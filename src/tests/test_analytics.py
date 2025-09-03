@@ -54,7 +54,7 @@ class TestACDAnalytics:
         )
         
         assert isinstance(result, RiskMetrics)
-        assert result.case_id is None  # Not set in current implementation
+        assert hasattr(result, "case_id") == False  # Not set in current implementation
         assert 0 <= result.composite_score <= 100
         assert result.verdict in ["LOW", "MEDIUM", "HIGH"]
         assert 0 <= result.confidence <= 1

@@ -1,0 +1,232 @@
+openapi: 3.1.0
+info:
+  title: ACD Monitor API
+  version: 1.0.0
+  description: >
+    Contracts for ingestion, analysis, summary and report evidence.
+servers:
+  - url: https://api.acd.example.com
+security:
+  - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Case:
+      type: object
+      required: [case_id, industry, geography, period_start, period_end]
+      properties:
+        case_id: {type: string}
+        industry: {type: string, example: "Banking CDS"}
+        geography: {type: string, example: "South Africa"}
+        period_start: {type: string, format: date-time}
+        period_end: {type: string, format: date-time}
+        meta: {type: object, additionalProperties: true}
+    Observation:
+      type: object
+      required: [case_id, ts, firm_id, price]
+      properties:
+        case_id: {type: string}
+        ts: {type: string, format: date-time, description: "UTC ISO-8601"}
+        firm_id: {type: string, example: "FNB"}
+        price: {type: number, description: "CDS spread (bps)"}
+        volume: {type: number, nullable: true}
+        unit: {type: string, example: "bps"}
+        src: {type: string, example: "client|spglobal|ice|refinitiv|derived"}
+        confidence: {type: number, minimum: 0, maximum: 100}
+        hash: {type: string, description: "SHA-256 hex of raw row"}
+    Metric:
+      type: object
+      required: [key, value, as_of]
+      properties:
+        key: {type: string, example: "INV|SYNC|STAB|REG|RISK"}
+        value: {type: number}
+        ci_low: {type: number, nullable: true}
+        ci_high: {type: number, nullable: true}
+        as_of: {type: string, format: date-time}
+        meta: {type: object, additionalProperties: true}
+    RiskSummary:
+      type: object
+      required: [case_id, score, verdict, confidence, updated_at]
+      properties:
+        case_id: {type: string}
+        score: {type: number, description: "0-100"}
+        verdict: {type: string, enum: [GREEN, AMBER, RED]}
+        confidence: {type: number, minimum: 0, maximum: 1}
+        ci_low: {type: number}
+        ci_high: {type: number}
+        updated_at: {type: string, format: date-time}
+        rationale:
+          type: object
+          properties:
+            weights: {type: object, additionalProperties: {type: number}}
+            components:
+              type: object
+              properties:
+                INV: {type: number}  # invariance
+                FLOW: {type: number} # info flow
+                REG: {type: number}  # regime
+                SYNC:{type: number}  # synchronization
+            notes: {type: array, items: {type: string}}
+    Environment:
+      type: object
+      properties:
+        env_id: {type: string}
+        label: {type: string}
+        start_ts: {type: string, format: date-time}
+        end_ts: {type: string, format: date-time}
+        method: {type: string, example: "PELT|manual|event"}
+        meta: {type: object, additionalProperties: true}
+    EvidenceManifest:
+      $ref: '#/components/schemas/EvidenceManifestInline'
+    EvidenceManifestInline:
+      type: object
+      required: [case_id, generated_at, inputs, artifacts, audit, digests]
+      properties:
+        case_id: {type: string}
+        generated_at: {type: string, format: date-time}
+        inputs:
+          type: object
+          properties:
+            sources:
+              type: array
+              items:
+                type: object
+                required: [name, kind, coverage, confidence_avg]
+                properties:
+                  name: {type: string}
+                  kind: {type: string, enum: [client, spglobal, ice, refinitiv, jse, derived]}
+                  coverage: {type: string, example: "2019-01-01/2025-01-15"}
+                  confidence_avg: {type: number}
+            time_range: {type: string}
+        artifacts:
+          type: array
+          items:
+            type: object
+            required: [type, path, sha256]
+            properties:
+              type: {type: string, enum: [pdf_report, csv_export, json_bundle, figure]}
+              path: {type: string}
+              sha256: {type: string}
+        audit:
+          type: object
+          properties:
+            events: {type: array, items: {type: object}}
+            rfc3161_timestamp: {type: string}
+        digests:
+          type: object
+          properties:
+            bundle_sha256: {type: string}
+            code_version: {type: string}
+paths:
+  /health:
+    get:
+      operationId: health
+      summary: Liveness/Readiness probe
+      responses:
+        '200': {description: OK}
+  /api/v1/cases:
+    post:
+      operationId: createCase
+      security: [{bearerAuth: []}]
+      requestBody:
+        required: true
+        content:
+          application/json: {schema: {$ref: '#/components/schemas/Case'}}
+      responses:
+        '201': {description: Created, content: {application/json: {schema: {$ref: '#/components/schemas/Case'}}}}
+  /api/v1/cases/{case_id}:
+    get:
+      operationId: getCase
+      parameters: [{in: path, name: case_id, required: true, schema: {type: string}}]
+      security: [{bearerAuth: []}]
+      responses:
+        '200': {description: Case}
+  /api/v1/cases/{case_id}/observations:
+    post:
+      operationId: ingestObservations
+      summary: Ingest observations (JSON array or NDJSON)
+      parameters: [{in: path, name: case_id, required: true, schema: {type: string}}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: array
+                  items: {$ref: '#/components/schemas/Observation'}
+                - $ref: '#/components/schemas/Observation'
+      security: [{bearerAuth: []}]
+      responses:
+        '202': {description: Accepted}
+    get:
+      operationId: queryObservations
+      parameters:
+        - {in: path, name: case_id, required: true, schema: {type: string}}
+        - {in: query, name: from, schema: {type: string, format: date-time}}
+        - {in: query, name: to, schema: {type: string, format: date-time}}
+        - {in: query, name: firm_id, schema: {type: string}}
+      security: [{bearerAuth: []}]
+      responses:
+        '200': {description: Rows, content: {application/json: {schema: {type: array, items: {$ref: '#/components/schemas/Observation'}}}}}
+  /api/v1/cases/{case_id}/analyze:
+    post:
+      operationId: runAnalysis
+      summary: Trigger analysis for [from,to] or full period
+      parameters:
+        - {in: path, name: case_id, required: true, schema: {type: string}}
+        - {in: query, name: from, schema: {type: string, format: date-time}}
+        - {in: query, name: to, schema: {type: string, format: date-time}}
+      security: [{bearerAuth: []}]
+      responses:
+        '202': {description: Enqueued}
+  /api/v1/cases/{case_id}/metrics:
+    get:
+      operationId: getMetrics
+      parameters:
+        - {in: path, name: case_id, required: true, schema: {type: string}}
+        - {in: query, name: keys, schema: {type: string, example: "INV,SYNC,STAB,REG,RISK"}}
+        - {in: query, name: from, schema: {type: string, format: date-time}}
+        - {in: query, name: to, schema: {type: string, format: date-time}}
+      security: [{bearerAuth: []}]
+      responses:
+        '200':
+          description: Metrics series
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: '#/components/schemas/Metric'}
+  /api/v1/cases/{case_id}/summary:
+    get:
+      operationId: getSummary
+      parameters: [{in: path, name: case_id, required: true, schema: {type: string}}]
+      security: [{bearerAuth: []}]
+      responses:
+        '200':
+          description: Risk summary
+          content: {application/json: {schema: {$ref: '#/components/schemas/RiskSummary'}}}
+  /api/v1/cases/{case_id}/environments:
+    get:
+      operationId: getEnvironments
+      parameters:
+        - {in: path, name: case_id, required: true, schema: {type: string}}
+      security: [{bearerAuth: []}]
+      responses:
+        '200':
+          description: Environments
+          content:
+            application/json:
+              schema: {type: array, items: {$ref: '#/components/schemas/Environment'}}
+  /api/v1/cases/{case_id}/evidence:
+    post:
+      operationId: generateEvidence
+      parameters: [{in: path, name: case_id, required: true, schema: {type: string}}]
+      security: [{bearerAuth: []}]
+      responses:
+        '201':
+          description: Evidence manifest
+          content: {application/json: {schema: {$ref: '#/components/schemas/EvidenceManifest'}}}

@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://acd.example.com/schemas/evidence_bundle.schema.json",
+  "title": "ACD Evidence Bundle Manifest",
+  "type": "object",
+  "required": ["case_id", "generated_at", "inputs", "artifacts", "digests", "audit"],
+  "properties": {
+    "case_id": {"type": "string"},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "inputs": {
+      "type": "object",
+      "required": ["time_range", "sources"],
+      "properties": {
+        "time_range": {"type": "string", "pattern": "^[0-9T:\\-+Z/]+$"},
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "kind", "coverage", "confidence_avg", "rows"],
+            "properties": {
+              "name": {"type": "string"},
+              "kind": {"type": "string", "enum": ["client", "spglobal", "ice", "refinitiv", "jse", "derived"]},
+              "coverage": {"type": "string"},
+              "confidence_avg": {"type": "number", "minimum": 0, "maximum": 100},
+              "rows": {"type": "integer", "minimum": 0}
+            }
+          }
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "path", "sha256"],
+        "properties": {
+          "type": {"type": "string", "enum": ["pdf_report", "csv_export", "json_bundle", "figure"]},
+          "path": {"type": "string"},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+        }
+      }
+    },
+    "digests": {
+      "type": "object",
+      "required": ["bundle_sha256", "code_version"],
+      "properties": {
+        "bundle_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "code_version": {"type": "string"}
+      }
+    },
+    "audit": {
+      "type": "object",
+      "required": ["events", "rfc3161_timestamp"],
+      "properties": {
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["ts", "actor", "action", "hash"],
+            "properties": {
+              "ts": {"type": "string", "format": "date-time"},
+              "actor": {"type": "string"},
+              "action": {type: "string"},
+              "hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+              "payload": {"type": "object"}
+            }
+          }
+        },
+        "rfc3161_timestamp": {"type": "string", "description": "Base64 or hex TSA token"}
+      }
+    }
+  }
+}
