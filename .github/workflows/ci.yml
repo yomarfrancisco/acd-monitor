@@ -18,8 +18,8 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-          cache: 'pip'
+          python-version: "3.11"
+          cache: "pip"
 
       - name: Install dependencies
         run: |
@@ -33,10 +33,23 @@ jobs:
       - name: Format check with black
         run: black --check src/
 
+      - name: Pre-commit (advice only)
+        run: |
+          pip install pre-commit
+          pre-commit run -a || true
+
       - name: Test with pytest (XML coverage)
         run: |
           pytest -q --maxfail=1 \
             --cov=src --cov-report=xml:coverage.xml
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-xml
+          path: coverage.xml
+          if-no-files-found: warn
+          retention-days: 7
 
       # ✅ Gate on env, not secrets
       - name: Upload coverage to Codecov

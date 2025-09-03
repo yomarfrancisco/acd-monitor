@@ -264,23 +264,22 @@ The ACD provides objective, empirically grounded tools for this distinction by t
 ### 9.1 VMM Implementation Details
 
 **Moment Conditions**
-- Orthogonality: E[g(θ, X)] = 0
-- Conditional variance stability: Var(g|Z) remains bounded
-- Temporal smoothness: θ changes gradually over time
-- Optional lead-lag checks: E[g(θ, X_t, X_{t-k})] = 0
+- First moment: 𝔼[β_t] = β_0 (competitive baseline)
+- Second moment: Var[β_t] = Σ_0 (expected variance)
+- Temporal cross-moment: Cov[β_t, β_{t-1}] = ρ_0 (persistence)
 
 **Variational Update**
 - Mean-field Gaussian approximation: q(θ) = N(μ, Σ)
-- Online ELBO ascent with natural-gradient updates
-- Learning rate decay: η_t = η_0 / (1 + λt)
-- Gradient clipping: ||∇_θ||₂ ≤ γ
-- Mini-batching with exponential kernel weighting
+- Stochastic variational inference on ELBO
+- Robbins-Monro step size: α_t = α_0 / (1 + λt)
+- Convergence: ELBO relative change < 1e-5 over 5 successive iterations
+- Maximum iterations: 200 per window
 
 **Update Cadence**
 - Every 5 minutes for real-time monitoring
 - Warm-up: minimum 2,000 data points
-- Decay: λ = 0.98 per day (exponential forgetting)
-- Convergence: ELBO relative change < 1e-4 or ||Δθ||₂ < 1e-3 over 5 consecutive inner iterations, max 50 inner iterations
+- Early stop on plateau or divergence guard
+- Outputs: regime_confidence, structural_stability, environment_quality, dynamic_validation_score
 
 ### 9.2 API Contracts
 

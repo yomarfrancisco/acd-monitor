@@ -3,6 +3,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green.svg)](https://fastapi.tiangolo.com/)
+[![CI](https://github.com/yomarfrancisco/acd-monitor/actions/workflows/ci.yml/badge.svg)](https://github.com/yomarfrancisco/acd-monitor/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/yomarfrancisco/acd-monitor/branch/main/graph/badge.svg)](https://codecov.io/gh/yomarfrancisco/acd-monitor)
 
 ## Executive Summary
 
@@ -145,6 +147,7 @@ acd-monitor/
 
 - **Automated Testing:** Lint, format check, pytest with coverage
 - **Coverage Upload:** Set `CODECOV_TOKEN` repo secret for coverage upload (private repos). Public repos may omit.
+- **Future:** Public repos can switch to tokenless OIDC for enhanced security.
 
 ## Contributing
 

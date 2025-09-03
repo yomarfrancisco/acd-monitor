@@ -1,0 +1,2223 @@
+{
+  "generated_at": "2025-09-04T00:17:27.306432",
+  "description": "Golden datasets for VMM acceptance testing",
+  "datasets": {
+    "competitive": {
+      "description": "Synthetic competitive data (environment-dependent betas)",
+      "n_windows": 50,
+      "windows": [
+        {
+          "filename": "competitive_window_000.parquet",
+          "window_id": 0,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-01-01T00:00:00",
+          "end_timestamp": "2024-01-05T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 81.37561378745222,
+              "max": 120.78849294744019
+            },
+            "firm_1_price": {
+              "min": 66.05467709714976,
+              "max": 124.47236077072166
+            },
+            "firm_2_price": {
+              "min": 72.85930466567193,
+              "max": 140.41815624397577
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_001.parquet",
+          "window_id": 1,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-01-08T00:00:00",
+          "end_timestamp": "2024-01-12T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 80.50138732591105,
+              "max": 126.6264612822654
+            },
+            "firm_1_price": {
+              "min": 79.8515395676685,
+              "max": 125.27804196184908
+            },
+            "firm_2_price": {
+              "min": 73.3295378579782,
+              "max": 123.13705419824682
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_002.parquet",
+          "window_id": 2,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-01-15T00:00:00",
+          "end_timestamp": "2024-01-19T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 74.6388223138156,
+              "max": 125.74688494501297
+            },
+            "firm_1_price": {
+              "min": 80.77990421070864,
+              "max": 130.48566702086154
+            },
+            "firm_2_price": {
+              "min": 80.59977313283858,
+              "max": 122.03957908254014
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_003.parquet",
+          "window_id": 3,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-01-22T00:00:00",
+          "end_timestamp": "2024-01-26T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 77.13842897728381,
+              "max": 120.55755687045662
+            },
+            "firm_1_price": {
+              "min": 78.82911788872319,
+              "max": 119.51185330675521
+            },
+            "firm_2_price": {
+              "min": 76.679589883393,
+              "max": 133.7756490793934
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_004.parquet",
+          "window_id": 4,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-01-29T00:00:00",
+          "end_timestamp": "2024-02-02T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 78.6985994909909,
+              "max": 124.31522935560606
+            },
+            "firm_1_price": {
+              "min": 78.02353755395954,
+              "max": 132.32772103351897
+            },
+            "firm_2_price": {
+              "min": 73.6939942466694,
+              "max": 131.99680213244764
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_005.parquet",
+          "window_id": 5,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-02-05T00:00:00",
+          "end_timestamp": "2024-02-09T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 76.12992652167438,
+              "max": 125.48092742313442
+            },
+            "firm_1_price": {
+              "min": 79.66096720290865,
+              "max": 128.95021708472675
+            },
+            "firm_2_price": {
+              "min": 73.64710844754393,
+              "max": 118.43273039566672
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_006.parquet",
+          "window_id": 6,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-02-12T00:00:00",
+          "end_timestamp": "2024-02-16T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 68.79179688058036,
+              "max": 122.12768480354214
+            },
+            "firm_1_price": {
+              "min": 73.16171335234084,
+              "max": 129.38900377352573
+            },
+            "firm_2_price": {
+              "min": 79.668423109019,
+              "max": 131.22240190247845
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_007.parquet",
+          "window_id": 7,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-02-19T00:00:00",
+          "end_timestamp": "2024-02-23T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 78.63706008099275,
+              "max": 122.01037015004407
+            },
+            "firm_1_price": {
+              "min": 74.73211696067216,
+              "max": 126.09399278139901
+            },
+            "firm_2_price": {
+              "min": 77.02444132570395,
+              "max": 122.81462225656415
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_008.parquet",
+          "window_id": 8,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-02-26T00:00:00",
+          "end_timestamp": "2024-03-01T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 71.15506688458821,
+              "max": 123.43008716691813
+            },
+            "firm_1_price": {
+              "min": 79.2510868998393,
+              "max": 122.77754104248162
+            },
+            "firm_2_price": {
+              "min": 62.024194191670844,
+              "max": 125.27929723562397
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_009.parquet",
+          "window_id": 9,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-03-04T00:00:00",
+          "end_timestamp": "2024-03-08T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 73.06176421842093,
+              "max": 120.4460143941467
+            },
+            "firm_1_price": {
+              "min": 70.53869929461202,
+              "max": 118.85501837018789
+            },
+            "firm_2_price": {
+              "min": 80.49811762004963,
+              "max": 122.14505931340315
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_010.parquet",
+          "window_id": 10,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-03-11T00:00:00",
+          "end_timestamp": "2024-03-15T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 78.11167596320793,
+              "max": 124.63129110368266
+            },
+            "firm_1_price": {
+              "min": 77.48091940612781,
+              "max": 120.63844726728594
+            },
+            "firm_2_price": {
+              "min": 79.16627502888905,
+              "max": 130.19863000475456
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_011.parquet",
+          "window_id": 11,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-03-18T00:00:00",
+          "end_timestamp": "2024-03-22T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 78.11308945337711,
+              "max": 132.78450075681292
+            },
+            "firm_1_price": {
+              "min": 79.21332489054512,
+              "max": 134.33798609448323
+            },
+            "firm_2_price": {
+              "min": 71.55833130396431,
+              "max": 123.49995814887927
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_012.parquet",
+          "window_id": 12,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-03-25T00:00:00",
+          "end_timestamp": "2024-03-29T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 72.91198244166235,
+              "max": 123.50668451043359
+            },
+            "firm_1_price": {
+              "min": 66.39558001770607,
+              "max": 123.30217730063562
+            },
+            "firm_2_price": {
+              "min": 67.77231768108125,
+              "max": 123.35599322801377
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_013.parquet",
+          "window_id": 13,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-04-01T00:00:00",
+          "end_timestamp": "2024-04-05T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 76.9608656013017,
+              "max": 145.2924694729881
+            },
+            "firm_1_price": {
+              "min": 71.90521764784496,
+              "max": 123.1637475655808
+            },
+            "firm_2_price": {
+              "min": 74.44318778814424,
+              "max": 124.68916355291574
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_014.parquet",
+          "window_id": 14,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-04-08T00:00:00",
+          "end_timestamp": "2024-04-12T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 77.99998374676328,
+              "max": 124.86407685832104
+            },
+            "firm_1_price": {
+              "min": 72.5447561721348,
+              "max": 130.67789263478176
+            },
+            "firm_2_price": {
+              "min": 75.03902669552137,
+              "max": 125.51462653868754
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_015.parquet",
+          "window_id": 15,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-04-15T00:00:00",
+          "end_timestamp": "2024-04-19T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 75.06487652429482,
+              "max": 127.63076219885323
+            },
+            "firm_1_price": {
+              "min": 66.07618000687387,
+              "max": 122.46816097991477
+            },
+            "firm_2_price": {
+              "min": 70.56718303522356,
+              "max": 122.32385535138457
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_016.parquet",
+          "window_id": 16,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-04-22T00:00:00",
+          "end_timestamp": "2024-04-26T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 72.76601128429638,
+              "max": 125.90425605267032
+            },
+            "firm_1_price": {
+              "min": 80.45128546457205,
+              "max": 121.58472785229739
+            },
+            "firm_2_price": {
+              "min": 70.89793197289245,
+              "max": 129.18951280085489
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_017.parquet",
+          "window_id": 17,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-04-29T00:00:00",
+          "end_timestamp": "2024-05-03T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 78.97390409414936,
+              "max": 123.15160433015532
+            },
+            "firm_1_price": {
+              "min": 77.78736351584294,
+              "max": 123.11519586263198
+            },
+            "firm_2_price": {
+              "min": 74.30551522056749,
+              "max": 121.54398546490421
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_018.parquet",
+          "window_id": 18,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-05-06T00:00:00",
+          "end_timestamp": "2024-05-10T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 80.61969651218524,
+              "max": 119.14283685950488
+            },
+            "firm_1_price": {
+              "min": 74.90413836730619,
+              "max": 123.63695151723564
+            },
+            "firm_2_price": {
+              "min": 79.10577030435705,
+              "max": 135.0667380053231
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_019.parquet",
+          "window_id": 19,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-05-13T00:00:00",
+          "end_timestamp": "2024-05-17T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 72.4492263251945,
+              "max": 120.9515242366605
+            },
+            "firm_1_price": {
+              "min": 74.32532451886138,
+              "max": 124.84639777214817
+            },
+            "firm_2_price": {
+              "min": 74.19560302369253,
+              "max": 124.832595829065
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_020.parquet",
+          "window_id": 20,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-05-20T00:00:00",
+          "end_timestamp": "2024-05-24T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 77.59082936237071,
+              "max": 130.68419708303642
+            },
+            "firm_1_price": {
+              "min": 78.78267090996779,
+              "max": 121.05992282034644
+            },
+            "firm_2_price": {
+              "min": 80.83383997473555,
+              "max": 124.50385406500115
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_021.parquet",
+          "window_id": 21,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-05-27T00:00:00",
+          "end_timestamp": "2024-05-31T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 75.64969745837064,
+              "max": 123.47545578982069
+            },
+            "firm_1_price": {
+              "min": 70.06509789990116,
+              "max": 124.97759285113918
+            },
+            "firm_2_price": {
+              "min": 76.1388583662669,
+              "max": 125.47539669343027
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_022.parquet",
+          "window_id": 22,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-06-03T00:00:00",
+          "end_timestamp": "2024-06-07T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 76.2084224149172,
+              "max": 127.47713074600316
+            },
+            "firm_1_price": {
+              "min": 78.81794300981012,
+              "max": 127.43076679345734
+            },
+            "firm_2_price": {
+              "min": 70.20832124611088,
+              "max": 126.63954546902143
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_023.parquet",
+          "window_id": 23,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-06-10T00:00:00",
+          "end_timestamp": "2024-06-14T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 73.5088760981135,
+              "max": 128.08693963492354
+            },
+            "firm_1_price": {
+              "min": 74.81625603977761,
+              "max": 124.93442904888734
+            },
+            "firm_2_price": {
+              "min": 78.1315418753276,
+              "max": 121.54766886725741
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_024.parquet",
+          "window_id": 24,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-06-17T00:00:00",
+          "end_timestamp": "2024-06-21T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 71.69538403072397,
+              "max": 121.81728432993167
+            },
+            "firm_1_price": {
+              "min": 78.42745393684719,
+              "max": 134.90919481538424
+            },
+            "firm_2_price": {
+              "min": 80.34654611270304,
+              "max": 122.5298331463353
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_025.parquet",
+          "window_id": 25,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-06-24T00:00:00",
+          "end_timestamp": "2024-06-28T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 77.69646306725757,
+              "max": 126.35095096238281
+            },
+            "firm_1_price": {
+              "min": 79.45933274054957,
+              "max": 119.75035592881378
+            },
+            "firm_2_price": {
+              "min": 64.5620213817986,
+              "max": 122.32999044204341
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_026.parquet",
+          "window_id": 26,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-07-01T00:00:00",
+          "end_timestamp": "2024-07-05T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 81.84168763587931,
+              "max": 122.98980671009613
+            },
+            "firm_1_price": {
+              "min": 80.0050663015648,
+              "max": 125.41757137383205
+            },
+            "firm_2_price": {
+              "min": 67.52231059917742,
+              "max": 120.70684527771112
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_027.parquet",
+          "window_id": 27,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-07-08T00:00:00",
+          "end_timestamp": "2024-07-12T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 53.16390368865995,
+              "max": 130.4730829139299
+            },
+            "firm_1_price": {
+              "min": 78.70996282901832,
+              "max": 125.76167547159048
+            },
+            "firm_2_price": {
+              "min": 69.44014779833239,
+              "max": 134.0844341999929
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_028.parquet",
+          "window_id": 28,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-07-15T00:00:00",
+          "end_timestamp": "2024-07-19T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 69.55728504794367,
+              "max": 126.41445431588812
+            },
+            "firm_1_price": {
+              "min": 66.47159101689657,
+              "max": 125.61905016548054
+            },
+            "firm_2_price": {
+              "min": 75.96284725894417,
+              "max": 125.70579547945074
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_029.parquet",
+          "window_id": 29,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-07-22T00:00:00",
+          "end_timestamp": "2024-07-26T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 73.49841700179847,
+              "max": 119.78621877137725
+            },
+            "firm_1_price": {
+              "min": 70.45690477201157,
+              "max": 122.02671239996857
+            },
+            "firm_2_price": {
+              "min": 66.31611061781788,
+              "max": 117.07584632900515
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_030.parquet",
+          "window_id": 30,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-07-29T00:00:00",
+          "end_timestamp": "2024-08-02T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 78.27119624360509,
+              "max": 120.02101058605668
+            },
+            "firm_1_price": {
+              "min": 75.3136026913422,
+              "max": 122.25195458821051
+            },
+            "firm_2_price": {
+              "min": 76.6816789159614,
+              "max": 129.23916351133258
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_031.parquet",
+          "window_id": 31,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-08-05T00:00:00",
+          "end_timestamp": "2024-08-09T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 77.38954050611449,
+              "max": 123.76744412967223
+            },
+            "firm_1_price": {
+              "min": 76.17397620133856,
+              "max": 125.1845917222169
+            },
+            "firm_2_price": {
+              "min": 80.56878057963138,
+              "max": 124.70145984086146
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_032.parquet",
+          "window_id": 32,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-08-12T00:00:00",
+          "end_timestamp": "2024-08-16T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 74.46690205126194,
+              "max": 125.93892852599846
+            },
+            "firm_1_price": {
+              "min": 76.13340044992631,
+              "max": 125.80652092639637
+            },
+            "firm_2_price": {
+              "min": 69.09283410118523,
+              "max": 122.38279298202262
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_033.parquet",
+          "window_id": 33,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-08-19T00:00:00",
+          "end_timestamp": "2024-08-23T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 81.7306106140016,
+              "max": 126.74611261859349
+            },
+            "firm_1_price": {
+              "min": 66.09886286189018,
+              "max": 132.33836011202723
+            },
+            "firm_2_price": {
+              "min": 75.35927552081286,
+              "max": 119.30578161140524
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_034.parquet",
+          "window_id": 34,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-08-26T00:00:00",
+          "end_timestamp": "2024-08-30T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 77.5143464292365,
+              "max": 123.67248286562872
+            },
+            "firm_1_price": {
+              "min": 73.33833508319147,
+              "max": 129.43140288205416
+            },
+            "firm_2_price": {
+              "min": 80.4228630895275,
+              "max": 119.01078414063527
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_035.parquet",
+          "window_id": 35,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-09-02T00:00:00",
+          "end_timestamp": "2024-09-06T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 80.3883276870122,
+              "max": 126.20123110662158
+            },
+            "firm_1_price": {
+              "min": 73.09917095161764,
+              "max": 120.87670861747162
+            },
+            "firm_2_price": {
+              "min": 70.3739643981655,
+              "max": 127.8847710492948
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_036.parquet",
+          "window_id": 36,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-09-09T00:00:00",
+          "end_timestamp": "2024-09-13T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 66.31510745311574,
+              "max": 122.46771237640633
+            },
+            "firm_1_price": {
+              "min": 79.07355910480165,
+              "max": 128.50141871332906
+            },
+            "firm_2_price": {
+              "min": 78.26738015301272,
+              "max": 127.23464733588975
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_037.parquet",
+          "window_id": 37,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-09-16T00:00:00",
+          "end_timestamp": "2024-09-20T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 74.50564606382383,
+              "max": 122.38365447159094
+            },
+            "firm_1_price": {
+              "min": 75.69723084618585,
+              "max": 121.89415730293224
+            },
+            "firm_2_price": {
+              "min": 75.3169568823356,
+              "max": 132.3865102357499
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_038.parquet",
+          "window_id": 38,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-09-23T00:00:00",
+          "end_timestamp": "2024-09-27T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 79.17285811576279,
+              "max": 121.36661766606977
+            },
+            "firm_1_price": {
+              "min": 70.22336888238824,
+              "max": 123.40480881174096
+            },
+            "firm_2_price": {
+              "min": 76.10983738794063,
+              "max": 123.67764510018301
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_039.parquet",
+          "window_id": 39,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-09-30T00:00:00",
+          "end_timestamp": "2024-10-04T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 81.74155388035335,
+              "max": 124.6745125520928
+            },
+            "firm_1_price": {
+              "min": 71.54707500118342,
+              "max": 123.1964879090896
+            },
+            "firm_2_price": {
+              "min": 78.84065826376086,
+              "max": 132.82735199638628
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_040.parquet",
+          "window_id": 40,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-10-07T00:00:00",
+          "end_timestamp": "2024-10-11T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 78.86570640634243,
+              "max": 124.7453234956023
+            },
+            "firm_1_price": {
+              "min": 77.98455328577344,
+              "max": 125.45089902768915
+            },
+            "firm_2_price": {
+              "min": 68.35929996408069,
+              "max": 123.10101097535659
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_041.parquet",
+          "window_id": 41,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-10-14T00:00:00",
+          "end_timestamp": "2024-10-18T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 76.60068846171683,
+              "max": 129.15939454902565
+            },
+            "firm_1_price": {
+              "min": 68.40919366554107,
+              "max": 123.06995194163134
+            },
+            "firm_2_price": {
+              "min": 77.62882462397155,
+              "max": 121.02408412070612
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_042.parquet",
+          "window_id": 42,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-10-21T00:00:00",
+          "end_timestamp": "2024-10-25T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 76.95335379902997,
+              "max": 131.03999313147028
+            },
+            "firm_1_price": {
+              "min": 68.78705347853926,
+              "max": 124.74052039408498
+            },
+            "firm_2_price": {
+              "min": 78.70753151794923,
+              "max": 121.29298023130258
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_043.parquet",
+          "window_id": 43,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-10-28T00:00:00",
+          "end_timestamp": "2024-11-01T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 71.85378676836422,
+              "max": 126.31223117374772
+            },
+            "firm_1_price": {
+              "min": 73.94820295729095,
+              "max": 127.4261513300883
+            },
+            "firm_2_price": {
+              "min": 76.36464663423828,
+              "max": 119.0157619619415
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_044.parquet",
+          "window_id": 44,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-11-04T00:00:00",
+          "end_timestamp": "2024-11-08T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 66.61962350121078,
+              "max": 123.92744545495049
+            },
+            "firm_1_price": {
+              "min": 74.73894388947646,
+              "max": 133.9815931223039
+            },
+            "firm_2_price": {
+              "min": 70.03378951847878,
+              "max": 122.35417183046893
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_045.parquet",
+          "window_id": 45,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-11-11T00:00:00",
+          "end_timestamp": "2024-11-15T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 70.23232274813367,
+              "max": 131.5259473667015
+            },
+            "firm_1_price": {
+              "min": 74.35084587125431,
+              "max": 117.44504803531787
+            },
+            "firm_2_price": {
+              "min": 70.74883825732864,
+              "max": 128.44601257864622
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_046.parquet",
+          "window_id": 46,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-11-18T00:00:00",
+          "end_timestamp": "2024-11-22T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 75.12527681775177,
+              "max": 125.81386235049295
+            },
+            "firm_1_price": {
+              "min": 70.45130402181515,
+              "max": 131.63192597568127
+            },
+            "firm_2_price": {
+              "min": 65.945481705314,
+              "max": 123.51233531996552
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_047.parquet",
+          "window_id": 47,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-11-25T00:00:00",
+          "end_timestamp": "2024-11-29T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 69.42565210358302,
+              "max": 122.19868120475502
+            },
+            "firm_1_price": {
+              "min": 71.6329128065892,
+              "max": 121.0906549006095
+            },
+            "firm_2_price": {
+              "min": 72.45001096474203,
+              "max": 119.99816363945354
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_048.parquet",
+          "window_id": 48,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-12-02T00:00:00",
+          "end_timestamp": "2024-12-06T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 74.90602354386029,
+              "max": 127.41126569766591
+            },
+            "firm_1_price": {
+              "min": 76.83018280249672,
+              "max": 128.65989960363518
+            },
+            "firm_2_price": {
+              "min": 76.1389849848376,
+              "max": 126.57712610357144
+            }
+          }
+        },
+        {
+          "filename": "competitive_window_049.parquet",
+          "window_id": 49,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-12-09T00:00:00",
+          "end_timestamp": "2024-12-13T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 73.67737590403385,
+              "max": 125.87221010705501
+            },
+            "firm_1_price": {
+              "min": 74.84729565376956,
+              "max": 117.89841510618626
+            },
+            "firm_2_price": {
+              "min": 74.09529256970563,
+              "max": 126.66393157973427
+            }
+          }
+        }
+      ]
+    },
+    "coordinated": {
+      "description": "Synthetic coordinated data (invariant betas)",
+      "n_windows": 50,
+      "windows": [
+        {
+          "filename": "coordinated_window_000.parquet",
+          "window_id": 0,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-01-01T00:00:00",
+          "end_timestamp": "2024-01-05T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 80.76226515999123,
+              "max": 122.3503916553539
+            },
+            "firm_1_price": {
+              "min": 68.36900824376119,
+              "max": 121.33463543311669
+            },
+            "firm_2_price": {
+              "min": 76.07565659337249,
+              "max": 137.7842837939789
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_001.parquet",
+          "window_id": 1,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-01-08T00:00:00",
+          "end_timestamp": "2024-01-12T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 80.38285654332154,
+              "max": 126.83386815718495
+            },
+            "firm_1_price": {
+              "min": 71.47768616859226,
+              "max": 125.5030978506698
+            },
+            "firm_2_price": {
+              "min": 73.54746548333597,
+              "max": 125.66398149443576
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_002.parquet",
+          "window_id": 2,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-01-15T00:00:00",
+          "end_timestamp": "2024-01-19T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 81.49865612355251,
+              "max": 125.71632616924245
+            },
+            "firm_1_price": {
+              "min": 79.28023123543886,
+              "max": 124.25272627432338
+            },
+            "firm_2_price": {
+              "min": 73.80557138982033,
+              "max": 121.05433127557242
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_003.parquet",
+          "window_id": 3,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-01-22T00:00:00",
+          "end_timestamp": "2024-01-26T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 70.17693604694352,
+              "max": 123.0086284343925
+            },
+            "firm_1_price": {
+              "min": 76.82816488441347,
+              "max": 130.8730381859452
+            },
+            "firm_2_price": {
+              "min": 69.79957551852402,
+              "max": 125.18959298643028
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_004.parquet",
+          "window_id": 4,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-01-29T00:00:00",
+          "end_timestamp": "2024-02-02T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 72.95109945343883,
+              "max": 126.2050487944671
+            },
+            "firm_1_price": {
+              "min": 82.0568828755463,
+              "max": 130.74330919799664
+            },
+            "firm_2_price": {
+              "min": 80.35218744420953,
+              "max": 122.96483583648224
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_005.parquet",
+          "window_id": 5,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-02-05T00:00:00",
+          "end_timestamp": "2024-02-09T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 75.85523343361291,
+              "max": 123.14050299879445
+            },
+            "firm_1_price": {
+              "min": 80.46175694346617,
+              "max": 130.00331187427128
+            },
+            "firm_2_price": {
+              "min": 70.65370780268258,
+              "max": 118.47786788234825
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_006.parquet",
+          "window_id": 6,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-02-12T00:00:00",
+          "end_timestamp": "2024-02-16T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 77.6430752627163,
+              "max": 123.7523076175781
+            },
+            "firm_1_price": {
+              "min": 78.7492284280598,
+              "max": 120.90134433133512
+            },
+            "firm_2_price": {
+              "min": 78.47360179951815,
+              "max": 132.02316841502824
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_007.parquet",
+          "window_id": 7,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-02-19T00:00:00",
+          "end_timestamp": "2024-02-23T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 75.44111178335099,
+              "max": 121.48803205958374
+            },
+            "firm_1_price": {
+              "min": 71.68795198217849,
+              "max": 119.35703362741258
+            },
+            "firm_2_price": {
+              "min": 75.470350243649,
+              "max": 121.79647564597825
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_008.parquet",
+          "window_id": 8,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-02-26T00:00:00",
+          "end_timestamp": "2024-03-01T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 77.61826396360334,
+              "max": 124.71822419245508
+            },
+            "firm_1_price": {
+              "min": 78.09198880729855,
+              "max": 131.1483768924115
+            },
+            "firm_2_price": {
+              "min": 76.01763283373194,
+              "max": 131.9453501412214
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_009.parquet",
+          "window_id": 9,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-03-04T00:00:00",
+          "end_timestamp": "2024-03-08T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 76.08919515990353,
+              "max": 125.98566637372433
+            },
+            "firm_1_price": {
+              "min": 71.81676358982574,
+              "max": 118.35749695190717
+            },
+            "firm_2_price": {
+              "min": 71.68545737898603,
+              "max": 123.12439706682086
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_010.parquet",
+          "window_id": 10,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-03-11T00:00:00",
+          "end_timestamp": "2024-03-15T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 76.5477544722841,
+              "max": 126.76945861848313
+            },
+            "firm_1_price": {
+              "min": 81.56735418321345,
+              "max": 124.57012679178304
+            },
+            "firm_2_price": {
+              "min": 71.86719375035877,
+              "max": 117.54620832381892
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_011.parquet",
+          "window_id": 11,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-03-18T00:00:00",
+          "end_timestamp": "2024-03-22T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 72.45088860781595,
+              "max": 135.260422604785
+            },
+            "firm_1_price": {
+              "min": 76.35907087700512,
+              "max": 124.69068556215193
+            },
+            "firm_2_price": {
+              "min": 74.29478631906913,
+              "max": 126.7147479518437
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_012.parquet",
+          "window_id": 12,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-03-25T00:00:00",
+          "end_timestamp": "2024-03-29T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 69.01882029860113,
+              "max": 124.78917856757649
+            },
+            "firm_1_price": {
+              "min": 72.55986534258652,
+              "max": 130.52582784062523
+            },
+            "firm_2_price": {
+              "min": 80.09777008597096,
+              "max": 131.43215639292657
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_013.parquet",
+          "window_id": 13,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-04-01T00:00:00",
+          "end_timestamp": "2024-04-05T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 81.21899065295759,
+              "max": 129.0684013438676
+            },
+            "firm_1_price": {
+              "min": 71.90685998336185,
+              "max": 127.3605452494414
+            },
+            "firm_2_price": {
+              "min": 68.45382123310634,
+              "max": 127.9333880190698
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_014.parquet",
+          "window_id": 14,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-04-08T00:00:00",
+          "end_timestamp": "2024-04-12T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 77.77391112403488,
+              "max": 123.16698701855302
+            },
+            "firm_1_price": {
+              "min": 75.5517887761934,
+              "max": 124.85760804045722
+            },
+            "firm_2_price": {
+              "min": 77.01518528544547,
+              "max": 124.69672820506894
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_015.parquet",
+          "window_id": 15,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-04-15T00:00:00",
+          "end_timestamp": "2024-04-19T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 73.2752247973666,
+              "max": 126.93496465723469
+            },
+            "firm_1_price": {
+              "min": 81.15730662776052,
+              "max": 119.84081789500462
+            },
+            "firm_2_price": {
+              "min": 80.51582378940324,
+              "max": 119.7297827717535
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_016.parquet",
+          "window_id": 16,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-04-22T00:00:00",
+          "end_timestamp": "2024-04-26T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 72.53804666712328,
+              "max": 123.87541311459074
+            },
+            "firm_1_price": {
+              "min": 79.26205203795938,
+              "max": 121.8476089463525
+            },
+            "firm_2_price": {
+              "min": 60.24371862050253,
+              "max": 125.98386769532941
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_017.parquet",
+          "window_id": 17,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-04-29T00:00:00",
+          "end_timestamp": "2024-05-03T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 77.15540932542783,
+              "max": 122.66085419148128
+            },
+            "firm_1_price": {
+              "min": 74.7205503234936,
+              "max": 120.22177990641977
+            },
+            "firm_2_price": {
+              "min": 73.85917438156154,
+              "max": 127.171976925145
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_018.parquet",
+          "window_id": 18,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-05-06T00:00:00",
+          "end_timestamp": "2024-05-10T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 71.303749939579,
+              "max": 121.94571770145323
+            },
+            "firm_1_price": {
+              "min": 69.62041339987788,
+              "max": 117.94494845558707
+            },
+            "firm_2_price": {
+              "min": 84.10387289810771,
+              "max": 122.07934889235307
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_019.parquet",
+          "window_id": 19,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-05-13T00:00:00",
+          "end_timestamp": "2024-05-17T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 70.89025487727017,
+              "max": 124.73593719053845
+            },
+            "firm_1_price": {
+              "min": 69.50377300547628,
+              "max": 132.6774878340953
+            },
+            "firm_2_price": {
+              "min": 67.1910278689988,
+              "max": 125.45416286190401
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_020.parquet",
+          "window_id": 20,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-05-20T00:00:00",
+          "end_timestamp": "2024-05-24T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 77.80215085596521,
+              "max": 124.14083671557657
+            },
+            "firm_1_price": {
+              "min": 77.32891766740116,
+              "max": 120.93077701201533
+            },
+            "firm_2_price": {
+              "min": 77.91911105186196,
+              "max": 128.89830302421706
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_021.parquet",
+          "window_id": 21,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-05-27T00:00:00",
+          "end_timestamp": "2024-05-31T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 77.11013543515008,
+              "max": 133.53206738255076
+            },
+            "firm_1_price": {
+              "min": 73.28302015346627,
+              "max": 123.2876673951264
+            },
+            "firm_2_price": {
+              "min": 74.620094628189,
+              "max": 126.37916708355714
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_022.parquet",
+          "window_id": 22,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-06-03T00:00:00",
+          "end_timestamp": "2024-06-07T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 75.88929263282186,
+              "max": 131.8631579274647
+            },
+            "firm_1_price": {
+              "min": 77.71507626505729,
+              "max": 135.0910910594952
+            },
+            "firm_2_price": {
+              "min": 72.48508925237782,
+              "max": 123.77366732202755
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_023.parquet",
+          "window_id": 23,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-06-10T00:00:00",
+          "end_timestamp": "2024-06-14T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 78.72962703476709,
+              "max": 124.42518147203192
+            },
+            "firm_1_price": {
+              "min": 68.59981263031075,
+              "max": 127.95014464103184
+            },
+            "firm_2_price": {
+              "min": 70.8873914898937,
+              "max": 134.34038974583464
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_024.parquet",
+          "window_id": 24,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-06-17T00:00:00",
+          "end_timestamp": "2024-06-21T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 76.34616491332406,
+              "max": 124.3665679360654
+            },
+            "firm_1_price": {
+              "min": 67.71408691209898,
+              "max": 123.17164396942705
+            },
+            "firm_2_price": {
+              "min": 67.68860642426911,
+              "max": 124.94937343702917
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_025.parquet",
+          "window_id": 25,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-06-24T00:00:00",
+          "end_timestamp": "2024-06-28T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 64.4472452868203,
+              "max": 121.21472791964122
+            },
+            "firm_1_price": {
+              "min": 78.08240230840178,
+              "max": 127.42832818805498
+            },
+            "firm_2_price": {
+              "min": 71.31483615130772,
+              "max": 127.04181956784697
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_026.parquet",
+          "window_id": 26,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-07-01T00:00:00",
+          "end_timestamp": "2024-07-05T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 74.79085790296348,
+              "max": 144.67043381320173
+            },
+            "firm_1_price": {
+              "min": 72.03845253854226,
+              "max": 124.09658466267513
+            },
+            "firm_2_price": {
+              "min": 74.54003033398881,
+              "max": 123.54919652411053
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_027.parquet",
+          "window_id": 27,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-07-08T00:00:00",
+          "end_timestamp": "2024-07-12T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 71.04901692997439,
+              "max": 127.04691716431151
+            },
+            "firm_1_price": {
+              "min": 72.92528953127139,
+              "max": 119.98345079646052
+            },
+            "firm_2_price": {
+              "min": 77.59616692379959,
+              "max": 121.41504471050385
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_028.parquet",
+          "window_id": 28,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-07-15T00:00:00",
+          "end_timestamp": "2024-07-19T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 77.92679849296589,
+              "max": 124.69052212055368
+            },
+            "firm_1_price": {
+              "min": 73.7718792050027,
+              "max": 129.6678229064453
+            },
+            "firm_2_price": {
+              "min": 75.32905074855692,
+              "max": 125.24932223947445
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_029.parquet",
+          "window_id": 29,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-07-22T00:00:00",
+          "end_timestamp": "2024-07-26T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 74.15954755068239,
+              "max": 132.3874810447797
+            },
+            "firm_1_price": {
+              "min": 79.36773751971448,
+              "max": 123.78393882632088
+            },
+            "firm_2_price": {
+              "min": 74.33033064946811,
+              "max": 128.12094104202006
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_030.parquet",
+          "window_id": 30,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-07-29T00:00:00",
+          "end_timestamp": "2024-08-02T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 75.67250029281553,
+              "max": 130.15893298295674
+            },
+            "firm_1_price": {
+              "min": 66.6216972651252,
+              "max": 123.92744496379817
+            },
+            "firm_2_price": {
+              "min": 69.597971774361,
+              "max": 121.75025572162056
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_031.parquet",
+          "window_id": 31,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-08-05T00:00:00",
+          "end_timestamp": "2024-08-09T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 77.80080645443088,
+              "max": 122.48938287986357
+            },
+            "firm_1_price": {
+              "min": 71.20602470629186,
+              "max": 122.59392270653014
+            },
+            "firm_2_price": {
+              "min": 75.96216630504473,
+              "max": 138.59781489350985
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_032.parquet",
+          "window_id": 32,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-08-12T00:00:00",
+          "end_timestamp": "2024-08-16T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 74.78943257570307,
+              "max": 122.66607638637004
+            },
+            "firm_1_price": {
+              "min": 80.08224272817723,
+              "max": 123.0360355950252
+            },
+            "firm_2_price": {
+              "min": 71.22888563585353,
+              "max": 130.1135654198348
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_033.parquet",
+          "window_id": 33,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-08-19T00:00:00",
+          "end_timestamp": "2024-08-23T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 68.96954682725858,
+              "max": 119.88004591419819
+            },
+            "firm_1_price": {
+              "min": 68.01142172388482,
+              "max": 121.22898639495216
+            },
+            "firm_2_price": {
+              "min": 74.17532356110353,
+              "max": 125.16233373735258
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_034.parquet",
+          "window_id": 34,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-08-26T00:00:00",
+          "end_timestamp": "2024-08-30T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 79.03984329441991,
+              "max": 124.80644923636336
+            },
+            "firm_1_price": {
+              "min": 78.39779101380347,
+              "max": 124.525536831347
+            },
+            "firm_2_price": {
+              "min": 77.75136630462232,
+              "max": 120.03410410040559
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_035.parquet",
+          "window_id": 35,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-09-02T00:00:00",
+          "end_timestamp": "2024-09-06T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 72.95882132576072,
+              "max": 125.97844115925855
+            },
+            "firm_1_price": {
+              "min": 80.51313611792013,
+              "max": 125.45634118218078
+            },
+            "firm_2_price": {
+              "min": 77.67709519240168,
+              "max": 124.25315250337215
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_036.parquet",
+          "window_id": 36,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-09-09T00:00:00",
+          "end_timestamp": "2024-09-13T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 76.835989544322,
+              "max": 119.78684744164246
+            },
+            "firm_1_price": {
+              "min": 75.82189582792181,
+              "max": 124.55734327860569
+            },
+            "firm_2_price": {
+              "min": 78.30315813119175,
+              "max": 136.50152455120735
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_037.parquet",
+          "window_id": 37,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-09-16T00:00:00",
+          "end_timestamp": "2024-09-20T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 63.82626060509935,
+              "max": 120.9049249369687
+            },
+            "firm_1_price": {
+              "min": 79.05316426343924,
+              "max": 126.14839539352428
+            },
+            "firm_2_price": {
+              "min": 67.54660284594006,
+              "max": 124.95864762422094
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_038.parquet",
+          "window_id": 38,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-09-23T00:00:00",
+          "end_timestamp": "2024-09-27T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 71.36192414928938,
+              "max": 122.35422278107755
+            },
+            "firm_1_price": {
+              "min": 75.75316858283021,
+              "max": 123.55151573660294
+            },
+            "firm_2_price": {
+              "min": 77.4955783193066,
+              "max": 126.81069534714125
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_039.parquet",
+          "window_id": 39,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-09-30T00:00:00",
+          "end_timestamp": "2024-10-04T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 83.51916531768829,
+              "max": 123.52464149348226
+            },
+            "firm_1_price": {
+              "min": 76.61831268357066,
+              "max": 119.7427589702588
+            },
+            "firm_2_price": {
+              "min": 79.88367431022495,
+              "max": 120.71177110581573
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_040.parquet",
+          "window_id": 40,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-10-07T00:00:00",
+          "end_timestamp": "2024-10-11T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 77.78245368145946,
+              "max": 128.8441351658278
+            },
+            "firm_1_price": {
+              "min": 77.62999593751034,
+              "max": 121.4179178976033
+            },
+            "firm_2_price": {
+              "min": 80.41955149050276,
+              "max": 124.52629498179209
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_041.parquet",
+          "window_id": 41,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-10-14T00:00:00",
+          "end_timestamp": "2024-10-18T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 80.18433672492465,
+              "max": 124.63572214533437
+            },
+            "firm_1_price": {
+              "min": 69.34329076872477,
+              "max": 115.53438167633956
+            },
+            "firm_2_price": {
+              "min": 64.68332687615744,
+              "max": 125.27359878786311
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_042.parquet",
+          "window_id": 42,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-10-21T00:00:00",
+          "end_timestamp": "2024-10-25T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 75.0018149941734,
+              "max": 122.35399228191481
+            },
+            "firm_1_price": {
+              "min": 70.20494189657948,
+              "max": 124.61375920531759
+            },
+            "firm_2_price": {
+              "min": 77.3786296151404,
+              "max": 125.36287867146096
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_043.parquet",
+          "window_id": 43,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-10-28T00:00:00",
+          "end_timestamp": "2024-11-01T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 73.83333627667099,
+              "max": 126.28077470776448
+            },
+            "firm_1_price": {
+              "min": 77.48881322996192,
+              "max": 129.50725899972426
+            },
+            "firm_2_price": {
+              "min": 78.19179716165804,
+              "max": 125.48249663526117
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_044.parquet",
+          "window_id": 44,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-11-04T00:00:00",
+          "end_timestamp": "2024-11-08T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 75.57858124741709,
+              "max": 126.2028900293536
+            },
+            "firm_1_price": {
+              "min": 78.098622636882,
+              "max": 128.309363941586
+            },
+            "firm_2_price": {
+              "min": 69.76304814476651,
+              "max": 128.3462206836079
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_045.parquet",
+          "window_id": 45,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-11-11T00:00:00",
+          "end_timestamp": "2024-11-15T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 73.35198179663564,
+              "max": 123.12498500998966
+            },
+            "firm_1_price": {
+              "min": 75.63940841439198,
+              "max": 119.05428610334769
+            },
+            "firm_2_price": {
+              "min": 68.43263563831562,
+              "max": 119.58436664173553
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_046.parquet",
+          "window_id": 46,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-11-18T00:00:00",
+          "end_timestamp": "2024-11-22T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 73.08306589025125,
+              "max": 128.8966242281273
+            },
+            "firm_1_price": {
+              "min": 75.7653352811904,
+              "max": 129.1307411979366
+            },
+            "firm_2_price": {
+              "min": 76.91938275526574,
+              "max": 121.44670829611094
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_047.parquet",
+          "window_id": 47,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-11-25T00:00:00",
+          "end_timestamp": "2024-11-29T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 74.68207725583795,
+              "max": 122.30013564669242
+            },
+            "firm_1_price": {
+              "min": 73.51642900551428,
+              "max": 124.14431591154695
+            },
+            "firm_2_price": {
+              "min": 75.72979504161131,
+              "max": 119.58571619090031
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_048.parquet",
+          "window_id": 48,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-12-02T00:00:00",
+          "end_timestamp": "2024-12-06T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 72.28670606733922,
+              "max": 120.9447234372647
+            },
+            "firm_1_price": {
+              "min": 78.087361610573,
+              "max": 132.44296563803618
+            },
+            "firm_2_price": {
+              "min": 78.71808291781848,
+              "max": 123.76387863283489
+            }
+          }
+        },
+        {
+          "filename": "coordinated_window_049.parquet",
+          "window_id": 49,
+          "n_observations": 100,
+          "n_firms": 3,
+          "start_timestamp": "2024-12-09T00:00:00",
+          "end_timestamp": "2024-12-13T03:00:00",
+          "price_range": {
+            "firm_0_price": {
+              "min": 74.95750208352072,
+              "max": 124.15468817939853
+            },
+            "firm_1_price": {
+              "min": 76.12046362492956,
+              "max": 129.19167252171266
+            },
+            "firm_2_price": {
+              "min": 65.56436799746962,
+              "max": 125.51116731261448
+            }
+          }
+        }
+      ]
+    }
+  },
+  "acceptance_criteria": {
+    "spurious_regime_rate": 0.05,
+    "reproducibility_drift": 0.03,
+    "regime_confidence_threshold": 0.67
+  }
+}
