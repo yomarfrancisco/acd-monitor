@@ -141,6 +141,11 @@ acd-monitor/
 - **Deterministic Pipelines:** Seeded randomness, pinned library versions
 - **Performance Benchmarks:** Latency, accuracy, scalability tests
 
+## CI / Coverage
+
+- **Automated Testing:** Lint, format check, pytest with coverage
+- **Coverage Upload:** Set `CODECOV_TOKEN` repo secret for coverage upload (private repos). Public repos may omit.
+
 ## Contributing
 
 1. Fork the repository
