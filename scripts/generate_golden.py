@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 # Generates deterministic golden CSVs for CI (no external deps beyond pandas/numpy)
-import hashlib, json, numpy as np, pandas as pd
+import hashlib
+import json
+import numpy as np
+import pandas as pd
 
 rng = np.random.default_rng(42)
 

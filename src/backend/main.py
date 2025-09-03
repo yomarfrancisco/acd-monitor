@@ -3,10 +3,10 @@ ACD Backend - FastAPI Application
 Algorithmic Coordination Diagnostic API
 """
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import List, Optional
+
 import uvicorn
 
 app = FastAPI(

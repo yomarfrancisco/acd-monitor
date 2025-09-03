@@ -4,8 +4,8 @@ Core algorithms for coordination detection
 """
 
 import numpy as np
-import pandas as pd
-from typing import Dict, List, Tuple, Optional
+
+from typing import Dict, List
 from dataclasses import dataclass
 
 

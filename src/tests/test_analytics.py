@@ -2,9 +2,8 @@
 Tests for ACD Analytics Module
 """
 
-import pytest
 import numpy as np
-from src.backend.analytics import ACDAnalytics, RiskMetrics
+from backend.analytics import ACDAnalytics, RiskMetrics
 
 
 class TestACDAnalytics:
@@ -53,7 +52,7 @@ class TestACDAnalytics:
         result = self.analytics.analyze_case("test_case", self.sample_prices, self.sample_events)
 
         assert isinstance(result, RiskMetrics)
-        assert hasattr(result, "case_id") == False  # Not set in current implementation
+        assert not hasattr(result, "case_id")  # Not set in current implementation
         assert 0 <= result.composite_score <= 100
         assert result.verdict in ["LOW", "MEDIUM", "HIGH"]
         assert 0 <= result.confidence <= 1
