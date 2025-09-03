@@ -40,7 +40,7 @@ jobs:
 
       - name: Test with pytest (XML coverage)
         run: |
-          pytest -q --maxfail=1 \
+          pytest -v --maxfail=5 --disable-warnings \
             --cov=src --cov-report=xml:coverage.xml
 
       - name: Upload coverage artifact
