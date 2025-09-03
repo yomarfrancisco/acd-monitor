@@ -12,7 +12,7 @@ import uvicorn
 app = FastAPI(
     title="ACD Monitor API",
     description="Algorithmic Coordination Diagnostic API",
-    version="1.0.0"
+    version="1.0.0",
 )
 
 # CORS middleware
@@ -24,6 +24,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 class RiskScore(BaseModel):
     case_id: str
     score: int
@@ -31,13 +32,16 @@ class RiskScore(BaseModel):
     confidence: float
     timestamp: str
 
+
 @app.get("/")
 async def root():
     return {"message": "ACD Monitor API - Algorithmic Coordination Diagnostic"}
 
+
 @app.get("/health")
 async def health_check():
     return {"status": "healthy", "service": "ACD Monitor"}
+
 
 @app.get("/cases/{case_id}/summary")
 async def get_risk_summary(case_id: str):
@@ -48,8 +52,9 @@ async def get_risk_summary(case_id: str):
         score=14,
         verdict="LOW",
         confidence=0.968,
-        timestamp="2024-09-03T19:30:00Z"
+        timestamp="2024-09-03T19:30:00Z",
     )
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
