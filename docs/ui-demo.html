@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ACD Monitor – FNB CDS Market</title>
+<style>
+body{font-family:sans-serif;background:#f0f9ff;margin:0;padding:0;color:#1e293b}
+header{background:#fff;padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e2e8f0;position:sticky;top:0}
+.brand{font-weight:700;color:#1e40af;font-size:1.25rem}
+.live{background:#dcfce7;color:#166534;padding:.3rem .8rem;border-radius:20px;font-weight:600;display:flex;align-items:center;gap:.5rem}
+.dot{width:8px;height:8px;background:#10b981;border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{50%{opacity:.5}}
+main{max-width:1100px;margin:0 auto;padding:2rem}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:1.5rem;margin-bottom:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.score{display:flex;flex-direction:column;align-items:center;text-align:center}
+.ring{--val:14;width:180px;height:180px;border-radius:50%;background:conic-gradient(#10b981 calc(var(--val)*1%), #e5e7eb 0);display:grid;place-items:center;margin-bottom:1rem}
+.ring div{background:#fff;width:150px;height:150px;border-radius:50%;display:grid;place-items:center}
+.score-num{font-size:2.5rem;font-weight:700;color:#10b981}
+.pill{background:#dcfce7;color:#166534;padding:.4rem 1rem;border-radius:20px;font-weight:600;margin-bottom:.5rem}
+.chart{height:250px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;display:grid;place-items:center;color:#94a3b8;margin-top:1rem}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">ACD Monitor – FNB</div>
+  <div class="live"><span class="dot"></span> LIVE</div>
+</header>
+<main>
+  <section class="card score">
+    <div class="ring" style="--val:14"><div><span class="score-num">14</span></div></div>
+    <div class="pill">LOW RISK</div>
+    <p>96.8% confidence • 18-month CDS view</p>
+    <div class="chart">[18-month CDS Price Chart – updating in real time]</div>
+  </section>
+  <section class="card">
+    <h3>Indicators</h3>
+    <ul>
+      <li><b>Price Stability:</b> 25 → Normal volatility</li>
+      <li><b>Price Synchronization:</b> 18 → Independent moves</li>
+      <li><b>Environmental Sensitivity:</b> 82 → Competitive adaptation</li>
+    </ul>
+  </section>
+  <section class="card">
+    <h3>Participants</h3>
+    <ul>
+      <li>FNB: 32.1%</li>
+      <li>Nedbank: 27.4%</li>
+      <li>Standard Bank: 25.6%</li>
+      <li>Absa: 14.9%</li>
+    </ul>
+  </section>
+</main>
+</body>
+</html>
