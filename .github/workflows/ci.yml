@@ -38,9 +38,9 @@ jobs:
           pip install pre-commit
           pre-commit run -a || true
 
-      - name: Test with pytest (XML coverage)
+      - name: Run tests with pytest
         run: |
-          pytest -v --maxfail=5 --disable-warnings \
+          pytest -vv --maxfail=5 --disable-warnings \
             --cov=src --cov-report=xml:coverage.xml
 
       - name: Upload coverage artifact
