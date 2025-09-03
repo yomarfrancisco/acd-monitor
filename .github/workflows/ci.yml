@@ -9,11 +9,12 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      # Expose the secret as an env var for use in `if:` expressions
+      # Stable imports in CI
+      PYTHONPATH: ${{ github.workspace }}:${{ github.workspace }}/src
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -21,37 +22,67 @@ jobs:
           python-version: "3.11"
           cache: "pip"
 
-      - name: Install dependencies
+      - name: Show environment
         run: |
-          python -m pip install -U pip
+          python -V
+          pip -V
+          python - <<'PY'
+          import sys, platform, os
+          print("platform:", platform.platform())
+          print("cwd:", os.getcwd())
+          print("PYTHONPATH:", os.environ.get("PYTHONPATH"))
+          print("sys.path[0:5]:", sys.path[:5])
+          PY
+          echo "Repo tree (top-level):"
+          ls -la
+          echo "src tree:"
+          find src -maxdepth 2 -type f | sort
+
+      - name: Install deps
+        run: |
           pip install -r requirements.txt
-          pip install -r requirements-dev.txt || true
+          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
 
       - name: Lint with flake8
         run: flake8
 
       - name: Format check with black
-        run: black --check src/
+        run: black --check src tests
 
-      - name: Pre-commit (advice only)
+      - name: Pytest collect-only (debug)
         run: |
-          pip install pre-commit
-          pre-commit run -a || true
+          pytest --collect-only -vv | tee collect.log
 
-      - name: Run tests with pytest
+      - name: Run tests with pytest (verbose, keep logs)
+        # never hide output; capture to files; do not block artifact upload
+        continue-on-error: true
         run: |
-          pytest -vv --maxfail=5 --disable-warnings \
-            --cov=src --cov-report=xml:coverage.xml
+          set -euxo pipefail
+          pytest -vv --maxfail=5 --disable-warnings --cov=src --cov-report=xml:coverage.xml \
+            2>&1 | tee pytest.log
+          echo $? > pytest_exit_code.txt
 
-      - name: Upload coverage artifact
+      - name: Upload debug artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-xml
-          path: coverage.xml
+          name: ci-debug-logs
+          path: |
+            collect.log
+            pytest.log
+            coverage.xml
+            pytest_exit_code.txt
+            .pytest_cache
           if-no-files-found: warn
           retention-days: 7
 
-      # ✅ Gate on env, not secrets
+      - name: Fail job if tests failed
+        run: |
+          code=$(cat pytest_exit_code.txt || echo 1)
+          if [ "$code" != "0" ]; then
+            echo "Tests failed with exit code $code (see artifacts ci-debug-logs/pytest.log)."
+            exit $code
+          fi
+
       - name: Upload coverage to Codecov
         if: ${{ env.CODECOV_TOKEN != '' }}
         uses: codecov/codecov-action@v4
