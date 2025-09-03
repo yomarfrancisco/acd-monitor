@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/risk_response.schema.json",
+  "title": "RiskResponse",
+  "type": "object",
+  "required": ["risk_score", "risk_level", "confidence", "components", "timestamp", "data_sources"],
+  "properties": {
+    "version": { "type": "string", "description": "Response schema/version tag, e.g. '1.0.0'" },
+    "risk_score": { "type": "number", "minimum": 0, "maximum": 100 },
+    "risk_level": { "type": "string", "enum": ["LOW", "AMBER", "RED"] },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "components": {
+      "type": "object",
+      "required": ["invariance", "network", "regime", "synchrony"],
+      "properties": {
+        "invariance": { "type": "number", "minimum": 0, "maximum": 1 },
+        "network": { "type": "number", "minimum": 0, "maximum": 1 },
+        "regime": { "type": "number", "minimum": 0, "maximum": 1 },
+        "synchrony": { "type": "number", "minimum": 0, "maximum": 1 }
+      },
+      "additionalProperties": true
+    },
+    "methodology": {
+      "type": "object",
+      "properties": {
+        "regime_source": { "type": "string", "enum": ["vmm", "hmm", "none"], "description": "Source of regime confidence: vmm (default), hmm (legacy), or none" },
+        "invariance_method": { "type": "string", "description": "Method used for invariance testing" },
+        "synchrony_method": { "type": "string", "description": "Method used for synchrony analysis" }
+      },
+      "additionalProperties": true
+    },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "data_sources": {
+      "type": "object",
+      "required": ["primary"],
+      "properties": {
+        "primary": { "type": "string" },
+        "fallback": { "type": "string" },
+        "last_switch": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

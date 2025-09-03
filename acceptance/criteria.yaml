@@ -1,0 +1,74 @@
+version: 1
+spec_version: "1.8"
+scope: "pilot"
+
+environments:
+  default:
+    standard_query:
+      dataset_scope:
+        max_months: 12
+        bar_interval_minutes: [1, 5]
+        max_participants: 10
+        max_rows_post_rollup: 10000000
+      latency_seconds:
+        p50: 5
+        p95: 8
+      notes:
+        - "p95 excludes first-call cold-start; warm subsequent calls must meet targets"
+    analytics_targets:
+      thresholds:
+        green_upper: 33
+        amber_upper: 66
+      performance:
+        golden_competitive:
+          fpr_max_pct: 5
+        golden_coordinated:
+          tpr_min_pct: 90
+      determinism:
+        max_delta_risk: 0.5
+        max_delta_p_value: 0.01
+        samples: 10
+      vmm_stability:
+        spurious_regime_rate_max_pct: 5
+        drift_reproducibility_max_delta: 0.03
+    data_quality:
+      min_confidence: 75
+      cross_source_discrepancy_bps:
+        liquid: { floor: 3, cap: 5 }
+        semi_liquid: { floor: 5, cap: 10 }
+        illiquid: { floor: 10, cap: 20 }
+      fallback_timeout_minutes: 10
+      hysteresis_healthy_checks: 2
+      auto_switch_violation_count: 3
+    slos:
+      availability_month_30day_pct: 99.0
+      evidence_export_under_minutes: { pct: 95, minutes: 2 }
+      data_freshness_minutes: { pct: 95, minutes: 10 }
+    calibration:
+      reestimate_cadence: "quarterly"
+      drift_test:
+        test: "KS"
+        p_value_threshold: 0.05
+      artifacts:
+        - calibration/{market}/{yyyymm}/weights_prior.json
+        - calibration/{market}/{yyyymm}/weights_posterior.json
+        - calibration/{market}/{yyyymm}/cv_metrics.json
+        - calibration/{market}/{yyyymm}/drift_tests.json
+        - calibration/{market}/{yyyymm}/calibration_report.md
+
+  # Optional overrides for CI profiles
+  ci:
+    standard_query:
+      latency_seconds:
+        p50: 6
+        p95: 9
+    slos:
+      availability_month_30day_pct: 98.5
+
+compatibility:
+  requires_spec_version: ">=1.8"
+  api_contracts:
+    - openapi/acd.yml
+  schemas:
+    - schemas/risk_response.schema.json
+    - schemas/evidence_bundle.schema.json
