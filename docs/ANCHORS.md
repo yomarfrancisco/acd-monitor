@@ -25,11 +25,17 @@ These anchors ensure methodological fidelity, operational discipline, and govern
    - Content: Roles, responsibilities, and decision rules  
    - Purpose: Ensures alignment and prevents scope drift.
 
+4. **Achievements Log**  
+   - File: `docs/achievements_log.md`  
+   - Status: **IMMUTABLE**  
+   - Content: Technical milestones and baseline standards (Weeks 0-3)  
+   - Purpose: Records progress and sets minimum bar for robustness.
+
 ---
 
 ## 📈 Evolving Specification
 
-4. **Product Specification**  
+5. **Product Specification**  
    - File: `docs/product_spec_v1.8.md`  
    - Status: **EVOLVING** (future: v1.9, v2.0, …)  
    - Content: Technical specification of platform implementation  
