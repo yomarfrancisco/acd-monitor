@@ -1,12 +1,20 @@
 """
-VMM Metrics and Calibration
-Post-hoc calibration to regime_confidence & stability scores
+VMM Calibration and Reliability Metrics
+
+This module provides calibration methods for VMM regime confidence scores
+and reliability metrics to ensure proper separation between competitive
+and coordinated behavior patterns.
 """
 
-from dataclasses import dataclass
-from typing import Dict
-
 import numpy as np
+import pickle
+from pathlib import Path
+from typing import Dict, Tuple, Optional, Any
+from dataclasses import dataclass
+from sklearn.isotonic import IsotonicRegression
+from sklearn.calibration import CalibratedClassifierCV
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 @dataclass
@@ -260,3 +268,270 @@ class MetricsCalibration:
             environment_quality=environment_quality,
             dynamic_validation_score=dynamic_validation,
         )
+
+
+def calibrate_confidence(
+    raw_scores: np.ndarray,
+    true_labels: np.ndarray,
+    method: str = "isotonic",
+    validation_split: float = 0.2,
+    random_state: int = 42,
+) -> Tuple[np.ndarray, Any]:
+    """
+    Calibrate raw VMM regime confidence scores using competitive golden data.
+
+    Args:
+        raw_scores: Raw regime confidence scores from VMM
+        true_labels: Binary labels (0=competitive, 1=coordinated)
+        method: Calibration method ("isotonic" or "platt")
+        validation_split: Fraction of data to use for validation
+        random_state: Random seed for reproducibility
+
+    Returns:
+        Tuple of (calibrated_scores, calibrator_object)
+    """
+    np.random.seed(random_state)
+
+    # Split data for calibration
+    n_samples = len(raw_scores)
+    indices = np.random.permutation(n_samples)
+    split_idx = int(n_samples * (1 - validation_split))
+
+    cal_indices = indices[:split_idx]
+    val_indices = indices[split_idx:]
+
+    if method == "isotonic":
+        calibrator = IsotonicRegression(out_of_bounds="clip")
+        calibrator.fit(raw_scores[cal_indices], true_labels[cal_indices])
+        calibrated_scores = calibrator.transform(raw_scores)
+
+    elif method == "platt":
+        # Platt scaling using logistic regression
+        from sklearn.linear_model import LogisticRegression
+
+        lr = LogisticRegression(random_state=random_state)
+        lr.fit(raw_scores[cal_indices].reshape(-1, 1), true_labels[cal_indices])
+
+        # Platt scaling: P(y=1|x) = 1 / (1 + exp(a * x + b))
+        a, b = lr.coef_[0][0], lr.intercept_[0]
+        calibrated_scores = 1 / (1 + np.exp(a * raw_scores + b))
+
+        # Store calibrator parameters
+        calibrator = {"method": "platt", "a": a, "b": b, "lr": lr}
+    else:
+        raise ValueError(f"Unknown calibration method: {method}")
+
+    return calibrated_scores, calibrator
+
+
+def reliability_metrics(
+    calibrated_scores: np.ndarray, true_labels: np.ndarray, n_bins: int = 10
+) -> Dict[str, float]:
+    """
+    Compute reliability metrics for calibrated regime confidence scores.
+
+    Args:
+        calibrated_scores: Calibrated confidence scores
+        true_labels: Binary true labels
+        n_bins: Number of bins for reliability diagram
+
+    Returns:
+        Dictionary containing Brier score, ECE, and reliability statistics
+    """
+    # Brier score: mean squared error between predictions and true labels
+    brier_score = np.mean((calibrated_scores - true_labels) ** 2)
+
+    # Expected Calibration Error (ECE)
+    bin_boundaries = np.linspace(0, 1, n_bins + 1)
+    bin_lowers = bin_boundaries[:-1]
+    bin_uppers = bin_boundaries[1:]
+
+    ece = 0.0
+    for bin_lower, bin_upper in zip(bin_lowers, bin_uppers):
+        # Find predictions in this bin
+        in_bin = (calibrated_scores > bin_lower) & (calibrated_scores <= bin_upper)
+        if np.sum(in_bin) > 0:
+            bin_size = np.sum(in_bin)
+            bin_accuracy = np.sum(true_labels[in_bin]) / bin_size
+            bin_confidence = np.mean(calibrated_scores[in_bin])
+            ece += bin_size * np.abs(bin_accuracy - bin_confidence)
+
+    ece /= len(calibrated_scores)
+
+    # Additional reliability metrics
+    reliability_stats = {
+        "brier_score": brier_score,
+        "ece": ece,
+        "mean_confidence": np.mean(calibrated_scores),
+        "std_confidence": np.std(calibrated_scores),
+        "min_confidence": np.min(calibrated_scores),
+        "max_confidence": np.max(calibrated_scores),
+    }
+
+    return reliability_stats
+
+
+def save_calibrator(
+    calibrator: Any, market: str, date: str, base_path: str = "calibration"
+) -> Path:
+    """
+    Save calibrator to disk with organized directory structure.
+
+    Args:
+        calibrator: Calibrator object to save
+        market: Market identifier
+        date: Date string (YYYYMM format)
+        base_path: Base directory for calibration files
+
+    Returns:
+        Path to saved calibrator file
+    """
+    save_dir = Path(base_path) / market / date
+    save_dir.mkdir(parents=True, exist_ok=True)
+
+    save_path = save_dir / "vmm_calibrator.pkl"
+    with open(save_path, "wb") as f:
+        pickle.dump(calibrator, f)
+
+    return save_path
+
+
+def load_calibrator(market: str, date: str, base_path: str = "calibration") -> Any:
+    """
+    Load calibrator from disk.
+
+    Args:
+        market: Market identifier
+        date: Date string (YYYYMM format)
+        base_path: Base directory for calibration files
+
+    Returns:
+        Loaded calibrator object
+    """
+    load_path = Path(base_path) / market / date / "vmm_calibrator.pkl"
+
+    if not load_path.exists():
+        raise FileNotFoundError(f"Calibrator not found: {load_path}")
+
+    with open(load_path, "rb") as f:
+        calibrator = pickle.load(f)
+
+    return calibrator
+
+
+def plot_reliability_diagram(
+    calibrated_scores: np.ndarray,
+    true_labels: np.ndarray,
+    n_bins: int = 10,
+    save_path: Optional[Path] = None,
+) -> None:
+    """
+    Plot reliability diagram for calibrated scores.
+
+    Args:
+        calibrated_scores: Calibrated confidence scores
+        true_labels: Binary true labels
+        n_bins: Number of bins for reliability diagram
+        save_path: Optional path to save the plot
+    """
+    # Create reliability diagram
+    bin_boundaries = np.linspace(0, 1, n_bins + 1)
+    bin_centers = (bin_boundaries[:-1] + bin_boundaries[1:]) / 2
+
+    bin_accuracies = []
+    bin_confidences = []
+    bin_sizes = []
+
+    for i in range(n_bins):
+        bin_lower = bin_boundaries[i]
+        bin_upper = bin_boundaries[i + 1]
+
+        in_bin = (calibrated_scores > bin_lower) & (calibrated_scores <= bin_upper)
+        if np.sum(in_bin) > 0:
+            bin_size = np.sum(in_bin)
+            bin_accuracy = np.sum(true_labels[in_bin]) / bin_size
+            bin_confidence = np.mean(calibrated_scores[in_bin])
+
+            bin_accuracies.append(bin_accuracy)
+            bin_confidences.append(bin_confidence)
+            bin_sizes.append(bin_size)
+        else:
+            bin_accuracies.append(0)
+            bin_confidences.append(bin_centers[i])
+            bin_sizes.append(0)
+
+    # Create the plot
+    plt.figure(figsize=(8, 6))
+
+    # Plot reliability diagram
+    plt.plot(bin_confidences, bin_accuracies, "o-", label="Reliability", linewidth=2, markersize=8)
+    plt.plot([0, 1], [0, 1], "--", color="gray", label="Perfect Calibration", alpha=0.7)
+
+    # Add confidence intervals (simplified)
+    for i, (acc, conf, size) in enumerate(zip(bin_accuracies, bin_confidences, bin_sizes)):
+        if size > 0:
+            # Standard error of proportion
+            se = np.sqrt(acc * (1 - acc) / size)
+            plt.errorbar(conf, acc, yerr=1.96 * se, fmt="none", color="blue", alpha=0.5)
+
+    plt.xlabel("Mean Predicted Confidence")
+    plt.ylabel("Fraction of Positives")
+    plt.title("Reliability Diagram - VMM Regime Confidence")
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    plt.xlim(0, 1)
+    plt.ylim(0, 1)
+
+    if save_path:
+        plt.savefig(save_path, dpi=300, bbox_inches="tight")
+        plt.close()
+    else:
+        plt.show()
+
+
+def compute_calibration_curves(
+    raw_scores: np.ndarray, calibrated_scores: np.ndarray, true_labels: np.ndarray
+) -> Dict[str, np.ndarray]:
+    """
+    Compute calibration curves for before/after comparison.
+
+    Args:
+        raw_scores: Original uncalibrated scores
+        calibrated_scores: Calibrated scores
+        true_labels: Binary true labels
+
+    Returns:
+        Dictionary with calibration curve data
+    """
+    # Sort scores and compute cumulative accuracy
+    raw_sorted = np.sort(raw_scores)[::-1]
+    cal_sorted = np.sort(calibrated_scores)[::-1]
+
+    # Compute cumulative accuracy at different thresholds
+    thresholds = np.linspace(0, 1, 101)
+
+    raw_accuracy = []
+    cal_accuracy = []
+
+    for threshold in thresholds:
+        raw_above = raw_scores >= threshold
+        cal_above = calibrated_scores >= threshold
+
+        if np.sum(raw_above) > 0:
+            raw_acc = np.sum(true_labels[raw_above]) / np.sum(raw_above)
+        else:
+            raw_acc = 0
+
+        if np.sum(cal_above) > 0:
+            cal_acc = np.sum(true_labels[cal_above]) / np.sum(cal_above)
+        else:
+            cal_acc = 0
+
+        raw_accuracy.append(raw_acc)
+        cal_accuracy.append(cal_acc)
+
+    return {
+        "thresholds": thresholds,
+        "raw_accuracy": np.array(raw_accuracy),
+        "calibrated_accuracy": np.array(cal_accuracy),
+    }
