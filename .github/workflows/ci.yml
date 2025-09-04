@@ -50,37 +50,46 @@ jobs:
         run: black --check src tests
 
       - name: Pytest collect-only (debug)
+        if: always()
+        shell: bash
         run: |
-          pytest --collect-only -vv | tee collect.log
+          set +e
+          pytest --collect-only -q 2>&1 | tee collect.log
+          exit 0
 
       - name: Run tests with pytest (verbose, keep logs)
-        # never hide output; capture to files; do not block artifact upload
-        continue-on-error: true
+        shell: bash
         run: |
-          set -euxo pipefail
-          pytest -vv --maxfail=5 --disable-warnings --cov=src --cov-report=xml:coverage.xml \
-            2>&1 | tee pytest.log
-          echo $? > pytest_exit_code.txt
+          set +e          # don't abort this step on test failure
+          set -o pipefail # propagate failure through the pipe, but we won't exit
+          pytest -vv --maxfail=5 --disable-warnings --cov=src --cov-report=xml:coverage.xml 2>&1 | tee pytest.log
+          status=${PIPESTATUS[0]}
+          echo "${status}" > pytest_exit_code.txt
+          set +o pipefail
+          exit 0          # never fail this step — we will fail explicitly later
 
       - name: Upload debug artifacts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ci-debug-logs
           path: |
-            collect.log
             pytest.log
-            coverage.xml
             pytest_exit_code.txt
-            .pytest_cache
+            coverage.xml
+            collect.log
           if-no-files-found: warn
           retention-days: 7
 
       - name: Fail job if tests failed
+        if: always()
+        shell: bash
         run: |
-          code=$(cat pytest_exit_code.txt || echo 1)
-          if [ "$code" != "0" ]; then
-            echo "Tests failed with exit code $code (see artifacts ci-debug-logs/pytest.log)."
-            exit $code
+          code=$(cat pytest_exit_code.txt 2>/dev/null || echo 0)
+          echo "Pytest exit code: ${code}"
+          if [ "${code}" -ne 0 ]; then
+            echo "::error::Tests failed with exit code ${code}. See artifact 'ci-debug-logs/pytest.log'."
+            exit 1
           fi
 
       - name: Upload coverage to Codecov
