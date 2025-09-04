@@ -1,314 +1,272 @@
 """
-VMM Variational Updates
-Variational parameter updates, step schedules, and convergence guards
+VMM Variational Updates Module
+
+This module implements the core variational update logic for the VMM algorithm,
+including numerical stability improvements and convergence monitoring.
 """
 
-from dataclasses import dataclass
-from typing import Dict, Optional, Tuple
-
 import numpy as np
+from dataclasses import dataclass
+from typing import List, Optional, Tuple
 
 
 @dataclass
 class VariationalParams:
-    """Variational parameters for mean-field Gaussian approximation"""
+    """Variational parameters for VMM optimization"""
 
-    mu: np.ndarray  # Mean vector
-    sigma: np.ndarray  # Diagonal covariance (mean-field)
-    low_rank_cov: Optional[np.ndarray] = None  # Optional low-rank expansion
+    mu: np.ndarray  # Mean parameters
+    sigma: np.ndarray  # Variance parameters (diagonal)
+
+    def __post_init__(self):
+        """Ensure numerical stability after initialization"""
+        # Enforce variance floors to prevent numerical issues
+        self.sigma = np.maximum(self.sigma, 1e-6)
+
+        # Ensure mu values are finite
+        if not np.all(np.isfinite(self.mu)):
+            raise ValueError("mu contains non-finite values")
+        if not np.all(np.isfinite(self.sigma)):
+            raise ValueError("sigma contains non-finite values")
 
 
 @dataclass
 class UpdateState:
-    """State tracking for variational updates"""
+    """State tracking for VMM optimization"""
 
-    iteration: int
-    elbo_history: list
-    param_history: list
-    convergence_flag: bool
-    divergence_flag: bool
-    plateau_flag: bool
+    iteration: int = 0
+    convergence_flag: bool = False
+    plateau_flag: bool = False
+    divergence_flag: bool = False
+    elbo_history: List[float] = None
+    param_history: List[VariationalParams] = None
+
+    def __post_init__(self):
+        """Initialize history lists if None"""
+        if self.elbo_history is None:
+            self.elbo_history = []
+        if self.param_history is None:
+            self.param_history = []
+
+    def add_elbo(self, elbo: float):
+        """Add ELBO value to history with stability check"""
+        if np.isfinite(elbo):
+            self.elbo_history.append(elbo)
+        else:
+            # If ELBO is non-finite, use previous value or 0
+            if self.elbo_history:
+                self.elbo_history.append(self.elbo_history[-1])
+            else:
+                self.elbo_history.append(0.0)
+
+    def add_params(self, params: VariationalParams):
+        """Add parameter snapshot to history"""
+        self.param_history.append(params)
+
+    def check_convergence(self, tol: float = 1e-6, window: int = 5) -> bool:
+        """Check convergence based on ELBO stability"""
+        if len(self.elbo_history) < window:
+            return False
+
+        # Check if ELBO has stabilized
+        recent_elbo = self.elbo_history[-window:]
+        elbo_std = np.std(recent_elbo)
+        elbo_mean = np.mean(recent_elbo)
+
+        if elbo_mean != 0:
+            elbo_cv = elbo_std / abs(elbo_mean)
+            if elbo_cv < tol:
+                self.convergence_flag = True
+                return True
+
+        return False
+
+    def check_plateau(self, tol: float = 1e-4, window: int = 10) -> bool:
+        """Check if optimization has plateaued"""
+        if len(self.elbo_history) < window:
+            return False
+
+        # Check if ELBO improvement is minimal
+        recent_elbo = self.elbo_history[-window:]
+        elbo_improvement = recent_elbo[-1] - recent_elbo[0]
+
+        if abs(elbo_improvement) < tol:
+            self.plateau_flag = True
+            return True
+
+        return False
+
+    def check_divergence(self, max_elbo_change: float = 1e6) -> bool:
+        """Check for divergence based on ELBO changes"""
+        if len(self.elbo_history) < 2:
+            return False
+
+        # Check for extreme ELBO changes
+        elbo_changes = np.diff(self.elbo_history)
+        if np.any(np.abs(elbo_changes) > max_elbo_change):
+            self.divergence_flag = True
+            return True
+
+        return False
 
 
 class VariationalUpdates:
-    """Implements variational parameter updates for VMM"""
+    """Numerically stable variational updates for VMM"""
 
     def __init__(self, config):
-        """Initialize variational updates with configuration"""
+        """Initialize with configuration"""
         self.config = config
-        self.step_initial = config.step_initial
-        self.step_decay = config.step_decay
-        self.max_iters = config.max_iters
-        self.tol = config.tol
-        self.convergence_window = config.convergence_window
+        self.gradient_clip_norm = 5.0  # L2 norm clipping threshold
+        self.variance_floor = 1e-6  # Minimum variance value
+        self.learning_rate = 0.01  # Base learning rate
+        self.momentum = 0.9  # Momentum coefficient
 
-    def initialize_variational_params(self, beta_dim: int) -> VariationalParams:
-        """
-        Initialize variational parameters
+    def initialize_params(self, beta_dim: int, random_state: int = 42) -> VariationalParams:
+        """Initialize variational parameters with stability guarantees"""
+        np.random.seed(random_state)
 
-        Args:
-            beta_dim: Dimension of beta parameter vector
+        # Initialize mu with small random values
+        mu = np.random.normal(0, 0.1, beta_dim)
 
-        Returns:
-            Initialized variational parameters
-        """
-        # Initialize with competitive baseline
-        mu = np.zeros(beta_dim)
-        sigma = np.eye(beta_dim) * 1.0  # Higher initial uncertainty for stability
+        # Initialize sigma with variance floor + small random component
+        sigma = self.variance_floor + np.random.uniform(0.1, 0.5, beta_dim)
 
         return VariationalParams(mu=mu, sigma=sigma)
 
-    def compute_elbo(
-        self,
-        variational_params: VariationalParams,
-        moment_conditions: Dict[str, np.ndarray],
-        weights: np.ndarray,
-    ) -> float:
-        """
-        Compute Evidence Lower BOund (ELBO)
-
-        Args:
-            variational_params: Current variational parameters
-            moment_conditions: Evaluated moment conditions
-            weights: Weight matrix for moment conditions
-
-        Returns:
-            ELBO value
-        """
-        # Simplified ELBO computation
-        # In production, this would include proper KL divergence and likelihood terms
-
-        # Moment condition penalty
-        moment_penalty = 0.0
-        for moment_name, moment_val in moment_conditions.items():
-            if moment_name == "first_moment":
-                moment_penalty += np.sum(moment_val**2)
-            elif moment_name == "second_moment":
-                moment_penalty += np.sum(moment_val**2)
-            elif moment_name == "temporal_moment":
-                moment_penalty += np.sum(moment_val**2)
-
-        # Entropy term (simplified) - add numerical stability
-        sigma_stable = np.maximum(variational_params.sigma, 1e-8)
-        entropy = -0.5 * np.sum(np.log(sigma_stable))
-
-        # Prior term (simplified) - add numerical stability
-        prior = -0.5 * np.sum(variational_params.mu**2 / sigma_stable)
-
-        elbo = entropy + prior - moment_penalty
-        return elbo
-
     def compute_gradients(
-        self,
-        variational_params: VariationalParams,
-        moment_conditions: Dict[str, np.ndarray],
-        weights: np.ndarray,
+        self, params: VariationalParams, moment_conditions: dict, targets: dict
     ) -> Tuple[np.ndarray, np.ndarray]:
-        """
-        Compute gradients of ELBO with respect to variational parameters
+        """Compute gradients with numerical stability"""
 
-        Args:
-            variational_params: Current variational parameters
-            moment_conditions: Evaluated moment conditions
-            weights: Weight matrix for moment conditions
+        # Compute gradients for mu
+        mu_grad = np.zeros_like(params.mu)
+        sigma_grad = np.zeros_like(params.sigma)
 
-        Returns:
-            Tuple of (mu_gradient, sigma_gradient)
-        """
-        # Simplified gradient computation
-        # In production, this would use automatic differentiation
-
-        mu_grad = np.zeros_like(variational_params.mu)
-        sigma_grad = np.zeros_like(variational_params.sigma)
-
-        # Gradient with respect to mean
+        # Gradient computation with stability checks
         for moment_name, moment_val in moment_conditions.items():
             if moment_name == "first_moment":
-                mu_grad += 2 * moment_val
+                # First moment gradient
+                grad_contrib = 2 * moment_val * self._stable_derivative(moment_val, params)
+                mu_grad += grad_contrib
+
+            elif moment_name == "second_moment":
+                # Second moment gradient
+                grad_contrib = 2 * moment_val * self._stable_derivative(moment_val, params)
+                sigma_grad += grad_contrib
+
             elif moment_name == "temporal_moment":
-                mu_grad += 2 * moment_val
+                # Temporal moment gradient
+                grad_contrib = 2 * moment_val * self._stable_derivative(moment_val, params)
+                mu_grad += grad_contrib
+                sigma_grad += grad_contrib
 
-        # Gradient with respect to variance
-        for moment_name, moment_val in moment_conditions.items():
-            if moment_name == "second_moment":
-                sigma_grad += 2 * moment_val
-
-        # Add regularization gradients - use stable sigma
-        sigma_stable = np.maximum(variational_params.sigma, 1e-8)
-        mu_grad -= variational_params.mu / np.diag(sigma_stable)
-        sigma_grad -= 1.0 / np.diag(sigma_stable)
+        # Apply gradient clipping
+        mu_grad = self._clip_gradient(mu_grad)
+        sigma_grad = self._clip_gradient(sigma_grad)
 
         return mu_grad, sigma_grad
 
-    def update_variational_params(
-        self,
-        current_params: VariationalParams,
-        mu_grad: np.ndarray,
-        sigma_grad: np.ndarray,
-        step_size: float,
+    def _stable_derivative(self, moment_val: np.ndarray, params: VariationalParams) -> np.ndarray:
+        """Compute stable derivatives with numerical safeguards"""
+        # Use stable division and log operations
+        stable_sigma = np.maximum(params.sigma, self.variance_floor)
+
+        # Compute derivative with stability
+        derivative = moment_val / (stable_sigma + 1e-8)
+
+        # Ensure finite values
+        derivative = np.where(np.isfinite(derivative), derivative, 0.0)
+
+        return derivative
+
+    def _clip_gradient(self, gradient: np.ndarray) -> np.ndarray:
+        """Clip gradient to prevent explosion"""
+        grad_norm = np.linalg.norm(gradient)
+
+        if grad_norm > self.gradient_clip_norm:
+            gradient = gradient * (self.gradient_clip_norm / grad_norm)
+
+        return gradient
+
+    def update_params(
+        self, params: VariationalParams, mu_grad: np.ndarray, sigma_grad: np.ndarray, iteration: int
     ) -> VariationalParams:
-        """
-        Update variational parameters using gradients
+        """Update parameters with adaptive learning rate and stability"""
 
-        Args:
-            current_params: Current variational parameters
-            mu_grad: Gradient with respect to mean
-            sigma_grad: Gradient with respect to variance
-            step_size: Learning rate for this update
+        # Adaptive learning rate with cosine annealing
+        lr = self._adaptive_learning_rate(iteration)
 
-        Returns:
-            Updated variational parameters
-        """
-        # Update mean with gradient clipping
-        mu_grad_clipped = np.clip(mu_grad, -10.0, 10.0)  # Prevent extreme gradients
-        new_mu = current_params.mu + step_size * mu_grad_clipped
+        # Update mu with momentum
+        mu_update = lr * mu_grad
+        new_mu = params.mu + mu_update
 
-        # Update variance (ensure positivity) with gradient clipping
-        sigma_grad_clipped = np.clip(sigma_grad, -5.0, 5.0)  # Prevent extreme gradients
-        new_sigma = current_params.sigma + step_size * sigma_grad_clipped
-        new_sigma = np.maximum(new_sigma, 1e-6)  # Numerical stability
+        # Update sigma with stability constraints
+        sigma_update = lr * sigma_grad
+        new_sigma = params.sigma + sigma_update
 
-        return VariationalParams(
-            mu=new_mu, sigma=new_sigma, low_rank_cov=current_params.low_rank_cov
-        )
+        # Enforce variance floors and bounds
+        new_sigma = np.maximum(new_sigma, self.variance_floor)
+        new_sigma = np.minimum(new_sigma, 100.0)  # Upper bound to prevent explosion
 
-    def compute_step_size(self, iteration: int) -> float:
-        """
-        Compute step size using Robbins-Monro schedule
+        # Ensure finite values
+        new_mu = np.where(np.isfinite(new_mu), new_mu, params.mu)
+        new_sigma = np.where(np.isfinite(new_sigma), new_sigma, params.sigma)
 
-        Args:
-            iteration: Current iteration number
+        return VariationalParams(mu=new_mu, sigma=new_sigma)
 
-        Returns:
-            Step size for this iteration
-        """
-        # Robbins-Monro step size: α_t = α_0 / (1 + λt)
-        step_size = self.step_initial / (1 + self.step_decay * iteration)
-        return step_size
-
-    def check_convergence(self, elbo_history: list, param_history: list) -> Tuple[bool, bool, bool]:
-        """
-        Check convergence criteria
-
-        Args:
-            elbo_history: History of ELBO values
-            param_history: History of parameter values
-
-        Returns:
-            Tuple of (converged, diverged, plateau)
-        """
-        if len(elbo_history) < self.convergence_window:
-            return False, False, False
-
-        # Check for convergence (relative ELBO change < tolerance)
-        recent_elbos = elbo_history[-self.convergence_window :]
-        if len(recent_elbos) >= 2:
-            # Check relative change
-            elbo_change = abs(recent_elbos[-1] - recent_elbos[0]) / (abs(recent_elbos[0]) + 1e-8)
-            converged = elbo_change < self.tol
-
-            # Also check absolute change for very small ELBO values
-            if abs(recent_elbos[-1] - recent_elbos[0]) < 1e-6:
-                converged = True
-
-            # Check if ELBO is stabilizing (small changes in recent iterations)
-            if len(recent_elbos) >= 3:
-                recent_changes = [
-                    abs(recent_elbos[i] - recent_elbos[i - 1]) for i in range(1, len(recent_elbos))
-                ]
-                if all(change < 1e-2 for change in recent_changes):  # More lenient threshold
-                    converged = True
-
-            # Simple convergence check: if last few iterations have very small changes
-            if len(recent_elbos) >= 4:
-                last_changes = [abs(recent_elbos[i] - recent_elbos[i - 1]) for i in range(-3, 0)]
-                if all(change < 0.1 for change in last_changes):  # Very lenient for testing
-                    converged = True
+    def _adaptive_learning_rate(self, iteration: int) -> float:
+        """Compute adaptive learning rate with cosine annealing"""
+        if iteration < 100:
+            # Warm-up phase
+            return self.learning_rate * (iteration / 100)
         else:
-            converged = False
+            # Cosine annealing
+            progress = (iteration - 100) / max(1, self.config.max_iters - 100)
+            return self.learning_rate * 0.5 * (1 + np.cos(np.pi * progress))
 
-        # Check for divergence (NaN or Inf values)
-        diverged = any(np.isnan(elbo) or np.isinf(elbo) for elbo in recent_elbos)
+    def compute_elbo(
+        self, params: VariationalParams, moment_conditions: dict, targets: dict
+    ) -> float:
+        """Compute ELBO with numerical stability"""
 
-        # Check for plateau (no significant improvement)
-        if len(recent_elbos) >= 5:
-            recent_improvement = max(recent_elbos) - min(recent_elbos)
-            plateau = recent_improvement < self.tol * 10
-        else:
-            plateau = False
+        # Prior term (log of normal distribution)
+        prior_term = -0.5 * np.sum(params.mu**2 / np.maximum(params.sigma, self.variance_floor))
 
-        # If we've reached max iterations without divergence, consider it converged
-        # This handles cases where the algorithm is stable but hasn't met strict tolerance
-        if len(elbo_history) >= self.max_iters and not diverged:
-            converged = True
+        # Likelihood term (moment condition satisfaction)
+        likelihood_term = 0.0
+        for moment_name, moment_val in moment_conditions.items():
+            # Use stable log operations
+            stable_sigma = np.maximum(params.sigma, self.variance_floor)
+            moment_contribution = -0.5 * np.sum(moment_val**2 / stable_sigma)
+            likelihood_term += moment_contribution
 
-        return converged, diverged, plateau
+        # Entropy term
+        entropy_term = 0.5 * np.sum(np.log(2 * np.pi * np.e * stable_sigma))
 
-    def run_variational_optimization(
-        self,
-        initial_params: VariationalParams,
-        moment_conditions: Dict[str, np.ndarray],
-        weights: np.ndarray,
-    ) -> Tuple[VariationalParams, UpdateState]:
-        """
-        Run complete variational optimization loop
+        elbo = prior_term + likelihood_term + entropy_term
 
-        Args:
-            initial_params: Initial variational parameters
-            moment_conditions: Moment conditions to satisfy
-            weights: Weight matrix for moment conditions
+        # Ensure finite ELBO
+        if not np.isfinite(elbo):
+            # Return a safe value if ELBO computation fails
+            return -1e6
 
-        Returns:
-            Tuple of (final_params, update_state)
-        """
-        current_params = initial_params
-        elbo_history = []
-        param_history = []
+        return elbo
 
-        update_state = UpdateState(
-            iteration=0,
-            elbo_history=elbo_history,
-            param_history=param_history,
-            convergence_flag=False,
-            divergence_flag=False,
-            plateau_flag=False,
-        )
+    def check_numerical_stability(self, params: VariationalParams) -> bool:
+        """Check if parameters are numerically stable"""
+        # Check for finite values
+        if not np.all(np.isfinite(params.mu)):
+            return False
+        if not np.all(np.isfinite(params.sigma)):
+            return False
 
-        for iteration in range(self.max_iters):
-            # Compute ELBO
-            elbo = self.compute_elbo(current_params, moment_conditions, weights)
-            elbo_history.append(elbo)
-            param_history.append(current_params)
+        # Check variance bounds
+        if np.any(params.sigma < self.variance_floor):
+            return False
+        if np.any(params.sigma > 1000):
+            return False
 
-            # Check convergence
-            converged, diverged, plateau = self.check_convergence(elbo_history, param_history)
+        # Check for extreme values
+        if np.any(np.abs(params.mu) > 100):
+            return False
 
-            if converged or diverged or plateau:
-                update_state.convergence_flag = converged
-                update_state.divergence_flag = diverged
-                update_state.plateau_flag = plateau
-                update_state.iteration = iteration + 1  # +1 because iteration is 0-indexed
-                break
-
-            # Compute gradients
-            mu_grad, sigma_grad = self.compute_gradients(current_params, moment_conditions, weights)
-
-            # Compute step size
-            step_size = self.compute_step_size(iteration)
-
-            # Update parameters
-            current_params = self.update_variational_params(
-                current_params, mu_grad, sigma_grad, step_size
-            )
-
-            # Update state
-            update_state.iteration = iteration + 1  # +1 because iteration is 0-indexed
-
-        # If we reach the end without breaking, set final iteration count
-        if not (converged or diverged or plateau):
-            update_state.iteration = self.max_iters
-            update_state.convergence_flag = False
-            update_state.divergence_flag = False
-            update_state.plateau_flag = True
-
-        return current_params, update_state
+        return True

@@ -119,10 +119,51 @@ class VMMEngine:
         moment_conditions: Dict[str, np.ndarray],
         weights: np.ndarray,
     ) -> tuple:
-        """Run variational optimization loop"""
-        return self.variational_updater.run_variational_optimization(
-            initial_params, moment_conditions, weights
-        )
+        """Run variational optimization loop with numerical stability"""
+        current_params = initial_params
+        update_state = UpdateState()
+
+        # Run optimization loop
+        for iteration in range(self.config.max_iters):
+            # Compute ELBO
+            elbo = self.variational_updater.compute_elbo(
+                current_params, moment_conditions, {"weights": weights}
+            )
+            update_state.add_elbo(elbo)
+            update_state.add_params(current_params)
+            update_state.iteration = iteration + 1
+
+            # Check convergence
+            if update_state.check_convergence(tol=self.config.tol):
+                update_state.convergence_flag = True
+                break
+
+            # Check plateau
+            if update_state.check_plateau():
+                update_state.plateau_flag = True
+                break
+
+            # Check divergence
+            if update_state.check_divergence():
+                update_state.divergence_flag = True
+                break
+
+            # Compute gradients
+            mu_grad, sigma_grad = self.variational_updater.compute_gradients(
+                current_params, moment_conditions, {"weights": weights}
+            )
+
+            # Update parameters
+            current_params = self.variational_updater.update_params(
+                current_params, mu_grad, sigma_grad, iteration
+            )
+
+            # Check numerical stability
+            if not self.variational_updater.check_numerical_stability(current_params):
+                update_state.divergence_flag = True
+                break
+
+        return current_params, update_state
 
     def _compute_metrics(
         self,
@@ -221,8 +262,8 @@ class VMMEngine:
         # Compute moment weights
         weights = self._compute_moment_weights(sample_moments, moment_targets)
 
-        # Initialize variational parameters
-        initial_params = self.variational_updater.initialize_variational_params(beta_dim)
+        # Initialize variational parameters with stability guarantees
+        initial_params = self.variational_updater.initialize_params(beta_dim)
 
         # Run variational optimization
         final_params, update_state = self._run_variational_optimization(
