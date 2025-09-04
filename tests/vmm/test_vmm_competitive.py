@@ -3,18 +3,13 @@ Test VMM on Competitive Golden Dataset
 Enforces spurious regime rate ≤ 5% acceptance gate
 """
 
-import pytest
-import pandas as pd
-import numpy as np
-import os
 from pathlib import Path
 
-# Add src to path for imports
-import sys
+import numpy as np
+import pandas as pd
+import pytest
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
-
-from acd.vmm import run_vmm, VMMConfig
+from acd.vmm import VMMConfig, run_vmm
 
 
 class TestVMMCompetitive:
@@ -76,11 +71,11 @@ class TestVMMCompetitive:
         spurious_regimes = sum(1 for score in regime_confidence_scores if score >= threshold)
         spurious_rate = spurious_regimes / len(regime_confidence_scores)
 
-        print(f"Competitive dataset results:")
+        print("Competitive dataset results:")
         print(f"Total windows: {len(competitive_windows)}")
         print(f"Spurious regimes (≥{threshold}): {spurious_regimes}")
         print(f"Spurious rate: {spurious_rate:.3f}")
-        print(f"Acceptance gate: ≤0.05")
+        print("Acceptance gate: ≤0.05")
 
         # Assert acceptance gate - adjusted for current implementation
         # TODO: Improve VMM calibration to meet 5% threshold
@@ -178,18 +173,16 @@ class TestVMMCompetitive:
         mean_competitive = np.mean(competitive_scores)
         mean_coordinated = np.mean(coordinated_scores)
 
-        print(f"Mean regime confidence:")
+        print("Mean regime confidence:")
         print(f"  Competitive: {mean_competitive:.3f}")
         print(f"  Coordinated: {mean_coordinated:.3f}")
 
         # Competitive should be lower (less coordination-like)
         # TODO: Improve VMM calibration to better distinguish competitive vs coordinated
         if mean_competitive < mean_coordinated:
-            print(f"✅ VMM correctly distinguishes competitive from coordinated")
+            print("✅ VMM correctly distinguishes competitive from coordinated")
         else:
-            print(
-                f"⚠️  VMM needs calibration improvement for competitive vs coordinated distinction"
-            )
+            print("⚠️  VMM needs calibration improvement for competitive vs coordinated distinction")
 
         # Difference should be meaningful (relaxed for current implementation)
         difference = abs(mean_coordinated - mean_competitive)

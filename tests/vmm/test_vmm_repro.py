@@ -3,17 +3,13 @@ Test VMM Reproducibility
 Enforces |Δstructural_stability| ≤ 0.03 reproducibility drift gate
 """
 
-import pytest
-import pandas as pd
-import numpy as np
 from pathlib import Path
 
-# Add src to path for imports
-import sys
+import numpy as np
+import pandas as pd
+import pytest
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
-
-from acd.vmm import run_vmm, VMMConfig
+from acd.vmm import VMMConfig, run_vmm
 
 
 class TestVMMReproducibility:
@@ -114,9 +110,9 @@ class TestVMMReproducibility:
         all_median_diffs = [result["median_diff"] for result in reproducibility_results]
         overall_median_diff = np.median(all_median_diffs)
 
-        print(f"\nReproducibility results:")
+        print("\nReproducibility results:")
         print(f"Overall median difference: {overall_median_diff:.4f}")
-        print(f"Acceptance gate: ≤0.03")
+        print("Acceptance gate: ≤0.03")
 
         # Primary assertion: median drift should be ≤ 0.03
         assert overall_median_diff <= 0.03, (
@@ -314,7 +310,8 @@ class TestVMMReproducibility:
 
             print(f"{window_type.upper()} WINDOW:")
             print(
-                f"  Structural Stability: median diff = {window_metrics['stability_median_diff']:.4f}"
+                f"  Structural Stability: median diff = "
+                f"{window_metrics['stability_median_diff']:.4f}"
             )
             print(
                 f"  Regime Confidence: median diff = {window_metrics['confidence_median_diff']:.4f}"
@@ -328,7 +325,7 @@ class TestVMMReproducibility:
         overall_confidence_diff = np.median([m["confidence_median_diff"] for m in all_metrics])
         overall_quality_diff = np.median([m["quality_median_diff"] for m in all_metrics])
 
-        print(f"\nOVERALL REPRODUCIBILITY:")
+        print("\nOVERALL REPRODUCIBILITY:")
         print(f"  Structural Stability: {overall_stability_diff:.4f} (gate: ≤0.03)")
         print(f"  Regime Confidence: {overall_confidence_diff:.4f} (gate: ≤0.05)")
         print(f"  Environment Quality: {overall_quality_diff:.4f} (gate: ≤0.05)")
@@ -339,5 +336,5 @@ class TestVMMReproducibility:
             f"exceeds acceptance gate 0.03"
         )
 
-        print(f"\n✅ VMM reproducibility meets all acceptance gates!")
+        print("\n✅ VMM reproducibility meets all acceptance gates!")
         print("=" * 60)

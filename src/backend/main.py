@@ -3,11 +3,10 @@ ACD Backend - FastAPI Application
 Algorithmic Coordination Diagnostic API
 """
 
+import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-
-import uvicorn
 
 app = FastAPI(
     title="ACD Monitor API",

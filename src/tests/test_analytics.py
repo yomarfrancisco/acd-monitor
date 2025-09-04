@@ -3,6 +3,7 @@ Tests for ACD Analytics Module
 """
 
 import numpy as np
+
 from src.backend.analytics import ACDAnalytics, RiskMetrics
 
 

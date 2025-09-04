@@ -3,9 +3,10 @@ VMM Metrics and Calibration
 Post-hoc calibration to regime_confidence & stability scores
 """
 
-import numpy as np
-from typing import Dict, Any, Tuple
 from dataclasses import dataclass
+from typing import Dict
+
+import numpy as np
 
 
 @dataclass
@@ -23,7 +24,6 @@ class MetricsCalibration:
 
     def __init__(self):
         """Initialize metrics calibration"""
-        pass
 
     def calibrate_regime_confidence(
         self, variational_params, moment_conditions: Dict[str, np.ndarray], update_state

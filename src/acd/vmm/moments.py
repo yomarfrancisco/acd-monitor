@@ -3,10 +3,11 @@ VMM Moment Conditions
 Computes sample moments and targets per window for variational inference
 """
 
+from dataclasses import dataclass
+from typing import Dict, Tuple
+
 import numpy as np
 import pandas as pd
-from typing import Tuple, Dict, Any
-from dataclasses import dataclass
 
 
 @dataclass
@@ -34,7 +35,6 @@ class MomentConditions:
 
     def __init__(self):
         """Initialize moment conditions calculator"""
-        pass
 
     def compute_moment_targets(self, historical_data: pd.DataFrame, beta_dim: int) -> MomentTargets:
         """

@@ -9,7 +9,7 @@ import numpy as np
 import json
 import os
 from datetime import datetime, timedelta
-from typing import Dict, List, Tuple
+from typing import Dict, List
 
 
 def generate_competitive_data(

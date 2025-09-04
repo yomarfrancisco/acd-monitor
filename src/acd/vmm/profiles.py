@@ -3,10 +3,11 @@ VMM Configuration Profiles
 Default settings and acceptance profile tie-ins
 """
 
-from dataclasses import dataclass
-from typing import Optional, Dict, Any
-import yaml
 import os
+from dataclasses import dataclass
+from typing import Any, Dict
+
+import yaml
 
 
 @dataclass

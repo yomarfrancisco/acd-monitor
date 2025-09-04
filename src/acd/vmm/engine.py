@@ -3,15 +3,16 @@ VMM Engine
 Main orchestration and public API for VMM continuous monitoring
 """
 
-import pandas as pd
-import numpy as np
-from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
+from typing import Dict, List, Optional
 
-from .profiles import VMMConfig
-from .moments import MomentConditions, MomentTargets, SampleMoments
-from .updates import VariationalUpdates, VariationalParams, UpdateState
+import numpy as np
+import pandas as pd
+
 from .metrics import MetricsCalibration, VMMMetrics
+from .moments import MomentConditions, MomentTargets, SampleMoments
+from .profiles import VMMConfig
+from .updates import UpdateState, VariationalParams, VariationalUpdates
 
 
 @dataclass

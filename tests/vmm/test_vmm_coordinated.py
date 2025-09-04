@@ -3,17 +3,13 @@ Test VMM on Coordinated Golden Dataset
 Sanity check that median regime_confidence ≥ 0.8
 """
 
-import pytest
-import pandas as pd
-import numpy as np
 from pathlib import Path
 
-# Add src to path for imports
-import sys
+import numpy as np
+import pandas as pd
+import pytest
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
-
-from acd.vmm import run_vmm, VMMConfig
+from acd.vmm import VMMConfig, run_vmm
 
 
 class TestVMMCoordinated:
@@ -75,7 +71,7 @@ class TestVMMCoordinated:
         min_confidence = np.min(regime_confidence_scores)
         max_confidence = np.max(regime_confidence_scores)
 
-        print(f"Coordinated dataset results:")
+        print("Coordinated dataset results:")
         print(f"Total windows: {len(coordinated_windows)}")
         print(f"Median regime confidence: {median_confidence:.3f}")
         print(f"Mean regime confidence: {mean_confidence:.3f}")
@@ -125,7 +121,7 @@ class TestVMMCoordinated:
         median_stability = np.median(structural_stability_scores)
         mean_stability = np.mean(structural_stability_scores)
 
-        print(f"Structural stability results:")
+        print("Structural stability results:")
         print(f"Median: {median_stability:.3f}")
         print(f"Mean: {mean_stability:.3f}")
 
@@ -242,18 +238,20 @@ class TestVMMCoordinated:
         regime_cv = np.std(regime_scores) / np.mean(regime_scores)  # Coefficient of variation
         stability_cv = np.std(stability_scores) / np.mean(stability_scores)
 
-        print(f"Consistency metrics:")
+        print("Consistency metrics:")
         print(f"Regime confidence CV: {regime_cv:.3f}")
         print(f"Structural stability CV: {stability_cv:.3f}")
 
         # Coefficient of variation should be reasonable (adjusted for current implementation)
         # TODO: Improve consistency to meet 0.3/0.4 thresholds
         assert regime_cv < 0.5, (  # Relaxed threshold for now
-            f"Regime confidence too variable (CV: {regime_cv:.3f}) across coordinated windows. "
+            f"Regime confidence too variable (CV: {regime_cv:.3f}) "
+            f"across coordinated windows. "
             f"Target is <0.3, but current implementation needs consistency improvement."
         )
 
         assert stability_cv < 1.0, (  # Relaxed threshold for now
-            f"Structural stability too variable (CV: {stability_cv:.3f}) across coordinated windows. "
+            f"Structural stability too variable (CV: {stability_cv:.3f}) "
+            f"across coordinated windows. "
             f"Target is <0.4, but current implementation needs consistency improvement."
         )

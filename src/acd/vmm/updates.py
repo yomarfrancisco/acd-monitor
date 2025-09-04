@@ -3,9 +3,10 @@ VMM Variational Updates
 Variational parameter updates, step schedules, and convergence guards
 """
 
-import numpy as np
-from typing import Dict, Tuple, Optional
 from dataclasses import dataclass
+from typing import Dict, Optional, Tuple
+
+import numpy as np
 
 
 @dataclass
