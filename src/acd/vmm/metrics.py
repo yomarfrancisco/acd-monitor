@@ -12,9 +12,7 @@ from pathlib import Path
 from typing import Dict, Tuple, Optional, Any
 from dataclasses import dataclass
 from sklearn.isotonic import IsotonicRegression
-from sklearn.calibration import CalibratedClassifierCV
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 
 @dataclass
@@ -298,7 +296,7 @@ def calibrate_confidence(
     split_idx = int(n_samples * (1 - validation_split))
 
     cal_indices = indices[:split_idx]
-    val_indices = indices[split_idx:]
+    # val_indices reserved for future validation logic
 
     if method == "isotonic":
         calibrator = IsotonicRegression(out_of_bounds="clip")
@@ -503,10 +501,6 @@ def compute_calibration_curves(
     Returns:
         Dictionary with calibration curve data
     """
-    # Sort scores and compute cumulative accuracy
-    raw_sorted = np.sort(raw_scores)[::-1]
-    cal_sorted = np.sort(calibrated_scores)[::-1]
-
     # Compute cumulative accuracy at different thresholds
     thresholds = np.linspace(0, 1, 101)
 

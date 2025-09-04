@@ -10,7 +10,6 @@ import numpy as np
 import pytest
 from pathlib import Path
 import tempfile
-import shutil
 
 from src.acd.vmm.metrics import (
     calibrate_confidence,
@@ -63,7 +62,8 @@ class TestVMMCalibration:
 
         assert spurious_rate <= 0.05, (
             f"Competitive spurious regime rate {spurious_rate:.3f} exceeds 5% threshold. "
-            f"Found {spurious_count} spurious out of {len(self.calibrated_competitive)} competitive samples."
+            f"Found {spurious_count} spurious out of "
+            f"{len(self.calibrated_competitive)} competitive samples."
         )
 
         # Gate 2: Coordinated median regime confidence ≥ 0.7
@@ -88,9 +88,10 @@ class TestVMMCalibration:
         cal_separation = np.mean(self.calibrated_coordinated) - np.mean(self.calibrated_competitive)
 
         # Calibration should improve or maintain separation
-        assert (
-            cal_separation >= raw_separation * 0.8
-        ), f"Calibration degraded separation: raw={raw_separation:.3f}, calibrated={cal_separation:.3f}"
+        assert cal_separation >= raw_separation * 0.8, (
+            f"Calibration degraded separation: raw={raw_separation:.3f}, "
+            f"calibrated={cal_separation:.3f}"
+        )
 
     def test_reliability_metrics(self):
         """Test reliability metrics computation"""
