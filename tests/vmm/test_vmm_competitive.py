@@ -186,8 +186,6 @@ class TestVMMCompetitive:
 
         # Difference should be meaningful (relaxed for current implementation)
         difference = abs(mean_coordinated - mean_competitive)
-        assert (
-            difference >= 0.01
-        ), (  # Relaxed threshold
-            f"Insufficient distinction between competitive and coordinated: {difference:.3f}"
+        assert difference >= 0.01, (  # Relaxed threshold
+            f"Insufficient distinction between competitive and coordinated: " f"{difference:.3f}"
         )
