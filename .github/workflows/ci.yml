@@ -68,6 +68,16 @@ jobs:
           echo "${PIPESTATUS[0]}" > pytest_exit_code.txt
           ls -l pytest.log pytest_exit_code.txt || true
 
+          # --- NEW: surface first failure straight into CI output ---
+          if grep -q "FAILED" pytest.log; then
+            echo "❌ First failure found:"
+            grep -m1 "FAILED" pytest.log
+            echo "--------------------------------------------"
+            # show 10 lines of context around the first failure
+            grep -m1 -A10 -B5 "FAILED" pytest.log || true
+            echo "--------------------------------------------"
+          fi
+
       - name: Upload debug artifacts
         if: always()
         uses: actions/upload-artifact@v4
