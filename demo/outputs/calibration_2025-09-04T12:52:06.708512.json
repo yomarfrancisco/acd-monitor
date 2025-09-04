@@ -1,0 +1,24 @@
+{
+  "timestamp": "2025-09-04T12:52:06.708512",
+  "bundle_id": "demo_600    demo_window_1_12\n601    demo_window_1_12\n602    demo_window_1_12\n603    demo_window_1_12\n604    demo_window_1_12\n605    demo_window_1_12\n606    demo_window_1_12\n607    demo_window_1_12\n608    demo_window_1_12\n609    demo_window_1_12\n610    demo_window_1_12\n611    demo_window_1_12\n612    demo_window_1_12\n613    demo_window_1_12\n614    demo_window_1_12\n615    demo_window_1_12\n616    demo_window_1_12\n617    demo_window_1_12\n618    demo_window_1_12\n619    demo_window_1_12\n620    demo_window_1_12\n621    demo_window_1_12\n622    demo_window_1_12\n623    demo_window_1_12\n624    demo_window_1_12\n625    demo_window_1_12\n626    demo_window_1_12\n627    demo_window_1_12\n628    demo_window_1_12\n629    demo_window_1_12\n630    demo_window_1_12\n631    demo_window_1_12\n632    demo_window_1_12\n633    demo_window_1_12\n634    demo_window_1_12\n635    demo_window_1_12\n636    demo_window_1_12\n637    demo_window_1_12\n638    demo_window_1_12\n639    demo_window_1_12\n640    demo_window_1_12\n641    demo_window_1_12\n642    demo_window_1_12\n643    demo_window_1_12\n644    demo_window_1_12\n645    demo_window_1_12\n646    demo_window_1_12\n647    demo_window_1_12\n648    demo_window_1_12\n649    demo_window_1_12\nName: window_id, dtype: object_20250904_125206",
+  "calibration_summary": {
+    "calibration_score": 0.8
+  },
+  "vmm_performance": {
+    "regime_confidence": 0.5,
+    "structural_stability": 0.5,
+    "dynamic_validation_score": 0.5
+  },
+  "data_quality_summary": {
+    "overall_score": 0.9,
+    "completeness": 0.9,
+    "timeliness": 0.9,
+    "consistency": 0.9
+  },
+  "validation_status": "demo_validation",
+  "recommendations": [
+    "This is a demo calibration report",
+    "Real-world deployment requires actual calibration data",
+    "VMM thresholds should be tuned based on market characteristics"
+  ]
+}

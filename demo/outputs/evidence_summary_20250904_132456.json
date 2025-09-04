@@ -1,0 +1,390 @@
+{
+  "summary_id": "evidence_summary_20250904_132456",
+  "timestamp": "2025-09-04T13:24:56.760144",
+  "total_bundles": 40,
+  "bundle_details": [
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.725792",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.728206",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.729240",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.729379",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.729500",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.729614",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.729724",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.729834",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.729942",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.730051",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.730157",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.730301",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.730426",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.730533",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.730635",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.730734",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.730882",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.730995",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.731099",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.731202",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.731303",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.731403",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.731504",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.731604",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.731717",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.731980",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.732228",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.732327",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.732425",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.732671",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.732814",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.732915",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.733015",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.733132",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.733233",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.733350",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.733466",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.733568",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.733667",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    },
+    {
+      "bundle_id": "demo_20250904_132456_3441",
+      "creation_timestamp": "2025-09-04T13:24:56.733767",
+      "vmm_outputs": "VMMEvidence(regime_confidence=0.5, structural_stability=0.5, dynamic_validation_score=0.5, elbo_convergence=-100.0, iteration_count=50, runtime_seconds=0.1, convergence_status='converged', numerical_stability={'variance_floor': 1e-06})",
+      "validation_status": false
+    }
+  ],
+  "validation_summary": {
+    "total_bundles": 40,
+    "valid_bundles": 0,
+    "invalid_bundles": 40,
+    "validation_errors": [
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation"
+    ],
+    "validation_rate": 0.0
+  },
+  "vmm_outputs_summary": {
+    "total_bundles": 40,
+    "regime_confidence": {
+      "values": [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "mean": 0.5,
+      "std": 0.0
+    },
+    "structural_stability": {
+      "values": [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "mean": 0.5,
+      "std": 0.0
+    }
+  }
+}

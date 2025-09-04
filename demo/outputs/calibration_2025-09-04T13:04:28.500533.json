@@ -1,0 +1,25 @@
+{
+  "timestamp": "2025-09-04T13:04:28.500533",
+  "bundle_id": "demo_20250904_130428_0762",
+  "calibration_summary": {
+    "calibration_score": 0.8,
+    "method": "demo_calibration"
+  },
+  "vmm_performance": {
+    "regime_confidence": 0.5,
+    "structural_stability": 0.5,
+    "dynamic_validation_score": 0.5
+  },
+  "data_quality_summary": {
+    "overall_score": 0.9,
+    "completeness": 0.9,
+    "timeliness": 0.9,
+    "consistency": 0.9
+  },
+  "validation_status": "demo_validation",
+  "recommendations": [
+    "This is a demo calibration report",
+    "Real-world deployment requires actual calibration data",
+    "VMM thresholds should be tuned based on market characteristics"
+  ]
+}

@@ -1,0 +1,390 @@
+{
+  "summary_id": "evidence_summary_20250904_132231",
+  "timestamp": "2025-09-04T13:22:31.818553",
+  "total_bundles": 40,
+  "bundle_details": [
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    },
+    {
+      "bundle_id": "unknown",
+      "creation_timestamp": "unknown",
+      "vmm_outputs": {},
+      "validation_status": false
+    }
+  ],
+  "validation_summary": {
+    "total_bundles": 40,
+    "valid_bundles": 0,
+    "invalid_bundles": 40,
+    "validation_errors": [
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation",
+      "Demo validation"
+    ],
+    "validation_rate": 0.0
+  },
+  "vmm_outputs_summary": {
+    "total_bundles": 40,
+    "regime_confidence": {
+      "values": [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "mean": 0.5,
+      "std": 0.0
+    },
+    "structural_stability": {
+      "values": [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "mean": 0.5,
+      "std": 0.0
+    }
+  }
+}

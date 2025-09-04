@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>ACD Monitor — SA Bank 5Y CDS (Client: FNB)</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="topbar" role="banner">
+            <div class="topbar__inner">
+                <div class="brand">
+                    <div class="rbb-logo">
+                        <span class="rbb">RBB</span>
+                        <div class="separator"></div>
+                        <span class="economics">Economics</span>
+                    </div>
+                    <div class="acd-monitor">ACD Monitor</div>
+                </div>
+                <div class="live">
+                    <span class="dot" aria-hidden="true"></span>
+                    LIVE
+                </div>
+                <div class="meta" aria-label="Context">
+                    <span>SA Bank 5Y CDS</span>
+                    <span>Client: FNB</span>
+                    <span>Updated 2025-01-15 14:32 SAST</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="wrap" role="main">
+            <!-- SCORE / HERO -->
+            <section class="card pad score" aria-labelledby="risk-label">
+                <span id="risk-label" class="label-sm">Coordination Risk</span>
+                <div class="ring" style="--val:14">
+                    <div><span class="score-num" aria-live="polite">14</span></div>
+                </div>
+                <div class="pill ok" aria-label="Risk band">LOW RISK</div>
+                <div class="sub">96.8% statistical confidence • 18-month view</div>
+
+                <!-- 18-month CDS time series, live-updating -->
+                <div class="hero-chart" aria-label="18-month CDS spread time series">
+                    <div class="legend">
+                        <span class="lg"><i class="sw" style="background:#1e40af"></i> FNB</span>
+                        <span class="lg"><i class="sw" style="background:#0ea5e9"></i> Standard Bank</span>
+                        <span class="lg"><i class="sw" style="background:#10b981"></i> Absa</span>
+                        <span class="lg"><i class="sw" style="background:#f59e0b"></i> Nedbank</span>
+                    </div>
+                    <canvas id="heroChart" height="180" style="width:100%; display:block;"></canvas>
+                    <div class="tiny" style="margin-top:6px">CDS spread (5Y, bps) • historical 18 months with live updates</div>
+                </div>
+            </section>
+
+            <!-- TABS -->
+            <section class="tabs">
+                <nav class="tabbar" role="tablist" aria-label="Sections">
+                    <button role="tab" aria-selected="true" id="t1" aria-controls="p1">Indicators</button>
+                    <button role="tab" aria-selected="false" id="t2" aria-controls="p2">Participants</button>
+                    <button role="tab" aria-selected="false" id="t3" aria-controls="p3">Events</button>
+                    <button role="tab" aria-selected="false" id="t4" aria-controls="p4">Competition</button>
+                    <button role="tab" aria-selected="false" id="t5" aria-controls="p5">Reports</button>
+                </nav>
+
+                <!-- Indicators -->
+                <div id="p1" role="tabpanel" aria-labelledby="t1" class="tabpanel">
+                    <div class="grid cols-3">
+                        <div class="card pad metric">
+                            <div class="row"><h3>Spread Stability</h3><strong>25</strong></div>
+                            <div class="bar"><div class="fill ok" style="width:25%"></div></div>
+                            <div class="tiny">Normal spread volatility → competitive dynamics</div>
+                            <div class="tiny">Bank CDS index avg 35 • Your market 25</div>
+                        </div>
+                        <div class="card pad metric">
+                            <div class="row"><h3>Spread Synchronization</h3><strong>18</strong></div>
+                            <div class="bar"><div class="fill ok" style="width:18%"></div></div>
+                            <div class="tiny">Movements mostly independent (lags controlled)</div>
+                            <div class="tiny">Concern threshold ≥ 70</div>
+                        </div>
+                        <div class="card pad metric">
+                            <div class="row"><h3>Environmental Sensitivity</h3><strong>82</strong></div>
+                            <div class="bar"><div class="fill ok" style="width:82%"></div></div>
+                            <div class="tiny">Strong adaptation to macro & idiosyncratic shocks</div>
+                            <div class="tiny">Higher = more competitive</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Participants -->
+                <div id="p2" role="tabpanel" aria-labelledby="t2" class="tabpanel" hidden>
+                    <div class="card pad">
+                        <h3 style="margin-top:0">Market Participants</h3>
+                        <div class="list" style="margin-top:12px">
+                            <div class="li">
+                                <div class="row" style="gap:8px"><span class="status ok"></span><strong>FNB (Client)</strong></div>
+                                <span class="value">Quote share 26%</span>
+                            </div>
+                            <div class="li">
+                                <div class="row" style="gap:8px"><span class="status ok"></span><strong>Standard Bank</strong></div>
+                                <span class="value">Quote share 29%</span>
+                            </div>
+                            <div class="li">
+                                <div class="row" style="gap:8px"><span class="status ok"></span><strong>Absa</strong></div>
+                                <span class="value">Quote share 23%</span>
+                            </div>
+                            <div class="li">
+                                <div class="row" style="gap:8px"><span class="status ok"></span><strong>Nedbank</strong></div>
+                                <span class="value">Quote share 22%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Events -->
+                <div id="p3" role="tabpanel" aria-labelledby="t3" class="tabpanel" hidden>
+                    <div class="grid cols-2">
+                        <div class="card pad">
+                            <h3 style="margin-top:0 0 10px 0">Impact Events (24h)</h3>
+                            <div class="list">
+                                <div class="li" style="align-items:start">
+                                    <div>
+                                        <div class="pill warn" style="padding:.25rem .6rem; font-size:.75rem">MEDIUM</div>
+                                        <div><strong>ZAR depreciates 1.9%</strong></div>
+                                        <div class="tiny">Broad CDS widening; sensitivity ↑ to 84 (competitive)</div>
+                                    </div>
+                                    <span class="tiny">13:45 SAST</span>
+                                </div>
+                                <div class="li" style="align-items:start">
+                                    <div>
+                                        <div class="pill ok" style="padding:.25rem .6rem; font-size:.75rem">LOW</div>
+                                        <div><strong>SARB guidance unchanged</strong></div>
+                                        <div class="tiny">No regime break detected</div>
+                                    </div>
+                                    <span class="tiny">11:20 SAST</span>
+                                </div>
+                                <div class="li" style="align-items:start">
+                                    <div>
+                                        <div class="pill ok" style="padding:.25rem .6rem; font-size:.75rem">LOW</div>
+                                        <div><strong>Sovereign outlook stable</strong></div>
+                                        <div class="tiny">Idiosyncratic responses across banks</div>
+                                    </div>
+                                    <span class="tiny">09:10 SAST</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card pad">
+                            <h3 style="margin-top:0 0 10px 0">Current Environment</h3>
+                            <div class="tile">
+                                <h4>Market Volatility</h4>
+                                <div class="bar"><div class="fill warn" style="width:48%"></div></div>
+                                <div class="tiny">Medium</div>
+                            </div>
+                            <div class="tile" style="margin-top:12px">
+                                <h4>Macro Pressure</h4>
+                                <div class="bar"><div class="fill ok" style="width:70%"></div></div>
+                                <div class="tiny">Elevated but competitive</div>
+                            </div>
+                            <div class="tile" style="margin-top:12px">
+                                <h4>Idiosyncratic Signals</h4>
+                                <div class="bar"><div class="fill ok" style="width:62%"></div></div>
+                                <div class="tiny">Bank-specific drivers active</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Competition -->
+                <div id="p4" role="tabpanel" aria-labelledby="t4" class="tabpanel" hidden>
+                    <div class="grid cols-4">
+                        <div class="card pad tile"><h4>HHI (quote share)</h4><div class="value">2,145</div><div class="tiny" style="color:var(--accent-danger)">↓ 18 vs last month</div></div>
+                        <div class="card pad tile"><h4>Spread Dispersion</h4><div class="value">0.27</div><div class="tiny" style="color:var(--accent-success)">↑ +0.04</div></div>
+                        <div class="card pad tile"><h4>Leader Rotation</h4><div class="value">2.3</div><div class="tiny" style="color:var(--accent-success)">Dynamic</div></div>
+                        <div class="card pad tile"><h4>Regime Breaks (90d)</h4><div class="value">3</div><div class="tiny" style="color:var(--accent-success)">Competitive adaptation</div></div>
+                    </div>
+                </div>
+
+                <!-- Reports -->
+                <div id="p5" role="tabpanel" aria-labelledby="t5" class="tabpanel" hidden>
+                    <div id="reports" class="card pad">
+                        <h3 style="margin-top:0">Reports</h3>
+                        <div class="list" style="margin-top:12px">
+                            <div class="li"><span>Legal report — last 7 days (FNB)</span><a class="linklike" href="#">Download PDF</a></div>
+                            <div class="li"><span>Compliance summary — monthly</span><a class="linklike" href="#">Download PDF</a></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Chat bubble (replace href with Chatbase launcher) -->
+    <a class="chat" href="#" aria-label="Open assistant">?</a>
+
+    <script src="app.js"></script>
+</body>
+</html>

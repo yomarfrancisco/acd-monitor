@@ -92,4 +92,52 @@ This document records the technical milestones achieved each week. It serves as 
 
 ---
 
+---
+
+## Week 5 – Phase 4 Achievements (Monitoring & Regression Alerts)
+- ✅ **Monitoring Framework Implementation**: Complete monitoring and regression detection system.
+  - **Metrics Layer**: Lightweight metrics collection with JSON/Parquet outputs
+    - Core metrics: spurious_regime_rate, auroc, f1, structural_stability_median, vmm_convergence_rate, mean_iterations, runtime_p50/p95, timestamp_success_rate, quality_overall, schema_validation_pass_rate, bundle_export_success_rate
+    - Outputs: `demo/outputs/run_summary.json` (snapshot), `artifacts/metrics/run_log.parquet` (historical)
+  - **Health Checker**: 8-gate health check system with PASS/WARN/FAIL classification
+    - Gates: Spurious Rate, Convergence Rate, Structural Stability, Runtime Performance, Timestamp Success, Quality Score, Schema Validation, Export Success
+    - Exit codes: 0=PASS, 1=WARN, 2=FAIL (CI integration ready)
+    - Monitoring modes: Strict, Balanced, Permissive with ±15-20% threshold adjustments
+  - **Regression Detector**: Automated regression detection with 20% change threshold over 7-run median
+    - Metrics monitored: spurious_regime_rate, vmm_convergence_rate, structural_stability_median, runtime_p95, timestamp_success_rate, quality_overall
+    - Automated logging: `docs/regressions/YYYY-MM-DD.md` and achievements log updates
+  - **CLI Integration**: `scripts/healthcheck.py` for standalone health checks and regression analysis
+  - **Dashboard Integration**: Enhanced demo visualization with monitoring dashboard (`demo/outputs/monitor_dashboard.json`)
+
+- ✅ **Adjusted Thresholds Applied** (as requested in Phase 4 assessment):
+  - Runtime p95: ≤3s (PASS), 3-7s (WARN), >7s (FAIL) [was ≤2s]
+  - Convergence rate: ≥70% (PASS), 50-69% (WARN), <50% (FAIL) [was ≥80%]
+  - Schema validation: ≥98% (PASS), 95-97.99% (WARN), <95% (FAIL) [was 100%]
+  - Monitoring mode bands: ±15-20% for balanced mode [was ±10-15%]
+
+- ✅ **Evidence & Artifacts**:
+  - **Metrics Outputs**: `demo/outputs/run_summary.json`, `artifacts/metrics/run_log.parquet`
+  - **Monitoring Dashboard**: `demo/outputs/monitor_dashboard.json` with health status and regression analysis
+  - **Sample Exit Codes**: Health check returns 0=PASS, 1=WARN, 2=FAIL for CI integration
+  - **Regression Reports**: `docs/regressions/YYYY-MM-DD.md` for detected regressions
+
+- ⚠️ **Risks & Notes**:
+  - **Demo-Only Thresholds**: Current thresholds are demo-optimized; production will require tightening
+  - **Schema Validation**: Plan to tighten schema validation to 99% for production use
+  - **Threshold Sensitivity**: Monitor for false alarms vs. insufficient sensitivity in production
+
+- ✅ **Guardrails Maintained**:
+  - **Anchors Respected**: Brief 55+ dual pillars (ICP+VMM) maintained; Week 3-5 baselines preserved
+  - **CI Green**: All monitoring components pass linting and basic validation
+  - **No Regressions**: Week 3-4 achievements preserved; monitoring adds visibility without weakening gates
+  - **Demo Scope**: Mock-only implementation; no real-data ingestion introduced
+
+- 🔄 **Next Phase Priorities**:
+  - **CI Integration**: Wire healthcheck into CI pipeline (non-blocking, WARN prints but doesn't fail build)
+  - **Bundle Integration**: Include monitoring snapshot in each EvidenceBundle for transparency
+  - **Production Readiness**: Tighten thresholds based on production data patterns
+  - **Performance Monitoring**: Establish baseline metrics for production deployment
+
+---
+
 📅 This log will continue to be updated weekly as new milestones are achieved.

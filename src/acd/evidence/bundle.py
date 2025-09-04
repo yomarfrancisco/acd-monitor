@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Any, Union
 from dataclasses import dataclass, asdict
 
-from ..vmm.types import VMMResult, VMMConfig
+from ..vmm import VMMConfig, VMMOutput
 
 
 @dataclass
@@ -87,6 +87,15 @@ class EvidenceBundle:
     analyst: str
     version: str
     checksum: str
+
+    # Adaptive threshold information (Week 5: New field)
+    adaptive_threshold_profile: Optional[Dict[str, Any]] = None
+
+    # Timestamping information (Week 5 Phase 3: New field)
+    timestamp_chain: Optional[Any] = None
+
+    # Quality profile information (Week 5 Phase 3: New field)
+    quality_profile: Optional[Any] = None
 
     def __post_init__(self):
         """Validate and compute checksum after initialization."""
@@ -182,7 +191,7 @@ class EvidenceBundle:
     @classmethod
     def from_vmm_result(
         cls,
-        vmm_result: VMMResult,
+        vmm_result: VMMOutput,
         vmm_config: VMMConfig,
         market: str,
         window_start: str,
@@ -199,11 +208,11 @@ class EvidenceBundle:
             regime_confidence=vmm_result.regime_confidence,
             structural_stability=vmm_result.structural_stability,
             dynamic_validation_score=vmm_result.dynamic_validation_score,
-            elbo_convergence=vmm_result.elbo_convergence,
+            elbo_convergence=vmm_result.elbo_final,
             iteration_count=vmm_result.iterations,
-            runtime_seconds=vmm_result.runtime,
+            runtime_seconds=0.0,  # Not available in VMMOutput
             convergence_status=vmm_result.convergence_status,
-            numerical_stability=vmm_result.numerical_stability,
+            numerical_stability={},  # Not available in VMMOutput
         )
 
         # Create bundle
@@ -216,10 +225,83 @@ class EvidenceBundle:
             vmm_outputs=vmm_outputs,
             calibration_artifacts=calibration_artifacts,
             data_quality=data_quality,
-            vmm_config=vmm_config.to_dict(),
+            vmm_config=asdict(vmm_config),
             data_sources=kwargs.get("data_sources", []),
             golden_dataset_validation=kwargs.get("golden_dataset_validation", {}),
             reproducibility_metrics=kwargs.get("reproducibility_metrics", {}),
+            analyst=analyst,
+            version="1.0.0",
+            checksum="",  # Will be auto-computed
+        )
+
+    @classmethod
+    def create_demo_bundle(
+        cls,
+        bundle_id: str,
+        market: str = "demo_market",
+        analyst: str = "demo_pipeline",
+        **kwargs,
+    ) -> "EvidenceBundle":
+        """Create a demo EvidenceBundle with mock data for testing purposes."""
+
+        # Create mock VMM outputs
+        vmm_outputs = VMMEvidence(
+            regime_confidence=kwargs.get("regime_confidence", 0.5),
+            structural_stability=kwargs.get("structural_stability", 0.5),
+            dynamic_validation_score=kwargs.get("dynamic_validation_score", 0.5),
+            elbo_convergence=kwargs.get("elbo_convergence", -100.0),
+            iteration_count=kwargs.get("iteration_count", 50),
+            runtime_seconds=kwargs.get("runtime_seconds", 0.1),
+            convergence_status=kwargs.get("convergence_status", "converged"),
+            numerical_stability=kwargs.get("numerical_stability", {"variance_floor": 1e-6}),
+        )
+
+        # Create mock calibration artifacts
+        calibration_artifacts = [
+            CalibrationArtifact(
+                market=market,
+                timestamp=datetime.now().isoformat(),
+                method="demo_calibration",
+                spurious_rate=kwargs.get("spurious_rate", 0.05),
+                structural_stability=kwargs.get("structural_stability", 0.5),
+                calibration_curve={"demo": "curve"},
+                validation_metrics={"demo_metric": 0.8},
+                file_path="demo_calibration.json",
+            )
+        ]
+
+        # Create mock data quality evidence
+        data_quality = DataQualityEvidence(
+            completeness_score=kwargs.get("completeness_score", 0.9),
+            accuracy_score=kwargs.get("accuracy_score", 0.9),
+            timeliness_score=kwargs.get("timeliness_score", 0.9),
+            consistency_score=kwargs.get("consistency_score", 0.9),
+            overall_score=kwargs.get("overall_score", 0.9),
+            quality_issues=kwargs.get("quality_issues", []),
+            validation_timestamp=datetime.now().isoformat(),
+        )
+
+        # Create bundle
+        return cls(
+            bundle_id=bundle_id,
+            creation_timestamp=datetime.now().isoformat(),
+            analysis_window_start=kwargs.get("window_start", "2024-01-01T00:00:00"),
+            analysis_window_end=kwargs.get("window_end", "2024-01-01T23:59:59"),
+            market=market,
+            vmm_outputs=vmm_outputs,
+            calibration_artifacts=calibration_artifacts,
+            data_quality=data_quality,
+            vmm_config=kwargs.get("vmm_config", {"max_iters": 100, "tol": 1e-4}),
+            data_sources=kwargs.get("data_sources", ["demo_source"]),
+            golden_dataset_validation=kwargs.get(
+                "golden_dataset_validation", {"demo_validation": 0.9}
+            ),
+            reproducibility_metrics=kwargs.get(
+                "reproducibility_metrics", {"demo_reproducibility": 0.9}
+            ),
+            adaptive_threshold_profile=kwargs.get("adaptive_threshold_profile", None),
+            timestamp_chain=kwargs.get("timestamp_chain", None),
+            quality_profile=kwargs.get("quality_profile", None),
             analyst=analyst,
             version="1.0.0",
             checksum="",  # Will be auto-computed

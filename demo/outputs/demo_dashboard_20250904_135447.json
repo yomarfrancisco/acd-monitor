@@ -1,0 +1,107 @@
+{
+  "execution_metrics": {
+    "total_time": 9.538580894470215,
+    "phases_completed": 4,
+    "success_rate": 1.0
+  },
+  "data_flow": {
+    "ingestion": {
+      "golden_datasets": 3,
+      "mock_feeds": 6,
+      "quality_metrics": 6
+    },
+    "processing": {
+      "vmm_windows": 40,
+      "evidence_bundles": 40,
+      "calibration_reports": 40
+    },
+    "output": {
+      "exported_files": 80,
+      "export_errors": 0
+    }
+  },
+  "performance_metrics": {
+    "vmm_analysis": {
+      "total_windows": 40,
+      "convergence_rate": 0.0,
+      "average_regime_confidence": 0.0,
+      "average_structural_stability": 0.0
+    },
+    "data_quality": {
+      "total_feeds": 6,
+      "average_quality": 0.7000000000000001,
+      "quality_distribution": {
+        "excellent": 0,
+        "good": 0,
+        "acceptable": 6,
+        "poor": 0
+      }
+    },
+    "pipeline_efficiency": {
+      "execution_time_seconds": 9.538580894470215,
+      "outputs_per_second": 16.77398365335,
+      "evidence_bundles_per_second": 4.1934959133375,
+      "calibration_reports_per_second": 4.1934959133375,
+      "total_outputs": 160
+    }
+  },
+  "adaptive_thresholds": {
+    "framework_version": "1.0.0",
+    "small_dataset": {
+      "max_size": 200,
+      "threshold": 0.02,
+      "description": "\u2264200 windows: \u22642.0%"
+    },
+    "medium_dataset": {
+      "min_size": 201,
+      "max_size": 800,
+      "threshold": 0.05,
+      "description": "201-800 windows: \u22645.0%"
+    },
+    "large_dataset": {
+      "min_size": 801,
+      "threshold": 0.08,
+      "description": ">800 windows: \u22648.0%"
+    },
+    "continuous_scaling": {
+      "enabled": true,
+      "scaling_factor": 0.006,
+      "description": "Smooth threshold transitions for medium datasets"
+    },
+    "strict_mode": true
+  },
+  "timestamping": {
+    "success_rate": 1.0,
+    "total_bundles": 40,
+    "timestamped_bundles": 40,
+    "latest_timestamp": "2025-09-04T11:54:39.743277+00:00",
+    "provider": "DigiCert",
+    "response_time_ms": 102.48970985412598,
+    "policy_oid": "1.3.6.1.4.1.6449.1.2.1.5.1",
+    "serial_number": "digicert_001",
+    "tsa_cert_digest": "514da8228d10270baf9972400ca0ed15f99706af3beabb7a90ac813d307a746a"
+  },
+  "quality_profiles": {
+    "profile_name": "Market_data",
+    "description": "General market data feeds",
+    "rationale": "Balanced profile for general market monitoring and analysis",
+    "thresholds": {
+      "overall_min": 0.7,
+      "timeliness_critical": 0.85,
+      "timeliness_standard": 0.7,
+      "completeness": 0.8,
+      "consistency": 0.75,
+      "accuracy": 0.8
+    },
+    "validation_rules": [
+      "Price data must be positive",
+      "Volume data must be non-negative",
+      "Timestamp must be in valid range"
+    ],
+    "metadata": {
+      "update_frequency": "variable",
+      "data_freshness": "standard",
+      "regulatory_impact": "medium"
+    }
+  }
+}

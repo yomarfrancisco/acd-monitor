@@ -1,0 +1,60 @@
+{
+  "bundle_id": "demo_20250904_130151_1006",
+  "creation_timestamp": "2025-09-04T13:01:51.153379",
+  "analysis_window_start": "2024-01-01T00:00:00",
+  "analysis_window_end": "2024-01-01T23:59:59",
+  "market": "demo_market",
+  "vmm_outputs": {
+    "regime_confidence": 0.5,
+    "structural_stability": 0.5,
+    "dynamic_validation_score": 0.5,
+    "elbo_convergence": -100.0,
+    "iteration_count": 50,
+    "runtime_seconds": 0.1,
+    "convergence_status": "converged",
+    "numerical_stability": {
+      "variance_floor": 1e-06
+    }
+  },
+  "calibration_artifacts": [
+    {
+      "market": "demo_market",
+      "timestamp": "2025-09-04T13:01:51.153376",
+      "method": "demo_calibration",
+      "spurious_rate": 0.05,
+      "structural_stability": 0.5,
+      "calibration_curve": {
+        "demo": "curve"
+      },
+      "validation_metrics": {
+        "demo_metric": 0.8
+      },
+      "file_path": "demo_calibration.json"
+    }
+  ],
+  "data_quality": {
+    "completeness_score": 0.9,
+    "accuracy_score": 0.9,
+    "timeliness_score": 0.9,
+    "consistency_score": 0.9,
+    "overall_score": 0.9,
+    "quality_issues": [],
+    "validation_timestamp": "2025-09-04T13:01:51.153378"
+  },
+  "vmm_config": {
+    "max_iters": 100,
+    "tol": 0.0001
+  },
+  "data_sources": [
+    "demo_source"
+  ],
+  "golden_dataset_validation": {
+    "demo_validation": 0.9
+  },
+  "reproducibility_metrics": {
+    "demo_reproducibility": 0.9
+  },
+  "analyst": "demo_pipeline",
+  "version": "1.0.0",
+  "checksum": "1ac18e4dd578625b201948dff6b5c58ef30bf146516bf2f248c53e60ab48ad17"
+}

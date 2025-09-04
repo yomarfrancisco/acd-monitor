@@ -1,0 +1,51 @@
+{
+  "execution_metrics": {
+    "total_time": 0.2717580795288086,
+    "phases_completed": 4,
+    "success_rate": 1.0
+  },
+  "data_flow": {
+    "ingestion": {
+      "golden_datasets": 3,
+      "mock_feeds": 6,
+      "quality_metrics": 6
+    },
+    "processing": {
+      "vmm_windows": 40,
+      "evidence_bundles": 40,
+      "calibration_reports": 40
+    },
+    "output": {
+      "exported_files": 80,
+      "export_errors": 0
+    }
+  },
+  "performance_metrics": {
+    "vmm_analysis": {
+      "total_windows": 40,
+      "convergence_rate": 0.0,
+      "average_regime_confidence": 0.0,
+      "average_structural_stability": 0.0
+    },
+    "data_quality": {
+      "total_feeds": 6,
+      "average_quality": 0.7000000000000001,
+      "quality_distribution": {
+        "excellent": 0,
+        "good": 0,
+        "acceptable": 6,
+        "poor": 0
+      }
+    },
+    "pipeline_efficiency": {
+      "execution_time_seconds": 0.2717580795288086,
+      "outputs_per_second": 588.7589442691756,
+      "evidence_bundles_per_second": 147.1897360672939,
+      "calibration_reports_per_second": 147.1897360672939,
+      "total_outputs": 160
+    }
+  },
+  "adaptive_thresholds": {
+    "error": "No threshold profile found in evidence bundles"
+  }
+}

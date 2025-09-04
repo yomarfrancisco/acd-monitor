@@ -1,0 +1,97 @@
+{
+  "report_id": "calibration_20250904_135447",
+  "timestamp": "2025-09-04T13:54:47.943445",
+  "report_type": "demo_calibration",
+  "summary": {
+    "total_windows": 40,
+    "vmm_metrics": {
+      "regime_confidence": {
+        "mean": 0.5,
+        "min": 0.5,
+        "max": 0.5,
+        "std": 0.0
+      },
+      "structural_stability": {
+        "mean": 0.5,
+        "min": 0.5,
+        "max": 0.5,
+        "std": 0.0
+      }
+    },
+    "convergence": {
+      "converged": 0,
+      "failed": 40,
+      "convergence_rate": 0.0
+    }
+  },
+  "vmm_performance": {
+    "window_analysis": [],
+    "overall_performance": {
+      "successful_analyses": 0,
+      "failed_analyses": 40,
+      "average_regime_confidence": 0,
+      "average_structural_stability": 0
+    }
+  },
+  "data_quality_analysis": {
+    "total_feeds": 6,
+    "quality_distribution": {
+      "excellent": 0,
+      "good": 0,
+      "acceptable": 0,
+      "poor": 6
+    },
+    "average_quality": 0.0,
+    "quality_by_feed": {
+      "market_feed_0": {
+        "completeness": 1.0,
+        "accuracy": 1.0,
+        "timeliness": 0.0,
+        "consistency": 1.0,
+        "overall_score": 0.7
+      },
+      "market_feed_1": {
+        "completeness": 1.0,
+        "accuracy": 1.0,
+        "timeliness": 0.0,
+        "consistency": 1.0,
+        "overall_score": 0.7
+      },
+      "market_feed_2": {
+        "completeness": 1.0,
+        "accuracy": 1.0,
+        "timeliness": 0.0,
+        "consistency": 1.0,
+        "overall_score": 0.7
+      },
+      "regulatory_feed_0": {
+        "completeness": 1.0,
+        "accuracy": 1.0,
+        "timeliness": 0.0,
+        "consistency": 1.0,
+        "overall_score": 0.7
+      },
+      "regulatory_feed_1": {
+        "completeness": 1.0,
+        "accuracy": 1.0,
+        "timeliness": 0.0,
+        "consistency": 1.0,
+        "overall_score": 0.7
+      },
+      "regulatory_feed_2": {
+        "completeness": 1.0,
+        "accuracy": 1.0,
+        "timeliness": 0.0,
+        "consistency": 1.0,
+        "overall_score": 0.7
+      }
+    }
+  },
+  "recommendations": [
+    "VMM convergence rate below 80% - consider adjusting tolerance or learning rate",
+    "Data quality below 80% - investigate data source issues",
+    "This is a demo calibration - real-world deployment requires actual market data",
+    "VMM thresholds should be tuned based on specific market characteristics",
+    "Regular recalibration is recommended as market conditions change"
+  ]
+}

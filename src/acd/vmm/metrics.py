@@ -9,11 +9,14 @@ and coordinated behavior patterns.
 import pickle
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple, List
 
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.isotonic import IsotonicRegression
+
+# Import adaptive threshold framework
+from .adaptive_thresholds import AdaptiveThresholdManager, AdaptiveThresholdConfig
 
 
 @dataclass
@@ -596,4 +599,50 @@ def compute_calibration_curves(
         "thresholds": thresholds,
         "raw_accuracy": np.array(raw_accuracy),
         "calibrated_accuracy": np.array(cal_accuracy),
+    }
+
+
+def calculate_spurious_rate_with_adaptive_thresholds(
+    regime_confidences: List[float],
+    dataset_size: int,
+    threshold_config: Optional[AdaptiveThresholdConfig] = None,
+) -> Dict[str, Any]:
+    """
+    Calculate spurious regime rate using adaptive thresholds.
+
+    Args:
+        regime_confidences: List of regime confidence scores
+        dataset_size: Number of windows in dataset
+        threshold_config: Optional custom threshold configuration
+
+    Returns:
+        Dictionary with spurious rate analysis and threshold validation
+    """
+    if not regime_confidences:
+        return {
+            "spurious_rate": 0.0,
+            "total_windows": 0,
+            "threshold_validation": None,
+            "error": "No regime confidences provided",
+        }
+
+    # Initialize threshold manager
+    threshold_manager = AdaptiveThresholdManager(threshold_config)
+
+    # Calculate spurious rate (regime confidence > 0.67 indicates coordination)
+    coordination_threshold = 0.67
+    coordination_scores = [conf for conf in regime_confidences if conf > coordination_threshold]
+    spurious_rate = len(coordination_scores) / len(regime_confidences)
+
+    # Validate against adaptive threshold
+    threshold_validation = threshold_manager.validate_spurious_rate(dataset_size, spurious_rate)
+
+    return {
+        "spurious_rate": spurious_rate,
+        "spurious_rate_percentage": spurious_rate * 100,
+        "total_windows": len(regime_confidences),
+        "coordination_windows": len(coordination_scores),
+        "coordination_threshold": coordination_threshold,
+        "threshold_validation": threshold_validation,
+        "threshold_profile": threshold_manager.get_threshold_profile(),
     }

@@ -1,0 +1,12 @@
+{
+  "name": "acd-monitor",
+  "version": "1.0.0",
+  "description": "Algorithmic Coordination Diagnostic (ACD) Platform",
+  "scripts": {
+    "ui:install": "cd ui/cursor-dashboard && npm install",
+    "ui:dev": "cd ui/cursor-dashboard && npm run dev",
+    "ui:build": "cd ui/cursor-dashboard && npm run build",
+    "ui:start": "cd ui/cursor-dashboard && npm start"
+  },
+  "private": true
+}
