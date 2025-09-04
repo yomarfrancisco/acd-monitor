@@ -1,0 +1,20 @@
+{
+  "competitive_mean": 100.11086706209028,
+  "competitive_std": 10.013560890077503,
+  "competitive_count": 50,
+  "coordinated_mean": 100.05877746623699,
+  "coordinated_std": 10.349539738252508,
+  "coordinated_count": 50,
+  "leader_follower_mean": 100.04983235248402,
+  "leader_follower_std": 12.928228421435218,
+  "leader_follower_count": 25,
+  "staggered_reaction_mean": 100.04160867586185,
+  "staggered_reaction_std": 10.137658435603985,
+  "staggered_reaction_count": 25,
+  "cds_spreads_mean": 150.23621799687734,
+  "cds_spreads_std": 52.89408631685756,
+  "cds_spreads_count": 20,
+  "sa_bank_competition_mean": 8.517134285774807,
+  "sa_bank_competition_std": 1.4344293705682798,
+  "sa_bank_competition_count": 20
+}

@@ -51,7 +51,11 @@ class TestDataQualityAssessment:
     def quality_config(self):
         """Standard quality configuration for testing"""
         return create_quality_config(
-            staleness_threshold_hours=24.0, completeness_threshold=0.95, outlier_threshold_std=3.0
+            staleness_threshold_hours=24.0,  # Use old threshold for tests
+            completeness_threshold=0.95,
+            outlier_threshold_std=3.0,
+            # Week 4: Disable strict thresholds for testing
+            strict_quality_thresholds=False,
         )
 
     def test_completeness_assessment(self, sample_data, quality_config):
@@ -162,8 +166,8 @@ class TestDataQualityAssessment:
 
         # Check that history is tracked
         assert len(assessment.quality_history) == 2
-        assert assessment.quality_history[0]["metrics"] == metrics1
-        assert assessment.quality_history[1]["metrics"] == metrics2
+        assert assessment.quality_history[0] == metrics1
+        assert assessment.quality_history[1] == metrics2
 
     def test_threshold_configuration(self, sample_data):
         """Test quality threshold configuration"""
@@ -203,11 +207,14 @@ class TestDataQualityConfig:
         """Test default configuration values"""
         config = DataQualityConfig()
 
-        assert config.staleness_threshold_hours == 24.0
-        assert config.completeness_threshold == 0.95
-        assert config.outlier_threshold_std == 3.0
+        # Week 4: Updated default values for hardened thresholds
+        assert config.staleness_threshold_hours == 12.0  # Hardened from 24.0
+        assert config.completeness_threshold == 0.98  # Hardened from 0.95
+        assert config.outlier_threshold_std == 2.5  # Hardened from 3.0
         assert config.validation_strict is True
         assert config.enable_outlier_detection is True
+        assert config.consistency_threshold == 0.95  # New field
+        assert config.timeliness_threshold == 0.9  # New field
 
     def test_custom_config(self):
         """Test custom configuration values"""
