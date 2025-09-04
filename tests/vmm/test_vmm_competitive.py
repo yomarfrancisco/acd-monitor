@@ -182,7 +182,7 @@ class TestVMMCompetitive:
         if mean_competitive < mean_coordinated:
             print("✅ VMM correctly distinguishes competitive from coordinated")
         else:
-            print("⚠️  VMM needs calibration improvement for competitive vs coordinated distinction")
+            print("⚠️  VMM needs calibration improvement")
 
         # Difference should be meaningful (relaxed for current implementation)
         difference = abs(mean_coordinated - mean_competitive)
