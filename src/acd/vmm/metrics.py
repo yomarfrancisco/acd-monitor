@@ -6,13 +6,14 @@ and reliability metrics to ensure proper separation between competitive
 and coordinated behavior patterns.
 """
 
-import numpy as np
 import pickle
-from pathlib import Path
-from typing import Dict, Tuple, Optional, Any
 from dataclasses import dataclass
-from sklearn.isotonic import IsotonicRegression
+from pathlib import Path
+from typing import Any, Dict, Optional, Tuple
+
 import matplotlib.pyplot as plt
+import numpy as np
+from sklearn.isotonic import IsotonicRegression
 
 
 @dataclass
@@ -365,10 +366,6 @@ def _adjust_for_spurious_rate(
         return calibrated_scores
 
     # Need to reduce spurious rate by adjusting competitive scores downward
-    # Find the percentile that gives us the target rate
-    target_percentile = (1 - target_rate) * 100
-    adjustment_threshold = np.percentile(competitive_scores, target_percentile)
-
     # Apply adjustment: reduce scores above the threshold
     adjusted_scores = calibrated_scores.copy()
 

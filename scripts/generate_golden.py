@@ -4,12 +4,13 @@ Generate Golden Datasets for VMM Testing
 Creates synthetic competitive and coordinated datasets for acceptance testing
 """
 
-import pandas as pd
-import numpy as np
 import json
 import os
 from datetime import datetime, timedelta
 from typing import Dict, List
+
+import numpy as np
+import pandas as pd
 
 
 def generate_competitive_data(

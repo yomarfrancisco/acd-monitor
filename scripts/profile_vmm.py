@@ -6,25 +6,24 @@ This script profiles VMM performance to identify bottlenecks and measure
 runtime performance against the <2s p95 target for standard windows.
 """
 
-import time
 import cProfile
-import pstats
 import io
+import sys
+import time
+from pathlib import Path
+from typing import Dict, List
+
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from pathlib import Path
-from typing import List, Dict, Tuple
-import matplotlib.pyplot as plt
-import seaborn as sns
+import pstats
 
-# Add src to path for imports
-import sys
-
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
-
+from generate_golden import generate_competitive_data
 from acd.vmm.engine import VMMEngine, run_vmm
 from acd.vmm.profiles import VMMConfig
-from generate_golden import generate_competitive_data
+
+# Add src to path for imports
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 
 class VMMProfiler:
@@ -139,7 +138,6 @@ class VMMProfiler:
 
         # Timing statistics
         run_times = [r["total_time"] for r in successful_runs]
-        run_times_sorted = sorted(run_times)
 
         performance_summary = {
             "total_runs": len(self.profile_results),
@@ -272,7 +270,9 @@ class VMMProfiler:
             f.write("|----------|--------------|-------------|\n")
             for bottleneck in bottlenecks:
                 f.write(
-                    f"| {bottleneck['function']} | {bottleneck['avg_time']:.4f} | {bottleneck['total_calls']} |\n"
+                    f"| {bottleneck['function']} | "
+                    f"{bottleneck['avg_time']:.4f} | "
+                    f"{bottleneck['total_calls']} |\n"
                 )
             f.write("\n")
 

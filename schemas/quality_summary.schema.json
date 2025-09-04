@@ -1,0 +1,187 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Data Quality Summary Schema",
+  "description": "Schema for data quality assessment summaries",
+  "type": "object",
+  "properties": {
+    "assessment_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of the quality assessment"
+    },
+    "data_source": {
+      "type": "string",
+      "enum": ["client", "independent", "regulatory"],
+      "description": "Source of the assessed data"
+    },
+    "data_period": {
+      "type": "object",
+      "properties": {
+        "start": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Start of data period"
+        },
+        "end": {
+          "type": "string",
+          "format": "date-time",
+          "description": "End of data period"
+        }
+      },
+      "required": ["start", "end"]
+    },
+    "completeness": {
+      "type": "object",
+      "properties": {
+        "total_records": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of records"
+        },
+        "missing_records": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of missing records"
+        },
+        "completeness_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Completeness rate (0-1)"
+        },
+        "missing_by_column": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": "Missing values by column"
+        }
+      },
+      "required": ["total_records", "missing_records", "completeness_rate"]
+    },
+    "accuracy": {
+      "type": "object",
+      "properties": {
+        "outlier_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of outliers detected"
+        },
+        "outlier_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Outlier rate (0-1)"
+        },
+        "data_type_errors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of data type errors"
+        },
+        "validation_errors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of validation errors"
+        }
+      },
+      "required": ["outlier_count", "outlier_rate"]
+    },
+    "timeliness": {
+      "type": "object",
+      "properties": {
+        "data_age_hours": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Age of data in hours"
+        },
+        "last_update": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last update timestamp"
+        },
+        "is_stale": {
+          "type": "boolean",
+          "description": "Whether data is considered stale"
+        },
+        "staleness_threshold_hours": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Staleness threshold in hours"
+        }
+      },
+      "required": ["data_age_hours", "last_update", "is_stale"]
+    },
+    "consistency": {
+      "type": "object",
+      "properties": {
+        "schema_compliance": {
+          "type": "boolean",
+          "description": "Whether data complies with schema"
+        },
+        "cross_field_validation_passed": {
+          "type": "boolean",
+          "description": "Whether cross-field validation passed"
+        },
+        "consistency_errors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of consistency errors"
+        },
+        "reference_data_comparison": {
+          "type": "object",
+          "properties": {
+            "passed": {
+              "type": "boolean",
+              "description": "Whether reference data comparison passed"
+            },
+            "discrepancies": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of discrepancies found"
+            }
+          },
+          "description": "Reference data comparison results"
+        }
+      },
+      "required": ["schema_compliance", "cross_field_validation_passed"]
+    },
+    "overall_quality_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Overall quality score (0-1)"
+    },
+    "quality_trend": {
+      "type": "string",
+      "enum": ["improving", "stable", "declining", "unknown"],
+      "description": "Quality trend over time"
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of quality improvement recommendations"
+    }
+  },
+  "required": [
+    "assessment_timestamp",
+    "data_source",
+    "data_period",
+    "completeness",
+    "accuracy",
+    "timeliness",
+    "consistency",
+    "overall_quality_score"
+  ],
+  "additionalProperties": false
+}

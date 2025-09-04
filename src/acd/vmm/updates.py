@@ -5,9 +5,10 @@ This module implements the core variational update logic for the VMM algorithm,
 including numerical stability improvements and convergence monitoring.
 """
 
-import numpy as np
 from dataclasses import dataclass
-from typing import List, Optional, Tuple
+from typing import List, Tuple
+
+import numpy as np
 
 
 @dataclass
