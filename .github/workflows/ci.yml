@@ -64,18 +64,27 @@ jobs:
           set -o pipefail
           # run tests, tee logs
           pytest -vv --maxfail=5 --disable-warnings --cov=src --cov-report=xml:coverage.xml 2>&1 | tee pytest.log
-          # record pytest exit code even when we continue-on-error
           echo "${PIPESTATUS[0]}" > pytest_exit_code.txt
           ls -l pytest.log pytest_exit_code.txt || true
 
-          # --- NEW: surface first failure straight into CI output ---
+          echo "============================================"
+          echo " 🔎 CI Failure Summary"
+          echo "============================================"
+
+          # --- Show all failing test names (concise list) ---
           if grep -q "FAILED" pytest.log; then
-            echo "❌ First failure found:"
-            grep -m1 "FAILED" pytest.log
+            echo "❌ Failing tests detected:"
+            # collect all test names that failed
+            grep "FAILED" pytest.log | cut -d' ' -f1 | sort -u
             echo "--------------------------------------------"
-            # show 10 lines of context around the first failure
+
+            # --- First failure with traceback context ---
+            echo "First failure details:"
+            grep -m1 "FAILED" pytest.log
             grep -m1 -A10 -B5 "FAILED" pytest.log || true
             echo "--------------------------------------------"
+          else
+            echo "✅ All tests passed."
           fi
 
       - name: Upload debug artifacts
