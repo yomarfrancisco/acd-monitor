@@ -31,11 +31,23 @@ These anchors ensure methodological fidelity, operational discipline, and govern
    - Content: Technical milestones and baseline standards (Weeks 0-3)  
    - Purpose: Records progress and sets minimum bar for robustness.
 
+5. **Release Checklist**  
+   - File: `docs/checklists/release_checklist.md`  
+   - Status: **IMMUTABLE**  
+   - Content: Mandatory acceptance gates and regression tracking for all releases  
+   - Purpose: Ensures every release maintains Brief 55+ dual pillars and governance compliance.
+
+6. **Regression Policy**  
+   - File: `docs/checklists/regression_policy.md`  
+   - Status: **IMMUTABLE**  
+   - Content: Regression classification, reporting, and mitigation requirements  
+   - Purpose: Systematic identification and resolution of regressions while maintaining platform integrity.
+
 ---
 
 ## 📈 Evolving Specification
 
-5. **Product Specification**  
+7. **Product Specification**  
    - File: `docs/product_spec_v1.8.md`  
    - Status: **EVOLVING** (future: v1.9, v2.0, …)  
    - Content: Technical specification of platform implementation  

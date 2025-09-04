@@ -44,6 +44,16 @@ This document records the technical milestones achieved each week. It serves as 
 - ✅ Integration & Evidence Artifacts: schema updated with VMM outputs.
 - ✅ CI/CD hardened with full lint/test/reporting.
 - ✅ 76 tests run: 75 passed, 1 xfail (Platt scaling calibration).
+- ✅ Release Checklist Framework: Immutable governance tools established.
+
+---
+
+## Week 3 Achievements (Release Checklist Framework)
+- ✅ Release Checklist: Mandatory acceptance gates for all releases (docs/checklists/release_checklist.md).
+- ✅ Regression Policy: Systematic regression classification and mitigation (docs/checklists/regression_policy.md).
+- ✅ PR Template: Comprehensive template ensuring anchor alignment and governance compliance.
+- ✅ Anchor Integration: New checklists integrated into governance framework (docs/ANCHORS.md).
+- ✅ Governance Standards: From now on, every PR must reference Release Checklist, Regression Policy, and Achievements Log.
 
 ---
 
@@ -51,6 +61,8 @@ This document records the technical milestones achieved each week. It serves as 
 - These achievements set the minimum bar for robustness.
 - Minor regressions are acceptable as complexity increases.
 - Significant regressions (e.g., spurious >10%, runtime >5s, major instability) must be flagged explicitly.
+- **NEW**: All releases must pass Release Checklist acceptance gates.
+- **NEW**: All regressions must be classified and documented per Regression Policy.
 
 ---
 
