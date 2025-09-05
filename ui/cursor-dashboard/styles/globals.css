@@ -123,3 +123,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom dark theme override for our specific needs */
+html.dark body {
+  background-color: #0f0f10 !important;
+  color: #f3f4f6 !important;
+}

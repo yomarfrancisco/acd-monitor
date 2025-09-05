@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts"
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts"
+import { CalendarIcon } from "lucide-react"
 import {
   MessageSquare,
   BarChart3,
@@ -17,36 +18,120 @@ import {
   Slack,
   Link,
   User,
-  Calendar,
+  TrendingUp,
+  GitBranch,
+  Activity,
+  Database,
+  Cpu,
+  ClipboardList,
+  CreditCard,
+  Bot,
 } from "lucide-react"
 
-const analyticsData = [
-  { date: "Aug 26", value: 100 },
-  { date: "Aug 27", value: 150 },
-  { date: "Aug 28", value: 200 },
-  { date: "Aug 29", value: 180 },
-  { date: "Aug 30", value: 250 },
-  { date: "Aug 31", value: 300 },
-  { date: "Sep 01", value: 280 },
-  { date: "Sep 02", value: 400 },
-  { date: "Sep 03", value: 350 },
+// Different data sets for different time periods
+const analyticsData30d = [
+  { date: "Aug 06", fnb: 100, absa: 95, standard: 105, nedbank: 98 },
+  { date: "Aug 13", fnb: 150, absa: 145, standard: 155, nedbank: 148 },
+  { date: "Aug 20", fnb: 200, absa: 190, standard: 210, nedbank: 195 },
+  { date: "Aug 27", fnb: 250, absa: 240, standard: 260, nedbank: 245 },
+  { date: "Sep 03", fnb: 300, absa: 290, standard: 310, nedbank: 295 },
+  { date: "Sep 10", fnb: 350, absa: 330, standard: 370, nedbank: 340 },
+]
+
+const analyticsData6m = [
+  { date: "Mar '25", fnb: 80, absa: 75, standard: 85, nedbank: 78 },
+  { date: "Apr '25", fnb: 120, absa: 115, standard: 125, nedbank: 118 },
+  { date: "May '25", fnb: 180, absa: 175, standard: 185, nedbank: 178 },
+  { date: "Jun '25", fnb: 220, absa: 210, standard: 230, nedbank: 215 },
+  { date: "Jul '25", fnb: 280, absa: 270, standard: 290, nedbank: 275 },
+  { date: "Aug '25", fnb: 320, absa: 310, standard: 330, nedbank: 315 },
+  { date: "Sep '25", fnb: 350, absa: 330, standard: 370, nedbank: 340 },
+]
+
+const analyticsData1y = [
+  { date: "Sep '24", fnb: 60, absa: 55, standard: 65, nedbank: 58 },
+  { date: "Oct '24", fnb: 80, absa: 75, standard: 85, nedbank: 78 },
+  { date: "Nov '24", fnb: 100, absa: 95, standard: 105, nedbank: 98 },
+  { date: "Dec '24", fnb: 120, absa: 115, standard: 125, nedbank: 118 },
+  { date: "Jan '25", fnb: 140, absa: 135, standard: 145, nedbank: 138 },
+  { date: "Feb '25", fnb: 180, absa: 175, standard: 185, nedbank: 178 },
+  { date: "Mar '25", fnb: 220, absa: 210, standard: 230, nedbank: 215 },
+  { date: "Apr '25", fnb: 260, absa: 250, standard: 270, nedbank: 255 },
+  { date: "May '25", fnb: 300, absa: 290, standard: 310, nedbank: 295 },
+  { date: "Jun '25", fnb: 320, absa: 310, standard: 330, nedbank: 315 },
+  { date: "Jul '25", fnb: 340, absa: 330, standard: 350, nedbank: 335 },
+  { date: "Aug '25", fnb: 360, absa: 350, standard: 370, nedbank: 355 },
+  { date: "Sep '25", fnb: 350, absa: 330, standard: 370, nedbank: 340 },
+]
+
+const analyticsDataYTD = [
+  { date: "Jan '25", fnb: 100, absa: 95, standard: 105, nedbank: 98 },
+  { date: "Feb '25", fnb: 150, absa: 145, standard: 155, nedbank: 148 },
+  { date: "Mar '25", fnb: 200, absa: 190, standard: 210, nedbank: 195 },
+  { date: "Apr '25", fnb: 180, absa: 175, standard: 185, nedbank: 178 },
+  { date: "May '25", fnb: 250, absa: 240, standard: 260, nedbank: 245 },
+  { date: "Jun '25", fnb: 300, absa: 290, standard: 310, nedbank: 295 },
+  { date: "Jul '25", fnb: 280, absa: 270, standard: 290, nedbank: 275 },
+  { date: "Aug '25", fnb: 400, absa: 380, standard: 420, nedbank: 390 },
+  { date: "Sep '25", fnb: 350, absa: 330, standard: 370, nedbank: 340 },
 ]
 
 export default function CursorDashboard() {
   const [activeTab, setActiveTab] = useState<"agents" | "dashboard">("agents")
+  const [selectedTimeframe, setSelectedTimeframe] = useState<"30d" | "6m" | "1y" | "YTD">("YTD")
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false)
+  const [selectedDate, setSelectedDate] = useState<{from: Date | undefined, to?: Date | undefined} | undefined>({
+    from: new Date(),
+    to: new Date()
+  })
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  // Close calendar when switching to agents tab
+  const handleTabChange = (tab: "agents" | "dashboard") => {
+    setActiveTab(tab)
+    if (tab === "agents") {
+      setIsCalendarOpen(false)
+    }
+  }
+
+  // Get the appropriate data based on selected timeframe
+  const getAnalyticsData = () => {
+    switch (selectedTimeframe) {
+      case "30d":
+        return analyticsData30d
+      case "6m":
+        return analyticsData6m
+      case "1y":
+        return analyticsData1y
+      case "YTD":
+        return analyticsDataYTD
+      default:
+        return analyticsDataYTD
+    }
+  }
+
+  const currentData = getAnalyticsData()
 
   return (
     <div className="min-h-screen bg-[#0f0f10] text-[#f9fafb] font-sans p-4">
       {/* Header */}
-      <header className="border-b border-[#1a1a1a] px-5 py-2.5 relative">
+      <header className="border-b border-[#1a1a1a] px-5 py-1.5 relative">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img src="/rbb-economics-logo.png" alt="RBB Economics" className="h-32 w-auto" />
+            <img 
+              src="/rbb-economics-logo.png" 
+              alt="RBB Economics" 
+              className="h-36 w-auto opacity-90 hover:opacity-100 transition-opacity"
+            />
           </div>
 
           <nav className="flex gap-5 absolute left-1/2 transform -translate-x-1/2">
             <button
-              onClick={() => setActiveTab("agents")}
+              onClick={() => handleTabChange("agents")}
               className={`px-2.5 py-1 text-xs font-medium ${
                 activeTab === "agents"
                   ? "text-[#f9fafb] border-b-2 border-[#f9fafb]"
@@ -56,7 +141,7 @@ export default function CursorDashboard() {
               Agents
             </button>
             <button
-              onClick={() => setActiveTab("dashboard")}
+              onClick={() => handleTabChange("dashboard")}
               className={`px-2.5 py-1 text-xs font-medium ${
                 activeTab === "dashboard"
                   ? "text-[#f9fafb] border-b-2 border-[#f9fafb]"
@@ -72,6 +157,9 @@ export default function CursorDashboard() {
           </div>
         </div>
       </header>
+
+      {/* Extra spacing below header */}
+      <div className="h-6"></div>
 
       <div className="flex justify-center">
         <div className="flex max-w-5xl w-full">
@@ -101,12 +189,12 @@ export default function CursorDashboard() {
                 {/* Navigation */}
                 <nav className="space-y-0.5">
                   <div className="flex items-center gap-2 text-xs text-[#a1a1aa] px-1.5 py-0.5 hover:bg-[#1a1a1a] rounded-md">
-                    <Settings className="w-3.5 h-3.5" />
+                    <Database className="w-3.5 h-3.5" />
                     Data Sources
                   </div>
                   <div className="flex items-center gap-2 text-xs text-[#a1a1aa] px-1.5 py-0.5 hover:bg-[#1a1a1a] rounded-md">
-                    <Users className="w-3.5 h-3.5" />
-                    Adaptive Engines
+                    <Bot className="w-3.5 h-3.5" />
+                    AI Economists
                   </div>
                   <div className="flex items-center gap-2 text-xs text-[#a1a1aa] px-1.5 py-0.5 hover:bg-[#1a1a1a] rounded-md">
                     <Zap className="w-3.5 h-3.5" />
@@ -118,11 +206,11 @@ export default function CursorDashboard() {
 
                 <nav className="space-y-0.5">
                   <div className="flex items-center gap-2 text-xs text-[#a1a1aa] px-1.5 py-0.5 hover:bg-[#1a1a1a] rounded-md">
-                    <Link className="w-3.5 h-3.5" />
+                    <ClipboardList className="w-3.5 h-3.5" />
                     Evidence Logs
                   </div>
                   <div className="flex items-center gap-2 text-xs text-[#a1a1aa] px-1.5 py-0.5 hover:bg-[#1a1a1a] rounded-md">
-                    <BarChart3 className="w-3.5 h-3.5" />
+                    <CreditCard className="w-3.5 h-3.5" />
                     Billing & Invoices
                   </div>
                 </nav>
@@ -177,7 +265,7 @@ export default function CursorDashboard() {
                           Generate compliance report
                         </button>
                         <button className="text-[#a1a1aa] hover:text-[#f9fafb] hover:underline text-[10px] px-2 py-1 flex items-center gap-1.5">
-                          <Calendar className="w-2.5 h-2.5" />
+                          <CalendarIcon className="w-2.5 h-2.5" />
                           Book a meeting with RBB
                         </button>
                       </div>
@@ -217,31 +305,81 @@ export default function CursorDashboard() {
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2 text-xs text-[#a1a1aa]">
-                        <span>Aug 26 - Sep 04</span>
+                        {isClient && activeTab === "dashboard" && (
+                          <button 
+                            onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+                            className="rounded-full px-3 py-1 text-xs border border-[#3a3a3a] bg-transparent hover:bg-[#2a2a2a]/50 text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1"
+                          >
+                            <CalendarIcon className="h-3 w-3" />
+                            {selectedTimeframe === "30d" ? "Aug 06 - Sep 10" : 
+                             selectedTimeframe === "6m" ? "Mar '25 - Sep '25" : 
+                             selectedTimeframe === "1y" ? "Sep '24 - Sep '25" :
+                             "Jan 01 - Sep 05"}
+                          </button>
+                        )}
                       </div>
-                      <div className="flex gap-1">
-                        <button className="text-[#a1a1aa] hover:text-[#f9fafb] text-xs px-2 py-1">1d</button>
-                        <button className="text-[#a1a1aa] hover:text-[#f9fafb] text-xs px-2 py-1">7d</button>
-                        <button className="text-[#a1a1aa] hover:text-[#f9fafb] text-xs px-2 py-1">30d</button>
-                      </div>
+                      {isClient && activeTab === "dashboard" && (
+                        <div className="flex gap-1">
+                          <button 
+                            onClick={() => setSelectedTimeframe("30d")}
+                            className={`text-xs px-2 py-1 ${
+                              selectedTimeframe === "30d" 
+                                ? "text-[#f9fafb] bg-[#3a3a3a] rounded" 
+                                : "text-[#a1a1aa] hover:text-[#f9fafb]"
+                            }`}
+                          >
+                            30d
+                          </button>
+                          <button 
+                            onClick={() => setSelectedTimeframe("6m")}
+                            className={`text-xs px-2 py-1 ${
+                              selectedTimeframe === "6m" 
+                                ? "text-[#f9fafb] bg-[#3a3a3a] rounded" 
+                                : "text-[#a1a1aa] hover:text-[#f9fafb]"
+                            }`}
+                          >
+                            6m
+                          </button>
+                          <button 
+                            onClick={() => setSelectedTimeframe("1y")}
+                            className={`text-xs px-2 py-1 ${
+                              selectedTimeframe === "1y" 
+                                ? "text-[#f9fafb] bg-[#3a3a3a] rounded" 
+                                : "text-[#a1a1aa] hover:text-[#f9fafb]"
+                            }`}
+                          >
+                            1y
+                          </button>
+                          <button 
+                            onClick={() => setSelectedTimeframe("YTD")}
+                            className={`text-xs px-2 py-1 ${
+                              selectedTimeframe === "YTD" 
+                                ? "text-[#f9fafb] bg-[#3a3a3a] rounded" 
+                                : "text-[#a1a1aa] hover:text-[#f9fafb]"
+                            }`}
+                          >
+                            YTD
+                          </button>
+                        </div>
+                      )}
                     </div>
 
                     <div className="mb-4">
                       <h3 className="text-xs font-medium text-[#f9fafb] mb-3">Your Coordination Risk</h3>
-                      <div className="grid grid-cols-2 gap-6 mb-4">
-                        <div>
-                          <div className="text-xl font-bold text-[#f9fafb]">14 out of 100 • Low Risk</div>
-                          <div className="text-xs text-[#a1a1aa]">CDS Spread</div>
+                      <div className="grid grid-cols-2 gap-6 mb-6">
+                        <div className="rounded-lg bg-[#1e1e1e] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
+                          <div className="text-xl font-bold text-[#f9fafb]">14 out of 100</div>
+                          <div className="text-xs text-[#a1a1aa]">Low Risk</div>
                         </div>
                         <div>
-                          <div className="text-xl font-bold text-[#f9fafb]">0</div>
-                          <div className="text-xs text-[#a1a1aa]">Tabs Received</div>
+                          <div className="text-xl font-bold text-[#f9fafb]">86%</div>
+                          <div className="text-xs text-[#a1a1aa]">Total Market Share</div>
                         </div>
                       </div>
 
-                      <div className="h-40">
+                      <div className="h-56">
                         <ResponsiveContainer width="100%" height="100%">
-                          <LineChart data={analyticsData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                          <LineChart data={currentData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                             <XAxis
                               dataKey="date"
                               axisLine={false}
@@ -259,88 +397,180 @@ export default function CursorDashboard() {
                                 style: { textAnchor: "middle", fill: "#a1a1aa", fontSize: 10 },
                               }}
                             />
+                            <Tooltip
+                              content={({ active, payload, label }) => {
+                                if (active && payload && payload.length) {
+                                  return (
+                                    <div className="bg-[#2a2a2a] border border-[#3a3a3a] rounded-lg p-2 shadow-lg">
+                                      <p className="text-[#a1a1aa] text-xs mb-1">{label}</p>
+                                      {payload.map((entry, index) => (
+                                        <div key={index} className="flex items-center gap-2 text-xs">
+                                          <div 
+                                            className="w-2 h-2 rounded-full" 
+                                            style={{ backgroundColor: entry.color }}
+                                          />
+                                          <span className="text-[#f9fafb]">{entry.name}: {entry.value}</span>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  );
+                                }
+                                return null;
+                              }}
+                            />
                             <Line
                               type="monotone"
-                              dataKey="value"
+                              dataKey="fnb"
                               stroke="#60a5fa"
                               strokeWidth={2}
                               dot={{ fill: "#60a5fa", strokeWidth: 2, r: 3 }}
                               activeDot={{ r: 4, fill: "#60a5fa" }}
+                              name="FNB"
+                            />
+                            <Line
+                              type="monotone"
+                              dataKey="absa"
+                              stroke="#a1a1aa"
+                              strokeWidth={1.5}
+                              dot={{ fill: "#a1a1aa", strokeWidth: 1.5, r: 2 }}
+                              activeDot={{ r: 3, fill: "#a1a1aa" }}
+                              name="ABSA"
+                            />
+                            <Line
+                              type="monotone"
+                              dataKey="standard"
+                              stroke="#71717a"
+                              strokeWidth={1.5}
+                              dot={{ fill: "#71717a", strokeWidth: 1.5, r: 2 }}
+                              activeDot={{ r: 3, fill: "#71717a" }}
+                              name="Standard Bank"
+                            />
+                            <Line
+                              type="monotone"
+                              dataKey="nedbank"
+                              stroke="#52525b"
+                              strokeWidth={1.5}
+                              dot={{ fill: "#52525b", strokeWidth: 1.5, r: 2 }}
+                              activeDot={{ r: 3, fill: "#52525b" }}
+                              name="Nedbank"
                             />
                           </LineChart>
                         </ResponsiveContainer>
-                        {console.log("[v0] Chart data:", analyticsData)}
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                {/* Third tile: Market Data Feed */}
+                {/* Metrics tile: Price Stability, Price Synchronization, Environmental Sensitivity */}
                 <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                  <CardContent className="p-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2.5">
-                        <Github className="w-4 h-4 text-[#a1a1aa]" />
-                        <div>
-                          <div className="text-[#f9fafb] font-medium text-xs">Market Data Feed</div>
-                          <div className="text-[10px] text-[#a1a1aa]">
-                            Connect GitHub for Background Agents, Bugbot and enhanced codebase context
+                  <CardContent className="p-0">
+                    {/* Price Stability */}
+                    <div className="p-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2.5">
+                          <TrendingUp className="w-4 h-4 text-[#a1a1aa]" />
+                          <div>
+                            <div className="text-[#f9fafb] font-medium text-xs">Price Stability</div>
+                            <div className="text-[10px] text-[#a1a1aa]">How steady your prices are compared to competitors</div>
                           </div>
                         </div>
-                      </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
-                      >
-                        Connect
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Fourth tile: Regulatory Notices */}
-                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                  <CardContent className="p-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2.5">
-                        <Slack className="w-4 h-4 text-[#a1a1aa]" />
-                        <div>
-                          <div className="text-[#f9fafb] font-medium text-xs">Regulatory Notices</div>
-                          <div className="text-[10px] text-[#a1a1aa]">Work with Background Agents from Slack</div>
+                        <div className="text-right">
+                          <div className="text-[#f9fafb] font-bold text-sm">25</div>
+                          <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
                         </div>
                       </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
-                      >
-                        Connect
-                      </Button>
                     </div>
-                  </CardContent>
-                </Card>
-
-                {/* Fifth tile: Institutional Disclosures */}
-                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                  <CardContent className="p-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2.5">
-                        <Link className="w-4 h-4 text-[#a1a1aa]" />
-                        <div>
-                          <div className="text-[#f9fafb] font-medium text-xs">Institutional Disclosures</div>
-                          <div className="text-[10px] text-[#a1a1aa]">
-                            Connect a Linear workspace to delegate issues to Background Agents
+                    
+                    {/* Separator line */}
+                    <div className="border-t border-[#2a2a2a]"></div>
+                    
+                    {/* Price Synchronization */}
+                    <div className="p-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2.5">
+                          <GitBranch className="w-4 h-4 text-[#a1a1aa]" />
+                          <div>
+                            <div className="text-[#f9fafb] font-medium text-xs">Price Synchronization</div>
+                            <div className="text-[10px] text-[#a1a1aa]">How much your prices move together with other banks</div>
                           </div>
                         </div>
+                        <div className="text-right">
+                          <div className="text-[#f9fafb] font-bold text-sm">18</div>
+                          <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
+                        </div>
                       </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
-                      >
-                        Connect
-                      </Button>
+                    </div>
+                    
+                    {/* Separator line */}
+                    <div className="border-t border-[#2a2a2a]"></div>
+                    
+                    {/* Environmental Sensitivity */}
+                    <div className="p-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2.5">
+                          <Activity className="w-4 h-4 text-[#a1a1aa]" />
+                          <div>
+                            <div className="text-[#f9fafb] font-medium text-xs">Environmental Sensitivity</div>
+                            <div className="text-[10px] text-[#a1a1aa]">How well you respond to market changes and economic events</div>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-[#f9fafb] font-bold text-sm">82</div>
+                          <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Combined tile: Market Data Feed, Regulatory Notices */}
+                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                  <CardContent className="p-0">
+                    {/* Market Data Feed */}
+                    <div className="p-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2.5">
+                          <BarChart3 className="w-4 h-4 text-[#a1a1aa]" />
+                          <div>
+                            <div className="text-[#f9fafb] font-medium text-xs">Market Data Feed</div>
+                            <div className="text-[10px] text-[#a1a1aa]">
+                              Real-time market data and price information
+                            </div>
+                          </div>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
+                        >
+                          Connect
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    {/* Separator line */}
+                    <div className="border-t border-[#2a2a2a]"></div>
+                    
+                    {/* Regulatory Notices */}
+                    <div className="p-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2.5">
+                          <FileText className="w-4 h-4 text-[#a1a1aa]" />
+                          <div>
+                            <div className="text-[#f9fafb] font-medium text-xs">Regulatory Notices</div>
+                            <div className="text-[10px] text-[#a1a1aa]">
+                              Important updates and compliance notifications
+                            </div>
+                          </div>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
+                        >
+                          Connect
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
