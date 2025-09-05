@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts"
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts"
 import { CalendarIcon } from "lucide-react"
 import {
   MessageSquare,
@@ -170,7 +170,7 @@ export default function CursorDashboard() {
                 {/* User Info */}
                 <div>
                   <h3 className="text-xs font-semibold text-[#f9fafb] mb-1">Ygor Francisco</h3>
-                  <p className="text-[10px] text-[#a1a1aa] mb-2.5">ygor.francisco@gmail.com</p>
+                  <p className="text-[10px] text-[#a1a1aa] mb-2.5">Ent Plan · ygor.francisco@gmail.com</p>
 
                   <div className="bg-[#1a1a1a] rounded-md p-1.5 mb-2.5">
                     <div className="flex items-center gap-2 text-xs font-medium text-[#f9fafb]">
@@ -180,7 +180,10 @@ export default function CursorDashboard() {
                   </div>
 
                   <div className="space-y-1 text-xs">
-                    <div className="text-[#a1a1aa] px-1.5 py-0.5">Configuration</div>
+                    <div className="flex items-center gap-2 text-[#a1a1aa] px-1.5 py-0.5 hover:bg-[#1a1a1a] rounded-md">
+                      <Settings className="w-3.5 h-3.5" />
+                      Configuration
+                    </div>
                   </div>
                 </div>
 
@@ -278,24 +281,26 @@ export default function CursorDashboard() {
               <div className="space-y-3 max-w-2xl">
                 <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                   <CardContent className="p-4">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <h2 className="text-sm font-medium text-[#f9fafb] mb-1">Enterprise Plan</h2>
-                        <p className="text-xs text-[#a1a1aa] mb-3 max-w-[280px] leading-relaxed">
-                          Real-time Diagnostic with regulatory compliance and VMM engine engaged.
-                        </p>
-                        <button className="rounded-full px-3 py-1 text-xs border border-[#2a2a2a] bg-transparent hover:bg-[#1a1a1a] text-[#a1a1aa] hover:text-[#f9fafb]">
+                    <div className="grid grid-cols-2 gap-6">
+                      <div className="rounded-lg bg-[#1a1a1a] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
+                        <div>
+                          <h2 className="text-sm font-medium text-[#f9fafb] mb-1">Enterprise Plan</h2>
+                          <p className="text-xs text-[#a1a1aa] mb-3 leading-relaxed">
+                            Live monitoring with compliance tracking
+                          </p>
+                        </div>
+                        <button className="rounded-full px-3 py-1 text-xs border border-[#2a2a2a] bg-transparent hover:bg-[#1a1a1a] text-[#a1a1aa] hover:text-[#f9fafb] self-start">
                           Manage Subscription
                         </button>
                       </div>
-                      <div className="rounded-lg bg-[#1e1e1e] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex-shrink-0">
-                        <div className="text-right">
+                      <div className="rounded-lg bg-[#1e1e1e] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
+                        <div>
                           <div className="text-xs font-bold text-[#f9fafb] mb-1">$0 / $6k</div>
                           <p className="text-xs text-[#a1a1aa] mb-2">Usage-Based Spending this Month</p>
-                          <button className="rounded-full px-3 py-1 text-xs border border-[#2a2a2a] bg-transparent hover:bg-[#1a1a1a] text-[#a1a1aa] hover:text-[#f9fafb]">
-                            Edit Limit
-                          </button>
                         </div>
+                        <button className="rounded-full px-3 py-1 text-xs border border-[#2a2a2a] bg-transparent hover:bg-[#1a1a1a] text-[#a1a1aa] hover:text-[#f9fafb] self-start">
+                          Edit Limit
+                        </button>
                       </div>
                     </div>
                   </CardContent>
@@ -366,50 +371,62 @@ export default function CursorDashboard() {
 
                     <div className="mb-4">
                       <h3 className="text-xs font-medium text-[#f9fafb] mb-3">Your Coordination Risk</h3>
-                      <div className="grid grid-cols-2 gap-6 mb-6">
-                        <div className="rounded-lg bg-[#1e1e1e] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
+                      <div className="grid grid-cols-2 gap-6 mb-10">
+                        <div className="rounded-lg bg-[#212121] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
                           <div className="text-xl font-bold text-[#f9fafb]">14 out of 100</div>
-                          <div className="text-xs text-[#a1a1aa]">Low Risk</div>
+                          <div className="text-xs text-[#a7f3d0]">Low Risk</div>
                         </div>
-                        <div>
-                          <div className="text-xl font-bold text-[#f9fafb]">86%</div>
+                        <div className="rounded-lg bg-[#212121]/40 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
+                          <div className="text-xl font-bold text-[#f9fafb]">{21 + 21 + 26 + 16}%</div>
                           <div className="text-xs text-[#a1a1aa]">Total Market Share</div>
                         </div>
                       </div>
 
-                      <div className="h-56">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <LineChart data={currentData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                            <XAxis
-                              dataKey="date"
-                              axisLine={false}
-                              tickLine={false}
-                              tick={{ fill: "#a1a1aa", fontSize: 10 }}
-                            />
-                            <YAxis
-                              axisLine={false}
-                              tickLine={false}
-                              tick={{ fill: "#a1a1aa", fontSize: 10 }}
-                              label={{
-                                value: "CDS Spread %",
-                                angle: -90,
-                                position: "insideLeft",
-                                style: { textAnchor: "middle", fill: "#a1a1aa", fontSize: 10 },
-                              }}
-                            />
+                                                  <div className="h-56">
+                              <ResponsiveContainer width="100%" height="100%">
+                                <LineChart data={currentData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                                  <XAxis
+                                    dataKey="date"
+                                    axisLine={false}
+                                    tickLine={false}
+                                    tick={{ fill: "#a1a1aa", fontSize: 10 }}
+                                  />
+                                  <YAxis
+                                    axisLine={false}
+                                    tickLine={false}
+                                    tick={{ fill: "#a1a1aa", fontSize: 10 }}
+                                    label={{
+                                      value: "SA Bank CDS Spread %",
+                                      angle: -90,
+                                      position: "insideLeft",
+                                      style: { textAnchor: "middle", fill: "#a1a1aa", fontSize: 10 },
+                                    }}
+                                  />
+                                  <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" opacity={0.45} />
                             <Tooltip
+                              cursor={false}
                               content={({ active, payload, label }) => {
                                 if (active && payload && payload.length) {
+                                  // Market share data for each bank
+                                  const marketShare = {
+                                    "FNB": 21,
+                                    "ABSA": 21,
+                                    "Standard Bank": 26,
+                                    "Nedbank": 16
+                                  };
+                                  
                                   return (
-                                    <div className="bg-[#2a2a2a] border border-[#3a3a3a] rounded-lg p-2 shadow-lg">
-                                      <p className="text-[#a1a1aa] text-xs mb-1">{label}</p>
+                                    <div className="bg-black border border-[#1a1a1a] rounded-lg p-3 shadow-2xl shadow-black/50">
+                                      <p className="text-[#a1a1aa] text-[10px] mb-1.5">{label}</p>
                                       {payload.map((entry, index) => (
-                                        <div key={index} className="flex items-center gap-2 text-xs">
-                                          <div 
-                                            className="w-2 h-2 rounded-full" 
+                                        <div key={index} className="flex items-center gap-2 text-[9px]">
+                                          <div
+                                            className="w-2 h-2 rounded-full"
                                             style={{ backgroundColor: entry.color }}
                                           />
-                                          <span className="text-[#f9fafb]">{entry.name}: {entry.value}</span>
+                                          <span className="text-[#f9fafb] font-semibold">
+                                            {entry.name}: <span className="font-bold">{entry.value} bps</span> | <span className="text-[#a1a1aa]">{marketShare[entry.name as keyof typeof marketShare]}% share</span>
+                                          </span>
                                         </div>
                                       ))}
                                     </div>
@@ -472,10 +489,14 @@ export default function CursorDashboard() {
                           <div>
                             <div className="text-[#f9fafb] font-medium text-xs">Price Stability</div>
                             <div className="text-[10px] text-[#a1a1aa]">How steady your prices are compared to competitors</div>
+                            <div className="text-[9px] text-[#a1a1aa] mt-0.5">2m ago • 45s</div>
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="text-[#f9fafb] font-bold text-sm">25</div>
+                          <div className="flex items-center gap-1.5">
+                            <div className="text-[#f9fafb] font-bold text-sm">25</div>
+                            <div className="text-[#fca5a5] text-xs">✗</div>
+                          </div>
                           <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
                         </div>
                       </div>
@@ -492,10 +513,14 @@ export default function CursorDashboard() {
                           <div>
                             <div className="text-[#f9fafb] font-medium text-xs">Price Synchronization</div>
                             <div className="text-[10px] text-[#a1a1aa]">How much your prices move together with other banks</div>
+                            <div className="text-[9px] text-[#a1a1aa] mt-0.5">1m ago • 32s</div>
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="text-[#f9fafb] font-bold text-sm">18</div>
+                          <div className="flex items-center gap-1.5">
+                            <div className="text-[#f9fafb] font-bold text-sm">18</div>
+                            <div className="text-[#a7f3d0] text-xs">✓</div>
+                          </div>
                           <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
                         </div>
                       </div>
@@ -512,10 +537,14 @@ export default function CursorDashboard() {
                           <div>
                             <div className="text-[#f9fafb] font-medium text-xs">Environmental Sensitivity</div>
                             <div className="text-[10px] text-[#a1a1aa]">How well you respond to market changes and economic events</div>
+                            <div className="text-[9px] text-[#a1a1aa] mt-0.5">30s ago • 18s</div>
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="text-[#f9fafb] font-bold text-sm">82</div>
+                          <div className="flex items-center gap-1.5">
+                            <div className="text-[#f9fafb] font-bold text-sm">82</div>
+                            <div className="text-[#a7f3d0] text-xs">✓</div>
+                          </div>
                           <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
                         </div>
                       </div>
