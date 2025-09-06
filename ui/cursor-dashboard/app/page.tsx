@@ -26,6 +26,17 @@ import {
   ClipboardList,
   CreditCard,
   Bot,
+  Clock,
+  ShieldCheck,
+  Moon,
+  Scale,
+  CalendarCheck2,
+  Download,
+  ChevronDown,
+  Cloud,
+  Send,
+  CloudUpload,
+  Package,
 } from "lucide-react"
 
 // Different data sets for different time periods
@@ -85,6 +96,20 @@ export default function CursorDashboard() {
     to: new Date()
   })
   const [isClient, setIsClient] = useState(false)
+  const [inputValue, setInputValue] = useState("")
+  const [activeSidebarItem, setActiveSidebarItem] = useState<"overview" | "configuration" | "data-sources" | "ai-economists" | "health-checks" | "events-log" | "billing" | "compliance" | "contact">("overview")
+
+  // Configuration toggle states
+  const [autoDetectMarketChanges, setAutoDetectMarketChanges] = useState(true)
+  const [enableLiveMonitoring, setEnableLiveMonitoring] = useState(true)
+  const [checkDataQuality, setCheckDataQuality] = useState(true)
+
+  // Configuration input field states
+  const [changeThreshold, setChangeThreshold] = useState("5%")
+  const [confidenceLevel, setConfidenceLevel] = useState("95%")
+  const [updateFrequency, setUpdateFrequency] = useState("5m")
+  const [sensitivityLevel, setSensitivityLevel] = useState("Medium")
+  const [maxDataAge, setMaxDataAge] = useState("10m")
 
   useEffect(() => {
     setIsClient(true)
@@ -114,6 +139,59 @@ export default function CursorDashboard() {
     }
   }
 
+  // Render shell tiles for navigation pages
+  const renderShellTiles = (pageTitle: string) => {
+    return (
+      <div className="space-y-3 max-w-2xl">
+        {/* First shell tile with left and right containers */}
+        <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+          <CardContent className="p-4">
+            <div className="grid grid-cols-2 gap-6">
+              <div className="rounded-lg bg-[#1a1a1a] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
+                <div>
+                  <h2 className="text-sm font-medium text-[#f9fafb] mb-1">Left Container</h2>
+                  <p className="text-xs text-[#a1a1aa] mb-3 leading-relaxed">
+                    Shell content for {pageTitle} - Left side
+                  </p>
+                </div>
+                <button className="rounded-full px-3 py-1 text-xs border border-[#2a2a2a] bg-transparent hover:bg-[#1a1a1a] text-[#a1a1aa] hover:text-[#f9fafb] self-start">
+                  Action Button
+                </button>
+              </div>
+              <div className="rounded-lg bg-[#1e1e1e] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
+                <div>
+                  <h2 className="text-sm font-medium text-[#f9fafb] mb-1">Right Container</h2>
+                  <p className="text-xs text-[#a1a1aa] mb-3 leading-relaxed">
+                    Shell content for {pageTitle} - Right side
+                  </p>
+                </div>
+                <button className="rounded-full px-3 py-1 text-xs border border-[#2a2a2a] bg-transparent hover:bg-[#1a1a1a] text-[#a1a1aa] hover:text-[#f9fafb] self-start">
+                  Action Button
+                </button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Second shell tile */}
+        <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+          <CardContent className="p-4 text-center">
+            <h3 className="text-[#f9fafb] font-medium mb-1.5 text-xs">Second Shell Tile</h3>
+            <p className="text-[10px] text-[#a1a1aa] mb-2.5">
+              Additional shell content for {pageTitle} page.
+            </p>
+            <Button
+              variant="outline"
+              className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
+            >
+              Shell Action
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
   const currentData = getAnalyticsData()
 
   return (
@@ -125,7 +203,7 @@ export default function CursorDashboard() {
             <img 
               src="/rbb-economics-logo.png" 
               alt="RBB Economics" 
-              className="h-36 w-auto opacity-90 hover:opacity-100 transition-opacity"
+              className="h-29 w-auto opacity-90 hover:opacity-100 transition-opacity"
             />
           </div>
 
@@ -134,7 +212,7 @@ export default function CursorDashboard() {
               onClick={() => handleTabChange("agents")}
               className={`px-2.5 py-1 text-xs font-medium ${
                 activeTab === "agents"
-                  ? "text-[#f9fafb] border-b-2 border-[#f9fafb]"
+                  ? "text-[#f9fafb]"
                   : "text-[#a1a1aa] hover:text-[#f9fafb]"
               }`}
             >
@@ -144,7 +222,7 @@ export default function CursorDashboard() {
               onClick={() => handleTabChange("dashboard")}
               className={`px-2.5 py-1 text-xs font-medium ${
                 activeTab === "dashboard"
-                  ? "text-[#f9fafb] border-b-2 border-[#f9fafb]"
+                  ? "text-[#f9fafb]"
                   : "text-[#a1a1aa] hover:text-[#f9fafb]"
               }`}
             >
@@ -172,7 +250,7 @@ export default function CursorDashboard() {
                   <h3 className="text-xs font-semibold text-[#f9fafb] mb-1">Ygor Francisco</h3>
                   <p className="text-[10px] text-[#a1a1aa] mb-2.5">Ent Plan · ygor.francisco@gmail.com</p>
 
-                  <div className="bg-[#1a1a1a] rounded-md p-1.5 mb-2.5">
+                  <div className={`rounded-md p-1.5 mb-2.5 cursor-pointer ${activeSidebarItem === "overview" ? "bg-[#1a1a1a]" : "hover:bg-[#1a1a1a]"}`} onClick={() => setActiveSidebarItem("overview")}>
                     <div className="flex items-center gap-2 text-xs font-medium text-[#f9fafb]">
                       <User className="w-3.5 h-3.5" />
                       Overview
@@ -180,7 +258,7 @@ export default function CursorDashboard() {
                   </div>
 
                   <div className="space-y-1 text-xs">
-                    <div className="flex items-center gap-2 text-[#a1a1aa] px-1.5 py-0.5 hover:bg-[#1a1a1a] rounded-md">
+                    <div className={`flex items-center gap-2 px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "configuration" ? "bg-[#1a1a1a] text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-[#1a1a1a]"}`} onClick={() => setActiveSidebarItem("configuration")}>
                       <Settings className="w-3.5 h-3.5" />
                       Configuration
                     </div>
@@ -191,15 +269,15 @@ export default function CursorDashboard() {
 
                 {/* Navigation */}
                 <nav className="space-y-0.5">
-                  <div className="flex items-center gap-2 text-xs text-[#a1a1aa] px-1.5 py-0.5 hover:bg-[#1a1a1a] rounded-md">
+                  <div className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "data-sources" ? "bg-[#1a1a1a] text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-[#1a1a1a]"}`} onClick={() => setActiveSidebarItem("data-sources")}>
                     <Database className="w-3.5 h-3.5" />
                     Data Sources
                   </div>
-                  <div className="flex items-center gap-2 text-xs text-[#a1a1aa] px-1.5 py-0.5 hover:bg-[#1a1a1a] rounded-md">
+                  <div className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "ai-economists" ? "bg-[#1a1a1a] text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-[#1a1a1a]"}`} onClick={() => setActiveSidebarItem("ai-economists")}>
                     <Bot className="w-3.5 h-3.5" />
                     AI Economists
                   </div>
-                  <div className="flex items-center gap-2 text-xs text-[#a1a1aa] px-1.5 py-0.5 hover:bg-[#1a1a1a] rounded-md">
+                  <div className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "health-checks" ? "bg-[#1a1a1a] text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-[#1a1a1a]"}`} onClick={() => setActiveSidebarItem("health-checks")}>
                     <Zap className="w-3.5 h-3.5" />
                     Health Checks
                   </div>
@@ -208,11 +286,11 @@ export default function CursorDashboard() {
                 <Separator className="bg-[#1a1a1a]" />
 
                 <nav className="space-y-0.5">
-                  <div className="flex items-center gap-2 text-xs text-[#a1a1aa] px-1.5 py-0.5 hover:bg-[#1a1a1a] rounded-md">
+                  <div className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "events-log" ? "bg-[#1a1a1a] text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-[#1a1a1a]"}`} onClick={() => setActiveSidebarItem("events-log")}>
                     <ClipboardList className="w-3.5 h-3.5" />
-                    Evidence Logs
+                    Events Log
                   </div>
-                  <div className="flex items-center gap-2 text-xs text-[#a1a1aa] px-1.5 py-0.5 hover:bg-[#1a1a1a] rounded-md">
+                  <div className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "billing" ? "bg-[#1a1a1a] text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-[#1a1a1a]"}`} onClick={() => setActiveSidebarItem("billing")}>
                     <CreditCard className="w-3.5 h-3.5" />
                     Billing & Invoices
                   </div>
@@ -221,11 +299,11 @@ export default function CursorDashboard() {
                 <Separator className="bg-[#1a1a1a]" />
 
                 <nav className="space-y-0.5">
-                  <div className="flex items-center gap-2 text-xs text-[#a1a1aa] px-1.5 py-0.5 hover:bg-[#1a1a1a] rounded-md">
+                  <div className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "compliance" ? "bg-[#1a1a1a] text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-[#1a1a1a]"}`} onClick={() => setActiveSidebarItem("compliance")}>
                     <FileText className="w-3.5 h-3.5" />
                     Compliance Reports
                   </div>
-                  <div className="flex items-center gap-2 text-xs text-[#a1a1aa] px-1.5 py-0.5 hover:bg-[#1a1a1a] rounded-md">
+                  <div className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "contact" ? "bg-[#1a1a1a] text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-[#1a1a1a]"}`} onClick={() => setActiveSidebarItem("contact")}>
                     <MessageSquare className="w-3.5 h-3.5" />
                     Contact Us
                   </div>
@@ -236,49 +314,74 @@ export default function CursorDashboard() {
 
           {/* Main Content */}
           <main className={`flex-1 p-5 max-w-3xl ${activeTab === "agents" ? "mx-auto" : ""}`}>
-            {activeTab === "agents" ? (
-              /* Agents View */
+            {activeTab === "agents" && (
               <div className="max-w-xl mx-auto">
                 <div className="flex flex-col items-center justify-center min-h-[45vh] space-y-5">
                   <div className="w-full space-y-3">
                     <div className="relative">
                       <textarea
-                        placeholder="Ask RBB to assess the competitive effects"
-                        className="w-full h-20 bg-[#1a1a1a] rounded-lg text-[#f9fafb] placeholder-[#a1a1aa] pr-12 px-4 py-4 text-xs resize-none focus:outline-none focus:ring-2 focus:ring-[#60a5fa] shadow-[0_1px_0_rgba(0,0,0,0.20)]"
-                        rows={3}
+                        placeholder="Is my pricing behaviour competitive or collusive?"
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        className="w-full h-28 bg-[#1a1a1a] rounded-lg text-[#f9fafb] placeholder-[#71717a] pr-16 px-4 py-4 text-xs resize-none focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50"
+                        rows={5}
                       />
-                      <Button
-                        size="sm"
-                        className="absolute right-3 top-3 h-7 w-7 p-0 bg-[#3f3f46]/80 hover:bg-[#3f3f46]/90 border-0"
-                      >
-                        <Search className="w-3.5 h-3.5 text-[#27272a]" />
-                      </Button>
+                      {/* Blinking cursor overlay - only shows when empty */}
+                      {inputValue === "" && (
+                        <div className="absolute left-4 top-4 text-[#f9fafb] text-xs" style={{
+                          animation: 'blink 1s infinite',
+                          display: 'inline-block'
+                        }}>
+                          |
+                        </div>
+                      )}
+                      {/* Model selector - bottom left */}
+                      <div className="absolute left-3 bottom-3 flex items-center gap-1.5">
+                        <Package className="w-3.5 h-3.5 text-[#71717a]" />
+                        <span className="text-[10px] text-[#71717a] font-medium">VMM</span>
+                        <ChevronDown className="w-3 h-3 text-[#71717a]" />
+                      </div>
+                      
+                      {/* Action buttons - bottom right */}
+                      <div className="absolute right-3 bottom-3 flex gap-1.5">
+                        <div className="h-6 w-6 flex items-center justify-center">
+                          <CloudUpload className="w-4 h-4 text-[#71717a] hover:text-[#a1a1aa]" />
+                        </div>
+                        <div className="h-6 w-6 flex items-center justify-center">
+                          <Send className="w-4 h-4 text-[#71717a] hover:text-[#a1a1aa]" />
+                        </div>
+                      </div>
                     </div>
 
-                    <div className="space-y-2.5">
+                    <div className="space-y-4 mt-8">
                       <p className="text-[10px] text-[#a1a1aa] text-center">Try these examples to get started</p>
 
-                      <div className="flex flex-wrap gap-1.5 justify-center">
-                        <button className="text-[#a1a1aa] hover:text-[#f9fafb] hover:underline text-[10px] px-2 py-1 flex items-center gap-1.5">
+                      <div className="flex flex-wrap gap-2 justify-center">
+                        <button className="rounded-full px-3 py-1 text-[10px] border border-[#2a2a2a] bg-[#1a1a1a] hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1.5">
                           <Zap className="w-2.5 h-2.5" />
-                          Assess collusion risk
+                          Assess coordination risk
                         </button>
-                        <button className="text-[#a1a1aa] hover:text-[#f9fafb] hover:underline text-[10px] px-2 py-1 flex items-center gap-1.5">
-                          <FileText className="w-2.5 h-2.5" />
-                          Generate compliance report
+                        <button className="rounded-full px-3 py-1 text-[10px] border border-[#2a2a2a] bg-[#1a1a1a] hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1.5">
+                          <TrendingUp className="w-2.5 h-2.5" />
+                          Prove competitive behavior
                         </button>
-                        <button className="text-[#a1a1aa] hover:text-[#f9fafb] hover:underline text-[10px] px-2 py-1 flex items-center gap-1.5">
-                          <CalendarIcon className="w-2.5 h-2.5" />
-                          Book a meeting with RBB
+                        <button className="rounded-full px-3 py-1 text-[10px] border border-[#2a2a2a] bg-[#1a1a1a] hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1.5">
+                          <Database className="w-2.5 h-2.5" />
+                          Export evidence bundle
                         </button>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            ) : (
+            )}
+
+            {activeTab === "dashboard" && (
               /* Dashboard View */
-              <div className="space-y-3 max-w-2xl">
+              <>
+                {/* Overview Page */}
+                {activeSidebarItem === "overview" && (
+                  <div className="space-y-3 max-w-2xl">
                 <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                   <CardContent className="p-4">
                     <div className="grid grid-cols-2 gap-6">
@@ -310,63 +413,48 @@ export default function CursorDashboard() {
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2 text-xs text-[#a1a1aa]">
-                        {isClient && activeTab === "dashboard" && (
-                          <button 
-                            onClick={() => setIsCalendarOpen(!isCalendarOpen)}
-                            className="rounded-full px-3 py-1 text-xs border border-[#3a3a3a] bg-transparent hover:bg-[#2a2a2a]/50 text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1"
-                          >
-                            <CalendarIcon className="h-3 w-3" />
-                            {selectedTimeframe === "30d" ? "Aug 06 - Sep 10" : 
-                             selectedTimeframe === "6m" ? "Mar '25 - Sep '25" : 
-                             selectedTimeframe === "1y" ? "Sep '24 - Sep '25" :
-                             "Jan 01 - Sep 05"}
-                          </button>
-                        )}
-                      </div>
-                      {isClient && activeTab === "dashboard" && (
-                        <div className="flex gap-1">
-                          <button 
-                            onClick={() => setSelectedTimeframe("30d")}
-                            className={`text-xs px-2 py-1 ${
-                              selectedTimeframe === "30d" 
-                                ? "text-[#f9fafb] bg-[#3a3a3a] rounded" 
-                                : "text-[#a1a1aa] hover:text-[#f9fafb]"
-                            }`}
-                          >
-                            30d
-                          </button>
-                          <button 
-                            onClick={() => setSelectedTimeframe("6m")}
-                            className={`text-xs px-2 py-1 ${
-                              selectedTimeframe === "6m" 
-                                ? "text-[#f9fafb] bg-[#3a3a3a] rounded" 
-                                : "text-[#a1a1aa] hover:text-[#f9fafb]"
-                            }`}
-                          >
-                            6m
-                          </button>
-                          <button 
-                            onClick={() => setSelectedTimeframe("1y")}
-                            className={`text-xs px-2 py-1 ${
-                              selectedTimeframe === "1y" 
-                                ? "text-[#f9fafb] bg-[#3a3a3a] rounded" 
-                                : "text-[#a1a1aa] hover:text-[#f9fafb]"
-                            }`}
-                          >
-                            1y
-                          </button>
-                          <button 
-                            onClick={() => setSelectedTimeframe("YTD")}
-                            className={`text-xs px-2 py-1 ${
-                              selectedTimeframe === "YTD" 
-                                ? "text-[#f9fafb] bg-[#3a3a3a] rounded" 
-                                : "text-[#a1a1aa] hover:text-[#f9fafb]"
-                            }`}
-                          >
-                            YTD
-                          </button>
-                        </div>
-                      )}
+  {isClient && activeTab === "dashboard" && (
+    <>
+      <button
+        onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+        className="rounded-full px-3 py-1 text-xs border border-[#3a3a3a] bg-transparent hover:bg-[#2a2a2a]/50 text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1"
+      >
+        <CalendarIcon className="h-3 w-3" />
+        {selectedTimeframe === "30d" ? "Aug 06 - Sep 10" :
+         selectedTimeframe === "6m"  ? "Mar '25 - Sep '25" :
+         selectedTimeframe === "1y"  ? "Sep '24 - Sep '25" :
+                                       "Jan 01 - Sep 05"}
+      </button>
+
+      <div className="flex gap-1">
+        <button
+          onClick={() => setSelectedTimeframe("30d")}
+          className={`text-xs px-2 py-1 ${selectedTimeframe === "30d" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
+        >
+          30d
+        </button>
+        <button
+          onClick={() => setSelectedTimeframe("6m")}
+          className={`text-xs px-2 py-1 ${selectedTimeframe === "6m" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
+        >
+          6m
+        </button>
+        <button
+          onClick={() => setSelectedTimeframe("1y")}
+          className={`text-xs px-2 py-1 ${selectedTimeframe === "1y" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
+        >
+          1y
+        </button>
+        <button
+          onClick={() => setSelectedTimeframe("YTD")}
+          className={`text-xs px-2 py-1 ${selectedTimeframe === "YTD" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
+        >
+          YTD
+        </button>
+      </div>
+    </>
+  )}
+</div>
                     </div>
 
                     <div className="mb-4">
@@ -382,27 +470,27 @@ export default function CursorDashboard() {
                         </div>
                       </div>
 
-                                                  <div className="h-56">
-                              <ResponsiveContainer width="100%" height="100%">
-                                <LineChart data={currentData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                                  <XAxis
-                                    dataKey="date"
-                                    axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fill: "#a1a1aa", fontSize: 10 }}
-                                  />
-                                  <YAxis
-                                    axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fill: "#a1a1aa", fontSize: 10 }}
-                                    label={{
-                                      value: "SA Bank CDS Spread %",
-                                      angle: -90,
-                                      position: "insideLeft",
-                                      style: { textAnchor: "middle", fill: "#a1a1aa", fontSize: 10 },
-                                    }}
-                                  />
-                                  <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" opacity={0.45} />
+                      <div className="h-80">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart data={currentData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                            <XAxis
+                              dataKey="date"
+                              axisLine={false}
+                              tickLine={false}
+                              tick={{ fill: "#a1a1aa", fontSize: 10 }}
+                            />
+                            <YAxis
+                              axisLine={false}
+                              tickLine={false}
+                              tick={{ fill: "#a1a1aa", fontSize: 10 }}
+                              label={{
+                                value: "SA Bank CDS Spread %",
+                                angle: -90,
+                                position: "insideLeft",
+                                style: { textAnchor: "middle", fill: "#a1a1aa", fontSize: 10 },
+                              }}
+                            />
+                            <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" opacity={0.75} />
                             <Tooltip
                               cursor={false}
                               content={({ active, payload, label }) => {
@@ -619,11 +707,594 @@ export default function CursorDashboard() {
                     </Button>
                   </CardContent>
                 </Card>
+                  </div>
+                )}
+
+                {/* Events Log Page */}
+                {activeSidebarItem === "events-log" && (
+                  <div className="space-y-3 max-w-2xl">
+                    {/* First shell tile with left and right containers */}
+                    <div className="bg-transparent">
+                      <div className="flex items-center justify-between mb-4">
+                        {/* Left Container - Date Range and Time Tabs */}
+                        <div className="flex items-center gap-4">
+                          {/* Date Range Button */}
+                          <Button variant="outline" size="sm" className="text-xs bg-transparent border-[#2a2a2a] text-[#f9fafb] hover:bg-[#1a1a1a]">
+                            Jan 01 - Sep 05
+                            <ChevronDown className="w-3 h-3 ml-1" />
+                          </Button>
+                          
+                          {/* Time Tabs */}
+                          <div className="flex gap-1">
+                            <Button variant="outline" size="sm" className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-[#1a1a1a] hover:text-[#f9fafb]">
+                              30d
+                            </Button>
+                            <Button variant="outline" size="sm" className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-[#1a1a1a] hover:text-[#f9fafb]">
+                              6m
+                            </Button>
+                            <Button variant="outline" size="sm" className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-[#1a1a1a] hover:text-[#f9fafb]">
+                              1y
+                            </Button>
+                            <Button variant="outline" size="sm" className="text-xs bg-[#1a1a1a] border-[#2a2a2a] text-[#f9fafb]">
+                              YTD
+                            </Button>
+                          </div>
+                        </div>
+                        
+                        {/* Right Container - Export CSV Button */}
+                        <div className="flex justify-end">
+                          <Button variant="outline" size="sm" className="text-xs bg-transparent border-[#2a2a2a] text-[#f9fafb] hover:bg-[#1a1a1a]">
+                            <Download className="w-3 h-3 mr-1" />
+                            Export CSV
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Option 3: Text Labels Metrics Tile */}
+                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                      <CardContent className="p-0">
+                        {/* Title Section */}
+                        <div className="px-4 py-3 border-b border-[#2a2a2a]">
+                          <h2 className="text-sm font-medium text-[#f9fafb]">All Events</h2>
+                        </div>
+                        
+                        {/* Event Status 1 */}
+                        <div className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2.5">
+                              <CalendarCheck2 className="w-4 h-4 text-[#a1a1aa]" />
+                              <div>
+                                <div className="text-[#f9fafb] font-medium text-xs">ZAR depreciates 1.9%</div>
+                                <div className="text-[10px] text-[#a1a1aa]">Broad CDS widening; sensitivity ↑ to 84</div>
+                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">2m ago • 45s</div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="flex items-center gap-1.5">
+                                <div className="text-[#f9fafb] font-bold text-sm">66 out of 100</div>
+                              </div>
+                              <div className="text-[10px] text-[#fca5a5]">High Risk</div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Separator line */}
+                        <div className="border-t border-[#2a2a2a]/70 border-opacity-70" style={{borderTopWidth: '0.5px'}}></div>
+                        
+                        {/* Event Status 2 */}
+                        <div className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2.5">
+                              <CalendarCheck2 className="w-4 h-4 text-[#a1a1aa]" />
+                              <div>
+                                <div className="text-[#f9fafb] font-medium text-xs">SARB guidance unchanged</div>
+                                <div className="text-[10px] text-[#a1a1aa]">No regime break detected</div>
+                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">1m ago • 32s</div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="flex items-center gap-1.5">
+                                <div className="text-[#f9fafb] font-bold text-sm">43 out of 100</div>
+                              </div>
+                              <div className="text-[10px] text-[#a7f3d0]">Low Risk</div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Separator line */}
+                        <div className="border-t border-[#2a2a2a]/70 border-opacity-70" style={{borderTopWidth: '0.5px'}}></div>
+                        
+                        {/* Event Status 3 */}
+                        <div className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2.5">
+                              <CalendarCheck2 className="w-4 h-4 text-[#a1a1aa]" />
+                              <div>
+                                <div className="text-[#f9fafb] font-medium text-xs">Sovereign outlook stable</div>
+                                <div className="text-[10px] text-[#a1a1aa]">Idiosyncratic responses across banks</div>
+                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">30s ago • 18s</div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="flex items-center gap-1.5">
+                                <div className="text-[#f9fafb] font-bold text-sm">18 out of 100</div>
+                              </div>
+                              <div className="text-[10px] text-[#fbbf24]">Medium Risk</div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Pagination Footer */}
+                        <div className="px-4 py-3 border-t border-[#2a2a2a]">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-4 text-[10px] text-[#a1a1aa]">
+                              <span>Showing 1 - 3 of 3 events</span>
+                              <div className="flex items-center gap-2">
+                                <span>Rows per page:</span>
+                                <select className="bg-transparent border border-[#2a2a2a] rounded px-2 py-1 text-[#f9fafb] text-[10px]">
+                                  <option value="100">100</option>
+                                </select>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2 text-[10px] text-[#a1a1aa]">
+                              <span>Page 1 of 1</span>
+                              <div className="flex gap-1">
+                                <button className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50" disabled>
+                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                                  </svg>
+                                </button>
+                                <button className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50" disabled>
+                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                                  </svg>
+                                </button>
+                                <button className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50" disabled>
+                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                  </svg>
+                                </button>
+                                <button className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50" disabled>
+                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                                  </svg>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
+
+                {/* Compliance Reports Page */}
+                {activeSidebarItem === "compliance" && (
+                  <div className="space-y-3 max-w-2xl">
+                    {/* First shell tile with left and right containers */}
+                    <div className="bg-transparent">
+                      <div className="flex items-center justify-between mb-4">
+                        {/* Left Container - Date Range and Time Tabs */}
+                        <div className="flex items-center gap-4">
+                          {/* Date Range Button */}
+                          <Button variant="outline" size="sm" className="text-xs bg-transparent border-[#2a2a2a] text-[#f9fafb] hover:bg-[#1a1a1a]">
+                            Jan 01 - Sep 05
+                            <ChevronDown className="w-3 h-3 ml-1" />
+                          </Button>
+                          
+                          {/* Time Tabs */}
+                          <div className="flex gap-1">
+                            <Button variant="outline" size="sm" className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-[#1a1a1a] hover:text-[#f9fafb]">
+                              30d
+                            </Button>
+                            <Button variant="outline" size="sm" className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-[#1a1a1a] hover:text-[#f9fafb]">
+                              6m
+                            </Button>
+                            <Button variant="outline" size="sm" className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-[#1a1a1a] hover:text-[#f9fafb]">
+                              1y
+                            </Button>
+                            <Button variant="outline" size="sm" className="text-xs bg-[#1a1a1a] border-[#2a2a2a] text-[#f9fafb]">
+                              YTD
+                            </Button>
+                          </div>
+                        </div>
+                        
+                        {/* Right Container - Export ZIP Button */}
+                        <div className="flex justify-end">
+                          <Button variant="outline" size="sm" className="text-xs bg-transparent border-[#2a2a2a] text-[#f9fafb] hover:bg-[#1a1a1a]">
+                            <Download className="w-3 h-3 mr-1" />
+                            Export ZIP
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Option 3: Text Labels Metrics Tile */}
+                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                      <CardContent className="p-0">
+                        {/* Title Section */}
+                        <div className="px-4 py-3 border-b border-[#2a2a2a]">
+                          <h2 className="text-sm font-medium text-[#f9fafb]">All Reports</h2>
+                        </div>
+                        
+                        {/* Event Status 1 */}
+                        <div className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2.5">
+                              <ShieldCheck className="w-4 h-4 text-[#a1a1aa]" />
+                              <div>
+                                <div className="text-[#f9fafb] font-medium text-xs">Monthly Compliance Report</div>
+                                <div className="text-[10px] text-[#a1a1aa]">Healthy: 3 instances of competitive adaptation to regime breaks</div>
+                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">2m ago • 45s</div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
+                              >
+                                Download
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Separator line */}
+                        <div className="border-t border-[#2a2a2a]/70 border-opacity-70" style={{borderTopWidth: '0.5px'}}></div>
+                        
+                        {/* Event Status 2 */}
+                        <div className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2.5">
+                              <Moon className="w-4 h-4 text-[#a1a1aa]" />
+                              <div>
+                                <div className="text-[#f9fafb] font-medium text-xs">Nightly Competitive Assessment</div>
+                                <div className="text-[10px] text-[#a1a1aa]">Spread Dispersion of 17 bps, ↑ +15% in 24 hrs</div>
+                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">1m ago • 32s</div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
+                              >
+                                Download
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Separator line */}
+                        <div className="border-t border-[#2a2a2a]/70 border-opacity-70" style={{borderTopWidth: '0.5px'}}></div>
+                        
+                        {/* Event Status 3 */}
+                        <div className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2.5">
+                              <Scale className="w-4 h-4 text-[#a1a1aa]" />
+                              <div>
+                                <div className="text-[#f9fafb] font-medium text-xs">Quarterly Evidence Bundle</div>
+                                <div className="text-[10px] text-[#a1a1aa]">96.8% statistical confidence over 18-month view</div>
+                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">30s ago • 18s</div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
+                              >
+                                Download
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Pagination Footer */}
+                        <div className="px-4 py-3 border-t border-[#2a2a2a]">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-4 text-[10px] text-[#a1a1aa]">
+                              <span>Showing 1 - 3 of 3 events</span>
+                              <div className="flex items-center gap-2">
+                                <span>Rows per page:</span>
+                                <select className="bg-transparent border border-[#2a2a2a] rounded px-2 py-1 text-[#f9fafb] text-[10px]">
+                                  <option value="100">100</option>
+                                </select>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2 text-[10px] text-[#a1a1aa]">
+                              <span>Page 1 of 1</span>
+                              <div className="flex gap-1">
+                                <button className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50" disabled>
+                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                                  </svg>
+                                </button>
+                                <button className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50" disabled>
+                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                                  </svg>
+                                </button>
+                                <button className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50" disabled>
+                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                  </svg>
+                                </button>
+                                <button className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50" disabled>
+                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                                  </svg>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
+
+                {/* Data Sources Page */}
+                {activeSidebarItem === "data-sources" && renderShellTiles("Data Sources")}
+
+                {/* AI Economists Page */}
+                {activeSidebarItem === "ai-economists" && renderShellTiles("AI Economists")}
+
+                {/* Health Checks Page */}
+                {activeSidebarItem === "health-checks" && renderShellTiles("Health Checks")}
+
+                {/* Billing Page */}
+                {activeSidebarItem === "billing" && renderShellTiles("Billing & Invoices")}
+
+                {/* Contact Page */}
+                {activeSidebarItem === "contact" && renderShellTiles("Contact Us")}
+
+                {/* Configuration Page */}
+                {activeSidebarItem === "configuration" && (
+              <div className="space-y-6 max-w-2xl">
+                {/* Pricing Analysis Settings Section */}
+                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                  <CardContent className="p-0">
+                    {/* Section Header */}
+                    <div className="px-4 py-3 border-b border-[#2a2a2a]">
+                      <h2 className="text-sm font-medium text-[#f9fafb]">Pricing Analysis Settings</h2>
+                    </div>
+                    {/* Configuration Item 1 */}
+                    <div className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <Activity className="w-4 h-4 text-[#a1a1aa]" />
+                            <div className="text-xs font-medium text-[#f9fafb]">Automatically Detect Market Changes</div>
+                          </div>
+                          <div className="text-[10px] text-[#a1a1aa] mt-0.5 ml-6">Enable automatic detection of significant market changes</div>
+                        </div>
+                        <div className="ml-4">
+                          <button 
+                            onClick={() => setAutoDetectMarketChanges(!autoDetectMarketChanges)}
+                            className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
+                              autoDetectMarketChanges ? 'bg-[#22c55e]' : 'bg-[#374151]'
+                            }`}
+                          >
+                            <div className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-200 ${
+                              autoDetectMarketChanges ? 'right-0.5' : 'left-0.5'
+                            }`}></div>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Horizontal Divider */}
+                    <div className="border-t border-[#2a2a2a]/70 border-opacity-70" style={{borderTopWidth: '0.5px'}}></div>
+                    
+                    {/* Configuration Item 2 */}
+                    <div className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <TrendingUp className="w-4 h-4 text-[#a1a1aa]" />
+                            <div className="text-xs font-medium text-[#f9fafb]">Change Threshold</div>
+                          </div>
+                          <div className="text-[10px] text-[#a1a1aa] mt-0.5 ml-6">Minimum change required to trigger analysis</div>
+                        </div>
+                        <div className="ml-4">
+                          <input
+                            type="text"
+                            value={changeThreshold}
+                            onChange={(e) => setChangeThreshold(e.target.value)}
+                            className="w-20 h-8 bg-[#0f0f10] border border-[#2a2a2a] rounded text-xs text-[#f9fafb] text-center focus:border-[#60a5fa] focus:outline-none focus:ring-1 focus:ring-[#60a5fa] transition-colors duration-200"
+                            placeholder="5%"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Horizontal Divider */}
+                    <div className="border-t border-[#2a2a2a]/70 border-opacity-70" style={{borderTopWidth: '0.5px'}}></div>
+                    
+                    {/* Configuration Item 3 */}
+                    <div className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <BarChart3 className="w-4 h-4 text-[#a1a1aa]" />
+                            <div className="text-xs font-medium text-[#f9fafb]">Confidence Level</div>
+                          </div>
+                          <div className="text-[10px] text-[#a1a1aa] mt-0.5 ml-6">Statistical confidence required for alerts</div>
+                        </div>
+                        <div className="ml-4">
+                          <input
+                            type="text"
+                            value={confidenceLevel}
+                            onChange={(e) => setConfidenceLevel(e.target.value)}
+                            className="w-20 h-8 bg-[#0f0f10] border border-[#2a2a2a] rounded text-xs text-[#f9fafb] text-center focus:border-[#60a5fa] focus:outline-none focus:ring-1 focus:ring-[#60a5fa] transition-colors duration-200"
+                            placeholder="95%"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Monitoring Engine Settings Section */}
+                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                  <CardContent className="p-0">
+                    {/* Section Header */}
+                    <div className="px-4 py-3 border-b border-[#2a2a2a]">
+                      <h2 className="text-sm font-medium text-[#f9fafb]">Monitoring Engine Settings</h2>
+                    </div>
+                    {/* Configuration Item 1 */}
+                    <div className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <Zap className="w-4 h-4 text-[#a1a1aa]" />
+                            <div className="text-xs font-medium text-[#f9fafb]">Enable Live Monitoring</div>
+                          </div>
+                          <div className="text-[10px] text-[#a1a1aa] mt-0.5 ml-6">Real-time analysis and risk assessment</div>
+                        </div>
+                        <div className="ml-4">
+                          <button 
+                            onClick={() => setEnableLiveMonitoring(!enableLiveMonitoring)}
+                            className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
+                              enableLiveMonitoring ? 'bg-[#22c55e]' : 'bg-[#374151]'
+                            }`}
+                          >
+                            <div className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-200 ${
+                              enableLiveMonitoring ? 'right-0.5' : 'left-0.5'
+                            }`}></div>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Horizontal Divider */}
+                    <div className="border-t border-[#2a2a2a]/70 border-opacity-70" style={{borderTopWidth: '0.5px'}}></div>
+                    
+                    {/* Configuration Item 2 */}
+                    <div className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <Clock className="w-4 h-4 text-[#a1a1aa]" />
+                            <div className="text-xs font-medium text-[#f9fafb]">Update Frequency</div>
+                          </div>
+                          <div className="text-[10px] text-[#a1a1aa] mt-0.5 ml-6">How often to run analysis</div>
+                        </div>
+                        <div className="ml-4">
+                          <input
+                            type="text"
+                            value={updateFrequency}
+                            onChange={(e) => setUpdateFrequency(e.target.value)}
+                            className="w-20 h-8 bg-[#0f0f10] border border-[#2a2a2a] rounded text-xs text-[#f9fafb] text-center focus:border-[#60a5fa] focus:outline-none focus:ring-1 focus:ring-[#60a5fa] transition-colors duration-200"
+                            placeholder="5m"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Horizontal Divider */}
+                    <div className="border-t border-[#2a2a2a]/70 border-opacity-70" style={{borderTopWidth: '0.5px'}}></div>
+                    
+                    {/* Configuration Item 3 */}
+                    <div className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <Settings className="w-4 h-4 text-[#a1a1aa]" />
+                            <div className="text-xs font-medium text-[#f9fafb]">Sensitivity Level</div>
+                          </div>
+                          <div className="text-[10px] text-[#a1a1aa] mt-0.5 ml-6">How sensitive the detection should be</div>
+                        </div>
+                        <div className="ml-4">
+                          <input
+                            type="text"
+                            value={sensitivityLevel}
+                            onChange={(e) => setSensitivityLevel(e.target.value)}
+                            className="w-20 h-8 bg-[#0f0f10] border border-[#2a2a2a] rounded text-xs text-[#f9fafb] text-center focus:border-[#60a5fa] focus:outline-none focus:ring-1 focus:ring-[#60a5fa] transition-colors duration-200"
+                            placeholder="Medium"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Data Quality Controls Section */}
+                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                  <CardContent className="p-0">
+                    {/* Section Header */}
+                    <div className="px-4 py-3 border-b border-[#2a2a2a]">
+                      <h2 className="text-sm font-medium text-[#f9fafb]">Data Quality Controls</h2>
+                    </div>
+                    {/* Configuration Item 1 */}
+                    <div className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <ShieldCheck className="w-4 h-4 text-[#a1a1aa]" />
+                            <div className="text-xs font-medium text-[#f9fafb]">Check Data Quality</div>
+                          </div>
+                          <div className="text-[10px] text-[#a1a1aa] mt-0.5 ml-6">Validate data accuracy and consistency</div>
+                        </div>
+                        <div className="ml-4">
+                          <button 
+                            onClick={() => setCheckDataQuality(!checkDataQuality)}
+                            className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
+                              checkDataQuality ? 'bg-[#22c55e]' : 'bg-[#374151]'
+                            }`}
+                          >
+                            <div className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-200 ${
+                              checkDataQuality ? 'right-0.5' : 'left-0.5'
+                            }`}></div>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Horizontal Divider */}
+                    <div className="border-t border-[#2a2a2a]/70 border-opacity-70" style={{borderTopWidth: '0.5px'}}></div>
+                    
+                    {/* Configuration Item 2 */}
+                    <div className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <Clock className="w-4 h-4 text-[#a1a1aa]" />
+                            <div className="text-xs font-medium text-[#f9fafb]">Max Data Age</div>
+                          </div>
+                          <div className="text-[10px] text-[#a1a1aa] mt-0.5 ml-6">Maximum age before switching to backup</div>
+                        </div>
+                        <div className="ml-4">
+                          <input
+                            type="text"
+                            value={maxDataAge}
+                            onChange={(e) => setMaxDataAge(e.target.value)}
+                            className="w-20 h-8 bg-[#0f0f10] border border-[#2a2a2a] rounded text-xs text-[#f9fafb] text-center focus:border-[#60a5fa] focus:outline-none focus:ring-1 focus:ring-[#60a5fa] transition-colors duration-200"
+                            placeholder="10m"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
+            )}
+              </>
             )}
           </main>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes blink {
+          0%, 50% { opacity: 1; }
+          51%, 100% { opacity: 0; }
+        }
+      `}</style>
     </div>
   )
 }

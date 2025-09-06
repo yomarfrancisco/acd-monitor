@@ -9,6 +9,10 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  // Configure port for dev server
+  env: {
+    PORT: '3004',
+  },
 }
 
 export default nextConfig
