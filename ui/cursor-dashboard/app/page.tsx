@@ -1,43 +1,42 @@
 "use client"
 
+import {
+  Bot,
+  ChevronDown,
+  FileText,
+  Zap,
+  Send,
+  Settings,
+  Database,
+  Activity,
+  CreditCard,
+  BarChart3,
+  TrendingUp,
+  Clock,
+  Download,
+  User,
+  SquareChevronRight,
+  SquarePlus,
+  ShieldCheck,
+  Upload,
+  Cloud,
+  Brain,
+  Target,
+  Shield,
+  Link,
+  Gauge,
+  Moon,
+  Scale,
+} from "lucide-react"
+
 import { Separator } from "@/components/ui/separator"
 
 import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import {
-  Bot,
-  FileText,
-  Zap,
-  Send,
-  ChevronDown,
-  User,
-  Settings,
-  Database,
-  Activity,
-  Scale,
-  TrendingUp,
-  Clock,
-  Download,
-  Upload,
-  Server,
-  Cloud,
-  SquareChevronRight,
-} from "lucide-react"
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts"
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, ReferenceLine } from "recharts"
 import { CalendarIcon } from "lucide-react"
-import {
-  MessageSquare,
-  BarChart3,
-  GitBranch,
-  ClipboardList,
-  CreditCardIcon,
-  CloudUpload,
-  ChevronRight,
-  CalendarCheck2,
-  ShieldCheck,
-  Moon,
-} from "lucide-react"
+import { MessageSquare, GitBranch, ClipboardList, CloudUpload, CalendarCheck2, ScaleIcon } from "lucide-react"
 
 // Different data sets for different time periods
 const analyticsData30d = [
@@ -122,6 +121,7 @@ export default function CursorDashboard() {
   const [autoDetectMarketChanges, setAutoDetectMarketChanges] = useState(true)
   const [enableLiveMonitoring, setEnableLiveMonitoring] = useState(true)
   const [checkDataQuality, setCheckDataQuality] = useState(true)
+  const [bloombergDataFeed, setBloombergDataFeed] = useState(false)
 
   useEffect(() => {
     setIsClient(true)
@@ -208,9 +208,9 @@ export default function CursorDashboard() {
       <header className="border-b border-[#1a1a1a] px-5 py-1.5 relative">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img 
-              src="/rbb-economics-logo.png" 
-              alt="RBB Economics" 
+            <img
+              src="/rbb-economics-logo.png"
+              alt="RBB Economics"
               className="h-28 w-auto opacity-90 hover:opacity-100 transition-opacity"
             />
           </div>
@@ -316,7 +316,7 @@ export default function CursorDashboard() {
                     className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "billing" ? "bg-[#1a1a1a] text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-[#1a1a1a]"}`}
                     onClick={() => setActiveSidebarItem("billing")}
                   >
-                    <CreditCardIcon className="w-3.5 h-3.5" />
+                    <CreditCard className="w-3.5 h-3.5" />
                     Billing & Invoices
                   </div>
                 </nav>
@@ -377,12 +377,12 @@ export default function CursorDashboard() {
                           onChange={(e) => setSelectedAgent(e.target.value)}
                           className="bg-transparent text-[10px] text-[#71717a] font-medium border-none outline-none cursor-pointer hover:text-[#a1a1aa]"
                         >
-                          <option value="Associate">Associate</option>
+                          <option value="Jnr Economist">Jnr Economist</option>
                           <option value="Legal">Legal</option>
-                          <option value="Economist">Economist</option>
+                          <option value="Snr Economist">Snr Economist</option>
                           <option value="Statistician">Statistician</option>
                         </select>
-                    </div>
+                      </div>
 
                       {/* Action buttons - bottom right */}
                       <div className="absolute right-3 bottom-3 flex gap-1.5">
@@ -427,45 +427,45 @@ export default function CursorDashboard() {
               /* Dashboard View */
               <>
                 {activeSidebarItem === "overview" && (
-              <div className="space-y-3 max-w-2xl">
-                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                  <CardContent className="p-4">
+                  <div className="space-y-3 max-w-2xl">
+                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                      <CardContent className="p-4">
                         <div className="grid grid-cols-2 gap-6">
                           <div className="rounded-lg bg-[#1a1a1a] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
                             <div>
-                        <h2 className="text-sm font-medium text-[#f9fafb] mb-1">Enterprise Plan</h2>
+                              <h2 className="text-sm font-medium text-[#f9fafb] mb-1">Enterprise Plan</h2>
                               <p className="text-xs text-[#a1a1aa] mb-3 leading-relaxed">
                                 Live monitoring with compliance tracking
-                        </p>
+                              </p>
                             </div>
                             <button className="rounded-full px-3 py-1 text-xs border border-[#2a2a2a] bg-transparent hover:bg-[#1a1a1a] text-[#a1a1aa] hover:text-[#f9fafb] self-start">
-                          Manage Subscription
-                        </button>
-                      </div>
+                              Manage Subscription
+                            </button>
+                          </div>
                           <div className="rounded-lg bg-[#1e1e1e] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
                             <div>
-                          <div className="text-xs font-bold text-[#f9fafb] mb-1">$0 / $6k</div>
-                          <p className="text-xs text-[#a1a1aa] mb-2">Usage-Based Spending this Month</p>
+                              <div className="text-xs font-bold text-[#f9fafb] mb-1">$0 / $6k</div>
+                              <p className="text-xs text-[#a1a1aa] mb-2">Usage-Based Spending this Month</p>
                             </div>
                             <button className="rounded-full px-3 py-1 text-xs border border-[#2a2a2a] bg-transparent hover:bg-[#1a1a1a] text-[#a1a1aa] hover:text-[#f9fafb] self-start">
-                            Edit Limit
-                          </button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                              Edit Limit
+                            </button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
 
-                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-2 text-xs text-[#a1a1aa]">
-                        {isClient && activeTab === "dashboard" && (
+                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-2 text-xs text-[#a1a1aa]">
+                            {isClient && activeTab === "dashboard" && (
                               <>
-                          <button 
-                            onClick={() => setIsCalendarOpen(!isCalendarOpen)}
-                            className="rounded-full px-3 py-1 text-xs border border-[#3a3a3a] bg-transparent hover:bg-[#2a2a2a]/50 text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1"
-                          >
-                            <CalendarIcon className="h-3 w-3" />
+                                <button
+                                  onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+                                  className="rounded-full px-3 py-1 text-xs border border-[#3a3a3a] bg-transparent hover:bg-[#2a2a2a]/50 text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1"
+                                >
+                                  <CalendarIcon className="h-3 w-3" />
                                   {selectedTimeframe === "30d"
                                     ? "Aug 06 - Sep 10"
                                     : selectedTimeframe === "6m"
@@ -473,77 +473,101 @@ export default function CursorDashboard() {
                                       : selectedTimeframe === "1y"
                                         ? "Sep '24 - Sep '25"
                                         : "Jan 01 - Sep 05"}
-                          </button>
+                                </button>
 
-                        <div className="flex gap-1">
-                          <button 
-                            onClick={() => setSelectedTimeframe("30d")}
+                                <div className="flex gap-1">
+                                  <button
+                                    onClick={() => setSelectedTimeframe("30d")}
                                     className={`text-xs px-2 py-1 ${selectedTimeframe === "30d" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
-                          >
-                            30d
-                          </button>
-                          <button 
-                            onClick={() => setSelectedTimeframe("6m")}
+                                  >
+                                    30d
+                                  </button>
+                                  <button
+                                    onClick={() => setSelectedTimeframe("6m")}
                                     className={`text-xs px-2 py-1 ${selectedTimeframe === "6m" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
-                          >
-                            6m
-                          </button>
-                          <button 
-                            onClick={() => setSelectedTimeframe("1y")}
+                                  >
+                                    6m
+                                  </button>
+                                  <button
+                                    onClick={() => setSelectedTimeframe("1y")}
                                     className={`text-xs px-2 py-1 ${selectedTimeframe === "1y" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
-                          >
-                            1y
-                          </button>
-                          <button 
-                            onClick={() => setSelectedTimeframe("YTD")}
+                                  >
+                                    1y
+                                  </button>
+                                  <button
+                                    onClick={() => setSelectedTimeframe("YTD")}
                                     className={`text-xs px-2 py-1 ${selectedTimeframe === "YTD" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
-                          >
-                            YTD
-                          </button>
-                        </div>
+                                  >
+                                    YTD
+                                  </button>
+                                </div>
                               </>
-                      )}
+                            )}
                           </div>
-                    </div>
+                        </div>
 
-                    <div className="mb-4">
-                      <h3 className="text-xs font-medium text-[#f9fafb] mb-3">Your Coordination Risk</h3>
+                        <div className="mb-4">
+                          <h3 className="text-xs font-medium text-[#f9fafb] mb-3">Your Coordination Risk</h3>
                           <div className="grid grid-cols-2 gap-6 mb-10">
                             <div className="rounded-lg bg-[#212121] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
-                          <div className="text-xl font-bold text-[#f9fafb]">14 out of 100</div>
+                              <div className="text-xl font-bold text-[#f9fafb]">14 out of 100</div>
                               <div className="text-xs text-[#a7f3d0]">Low Risk</div>
-                        </div>
+                            </div>
                             <div className="rounded-lg bg-[#212121]/40 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
                               <div className="text-xl font-bold text-[#f9fafb]">{21 + 21 + 26 + 16}%</div>
                               <div className="text-xs text-[#a1a1aa]">Weekly Price Leader</div>
-                        </div>
-                      </div>
+                            </div>
+                          </div>
 
                           <div className="h-80">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <LineChart data={currentData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                            <XAxis
-                              dataKey="date"
-                              axisLine={false}
-                              tickLine={false}
-                              tick={{ fill: "#a1a1aa", fontSize: 10 }}
-                            />
-                            <YAxis
-                              axisLine={false}
-                              tickLine={false}
-                              tick={{ fill: "#a1a1aa", fontSize: 10 }}
-                              label={{
+                            <ResponsiveContainer width="100%" height="100%">
+                              <LineChart data={currentData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                                <XAxis
+                                  dataKey="date"
+                                  axisLine={false}
+                                  tickLine={false}
+                                  tick={{ fill: "#a1a1aa", fontSize: 10 }}
+                                />
+                                <YAxis
+                                  axisLine={false}
+                                  tickLine={false}
+                                  tick={{ fill: "#a1a1aa", fontSize: 10 }}
+                                  label={{
                                     value: "SA Bank CDS Spread %",
-                                angle: -90,
-                                position: "insideLeft",
-                                style: { textAnchor: "middle", fill: "#a1a1aa", fontSize: 10 },
-                              }}
-                            />
+                                    angle: -90,
+                                    position: "insideLeft",
+                                    style: { textAnchor: "middle", fill: "#a1a1aa", fontSize: 10 },
+                                  }}
+                                />
                                 <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" opacity={0.75} />
-                            <Tooltip
+
+                                {/* Event lines for environmental changes */}
+                                <ReferenceLine
+                                  x="Feb 25"
+                                  stroke="#60a5fa"
+                                  strokeOpacity={0.5}
+                                  strokeWidth={2}
+                                  strokeDasharray="2 2"
+                                />
+                                <ReferenceLine
+                                  x="Jun 25"
+                                  stroke="#60a5fa"
+                                  strokeOpacity={0.5}
+                                  strokeWidth={2}
+                                  strokeDasharray="2 2"
+                                />
+                                <ReferenceLine
+                                  x="Jul 25"
+                                  stroke="#60a5fa"
+                                  strokeOpacity={0.5}
+                                  strokeWidth={2}
+                                  strokeDasharray="2 2"
+                                />
+
+                                <Tooltip
                                   cursor={false}
-                              content={({ active, payload, label }) => {
-                                if (active && payload && payload.length) {
+                                  content={({ active, payload, label }) => {
+                                    if (active && payload && payload.length) {
                                       // Market share data for each bank
                                       const marketShare = {
                                         FNB: 21,
@@ -552,259 +576,267 @@ export default function CursorDashboard() {
                                         Nedbank: 16,
                                       }
 
-                                  return (
+                                      return (
                                         <div className="bg-black border border-[#1a1a1a] rounded-lg p-3 shadow-2xl shadow-black/50">
                                           <p className="text-[#a1a1aa] text-[10px] mb-1.5">{label}</p>
-                                      {payload.map((entry, index) => (
+                                          {payload.map((entry, index) => (
                                             <div key={index} className="flex items-center gap-2 text-[9px]">
-                                          <div 
-                                            className="w-2 h-2 rounded-full" 
-                                            style={{ backgroundColor: entry.color }}
-                                          />
+                                              <div
+                                                className="w-2 h-2 rounded-full"
+                                                style={{ backgroundColor: entry.color }}
+                                              />
                                               <span className="text-[#f9fafb] font-semibold">
                                                 {entry.name}: <span className="font-bold">{entry.value} bps</span> |{" "}
                                                 <span className="text-[#a1a1aa]">
                                                   {marketShare[entry.name as keyof typeof marketShare]}% share
                                                 </span>
                                               </span>
+                                            </div>
+                                          ))}
                                         </div>
-                                      ))}
-                                    </div>
                                       )
-                                }
+                                    }
                                     return null
-                              }}
-                            />
-                            <Line
-                              type="monotone"
-                              dataKey="fnb"
-                              stroke="#60a5fa"
-                              strokeWidth={2}
-                              dot={{ fill: "#60a5fa", strokeWidth: 2, r: 3 }}
-                              activeDot={{ r: 4, fill: "#60a5fa" }}
-                              name="FNB"
-                            />
-                            <Line
-                              type="monotone"
-                              dataKey="absa"
-                              stroke="#a1a1aa"
-                              strokeWidth={1.5}
-                              dot={{ fill: "#a1a1aa", strokeWidth: 1.5, r: 2 }}
-                              activeDot={{ r: 3, fill: "#a1a1aa" }}
-                              name="ABSA"
-                            />
-                            <Line
-                              type="monotone"
-                              dataKey="standard"
-                              stroke="#71717a"
-                              strokeWidth={1.5}
-                              dot={{ fill: "#71717a", strokeWidth: 1.5, r: 2 }}
-                              activeDot={{ r: 3, fill: "#71717a" }}
-                              name="Standard Bank"
-                            />
-                            <Line
-                              type="monotone"
-                              dataKey="nedbank"
-                              stroke="#52525b"
-                              strokeWidth={1.5}
-                              dot={{ fill: "#52525b", strokeWidth: 1.5, r: 2 }}
-                              activeDot={{ r: 3, fill: "#52525b" }}
-                              name="Nedbank"
-                            />
-                          </LineChart>
-                        </ResponsiveContainer>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-                {/* Metrics tile: Price Stability, Price Synchronization, Environmental Sensitivity */}
-                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                  <CardContent className="p-0">
-                    {/* Price Stability */}
-                    <div className="p-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2.5">
-                          <TrendingUp className="w-4 h-4 text-[#a1a1aa]" />
-                          <div>
-                            <div className="text-[#f9fafb] font-medium text-xs">Price Stability</div>
+                                  }}
+                                />
+                                <Line
+                                  type="monotone"
+                                  dataKey="fnb"
+                                  stroke="#60a5fa"
+                                  strokeWidth={2}
+                                  dot={{ fill: "#60a5fa", strokeWidth: 2, r: 3 }}
+                                  activeDot={{ r: 4, fill: "#60a5fa" }}
+                                  name="FNB"
+                                />
+                                <Line
+                                  type="monotone"
+                                  dataKey="absa"
+                                  stroke="#a1a1aa"
+                                  strokeWidth={1.5}
+                                  dot={{ fill: "#a1a1aa", strokeWidth: 1.5, r: 2 }}
+                                  activeDot={{ r: 3, fill: "#a1a1aa" }}
+                                  name="ABSA"
+                                />
+                                <Line
+                                  type="monotone"
+                                  dataKey="standard"
+                                  stroke="#71717a"
+                                  strokeWidth={1.5}
+                                  dot={{ fill: "#71717a", strokeWidth: 1.5, r: 2 }}
+                                  activeDot={{ r: 3, fill: "#71717a" }}
+                                  name="Standard Bank"
+                                />
+                                <Line
+                                  type="monotone"
+                                  dataKey="nedbank"
+                                  stroke="#52525b"
+                                  strokeWidth={1.5}
+                                  dot={{ fill: "#52525b", strokeWidth: 1.5, r: 2 }}
+                                  activeDot={{ r: 3, fill: "#52525b" }}
+                                  name="Nedbank"
+                                />
+                              </LineChart>
+                            </ResponsiveContainer>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    {/* Metrics tile: Price Stability, Price Synchronization, Environmental Sensitivity */}
+                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                      <CardContent className="p-0">
+                        {/* Price Stability */}
+                        <div className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2.5">
+                              <TrendingUp className="w-4 h-4 text-[#a1a1aa]" />
+                              <div>
+                                <div className="text-[#f9fafb] font-medium text-xs">Price Stability</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
                                   How steady your prices are compared to competitors
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">2m ago • 45s</div>
-                          </div>
-                        </div>
-                        <div className="text-right">
+                              </div>
+                            </div>
+                            <div className="text-right">
                               <div className="flex items-center gap-1.5">
-                          <div className="text-[#f9fafb] font-bold text-sm">25</div>
+                                <div className="text-[#f9fafb] font-bold text-sm">65</div>
                                 <div className="text-[#fca5a5] text-xs">✗</div>
                               </div>
-                          <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
+                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                    
-                    {/* Separator line */}
+
+                        {/* Separator line */}
                         <div
                           className="border-t border-[#2a2a2a]/70 border-opacity-70"
                           style={{ borderTopWidth: "0.5px" }}
                         ></div>
-                    
-                    {/* Price Synchronization */}
-                    <div className="p-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2.5">
-                          <GitBranch className="w-4 h-4 text-[#a1a1aa]" />
-                          <div>
-                            <div className="text-[#f9fafb] font-medium text-xs">Price Synchronization</div>
+
+                        {/* Price Synchronization */}
+                        <div className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2.5">
+                              <GitBranch className="w-4 h-4 text-[#a1a1aa]" />
+                              <div>
+                                <div className="text-[#f9fafb] font-medium text-xs">Price Synchronization</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
                                   How much your prices move together with other banks
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">1m ago • 32s</div>
-                          </div>
-                        </div>
-                        <div className="text-right">
+                              </div>
+                            </div>
+                            <div className="text-right">
                               <div className="flex items-center gap-1.5">
-                          <div className="text-[#f9fafb] font-bold text-sm">18</div>
+                                <div className="text-[#f9fafb] font-bold text-sm">18</div>
                                 <div className="text-[#a7f3d0] text-xs">✓</div>
                               </div>
-                          <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
+                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                    
-                    {/* Separator line */}
+
+                        {/* Separator line */}
                         <div
                           className="border-t border-[#2a2a2a]/70 border-opacity-70"
                           style={{ borderTopWidth: "0.5px" }}
                         ></div>
-                    
-                    {/* Environmental Sensitivity */}
-                    <div className="p-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2.5">
-                          <Activity className="w-4 h-4 text-[#a1a1aa]" />
-                          <div>
-                            <div className="text-[#f9fafb] font-medium text-xs">Environmental Sensitivity</div>
+
+                        {/* Environmental Sensitivity */}
+                        <div className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2.5">
+                              <Activity className="w-4 h-4 text-[#a1a1aa]" />
+                              <div>
+                                <div className="text-[#f9fafb] font-medium text-xs">Environmental Sensitivity</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
                                   How well you respond to market changes and economic events
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">30s ago • 18s</div>
-                          </div>
-                        </div>
-                        <div className="text-right">
+                              </div>
+                            </div>
+                            <div className="text-right">
                               <div className="flex items-center gap-1.5">
-                          <div className="text-[#f9fafb] font-bold text-sm">82</div>
+                                <div className="text-[#f9fafb] font-bold text-sm">82</div>
                                 <div className="text-[#a7f3d0] text-xs">✓</div>
                               </div>
-                          <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Combined tile: Market Data Feed, Regulatory Notices */}
-                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                  <CardContent className="p-0">
-                    {/* Market Data Feed */}
-                    <div className="p-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2.5">
-                          <BarChart3 className="w-4 h-4 text-[#a1a1aa]" />
-                          <div>
-                            <div className="text-[#f9fafb] font-medium text-xs">Market Data Feed</div>
-                            <div className="text-[10px] text-[#a1a1aa]">
-                              Real-time market data and price information
+                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
                             </div>
                           </div>
                         </div>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
-                        >
-                          Connect
-                        </Button>
-                      </div>
-                    </div>
-                    
-                    {/* Separator line */}
+                      </CardContent>
+                    </Card>
+
+                    {/* Combined tile: Market Data Feed, Regulatory Notices */}
+                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                      <CardContent className="p-0">
+                        {/* Bloomberg Data Feed */}
+                        <div className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2.5">
+                              <Database className="w-4 h-4 text-[#a1a1aa]" />
+                              <div>
+                                <div className="text-[#f9fafb] font-medium text-xs">Enable Bloomberg Data Feed</div>
+                                <div className="text-[10px] text-[#a1a1aa]">Real-time market data and analytics</div>
+                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">
+                                  Live pricing • Market depth • News feed
+                                </div>
+                              </div>
+                            </div>
+                            <div className="ml-4">
+                              <button
+                                onClick={() => setBloombergDataFeed(!bloombergDataFeed)}
+                                className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
+                                  bloombergDataFeed ? "bg-[#22c55e]" : "bg-[#374151]"
+                                }`}
+                              >
+                                <div
+                                  className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-200 ${
+                                    bloombergDataFeed ? "right-0.5" : "left-0.5"
+                                  }`}
+                                ></div>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Separator line */}
                         <div
                           className="border-t border-[#2a2a2a]/70 border-opacity-70"
                           style={{ borderTopWidth: "0.5px" }}
                         ></div>
-                    
-                    {/* Regulatory Notices */}
-                    <div className="p-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2.5">
-                          <FileText className="w-4 h-4 text-[#a1a1aa]" />
-                          <div>
-                            <div className="text-[#f9fafb] font-medium text-xs">Regulatory Notices</div>
-                            <div className="text-[10px] text-[#a1a1aa]">
-                              Important updates and compliance notifications
+
+                        {/* Regulatory Notices */}
+                        <div className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2.5">
+                              <FileText className="w-4 h-4 text-[#a1a1aa]" />
+                              <div>
+                                <div className="text-[#f9fafb] font-medium text-xs">Regulatory Notices</div>
+                                <div className="text-[10px] text-[#a1a1aa]">
+                                  Important updates and compliance notifications
+                                </div>
+                              </div>
                             </div>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
+                            >
+                              Connect
+                            </Button>
                           </div>
                         </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Sixth tile: Assign Reviewers */}
+                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                      <CardContent className="p-4 text-center">
+                        <h3 className="text-[#f9fafb] font-medium mb-1.5 text-xs">Assign Reviewers</h3>
+                        <p className="text-[10px] text-[#a1a1aa] mb-2.5">
+                          Ensure independent oversight of monitoring outputs.
+                        </p>
                         <Button
                           variant="outline"
-                          size="sm"
                           className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
                         >
-                          Connect
+                          Invite Your Team
                         </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Sixth tile: Assign Reviewers */}
-                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                  <CardContent className="p-4 text-center">
-                    <h3 className="text-[#f9fafb] font-medium mb-1.5 text-xs">Assign Reviewers</h3>
-                    <p className="text-[10px] text-[#a1a1aa] mb-2.5">
-                      Ensure independent oversight of monitoring outputs.
-                    </p>
-                    <Button
-                      variant="outline"
-                      className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
-                    >
-                      Invite Your Team
-                    </Button>
-                  </CardContent>
-                </Card>
-              </div>
-            )}
-            {/* Configuration Page */}
-            {activeSidebarItem === "configuration" && (
-              <div className="space-y-6 max-w-2xl">
-                {/* Pricing Analysis Settings Section */}
-                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                  <CardContent className="p-0">
-                    {/* Section Header */}
-                    <div className="px-4 py-3 border-b border-[#2a2a2a]">
-                      <h2 className="text-sm font-medium text-[#f9fafb]">Pricing Analysis Settings</h2>
-                    </div>
-                    {/* Configuration Item 1 */}
-                    <div className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
+                {/* Configuration Page */}
+                {activeSidebarItem === "configuration" && (
+                  <div className="space-y-6 max-w-2xl">
+                    {/* Pricing Analysis Settings Section */}
+                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                      <CardContent className="p-0">
+                        {/* Section Header */}
+                        <div className="px-4 py-3 border-b border-[#2a2a2a]">
+                          <h2 className="text-sm font-medium text-[#f9fafb]">Coordination Analysis Settings</h2>
+                        </div>
+                        {/* Configuration Item 1 */}
+                        <div className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
                               <div className="flex items-start gap-2">
                                 <Activity className="w-4 h-4 text-[#a1a1aa] self-center" />
                                 <div>
                                   <div className="text-xs font-medium text-[#f9fafb]">
                                     Automatically Detect Market Changes
-                          </div>
+                                  </div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
                                     Enable automatic detection of significant market changes
                                   </div>
                                 </div>
                               </div>
-                        </div>
-                        <div className="ml-4">
-                          <button 
-                            onClick={() => setAutoDetectMarketChanges(!autoDetectMarketChanges)}
-                            className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
+                            </div>
+                            <div className="ml-4">
+                              <button
+                                onClick={() => setAutoDetectMarketChanges(!autoDetectMarketChanges)}
+                                className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
                                   autoDetectMarketChanges ? "bg-[#22c55e]" : "bg-[#374151]"
                                 }`}
                               >
@@ -813,35 +845,35 @@ export default function CursorDashboard() {
                                     autoDetectMarketChanges ? "right-0.5" : "left-0.5"
                                   }`}
                                 ></div>
-                          </button>
+                              </button>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                    
-                    {/* Horizontal Divider */}
+
+                        {/* Horizontal Divider */}
                         <div
                           className="border-t border-[#2a2a2a]/70 border-opacity-70"
                           style={{ borderTopWidth: "0.5px" }}
                         ></div>
-                    
-                    {/* Configuration Item 2 */}
-                    <div className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
+
+                        {/* Configuration Item 2 */}
+                        <div className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
                               <div className="flex items-start gap-2">
                                 <TrendingUp className="w-4 h-4 text-[#a1a1aa] self-center" />
                                 <div>
-                            <div className="text-xs font-medium text-[#f9fafb]">Change Threshold</div>
+                                  <div className="text-xs font-medium text-[#f9fafb]">Price Change Threshold</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
                                     Minimum change required to trigger analysis
-                          </div>
-                        </div>
+                                  </div>
+                                </div>
                               </div>
                             </div>
                             <div className="ml-4 relative">
                               <select
-                            value={changeThreshold}
-                            onChange={(e) => setChangeThreshold(e.target.value)}
+                                value={changeThreshold}
+                                onChange={(e) => setChangeThreshold(e.target.value)}
                                 className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-md px-3 py-1.5 text-xs text-[#f9fafb] cursor-pointer hover:bg-[#2a2a2a] focus:border-[#60a5fa] focus:outline-none focus:ring-1 focus:ring-[#60a5fa] transition-colors duration-200 appearance-none pr-8"
                               >
                                 <option value="5%">5%</option>
@@ -851,34 +883,34 @@ export default function CursorDashboard() {
                                 <option value="25%">25%</option>
                               </select>
                               <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-3 h-3 text-[#71717a] pointer-events-none" />
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                    
-                    {/* Horizontal Divider */}
+
+                        {/* Horizontal Divider */}
                         <div
                           className="border-t border-[#2a2a2a]/70 border-opacity-70"
                           style={{ borderTopWidth: "0.5px" }}
                         ></div>
-                    
-                    {/* Configuration Item 3 */}
-                    <div className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
+
+                        {/* Configuration Item 3 */}
+                        <div className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
                               <div className="flex items-start gap-2">
                                 <BarChart3 className="w-4 h-4 text-[#a1a1aa] self-center" />
                                 <div>
-                            <div className="text-xs font-medium text-[#f9fafb]">Confidence Level</div>
+                                  <div className="text-xs font-medium text-[#f9fafb]">Confidence Level</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
                                     Statistical confidence required for alerts
-                          </div>
-                        </div>
+                                  </div>
+                                </div>
                               </div>
                             </div>
                             <div className="ml-4 relative">
                               <select
-                            value={confidenceLevel}
-                            onChange={(e) => setConfidenceLevel(e.target.value)}
+                                value={confidenceLevel}
+                                onChange={(e) => setConfidenceLevel(e.target.value)}
                                 className="w-20 h-8 bg-[#1a1a1a] border border-[#2a2a2a] rounded text-xs text-[#f9fafb] text-center appearance-none cursor-pointer hover:bg-[#2a2a2a] transition-colors duration-200 pr-6"
                               >
                                 <option value="95%">95%</option>
@@ -889,37 +921,37 @@ export default function CursorDashboard() {
                                 <option value="70%">70%</option>
                               </select>
                               <ChevronDown className="absolute right-1 top-1/2 transform -translate-y-1/2 w-3 h-3 text-[#a1a1aa] pointer-events-none" />
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                      </CardContent>
+                    </Card>
 
-                {/* Monitoring Engine Settings Section */}
-                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                  <CardContent className="p-0">
-                    {/* Section Header */}
-                    <div className="px-4 py-3 border-b border-[#2a2a2a]">
-                      <h2 className="text-sm font-medium text-[#f9fafb]">Monitoring Engine Settings</h2>
-                    </div>
-                    {/* Configuration Item 1 */}
-                    <div className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
+                    {/* Monitoring Engine Settings Section */}
+                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                      <CardContent className="p-0">
+                        {/* Section Header */}
+                        <div className="px-4 py-3 border-b border-[#2a2a2a]">
+                          <h2 className="text-sm font-medium text-[#f9fafb]">Monitoring Engine Settings</h2>
+                        </div>
+                        {/* Configuration Item 1 */}
+                        <div className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
                               <div className="flex items-start gap-2">
                                 <Zap className="w-4 h-4 text-[#a1a1aa] self-center" />
                                 <div>
-                            <div className="text-xs font-medium text-[#f9fafb]">Enable Live Monitoring</div>
+                                  <div className="text-xs font-medium text-[#f9fafb]">Enable Live Monitoring</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
                                     Real-time analysis and risk assessment
-                          </div>
+                                  </div>
                                 </div>
                               </div>
-                        </div>
-                        <div className="ml-4">
-                          <button 
-                            onClick={() => setEnableLiveMonitoring(!enableLiveMonitoring)}
-                            className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
+                            </div>
+                            <div className="ml-4">
+                              <button
+                                onClick={() => setEnableLiveMonitoring(!enableLiveMonitoring)}
+                                className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
                                   enableLiveMonitoring ? "bg-[#22c55e]" : "bg-[#374151]"
                                 }`}
                               >
@@ -928,33 +960,33 @@ export default function CursorDashboard() {
                                     enableLiveMonitoring ? "right-0.5" : "left-0.5"
                                   }`}
                                 ></div>
-                          </button>
+                              </button>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                    
-                    {/* Horizontal Divider */}
+
+                        {/* Horizontal Divider */}
                         <div
                           className="border-t border-[#2a2a2a]/70 border-opacity-70"
                           style={{ borderTopWidth: "0.5px" }}
                         ></div>
-                    
-                    {/* Configuration Item 2 */}
-                    <div className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
+
+                        {/* Configuration Item 2 */}
+                        <div className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
                               <div className="flex items-start gap-2">
                                 <Clock className="w-4 h-4 text-[#a1a1aa] self-center" />
                                 <div>
-                            <div className="text-xs font-medium text-[#f9fafb]">Update Frequency</div>
+                                  <div className="text-xs font-medium text-[#f9fafb]">Update Frequency</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">How often to run analysis</div>
-                          </div>
-                        </div>
+                                </div>
+                              </div>
                             </div>
                             <div className="ml-4 relative">
                               <select
-                            value={updateFrequency}
-                            onChange={(e) => setUpdateFrequency(e.target.value)}
+                                value={updateFrequency}
+                                onChange={(e) => setUpdateFrequency(e.target.value)}
                                 className="w-20 h-8 bg-[#1a1a1a] border border-[#2a2a2a] rounded text-xs text-[#f9fafb] text-center appearance-none cursor-pointer hover:bg-[#2a2a2a] transition-colors duration-200 pr-6"
                               >
                                 <option value="1m">1m</option>
@@ -965,34 +997,34 @@ export default function CursorDashboard() {
                                 <option value="1h">1h</option>
                               </select>
                               <ChevronDown className="absolute right-1 top-1/2 transform -translate-y-1/2 w-3 h-3 text-[#a1a1aa] pointer-events-none" />
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                    
-                    {/* Horizontal Divider */}
+
+                        {/* Horizontal Divider */}
                         <div
                           className="border-t border-[#2a2a2a]/70 border-opacity-70"
                           style={{ borderTopWidth: "0.5px" }}
                         ></div>
-                    
-                    {/* Configuration Item 3 */}
-                    <div className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
+
+                        {/* Configuration Item 3 */}
+                        <div className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
                               <div className="flex items-start gap-2">
                                 <Settings className="w-4 h-4 text-[#a1a1aa] self-center" />
                                 <div>
-                            <div className="text-xs font-medium text-[#f9fafb]">Sensitivity Level</div>
+                                  <div className="text-xs font-medium text-[#f9fafb]">Sensitivity Level</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
                                     How sensitive the detection should be
-                          </div>
-                        </div>
+                                  </div>
+                                </div>
                               </div>
                             </div>
                             <div className="ml-4 relative">
                               <select
-                            value={sensitivityLevel}
-                            onChange={(e) => setSensitivityLevel(e.target.value)}
+                                value={sensitivityLevel}
+                                onChange={(e) => setSensitivityLevel(e.target.value)}
                                 className="w-20 h-8 bg-[#1a1a1a] border border-[#2a2a2a] rounded text-xs text-[#f9fafb] text-center appearance-none cursor-pointer hover:bg-[#2a2a2a] transition-colors duration-200 pr-6"
                               >
                                 <option value="Low">Low</option>
@@ -1000,37 +1032,37 @@ export default function CursorDashboard() {
                                 <option value="High">High</option>
                               </select>
                               <ChevronDown className="absolute right-1 top-1/2 transform -translate-y-1/2 w-3 h-3 text-[#a1a1aa] pointer-events-none" />
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                      </CardContent>
+                    </Card>
 
-                {/* Data Quality Controls Section */}
-                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                  <CardContent className="p-0">
-                    {/* Section Header */}
-                    <div className="px-4 py-3 border-b border-[#2a2a2a]">
-                      <h2 className="text-sm font-medium text-[#f9fafb]">Data Quality Controls</h2>
-                    </div>
-                    {/* Configuration Item 1 */}
-                    <div className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
+                    {/* Data Quality Controls Section */}
+                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                      <CardContent className="p-0">
+                        {/* Section Header */}
+                        <div className="px-4 py-3 border-b border-[#2a2a2a]">
+                          <h2 className="text-sm font-medium text-[#f9fafb]">Data Quality Controls</h2>
+                        </div>
+                        {/* Configuration Item 1 */}
+                        <div className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
                               <div className="flex items-start gap-2">
                                 <ShieldCheck className="w-4 h-4 text-[#a1a1aa] self-center" />
                                 <div>
-                            <div className="text-xs font-medium text-[#f9fafb]">Check Data Quality</div>
+                                  <div className="text-xs font-medium text-[#f9fafb]">Check Data Quality</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
                                     Validate data accuracy and consistency
-                          </div>
+                                  </div>
                                 </div>
                               </div>
-                        </div>
-                        <div className="ml-4">
-                          <button 
-                            onClick={() => setCheckDataQuality(!checkDataQuality)}
-                            className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
+                            </div>
+                            <div className="ml-4">
+                              <button
+                                onClick={() => setCheckDataQuality(!checkDataQuality)}
+                                className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
                                   checkDataQuality ? "bg-[#22c55e]" : "bg-[#374151]"
                                 }`}
                               >
@@ -1039,35 +1071,35 @@ export default function CursorDashboard() {
                                     checkDataQuality ? "right-0.5" : "left-0.5"
                                   }`}
                                 ></div>
-                          </button>
+                              </button>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                    
-                    {/* Horizontal Divider */}
+
+                        {/* Horizontal Divider */}
                         <div
                           className="border-t border-[#2a2a2a]/70 border-opacity-70"
                           style={{ borderTopWidth: "0.5px" }}
                         ></div>
-                    
-                    {/* Configuration Item 2 */}
-                    <div className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
+
+                        {/* Configuration Item 2 */}
+                        <div className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
                               <div className="flex items-start gap-2">
                                 <Clock className="w-4 h-4 text-[#a1a1aa] self-center" />
                                 <div>
-                            <div className="text-xs font-medium text-[#f9fafb]">Max Data Age</div>
+                                  <div className="text-xs font-medium text-[#f9fafb]">Max Data Age</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
                                     Maximum age before switching to backup
-                          </div>
-                        </div>
+                                  </div>
+                                </div>
                               </div>
                             </div>
                             <div className="ml-4 relative">
                               <select
-                            value={maxDataAge}
-                            onChange={(e) => setMaxDataAge(e.target.value)}
+                                value={maxDataAge}
+                                onChange={(e) => setMaxDataAge(e.target.value)}
                                 className="w-20 h-8 bg-[#1a1a1a] border border-[#2a2a2a] rounded text-xs text-[#f9fafb] text-center appearance-none cursor-pointer hover:bg-[#2a2a2a] transition-colors duration-200 pr-6"
                               >
                                 <option value="10m">10m</option>
@@ -1085,27 +1117,21 @@ export default function CursorDashboard() {
                 )}
                 {/* Data Sources Page */}
                 {activeSidebarItem === "data-sources" && (
-                  <div className="space-y-3 max-w-2xl">
+                  <div className="space-y-6">
+                    {/* Connect Your Data */}
                     <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                      <CardContent className="p-0">
-                        {/* Section Header */}
-                        <div className="px-4 py-3 border-b border-[#2a2a2a]">
-                          <h2 className="text-sm font-medium text-[#f9fafb]">Connect Your Data</h2>
-                        </div>
-
-                        {/* File Upload */}
-                        <div className="p-3">
-                          <div className="flex items-center justify-between">
+                      <CardContent className="p-4">
+                        <h3 className="text-sm font-medium text-[#f9fafb] mb-3">Connect Your Data</h3>
+                        <div className="space-y-3">
+                          <div
+                            className="flex items-center justify-between p-3 border-b border-[#2a2a2a]/70"
+                            style={{ borderWidth: "0.5px" }}
+                          >
                             <div className="flex items-center gap-2.5">
                               <Upload className="w-4 h-4 text-[#a1a1aa]" />
                               <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">Upload Files</div>
-                                <div className="text-[10px] text-[#a1a1aa]">
-                                  CSV, JSON, Parquet files for batch analysis
-                                </div>
-                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">
-                                  Supports up to 100MB • Auto-validation enabled
-                                </div>
+                                <div className="text-[#f9fafb] font-medium text-xs">File Upload</div>
+                                <div className="text-[10px] text-[#a1a1aa]">CSV, JSON, Parquet files • Up to 100MB</div>
                               </div>
                             </div>
                             <Button
@@ -1116,55 +1142,37 @@ export default function CursorDashboard() {
                               Connect
                             </Button>
                           </div>
-                        </div>
 
-                        {/* Separator */}
-                        <div
-                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        ></div>
+                          <div
+                            className="flex items-center justify-between p-3 border-b border-[#2a2a2a]/70"
+                            style={{ borderWidth: "0.5px" }}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <Zap className="w-4 h-4 text-[#a1a1aa]" />
+                              <div>
+                                <div className="text-[#f9fafb] font-medium text-xs">API Integration</div>
+                                <div className="text-[10px] text-[#a1a1aa]">Real-time pricing feeds • REST/GraphQL</div>
+                              </div>
+                            </div>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
+                            >
+                              Connect
+                            </Button>
+                          </div>
 
-                        {/* API Integration */}
-                        <div className="p-3">
-                          <div className="flex items-center justify-between">
+                          <div
+                            className="flex items-center justify-between p-3 border-b border-[#2a2a2a]/70"
+                            style={{ borderWidth: "0.5px" }}
+                          >
                             <div className="flex items-center gap-2.5">
                               <Database className="w-4 h-4 text-[#a1a1aa]" />
                               <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">API Integration</div>
-                                <div className="text-[10px] text-[#a1a1aa]">Real-time pricing feeds and webhooks</div>
-                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">
-                                  REST & GraphQL • Rate limiting included
-                                </div>
-                              </div>
-                            </div>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
-                            >
-                              Connect
-                            </Button>
-                          </div>
-                        </div>
-
-                        {/* Separator */}
-                        <div
-                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        ></div>
-
-                        {/* Database Connection */}
-                        <div className="p-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2.5">
-                              <Server className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
                                 <div className="text-[#f9fafb] font-medium text-xs">Database Connection</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
-                                  PostgreSQL, MongoDB, and other databases
-                                </div>
-                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">
-                                  SSL encryption • Connection pooling
+                                  PostgreSQL, MongoDB • Direct connection
                                 </div>
                               </div>
                             </div>
@@ -1176,25 +1184,13 @@ export default function CursorDashboard() {
                               Connect
                             </Button>
                           </div>
-                        </div>
 
-                        {/* Separator */}
-                        <div
-                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        ></div>
-
-                        {/* Cloud Storage */}
-                        <div className="p-3">
-                          <div className="flex items-center justify-between">
+                          <div className="flex items-center justify-between p-3">
                             <div className="flex items-center gap-2.5">
                               <Cloud className="w-4 h-4 text-[#a1a1aa]" />
                               <div>
                                 <div className="text-[#f9fafb] font-medium text-xs">Cloud Storage</div>
-                                <div className="text-[10px] text-[#a1a1aa]">
-                                  S3, Azure Blob, and other cloud providers
-                                </div>
-                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">Auto-sync • Multi-region support</div>
+                                <div className="text-[10px] text-[#a1a1aa]">S3, Azure Blob • Automated sync</div>
                               </div>
                             </div>
                             <Button
@@ -1209,16 +1205,19 @@ export default function CursorDashboard() {
                       </CardContent>
                     </Card>
 
-                    {/* API Keys Section */}
+                    {/* API Keys */}
                     <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                       <CardContent className="p-4">
                         <h3 className="text-xs font-medium text-[#f9fafb] mb-3">API Keys</h3>
                         <div className="space-y-2">
-                          <button className="w-full text-left p-3 bg-[#212121] hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors">
-                            <div className="font-medium">Generate new API key</div>
-                            <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                              Create secure access tokens for data integration
+                          <button className="w-full text-left p-3 bg-[#212121] hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
+                            <div>
+                              <div className="font-medium">Generate new API key</div>
+                              <div className="text-[10px] text-[#a1a1aa] mt-0.5">
+                                Create secure access tokens for data integration
+                              </div>
                             </div>
+                            <SquarePlus className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
                           </button>
                         </div>
                       </CardContent>
@@ -1227,136 +1226,126 @@ export default function CursorDashboard() {
                 )}
                 {/* AI Economists Page */}
                 {activeSidebarItem === "ai-economists" && (
-                  <div className="space-y-3 max-w-2xl">
-                    {/* Multiple Agent Cards */}
+                  <div className="space-y-6">
+                    {/* Quick Analysis */}
                     <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                      <CardContent className="p-0">
-                        {/* Section Header */}
-                        <div className="px-4 py-3 border-b border-[#2a2a2a]">
-                          <h2 className="text-sm font-medium text-[#f9fafb]">Specialized Agents</h2>
-                        </div>
-
-                        {/* US Market Compliance Agent */}
-                        <div className="p-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2.5">
-                              <Scale className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">US Market Compliance Agent</div>
-                                <div className="text-[10px] text-[#a1a1aa]">
-                                  Sherman Act analysis and antitrust compliance
-                                </div>
-                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">
-                                  1,247 scenarios analyzed • 96% accuracy
-                                </div>
+                      <CardContent className="p-4">
+                        {/* Updated Quick Analysis header font size from text-xs to text-sm */}
+                        <h3 className="text-sm font-medium text-[#f9fafb] mb-3">Quick Analysis</h3>
+                        <div className="space-y-2">
+                          <button className="w-full text-left p-3 bg-[#212121] hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
+                            <div>
+                              <div className="font-medium">Analyze pricing patterns</div>
+                              <div className="text-[10px] text-[#a1a1aa] mt-0.5">
+                                Identify trends and anomalies in market data
                               </div>
                             </div>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
-                            >
-                              Chat
-                            </Button>
-                          </div>
-                        </div>
-
-                        {/* Separator */}
-                        <div
-                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        ></div>
-
-                        {/* EU Competition Agent */}
-                        <div className="p-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2.5">
-                              <FileText className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">EU Competition Agent</div>
-                                <div className="text-[10px] text-[#a1a1aa]">
-                                  Article 101 interpretation and GDPR compliance
-                                </div>
-                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">
-                                  892 cases processed • 94% accuracy
-                                </div>
+                            <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
+                          </button>
+                          <button className="w-full text-left p-3 bg-[#212121] hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
+                            <div>
+                              <div className="font-medium">Check compliance status</div>
+                              <div className="text-[10px] text-[#a1a1aa] mt-0.5">
+                                Review regulatory requirements and violations
                               </div>
                             </div>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
-                            >
-                              Chat
-                            </Button>
-                          </div>
-                        </div>
-
-                        {/* Separator */}
-                        <div
-                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        ></div>
-
-                        {/* Surge Pricing Analyst */}
-                        <div className="p-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2.5">
-                              <TrendingUp className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">Surge Pricing Analyst</div>
-                                <div className="text-[10px] text-[#a1a1aa]">
-                                  Dynamic pricing and demand-based algorithms
-                                </div>
-                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">
-                                  3,156 surge events analyzed • 98% accuracy
-                                </div>
+                            <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
+                          </button>
+                          <button className="w-full text-left p-3 bg-[#212121] hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
+                            <div>
+                              <div className="font-medium">Generate report</div>
+                              <div className="text-[10px] text-[#a1a1aa] mt-0.5">
+                                Create comprehensive analysis document
                               </div>
                             </div>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
-                            >
-                              Chat
-                            </Button>
-                          </div>
+                            <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
+                          </button>
                         </div>
                       </CardContent>
                     </Card>
 
-                    {/* Smart Prompt Suggestions */}
+                    {/* Available Agents */}
                     <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                       <CardContent className="p-4">
-                        <h3 className="text-xs font-medium text-[#f9fafb] mb-3">Quick Analysis</h3>
-                        <div className="space-y-2">
-                          <button className="w-full text-left p-3 bg-[#212121] hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
-                            <div>
-                              <div className="font-medium">Analyze surge pricing compliance</div>
-                              <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                Review dynamic pricing against competition law
+                        {/* Updated Available Agents header font size from text-xs to text-sm */}
+                        <h3 className="text-sm font-medium text-[#f9fafb] mb-3">Available Agents</h3>
+                        <div className="space-y-3">
+                          <div
+                            className="flex items-center justify-between p-3 border-b border-[#2a2a2a]/70"
+                            style={{ borderWidth: "0.5px" }}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <Brain className="w-4 h-4 text-[#a1a1aa]" />
+                              <div>
+                                <div className="text-[#f9fafb] font-medium text-xs">General Analysis</div>
+                                <div className="text-[10px] text-[#a1a1aa]">Accuracy: 94.2% • Response time: 1.2s</div>
                               </div>
                             </div>
-                            <SquareChevronRight className="w-4 h-4 text-[#a1a1aa]" />
-                          </button>
-                          <button className="w-full text-left p-3 bg-[#212121] hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
-                            <div>
-                              <div className="font-medium">Generate Q3 compliance report</div>
-                              <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                Comprehensive quarterly analysis and documentation
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
+                            >
+                              Deploy
+                            </Button>
+                          </div>
+
+                          <div
+                            className="flex items-center justify-between p-3 border-b border-[#2a2a2a]/70"
+                            style={{ borderWidth: "0.5px" }}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <ScaleIcon className="w-4 h-4 text-[#a1a1aa]" />
+                              <div>
+                                <div className="text-[#f9fafb] font-medium text-xs">Competition Lawyer</div>
+                                <div className="text-[10px] text-[#a1a1aa]">Accuracy: 97.8% • Response time: 2.1s</div>
                               </div>
                             </div>
-                            <SquareChevronRight className="w-4 h-4 text-[#a1a1aa]" />
-                          </button>
-                          <button className="w-full text-left p-3 bg-[#212121] hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
-                            <div>
-                              <div className="font-medium">Cross-market coordination assessment</div>
-                              <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                Multi-jurisdictional pricing strategy review
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
+                            >
+                              Deploy
+                            </Button>
+                          </div>
+
+                          <div
+                            className="flex items-center justify-between p-3 border-b border-[#2a2a2a]/70"
+                            style={{ borderWidth: "0.5px" }}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <TrendingUp className="w-4 h-4 text-[#a1a1aa]" />
+                              <div>
+                                <div className="text-[#f9fafb] font-medium text-xs">Pricing Economist</div>
+                                <div className="text-[10px] text-[#a1a1aa]">Accuracy: 96.1% • Response time: 1.8s</div>
                               </div>
                             </div>
-                            <SquareChevronRight className="w-4 h-4 text-[#a1a1aa]" />
-                          </button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
+                            >
+                              Deploy
+                            </Button>
+                          </div>
+
+                          <div className="flex items-center justify-between p-3">
+                            <div className="flex items-center gap-2.5">
+                              <BarChart3 className="w-4 h-4 text-[#a1a1aa]" />
+                              <div>
+                                <div className="text-[#f9fafb] font-medium text-xs">Data Scientist</div>
+                                <div className="text-[10px] text-[#a1a1aa]">Accuracy: 95.7% • Response time: 1.5s</div>
+                              </div>
+                            </div>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
+                            >
+                              Deploy
+                            </Button>
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
@@ -1365,133 +1354,302 @@ export default function CursorDashboard() {
                 {/* Health Checks Page */}
                 {activeSidebarItem === "health-checks" && (
                   <div className="space-y-3 max-w-2xl">
-                    {/* Notification banner */}
-                    <div className="bg-[#2a1f0a] border border-[#3d2914] rounded-lg p-3">
-                      <p className="text-xs text-[#f59e0b]">
-                        System health monitoring active. Upgrade to RBB Pro for advanced diagnostics and alerts.
-                      </p>
-                    </div>
-
-                    {/* Main Health Checks card */}
+                    {/* Top tile - Copy of 2nd tile from Overview (with graph) */}
                     <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                      <CardContent className="p-4">
-                        {/* Header */}
-                        <div className="mb-4">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h2 className="text-sm font-medium text-[#f9fafb]">System Health</h2>
-                            <span className="text-xs text-[#22c55e] bg-[#0f1f0f] px-2 py-0.5 rounded">Active</span>
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className="text-xs font-medium text-[#f9fafb]">Your System Integrity</h3>
+                          {activeSidebarItem === "overview" && (
+                            <>
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => setSelectedTimeframe("1d")}
+                                  className={`text-xs px-2 py-1 ${selectedTimeframe === "1d" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
+                                >
+                                  1d
+                                </button>
+                                <button
+                                  onClick={() => setSelectedTimeframe("7d")}
+                                  className={`text-xs px-2 py-1 ${selectedTimeframe === "7d" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
+                                >
+                                  7d
+                                </button>
+                                <button
+                                  onClick={() => setSelectedTimeframe("30d")}
+                                  className={`text-xs px-2 py-1 ${selectedTimeframe === "30d" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
+                                >
+                                  30d
+                                </button>
+                              </div>
+                            </>
+                          )}
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-6 mb-10">
+                          <div className="rounded-lg bg-[#212121] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
+                            <div className="text-xl font-bold text-[#f9fafb]">84 out of 100</div>
+                            <div className="text-xs text-[#a7f3d0]">Pass</div>
                           </div>
-                          <p className="text-xs text-[#a1a1aa]">
-                            Automatically monitor system performance and compliance metrics
-                          </p>
+                          <div className="rounded-lg bg-[#212121]/40 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
+                            <div className="text-xl font-bold text-[#f9fafb]">67%</div>
+                            <div className="text-xs text-[#a1a1aa]">Compliance Readiness</div>
+                          </div>
                         </div>
 
-                        {/* Analytics section */}
-                        <div className="mb-6 text-center py-8">
-                          <h3 className="text-xs font-medium text-[#f9fafb] mb-1">No Health Analytics Available Yet</h3>
-                          <p className="text-xs text-[#71717a]">
-                            Continue using Health Checks to view system analytics and trends
-                          </p>
-                        </div>
-
-                        {/* Configuration sections */}
-                        <div className="space-y-0">
-                          {/* Database Connections */}
-                          <div
-                            className="flex items-center justify-between py-3 border-t border-[#2a2a2a]/70"
-                            style={{ borderTopWidth: "0.5px" }}
-                          >
-                            <div>
-                              <h4 className="text-xs font-medium text-[#f9fafb] mb-0.5">Database Connections</h4>
-                              <p className="text-xs text-[#71717a]">Monitor database connectivity and performance</p>
-                            </div>
-                            <Button
-                              variant="outline"
-                              className="border-[#2a2a2a] text-[#a1a1aa] bg-transparent hover:bg-[#1e1e1e] text-xs h-6 px-3"
+                        <div className="h-80">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <LineChart
+                              data={[
+                                {
+                                  date: "Jan 25",
+                                  "Convergence Rate": 25,
+                                  "Data Integrity": 18,
+                                  "Evidence Chain": 82,
+                                  "Runtime Stability": 81,
+                                },
+                                {
+                                  date: "Feb 25",
+                                  "Convergence Rate": 28,
+                                  "Data Integrity": 22,
+                                  "Evidence Chain": 85,
+                                  "Runtime Stability": 79,
+                                },
+                                {
+                                  date: "Mar 25",
+                                  "Convergence Rate": 32,
+                                  "Data Integrity": 25,
+                                  "Evidence Chain": 88,
+                                  "Runtime Stability": 83,
+                                },
+                                {
+                                  date: "Apr 25",
+                                  "Convergence Rate": 29,
+                                  "Data Integrity": 19,
+                                  "Evidence Chain": 84,
+                                  "Runtime Stability": 77,
+                                },
+                                {
+                                  date: "May 25",
+                                  "Convergence Rate": 35,
+                                  "Data Integrity": 28,
+                                  "Evidence Chain": 90,
+                                  "Runtime Stability": 85,
+                                },
+                                {
+                                  date: "Jun 25",
+                                  "Convergence Rate": 31,
+                                  "Data Integrity": 24,
+                                  "Evidence Chain": 87,
+                                  "Runtime Stability": 82,
+                                },
+                                {
+                                  date: "Jul 25",
+                                  "Convergence Rate": 38,
+                                  "Data Integrity": 31,
+                                  "Evidence Chain": 92,
+                                  "Runtime Stability": 88,
+                                },
+                                {
+                                  date: "Aug 25",
+                                  "Convergence Rate": 42,
+                                  "Data Integrity": 35,
+                                  "Evidence Chain": 94,
+                                  "Runtime Stability": 91,
+                                },
+                              ]}
+                              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                             >
-                              Configure
-                            </Button>
-                          </div>
+                              <XAxis
+                                dataKey="date"
+                                axisLine={false}
+                                tickLine={false}
+                                tick={{ fill: "#a1a1aa", fontSize: 10 }}
+                              />
+                              <YAxis
+                                axisLine={false}
+                                tickLine={false}
+                                tick={{ fill: "#a1a1aa", fontSize: 10 }}
+                                label={{
+                                  value: "System Health Score",
+                                  angle: -90,
+                                  position: "insideLeft",
+                                  style: { textAnchor: "middle", fill: "#a1a1aa", fontSize: 10 },
+                                }}
+                              />
+                              <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" opacity={0.75} />
 
-                          {/* API Health Monitoring */}
-                          <div
-                            className="flex items-center justify-between py-3 border-t border-[#2a2a2a]/70"
-                            style={{ borderTopWidth: "0.5px" }}
-                          >
-                            <div>
-                              <h4 className="text-xs font-medium text-[#f9fafb] mb-0.5">API Health Monitoring</h4>
-                              <p className="text-xs text-[#71717a]">
-                                Get unlimited health checks with RBB Pro. Start your 14-day free trial
-                              </p>
-                            </div>
-                            <Button
-                              variant="outline"
-                              className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-xs h-6 px-3"
-                            >
-                              Upgrade
-                            </Button>
-                          </div>
+                              <Tooltip
+                                cursor={false}
+                                content={({ active, payload, label }) => {
+                                  if (active && payload && payload.length) {
+                                    return (
+                                      <div className="bg-black border border-[#1a1a1a] rounded-lg p-3 shadow-2xl shadow-black/50">
+                                        <p className="text-[#a1a1aa] text-[10px] mb-1.5">{label}</p>
+                                        {payload.map((entry, index) => (
+                                          <div key={index} className="flex items-center gap-2 text-[9px]">
+                                            <div
+                                              className="w-2 h-2 rounded-full"
+                                              style={{ backgroundColor: entry.color }}
+                                            />
+                                            <span className="text-[#f9fafb] font-semibold">
+                                              {entry.name}: <span className="font-bold">{entry.value}/100</span>
+                                            </span>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    )
+                                  }
+                                  return null
+                                }}
+                              />
+                              <Line
+                                type="monotone"
+                                dataKey="Convergence Rate"
+                                stroke="#60a5fa"
+                                strokeWidth={2}
+                                dot={{ fill: "#60a5fa", strokeWidth: 0, r: 3 }}
+                                activeDot={{ r: 4, stroke: "#60a5fa", strokeWidth: 2, fill: "#0f0f10" }}
+                              />
+                              <Line
+                                type="monotone"
+                                dataKey="Data Integrity"
+                                stroke="#34d399"
+                                strokeWidth={2}
+                                dot={{ fill: "#34d399", strokeWidth: 0, r: 3 }}
+                                activeDot={{ r: 4, stroke: "#34d399", strokeWidth: 2, fill: "#0f0f10" }}
+                              />
+                              <Line
+                                type="monotone"
+                                dataKey="Evidence Chain"
+                                stroke="#fbbf24"
+                                strokeWidth={2}
+                                dot={{ fill: "#fbbf24", strokeWidth: 0, r: 3 }}
+                                activeDot={{ r: 4, stroke: "#fbbf24", strokeWidth: 2, fill: "#0f0f10" }}
+                              />
+                              <Line
+                                type="monotone"
+                                dataKey="Runtime Stability"
+                                stroke="#f87171"
+                                strokeWidth={2}
+                                dot={{ fill: "#f87171", strokeWidth: 0, r: 3 }}
+                                activeDot={{ r: 4, stroke: "#f87171", strokeWidth: 2, fill: "#0f0f10" }}
+                              />
+                            </LineChart>
+                          </ResponsiveContainer>
+                        </div>
+                      </CardContent>
+                    </Card>
 
-                          {/* Alert on Critical Issues */}
-                          <div
-                            className="flex items-center justify-between py-3 border-t border-[#2a2a2a]/70"
-                            style={{ borderTopWidth: "0.5px" }}
-                          >
-                            <div>
-                              <h4 className="text-xs font-medium text-[#f9fafb] mb-0.5">Alert on Critical Issues</h4>
-                              <p className="text-xs text-[#71717a]">
-                                Only send alerts when critical system issues are detected
-                              </p>
+                    {/* Bottom tile - Copy of 3rd tile from Overview (with 4 rows of content) */}
+                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                      <CardContent className="p-0">
+                        {/* Convergence Rate */}
+                        <div className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2.5">
+                              <Target className="w-4 h-4 text-[#a1a1aa]" />
+                              <div>
+                                <div className="text-[#f9fafb] font-medium text-xs">Convergence Rate</div>
+                                <div className="text-[10px] text-[#a1a1aa]">
+                                  Shows how often the risk model finishes its job without errors
+                                </div>
+                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">2m ago • 45s</div>
+                              </div>
                             </div>
-                            <div className="w-8 h-4 bg-[#2563eb] rounded-full relative cursor-pointer">
-                              <div className="w-3 h-3 bg-white rounded-full absolute top-0.5 right-0.5"></div>
-                            </div>
-                          </div>
-
-                          {/* Auto-Restart Services */}
-                          <div
-                            className="flex items-center justify-between py-3 border-t border-[#2a2a2a]/70"
-                            style={{ borderTopWidth: "0.5px" }}
-                          >
-                            <div>
-                              <h4 className="text-xs font-medium text-[#f9fafb] mb-0.5">Auto-Restart Services</h4>
-                              <p className="text-xs text-[#71717a]">
-                                Automatically restart services when health checks fail
-                              </p>
-                            </div>
-                            <div className="w-8 h-4 bg-[#2563eb] rounded-full relative cursor-pointer">
-                              <div className="w-3 h-3 bg-white rounded-full absolute top-0.5 right-0.5"></div>
-                            </div>
-                          </div>
-
-                          {/* Monitor Compliance Status */}
-                          <div
-                            className="flex items-center justify-between py-3 border-t border-[#2a2a2a]/70"
-                            style={{ borderTopWidth: "0.5px" }}
-                          >
-                            <div>
-                              <h4 className="text-xs font-medium text-[#f9fafb] mb-0.5">Monitor Compliance Status</h4>
-                              <p className="text-xs text-[#71717a]">
-                                Track regulatory compliance and generate automated reports
-                              </p>
-                            </div>
-                            <div className="w-8 h-4 bg-[#374151] rounded-full relative cursor-pointer">
-                              <div className="w-3 h-3 bg-white rounded-full absolute top-0.5 left-0.5"></div>
+                            <div className="text-right">
+                              <div className="flex items-center gap-1.5">
+                                <div className="text-[#f9fafb] font-bold text-sm">25</div>
+                                <div className="text-[#fca5a5] text-xs">✗</div>
+                              </div>
+                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
                             </div>
                           </div>
                         </div>
 
-                        {/* Footer */}
+                        {/* Separator line */}
                         <div
-                          className="flex items-center justify-between pt-4 border-t border-[#2a2a2a]/70 mt-4"
+                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
                           style={{ borderTopWidth: "0.5px" }}
-                        >
-                          <span className="text-xs text-[#71717a]">rbb.economics</span>
-                          <div className="flex items-center gap-1 text-xs text-[#71717a]">
-                            <span>12 Services</span>
-                            <span>•</span>
-                            <span>8 Healthy</span>
-                            <ChevronRight className="w-3 h-3" />
+                        ></div>
+
+                        {/* Data Integrity */}
+                        <div className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2.5">
+                              <Shield className="w-4 h-4 text-[#a1a1aa]" />
+                              <div>
+                                <div className="text-[#f9fafb] font-medium text-xs">Data Integrity</div>
+                                <div className="text-[10px] text-[#a1a1aa]">
+                                  Checks if incoming market data is in the right format and free from errors
+                                </div>
+                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">5m ago • 1m 12s</div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="flex items-center gap-1.5">
+                                <div className="text-[#f9fafb] font-bold text-sm">18</div>
+                                <div className="text-[#a7f3d0] text-xs">✓</div>
+                              </div>
+                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Separator line */}
+                        <div
+                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
+                          style={{ borderTopWidth: "0.5px" }}
+                        ></div>
+
+                        {/* Evidence Chain */}
+                        <div className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2.5">
+                              <Link className="w-4 h-4 text-[#a1a1aa]" />
+                              <div>
+                                <div className="text-[#f9fafb] font-medium text-xs">Evidence Chain</div>
+                                <div className="text-[10px] text-[#a1a1aa]">
+                                  Confirms all results are time-stamped and stored for audit and legal use
+                                </div>
+                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">30s ago • 18s</div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="flex items-center gap-1.5">
+                                <div className="text-[#f9fafb] font-bold text-sm">82</div>
+                                <div className="text-[#a7f3d0] text-xs">✓</div>
+                              </div>
+                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Separator line */}
+                        <div
+                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
+                          style={{ borderTopWidth: "0.5px" }}
+                        ></div>
+
+                        {/* Runtime Stability */}
+                        <div className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2.5">
+                              <Gauge className="w-4 h-4 text-[#a1a1aa]" />
+                              <div>
+                                <div className="text-[#f9fafb] font-medium text-xs">Runtime Stability</div>
+                                <div className="text-[10px] text-[#a1a1aa]">
+                                  Tracks how fast the system runs compared to targets (slow runs may signal problems)
+                                </div>
+                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">Updated just now</div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="flex items-center gap-1.5">
+                                <div className="text-[#f9fafb] font-bold text-sm">81</div>
+                                <div className="text-[#a7f3d0] text-xs">✓</div>
+                              </div>
+                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
+                            </div>
                           </div>
                         </div>
                       </CardContent>
@@ -1586,9 +1744,10 @@ export default function CursorDashboard() {
                             </div>
                             <div className="text-right">
                               <div className="flex items-center gap-1.5">
-                                <div className="text-[#f9fafb] font-bold text-sm">66 out of 100</div>
+                                <div className="text-[#f9fafb] font-bold text-sm">66</div>
+                                <div className="text-[#fca5a5] text-xs">✗</div>
                               </div>
-                              <div className="text-[10px] text-[#fca5a5]">High Risk</div>
+                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
                             </div>
                           </div>
                         </div>
@@ -1612,9 +1771,10 @@ export default function CursorDashboard() {
                             </div>
                             <div className="text-right">
                               <div className="flex items-center gap-1.5">
-                                <div className="text-[#f9fafb] font-bold text-sm">43 out of 100</div>
+                                <div className="text-[#f9fafb] font-bold text-sm">43</div>
+                                <div className="text-[#a7f3d0] text-xs">✓</div>
                               </div>
-                              <div className="text-[10px] text-[#a7f3d0]">Low Risk</div>
+                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
                             </div>
                           </div>
                         </div>
@@ -1638,9 +1798,10 @@ export default function CursorDashboard() {
                             </div>
                             <div className="text-right">
                               <div className="flex items-center gap-1.5">
-                                <div className="text-[#f9fafb] font-bold text-sm">18 out of 100</div>
+                                <div className="text-[#f9fafb] font-bold text-sm">18</div>
+                                <div className="text-[#fca5a5] text-xs">✗</div>
                               </div>
-                              <div className="text-[10px] text-[#fbbf24]">Medium Risk</div>
+                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
                             </div>
                           </div>
                         </div>
@@ -1713,86 +1874,36 @@ export default function CursorDashboard() {
                                   </svg>
                                 </button>
                               </div>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+                      </CardContent>
+                    </Card>
+                  </div>
                 )}
 
                 {/* Billing Page */}
                 {activeSidebarItem === "billing" && (
                   <div className="space-y-6 max-w-4xl">
-                    {/* Enterprise Plan Summary */}
                     <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                       <CardContent className="p-6">
-                        <div className="mb-6">
-                          <h2 className="text-sm font-medium text-[#f9fafb] mb-1">Enterprise Plan Summary</h2>
-                          <p className="text-xs text-[#a1a1aa]">29 Aug 2025 - 29 Sept 2025</p>
-                        </div>
-
-                        <div className="overflow-hidden">
-                          <table className="w-full">
-                            <thead>
-                              <tr className="border-b border-[#2a2a2a]/70">
-                                <th className="text-left text-xs text-[#a1a1aa] font-medium pb-3">Item</th>
-                                <th className="text-right text-xs text-[#a1a1aa] font-medium pb-3">Quantity</th>
-                                <th className="text-right text-xs text-[#a1a1aa] font-medium pb-3">Cost</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr className="border-b border-[#2a2a2a]/70">
-                                <td className="py-3">
-                                  <div className="text-xs text-[#f9fafb] font-medium">Included in Enterprise</div>
-                                  <div className="text-xs text-[#a1a1aa]">
-                                    Compliance Reports - Unlimited until 29 Sept 2025
-                                  </div>
-                                </td>
-                                <td className="text-right text-xs text-[#f9fafb] py-3">2.4M assessments</td>
-                                <td className="text-right text-xs text-[#f9fafb] py-3">Free</td>
-                              </tr>
-                              <tr>
-                                <td className="py-3">
-                                  <div className="text-xs text-[#f9fafb] font-medium">Total</div>
-                                </td>
-                                <td className="text-right text-xs text-[#f9fafb] py-3">2.4M</td>
-                                <td className="text-right text-xs text-[#f9fafb] py-3">
-                                  <span className="line-through text-[#a1a1aa]">US$2,400.00</span> included
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-
-                        <div className="mt-4 text-xs text-[#a1a1aa]">
-                          * Your plan has unlimited Compliance Reports until 29 Sept 2025.{" "}
-                          <span className="text-[#60a5fa] cursor-pointer">Learn more</span>
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    {/* Invoice Section */}
-                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                      <CardContent className="p-6">
-                        <div className="flex items-center justify-between mb-6">
-                          <select className="bg-[#1e1e1e] border border-[#2a2a2a] rounded-md px-3 py-1.5 text-xs text-[#f9fafb] focus:outline-none focus:ring-1 focus:ring-[#60a5fa]">
-                            <option>September 2025</option>
-                            <option>August 2025</option>
-                            <option>July 2025</option>
-                          </select>
-                          <button className="rounded-full px-3 py-1 text-xs border border-[#2a2a2a] bg-transparent hover:bg-[#1a1a1a] text-[#a1a1aa] hover:text-[#f9fafb]">
-                            Manage Subscription
-                          </button>
-                        </div>
-
+                        {/* Title Section */}
                         <div className="mb-4">
-                          <h3 className="text-sm text-[#f9fafb] mb-1">September 2025 • Upcoming Invoice</h3>
-                          <div className="text-lg font-medium text-[#f9fafb]">
-                            US$0.00 <span className="text-sm text-[#a1a1aa] line-through">US$6,000.00</span>
-                          </div>
+                          <h3 className="text-xs font-medium text-[#f9fafb]">Your Invoice</h3>
                         </div>
 
+                        {/* Left and Right Containers */}
+                        <div className="grid grid-cols-2 gap-6 mb-10">
+                          {/* Left Container - Pricing Info */}
+                          <div className="rounded-lg bg-[#212121] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
+                            <div className="text-xl font-bold text-[#f9fafb]">US$ 0.00</div>
+                            <div className="text-xs text-[#a1a1aa]">September 2025</div>
+                          </div>
+                          {/* Right Container - Empty and Transparent */}
+                          <div className="rounded-lg bg-transparent p-3"></div>
+                        </div>
+
+                        {/* General Content Area - Table Content */}
                         <div className="overflow-hidden">
                           <table className="w-full">
                             <thead>
@@ -1814,7 +1925,7 @@ export default function CursorDashboard() {
                           </table>
                         </div>
 
-                        <div className="mt-6 text-center text-xs text-[#a1a1aa]">
+                        <div className="mt-6 text-center text-[10px] text-[#a1a1aa]">
                           No invoices found for September 2025
                         </div>
                       </CardContent>
@@ -1887,7 +1998,6 @@ export default function CursorDashboard() {
                       </div>
                     </div>
 
-                    {/* Option 3: Text Labels Metrics Tile */}
                     <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                       <CardContent className="p-0">
                         {/* Title Section */}
@@ -2058,8 +2168,24 @@ export default function CursorDashboard() {
                   </div>
                 )}
 
-                {/* Contact Page */}
-                {activeSidebarItem === "contact" && renderShellTiles("Contact Us")}
+                {/* Contact Us Page */}
+                {activeSidebarItem === "contact" && (
+                  <div className="space-y-3 max-w-2xl">
+                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                      <CardContent className="p-4">
+                        <h2 className="text-sm font-medium text-[#f9fafb] mb-2">Contact Us</h2>
+                        <p className="text-xs text-[#a1a1aa] leading-relaxed">
+                          For all support inquiries, including billing issues, receipts, and general assistance, please
+                          email{" "}
+                          <a href="mailto:hello@RBB.ai" className="text-[#60a5fa] hover:text-[#93c5fd] underline">
+                            hello@RBB.ai
+                          </a>
+                          .
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
               </>
             )}
           </main>
