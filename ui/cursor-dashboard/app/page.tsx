@@ -208,9 +208,9 @@ export default function CursorDashboard() {
       <header className="border-b border-[#1a1a1a] px-5 py-1.5 relative">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img
-              src="/rbb-economics-logo.png"
-              alt="RBB Economics"
+            <img 
+              src="/rbb-economics-logo.png" 
+              alt="RBB Economics" 
               className="h-28 w-auto opacity-90 hover:opacity-100 transition-opacity"
             />
           </div>
@@ -382,7 +382,7 @@ export default function CursorDashboard() {
                           <option value="Snr Economist">Snr Economist</option>
                           <option value="Statistician">Statistician</option>
                         </select>
-                      </div>
+                    </div>
 
                       {/* Action buttons - bottom right */}
                       <div className="absolute right-3 bottom-3 flex gap-1.5">
@@ -427,45 +427,45 @@ export default function CursorDashboard() {
               /* Dashboard View */
               <>
                 {activeSidebarItem === "overview" && (
-                  <div className="space-y-3 max-w-2xl">
-                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                      <CardContent className="p-4">
+              <div className="space-y-3 max-w-2xl">
+                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                  <CardContent className="p-4">
                         <div className="grid grid-cols-2 gap-6">
                           <div className="rounded-lg bg-[#1a1a1a] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
                             <div>
-                              <h2 className="text-sm font-medium text-[#f9fafb] mb-1">Enterprise Plan</h2>
+                        <h2 className="text-sm font-medium text-[#f9fafb] mb-1">Enterprise Plan</h2>
                               <p className="text-xs text-[#a1a1aa] mb-3 leading-relaxed">
                                 Live monitoring with compliance tracking
-                              </p>
+                        </p>
                             </div>
                             <button className="rounded-full px-3 py-1 text-xs border border-[#2a2a2a] bg-transparent hover:bg-[#1a1a1a] text-[#a1a1aa] hover:text-[#f9fafb] self-start">
-                              Manage Subscription
-                            </button>
-                          </div>
+                          Manage Subscription
+                        </button>
+                      </div>
                           <div className="rounded-lg bg-[#1e1e1e] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
                             <div>
-                              <div className="text-xs font-bold text-[#f9fafb] mb-1">$0 / $6k</div>
-                              <p className="text-xs text-[#a1a1aa] mb-2">Usage-Based Spending this Month</p>
+                          <div className="text-xs font-bold text-[#f9fafb] mb-1">$0 / $6k</div>
+                          <p className="text-xs text-[#a1a1aa] mb-2">Usage-Based Spending this Month</p>
                             </div>
                             <button className="rounded-full px-3 py-1 text-xs border border-[#2a2a2a] bg-transparent hover:bg-[#1a1a1a] text-[#a1a1aa] hover:text-[#f9fafb] self-start">
-                              Edit Limit
-                            </button>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
+                            Edit Limit
+                          </button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
 
-                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center gap-2 text-xs text-[#a1a1aa]">
-                            {isClient && activeTab === "dashboard" && (
+                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2 text-xs text-[#a1a1aa]">
+                        {isClient && activeTab === "dashboard" && (
                               <>
-                                <button
-                                  onClick={() => setIsCalendarOpen(!isCalendarOpen)}
-                                  className="rounded-full px-3 py-1 text-xs border border-[#3a3a3a] bg-transparent hover:bg-[#2a2a2a]/50 text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1"
-                                >
-                                  <CalendarIcon className="h-3 w-3" />
+                          <button 
+                            onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+                            className="rounded-full px-3 py-1 text-xs border border-[#3a3a3a] bg-transparent hover:bg-[#2a2a2a]/50 text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1"
+                          >
+                            <CalendarIcon className="h-3 w-3" />
                                   {selectedTimeframe === "30d"
                                     ? "Aug 06 - Sep 10"
                                     : selectedTimeframe === "6m"
@@ -473,101 +473,127 @@ export default function CursorDashboard() {
                                       : selectedTimeframe === "1y"
                                         ? "Sep '24 - Sep '25"
                                         : "Jan 01 - Sep 05"}
-                                </button>
+                          </button>
 
-                                <div className="flex gap-1">
-                                  <button
-                                    onClick={() => setSelectedTimeframe("30d")}
+                        <div className="flex gap-1">
+                          <button 
+                            onClick={() => setSelectedTimeframe("30d")}
                                     className={`text-xs px-2 py-1 ${selectedTimeframe === "30d" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
-                                  >
-                                    30d
-                                  </button>
-                                  <button
-                                    onClick={() => setSelectedTimeframe("6m")}
+                          >
+                            30d
+                          </button>
+                          <button 
+                            onClick={() => setSelectedTimeframe("6m")}
                                     className={`text-xs px-2 py-1 ${selectedTimeframe === "6m" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
-                                  >
-                                    6m
-                                  </button>
-                                  <button
-                                    onClick={() => setSelectedTimeframe("1y")}
+                          >
+                            6m
+                          </button>
+                          <button 
+                            onClick={() => setSelectedTimeframe("1y")}
                                     className={`text-xs px-2 py-1 ${selectedTimeframe === "1y" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
-                                  >
-                                    1y
-                                  </button>
-                                  <button
-                                    onClick={() => setSelectedTimeframe("YTD")}
+                          >
+                            1y
+                          </button>
+                          <button 
+                            onClick={() => setSelectedTimeframe("YTD")}
                                     className={`text-xs px-2 py-1 ${selectedTimeframe === "YTD" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
-                                  >
-                                    YTD
-                                  </button>
-                                </div>
-                              </>
-                            )}
-                          </div>
+                          >
+                            YTD
+                          </button>
                         </div>
+                              </>
+                      )}
+                          </div>
+                    </div>
 
-                        <div className="mb-4">
-                          <h3 className="text-xs font-medium text-[#f9fafb] mb-3">Your Coordination Risk</h3>
+                    <div className="mb-4">
+                      <h3 className="text-xs font-medium text-[#f9fafb] mb-3">Your Coordination Risk</h3>
                           <div className="grid grid-cols-2 gap-6 mb-10">
                             <div className="rounded-lg bg-[#212121] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
-                              <div className="text-xl font-bold text-[#f9fafb]">14 out of 100</div>
+                          <div className="text-xl font-bold text-[#f9fafb]">14 out of 100</div>
                               <div className="text-xs text-[#a7f3d0]">Low Risk</div>
-                            </div>
+                        </div>
                             <div className="rounded-lg bg-[#212121]/40 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
                               <div className="text-xl font-bold text-[#f9fafb]">{21 + 21 + 26 + 16}%</div>
                               <div className="text-xs text-[#a1a1aa]">Weekly Price Leader</div>
-                            </div>
-                          </div>
+                        </div>
+                      </div>
 
-                          <div className="h-80">
+                          <div className="h-80 relative">
                             <ResponsiveContainer width="100%" height="100%">
                               <LineChart data={currentData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                                <XAxis
-                                  dataKey="date"
-                                  axisLine={false}
-                                  tickLine={false}
-                                  tick={{ fill: "#a1a1aa", fontSize: 10 }}
-                                />
-                                <YAxis
-                                  axisLine={false}
-                                  tickLine={false}
-                                  tick={{ fill: "#a1a1aa", fontSize: 10 }}
-                                  label={{
+                            <XAxis
+                              dataKey="date"
+                              axisLine={false}
+                              tickLine={false}
+                              tick={{ fill: "#a1a1aa", fontSize: 10 }}
+                            />
+                            <YAxis
+                              axisLine={false}
+                              tickLine={false}
+                              tick={{ fill: "#a1a1aa", fontSize: 10 }}
+                              label={{
                                     value: "SA Bank CDS Spread %",
-                                    angle: -90,
-                                    position: "insideLeft",
-                                    style: { textAnchor: "middle", fill: "#a1a1aa", fontSize: 10 },
-                                  }}
-                                />
+                                angle: -90,
+                                position: "insideLeft",
+                                style: { textAnchor: "middle", fill: "#a1a1aa", fontSize: 10 },
+                              }}
+                            />
                                 <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" opacity={0.75} />
 
-                                {/* Event lines for environmental changes */}
+                                {/* Option 2: Event Dots - Small colored indicators */}
                                 <ReferenceLine
-                                  x="Feb 25"
-                                  stroke="#60a5fa"
-                                  strokeOpacity={0.5}
-                                  strokeWidth={2}
-                                  strokeDasharray="2 2"
+                                  x="Feb '25"
+                                  stroke="#ef4444"
+                                  strokeOpacity={0}
+                                  strokeWidth={0}
+                                  dot={{ fill: "#ef4444", strokeWidth: 0, r: 4 }}
+                                  label={{ value: "●", position: "top", style: { textAnchor: "middle", fill: "#ef4444", fontSize: 12 } }}
                                 />
                                 <ReferenceLine
-                                  x="Jun 25"
-                                  stroke="#60a5fa"
-                                  strokeOpacity={0.5}
-                                  strokeWidth={2}
-                                  strokeDasharray="2 2"
+                                  x="Jun '25"
+                                  stroke="#f59e0b"
+                                  strokeOpacity={0}
+                                  strokeWidth={0}
+                                  dot={{ fill: "#f59e0b", strokeWidth: 0, r: 4 }}
+                                  label={{ value: "●", position: "top", style: { textAnchor: "middle", fill: "#f59e0b", fontSize: 12 } }}
                                 />
                                 <ReferenceLine
-                                  x="Jul 25"
-                                  stroke="#60a5fa"
-                                  strokeOpacity={0.5}
-                                  strokeWidth={2}
-                                  strokeDasharray="2 2"
+                                  x="Jul '25"
+                                  stroke="#10b981"
+                                  strokeOpacity={0}
+                                  strokeWidth={0}
+                                  dot={{ fill: "#10b981", strokeWidth: 0, r: 4 }}
+                                  label={{ value: "●", position: "top", style: { textAnchor: "middle", fill: "#10b981", fontSize: 12 } }}
                                 />
 
-                                <Tooltip
+                                {/* Option 3: Subtle Background Shading - Vertical bands for event periods */}
+                                <ReferenceLine
+                                  x="Feb '25"
+                                  stroke="rgba(239, 68, 68, 0.08)"
+                                  strokeOpacity={1}
+                                  strokeWidth={40}
+                                  strokeDasharray="0"
+                                />
+                                <ReferenceLine
+                                  x="Jun '25"
+                                  stroke="rgba(245, 158, 11, 0.08)"
+                                  strokeOpacity={1}
+                                  strokeWidth={40}
+                                  strokeDasharray="0"
+                                />
+                                <ReferenceLine
+                                  x="Jul '25"
+                                  stroke="rgba(16, 185, 129, 0.08)"
+                                  strokeOpacity={1}
+                                  strokeWidth={40}
+                                  strokeDasharray="0"
+                                />
+
+                            <Tooltip
                                   cursor={false}
-                                  content={({ active, payload, label }) => {
-                                    if (active && payload && payload.length) {
+                              content={({ active, payload, label }) => {
+                                if (active && payload && payload.length) {
                                       // Market share data for each bank
                                       const marketShare = {
                                         FNB: 21,
@@ -576,173 +602,195 @@ export default function CursorDashboard() {
                                         Nedbank: 16,
                                       }
 
-                                      return (
+                                      // Event data for significant dates
+                                      const eventData = {
+                                        "Feb '25": { type: "SARB Rate Cut", impact: "Price Adaptation", color: "#ef4444" },
+                                        "Jun '25": { type: "Market Shock", impact: "Price Invariance", color: "#f59e0b" },
+                                        "Jul '25": { type: "Price Adaptation", impact: "Competitive Response", color: "#10b981" },
+                                      }
+
+                                      const currentEvent = eventData[label as keyof typeof eventData]
+
+                                  return (
                                         <div className="bg-black border border-[#1a1a1a] rounded-lg p-3 shadow-2xl shadow-black/50">
                                           <p className="text-[#a1a1aa] text-[10px] mb-1.5">{label}</p>
-                                          {payload.map((entry, index) => (
+                                          
+                                          {/* Event Information */}
+                                          {currentEvent && (
+                                            <div className="mb-2 p-2 bg-[#1a1a1a] rounded border-l-2" style={{ borderLeftColor: currentEvent.color }}>
+                                              <div className="flex items-center gap-2 mb-1">
+                                                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: currentEvent.color }}></div>
+                                                <span className="text-[#f9fafb] font-semibold text-[10px]">{currentEvent.type}</span>
+                                              </div>
+                                              <p className="text-[#a1a1aa] text-[9px]">{currentEvent.impact}</p>
+                                            </div>
+                                          )}
+
+                                          {/* Bank Data */}
+                                      {payload.map((entry, index) => (
                                             <div key={index} className="flex items-center gap-2 text-[9px]">
-                                              <div
-                                                className="w-2 h-2 rounded-full"
-                                                style={{ backgroundColor: entry.color }}
-                                              />
+                                          <div 
+                                            className="w-2 h-2 rounded-full" 
+                                            style={{ backgroundColor: entry.color }}
+                                          />
                                               <span className="text-[#f9fafb] font-semibold">
                                                 {entry.name}: <span className="font-bold">{entry.value} bps</span> |{" "}
                                                 <span className="text-[#a1a1aa]">
                                                   {marketShare[entry.name as keyof typeof marketShare]}% share
                                                 </span>
                                               </span>
-                                            </div>
-                                          ))}
                                         </div>
+                                      ))}
+                                    </div>
                                       )
-                                    }
+                                }
                                     return null
-                                  }}
-                                />
-                                <Line
-                                  type="monotone"
-                                  dataKey="fnb"
-                                  stroke="#60a5fa"
-                                  strokeWidth={2}
-                                  dot={{ fill: "#60a5fa", strokeWidth: 2, r: 3 }}
-                                  activeDot={{ r: 4, fill: "#60a5fa" }}
-                                  name="FNB"
-                                />
-                                <Line
-                                  type="monotone"
-                                  dataKey="absa"
-                                  stroke="#a1a1aa"
-                                  strokeWidth={1.5}
-                                  dot={{ fill: "#a1a1aa", strokeWidth: 1.5, r: 2 }}
-                                  activeDot={{ r: 3, fill: "#a1a1aa" }}
-                                  name="ABSA"
-                                />
-                                <Line
-                                  type="monotone"
-                                  dataKey="standard"
-                                  stroke="#71717a"
-                                  strokeWidth={1.5}
-                                  dot={{ fill: "#71717a", strokeWidth: 1.5, r: 2 }}
-                                  activeDot={{ r: 3, fill: "#71717a" }}
-                                  name="Standard Bank"
-                                />
-                                <Line
-                                  type="monotone"
-                                  dataKey="nedbank"
-                                  stroke="#52525b"
-                                  strokeWidth={1.5}
-                                  dot={{ fill: "#52525b", strokeWidth: 1.5, r: 2 }}
-                                  activeDot={{ r: 3, fill: "#52525b" }}
-                                  name="Nedbank"
-                                />
-                              </LineChart>
-                            </ResponsiveContainer>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                    {/* Metrics tile: Price Stability, Price Synchronization, Environmental Sensitivity */}
-                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                      <CardContent className="p-0">
-                        {/* Price Stability */}
-                        <div className="p-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2.5">
-                              <TrendingUp className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">Price Stability</div>
+                              }}
+                            />
+                            <Line
+                              type="monotone"
+                              dataKey="fnb"
+                              stroke="#60a5fa"
+                              strokeWidth={2}
+                              dot={{ fill: "#60a5fa", strokeWidth: 2, r: 3 }}
+                              activeDot={{ r: 4, fill: "#60a5fa" }}
+                              name="FNB"
+                            />
+                            <Line
+                              type="monotone"
+                              dataKey="absa"
+                              stroke="#a1a1aa"
+                              strokeWidth={1.5}
+                              dot={{ fill: "#a1a1aa", strokeWidth: 1.5, r: 2 }}
+                              activeDot={{ r: 3, fill: "#a1a1aa" }}
+                              name="ABSA"
+                            />
+                            <Line
+                              type="monotone"
+                              dataKey="standard"
+                              stroke="#71717a"
+                              strokeWidth={1.5}
+                              dot={{ fill: "#71717a", strokeWidth: 1.5, r: 2 }}
+                              activeDot={{ r: 3, fill: "#71717a" }}
+                              name="Standard Bank"
+                            />
+                            <Line
+                              type="monotone"
+                              dataKey="nedbank"
+                              stroke="#52525b"
+                              strokeWidth={1.5}
+                              dot={{ fill: "#52525b", strokeWidth: 1.5, r: 2 }}
+                              activeDot={{ r: 3, fill: "#52525b" }}
+                              name="Nedbank"
+                            />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                {/* Metrics tile: Price Stability, Price Synchronization, Environmental Sensitivity */}
+                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                  <CardContent className="p-0">
+                    {/* Price Stability */}
+                    <div className="p-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2.5">
+                          <TrendingUp className="w-4 h-4 text-[#a1a1aa]" />
+                          <div>
+                            <div className="text-[#f9fafb] font-medium text-xs">Price Stability</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
                                   How steady your prices are compared to competitors
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">2m ago • 45s</div>
-                              </div>
-                            </div>
-                            <div className="text-right">
+                          </div>
+                        </div>
+                        <div className="text-right">
                               <div className="flex items-center gap-1.5">
                                 <div className="text-[#f9fafb] font-bold text-sm">65</div>
                                 <div className="text-[#fca5a5] text-xs">✗</div>
                               </div>
-                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
-                            </div>
-                          </div>
+                          <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
                         </div>
-
-                        {/* Separator line */}
+                      </div>
+                    </div>
+                    
+                    {/* Separator line */}
                         <div
                           className="border-t border-[#2a2a2a]/70 border-opacity-70"
                           style={{ borderTopWidth: "0.5px" }}
                         ></div>
-
-                        {/* Price Synchronization */}
-                        <div className="p-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2.5">
-                              <GitBranch className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">Price Synchronization</div>
+                    
+                    {/* Price Synchronization */}
+                    <div className="p-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2.5">
+                          <GitBranch className="w-4 h-4 text-[#a1a1aa]" />
+                          <div>
+                            <div className="text-[#f9fafb] font-medium text-xs">Price Synchronization</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
                                   How much your prices move together with other banks
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">1m ago • 32s</div>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <div className="flex items-center gap-1.5">
-                                <div className="text-[#f9fafb] font-bold text-sm">18</div>
-                                <div className="text-[#a7f3d0] text-xs">✓</div>
-                              </div>
-                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
-                            </div>
                           </div>
                         </div>
-
-                        {/* Separator line */}
+                        <div className="text-right">
+                              <div className="flex items-center gap-1.5">
+                          <div className="text-[#f9fafb] font-bold text-sm">18</div>
+                                <div className="text-[#a7f3d0] text-xs">✓</div>
+                              </div>
+                          <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Separator line */}
                         <div
                           className="border-t border-[#2a2a2a]/70 border-opacity-70"
                           style={{ borderTopWidth: "0.5px" }}
                         ></div>
-
-                        {/* Environmental Sensitivity */}
-                        <div className="p-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2.5">
-                              <Activity className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">Environmental Sensitivity</div>
+                    
+                    {/* Environmental Sensitivity */}
+                    <div className="p-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2.5">
+                          <Activity className="w-4 h-4 text-[#a1a1aa]" />
+                          <div>
+                            <div className="text-[#f9fafb] font-medium text-xs">Environmental Sensitivity</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
                                   How well you respond to market changes and economic events
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">30s ago • 18s</div>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <div className="flex items-center gap-1.5">
-                                <div className="text-[#f9fafb] font-bold text-sm">82</div>
-                                <div className="text-[#a7f3d0] text-xs">✓</div>
-                              </div>
-                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
-                            </div>
                           </div>
                         </div>
-                      </CardContent>
-                    </Card>
+                        <div className="text-right">
+                              <div className="flex items-center gap-1.5">
+                          <div className="text-[#f9fafb] font-bold text-sm">82</div>
+                                <div className="text-[#a7f3d0] text-xs">✓</div>
+                              </div>
+                          <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
 
-                    {/* Combined tile: Market Data Feed, Regulatory Notices */}
-                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                      <CardContent className="p-0">
+                {/* Combined tile: Market Data Feed, Regulatory Notices */}
+                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                  <CardContent className="p-0">
                         {/* Bloomberg Data Feed */}
-                        <div className="p-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2.5">
+                    <div className="p-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2.5">
                               <Database className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
+                          <div>
                                 <div className="text-[#f9fafb] font-medium text-xs">Enable Bloomberg Data Feed</div>
                                 <div className="text-[10px] text-[#a1a1aa]">Real-time market data and analytics</div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">
                                   Live pricing • Market depth • News feed
-                                </div>
-                              </div>
                             </div>
+                          </div>
+                        </div>
                             <div className="ml-4">
                               <button
                                 onClick={() => setBloombergDataFeed(!bloombergDataFeed)}
@@ -757,86 +805,86 @@ export default function CursorDashboard() {
                                 ></div>
                               </button>
                             </div>
-                          </div>
-                        </div>
-
-                        {/* Separator line */}
+                      </div>
+                    </div>
+                    
+                    {/* Separator line */}
                         <div
                           className="border-t border-[#2a2a2a]/70 border-opacity-70"
                           style={{ borderTopWidth: "0.5px" }}
                         ></div>
-
-                        {/* Regulatory Notices */}
-                        <div className="p-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2.5">
-                              <FileText className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">Regulatory Notices</div>
-                                <div className="text-[10px] text-[#a1a1aa]">
-                                  Important updates and compliance notifications
-                                </div>
-                              </div>
+                    
+                    {/* Regulatory Notices */}
+                    <div className="p-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2.5">
+                          <FileText className="w-4 h-4 text-[#a1a1aa]" />
+                          <div>
+                            <div className="text-[#f9fafb] font-medium text-xs">Regulatory Notices</div>
+                            <div className="text-[10px] text-[#a1a1aa]">
+                              Important updates and compliance notifications
                             </div>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
-                            >
-                              Connect
-                            </Button>
                           </div>
                         </div>
-                      </CardContent>
-                    </Card>
-
-                    {/* Sixth tile: Assign Reviewers */}
-                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                      <CardContent className="p-4 text-center">
-                        <h3 className="text-[#f9fafb] font-medium mb-1.5 text-xs">Assign Reviewers</h3>
-                        <p className="text-[10px] text-[#a1a1aa] mb-2.5">
-                          Ensure independent oversight of monitoring outputs.
-                        </p>
                         <Button
                           variant="outline"
+                          size="sm"
                           className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
                         >
-                          Invite Your Team
+                          Connect
                         </Button>
-                      </CardContent>
-                    </Card>
-                  </div>
-                )}
-                {/* Configuration Page */}
-                {activeSidebarItem === "configuration" && (
-                  <div className="space-y-6 max-w-2xl">
-                    {/* Pricing Analysis Settings Section */}
-                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                      <CardContent className="p-0">
-                        {/* Section Header */}
-                        <div className="px-4 py-3 border-b border-[#2a2a2a]">
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Sixth tile: Assign Reviewers */}
+                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                  <CardContent className="p-4 text-center">
+                    <h3 className="text-[#f9fafb] font-medium mb-1.5 text-xs">Assign Reviewers</h3>
+                    <p className="text-[10px] text-[#a1a1aa] mb-2.5">
+                      Ensure independent oversight of monitoring outputs.
+                    </p>
+                    <Button
+                      variant="outline"
+                      className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
+                    >
+                      Invite Your Team
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+            {/* Configuration Page */}
+            {activeSidebarItem === "configuration" && (
+              <div className="space-y-6 max-w-2xl">
+                {/* Pricing Analysis Settings Section */}
+                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                  <CardContent className="p-0">
+                    {/* Section Header */}
+                    <div className="px-4 py-3 border-b border-[#2a2a2a]">
                           <h2 className="text-sm font-medium text-[#f9fafb]">Coordination Analysis Settings</h2>
-                        </div>
-                        {/* Configuration Item 1 */}
-                        <div className="p-4">
-                          <div className="flex items-center justify-between">
-                            <div className="flex-1">
+                    </div>
+                    {/* Configuration Item 1 */}
+                    <div className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
                               <div className="flex items-start gap-2">
                                 <Activity className="w-4 h-4 text-[#a1a1aa] self-center" />
                                 <div>
                                   <div className="text-xs font-medium text-[#f9fafb]">
                                     Automatically Detect Market Changes
-                                  </div>
+                          </div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
                                     Enable automatic detection of significant market changes
                                   </div>
                                 </div>
                               </div>
-                            </div>
-                            <div className="ml-4">
-                              <button
-                                onClick={() => setAutoDetectMarketChanges(!autoDetectMarketChanges)}
-                                className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
+                        </div>
+                        <div className="ml-4">
+                          <button 
+                            onClick={() => setAutoDetectMarketChanges(!autoDetectMarketChanges)}
+                            className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
                                   autoDetectMarketChanges ? "bg-[#22c55e]" : "bg-[#374151]"
                                 }`}
                               >
@@ -845,35 +893,35 @@ export default function CursorDashboard() {
                                     autoDetectMarketChanges ? "right-0.5" : "left-0.5"
                                   }`}
                                 ></div>
-                              </button>
-                            </div>
-                          </div>
+                          </button>
                         </div>
-
-                        {/* Horizontal Divider */}
+                      </div>
+                    </div>
+                    
+                    {/* Horizontal Divider */}
                         <div
                           className="border-t border-[#2a2a2a]/70 border-opacity-70"
                           style={{ borderTopWidth: "0.5px" }}
                         ></div>
-
-                        {/* Configuration Item 2 */}
-                        <div className="p-4">
-                          <div className="flex items-center justify-between">
-                            <div className="flex-1">
+                    
+                    {/* Configuration Item 2 */}
+                    <div className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
                               <div className="flex items-start gap-2">
                                 <TrendingUp className="w-4 h-4 text-[#a1a1aa] self-center" />
                                 <div>
                                   <div className="text-xs font-medium text-[#f9fafb]">Price Change Threshold</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
                                     Minimum change required to trigger analysis
-                                  </div>
-                                </div>
+                          </div>
+                        </div>
                               </div>
                             </div>
                             <div className="ml-4 relative">
                               <select
-                                value={changeThreshold}
-                                onChange={(e) => setChangeThreshold(e.target.value)}
+                            value={changeThreshold}
+                            onChange={(e) => setChangeThreshold(e.target.value)}
                                 className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-md px-3 py-1.5 text-xs text-[#f9fafb] cursor-pointer hover:bg-[#2a2a2a] focus:border-[#60a5fa] focus:outline-none focus:ring-1 focus:ring-[#60a5fa] transition-colors duration-200 appearance-none pr-8"
                               >
                                 <option value="5%">5%</option>
@@ -883,34 +931,34 @@ export default function CursorDashboard() {
                                 <option value="25%">25%</option>
                               </select>
                               <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-3 h-3 text-[#71717a] pointer-events-none" />
-                            </div>
-                          </div>
                         </div>
-
-                        {/* Horizontal Divider */}
+                      </div>
+                    </div>
+                    
+                    {/* Horizontal Divider */}
                         <div
                           className="border-t border-[#2a2a2a]/70 border-opacity-70"
                           style={{ borderTopWidth: "0.5px" }}
                         ></div>
-
-                        {/* Configuration Item 3 */}
-                        <div className="p-4">
-                          <div className="flex items-center justify-between">
-                            <div className="flex-1">
+                    
+                    {/* Configuration Item 3 */}
+                    <div className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
                               <div className="flex items-start gap-2">
                                 <BarChart3 className="w-4 h-4 text-[#a1a1aa] self-center" />
                                 <div>
-                                  <div className="text-xs font-medium text-[#f9fafb]">Confidence Level</div>
+                            <div className="text-xs font-medium text-[#f9fafb]">Confidence Level</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
                                     Statistical confidence required for alerts
-                                  </div>
-                                </div>
+                          </div>
+                        </div>
                               </div>
                             </div>
                             <div className="ml-4 relative">
                               <select
-                                value={confidenceLevel}
-                                onChange={(e) => setConfidenceLevel(e.target.value)}
+                            value={confidenceLevel}
+                            onChange={(e) => setConfidenceLevel(e.target.value)}
                                 className="w-20 h-8 bg-[#1a1a1a] border border-[#2a2a2a] rounded text-xs text-[#f9fafb] text-center appearance-none cursor-pointer hover:bg-[#2a2a2a] transition-colors duration-200 pr-6"
                               >
                                 <option value="95%">95%</option>
@@ -921,37 +969,37 @@ export default function CursorDashboard() {
                                 <option value="70%">70%</option>
                               </select>
                               <ChevronDown className="absolute right-1 top-1/2 transform -translate-y-1/2 w-3 h-3 text-[#a1a1aa] pointer-events-none" />
-                            </div>
-                          </div>
                         </div>
-                      </CardContent>
-                    </Card>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
 
-                    {/* Monitoring Engine Settings Section */}
-                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                      <CardContent className="p-0">
-                        {/* Section Header */}
-                        <div className="px-4 py-3 border-b border-[#2a2a2a]">
-                          <h2 className="text-sm font-medium text-[#f9fafb]">Monitoring Engine Settings</h2>
-                        </div>
-                        {/* Configuration Item 1 */}
-                        <div className="p-4">
-                          <div className="flex items-center justify-between">
-                            <div className="flex-1">
+                {/* Monitoring Engine Settings Section */}
+                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                  <CardContent className="p-0">
+                    {/* Section Header */}
+                    <div className="px-4 py-3 border-b border-[#2a2a2a]">
+                      <h2 className="text-sm font-medium text-[#f9fafb]">Monitoring Engine Settings</h2>
+                    </div>
+                    {/* Configuration Item 1 */}
+                    <div className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
                               <div className="flex items-start gap-2">
                                 <Zap className="w-4 h-4 text-[#a1a1aa] self-center" />
                                 <div>
-                                  <div className="text-xs font-medium text-[#f9fafb]">Enable Live Monitoring</div>
+                            <div className="text-xs font-medium text-[#f9fafb]">Enable Live Monitoring</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
                                     Real-time analysis and risk assessment
-                                  </div>
+                          </div>
                                 </div>
                               </div>
-                            </div>
-                            <div className="ml-4">
-                              <button
-                                onClick={() => setEnableLiveMonitoring(!enableLiveMonitoring)}
-                                className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
+                        </div>
+                        <div className="ml-4">
+                          <button 
+                            onClick={() => setEnableLiveMonitoring(!enableLiveMonitoring)}
+                            className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
                                   enableLiveMonitoring ? "bg-[#22c55e]" : "bg-[#374151]"
                                 }`}
                               >
@@ -960,33 +1008,33 @@ export default function CursorDashboard() {
                                     enableLiveMonitoring ? "right-0.5" : "left-0.5"
                                   }`}
                                 ></div>
-                              </button>
-                            </div>
-                          </div>
+                          </button>
                         </div>
-
-                        {/* Horizontal Divider */}
+                      </div>
+                    </div>
+                    
+                    {/* Horizontal Divider */}
                         <div
                           className="border-t border-[#2a2a2a]/70 border-opacity-70"
                           style={{ borderTopWidth: "0.5px" }}
                         ></div>
-
-                        {/* Configuration Item 2 */}
-                        <div className="p-4">
-                          <div className="flex items-center justify-between">
-                            <div className="flex-1">
+                    
+                    {/* Configuration Item 2 */}
+                    <div className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
                               <div className="flex items-start gap-2">
                                 <Clock className="w-4 h-4 text-[#a1a1aa] self-center" />
                                 <div>
-                                  <div className="text-xs font-medium text-[#f9fafb]">Update Frequency</div>
+                            <div className="text-xs font-medium text-[#f9fafb]">Update Frequency</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">How often to run analysis</div>
-                                </div>
-                              </div>
+                          </div>
+                        </div>
                             </div>
                             <div className="ml-4 relative">
                               <select
-                                value={updateFrequency}
-                                onChange={(e) => setUpdateFrequency(e.target.value)}
+                            value={updateFrequency}
+                            onChange={(e) => setUpdateFrequency(e.target.value)}
                                 className="w-20 h-8 bg-[#1a1a1a] border border-[#2a2a2a] rounded text-xs text-[#f9fafb] text-center appearance-none cursor-pointer hover:bg-[#2a2a2a] transition-colors duration-200 pr-6"
                               >
                                 <option value="1m">1m</option>
@@ -997,34 +1045,34 @@ export default function CursorDashboard() {
                                 <option value="1h">1h</option>
                               </select>
                               <ChevronDown className="absolute right-1 top-1/2 transform -translate-y-1/2 w-3 h-3 text-[#a1a1aa] pointer-events-none" />
-                            </div>
-                          </div>
                         </div>
-
-                        {/* Horizontal Divider */}
+                      </div>
+                    </div>
+                    
+                    {/* Horizontal Divider */}
                         <div
                           className="border-t border-[#2a2a2a]/70 border-opacity-70"
                           style={{ borderTopWidth: "0.5px" }}
                         ></div>
-
-                        {/* Configuration Item 3 */}
-                        <div className="p-4">
-                          <div className="flex items-center justify-between">
-                            <div className="flex-1">
+                    
+                    {/* Configuration Item 3 */}
+                    <div className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
                               <div className="flex items-start gap-2">
                                 <Settings className="w-4 h-4 text-[#a1a1aa] self-center" />
                                 <div>
-                                  <div className="text-xs font-medium text-[#f9fafb]">Sensitivity Level</div>
+                            <div className="text-xs font-medium text-[#f9fafb]">Sensitivity Level</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
                                     How sensitive the detection should be
-                                  </div>
-                                </div>
+                          </div>
+                        </div>
                               </div>
                             </div>
                             <div className="ml-4 relative">
                               <select
-                                value={sensitivityLevel}
-                                onChange={(e) => setSensitivityLevel(e.target.value)}
+                            value={sensitivityLevel}
+                            onChange={(e) => setSensitivityLevel(e.target.value)}
                                 className="w-20 h-8 bg-[#1a1a1a] border border-[#2a2a2a] rounded text-xs text-[#f9fafb] text-center appearance-none cursor-pointer hover:bg-[#2a2a2a] transition-colors duration-200 pr-6"
                               >
                                 <option value="Low">Low</option>
@@ -1032,37 +1080,37 @@ export default function CursorDashboard() {
                                 <option value="High">High</option>
                               </select>
                               <ChevronDown className="absolute right-1 top-1/2 transform -translate-y-1/2 w-3 h-3 text-[#a1a1aa] pointer-events-none" />
-                            </div>
-                          </div>
                         </div>
-                      </CardContent>
-                    </Card>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
 
-                    {/* Data Quality Controls Section */}
-                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                      <CardContent className="p-0">
-                        {/* Section Header */}
-                        <div className="px-4 py-3 border-b border-[#2a2a2a]">
-                          <h2 className="text-sm font-medium text-[#f9fafb]">Data Quality Controls</h2>
-                        </div>
-                        {/* Configuration Item 1 */}
-                        <div className="p-4">
-                          <div className="flex items-center justify-between">
-                            <div className="flex-1">
+                {/* Data Quality Controls Section */}
+                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                  <CardContent className="p-0">
+                    {/* Section Header */}
+                    <div className="px-4 py-3 border-b border-[#2a2a2a]">
+                      <h2 className="text-sm font-medium text-[#f9fafb]">Data Quality Controls</h2>
+                    </div>
+                    {/* Configuration Item 1 */}
+                    <div className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
                               <div className="flex items-start gap-2">
                                 <ShieldCheck className="w-4 h-4 text-[#a1a1aa] self-center" />
                                 <div>
-                                  <div className="text-xs font-medium text-[#f9fafb]">Check Data Quality</div>
+                            <div className="text-xs font-medium text-[#f9fafb]">Check Data Quality</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
                                     Validate data accuracy and consistency
-                                  </div>
+                          </div>
                                 </div>
                               </div>
-                            </div>
-                            <div className="ml-4">
-                              <button
-                                onClick={() => setCheckDataQuality(!checkDataQuality)}
-                                className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
+                        </div>
+                        <div className="ml-4">
+                          <button 
+                            onClick={() => setCheckDataQuality(!checkDataQuality)}
+                            className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
                                   checkDataQuality ? "bg-[#22c55e]" : "bg-[#374151]"
                                 }`}
                               >
@@ -1071,35 +1119,35 @@ export default function CursorDashboard() {
                                     checkDataQuality ? "right-0.5" : "left-0.5"
                                   }`}
                                 ></div>
-                              </button>
-                            </div>
-                          </div>
+                          </button>
                         </div>
-
-                        {/* Horizontal Divider */}
+                      </div>
+                    </div>
+                    
+                    {/* Horizontal Divider */}
                         <div
                           className="border-t border-[#2a2a2a]/70 border-opacity-70"
                           style={{ borderTopWidth: "0.5px" }}
                         ></div>
-
-                        {/* Configuration Item 2 */}
-                        <div className="p-4">
-                          <div className="flex items-center justify-between">
-                            <div className="flex-1">
+                    
+                    {/* Configuration Item 2 */}
+                    <div className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
                               <div className="flex items-start gap-2">
                                 <Clock className="w-4 h-4 text-[#a1a1aa] self-center" />
                                 <div>
-                                  <div className="text-xs font-medium text-[#f9fafb]">Max Data Age</div>
+                            <div className="text-xs font-medium text-[#f9fafb]">Max Data Age</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
                                     Maximum age before switching to backup
-                                  </div>
-                                </div>
+                          </div>
+                        </div>
                               </div>
                             </div>
                             <div className="ml-4 relative">
                               <select
-                                value={maxDataAge}
-                                onChange={(e) => setMaxDataAge(e.target.value)}
+                            value={maxDataAge}
+                            onChange={(e) => setMaxDataAge(e.target.value)}
                                 className="w-20 h-8 bg-[#1a1a1a] border border-[#2a2a2a] rounded text-xs text-[#f9fafb] text-center appearance-none cursor-pointer hover:bg-[#2a2a2a] transition-colors duration-200 pr-6"
                               >
                                 <option value="10m">10m</option>
@@ -1494,9 +1542,9 @@ export default function CursorDashboard() {
                                             <span className="text-[#f9fafb] font-semibold">
                                               {entry.name}: <span className="font-bold">{entry.value}/100</span>
                                             </span>
-                                          </div>
+                        </div>
                                         ))}
-                                      </div>
+                      </div>
                                     )
                                   }
                                   return null
@@ -1651,10 +1699,10 @@ export default function CursorDashboard() {
                               <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
                             </div>
                           </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
                 )}
                 {/* Events Log Page */}
                 {activeSidebarItem === "events-log" && (
