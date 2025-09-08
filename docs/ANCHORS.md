@@ -53,6 +53,12 @@ These anchors ensure methodological fidelity, operational discipline, and govern
    - Content: Technical specification of platform implementation  
    - Purpose: Living document that evolves as development progresses.
 
+8. **UI Anchor Document**  
+   - File: `docs/UI-ANCHOR-DOCUMENT-v1.1.md`  
+   - Status: **EVOLVING** (future: v1.2, v2.0, …)  
+   - Content: Frontend implementation reference and Brief 55+ alignment  
+   - Purpose: Anchors current UI state as reference point for backend integration.
+
 ---
 
 ## ⚠️ Note
