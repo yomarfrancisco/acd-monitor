@@ -635,9 +635,37 @@ It would also be helpful if you described:
                               <div className="text-xs text-[#a7f3d0]">Low Risk</div>
                         </div>
                             <div className="rounded-lg bg-[#212121]/40 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
-                              <div className="text-xl font-bold text-[#f9fafb]">{21 + 21 + 26 + 16}%</div>
-                              <div className="text-xs text-[#a1a1aa]">Weekly Price Leader</div>
-                        </div>
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <div className="text-xl font-bold text-[#f9fafb]">
+                                    {selectedTimeframe === "30d" ? "78" : 
+                                     selectedTimeframe === "6m" ? "82" : 
+                                     selectedTimeframe === "1y" ? "79" : "84"}%
+                                  </div>
+                                  <div className="text-xs text-[#a1a1aa]">
+                                    {selectedTimeframe === "30d" ? "30d" : 
+                                     selectedTimeframe === "6m" ? "6m" : 
+                                     selectedTimeframe === "1y" ? "1y" : 
+                                     selectedTimeframe === "YTD" ? "YTD" : "Cal"} Price Leader
+                                  </div>
+                                </div>
+                                {/* FANS Avatar Flow */}
+                                <div className="flex items-center -space-x-2">
+                                  <div className="w-8 h-8 bg-[#60a5fa] rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-[#1a1a1a]">
+                                    F
+                                  </div>
+                                  <div className="w-8 h-8 bg-[#a1a1aa] rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-[#1a1a1a] opacity-80">
+                                    A
+                                  </div>
+                                  <div className="w-8 h-8 bg-[#71717a] rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-[#1a1a1a] opacity-60">
+                                    N
+                                  </div>
+                                  <div className="w-8 h-8 bg-[#52525b] rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-[#1a1a1a] opacity-40">
+                                    S
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
                       </div>
 
                           <div className="h-80 relative focus:outline-none" style={{ outline: "none" }}>
