@@ -127,10 +127,14 @@ export default function CursorDashboard() {
     setIsClient(true)
   }, [])
 
-  // Close calendar when switching to agents tab
+  // Close calendar when switching to agents tab and reset sidebar when switching to dashboard
   const handleTabChange = (tab: "agents" | "dashboard") => {
     setActiveTab(tab)
-    if (tab === "agents") setIsCalendarOpen(false)
+    if (tab === "agents") {
+      setIsCalendarOpen(false)
+    } else if (tab === "dashboard") {
+      setActiveSidebarItem("overview")
+    }
   }
 
   // Get the appropriate data based on selected timeframe
@@ -507,7 +511,7 @@ export default function CursorDashboard() {
                     </div>
 
                     <div className="mb-4">
-                      <h3 className="text-xs font-medium text-[#f9fafb] mb-3">Your Coordination Risk</h3>
+                      <h3 className="text-xs font-medium text-[#f9fafb] mb-3">Your Algorithmic Cartel Risk</h3>
                           <div className="grid grid-cols-2 gap-6 mb-10">
                             <div className="rounded-lg bg-[#212121] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
                           <div className="text-xl font-bold text-[#f9fafb]">14 out of 100</div>
