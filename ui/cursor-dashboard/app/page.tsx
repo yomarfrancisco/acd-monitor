@@ -1276,59 +1276,20 @@ It would also be helpful if you described:
                   <div className="space-y-6">
                     {/* Connect Your Data */}
                     <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                      <CardContent className="p-4">
-                        <h3 className="text-sm font-medium text-[#f9fafb] mb-3">Connect Your Data</h3>
-                        <div className="space-y-3">
-                          <div
-                            className="flex items-center justify-between p-3 border-b border-[#2a2a2a]/70"
-                            style={{ borderWidth: "0.5px" }}
-                          >
-                            <div className="flex items-center gap-2.5">
-                              <Upload className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">File Upload</div>
-                                <div className="text-[10px] text-[#a1a1aa]">CSV, JSON, Parquet files • Up to 100MB</div>
-                              </div>
-                            </div>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
-                            >
-                              Connect
-                            </Button>
-                          </div>
-
-                          <div
-                            className="flex items-center justify-between p-3 border-b border-[#2a2a2a]/70"
-                            style={{ borderWidth: "0.5px" }}
-                          >
-                            <div className="flex items-center gap-2.5">
-                              <Zap className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">API Integration</div>
-                                <div className="text-[10px] text-[#a1a1aa]">Real-time pricing feeds • REST/GraphQL</div>
-                              </div>
-                            </div>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
-                            >
-                              Connect
-                            </Button>
-                          </div>
-
-                          <div
-                            className="flex items-center justify-between p-3 border-b border-[#2a2a2a]/70"
-                            style={{ borderWidth: "0.5px" }}
-                          >
-                            <div className="flex items-center gap-2.5">
-                              <Database className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">Database Connection</div>
-                                <div className="text-[10px] text-[#a1a1aa]">
-                                  PostgreSQL, MongoDB • Direct connection
+                      <CardContent className="p-0">
+                        {/* Section Header */}
+                        <div className="px-4 py-3 border-b border-[#2a2a2a]">
+                          <h2 className="text-sm font-medium text-[#f9fafb]">Connect Your Data</h2>
+                        </div>
+                        {/* Configuration Items */}
+                        <div className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-start gap-2">
+                                <Upload className="w-4 h-4 text-[#a1a1aa] self-center" />
+                                <div>
+                                  <div className="text-xs font-medium text-[#f9fafb]">File Upload</div>
+                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">CSV, JSON, Parquet files • Up to 100MB</div>
                                 </div>
                               </div>
                             </div>
@@ -1340,13 +1301,56 @@ It would also be helpful if you described:
                               Connect
                             </Button>
                           </div>
-
-                          <div className="flex items-center justify-between p-3">
-                            <div className="flex items-center gap-2.5">
-                              <Cloud className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">Cloud Storage</div>
-                                <div className="text-[10px] text-[#a1a1aa]">S3, Azure Blob • Automated sync</div>
+                        </div>
+                        <div className="px-4 py-3 border-t border-[#2a2a2a]/70 border-opacity-70" style={{ borderTopWidth: "0.5px" }}>
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-start gap-2">
+                                <Zap className="w-4 h-4 text-[#a1a1aa] self-center" />
+                                <div>
+                                  <div className="text-xs font-medium text-[#f9fafb]">API Integration</div>
+                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">Real-time pricing feeds • REST/GraphQL</div>
+                                </div>
+                              </div>
+                            </div>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
+                            >
+                              Connect
+                            </Button>
+                          </div>
+                        </div>
+                        <div className="px-4 py-3 border-t border-[#2a2a2a]/70 border-opacity-70" style={{ borderTopWidth: "0.5px" }}>
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-start gap-2">
+                                <Database className="w-4 h-4 text-[#a1a1aa] self-center" />
+                                <div>
+                                  <div className="text-xs font-medium text-[#f9fafb]">Database Connection</div>
+                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">PostgreSQL, MongoDB • Direct connection</div>
+                                </div>
+                              </div>
+                            </div>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
+                            >
+                              Connect
+                            </Button>
+                          </div>
+                        </div>
+                        <div className="px-4 py-3 border-t border-[#2a2a2a]/70 border-opacity-70" style={{ borderTopWidth: "0.5px" }}>
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-start gap-2">
+                                <Cloud className="w-4 h-4 text-[#a1a1aa] self-center" />
+                                <div>
+                                  <div className="text-xs font-medium text-[#f9fafb]">Cloud Storage</div>
+                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">S3, Azure Blob • Automated sync</div>
+                                </div>
                               </div>
                             </div>
                             <Button
@@ -1422,19 +1426,21 @@ It would also be helpful if you described:
 
                     {/* Available Agents */}
                     <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                      <CardContent className="p-4">
-                        {/* Updated Available Agents header font size from text-xs to text-sm */}
-                        <h3 className="text-sm font-medium text-[#f9fafb] mb-3">Available Agents</h3>
-                        <div className="space-y-3">
-                          <div
-                            className="flex items-center justify-between p-3 border-b border-[#2a2a2a]/70"
-                            style={{ borderWidth: "0.5px" }}
-                          >
-                            <div className="flex items-center gap-2.5">
-                              <Brain className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">General Analysis</div>
-                                <div className="text-[10px] text-[#a1a1aa]">Accuracy: 94.2% • Response time: 1.2s</div>
+                      <CardContent className="p-0">
+                        {/* Section Header */}
+                        <div className="px-4 py-3 border-b border-[#2a2a2a]">
+                          <h2 className="text-sm font-medium text-[#f9fafb]">Available Agents</h2>
+                        </div>
+                        {/* Configuration Items */}
+                        <div className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-start gap-2">
+                                <Brain className="w-4 h-4 text-[#a1a1aa] self-center" />
+                                <div>
+                                  <div className="text-xs font-medium text-[#f9fafb]">General Analysis</div>
+                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">Accuracy: 94.2% • Response time: 1.2s</div>
+                                </div>
                               </div>
                             </div>
                             <Button
@@ -1445,16 +1451,16 @@ It would also be helpful if you described:
                               Deploy
                             </Button>
                           </div>
-
-                          <div
-                            className="flex items-center justify-between p-3 border-b border-[#2a2a2a]/70"
-                            style={{ borderWidth: "0.5px" }}
-                          >
-                            <div className="flex items-center gap-2.5">
-                              <ScaleIcon className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">Competition Lawyer</div>
-                                <div className="text-[10px] text-[#a1a1aa]">Accuracy: 97.8% • Response time: 2.1s</div>
+                        </div>
+                        <div className="px-4 py-3 border-t border-[#2a2a2a]/70 border-opacity-70" style={{ borderTopWidth: "0.5px" }}>
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-start gap-2">
+                                <ScaleIcon className="w-4 h-4 text-[#a1a1aa] self-center" />
+                                <div>
+                                  <div className="text-xs font-medium text-[#f9fafb]">Competition Lawyer</div>
+                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">Accuracy: 97.8% • Response time: 2.1s</div>
+                                </div>
                               </div>
                             </div>
                             <Button
@@ -1465,16 +1471,16 @@ It would also be helpful if you described:
                               Deploy
                             </Button>
                           </div>
-
-                          <div
-                            className="flex items-center justify-between p-3 border-b border-[#2a2a2a]/70"
-                            style={{ borderWidth: "0.5px" }}
-                          >
-                            <div className="flex items-center gap-2.5">
-                              <TrendingUp className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">Pricing Economist</div>
-                                <div className="text-[10px] text-[#a1a1aa]">Accuracy: 96.1% • Response time: 1.8s</div>
+                        </div>
+                        <div className="px-4 py-3 border-t border-[#2a2a2a]/70 border-opacity-70" style={{ borderTopWidth: "0.5px" }}>
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-start gap-2">
+                                <TrendingUp className="w-4 h-4 text-[#a1a1aa] self-center" />
+                                <div>
+                                  <div className="text-xs font-medium text-[#f9fafb]">Pricing Economist</div>
+                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">Accuracy: 96.1% • Response time: 1.8s</div>
+                                </div>
                               </div>
                             </div>
                             <Button
@@ -1485,13 +1491,16 @@ It would also be helpful if you described:
                               Deploy
                             </Button>
                           </div>
-
-                          <div className="flex items-center justify-between p-3">
-                            <div className="flex items-center gap-2.5">
-                              <BarChart3 className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">Data Scientist</div>
-                                <div className="text-[10px] text-[#a1a1aa]">Accuracy: 95.7% • Response time: 1.5s</div>
+                        </div>
+                        <div className="px-4 py-3 border-t border-[#2a2a2a]/70 border-opacity-70" style={{ borderTopWidth: "0.5px" }}>
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-start gap-2">
+                                <BarChart3 className="w-4 h-4 text-[#a1a1aa] self-center" />
+                                <div>
+                                  <div className="text-xs font-medium text-[#f9fafb]">Data Scientist</div>
+                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">Accuracy: 95.7% • Response time: 1.5s</div>
+                                </div>
                               </div>
                             </div>
                             <Button
