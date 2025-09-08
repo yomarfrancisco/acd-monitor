@@ -36,7 +36,15 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, ReferenceLine } from "recharts"
 import { CalendarIcon } from "lucide-react"
-import { MessageSquare, GitBranch, ClipboardList, CloudUpload, CalendarCheck2, ScaleIcon, SquarePen, X } from "lucide-react"
+import {
+  MessageSquare,
+  GitBranch,
+  ClipboardList,
+  CloudUpload,
+  CalendarCheck2,
+  ScaleIcon,
+  SquarePen,
+} from "lucide-react"
 
 // Different data sets for different time periods
 const analyticsData30d = [
@@ -124,7 +132,9 @@ export default function CursorDashboard() {
   const [bloombergDataFeed, setBloombergDataFeed] = useState(false)
   const [showEventModal, setShowEventModal] = useState(false)
   const [initialAgentMessage, setInitialAgentMessage] = useState("")
-  const [messages, setMessages] = useState<Array<{id: string, type: 'user' | 'agent', content: string, timestamp: Date}>>([])
+  const [messages, setMessages] = useState<
+    Array<{ id: string; type: "user" | "agent"; content: string; timestamp: Date }>
+  >([])
   const [hasEngaged, setHasEngaged] = useState<boolean>(false)
 
   useEffect(() => {
@@ -144,22 +154,22 @@ export default function CursorDashboard() {
   const handleSendMessage = (customMessage?: string) => {
     const messageContent = customMessage || inputValue.trim()
     if (!messageContent) return
-    
+
     // Add user message
     const userMessage = {
       id: Date.now().toString(),
-      type: 'user' as const,
+      type: "user" as const,
       content: messageContent,
-      timestamp: new Date()
+      timestamp: new Date(),
     }
-    
-    setMessages(prev => [...prev, userMessage])
+
+    setMessages((prev) => [...prev, userMessage])
     setHasEngaged(true)
-    
+
     // Generate agent response based on message content
     setTimeout(() => {
       let agentResponseContent = ""
-      
+
       if (messageContent === "Help me log a market event") {
         agentResponseContent = `Sounds good, I'll help you log a market event for analysis. I need to understand what happened and its potential implications. Don't worry if you don't have all the details - we can work through this together. What caught your attention that made you want to log this event?
 
@@ -170,16 +180,16 @@ It would also be helpful if you described:
       } else {
         agentResponseContent = `Thank you for your message: "${messageContent}". I'm your AI economist assistant and I'm here to help you analyze market data, check compliance, and generate reports. How can I assist you today?`
       }
-      
+
       const agentResponse = {
         id: (Date.now() + 1).toString(),
-        type: 'agent' as const,
+        type: "agent" as const,
         content: agentResponseContent,
-        timestamp: new Date()
+        timestamp: new Date(),
       }
-      setMessages(prev => [...prev, agentResponse])
+      setMessages((prev) => [...prev, agentResponse])
     }, 1000)
-    
+
     setInputValue("")
   }
 
@@ -409,18 +419,16 @@ It would also be helpful if you described:
                 )}
 
                 {/* Chat Interface */}
-                <div className={`${hasEngaged ? 'h-[60vh]' : 'min-h-[45vh]'} flex flex-col`}>
+                <div className={`${hasEngaged ? "h-[60vh]" : "min-h-[45vh]"} flex flex-col`}>
                   {/* Chat Messages Area */}
                   {hasEngaged && (
                     <div className="flex-1 overflow-y-auto mb-4 space-y-4">
                       {messages.map((message) => (
                         <div key={message.id} className="w-full">
-                          {message.type === 'agent' ? (
+                          {message.type === "agent" ? (
                             <div className="flex items-start gap-3">
                               <Bot className="w-4 h-4 text-[#86a789] mt-1 flex-shrink-0" />
-                              <div className="flex-1 text-xs text-[#f9fafb] leading-relaxed">
-                                {message.content}
-                              </div>
+                              <div className="flex-1 text-xs text-[#f9fafb] leading-relaxed">{message.content}</div>
                             </div>
                           ) : (
                             <div className="flex justify-end">
@@ -435,7 +443,7 @@ It would also be helpful if you described:
                   )}
 
                   {/* Input Area */}
-                  <div className={`${hasEngaged ? 'mt-auto' : 'flex flex-col items-center justify-center space-y-5'}`}>
+                  <div className={`${hasEngaged ? "mt-auto" : "flex flex-col items-center justify-center space-y-5"}`}>
                   <div className="w-full space-y-3">
                     <div className="relative">
                       <textarea
@@ -443,7 +451,7 @@ It would also be helpful if you described:
                           value={inputValue}
                           onChange={(e) => setInputValue(e.target.value)}
                           onKeyDown={(e) => {
-                            if (e.key === 'Enter' && !e.shiftKey) {
+                            if (e.key === "Enter" && !e.shiftKey) {
                               e.preventDefault()
                               handleSendMessage()
                             }
@@ -489,7 +497,7 @@ It would also be helpful if you described:
                           >
                             <CloudUpload className="w-4 h-4 text-[#71717a] hover:text-[#a1a1aa]" />
                           </div>
-                          <div 
+                          <div
                             className="h-6 w-6 flex items-center justify-center cursor-pointer"
                             onClick={handleSendMessage}
                           >
@@ -516,7 +524,7 @@ It would also be helpful if you described:
                               <FileText className="w-2 h-2" />
                               Generate report
                             </button>
-                            <button 
+                            <button
                               onClick={() => handleSendMessage("Help me log a market event")}
                               className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-[#1a1a1a] hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 whitespace-nowrap"
                             >
@@ -615,9 +623,14 @@ It would also be helpful if you described:
                     </div>
 
                     <div className="mb-4">
-                      <h3 className="text-xs font-medium text-[#f9fafb] mb-3">Your Algorithmic Cartel Risk</h3>
+                          <h3 className="text-xs font-medium text-[#f9fafb] mb-3">Your Algorithmic Cartel Risk</h3>
                           <div className="grid grid-cols-2 gap-6 mb-10">
-                            <div className="rounded-lg bg-[#212121] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
+                            <div className="rounded-lg bg-[#212121] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 relative">
+                              {/* Live indicator - pulsing green dot with frame */}
+                              <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-[#1a1a1a] border border-[#2a2a2a] rounded-full px-2 py-1">
+                                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                <span className="text-[10px] text-[#a1a1aa]">LIVE</span>
+                              </div>
                           <div className="text-xl font-bold text-[#f9fafb]">14 out of 100</div>
                               <div className="text-xs text-[#a7f3d0]">Low Risk</div>
                         </div>
@@ -627,8 +640,8 @@ It would also be helpful if you described:
                         </div>
                       </div>
 
-                          <div className="h-80 relative">
-                        <ResponsiveContainer width="100%" height="100%">
+                          <div className="h-80 relative focus:outline-none" style={{ outline: "none" }}>
+                            <ResponsiveContainer width="100%" height="100%" style={{ outline: "none" }}>
                           <LineChart data={currentData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                             <XAxis
                               dataKey="date"
@@ -656,7 +669,11 @@ It would also be helpful if you described:
                                   strokeOpacity={0}
                                   strokeWidth={0}
                                   dot={{ fill: "#ef4444", strokeWidth: 0, r: 4 }}
-                                  label={{ value: "●", position: "top", style: { textAnchor: "middle", fill: "#ef4444", fontSize: 12 } }}
+                                  label={{
+                                    value: "●",
+                                    position: "top",
+                                    style: { textAnchor: "middle", fill: "#ef4444", fontSize: 12 },
+                                  }}
                                 />
                                 <ReferenceLine
                                   x="Jun '25"
@@ -664,7 +681,11 @@ It would also be helpful if you described:
                                   strokeOpacity={0}
                                   strokeWidth={0}
                                   dot={{ fill: "#f59e0b", strokeWidth: 0, r: 4 }}
-                                  label={{ value: "●", position: "top", style: { textAnchor: "middle", fill: "#f59e0b", fontSize: 12 } }}
+                                  label={{
+                                    value: "●",
+                                    position: "top",
+                                    style: { textAnchor: "middle", fill: "#f59e0b", fontSize: 12 },
+                                  }}
                                 />
                                 <ReferenceLine
                                   x="Jul '25"
@@ -672,7 +693,11 @@ It would also be helpful if you described:
                                   strokeOpacity={0}
                                   strokeWidth={0}
                                   dot={{ fill: "#10b981", strokeWidth: 0, r: 4 }}
-                                  label={{ value: "●", position: "top", style: { textAnchor: "middle", fill: "#10b981", fontSize: 12 } }}
+                                  label={{
+                                    value: "●",
+                                    position: "top",
+                                    style: { textAnchor: "middle", fill: "#10b981", fontSize: 12 },
+                                  }}
                                 />
 
                                 {/* Option 3: Subtle Background Shading - Colored bands for event periods */}
@@ -712,9 +737,21 @@ It would also be helpful if you described:
 
                                       // Event data for significant dates
                                       const eventData = {
-                                        "Feb '25": { type: "SARB Rate Cut", impact: "Price Adaptation", color: "#ef4444" },
-                                        "Jun '25": { type: "Market Shock", impact: "Price Invariance", color: "#f59e0b" },
-                                        "Jul '25": { type: "Price Adaptation", impact: "Competitive Response", color: "#10b981" },
+                                        "Feb '25": {
+                                          type: "SARB Rate Cut",
+                                          impact: "Price Adaptation",
+                                          color: "#ef4444",
+                                        },
+                                        "Jun '25": {
+                                          type: "Market Shock",
+                                          impact: "Price Invariance",
+                                          color: "#f59e0b",
+                                        },
+                                        "Jul '25": {
+                                          type: "Price Adaptation",
+                                          impact: "Competitive Response",
+                                          color: "#10b981",
+                                        },
                                       }
 
                                       const currentEvent = eventData[label as keyof typeof eventData]
@@ -722,13 +759,21 @@ It would also be helpful if you described:
                                   return (
                                         <div className="bg-black border border-[#1a1a1a] rounded-lg p-3 shadow-2xl shadow-black/50">
                                           <p className="text-[#a1a1aa] text-[10px] mb-1.5">{label}</p>
-                                          
+
                                           {/* Event Information */}
                                           {currentEvent && (
-                                            <div className="mb-2 p-2 bg-[#1a1a1a] rounded border-l-2" style={{ borderLeftColor: currentEvent.color }}>
+                                            <div
+                                              className="mb-2 p-2 bg-[#1a1a1a] rounded border-l-2"
+                                              style={{ borderLeftColor: currentEvent.color }}
+                                            >
                                               <div className="flex items-center gap-2 mb-1">
-                                                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: currentEvent.color }}></div>
-                                                <span className="text-[#f9fafb] font-semibold text-[10px]">{currentEvent.type}</span>
+                                                <div
+                                                  className="w-2 h-2 rounded-full"
+                                                  style={{ backgroundColor: currentEvent.color }}
+                                                ></div>
+                                                <span className="text-[#f9fafb] font-semibold text-[10px]">
+                                                  {currentEvent.type}
+                                                </span>
                                               </div>
                                               <p className="text-[#a1a1aa] text-[9px]">{currentEvent.impact}</p>
                                             </div>
@@ -794,6 +839,10 @@ It would also be helpful if you described:
                           </LineChart>
                         </ResponsiveContainer>
                       </div>
+                          {/* Data source indicator */}
+                          <div className="text-[9px] text-[#71717a] mt-2 text-center">
+                            Data source: Bloomberg Terminal
+                          </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -1289,7 +1338,9 @@ It would also be helpful if you described:
                                 <Upload className="w-4 h-4 text-[#a1a1aa] self-center" />
                                 <div>
                                   <div className="text-xs font-medium text-[#f9fafb]">File Upload</div>
-                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">CSV, JSON, Parquet files • Up to 100MB</div>
+                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">
+                                    CSV, JSON, Parquet files • Up to 100MB
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -1302,14 +1353,19 @@ It would also be helpful if you described:
                             </Button>
                           </div>
                         </div>
-                        <div className="px-4 py-3 border-t border-[#2a2a2a]/70 border-opacity-70" style={{ borderTopWidth: "0.5px" }}>
+                        <div
+                          className="px-4 py-3 border-t border-[#2a2a2a]/70 border-opacity-70"
+                          style={{ borderTopWidth: "0.5px" }}
+                        >
                           <div className="flex items-center justify-between">
                             <div className="flex-1">
                               <div className="flex items-start gap-2">
                                 <Zap className="w-4 h-4 text-[#a1a1aa] self-center" />
                                 <div>
                                   <div className="text-xs font-medium text-[#f9fafb]">API Integration</div>
-                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">Real-time pricing feeds • REST/GraphQL</div>
+                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">
+                                    Real-time pricing feeds • REST/GraphQL
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -1322,14 +1378,19 @@ It would also be helpful if you described:
                             </Button>
                           </div>
                         </div>
-                        <div className="px-4 py-3 border-t border-[#2a2a2a]/70 border-opacity-70" style={{ borderTopWidth: "0.5px" }}>
+                        <div
+                          className="px-4 py-3 border-t border-[#2a2a2a]/70 border-opacity-70"
+                          style={{ borderTopWidth: "0.5px" }}
+                        >
                           <div className="flex items-center justify-between">
                             <div className="flex-1">
                               <div className="flex items-start gap-2">
                                 <Database className="w-4 h-4 text-[#a1a1aa] self-center" />
                                 <div>
                                   <div className="text-xs font-medium text-[#f9fafb]">Database Connection</div>
-                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">PostgreSQL, MongoDB • Direct connection</div>
+                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">
+                                    PostgreSQL, MongoDB • Direct connection
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -1342,14 +1403,19 @@ It would also be helpful if you described:
                             </Button>
                           </div>
                         </div>
-                        <div className="px-4 py-3 border-t border-[#2a2a2a]/70 border-opacity-70" style={{ borderTopWidth: "0.5px" }}>
+                        <div
+                          className="px-4 py-3 border-t border-[#2a2a2a]/70 border-opacity-70"
+                          style={{ borderTopWidth: "0.5px" }}
+                        >
                           <div className="flex items-center justify-between">
                             <div className="flex-1">
                               <div className="flex items-start gap-2">
                                 <Cloud className="w-4 h-4 text-[#a1a1aa] self-center" />
                                 <div>
                                   <div className="text-xs font-medium text-[#f9fafb]">Cloud Storage</div>
-                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">S3, Azure Blob • Automated sync</div>
+                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">
+                                    S3, Azure Blob • Automated sync
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -1420,6 +1486,24 @@ It would also be helpful if you described:
                             </div>
                             <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
                           </button>
+                          <button className="w-full text-left p-3 bg-[#212121] hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
+                            <div>
+                              <div className="font-medium">Generate Evidence Package</div>
+                              <div className="text-[10px] text-[#a1a1aa] mt-0.5">
+                                Court-ready evidence bundle with cryptographic timestamps
+                              </div>
+                            </div>
+                            <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
+                          </button>
+                          <button className="w-full text-left p-3 bg-[#212121] hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
+                            <div>
+                              <div className="font-medium">Assess Statistical Confidence</div>
+                              <div className="text-[10px] text-[#a1a1aa] mt-0.5">
+                                P-values, confidence intervals, and methodological validation
+                              </div>
+                            </div>
+                            <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
+                          </button>
                         </div>
                       </CardContent>
                     </Card>
@@ -1439,7 +1523,9 @@ It would also be helpful if you described:
                                 <Brain className="w-4 h-4 text-[#a1a1aa] self-center" />
                                 <div>
                                   <div className="text-xs font-medium text-[#f9fafb]">General Analysis</div>
-                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">Accuracy: 94.2% • Response time: 1.2s</div>
+                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">
+                                    Accuracy: 94.2% • Response time: 1.2s
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -1452,14 +1538,19 @@ It would also be helpful if you described:
                             </Button>
                           </div>
                         </div>
-                        <div className="px-4 py-3 border-t border-[#2a2a2a]/70 border-opacity-70" style={{ borderTopWidth: "0.5px" }}>
+                        <div
+                          className="px-4 py-3 border-t border-[#2a2a2a]/70 border-opacity-70"
+                          style={{ borderTopWidth: "0.5px" }}
+                        >
                           <div className="flex items-center justify-between">
                             <div className="flex-1">
                               <div className="flex items-start gap-2">
                                 <ScaleIcon className="w-4 h-4 text-[#a1a1aa] self-center" />
                                 <div>
                                   <div className="text-xs font-medium text-[#f9fafb]">Competition Lawyer</div>
-                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">Accuracy: 97.8% • Response time: 2.1s</div>
+                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">
+                                    Accuracy: 97.8% • Response time: 2.1s
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -1472,14 +1563,19 @@ It would also be helpful if you described:
                             </Button>
                           </div>
                         </div>
-                        <div className="px-4 py-3 border-t border-[#2a2a2a]/70 border-opacity-70" style={{ borderTopWidth: "0.5px" }}>
+                        <div
+                          className="px-4 py-3 border-t border-[#2a2a2a]/70 border-opacity-70"
+                          style={{ borderTopWidth: "0.5px" }}
+                        >
                           <div className="flex items-center justify-between">
                             <div className="flex-1">
                               <div className="flex items-start gap-2">
                                 <TrendingUp className="w-4 h-4 text-[#a1a1aa] self-center" />
                                 <div>
                                   <div className="text-xs font-medium text-[#f9fafb]">Pricing Economist</div>
-                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">Accuracy: 96.1% • Response time: 1.8s</div>
+                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">
+                                    Accuracy: 96.1% • Response time: 1.8s
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -1492,14 +1588,19 @@ It would also be helpful if you described:
                             </Button>
                           </div>
                         </div>
-                        <div className="px-4 py-3 border-t border-[#2a2a2a]/70 border-opacity-70" style={{ borderTopWidth: "0.5px" }}>
+                        <div
+                          className="px-4 py-3 border-t border-[#2a2a2a]/70 border-opacity-70"
+                          style={{ borderTopWidth: "0.5px" }}
+                        >
                           <div className="flex items-center justify-between">
                             <div className="flex-1">
                               <div className="flex items-start gap-2">
                                 <BarChart3 className="w-4 h-4 text-[#a1a1aa] self-center" />
                                 <div>
                                   <div className="text-xs font-medium text-[#f9fafb]">Data Scientist</div>
-                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">Accuracy: 95.7% • Response time: 1.5s</div>
+                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">
+                                    Accuracy: 95.7% • Response time: 1.5s
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -1702,6 +1803,10 @@ It would also be helpful if you described:
                             </LineChart>
                           </ResponsiveContainer>
                         </div>
+                        {/* Data source indicator */}
+                        <div className="text-[9px] text-[#71717a] mt-2 text-center">
+                          Data source: Internal Monitoring
+                        </div>
                       </CardContent>
                     </Card>
 
@@ -1878,14 +1983,14 @@ It would also be helpful if you described:
                             variant="outline"
                             size="sm"
                             className="text-xs bg-transparent border-[#2a2a2a] text-[#f9fafb] hover:bg-[#1a1a1a]"
-                          onClick={() => {
-                            setActiveTab("agents")
-                            setInitialAgentMessage("")
-                            // Trigger the event logging flow
-                            setTimeout(() => {
-                              handleSendMessage("Help me log a market event")
-                            }, 100)
-                          }}
+                            onClick={() => {
+                              setActiveTab("agents")
+                              setInitialAgentMessage("")
+                              // Trigger the event logging flow
+                              setTimeout(() => {
+                                handleSendMessage("Help me log a market event")
+                              }, 100)
+                            }}
                           >
                             <SquarePen className="w-3 h-3 mr-1" />
                             Log event
@@ -2338,7 +2443,6 @@ It would also be helpful if you described:
                         </div>
                       </CardContent>
                     </Card>
-                    
                   </div>
                 )}
 
@@ -2365,7 +2469,6 @@ It would also be helpful if you described:
           </main>
         </div>
       </div>
-
 
       <style jsx>{`
         @keyframes blink {
