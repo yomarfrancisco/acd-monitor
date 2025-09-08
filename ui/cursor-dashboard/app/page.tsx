@@ -36,6 +36,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, ReferenceLine } from "recharts"
 import { CalendarIcon } from "lucide-react"
+import { RiskSummarySchema } from "@/types/api.schemas"
+import type { RiskSummary } from "@/types/api"
 import {
   MessageSquare,
   GitBranch,
@@ -98,6 +100,11 @@ export default function CursorDashboard() {
   const [activeTab, setActiveTab] = useState<"agents" | "dashboard">("agents")
   const [selectedTimeframe, setSelectedTimeframe] = useState<"30d" | "6m" | "1y" | "YTD">("YTD")
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
+  
+  // Risk summary state
+  const [riskSummary, setRiskSummary] = useState<RiskSummary | null>(null)
+  const [riskSummaryLoading, setRiskSummaryLoading] = useState(false)
+  const [riskSummaryError, setRiskSummaryError] = useState<string | null>(null)
   const [selectedDate, setSelectedDate] = useState<{ from: Date | undefined; to?: Date | undefined } | undefined>({
     from: new Date(),
     to: new Date(),
@@ -140,6 +147,38 @@ export default function CursorDashboard() {
   useEffect(() => {
     setIsClient(true)
   }, [])
+
+  // Fetch risk summary data when timeframe changes
+  useEffect(() => {
+    const fetchRiskSummary = async () => {
+      if (!isClient) return
+      
+      setRiskSummaryLoading(true)
+      setRiskSummaryError(null)
+      
+      try {
+        const timeframeParam = selectedTimeframe === "YTD" ? "ytd" : selectedTimeframe.toLowerCase()
+        const response = await fetch(`/api/risk/summary?timeframe=${timeframeParam}`, { 
+          cache: 'no-store' 
+        })
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        
+        const json = await response.json()
+        const validated = RiskSummarySchema.parse(json)
+        setRiskSummary(validated)
+      } catch (error) {
+        console.error('Failed to fetch risk summary:', error)
+        setRiskSummaryError(error instanceof Error ? error.message : 'Failed to fetch risk summary')
+      } finally {
+        setRiskSummaryLoading(false)
+      }
+    }
+
+    fetchRiskSummary()
+  }, [selectedTimeframe, isClient])
 
   // Close calendar when switching to agents tab and reset sidebar when switching to dashboard
   const handleTabChange = (tab: "agents" | "dashboard") => {
@@ -631,8 +670,35 @@ It would also be helpful if you described:
                                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                                 <span className="text-[10px] text-[#a1a1aa]">LIVE</span>
                               </div>
-                          <div className="text-xl font-bold text-[#f9fafb]">14 out of 100</div>
+                          {riskSummaryLoading ? (
+                            <div className="animate-pulse">
+                              <div className="h-6 bg-[#2a2a2a] rounded w-20 mb-1"></div>
+                              <div className="h-3 bg-[#2a2a2a] rounded w-16"></div>
+                            </div>
+                          ) : riskSummaryError ? (
+                            <div className="text-center">
+                              <div className="text-sm text-[#fca5a5] mb-1">Error</div>
+                              <div className="text-xs text-[#a1a1aa]">Retry</div>
+                            </div>
+                          ) : riskSummary ? (
+                            <>
+                              <div className="text-xl font-bold text-[#f9fafb]">{riskSummary.score} out of 100</div>
+                              <div className={`text-xs ${
+                                riskSummary.band === 'LOW' ? 'text-[#a7f3d0]' :
+                                riskSummary.band === 'AMBER' ? 'text-[#fbbf24]' :
+                                'text-[#fca5a5]'
+                              }`}>
+                                {riskSummary.band === 'LOW' ? 'Low Risk' :
+                                 riskSummary.band === 'AMBER' ? 'Amber Risk' :
+                                 'High Risk'}
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <div className="text-xl font-bold text-[#f9fafb]">14 out of 100</div>
                               <div className="text-xs text-[#a7f3d0]">Low Risk</div>
+                            </>
+                          )}
                         </div>
                             <div className="rounded-lg bg-[#212121]/40 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
                               <div className="flex items-center justify-between">
@@ -651,21 +717,60 @@ It would also be helpful if you described:
                                 </div>
                                 {/* FANS Avatar Flow */}
                                 <div className="flex items-center -space-x-2">
-                                  <div className="w-8 h-8 bg-[#60a5fa] rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-[#1a1a1a]">
-                                    F
+                                  <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white">
+                                    <img 
+                                      src="/fnb-logo.png" 
+                                      alt="FNB" 
+                                      className="w-full h-full object-contain p-0.5"
+                                    />
                                   </div>
-                                  <div className="w-8 h-8 bg-[#a1a1aa] rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-[#1a1a1a] opacity-80">
-                                    A
+                                  <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-80">
+                                    <img 
+                                      src="/absa-logo.png" 
+                                      alt="ABSA" 
+                                      className="w-full h-full object-contain p-0.5"
+                                    />
                                   </div>
-                                  <div className="w-8 h-8 bg-[#71717a] rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-[#1a1a1a] opacity-60">
-                                    N
+                                  <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-60">
+                                    <img 
+                                      src="/nedbank-logo.png" 
+                                      alt="Nedbank" 
+                                      className="w-full h-full object-contain p-0.5"
+                                    />
                                   </div>
-                                  <div className="w-8 h-8 bg-[#52525b] rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-[#1a1a1a] opacity-40">
-                                    S
+                                  <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-40">
+                                    <img 
+                                      src="/standard-logo.png" 
+                                      alt="Standard Bank" 
+                                      className="w-full h-full object-contain p-0.5"
+                                    />
                                   </div>
                                 </div>
                               </div>
                             </div>
+                            
+                            {/* Confidence Display */}
+                            {riskSummary && (
+                              <div className="mt-3 rounded-lg bg-[#212121]/40 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
+                                <div className="flex items-center justify-between">
+                                  <div>
+                                    <div className="text-sm font-bold text-[#f9fafb]">{riskSummary.confidence}%</div>
+                                    <div className="text-xs text-[#a1a1aa]">Statistical Confidence</div>
+                                  </div>
+                                  <div className="text-right">
+                                    <div className="text-xs text-[#a1a1aa]">
+                                      {riskSummary.source.freshnessSec < 60 
+                                        ? `${riskSummary.source.freshnessSec}s ago`
+                                        : `${Math.round(riskSummary.source.freshnessSec / 60)}m ago`
+                                      }
+                                    </div>
+                                    <div className="text-[10px] text-[#a1a1aa]">
+                                      Quality: {Math.round(riskSummary.source.quality * 100)}%
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
                       </div>
 
                           <div className="h-80 relative focus:outline-none" style={{ outline: "none" }}>
