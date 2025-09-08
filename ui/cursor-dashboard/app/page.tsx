@@ -636,7 +636,7 @@ It would also be helpful if you described:
                         </div>
                             <div className="rounded-lg bg-[#212121]/40 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
                               <div className="flex items-center justify-between">
-                                <div>
+                        <div>
                                   <div className="text-xl font-bold text-[#f9fafb]">
                                     {selectedTimeframe === "30d" ? "78" : 
                                      selectedTimeframe === "6m" ? "82" : 
@@ -665,7 +665,7 @@ It would also be helpful if you described:
                                   </div>
                                 </div>
                               </div>
-                            </div>
+                        </div>
                       </div>
 
                           <div className="h-80 relative focus:outline-none" style={{ outline: "none" }}>
@@ -870,7 +870,7 @@ It would also be helpful if you described:
                           {/* Data source indicator */}
                           <div className="text-[9px] text-[#71717a] mt-2 text-center">
                             Data source: Bloomberg Terminal
-                          </div>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -2112,11 +2112,92 @@ It would also be helpful if you described:
                           </div>
                         </div>
 
+                        {/* Separator line */}
+                        <div
+                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
+                          style={{ borderTopWidth: "0.5px" }}
+                        ></div>
+
+                        {/* Event Status 4 - Market Coordination */}
+                        <div className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2.5">
+                              <CalendarCheck2 className="w-4 h-4 text-[#a1a1aa]" />
+                              <div>
+                                <div className="text-[#f9fafb] font-medium text-xs">Market coordination detected</div>
+                                <div className="text-[10px] text-[#a1a1aa]">3 banks moved within 2 minutes</div>
+                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">5m ago • 2m 15s</div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="flex items-center gap-1.5">
+                                <div className="text-[#f9fafb] font-bold text-sm">92</div>
+                                <div className="text-[#fca5a5] text-xs">✗</div>
+                              </div>
+                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Separator line */}
+                        <div
+                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
+                          style={{ borderTopWidth: "0.5px" }}
+                        ></div>
+
+                        {/* Event Status 5 - Information Flow Anomaly */}
+                        <div className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2.5">
+                              <CalendarCheck2 className="w-4 h-4 text-[#a1a1aa]" />
+                              <div>
+                                <div className="text-[#f9fafb] font-medium text-xs">Information flow anomaly</div>
+                                <div className="text-[10px] text-[#a1a1aa]">Price changes spread 5x faster than normal</div>
+                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">12m ago • 4m 32s</div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="flex items-center gap-1.5">
+                                <div className="text-[#f9fafb] font-bold text-sm">87</div>
+                                <div className="text-[#fca5a5] text-xs">✗</div>
+                              </div>
+                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Separator line */}
+                        <div
+                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
+                          style={{ borderTopWidth: "0.5px" }}
+                        ></div>
+
+                        {/* Event Status 6 - Regime Switch */}
+                        <div className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2.5">
+                              <CalendarCheck2 className="w-4 h-4 text-[#a1a1aa]" />
+                              <div>
+                                <div className="text-[#f9fafb] font-medium text-xs">Regime switch detected</div>
+                                <div className="text-[10px] text-[#a1a1aa]">Competition pattern changed to coordination</div>
+                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">1h ago • 8m 45s</div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="flex items-center gap-1.5">
+                                <div className="text-[#f9fafb] font-bold text-sm">95</div>
+                                <div className="text-[#fca5a5] text-xs">✗</div>
+                              </div>
+                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
+                            </div>
+                          </div>
+                        </div>
+
                         {/* Pagination Footer */}
                         <div className="px-4 py-3 border-t border-[#2a2a2a]">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-4 text-[10px] text-[#a1a1aa]">
-                              <span>Showing 1 - 3 of 3 events</span>
+                              <span>Showing 1 - 6 of 6 events</span>
                               <div className="flex items-center gap-2">
                                 <span>Rows per page:</span>
                                 <select className="bg-transparent border border-[#2a2a2a] rounded px-2 py-1 text-[#f9fafb] text-[10px]">
@@ -2402,7 +2483,7 @@ It would also be helpful if you described:
                         <div className="px-4 py-3 border-t border-[#2a2a2a]">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-4 text-[10px] text-[#a1a1aa]">
-                              <span>Showing 1 - 3 of 3 events</span>
+                              <span>Showing 1 - 6 of 6 events</span>
                               <div className="flex items-center gap-2">
                                 <span>Rows per page:</span>
                                 <select className="bg-transparent border border-[#2a2a2a] rounded px-2 py-1 text-[#f9fafb] text-[10px]">
