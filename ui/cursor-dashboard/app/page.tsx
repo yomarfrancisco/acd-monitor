@@ -520,8 +520,8 @@ export default function CursorDashboard() {
                       </div>
 
                           <div className="h-80 relative">
-                            <ResponsiveContainer width="100%" height="100%">
-                              <LineChart data={currentData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart data={currentData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                             <XAxis
                               dataKey="date"
                               axisLine={false}
@@ -567,7 +567,7 @@ export default function CursorDashboard() {
                                   label={{ value: "●", position: "top", style: { textAnchor: "middle", fill: "#10b981", fontSize: 12 } }}
                                 />
 
-                                {/* Option 3: Subtle Background Shading - Vertical bands for event periods */}
+                                {/* Option 3: Subtle Background Shading - Colored bands for event periods */}
                                 <ReferenceLine
                                   x="Feb '25"
                                   stroke="rgba(239, 68, 68, 0.08)"
@@ -1553,34 +1553,34 @@ export default function CursorDashboard() {
                               <Line
                                 type="monotone"
                                 dataKey="Convergence Rate"
-                                stroke="#60a5fa"
+                                stroke="#a8b2d1"
                                 strokeWidth={2}
-                                dot={{ fill: "#60a5fa", strokeWidth: 0, r: 3 }}
-                                activeDot={{ r: 4, stroke: "#60a5fa", strokeWidth: 2, fill: "#0f0f10" }}
+                                dot={{ fill: "#a8b2d1", strokeWidth: 0, r: 3 }}
+                                activeDot={{ r: 4, stroke: "#a8b2d1", strokeWidth: 2, fill: "#0f0f10" }}
                               />
                               <Line
                                 type="monotone"
                                 dataKey="Data Integrity"
-                                stroke="#34d399"
+                                stroke="#b5c4a8"
                                 strokeWidth={2}
-                                dot={{ fill: "#34d399", strokeWidth: 0, r: 3 }}
-                                activeDot={{ r: 4, stroke: "#34d399", strokeWidth: 2, fill: "#0f0f10" }}
+                                dot={{ fill: "#b5c4a8", strokeWidth: 0, r: 3 }}
+                                activeDot={{ r: 4, stroke: "#b5c4a8", strokeWidth: 2, fill: "#0f0f10" }}
                               />
                               <Line
                                 type="monotone"
                                 dataKey="Evidence Chain"
-                                stroke="#fbbf24"
+                                stroke="#d4a5a5"
                                 strokeWidth={2}
-                                dot={{ fill: "#fbbf24", strokeWidth: 0, r: 3 }}
-                                activeDot={{ r: 4, stroke: "#fbbf24", strokeWidth: 2, fill: "#0f0f10" }}
+                                dot={{ fill: "#d4a5a5", strokeWidth: 0, r: 3 }}
+                                activeDot={{ r: 4, stroke: "#d4a5a5", strokeWidth: 2, fill: "#0f0f10" }}
                               />
                               <Line
                                 type="monotone"
                                 dataKey="Runtime Stability"
-                                stroke="#f87171"
+                                stroke="#a8a8b5"
                                 strokeWidth={2}
-                                dot={{ fill: "#f87171", strokeWidth: 0, r: 3 }}
-                                activeDot={{ r: 4, stroke: "#f87171", strokeWidth: 2, fill: "#0f0f10" }}
+                                dot={{ fill: "#a8a8b5", strokeWidth: 0, r: 3 }}
+                                activeDot={{ r: 4, stroke: "#a8a8b5", strokeWidth: 2, fill: "#0f0f10" }}
                               />
                             </LineChart>
                           </ResponsiveContainer>
