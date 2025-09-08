@@ -795,7 +795,7 @@ export default function CursorDashboard() {
                               <button
                                 onClick={() => setBloombergDataFeed(!bloombergDataFeed)}
                                 className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
-                                  bloombergDataFeed ? "bg-[#22c55e]" : "bg-[#374151]"
+                                  bloombergDataFeed ? "bg-[#86a789]" : "bg-[#374151]"
                                 }`}
                               >
                                 <div
@@ -885,7 +885,7 @@ export default function CursorDashboard() {
                           <button 
                             onClick={() => setAutoDetectMarketChanges(!autoDetectMarketChanges)}
                             className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
-                                  autoDetectMarketChanges ? "bg-[#22c55e]" : "bg-[#374151]"
+                                  autoDetectMarketChanges ? "bg-[#86a789]" : "bg-[#374151]"
                                 }`}
                               >
                                 <div
@@ -1000,7 +1000,7 @@ export default function CursorDashboard() {
                           <button 
                             onClick={() => setEnableLiveMonitoring(!enableLiveMonitoring)}
                             className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
-                                  enableLiveMonitoring ? "bg-[#22c55e]" : "bg-[#374151]"
+                                  enableLiveMonitoring ? "bg-[#86a789]" : "bg-[#374151]"
                                 }`}
                               >
                                 <div
@@ -1111,7 +1111,7 @@ export default function CursorDashboard() {
                           <button 
                             onClick={() => setCheckDataQuality(!checkDataQuality)}
                             className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
-                                  checkDataQuality ? "bg-[#22c55e]" : "bg-[#374151]"
+                                  checkDataQuality ? "bg-[#86a789]" : "bg-[#374151]"
                                 }`}
                               >
                                 <div
