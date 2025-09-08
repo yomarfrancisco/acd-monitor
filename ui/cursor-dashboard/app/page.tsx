@@ -36,7 +36,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, ReferenceLine } from "recharts"
 import { CalendarIcon } from "lucide-react"
-import { MessageSquare, GitBranch, ClipboardList, CloudUpload, CalendarCheck2, ScaleIcon } from "lucide-react"
+import { MessageSquare, GitBranch, ClipboardList, CloudUpload, CalendarCheck2, ScaleIcon, SquarePen, X } from "lucide-react"
 
 // Different data sets for different time periods
 const analyticsData30d = [
@@ -122,6 +122,10 @@ export default function CursorDashboard() {
   const [enableLiveMonitoring, setEnableLiveMonitoring] = useState(true)
   const [checkDataQuality, setCheckDataQuality] = useState(true)
   const [bloombergDataFeed, setBloombergDataFeed] = useState(false)
+  const [showEventModal, setShowEventModal] = useState(false)
+  const [initialAgentMessage, setInitialAgentMessage] = useState("")
+  const [messages, setMessages] = useState<Array<{id: string, type: 'user' | 'agent', content: string, timestamp: Date}>>([])
+  const [hasEngaged, setHasEngaged] = useState<boolean>(false)
 
   useEffect(() => {
     setIsClient(true)
@@ -135,6 +139,48 @@ export default function CursorDashboard() {
     } else if (tab === "dashboard") {
       setActiveSidebarItem("overview")
     }
+  }
+
+  const handleSendMessage = (customMessage?: string) => {
+    const messageContent = customMessage || inputValue.trim()
+    if (!messageContent) return
+    
+    // Add user message
+    const userMessage = {
+      id: Date.now().toString(),
+      type: 'user' as const,
+      content: messageContent,
+      timestamp: new Date()
+    }
+    
+    setMessages(prev => [...prev, userMessage])
+    setHasEngaged(true)
+    
+    // Generate agent response based on message content
+    setTimeout(() => {
+      let agentResponseContent = ""
+      
+      if (messageContent === "Help me log a market event") {
+        agentResponseContent = `Sounds good, I'll help you log a market event for analysis. I need to understand what happened and its potential implications. Don't worry if you don't have all the details - we can work through this together. What caught your attention that made you want to log this event?
+
+It would also be helpful if you described:
+• What market behavior did you observe?
+• When did this occur?
+• Which companies or participants were involved?`
+      } else {
+        agentResponseContent = `Thank you for your message: "${messageContent}". I'm your AI economist assistant and I'm here to help you analyze market data, check compliance, and generate reports. How can I assist you today?`
+      }
+      
+      const agentResponse = {
+        id: (Date.now() + 1).toString(),
+        type: 'agent' as const,
+        content: agentResponseContent,
+        timestamp: new Date()
+      }
+      setMessages(prev => [...prev, agentResponse])
+    }, 1000)
+    
+    setInputValue("")
   }
 
   // Get the appropriate data based on selected timeframe
@@ -351,80 +397,138 @@ export default function CursorDashboard() {
           <main className={`flex-1 p-5 max-w-3xl ${activeTab === "agents" ? "mx-auto" : ""}`}>
             {activeTab === "agents" && (
               <div className="max-w-xl mx-auto">
-                <div className="flex flex-col items-center justify-center min-h-[45vh] space-y-5">
+                {/* Initial Agent Message */}
+                {initialAgentMessage && (
+                  <div className="mb-4 p-3 bg-[#212121] rounded-lg border border-[#2a2a2a]">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Bot className="w-4 h-4 text-[#86a789]" />
+                      <span className="text-xs font-medium text-[#f9fafb]">{selectedAgent}</span>
+                    </div>
+                    <p className="text-xs text-[#f9fafb]">{initialAgentMessage}</p>
+                  </div>
+                )}
+
+                {/* Chat Interface */}
+                <div className={`${hasEngaged ? 'h-[60vh]' : 'min-h-[45vh]'} flex flex-col`}>
+                  {/* Chat Messages Area */}
+                  {hasEngaged && (
+                    <div className="flex-1 overflow-y-auto mb-4 space-y-4">
+                      {messages.map((message) => (
+                        <div key={message.id} className="w-full">
+                          {message.type === 'agent' ? (
+                            <div className="flex items-start gap-3">
+                              <Bot className="w-4 h-4 text-[#86a789] mt-1 flex-shrink-0" />
+                              <div className="flex-1 text-xs text-[#f9fafb] leading-relaxed">
+                                {message.content}
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="flex justify-end">
+                              <div className="max-w-[60%] bg-[#2a2a2a] rounded-lg px-3 py-2 text-xs text-[#f9fafb]">
+                                {message.content}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Input Area */}
+                  <div className={`${hasEngaged ? 'mt-auto' : 'flex flex-col items-center justify-center space-y-5'}`}>
                   <div className="w-full space-y-3">
                     <div className="relative">
                       <textarea
-                        placeholder="Is my pricing behaviour competitive or collusive?"
-                        value={inputValue}
-                        onChange={(e) => setInputValue(e.target.value)}
-                        className="w-full h-28 bg-[#1a1a1a] rounded-lg text-[#f9fafb] placeholder-[#71717a] pr-16 px-4 py-4 text-xs resize-none focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50"
-                        rows={5}
-                      />
-                      {/* Blinking cursor overlay - only shows when empty */}
-                      {inputValue === "" && (
-                        <div
-                          className="absolute left-4 top-4 text-[#f9fafb] text-xs"
-                          style={{
-                            animation: "blink 1s infinite",
-                            display: "inline-block",
+                          placeholder="Is my pricing behaviour competitive or collusive?"
+                          value={inputValue}
+                          onChange={(e) => setInputValue(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                              e.preventDefault()
+                              handleSendMessage()
+                            }
                           }}
-                        >
-                          |
-                        </div>
-                      )}
-                      {/* Model selector - bottom left */}
-                      <div className="absolute left-3 bottom-3 flex items-center gap-1.5">
-                        <Bot className="w-3.5 h-3.5 text-[#71717a]" />
-                        <select
-                          value={selectedAgent}
-                          onChange={(e) => setSelectedAgent(e.target.value)}
-                          className="bg-transparent text-[10px] text-[#71717a] font-medium border-none outline-none cursor-pointer hover:text-[#a1a1aa]"
-                        >
-                          <option value="Jnr Economist">Jnr Economist</option>
-                          <option value="Legal">Legal</option>
-                          <option value="Snr Economist">Snr Economist</option>
-                          <option value="Statistician">Statistician</option>
-                        </select>
+                          className="w-full h-28 bg-[#1a1a1a] rounded-lg text-[#f9fafb] placeholder-[#71717a] pr-16 px-4 py-4 text-xs resize-none focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50"
+                          rows={5}
+                        />
+                        {/* Blinking cursor overlay - only shows when empty */}
+                        {inputValue === "" && (
+                          <div
+                            className="absolute left-4 top-4 text-[#f9fafb] text-xs"
+                            style={{
+                              animation: "blink 1s infinite",
+                              display: "inline-block",
+                            }}
+                          >
+                            |
+                          </div>
+                        )}
+                        {/* Model selector - bottom left */}
+                        <div className="absolute left-3 bottom-3 flex items-center gap-1.5">
+                          <Bot className="w-3.5 h-3.5 text-[#71717a]" />
+                          <select
+                            value={selectedAgent}
+                            onChange={(e) => setSelectedAgent(e.target.value)}
+                            className="bg-transparent text-[10px] text-[#71717a] font-medium border-none outline-none cursor-pointer hover:text-[#a1a1aa]"
+                          >
+                            <option value="Jnr Economist">Jnr Economist</option>
+                            <option value="Legal">Legal</option>
+                            <option value="Snr Economist">Snr Economist</option>
+                            <option value="Statistician">Statistician</option>
+                          </select>
                     </div>
 
-                      {/* Action buttons - bottom right */}
-                      <div className="absolute right-3 bottom-3 flex gap-1.5">
-                        <div
-                          className="h-6 w-6 flex items-center justify-center cursor-pointer"
-                          onClick={() => {
-                            // Simulate file upload
-                            setUploadedFiles((prev) => [...prev, "pricing_data.csv"])
-                          }}
-                        >
-                          <CloudUpload className="w-4 h-4 text-[#71717a] hover:text-[#a1a1aa]" />
-                        </div>
-                        <div className="h-6 w-6 flex items-center justify-center">
-                          <Send className="w-4 h-4 text-[#71717a] hover:text-[#a1a1aa]" />
+                        {/* Action buttons - bottom right */}
+                        <div className="absolute right-3 bottom-3 flex gap-1.5">
+                          <div
+                            className="h-6 w-6 flex items-center justify-center cursor-pointer"
+                            onClick={() => {
+                              // Simulate file upload
+                              setUploadedFiles((prev) => [...prev, "pricing_data.csv"])
+                            }}
+                          >
+                            <CloudUpload className="w-4 h-4 text-[#71717a] hover:text-[#a1a1aa]" />
+                          </div>
+                          <div 
+                            className="h-6 w-6 flex items-center justify-center cursor-pointer"
+                            onClick={handleSendMessage}
+                          >
+                            <Send className="w-4 h-4 text-[#71717a] hover:text-[#a1a1aa]" />
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div className="space-y-4 mt-8">
+                      {/* Quick Action Buttons - only show when not engaged */}
+                      {!hasEngaged && (
+                        <div className="space-y-4 mt-8">
                       <p className="text-[10px] text-[#a1a1aa] text-center">Try these examples to get started</p>
 
-                      <div className="flex flex-wrap gap-2 justify-center">
-                        <button className="rounded-full px-3 py-1 text-[10px] border border-[#2a2a2a] bg-[#1a1a1a] hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1.5">
-                          <Zap className="w-2.5 h-2.5" />
-                          Analyze pricing patterns
+                          <div className="flex gap-2 justify-center max-w-4xl mx-auto">
+                            <button className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-[#1a1a1a] hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 whitespace-nowrap">
+                              <Zap className="w-2 h-2" />
+                              Analyze pricing patterns
                         </button>
-                        <button className="rounded-full px-3 py-1 text-[10px] border border-[#2a2a2a] bg-[#1a1a1a] hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1.5">
-                          <ShieldCheck className="w-2.5 h-2.5" />
-                          Check compliance status
+                            <button className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-[#1a1a1a] hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 whitespace-nowrap">
+                              <ShieldCheck className="w-2 h-2" />
+                              Check compliance status
                         </button>
-                        <button className="rounded-full px-3 py-1 text-[10px] border border-[#2a2a2a] bg-[#1a1a1a] hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1.5">
-                          <FileText className="w-2.5 h-2.5" />
-                          Generate report
+                            <button className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-[#1a1a1a] hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 whitespace-nowrap">
+                              <FileText className="w-2 h-2" />
+                              Generate report
+                            </button>
+                            <button 
+                              onClick={() => handleSendMessage("Help me log a market event")}
+                              className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-[#1a1a1a] hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 whitespace-nowrap"
+                            >
+                              <SquarePen className="w-2 h-2" />
+                              Log a market event
                         </button>
                       </div>
                     </div>
+                      )}
                   </div>
                 </div>
+              </div>
               </div>
             )}
             {activeTab === "dashboard" && (
@@ -1759,15 +1863,23 @@ export default function CursorDashboard() {
                           </div>
                         </div>
 
-                        {/* Right Container - Export CSV Button */}
+                        {/* Right Container - Post Button */}
                         <div className="flex justify-end">
                           <Button
                             variant="outline"
                             size="sm"
                             className="text-xs bg-transparent border-[#2a2a2a] text-[#f9fafb] hover:bg-[#1a1a1a]"
+                          onClick={() => {
+                            setActiveTab("agents")
+                            setInitialAgentMessage("")
+                            // Trigger the event logging flow
+                            setTimeout(() => {
+                              handleSendMessage("Help me log a market event")
+                            }, 100)
+                          }}
                           >
-                            <Download className="w-3 h-3 mr-1" />
-                            Export CSV
+                            <SquarePen className="w-3 h-3 mr-1" />
+                            Log event
                           </Button>
                         </div>
                       </div>
@@ -2217,6 +2329,7 @@ export default function CursorDashboard() {
                         </div>
                       </CardContent>
                     </Card>
+                    
                   </div>
                 )}
 
@@ -2243,6 +2356,7 @@ export default function CursorDashboard() {
           </main>
         </div>
       </div>
+
 
       <style jsx>{`
         @keyframes blink {
