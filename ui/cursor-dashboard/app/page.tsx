@@ -651,17 +651,33 @@ It would also be helpful if you described:
                                 </div>
                                 {/* FANS Avatar Flow */}
                                 <div className="flex items-center -space-x-2">
-                                  <div className="w-8 h-8 bg-[#60a5fa] rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-[#1a1a1a]">
-                                    F
+                                  <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white">
+                                    <img 
+                                      src="/fnb-logo.png" 
+                                      alt="FNB" 
+                                      className="w-full h-full object-contain p-0.5"
+                                    />
                                   </div>
-                                  <div className="w-8 h-8 bg-[#a1a1aa] rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-[#1a1a1a] opacity-80">
-                                    A
+                                  <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-80">
+                                    <img 
+                                      src="/absa-logo.png" 
+                                      alt="ABSA" 
+                                      className="w-full h-full object-contain p-0.5"
+                                    />
                                   </div>
-                                  <div className="w-8 h-8 bg-[#71717a] rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-[#1a1a1a] opacity-60">
-                                    N
+                                  <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-60">
+                                    <img 
+                                      src="/nedbank-logo.png" 
+                                      alt="Nedbank" 
+                                      className="w-full h-full object-contain p-0.5"
+                                    />
                                   </div>
-                                  <div className="w-8 h-8 bg-[#52525b] rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-[#1a1a1a] opacity-40">
-                                    S
+                                  <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-40">
+                                    <img 
+                                      src="/standard-logo.png" 
+                                      alt="Standard Bank" 
+                                      className="w-full h-full object-contain p-0.5"
+                                    />
                                   </div>
                                 </div>
                               </div>
