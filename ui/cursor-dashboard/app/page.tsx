@@ -853,7 +853,7 @@ It would also be helpful if you described:
                         </div>
                             <div className="rounded-lg bg-[#212121]/40 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
                               <div className="flex items-center justify-between">
-                                <div>
+                        <div>
                                   <div className="text-xl font-bold text-[#f9fafb]">
                                     {selectedTimeframe === "30d" ? "78" : 
                                      selectedTimeframe === "6m" ? "82" : 
@@ -897,9 +897,9 @@ It would also be helpful if you described:
                                     />
                                   </div>
                                 </div>
-                              </div>
-                            </div>
-                            
+                        </div>
+                      </div>
+
                             {/* Confidence Display */}
                             {riskSummary && (
                               <div className="mt-3 rounded-lg bg-[#212121]/40 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
@@ -910,13 +910,10 @@ It would also be helpful if you described:
                                   </div>
                                   <div className="text-right">
                                     <div className="text-xs text-[#a1a1aa]">
-                                      {riskSummary.source.freshnessSec < 60 
+                                      Updated {riskSummary.source.freshnessSec < 60 
                                         ? `${riskSummary.source.freshnessSec}s ago`
                                         : `${Math.round(riskSummary.source.freshnessSec / 60)}m ago`
                                       }
-                                    </div>
-                                    <div className="text-[10px] text-[#a1a1aa]">
-                                      Quality: {Math.round(riskSummary.source.quality * 100)}%
                                     </div>
                                   </div>
                                 </div>
@@ -1131,7 +1128,7 @@ It would also be helpful if you described:
                             ) : (
                               'Data source: Bloomberg Terminal'
                             )}
-                          </div>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -1177,7 +1174,7 @@ It would also be helpful if you described:
                                        metricsOverview.items.find(m => m.key === 'stability')?.direction === 'DOWN' ? '↓' : '→'}
                                     </div>
                                   </div>
-                                  <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
+                          <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
                                 </>
                               ) : (
                                 <>
