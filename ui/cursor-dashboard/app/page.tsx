@@ -915,8 +915,8 @@ It would also be helpful if you described:
                               <div className="mt-3 rounded-lg bg-[#212121]/40 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 relative">
                                 {/* top-right time badge — mirror LIVE chip spacing */}
                                 <span className="absolute top-3 right-3 inline-flex items-center gap-1.5 bg-[#1a1a1a] border border-[#2a2a2a] rounded-full px-2 py-1">
-                                  <Clock className="h-3 w-3 text-[#a1a1aa] opacity-85" />
-                                  <span className="text-[10px] text-[#a1a1aa] opacity-85">
+                                  <Clock className="h-3 w-3 text-[#a1a1aa] opacity-70" />
+                                  <span className="text-[10px] text-[#a1a1aa] opacity-70">
                                     {riskSummary.source.freshnessSec < 60 
                                       ? `${riskSummary.source.freshnessSec}s ago`
                                       : `${Math.round(riskSummary.source.freshnessSec / 60)}m ago`
