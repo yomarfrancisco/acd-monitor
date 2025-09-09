@@ -27,16 +27,11 @@ npm run dev:clean
 - For production builds: `npm run build:clean`
 - Manual cleanup: `rm -rf .next` then restart
 
-### Password Gate Still Appears
+### Password Gate Removed
 
-**Problem:** You're still seeing a passcode screen or being redirected to `/login`.
+**Status:** Password gate has been completely removed from the application. No authentication is required for demo access.
 
-**Root Cause:** Browser cache or history pointing to old `/login` route.
-
-**Solution:**
-1. Clear browser cache: `Cmd + Shift + R` (hard refresh)
-2. Navigate directly to `http://localhost:3004/` (root, not `/login`)
-3. Clear browser history for localhost
+**Note:** If you previously had `DEMO_PASSCODE` environment variable set in Vercel, it has been removed. Redeploy with Clear Cache if you need to reintroduce authentication.
 4. Try incognito/private window
 
 ### MetaMask Console Errors

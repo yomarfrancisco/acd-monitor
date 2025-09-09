@@ -247,3 +247,9 @@ All integrations have been verified with:
 - ✅ CI gating (backend skipped on UI-only changes)
 - ✅ No `any` type leaks in API responses
 - ✅ Consistent timeframe handling (`'30d' | '6m' | '1y' | 'ytd'`)
+
+## Security & Access
+
+**Password Gate Status:** Completely removed from the application. No authentication is required for demo access.
+
+**Environment Variables:** `DEMO_PASSCODE` has been removed from Vercel environment variables. Redeploy with Clear Cache if authentication needs to be reintroduced.
