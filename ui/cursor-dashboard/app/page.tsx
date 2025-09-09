@@ -972,21 +972,21 @@ It would also be helpful if you described:
                                 {/* Option 3: Subtle Background Shading - Colored bands for event periods */}
                                 <ReferenceLine
                                   x="Feb '25"
-                                  stroke="rgba(239, 68, 68, 0.15)"
+                                  stroke="rgba(255, 200, 200, 0.15)"
                                   strokeOpacity={1}
                                   strokeWidth={40}
                                   strokeDasharray="0"
                                 />
                                 <ReferenceLine
                                   x="Jun '25"
-                                  stroke="rgba(245, 158, 11, 0.15)"
+                                  stroke="rgba(255, 220, 180, 0.15)"
                                   strokeOpacity={1}
                                   strokeWidth={40}
                                   strokeDasharray="0"
                                 />
                                 <ReferenceLine
                                   x="Jul '25"
-                                  stroke="rgba(16, 185, 129, 0.15)"
+                                  stroke="rgba(200, 255, 220, 0.15)"
                                   strokeOpacity={1}
                                   strokeWidth={40}
                                   strokeDasharray="0"
