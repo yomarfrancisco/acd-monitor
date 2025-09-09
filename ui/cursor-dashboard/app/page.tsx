@@ -1830,6 +1830,70 @@ It would also be helpful if you described:
                         </div>
                       </CardContent>
                     </Card>
+
+                    {/* Data Sources Status */}
+                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                      <CardContent className="p-0">
+                        {/* Section Header */}
+                        <div className="px-4 py-3 border-b border-[#2a2a2a]">
+                          <h2 className="text-sm font-medium text-[#f9fafb]">Data Sources Status</h2>
+                        </div>
+                        
+                        {/* Data Sources List */}
+                        {dataSourcesLoading ? (
+                          <div className="p-6 text-center">
+                            <div className="text-[#a1a1aa] text-sm">Loading data sources...</div>
+                          </div>
+                        ) : dataSourcesError ? (
+                          <div className="p-6 text-center">
+                            <div className="text-[#fca5a5] text-sm">Error loading data sources: {dataSourcesError}</div>
+                            <button 
+                              onClick={() => window.location.reload()} 
+                              className="text-[#a1a1aa] text-xs hover:text-[#f9fafb] mt-2"
+                            >
+                              Retry
+                            </button>
+                          </div>
+                        ) : dataSources?.items.length === 0 ? (
+                          <div className="p-6 text-center">
+                            <div className="text-[#a1a1aa] text-sm">No data sources configured</div>
+                          </div>
+                        ) : (
+                          dataSources?.items.map((source, index) => (
+                            <div key={source.id}>
+                              {index > 0 && (
+                                <div
+                                  className="border-t border-[#2a2a2a]/70 border-opacity-70"
+                                  style={{ borderTopWidth: "0.5px" }}
+                                ></div>
+                              )}
+                              <div className="p-3">
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-2.5">
+                                    <Database className="w-4 h-4 text-[#a1a1aa]" />
+                                    <div>
+                                      <div className="text-[#f9fafb] font-medium text-xs">{source.name}</div>
+                                      <div className="text-[10px] text-[#a1a1aa]">
+                                        Tier {source.tier} • Freshness: {Math.round(source.freshnessSec / 60)}m • Quality: {Math.round(source.quality * 100)}%
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="text-right">
+                                    <div className={`text-xs px-2 py-1 rounded ${
+                                      source.status === 'OK' ? 'bg-[#a7f3d0]/20 text-[#a7f3d0]' :
+                                      source.status === 'DEGRADED' ? 'bg-[#fbbf24]/20 text-[#fbbf24]' :
+                                      'bg-[#fca5a5]/20 text-[#fca5a5]'
+                                    }`}>
+                                      {source.status}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </CardContent>
+                    </Card>
                   </div>
                 )}
                 {/* AI Economists Page */}

@@ -68,7 +68,8 @@ export interface EventsResponse {
 export interface DataSource {
   id: string;
   name: string;
-  status: string;
+  tier: 'T1' | 'T2' | 'T3' | 'T4';
+  status: 'OK' | 'DEGRADED' | 'DOWN';
   freshnessSec: number;
   quality: number;
 }
