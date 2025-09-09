@@ -408,28 +408,28 @@ It would also be helpful if you described:
     return (
       <div className="space-y-3 max-w-2xl">
         {/* First shell tile with left and right containers */}
-        <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+        <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
           <CardContent className="p-4">
             <div className="grid grid-cols-2 gap-6">
-              <div className="rounded-lg bg-[#1a1a1a] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
+              <div className="rounded-lg bg-bg-tile shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
                 <div>
                   <h2 className="text-sm font-medium text-[#f9fafb] mb-1">Left Container</h2>
                   <p className="text-xs text-[#a1a1aa] mb-3 leading-relaxed">
                     Shell content for {pageTitle} - Left side
                   </p>
                 </div>
-                <button className="rounded-full px-3 py-1 text-xs border border-[#2a2a2a] bg-transparent hover:bg-[#1a1a1a] text-[#a1a1aa] hover:text-[#f9fafb] self-start">
+                <button className="rounded-full px-3 py-1 text-xs border border-[#2a2a2a] bg-transparent hover:bg-bg-tile text-[#a1a1aa] hover:text-[#f9fafb] self-start">
                   Action Button
                 </button>
               </div>
-              <div className="rounded-lg bg-[#1e1e1e] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
+              <div className="rounded-lg bg-bg-tile2 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
                 <div>
                   <h2 className="text-sm font-medium text-[#f9fafb] mb-1">Right Container</h2>
                   <p className="text-xs text-[#a1a1aa] mb-3 leading-relaxed">
                     Shell content for {pageTitle} - Right side
                   </p>
                 </div>
-                <button className="rounded-full px-3 py-1 text-xs border border-[#2a2a2a] bg-transparent hover:bg-[#1a1a1a] text-[#a1a1aa] hover:text-[#f9fafb] self-start">
+                <button className="rounded-full px-3 py-1 text-xs border border-[#2a2a2a] bg-transparent hover:bg-bg-tile text-[#a1a1aa] hover:text-[#f9fafb] self-start">
                   Action Button
                 </button>
               </div>
@@ -438,7 +438,7 @@ It would also be helpful if you described:
         </Card>
 
         {/* Second shell tile */}
-        <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+        <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
           <CardContent className="p-4 text-center">
             <h3 className="text-[#f9fafb] font-medium mb-1.5 text-xs">Second Shell Tile</h3>
             <p className="text-[10px] text-[#a1a1aa] mb-2.5">Additional shell content for {pageTitle} page.</p>
@@ -488,7 +488,7 @@ It would also be helpful if you described:
             </button>
           </nav>
 
-          <div className="text-xs font-medium text-[#f9fafb] bg-[#1a1a1a] rounded-full w-7 h-7 flex items-center justify-center">
+          <div className="text-xs font-medium text-[#f9fafb] bg-bg-tile rounded-full w-7 h-7 flex items-center justify-center">
             YF
           </div>
         </div>
@@ -512,7 +512,7 @@ It would also be helpful if you described:
                   <p className="text-[10px] text-[#a1a1aa] mb-2.5">Ent Plan · ygor.francisco@gmail.com</p>
 
                   <div
-                    className={`rounded-md p-1.5 mb-2.5 cursor-pointer ${activeSidebarItem === "overview" ? "bg-[#1a1a1a]" : "hover:bg-[#1a1a1a]"}`}
+                    className={`rounded-md p-1.5 mb-2.5 cursor-pointer ${activeSidebarItem === "overview" ? "bg-bg-tile" : "hover:bg-bg-tile"}`}
                     onClick={() => setActiveSidebarItem("overview")}
                   >
                     <div className="flex items-center gap-2 text-xs font-medium text-[#f9fafb]">
@@ -523,7 +523,7 @@ It would also be helpful if you described:
 
                   <div className="space-y-1 text-xs">
                     <div
-                      className={`flex items-center gap-2 px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "configuration" ? "bg-[#1a1a1a] text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-[#1a1a1a]"}`}
+                      className={`flex items-center gap-2 px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "configuration" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
                       onClick={() => setActiveSidebarItem("configuration")}
                     >
                       <Settings className="w-3.5 h-3.5" />
@@ -532,26 +532,26 @@ It would also be helpful if you described:
                   </div>
                 </div>
 
-                <Separator className="bg-[#1a1a1a]" />
+                <Separator className="bg-bg-tile" />
 
                 {/* Navigation */}
                 <nav className="space-y-0.5">
                   <div
-                    className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "data-sources" ? "bg-[#1a1a1a] text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-[#1a1a1a]"}`}
+                    className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "data-sources" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
                     onClick={() => setActiveSidebarItem("data-sources")}
                   >
                     <Database className="w-3.5 h-3.5" />
                     Data Sources
                   </div>
                   <div
-                    className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "ai-economists" ? "bg-[#1a1a1a] text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-[#1a1a1a]"}`}
+                    className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "ai-economists" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
                     onClick={() => setActiveSidebarItem("ai-economists")}
                   >
                     <Bot className="w-3.5 h-3.5" />
                     AI Agents
                   </div>
                   <div
-                    className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "health-checks" ? "bg-[#1a1a1a] text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-[#1a1a1a]"}`}
+                    className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "health-checks" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
                     onClick={() => setActiveSidebarItem("health-checks")}
                   >
                     <Zap className="w-3.5 h-3.5" />
@@ -559,18 +559,18 @@ It would also be helpful if you described:
                   </div>
                 </nav>
 
-                <Separator className="bg-[#1a1a1a]" />
+                <Separator className="bg-bg-tile" />
 
                 <nav className="space-y-0.5">
                   <div
-                    className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "events-log" ? "bg-[#1a1a1a] text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-[#1a1a1a]"}`}
+                    className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "events-log" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
                     onClick={() => setActiveSidebarItem("events-log")}
                   >
                     <ClipboardList className="w-3.5 h-3.5" />
                     Events Log
                   </div>
                   <div
-                    className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "billing" ? "bg-[#1a1a1a] text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-[#1a1a1a]"}`}
+                    className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "billing" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
                     onClick={() => setActiveSidebarItem("billing")}
                   >
                     <CreditCard className="w-3.5 h-3.5" />
@@ -578,18 +578,18 @@ It would also be helpful if you described:
                   </div>
                 </nav>
 
-                <Separator className="bg-[#1a1a1a]" />
+                <Separator className="bg-bg-tile" />
 
                 <nav className="space-y-0.5">
                   <div
-                    className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "compliance" ? "bg-[#1a1a1a] text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-[#1a1a1a]"}`}
+                    className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "compliance" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
                     onClick={() => setActiveSidebarItem("compliance")}
                   >
                     <FileText className="w-3.5 h-3.5" />
                     Compliance Reports
                   </div>
                   <div
-                    className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "contact" ? "bg-[#1a1a1a] text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-[#1a1a1a]"}`}
+                    className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "contact" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
                     onClick={() => setActiveSidebarItem("contact")}
                   >
                     <MessageSquare className="w-3.5 h-3.5" />
@@ -606,7 +606,7 @@ It would also be helpful if you described:
               <div className="max-w-xl mx-auto">
                 {/* Initial Agent Message */}
                 {initialAgentMessage && (
-                  <div className="mb-4 p-3 bg-[#212121] rounded-lg border border-[#2a2a2a]">
+                  <div className="mb-4 p-3 bg-bg-surface rounded-lg border border-[#2a2a2a]">
                     <div className="flex items-center gap-2 mb-2">
                       <Bot className="w-4 h-4 text-[#86a789]" />
                       <span className="text-xs font-medium text-[#f9fafb]">{selectedAgent}</span>
@@ -653,7 +653,7 @@ It would also be helpful if you described:
                               handleSendMessage()
                             }
                           }}
-                          className="w-full h-28 bg-[#1a1a1a] rounded-lg text-[#f9fafb] placeholder-[#71717a] pr-16 px-4 py-4 text-xs resize-none focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50"
+                          className="w-full h-28 bg-bg-tile rounded-lg text-[#f9fafb] placeholder-[#71717a] pr-16 px-4 py-4 text-xs resize-none focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50"
                           rows={5}
                         />
                         {/* Blinking cursor overlay - only shows when empty */}
@@ -712,21 +712,21 @@ It would also be helpful if you described:
                       <p className="text-[10px] text-[#a1a1aa] text-center">Try these examples to get started</p>
 
                           <div className="flex gap-2 justify-center max-w-4xl mx-auto">
-                            <button className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-[#1a1a1a] hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 whitespace-nowrap">
+                            <button className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 whitespace-nowrap">
                               <Zap className="w-2 h-2" />
                               Analyze pricing patterns
                         </button>
-                            <button className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-[#1a1a1a] hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 whitespace-nowrap">
+                            <button className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 whitespace-nowrap">
                               <ShieldCheck className="w-2 h-2" />
                               Check compliance status
                         </button>
-                            <button className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-[#1a1a1a] hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 whitespace-nowrap">
+                            <button className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 whitespace-nowrap">
                               <FileText className="w-2 h-2" />
                               Generate report
                             </button>
                             <button
                               onClick={() => handleSendMessage("Help me log a market event")}
-                              className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-[#1a1a1a] hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 whitespace-nowrap"
+                              className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 whitespace-nowrap"
                             >
                               <SquarePen className="w-2 h-2" />
                               Log a market event
@@ -744,26 +744,26 @@ It would also be helpful if you described:
               <>
                 {activeSidebarItem === "overview" && (
               <div className="space-y-3 max-w-2xl">
-                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                   <CardContent className="p-4">
                         <div className="grid grid-cols-2 gap-6">
-                          <div className="rounded-lg bg-[#1a1a1a] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
+                          <div className="rounded-lg bg-bg-tile shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
                             <div>
                         <h2 className="text-sm font-medium text-[#f9fafb] mb-1">Enterprise Plan</h2>
                               <p className="text-xs text-[#a1a1aa] mb-3 leading-relaxed">
                                 Live monitoring with compliance tracking
                         </p>
                             </div>
-                            <button className="rounded-full px-3 py-1 text-xs border border-[#2a2a2a] bg-transparent hover:bg-[#1a1a1a] text-[#a1a1aa] hover:text-[#f9fafb] self-start">
+                            <button className="rounded-full px-3 py-1 text-xs border border-[#2a2a2a] bg-transparent hover:bg-bg-tile text-[#a1a1aa] hover:text-[#f9fafb] self-start">
                           Manage Subscription
                         </button>
                       </div>
-                          <div className="rounded-lg bg-[#1e1e1e] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
+                          <div className="rounded-lg bg-bg-tile2 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
                             <div>
                           <div className="text-xs font-bold text-[#f9fafb] mb-1">$0 / $6k</div>
                           <p className="text-xs text-[#a1a1aa] mb-2">Usage-Based Spending this Month</p>
                             </div>
-                            <button className="rounded-full px-3 py-1 text-xs border border-[#2a2a2a] bg-transparent hover:bg-[#1a1a1a] text-[#a1a1aa] hover:text-[#f9fafb] self-start">
+                            <button className="rounded-full px-3 py-1 text-xs border border-[#2a2a2a] bg-transparent hover:bg-bg-tile text-[#a1a1aa] hover:text-[#f9fafb] self-start">
                             Edit Limit
                           </button>
                       </div>
@@ -771,7 +771,7 @@ It would also be helpful if you described:
                   </CardContent>
                 </Card>
 
-                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2 text-xs text-[#a1a1aa]">
@@ -825,9 +825,9 @@ It would also be helpful if you described:
                     <div className="mb-4">
                           <h3 className="text-xs font-medium text-[#f9fafb] mb-3">Algorithmic Cartel Diagnostic</h3>
                           <div className="grid grid-cols-2 gap-6 mb-10">
-                            <div className="rounded-lg bg-[#212121] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 relative">
+                            <div className="rounded-lg bg-bg-surface shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 relative">
                               {/* Live indicator - pulsing green dot with frame */}
-                              <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-[#1a1a1a] border border-[#2a2a2a] rounded-full px-2 py-1">
+                              <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-bg-tile border border-[#2a2a2a] rounded-full px-2 py-1">
                                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                                 <span className="text-[10px] text-[#a1a1aa]">LIVE</span>
                               </div>
@@ -861,7 +861,7 @@ It would also be helpful if you described:
                             </>
                           )}
                         </div>
-                            <div className="rounded-lg bg-[#212121]/40 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
+                            <div className="rounded-lg bg-bg-surface/40 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
                               <div className="flex items-center justify-between">
                         <div>
                                   <div className="text-xl font-bold text-[#f9fafb]">
@@ -912,9 +912,9 @@ It would also be helpful if you described:
 
                             {/* Confidence Display */}
                             {riskSummary && (
-                              <div className="mt-3 rounded-lg bg-[#212121]/40 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 relative">
+                              <div className="mt-3 rounded-lg bg-bg-surface/40 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 relative">
                                 {/* top-right time badge — mirror LIVE chip spacing */}
-                                <span className="absolute top-3 right-3 inline-flex items-center gap-1.5 bg-[#1a1a1a] border border-[#2a2a2a] rounded-full px-2 py-1">
+                                <span className="absolute top-3 right-3 inline-flex items-center gap-1.5 bg-bg-tile border border-[#2a2a2a] rounded-full px-2 py-1">
                                   <Clock className="h-3 w-3 text-[#a1a1aa] opacity-70" />
                                   <span className="text-[10px] text-[#a1a1aa] opacity-70">
                                     {riskSummary.source.freshnessSec < 60 
@@ -1042,7 +1042,7 @@ It would also be helpful if you described:
                                           {/* Event Information */}
                                           {currentEvent && (
                                             <div
-                                              className="mb-2 p-2 bg-[#1a1a1a] rounded border-l-2"
+                                              className="mb-2 p-2 bg-bg-tile rounded border-l-2"
                                               style={{ borderLeftColor: currentEvent.color }}
                                             >
                                               <div className="flex items-center gap-2 mb-1">
@@ -1143,7 +1143,7 @@ It would also be helpful if you described:
                   </CardContent>
                 </Card>
                 {/* Metrics tile: Price Stability, Price Synchronization, Environmental Sensitivity */}
-                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                   <CardContent className="p-0">
                     {/* Price Stability */}
                     <div className="p-3">
@@ -1322,7 +1322,7 @@ It would also be helpful if you described:
                 </Card>
 
                 {/* Combined tile: Market Data Feed, Regulatory Notices */}
-                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                   <CardContent className="p-0">
                         {/* Bloomberg Data Feed */}
                     <div className="p-3">
@@ -1385,7 +1385,7 @@ It would also be helpful if you described:
                 </Card>
 
                 {/* Sixth tile: Assign Reviewers */}
-                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                   <CardContent className="p-4 text-center">
                     <h3 className="text-[#f9fafb] font-medium mb-1.5 text-xs">Assign Reviewers</h3>
                     <p className="text-[10px] text-[#a1a1aa] mb-2.5">
@@ -1405,7 +1405,7 @@ It would also be helpful if you described:
             {activeSidebarItem === "configuration" && (
               <div className="space-y-6 max-w-2xl">
                 {/* Pricing Analysis Settings Section */}
-                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                   <CardContent className="p-0">
                     {/* Section Header */}
                     <div className="px-4 py-3 border-b border-[#2a2a2a]">
@@ -1468,7 +1468,7 @@ It would also be helpful if you described:
                               <select
                             value={changeThreshold}
                             onChange={(e) => setChangeThreshold(e.target.value)}
-                                className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-md px-3 py-1.5 text-xs text-[#f9fafb] cursor-pointer hover:bg-[#2a2a2a] focus:border-[#60a5fa] focus:outline-none focus:ring-1 focus:ring-[#60a5fa] transition-colors duration-200 appearance-none pr-8"
+                                className="bg-bg-tile border border-[#2a2a2a] rounded-md px-3 py-1.5 text-xs text-[#f9fafb] cursor-pointer hover:bg-[#2a2a2a] focus:border-[#60a5fa] focus:outline-none focus:ring-1 focus:ring-[#60a5fa] transition-colors duration-200 appearance-none pr-8"
                               >
                                 <option value="5%">5%</option>
                                 <option value="10%">10%</option>
@@ -1505,7 +1505,7 @@ It would also be helpful if you described:
                               <select
                             value={confidenceLevel}
                             onChange={(e) => setConfidenceLevel(e.target.value)}
-                                className="w-20 h-8 bg-[#1a1a1a] border border-[#2a2a2a] rounded text-xs text-[#f9fafb] text-center appearance-none cursor-pointer hover:bg-[#2a2a2a] transition-colors duration-200 pr-6"
+                                className="w-20 h-8 bg-bg-tile border border-[#2a2a2a] rounded text-xs text-[#f9fafb] text-center appearance-none cursor-pointer hover:bg-[#2a2a2a] transition-colors duration-200 pr-6"
                               >
                                 <option value="95%">95%</option>
                                 <option value="90%">90%</option>
@@ -1522,7 +1522,7 @@ It would also be helpful if you described:
                 </Card>
 
                 {/* Monitoring Engine Settings Section */}
-                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                   <CardContent className="p-0">
                     {/* Section Header */}
                     <div className="px-4 py-3 border-b border-[#2a2a2a]">
@@ -1581,7 +1581,7 @@ It would also be helpful if you described:
                               <select
                             value={updateFrequency}
                             onChange={(e) => setUpdateFrequency(e.target.value)}
-                                className="w-20 h-8 bg-[#1a1a1a] border border-[#2a2a2a] rounded text-xs text-[#f9fafb] text-center appearance-none cursor-pointer hover:bg-[#2a2a2a] transition-colors duration-200 pr-6"
+                                className="w-20 h-8 bg-bg-tile border border-[#2a2a2a] rounded text-xs text-[#f9fafb] text-center appearance-none cursor-pointer hover:bg-[#2a2a2a] transition-colors duration-200 pr-6"
                               >
                                 <option value="1m">1m</option>
                                 <option value="5m">5m</option>
@@ -1619,7 +1619,7 @@ It would also be helpful if you described:
                               <select
                             value={sensitivityLevel}
                             onChange={(e) => setSensitivityLevel(e.target.value)}
-                                className="w-20 h-8 bg-[#1a1a1a] border border-[#2a2a2a] rounded text-xs text-[#f9fafb] text-center appearance-none cursor-pointer hover:bg-[#2a2a2a] transition-colors duration-200 pr-6"
+                                className="w-20 h-8 bg-bg-tile border border-[#2a2a2a] rounded text-xs text-[#f9fafb] text-center appearance-none cursor-pointer hover:bg-[#2a2a2a] transition-colors duration-200 pr-6"
                               >
                                 <option value="Low">Low</option>
                                 <option value="Medium">Medium</option>
@@ -1633,7 +1633,7 @@ It would also be helpful if you described:
                 </Card>
 
                 {/* Data Quality Controls Section */}
-                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                   <CardContent className="p-0">
                     {/* Section Header */}
                     <div className="px-4 py-3 border-b border-[#2a2a2a]">
@@ -1694,7 +1694,7 @@ It would also be helpful if you described:
                               <select
                             value={maxDataAge}
                             onChange={(e) => setMaxDataAge(e.target.value)}
-                                className="w-20 h-8 bg-[#1a1a1a] border border-[#2a2a2a] rounded text-xs text-[#f9fafb] text-center appearance-none cursor-pointer hover:bg-[#2a2a2a] transition-colors duration-200 pr-6"
+                                className="w-20 h-8 bg-bg-tile border border-[#2a2a2a] rounded text-xs text-[#f9fafb] text-center appearance-none cursor-pointer hover:bg-[#2a2a2a] transition-colors duration-200 pr-6"
                               >
                                 <option value="10m">10m</option>
                                 <option value="30m">30m</option>
@@ -1713,7 +1713,7 @@ It would also be helpful if you described:
                 {activeSidebarItem === "data-sources" && (
                   <div className="space-y-6">
                     {/* Connect Your Data */}
-                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                    <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                       <CardContent className="p-0">
                         {/* Section Header */}
                         <div className="px-4 py-3 border-b border-[#2a2a2a]">
@@ -1821,11 +1821,11 @@ It would also be helpful if you described:
                     </Card>
 
                     {/* API Keys */}
-                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                    <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                       <CardContent className="p-4">
                         <h3 className="text-xs font-medium text-[#f9fafb] mb-3">API Keys</h3>
                         <div className="space-y-2">
-                          <button className="w-full text-left p-3 bg-[#212121] hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
+                          <button className="w-full text-left p-3 bg-bg-surface hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
                             <div>
                               <div className="font-medium">Generate new API key</div>
                               <div className="text-[10px] text-[#a1a1aa] mt-0.5">
@@ -1843,12 +1843,12 @@ It would also be helpful if you described:
                 {activeSidebarItem === "ai-economists" && (
                   <div className="space-y-6">
                     {/* Quick Analysis */}
-                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                    <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                       <CardContent className="p-4">
                         {/* Updated Quick Analysis header font size from text-xs to text-sm */}
                         <h3 className="text-sm font-medium text-[#f9fafb] mb-3">Quick Analysis</h3>
                         <div className="space-y-2">
-                          <button className="w-full text-left p-3 bg-[#212121] hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
+                          <button className="w-full text-left p-3 bg-bg-surface hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
                             <div>
                               <div className="font-medium">Analyze pricing patterns</div>
                               <div className="text-[10px] text-[#a1a1aa] mt-0.5">
@@ -1857,7 +1857,7 @@ It would also be helpful if you described:
                             </div>
                             <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
                           </button>
-                          <button className="w-full text-left p-3 bg-[#212121] hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
+                          <button className="w-full text-left p-3 bg-bg-surface hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
                             <div>
                               <div className="font-medium">Check compliance status</div>
                               <div className="text-[10px] text-[#a1a1aa] mt-0.5">
@@ -1866,7 +1866,7 @@ It would also be helpful if you described:
                             </div>
                             <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
                           </button>
-                          <button className="w-full text-left p-3 bg-[#212121] hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
+                          <button className="w-full text-left p-3 bg-bg-surface hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
                             <div>
                               <div className="font-medium">Generate report</div>
                               <div className="text-[10px] text-[#a1a1aa] mt-0.5">
@@ -1875,7 +1875,7 @@ It would also be helpful if you described:
                             </div>
                             <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
                           </button>
-                          <button className="w-full text-left p-3 bg-[#212121] hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
+                          <button className="w-full text-left p-3 bg-bg-surface hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
                             <div>
                               <div className="font-medium">Generate Evidence Package</div>
                               <div className="text-[10px] text-[#a1a1aa] mt-0.5">
@@ -1884,7 +1884,7 @@ It would also be helpful if you described:
                             </div>
                             <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
                           </button>
-                          <button className="w-full text-left p-3 bg-[#212121] hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
+                          <button className="w-full text-left p-3 bg-bg-surface hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
                             <div>
                               <div className="font-medium">Assess Statistical Confidence</div>
                               <div className="text-[10px] text-[#a1a1aa] mt-0.5">
@@ -1898,7 +1898,7 @@ It would also be helpful if you described:
                     </Card>
 
                     {/* Available Agents */}
-                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                    <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                       <CardContent className="p-0">
                         {/* Section Header */}
                         <div className="px-4 py-3 border-b border-[#2a2a2a]">
@@ -2010,7 +2010,7 @@ It would also be helpful if you described:
                 {activeSidebarItem === "health-checks" && (
                   <div className="space-y-3 max-w-2xl">
                     {/* Top tile - Copy of 2nd tile from Overview (with graph) */}
-                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                    <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between mb-4">
                           <h3 className="text-xs font-medium text-[#f9fafb]">Your System Integrity</h3>
@@ -2043,11 +2043,11 @@ It would also be helpful if you described:
                         </div>
 
                         <div className="grid grid-cols-2 gap-6 mb-10">
-                          <div className="rounded-lg bg-[#212121] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
+                          <div className="rounded-lg bg-bg-surface shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
                             <div className="text-xl font-bold text-[#f9fafb]">84 out of 100</div>
                             <div className="text-xs text-[#a7f3d0]">Pass</div>
                           </div>
-                          <div className="rounded-lg bg-[#212121]/40 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
+                          <div className="rounded-lg bg-bg-surface/40 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
                             <div className="text-xl font-bold text-[#f9fafb]">67%</div>
                             <div className="text-xs text-[#a1a1aa]">Compliance Readiness</div>
                           </div>
@@ -2202,7 +2202,7 @@ It would also be helpful if you described:
                     </Card>
 
                     {/* Bottom tile - Copy of 3rd tile from Overview (with 4 rows of content) */}
-                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                    <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                       <CardContent className="p-0">
                         {/* Convergence Rate */}
                         <div className="p-3">
@@ -2329,7 +2329,7 @@ It would also be helpful if you described:
                           <Button
                             variant="outline"
                             size="sm"
-                            className="text-xs bg-transparent border-[#2a2a2a] text-[#f9fafb] hover:bg-[#1a1a1a]"
+                            className="text-xs bg-transparent border-[#2a2a2a] text-[#f9fafb] hover:bg-bg-tile"
                           >
                             Jan 01 - Sep 05
                             <ChevronDown className="w-3 h-3 ml-1" />
@@ -2340,28 +2340,28 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-[#1a1a1a] hover:text-[#f9fafb]"
+                              className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-bg-tile hover:text-[#f9fafb]"
                             >
                               30d
                             </Button>
                             <Button
                               variant="outline"
                               size="sm"
-                              className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-[#1a1a1a] hover:text-[#f9fafb]"
+                              className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-bg-tile hover:text-[#f9fafb]"
                             >
                               6m
                             </Button>
                             <Button
                               variant="outline"
                               size="sm"
-                              className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-[#1a1a1a] hover:text-[#f9fafb]"
+                              className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-bg-tile hover:text-[#f9fafb]"
                             >
                               1y
                             </Button>
                             <Button
                               variant="outline"
                               size="sm"
-                              className="text-xs bg-[#1a1a1a] border-[#2a2a2a] text-[#f9fafb]"
+                              className="text-xs bg-bg-tile border-[#2a2a2a] text-[#f9fafb]"
                             >
                               YTD
                             </Button>
@@ -2373,7 +2373,7 @@ It would also be helpful if you described:
                           <Button
                             variant="outline"
                             size="sm"
-                            className="text-xs bg-transparent border-[#2a2a2a] text-[#f9fafb] hover:bg-[#1a1a1a]"
+                            className="text-xs bg-transparent border-[#2a2a2a] text-[#f9fafb] hover:bg-bg-tile"
                             onClick={() => {
                               setActiveTab("agents")
                               setInitialAgentMessage("")
@@ -2391,7 +2391,7 @@ It would also be helpful if you described:
                     </div>
 
                     {/* Option 3: Text Labels Metrics Tile */}
-                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                    <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                       <CardContent className="p-0">
                         {/* Title Section */}
                         <div className="px-4 py-3 border-b border-[#2a2a2a]">
@@ -2554,7 +2554,7 @@ It would also be helpful if you described:
                 {/* Billing Page */}
                 {activeSidebarItem === "billing" && (
                   <div className="space-y-6 max-w-4xl">
-                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                    <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                       <CardContent className="p-6">
                         {/* Title Section */}
                         <div className="mb-4">
@@ -2564,7 +2564,7 @@ It would also be helpful if you described:
                         {/* Left and Right Containers */}
                         <div className="grid grid-cols-2 gap-6 mb-10">
                           {/* Left Container - Pricing Info */}
-                          <div className="rounded-lg bg-[#212121] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
+                          <div className="rounded-lg bg-bg-surface shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
                             <div className="text-xl font-bold text-[#f9fafb]">US$ 0.00</div>
                             <div className="text-xs text-[#a1a1aa]">September 2025</div>
                           </div>
@@ -2614,7 +2614,7 @@ It would also be helpful if you described:
                           <Button
                             variant="outline"
                             size="sm"
-                            className="text-xs bg-transparent border-[#2a2a2a] text-[#f9fafb] hover:bg-[#1a1a1a]"
+                            className="text-xs bg-transparent border-[#2a2a2a] text-[#f9fafb] hover:bg-bg-tile"
                           >
                             Jan 01 - Sep 05
                             <ChevronDown className="w-3 h-3 ml-1" />
@@ -2625,28 +2625,28 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-[#1a1a1a] hover:text-[#f9fafb]"
+                              className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-bg-tile hover:text-[#f9fafb]"
                             >
                               30d
                             </Button>
                             <Button
                               variant="outline"
                               size="sm"
-                              className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-[#1a1a1a] hover:text-[#f9fafb]"
+                              className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-bg-tile hover:text-[#f9fafb]"
                             >
                               6m
                             </Button>
                             <Button
                               variant="outline"
                               size="sm"
-                              className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-[#1a1a1a] hover:text-[#f9fafb]"
+                              className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-bg-tile hover:text-[#f9fafb]"
                             >
                               1y
                             </Button>
                             <Button
                               variant="outline"
                               size="sm"
-                              className="text-xs bg-[#1a1a1a] border-[#2a2a2a] text-[#f9fafb]"
+                              className="text-xs bg-bg-tile border-[#2a2a2a] text-[#f9fafb]"
                             >
                               YTD
                             </Button>
@@ -2658,7 +2658,7 @@ It would also be helpful if you described:
                           <Button
                             variant="outline"
                             size="sm"
-                            className="text-xs bg-transparent border-[#2a2a2a] text-[#f9fafb] hover:bg-[#1a1a1a]"
+                            className="text-xs bg-transparent border-[#2a2a2a] text-[#f9fafb] hover:bg-bg-tile"
                           >
                             <Download className="w-3 h-3 mr-1" />
                             Export ZIP
@@ -2667,7 +2667,7 @@ It would also be helpful if you described:
                       </div>
                     </div>
 
-                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                    <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                       <CardContent className="p-0">
                         {/* Title Section */}
                         <div className="px-4 py-3 border-b border-[#2a2a2a]">
@@ -2840,7 +2840,7 @@ It would also be helpful if you described:
                 {/* Contact Us Page */}
                 {activeSidebarItem === "contact" && (
                   <div className="space-y-3 max-w-2xl">
-                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                    <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                       <CardContent className="p-4">
                         <h2 className="text-sm font-medium text-[#f9fafb] mb-2">Contact Us</h2>
                         <p className="text-xs text-[#a1a1aa] leading-relaxed">
