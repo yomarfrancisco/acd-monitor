@@ -38,6 +38,8 @@ import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianG
 import { CalendarIcon } from "lucide-react"
 import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema } from "@/types/api.schemas"
 import { fetchTyped } from "@/lib/backendAdapter"
+import { safe } from "@/lib/safe"
+import { DegradedModeBanner } from "@/components/DegradedModeBanner"
 import type { RiskSummary, MetricsOverview, HealthRun, EventsResponse, DataSources, EvidenceExport } from "@/types/api"
 import {
   MessageSquare,
@@ -132,6 +134,10 @@ export default function CursorDashboard() {
   const [evidenceExport, setEvidenceExport] = useState<EvidenceExport | null>(null)
   const [evidenceLoading, setEvidenceLoading] = useState(false)
   const [evidenceError, setEvidenceError] = useState<string | null>(null)
+  
+  // Degraded mode state
+  const [isDegradedMode, setIsDegradedMode] = useState(false)
+  const [lastHeartbeat, setLastHeartbeat] = useState<number | null>(null)
   const [selectedDate, setSelectedDate] = useState<{ from: Date | undefined; to?: Date | undefined } | undefined>({
     from: new Date(),
     to: new Date(),
@@ -175,6 +181,29 @@ export default function CursorDashboard() {
     setIsClient(true)
   }, [])
 
+  // Heartbeat check for degraded mode
+  useEffect(() => {
+    const checkHeartbeat = async () => {
+      try {
+        const response = await fetch('/api/_status', { cache: 'no-store' })
+        if (response.ok) {
+          setLastHeartbeat(0) // Mock always fresh
+          setIsDegradedMode(false)
+        } else {
+          setIsDegradedMode(true)
+        }
+      } catch {
+        setIsDegradedMode(true)
+      }
+    }
+
+    if (isClient) {
+      checkHeartbeat()
+      const interval = setInterval(checkHeartbeat, 30000) // Check every 30s
+      return () => clearInterval(interval)
+    }
+  }, [isClient])
+
   // Fetch risk summary data when timeframe changes
   useEffect(() => {
     const fetchRiskSummary = async () => {
@@ -183,18 +212,20 @@ export default function CursorDashboard() {
       setRiskSummaryLoading(true)
       setRiskSummaryError(null)
       
-      try {
-        const timeframeParam = selectedTimeframe
-        const validated = await fetchTyped(`/risk/summary?timeframe=${timeframeParam}`, RiskSummarySchema, { 
-          cache: 'no-store' 
-        })
-        setRiskSummary(validated)
-      } catch (error) {
-        console.error('Failed to fetch risk summary:', error)
-        setRiskSummaryError(error instanceof Error ? error.message : 'Failed to fetch risk summary')
-      } finally {
-        setRiskSummaryLoading(false)
+      const result = await safe(fetchTyped(`/risk/summary?timeframe=${selectedTimeframe}`, RiskSummarySchema, { 
+        cache: 'no-store' 
+      }))
+      
+      if (result.ok) {
+        setRiskSummary(result.data)
+        setRiskSummaryError(null)
+        setIsDegradedMode(false)
+      } else {
+        setRiskSummaryError(result.error)
+        setIsDegradedMode(true)
       }
+      
+      setRiskSummaryLoading(false)
     }
 
     fetchRiskSummary()
@@ -452,6 +483,9 @@ It would also be helpful if you described:
           </div>
         </div>
       </header>
+
+      {/* Degraded Mode Banner */}
+      <DegradedModeBanner isVisible={isDegradedMode} lastHeartbeat={lastHeartbeat || undefined} />
 
       {/* Extra spacing below header */}
       <div className="h-6"></div>
