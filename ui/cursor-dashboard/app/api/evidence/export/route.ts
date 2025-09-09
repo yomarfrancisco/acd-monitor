@@ -299,7 +299,7 @@ export async function GET(request: Request) {
     const filename = `acd-evidence-${now.toISOString().slice(0,16).replace(/[-:T]/g,'')}.zip`;
     
     // Return a binary Response with download headers
-    return new NextResponse(binary, {
+    return new NextResponse(binary as BodyInit, {
       status: 200,
       headers: {
         'Content-Type': 'application/zip',
@@ -360,7 +360,7 @@ export async function POST(request: Request) {
     const filename = `acd-evidence-${now.toISOString().slice(0,16).replace(/[-:T]/g,'')}.zip`;
     
     // Return a binary Response with download headers
-    return new NextResponse(binary, {
+    return new NextResponse(binary as BodyInit, {
       status: 200,
       headers: {
         'Content-Type': 'application/zip',

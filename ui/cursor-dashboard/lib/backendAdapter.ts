@@ -6,6 +6,7 @@
  */
 export async function fetchTyped<T>(
   path: string,
+  schema: any,
   init?: RequestInit
 ): Promise<T> {
   // Always use Next.js API routes - prepend /api if not already present
