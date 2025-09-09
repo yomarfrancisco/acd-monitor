@@ -813,7 +813,7 @@ It would also be helpful if you described:
                     </div>
 
                     <div className="mb-4">
-                          <h3 className="text-xs font-medium text-[#f9fafb] mb-3">Your Algorithmic Cartel Risk</h3>
+                          <h3 className="text-xs font-medium text-[#f9fafb] mb-3">Algorithmic Cartel Diagnostic</h3>
                           <div className="grid grid-cols-2 gap-6 mb-10">
                             <div className="rounded-lg bg-[#212121] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 relative">
                               {/* Live indicator - pulsing green dot with frame */}
