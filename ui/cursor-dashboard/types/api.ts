@@ -83,4 +83,5 @@ export interface EvidenceExport {
   status: string;
   url?: string;
   bundleId: string;
+  estSeconds?: number;
 }

@@ -131,6 +131,58 @@ export default function CursorDashboard() {
   const [evidenceExport, setEvidenceExport] = useState<EvidenceExport | null>(null)
   const [evidenceLoading, setEvidenceLoading] = useState(false)
   const [evidenceError, setEvidenceError] = useState<string | null>(null)
+  
+  // Fetch evidence export
+  const fetchEvidenceExport = async () => {
+    setEvidenceLoading(true)
+    setEvidenceError(null)
+    try {
+      const response = await fetch('/api/evidence/export', { 
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mode: 'queued' }) // Start with queued to show progress
+      })
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      const json = await response.json()
+      const validated = EvidenceExportSchema.parse(json)
+      setEvidenceExport(validated)
+    } catch (error) {
+      console.error('Failed to fetch evidence export:', error)
+      setEvidenceError(error instanceof Error ? error.message : 'Failed to export evidence')
+    } finally {
+      setEvidenceLoading(false)
+    }
+  }
+  
+  // Simulate transition from QUEUED to READY
+  useEffect(() => {
+    if (evidenceExport?.status === 'QUEUED' && evidenceExport.estSeconds) {
+      const timer = setTimeout(async () => {
+        try {
+          const response = await fetch('/api/evidence/export', { 
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mode: 'ready' })
+          })
+          
+          if (response.ok) {
+            const json = await response.json()
+            const validated = EvidenceExportSchema.parse(json)
+            setEvidenceExport(validated)
+          }
+        } catch (error) {
+          console.error('Failed to check evidence export status:', error)
+        }
+      }, evidenceExport.estSeconds * 1000)
+      
+      return () => clearTimeout(timer)
+    }
+  }, [evidenceExport])
+  
   const [selectedDate, setSelectedDate] = useState<{ from: Date | undefined; to?: Date | undefined } | undefined>({
     from: new Date(),
     to: new Date(),
@@ -1868,14 +1920,37 @@ It would also be helpful if you described:
                             </div>
                             <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
                           </button>
-                          <button className="w-full text-left p-3 bg-[#212121] hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
+                          <button 
+                            onClick={() => {
+                              if (evidenceExport?.status === 'READY' && evidenceExport.url) {
+                                window.open(evidenceExport.url, '_blank')
+                              } else {
+                                fetchEvidenceExport()
+                              }
+                            }}
+                            disabled={evidenceLoading}
+                            className="w-full text-left p-3 bg-[#212121] hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between disabled:opacity-50"
+                          >
                             <div>
-                              <div className="font-medium">Generate Evidence Package</div>
+                              <div className="font-medium">
+                                {evidenceLoading ? 'Generating...' : 
+                                 evidenceExport?.status === 'READY' ? 'Download Evidence Package' :
+                                 evidenceExport?.status === 'QUEUED' ? 'Processing...' :
+                                 'Generate Evidence Package'}
+                              </div>
                               <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                Court-ready evidence bundle with cryptographic timestamps
+                                {evidenceExport?.status === 'READY' ? 'Ready for download' :
+                                 evidenceExport?.status === 'QUEUED' ? `Estimated time: ${evidenceExport.estSeconds}s` :
+                                 'Court-ready evidence bundle with cryptographic timestamps'}
                               </div>
                             </div>
-                            <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
+                            {evidenceExport?.status === 'READY' ? (
+                              <Download className="w-4 h-4 text-[#a7f3d0] flex-shrink-0" />
+                            ) : evidenceLoading || evidenceExport?.status === 'QUEUED' ? (
+                              <div className="w-4 h-4 border-2 border-[#a1a1aa] border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                            ) : (
+                              <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
+                            )}
                           </button>
                           <button className="w-full text-left p-3 bg-[#212121] hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
                             <div>
