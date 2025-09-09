@@ -156,9 +156,9 @@ export default function CursorDashboard() {
       // For binary downloads, we need to handle the URL construction manually
       const MODE = process.env.NEXT_PUBLIC_DATA_MODE ?? 'mock';
       const BASE = process.env.NEXT_PUBLIC_API_BASE ?? '';
-      const url = MODE === 'live' ? `${BASE.replace(/\/+$/, '')}/api/evidence/export` : '/api/evidence/export';
+      const requestUrl = MODE === 'live' ? `${BASE.replace(/\/+$/, '')}/api/evidence/export` : '/api/evidence/export';
       
-      const response = await fetch(url, { method: 'GET' })
+      const response = await fetch(requestUrl, { method: 'GET' })
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`)
       }
@@ -169,20 +169,20 @@ export default function CursorDashboard() {
       const fname = match?.[1] ?? 'acd-evidence.zip'
 
       const blob = await response.blob()
-      const url = URL.createObjectURL(blob)
+      const blobUrl = URL.createObjectURL(blob)
       const a = document.createElement('a')
-      a.href = url
+      a.href = blobUrl
       a.download = fname
       document.body.appendChild(a)
       a.click()
       a.remove()
-      URL.revokeObjectURL(url)
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 0)
       
       setEvidenceExport({
         requestedAt: new Date().toISOString(),
         status: 'READY',
         bundleId: fname.replace('.zip', ''),
-        url: url
+        url: blobUrl
       })
     } catch (error) {
       console.error('Evidence export failed', error)
@@ -239,7 +239,7 @@ export default function CursorDashboard() {
     const checkHeartbeat = async () => {
       try {
         const response = await fetchTyped('/api/_status', { cache: 'no-store' })
-        if (response && response.ok) {
+        if (response && (response as any).ok) {
           setLastHeartbeat(0) // Mock always fresh
           setIsDegradedMode(false)
         } else {

@@ -160,7 +160,7 @@ export async function GET(request: Request) {
     const filename = `acd-evidence-${now.toISOString().slice(0,16).replace(/[-:T]/g,'')}.zip`;
     
     // Create a Blob from the binary data to fix TypeScript BodyInit error
-    const blob = new Blob([binary], { type: 'application/zip' });
+    const blob = new Blob([binary.buffer as ArrayBuffer], { type: 'application/zip' });
     
     return new Response(blob, {
       status: 200,
@@ -223,7 +223,7 @@ export async function POST(request: Request) {
     const filename = `acd-evidence-${now.toISOString().slice(0,16).replace(/[-:T]/g,'')}.zip`;
     
     // Create a Blob from the binary data to fix TypeScript BodyInit error
-    const blob = new Blob([binary], { type: 'application/zip' });
+    const blob = new Blob([binary.buffer as ArrayBuffer], { type: 'application/zip' });
     
     return new Response(blob, {
       status: 200,
