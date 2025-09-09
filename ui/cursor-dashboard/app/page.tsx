@@ -37,6 +37,7 @@ import { Button } from "@/components/ui/button"
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, ReferenceLine, Label } from "recharts"
 import { CalendarIcon } from "lucide-react"
 import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema } from "@/types/api.schemas"
+import { fetchTyped } from "@/lib/backendAdapter"
 import type { RiskSummary, MetricsOverview, HealthRun, EventsResponse, DataSources, EvidenceExport } from "@/types/api"
 import {
   MessageSquare,
@@ -184,16 +185,9 @@ export default function CursorDashboard() {
       
       try {
         const timeframeParam = selectedTimeframe
-        const response = await fetch(`/api/risk/summary?timeframe=${timeframeParam}`, { 
+        const validated = await fetchTyped(`/risk/summary?timeframe=${timeframeParam}`, RiskSummarySchema, { 
           cache: 'no-store' 
         })
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-        
-        const json = await response.json()
-        const validated = RiskSummarySchema.parse(json)
         setRiskSummary(validated)
       } catch (error) {
         console.error('Failed to fetch risk summary:', error)
@@ -216,16 +210,9 @@ export default function CursorDashboard() {
       
       try {
         const timeframeParam = selectedTimeframe
-        const response = await fetch(`/api/metrics/overview?timeframe=${timeframeParam}`, { 
+        const validated = await fetchTyped(`/metrics/overview?timeframe=${timeframeParam}`, MetricsOverviewSchema, { 
           cache: 'no-store' 
         })
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-        
-        const json = await response.json()
-        const validated = MetricsOverviewSchema.parse(json)
         setMetricsOverview(validated)
       } catch (error) {
         console.error('Failed to fetch metrics overview:', error)
@@ -247,14 +234,7 @@ export default function CursorDashboard() {
       setHealthError(null)
       
       try {
-        const response = await fetch('/api/health/run', { cache: 'no-store' })
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-        
-        const json = await response.json()
-        const validated = HealthRunSchema.parse(json)
+        const validated = await fetchTyped('/health/run', HealthRunSchema, { cache: 'no-store' })
         setHealthRun(validated)
       } catch (error) {
         console.error('Failed to fetch health run:', error)
@@ -277,16 +257,9 @@ export default function CursorDashboard() {
       
       try {
         const timeframeParam = selectedTimeframe
-        const response = await fetch(`/api/events?timeframe=${timeframeParam}`, { 
+        const validated = await fetchTyped(`/events?timeframe=${timeframeParam}`, EventsResponseSchema, { 
           cache: 'no-store' 
         })
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-        
-        const json = await response.json()
-        const validated = EventsResponseSchema.parse(json)
         setEvents(validated)
       } catch (error) {
         console.error('Failed to fetch events:', error)
@@ -308,14 +281,7 @@ export default function CursorDashboard() {
       setDataSourcesError(null)
       
       try {
-        const response = await fetch('/api/datasources/status', { cache: 'no-store' })
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-        
-        const json = await response.json()
-        const validated = DataSourcesSchema.parse(json)
+        const validated = await fetchTyped('/datasources/status', DataSourcesSchema, { cache: 'no-store' })
         setDataSources(validated)
       } catch (error) {
         console.error('Failed to fetch data sources:', error)
