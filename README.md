@@ -172,3 +172,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Built by [Ygor Francisco](mailto:ygor.francisco@gmail.com)**
 
 *The ACD platform operationalizes the methodological framework developed in RBB Brief 55+ to provide empirically grounded tools for algorithmic coordination detection.*
+# Trigger Vercel redeploy
