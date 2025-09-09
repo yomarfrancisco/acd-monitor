@@ -96,7 +96,7 @@ const analyticsDataYTD = [
   { date: "Sep '25", fnb: 350, absa: 330, standard: 370, nedbank: 340 },
 ]
 
-// Financial Compliance Dashboard - Main Component
+// Financial Compliance Dashboard - Main Component (CI Test)
 export default function CursorDashboard() {
   const [activeTab, setActiveTab] = useState<"agents" | "dashboard">("agents")
   const [selectedTimeframe, setSelectedTimeframe] = useState<"30d" | "6m" | "1y" | "ytd">("ytd")
