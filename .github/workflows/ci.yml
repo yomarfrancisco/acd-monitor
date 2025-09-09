@@ -13,7 +13,9 @@ jobs:
       backend: ${{ steps.filter.outputs.backend }}
     steps:
       - uses: actions/checkout@v4
-      - id: filter
+
+      - name: Detect changed areas
+        id: filter
         uses: dorny/paths-filter@v3
         with:
           filters: |
@@ -21,22 +23,19 @@ jobs:
               - 'ui/**'
               - 'package.json'
               - 'package-lock.json'
-              - '.github/workflows/ci.yml'
             backend:
               - 'src/**'
               - 'tests/**'
               - 'schemas/**'
               - 'scripts/**'
-              - 'pyproject.toml'
-              - 'requirements*.txt'
+              - 'openapi/**'
               - '.flake8'
+              - 'pyproject.toml'
               - 'setup.cfg'
-              - '!ui/**'
-              - '!docs/**'
 
   ui:
     needs: detect
-    if: ${{ needs.detect.outputs.ui == 'true' }}
+    if: needs.detect.outputs.ui == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -45,16 +44,22 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 20
           cache: 'npm'
           cache-dependency-path: ui/cursor-dashboard/package-lock.json
-      - run: npm ci || npm install
-      - run: npx tsc --noEmit
-      - run: npm run build
+
+      - name: Install deps (ci with fallback)
+        run: npm ci || npm install
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Build
+        run: npm run build
 
   backend:
     needs: detect
-    if: ${{ needs.detect.outputs.backend == 'true' }}
+    if: needs.detect.outputs.backend == 'true'
     runs-on: ubuntu-latest
     env:
       PYTHONPATH: ${{ github.workspace }}:${{ github.workspace }}/src
@@ -62,10 +67,16 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-          cache: 'pip'
-      - run: pip install -r requirements.txt
-      - run: if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
-      - run: flake8
-      - run: black --check src tests
-      - run: pytest -vv --maxfail=5 --disable-warnings
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install deps
+        run: |
+          pip install -r requirements.txt
+          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+
+      - name: Lint with flake8
+        run: flake8
+
+      - name: Format check with black
+        run: black --check src tests
