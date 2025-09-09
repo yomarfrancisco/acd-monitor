@@ -1,5 +1,13 @@
 "use client"
 
+// Temporary debug logging for environment variables
+if (typeof window !== 'undefined') {
+  console.log('[ENV]', {
+    MODE: process.env.NEXT_PUBLIC_DATA_MODE,
+    BASE: process.env.NEXT_PUBLIC_API_BASE
+  });
+}
+
 import {
   Bot,
   ChevronDown,
@@ -252,7 +260,7 @@ export default function CursorDashboard() {
       setRiskSummaryLoading(true)
       setRiskSummaryError(null)
       
-      const result = await safe(fetchTyped(`/risk/summary?timeframe=${selectedTimeframe}`, RiskSummarySchema, { 
+      const result = await safe(fetchTyped(`/api/risk/summary?timeframe=${selectedTimeframe}`, RiskSummarySchema, { 
         cache: 'no-store' 
       }))
       
@@ -279,7 +287,7 @@ export default function CursorDashboard() {
       setMetricsLoading(true)
       setMetricsError(null)
       
-      const result = await safe(fetchTyped(`/metrics/overview?timeframe=${selectedTimeframe}`, MetricsOverviewSchema, { 
+      const result = await safe(fetchTyped(`/api/metrics/overview?timeframe=${selectedTimeframe}`, MetricsOverviewSchema, { 
         cache: 'no-store' 
       }))
       
@@ -306,7 +314,7 @@ export default function CursorDashboard() {
       setHealthLoading(true)
       setHealthError(null)
       
-      const result = await safe(fetchTyped('/health/run', HealthRunSchema, { cache: 'no-store' }))
+      const result = await safe(fetchTyped('/api/health/run', HealthRunSchema, { cache: 'no-store' }))
       
       if (result.ok) {
         setHealthRun(result.data as HealthRun)
@@ -331,7 +339,7 @@ export default function CursorDashboard() {
       setEventsLoading(true)
       setEventsError(null)
       
-      const result = await safe(fetchTyped(`/events?timeframe=${selectedTimeframe}`, EventsResponseSchema, { 
+      const result = await safe(fetchTyped(`/api/events?timeframe=${selectedTimeframe}`, EventsResponseSchema, { 
         cache: 'no-store' 
       }))
       
@@ -358,7 +366,7 @@ export default function CursorDashboard() {
       setDataSourcesLoading(true)
       setDataSourcesError(null)
       
-      const result = await safe(fetchTyped('/datasources/status', DataSourcesSchema, { cache: 'no-store' }))
+      const result = await safe(fetchTyped('/api/datasources/status', DataSourcesSchema, { cache: 'no-store' }))
       
       if (result.ok) {
         setDataSources(result.data as DataSources)
