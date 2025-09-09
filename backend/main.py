@@ -13,7 +13,7 @@ app = FastAPI(title="ACD Monitor API", version="1.0.0")
 # CORS middleware for Vercel frontend
 PROD = "https://acd-monitor.vercel.app"
 PREVIEW_REGEX = (
-    r"^https://acd-monitor-git-[a-z0-9-]+-" r"ygorfrancisco-gmailcoms-projects\.vercel\.app$"
+    r"^https://acd-monitor-git-[a-z0-9-]+-ygorfrancisco-gmailcoms-projects\.vercel\.app$"
 )
 
 app.add_middleware(
