@@ -1,11 +1,12 @@
 export type RiskBand = 'LOW' | 'AMBER' | 'RED';
+export type Timeframe = '30d' | '6m' | '1y' | 'ytd';
 
 export interface RiskSummary {
   score: number;           // 0–100
   band: RiskBand;          // LOW | AMBER | RED
   confidence: number;      // 0–100 (%)
   updatedAt: string;       // ISO timestamp
-  timeframe: '30d'|'6m'|'1y'|'ytd';
+  timeframe: Timeframe;
   source: { 
     name: string; 
     freshnessSec: number; 

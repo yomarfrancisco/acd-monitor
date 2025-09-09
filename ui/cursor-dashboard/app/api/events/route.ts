@@ -12,7 +12,17 @@ export async function GET(request: Request) {
   const mode = url.searchParams.get('mode') ?? 'normal'; // normal|degraded
 
   // Generate events based on timeframe
-  const events = [];
+  const events: Array<{
+    id: string;
+    ts: string;
+    type: string;
+    title: string;
+    description: string;
+    severity: string;
+    riskScore: number;
+    durationMin?: number;
+    affects?: string[];
+  }> = [];
   const now = new Date();
   
   // Base events for different timeframes

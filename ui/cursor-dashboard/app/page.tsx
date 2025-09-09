@@ -34,7 +34,7 @@ import { Separator } from "@/components/ui/separator"
 import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, ReferenceLine } from "recharts"
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, ReferenceLine, Label } from "recharts"
 import { CalendarIcon } from "lucide-react"
 import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema } from "@/types/api.schemas"
 import type { RiskSummary, MetricsOverview, HealthRun, EventsResponse, DataSources, EvidenceExport } from "@/types/api"
@@ -98,7 +98,7 @@ const analyticsDataYTD = [
 
 export default function CursorDashboard() {
   const [activeTab, setActiveTab] = useState<"agents" | "dashboard">("agents")
-  const [selectedTimeframe, setSelectedTimeframe] = useState<"30d" | "6m" | "1y" | "YTD">("YTD")
+  const [selectedTimeframe, setSelectedTimeframe] = useState<"30d" | "6m" | "1y" | "ytd">("ytd")
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
   
   // Risk summary state
@@ -182,7 +182,7 @@ export default function CursorDashboard() {
       setRiskSummaryError(null)
       
       try {
-        const timeframeParam = selectedTimeframe === "YTD" ? "ytd" : selectedTimeframe.toLowerCase()
+        const timeframeParam = selectedTimeframe
         const response = await fetch(`/api/risk/summary?timeframe=${timeframeParam}`, { 
           cache: 'no-store' 
         })
@@ -214,7 +214,7 @@ export default function CursorDashboard() {
       setMetricsError(null)
       
       try {
-        const timeframeParam = selectedTimeframe === "YTD" ? "ytd" : selectedTimeframe.toLowerCase()
+        const timeframeParam = selectedTimeframe
         const response = await fetch(`/api/metrics/overview?timeframe=${timeframeParam}`, { 
           cache: 'no-store' 
         })
@@ -275,7 +275,7 @@ export default function CursorDashboard() {
       setEventsError(null)
       
       try {
-        const timeframeParam = selectedTimeframe === "YTD" ? "ytd" : selectedTimeframe.toLowerCase()
+        const timeframeParam = selectedTimeframe
         const response = await fetch(`/api/events?timeframe=${timeframeParam}`, { 
           cache: 'no-store' 
         })
@@ -388,7 +388,7 @@ It would also be helpful if you described:
         return analyticsData6m
       case "1y":
         return analyticsData1y
-      case "YTD":
+      case "ytd":
         return analyticsDataYTD
       default:
         return analyticsDataYTD
@@ -685,7 +685,10 @@ It would also be helpful if you described:
                           </div>
                           <div
                             className="h-6 w-6 flex items-center justify-center cursor-pointer"
-                            onClick={handleSendMessage}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleSendMessage();
+                            }}
                           >
                             <Send className="w-4 h-4 text-[#71717a] hover:text-[#a1a1aa]" />
                           </div>
@@ -797,8 +800,8 @@ It would also be helpful if you described:
                             1y
                           </button>
                           <button 
-                            onClick={() => setSelectedTimeframe("YTD")}
-                                    className={`text-xs px-2 py-1 ${selectedTimeframe === "YTD" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
+                            onClick={() => setSelectedTimeframe("ytd")}
+                                    className={`text-xs px-2 py-1 ${selectedTimeframe === "ytd" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
                           >
                             YTD
                           </button>
@@ -842,7 +845,7 @@ It would also be helpful if you described:
                             </>
                           ) : (
                             <>
-                              <div className="text-xl font-bold text-[#f9fafb]">14 out of 100</div>
+                          <div className="text-xl font-bold text-[#f9fafb]">14 out of 100</div>
                               <div className="text-xs text-[#a7f3d0]">Low Risk</div>
                             </>
                           )}
@@ -854,12 +857,12 @@ It would also be helpful if you described:
                                     {selectedTimeframe === "30d" ? "78" : 
                                      selectedTimeframe === "6m" ? "82" : 
                                      selectedTimeframe === "1y" ? "79" : "84"}%
-                                  </div>
+                        </div>
                                   <div className="text-xs text-[#a1a1aa]">
                                     {selectedTimeframe === "30d" ? "30d" : 
                                      selectedTimeframe === "6m" ? "6m" : 
                                      selectedTimeframe === "1y" ? "1y" : 
-                                     selectedTimeframe === "YTD" ? "YTD" : "Cal"} Price Leader
+                                     selectedTimeframe === "ytd" ? "YTD" : "Cal"} Price Leader
                                   </div>
                                 </div>
                                 {/* FANS Avatar Flow */}
@@ -948,37 +951,25 @@ It would also be helpful if you described:
                                   stroke="#ef4444"
                                   strokeOpacity={0}
                                   strokeWidth={0}
-                                  dot={{ fill: "#ef4444", strokeWidth: 0, r: 4 }}
-                                  label={{
-                                    value: "●",
-                                    position: "top",
-                                    style: { textAnchor: "middle", fill: "#ef4444", fontSize: 12 },
-                                  }}
-                                />
+                                >
+                                  <Label value="●" position="top" />
+                                </ReferenceLine>
                                 <ReferenceLine
                                   x="Jun '25"
                                   stroke="#f59e0b"
                                   strokeOpacity={0}
                                   strokeWidth={0}
-                                  dot={{ fill: "#f59e0b", strokeWidth: 0, r: 4 }}
-                                  label={{
-                                    value: "●",
-                                    position: "top",
-                                    style: { textAnchor: "middle", fill: "#f59e0b", fontSize: 12 },
-                                  }}
-                                />
+                                >
+                                  <Label value="●" position="top" />
+                                </ReferenceLine>
                                 <ReferenceLine
                                   x="Jul '25"
                                   stroke="#10b981"
                                   strokeOpacity={0}
                                   strokeWidth={0}
-                                  dot={{ fill: "#10b981", strokeWidth: 0, r: 4 }}
-                                  label={{
-                                    value: "●",
-                                    position: "top",
-                                    style: { textAnchor: "middle", fill: "#10b981", fontSize: 12 },
-                                  }}
-                                />
+                                >
+                                  <Label value="●" position="top" />
+                                </ReferenceLine>
 
                                 {/* Option 3: Subtle Background Shading - Colored bands for event periods */}
                                 <ReferenceLine
@@ -1189,11 +1180,11 @@ It would also be helpful if you described:
                                 </>
                               ) : (
                                 <>
-                                  <div className="flex items-center gap-1.5">
-                                    <div className="text-[#f9fafb] font-bold text-sm">65</div>
-                                    <div className="text-[#fca5a5] text-xs">✗</div>
-                                  </div>
-                                  <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
+                              <div className="flex items-center gap-1.5">
+                                <div className="text-[#f9fafb] font-bold text-sm">65</div>
+                                <div className="text-[#fca5a5] text-xs">✗</div>
+                              </div>
+                          <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
                                 </>
                               )}
                         </div>
@@ -1249,11 +1240,11 @@ It would also be helpful if you described:
                                 </>
                               ) : (
                                 <>
-                                  <div className="flex items-center gap-1.5">
-                                    <div className="text-[#f9fafb] font-bold text-sm">18</div>
-                                    <div className="text-[#a7f3d0] text-xs">✓</div>
-                                  </div>
-                                  <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
+                              <div className="flex items-center gap-1.5">
+                          <div className="text-[#f9fafb] font-bold text-sm">18</div>
+                                <div className="text-[#a7f3d0] text-xs">✓</div>
+                              </div>
+                          <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
                                 </>
                               )}
                         </div>
@@ -1309,11 +1300,11 @@ It would also be helpful if you described:
                                 </>
                               ) : (
                                 <>
-                                  <div className="flex items-center gap-1.5">
-                                    <div className="text-[#f9fafb] font-bold text-sm">82</div>
-                                    <div className="text-[#a7f3d0] text-xs">✓</div>
-                                  </div>
-                                  <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
+                              <div className="flex items-center gap-1.5">
+                          <div className="text-[#f9fafb] font-bold text-sm">82</div>
+                                <div className="text-[#a7f3d0] text-xs">✓</div>
+                              </div>
+                          <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
                                 </>
                               )}
                         </div>
@@ -2018,18 +2009,6 @@ It would also be helpful if you described:
                           {activeSidebarItem === "overview" && (
                             <>
                               <div className="flex gap-2">
-                                <button
-                                  onClick={() => setSelectedTimeframe("1d")}
-                                  className={`text-xs px-2 py-1 ${selectedTimeframe === "1d" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
-                                >
-                                  1d
-                                </button>
-                                <button
-                                  onClick={() => setSelectedTimeframe("7d")}
-                                  className={`text-xs px-2 py-1 ${selectedTimeframe === "7d" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
-                                >
-                                  7d
-                                </button>
                                 <button
                                   onClick={() => setSelectedTimeframe("30d")}
                                   className={`text-xs px-2 py-1 ${selectedTimeframe === "30d" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
