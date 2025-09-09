@@ -905,8 +905,8 @@ It would also be helpful if you described:
                               <div className="mt-3 rounded-lg bg-[#212121]/40 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 relative">
                                 {/* top-right time badge — mirror LIVE chip spacing */}
                                 <span className="absolute top-3 right-3 inline-flex items-center gap-1.5 bg-[#1a1a1a] border border-[#2a2a2a] rounded-full px-2 py-1">
-                                  <Clock className="h-3 w-3 text-[#a1a1aa]" />
-                                  <span className="text-[10px] text-[#a1a1aa]">
+                                  <Clock className="h-3 w-3 text-[#a1a1aa] opacity-85" />
+                                  <span className="text-[10px] text-[#a1a1aa] opacity-85">
                                     {riskSummary.source.freshnessSec < 60 
                                       ? `${riskSummary.source.freshnessSec}s ago`
                                       : `${Math.round(riskSummary.source.freshnessSec / 60)}m ago`
@@ -972,21 +972,21 @@ It would also be helpful if you described:
                                 {/* Option 3: Subtle Background Shading - Colored bands for event periods */}
                                 <ReferenceLine
                                   x="Feb '25"
-                                  stroke="rgba(239, 68, 68, 0.08)"
+                                  stroke="rgba(239, 68, 68, 0.15)"
                                   strokeOpacity={1}
                                   strokeWidth={40}
                                   strokeDasharray="0"
                                 />
                                 <ReferenceLine
                                   x="Jun '25"
-                                  stroke="rgba(245, 158, 11, 0.08)"
+                                  stroke="rgba(245, 158, 11, 0.15)"
                                   strokeOpacity={1}
                                   strokeWidth={40}
                                   strokeDasharray="0"
                                 />
                                 <ReferenceLine
                                   x="Jul '25"
-                                  stroke="rgba(16, 185, 129, 0.08)"
+                                  stroke="rgba(16, 185, 129, 0.15)"
                                   strokeOpacity={1}
                                   strokeWidth={40}
                                   strokeDasharray="0"
