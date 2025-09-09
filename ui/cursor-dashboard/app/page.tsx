@@ -217,7 +217,7 @@ export default function CursorDashboard() {
       }))
       
       if (result.ok) {
-        setRiskSummary(result.data)
+        setRiskSummary(result.data as RiskSummary)
         setRiskSummaryError(null)
         setIsDegradedMode(false)
       } else {
@@ -239,18 +239,20 @@ export default function CursorDashboard() {
       setMetricsLoading(true)
       setMetricsError(null)
       
-      try {
-        const timeframeParam = selectedTimeframe
-        const validated = await fetchTyped(`/metrics/overview?timeframe=${timeframeParam}`, MetricsOverviewSchema, { 
-          cache: 'no-store' 
-        })
-        setMetricsOverview(validated)
-      } catch (error) {
-        console.error('Failed to fetch metrics overview:', error)
-        setMetricsError(error instanceof Error ? error.message : 'Failed to fetch metrics overview')
-      } finally {
-        setMetricsLoading(false)
+      const result = await safe(fetchTyped(`/metrics/overview?timeframe=${selectedTimeframe}`, MetricsOverviewSchema, { 
+        cache: 'no-store' 
+      }))
+      
+      if (result.ok) {
+        setMetricsOverview(result.data as MetricsOverview)
+        setMetricsError(null)
+        setIsDegradedMode(false)
+      } else {
+        setMetricsError(result.error)
+        setIsDegradedMode(true)
       }
+      
+      setMetricsLoading(false)
     }
 
     fetchMetricsOverview()
@@ -264,15 +266,18 @@ export default function CursorDashboard() {
       setHealthLoading(true)
       setHealthError(null)
       
-      try {
-        const validated = await fetchTyped('/health/run', HealthRunSchema, { cache: 'no-store' })
-        setHealthRun(validated)
-      } catch (error) {
-        console.error('Failed to fetch health run:', error)
-        setHealthError(error instanceof Error ? error.message : 'Failed to fetch health run')
-      } finally {
-        setHealthLoading(false)
+      const result = await safe(fetchTyped('/health/run', HealthRunSchema, { cache: 'no-store' }))
+      
+      if (result.ok) {
+        setHealthRun(result.data as HealthRun)
+        setHealthError(null)
+        setIsDegradedMode(false)
+      } else {
+        setHealthError(result.error)
+        setIsDegradedMode(true)
       }
+      
+      setHealthLoading(false)
     }
 
     fetchHealthRun()
@@ -286,18 +291,20 @@ export default function CursorDashboard() {
       setEventsLoading(true)
       setEventsError(null)
       
-      try {
-        const timeframeParam = selectedTimeframe
-        const validated = await fetchTyped(`/events?timeframe=${timeframeParam}`, EventsResponseSchema, { 
-          cache: 'no-store' 
-        })
-        setEvents(validated)
-      } catch (error) {
-        console.error('Failed to fetch events:', error)
-        setEventsError(error instanceof Error ? error.message : 'Failed to fetch events')
-      } finally {
-        setEventsLoading(false)
+      const result = await safe(fetchTyped(`/events?timeframe=${selectedTimeframe}`, EventsResponseSchema, { 
+        cache: 'no-store' 
+      }))
+      
+      if (result.ok) {
+        setEvents(result.data as EventsResponse)
+        setEventsError(null)
+        setIsDegradedMode(false)
+      } else {
+        setEventsError(result.error)
+        setIsDegradedMode(true)
       }
+      
+      setEventsLoading(false)
     }
 
     fetchEvents()
@@ -311,15 +318,18 @@ export default function CursorDashboard() {
       setDataSourcesLoading(true)
       setDataSourcesError(null)
       
-      try {
-        const validated = await fetchTyped('/datasources/status', DataSourcesSchema, { cache: 'no-store' })
-        setDataSources(validated)
-      } catch (error) {
-        console.error('Failed to fetch data sources:', error)
-        setDataSourcesError(error instanceof Error ? error.message : 'Failed to fetch data sources')
-      } finally {
-        setDataSourcesLoading(false)
+      const result = await safe(fetchTyped('/datasources/status', DataSourcesSchema, { cache: 'no-store' }))
+      
+      if (result.ok) {
+        setDataSources(result.data as DataSources)
+        setDataSourcesError(null)
+        setIsDegradedMode(false)
+      } else {
+        setDataSourcesError(result.error)
+        setIsDegradedMode(true)
       }
+      
+      setDataSourcesLoading(false)
     }
 
     fetchDataSources()
