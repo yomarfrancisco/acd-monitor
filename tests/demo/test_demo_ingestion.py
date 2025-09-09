@@ -1,8 +1,9 @@
 """Unit tests for demo pipeline ingestion module."""
 
-import pytest
+from unittest.mock import MagicMock, patch
+
 import pandas as pd
-from unittest.mock import patch, MagicMock
+import pytest
 
 from acd.demo.ingestion import MockDataIngestion
 

@@ -13,13 +13,12 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import Dict, Any
 
 # Add src to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from acd.evidence.timestamping import create_timestamp_client, TimestampChain
 from acd.evidence.bundle import EvidenceBundle
+from acd.evidence.timestamping import create_timestamp_client
 
 # Configure logging
 logging.basicConfig(
@@ -91,7 +90,7 @@ def timestamp_bundle(bundle: EvidenceBundle, output_path: Path) -> None:
         # Display timestamp information
         latest_timestamp = timestamp_chain.get_latest_timestamp()
         if latest_timestamp:
-            print(f"✅ Bundle timestamped successfully!")
+            print("✅ Bundle timestamped successfully!")
             print(f"   Timestamp: {latest_timestamp.isoformat()}")
             print(f"   Provider: {timestamp_chain.timestamp_responses[0].provider_name}")
             print(

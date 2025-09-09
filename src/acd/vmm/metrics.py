@@ -9,14 +9,14 @@ and coordinated behavior patterns.
 import pickle
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple, List
+from typing import Any, Dict, List, Optional, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.isotonic import IsotonicRegression
 
 # Import adaptive threshold framework
-from .adaptive_thresholds import AdaptiveThresholdManager, AdaptiveThresholdConfig
+from .adaptive_thresholds import AdaptiveThresholdConfig, AdaptiveThresholdManager
 
 
 @dataclass

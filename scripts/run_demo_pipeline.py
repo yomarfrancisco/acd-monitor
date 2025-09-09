@@ -99,13 +99,13 @@ def main():
         print("\n" + pipeline_summary)
 
         # Output files
-        print(f"\n📁 Output Files Generated:")
+        print("\n📁 Output Files Generated:")
         print(f"   • Calibration Report: {calibration_path}")
         print(f"   • Evidence Summary: {evidence_path}")
         print(f"   • Demo Dashboard: {dashboard_path}")
 
         # Check Week 3-4 baseline compliance
-        print(f"\n🔍 Week 3-4 Baseline Compliance:")
+        print("\n🔍 Week 3-4 Baseline Compliance:")
         baseline_check = check_baseline_compliance(pipeline_results)
         for check, status in baseline_check.items():
             status_icon = "✅" if status else "❌"
@@ -114,10 +114,10 @@ def main():
         # Success message
         if all(baseline_check.values()):
             print(
-                f"\n🎉 All baseline requirements met! Demo pipeline ready for real-world transition."
+                "\n🎉 All baseline requirements met! Demo pipeline ready for real-world transition."
             )
         else:
-            print(f"\n⚠️  Some baseline requirements not met. Review before real-world deployment.")
+            print("\n⚠️  Some baseline requirements not met. Review before real-world deployment.")
 
         return 0
 

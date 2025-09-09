@@ -4,19 +4,17 @@ import json
 import logging
 import time
 from pathlib import Path
-from typing import Dict, List, Optional
-
+from typing import Dict
 
 import pandas as pd
 
-from ..evidence.bundle import EvidenceBundle
-from ..evidence.export import export_evidence_bundle
-from ..vmm.adaptive_thresholds import AdaptiveThresholdManager, AdaptiveThresholdConfig
-from ..evidence.timestamping import create_timestamp_client
 from ..data.quality_profiles import create_quality_profile_manager
-from ..monitoring import MetricsCollector, HealthChecker, RegressionDetector
-from .ingestion import MockDataIngestion
+from ..evidence.bundle import EvidenceBundle
+from ..evidence.timestamping import create_timestamp_client
+from ..monitoring import HealthChecker, MetricsCollector, RegressionDetector
+from ..vmm.adaptive_thresholds import AdaptiveThresholdManager
 from .features import DemoFeatureEngineering
+from .ingestion import MockDataIngestion
 
 logger = logging.getLogger(__name__)
 
@@ -329,7 +327,7 @@ class DemoPipeline:
                 )
 
                 # Validate bundle
-                validation_result = bundle.validate_schema()
+                bundle.validate_schema()
 
                 results["bundles"].append(bundle)
 

@@ -4,21 +4,20 @@ Unit tests for ACD Monitor timestamping system.
 Tests TSA providers, circuit breakers, timestamp clients, and integration.
 """
 
-import pytest
 import time
-from unittest.mock import Mock, patch, MagicMock
 from datetime import datetime, timezone
-from pathlib import Path
+from unittest.mock import Mock, patch
+
+import pytest
 
 from acd.evidence.timestamping import (
-    TSAProvider,
-    TimestampResponse,
-    TimestampChain,
     CircuitBreaker,
-    TSAClient,
-    FreeTSAClient,
     DigiCertTSAClient,
+    FreeTSAClient,
     LocalTSAClient,
+    TimestampChain,
+    TimestampResponse,
+    TSAProvider,
     create_timestamp_client,
 )
 

@@ -1,9 +1,8 @@
 """Unit tests for demo pipeline main module."""
 
-import pytest
-import json
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
 import pandas as pd
 
 from acd.demo.pipeline import DemoPipeline
@@ -34,7 +33,7 @@ class TestDemoPipeline:
 
             shutil.rmtree(test_dir)
 
-        pipeline = DemoPipeline(output_dir=test_dir)
+        DemoPipeline(output_dir=test_dir)
 
         assert Path(test_dir).exists()
         assert Path(test_dir).is_dir()
@@ -122,7 +121,6 @@ class TestDemoPipeline:
         with patch.object(pipeline.ingestion, "ingest_golden_datasets") as mock_golden:
             with patch.object(pipeline.ingestion, "generate_mock_feeds") as mock_feeds:
                 with patch.object(pipeline.ingestion, "validate_mock_data") as mock_validate:
-
                     # Setup mocks
                     mock_golden.return_value = {"test_dataset": pd.DataFrame({"col": range(50)})}
                     mock_feeds.side_effect = [
@@ -165,7 +163,6 @@ class TestDemoPipeline:
                     pipeline.feature_engineering, "prepare_evidence_data"
                 ) as mock_evidence:
                     with patch.object(pipeline.ingestion, "validate_mock_data") as mock_validate:
-
                         # Setup mocks
                         mock_windows.return_value = [MagicMock(), MagicMock()]
                         mock_vmm.return_value = MagicMock()
@@ -244,7 +241,7 @@ class TestDemoPipeline:
             mock_bundle_class.from_vmm_result.return_value = mock_bundle
 
             # Mock file operations
-            with patch("builtins.open", create=True) as mock_open:
+            with patch("builtins.open", create=True):
                 with patch("pathlib.Path.stat") as mock_stat:
                     mock_stat.return_value = MagicMock(st_size=1024)
 

@@ -8,6 +8,7 @@ runtime performance against the <2s p95 target for standard windows.
 
 import cProfile
 import io
+import pstats
 import sys
 import time
 from pathlib import Path
@@ -16,9 +17,8 @@ from typing import Dict, List
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import pstats
-
 from generate_golden import generate_competitive_data
+
 from acd.vmm.engine import VMMEngine, run_vmm
 from acd.vmm.profiles import VMMConfig
 

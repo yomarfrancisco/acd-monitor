@@ -6,14 +6,11 @@ with configurable parameters and validation logic.
 """
 
 import pytest
-import numpy as np
-from unittest.mock import Mock
 
 from acd.vmm.adaptive_thresholds import (
     AdaptiveThresholdConfig,
     AdaptiveThresholdManager,
     get_profile,
-    DEFAULT_PROFILES,
 )
 
 
