@@ -1,3 +1,8 @@
+// Force Node runtime (Edge can't use JSZip/Buffer)
+export const runtime = 'nodejs'
+// Give the function breathing room for zip generation
+export const maxDuration = 15
+
 import { NextResponse } from 'next/server';
 import JSZip from 'jszip';
 
@@ -149,16 +154,18 @@ export async function GET(request: Request) {
     // Add data_source.json
     zip.file('data_source.json', JSON.stringify(generateDataSources(), null, 2));
     
-    // Generate the zip file
-    const zipBuffer = await zip.generateAsync({ type: 'arraybuffer' });
+    // Generate the zip file as Uint8Array to avoid Buffer on Edge
+    const binary: Uint8Array = await zip.generateAsync({ type: 'uint8array' });
     
-    // Return the zip file as a download
-    return new NextResponse(zipBuffer, {
+    const filename = `acd-evidence-${now.toISOString().slice(0,16).replace(/[-:T]/g,'')}.zip`;
+    
+    // Return a binary Response with download headers
+    return new NextResponse(binary, {
       status: 200,
       headers: {
         'Content-Type': 'application/zip',
-        'Content-Disposition': `attachment; filename="${bundleId}.zip"`,
-        'Content-Length': zipBuffer.byteLength.toString(),
+        'Content-Disposition': `attachment; filename="${filename}"`,
+        'Cache-Control': 'no-store',
       },
     });
     
@@ -208,16 +215,18 @@ export async function POST(request: Request) {
     // Add data_source.json
     zip.file('data_source.json', JSON.stringify(generateDataSources(), null, 2));
     
-    // Generate the zip file
-    const zipBuffer = await zip.generateAsync({ type: 'arraybuffer' });
+    // Generate the zip file as Uint8Array to avoid Buffer on Edge
+    const binary: Uint8Array = await zip.generateAsync({ type: 'uint8array' });
     
-    // Return the zip file as a download
-    return new NextResponse(zipBuffer, {
+    const filename = `acd-evidence-${now.toISOString().slice(0,16).replace(/[-:T]/g,'')}.zip`;
+    
+    // Return a binary Response with download headers
+    return new NextResponse(binary, {
       status: 200,
       headers: {
         'Content-Type': 'application/zip',
-        'Content-Disposition': `attachment; filename="${bundleId}.zip"`,
-        'Content-Length': zipBuffer.byteLength.toString(),
+        'Content-Disposition': `attachment; filename="${filename}"`,
+        'Cache-Control': 'no-store',
       },
     });
     

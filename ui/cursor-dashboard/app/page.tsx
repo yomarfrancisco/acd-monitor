@@ -145,52 +145,34 @@ export default function CursorDashboard() {
     setEvidenceError(null)
     
     try {
-      const response = await fetch('/api/evidence/export', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ mode: 'ready' })
-      })
-      
+      const response = await fetch('/api/evidence/export', { method: 'GET' })
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+        throw new Error(`HTTP ${response.status}`)
       }
+
+      // Try to read filename from header; fallback if absent
+      const cd = response.headers.get('content-disposition') || ''
+      const match = cd.match(/filename="?(.+?)"?$/)
+      const fname = match?.[1] ?? 'acd-evidence.zip'
+
+      const blob = await response.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = fname
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      URL.revokeObjectURL(url)
       
-      // Check if it's a zip file download
-      const contentType = response.headers.get('content-type')
-      if (contentType === 'application/zip') {
-        // Handle zip file download
-        const blob = await response.blob()
-        const url = window.URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = url
-        
-        // Get filename from Content-Disposition header
-        const contentDisposition = response.headers.get('content-disposition')
-        const filename = contentDisposition 
-          ? contentDisposition.split('filename=')[1]?.replace(/"/g, '')
-          : 'acd-evidence.zip'
-        
-        a.download = filename
-        document.body.appendChild(a)
-        a.click()
-        window.URL.revokeObjectURL(url)
-        document.body.removeChild(a)
-        
-        setEvidenceExport({
-          requestedAt: new Date().toISOString(),
-          status: 'READY',
-          bundleId: filename.replace('.zip', ''),
-          url: url
-        })
-      } else {
-        // Handle JSON response (QUEUED status)
-        const data = await response.json()
-        setEvidenceExport(data)
-      }
+      setEvidenceExport({
+        requestedAt: new Date().toISOString(),
+        status: 'READY',
+        bundleId: fname.replace('.zip', ''),
+        url: url
+      })
     } catch (error) {
-      console.error('Evidence export error:', error)
+      console.error('Evidence export failed', error)
       setEvidenceError(error instanceof Error ? error.message : 'Failed to export evidence')
     } finally {
       setEvidenceLoading(false)
