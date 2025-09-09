@@ -55,6 +55,8 @@ export interface Event {
   description: string;
   severity: string;
   riskScore: number;
+  durationMin?: number;
+  affects?: string[];
 }
 
 export interface EventsResponse {

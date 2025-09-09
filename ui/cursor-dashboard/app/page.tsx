@@ -2006,18 +2006,32 @@ It would also be helpful if you described:
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between mb-4">
                           <h3 className="text-xs font-medium text-[#f9fafb]">Your System Integrity</h3>
-                          {activeSidebarItem === "overview" && (
-                            <>
-                              <div className="flex gap-2">
-                                <button
-                                  onClick={() => setSelectedTimeframe("30d")}
-                                  className={`text-xs px-2 py-1 ${selectedTimeframe === "30d" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
-                                >
-                                  30d
-                                </button>
-                              </div>
-                            </>
-                          )}
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => setSelectedTimeframe("30d")}
+                              className={`text-xs px-2 py-1 ${selectedTimeframe === "30d" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
+                            >
+                              30d
+                            </button>
+                            <button
+                              onClick={() => setSelectedTimeframe("6m")}
+                              className={`text-xs px-2 py-1 ${selectedTimeframe === "6m" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
+                            >
+                              6m
+                            </button>
+                            <button
+                              onClick={() => setSelectedTimeframe("1y")}
+                              className={`text-xs px-2 py-1 ${selectedTimeframe === "1y" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
+                            >
+                              1y
+                            </button>
+                            <button
+                              onClick={() => setSelectedTimeframe("ytd")}
+                              className={`text-xs px-2 py-1 ${selectedTimeframe === "ytd" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
+                            >
+                              YTD
+                            </button>
+                          </div>
                         </div>
 
                         <div className="grid grid-cols-2 gap-6 mb-10">

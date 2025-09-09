@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { EventsResponse, Event } from '@/types/api';
 
 // Simple deterministic pseudo-random with jitter for "live-ish" feel
 const jitter = (base: number, span: number) => {
@@ -12,17 +13,7 @@ export async function GET(request: Request) {
   const mode = url.searchParams.get('mode') ?? 'normal'; // normal|degraded
 
   // Generate events based on timeframe
-  const events: Array<{
-    id: string;
-    ts: string;
-    type: string;
-    title: string;
-    description: string;
-    severity: string;
-    riskScore: number;
-    durationMin?: number;
-    affects?: string[];
-  }> = [];
+  const events: Event[] = [];
   const now = new Date();
   
   // Base events for different timeframes
@@ -71,11 +62,11 @@ export async function GET(request: Request) {
   // Sort by timestamp (most recent first)
   events.sort((a, b) => new Date(b.ts).getTime() - new Date(a.ts).getTime());
 
-  const payload = {
+  const response: EventsResponse = {
     timeframe,
     updatedAt: new Date().toISOString(),
     items: events
   };
 
-  return NextResponse.json(payload);
+  return NextResponse.json(response);
 }

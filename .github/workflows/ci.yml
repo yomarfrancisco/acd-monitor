@@ -2,57 +2,70 @@ name: ci
 
 on:
   push:
-    branches: [ main, feature/** ]
+    branches: [ main ]
   pull_request:
 
 jobs:
   detect:
     runs-on: ubuntu-latest
     outputs:
-      ui_changed: ${{ steps.changes.outputs.ui }}
-      backend_changed: ${{ steps.changes.outputs.backend }}
+      ui: ${{ steps.filter.outputs.ui }}
+      backend: ${{ steps.filter.outputs.backend }}
     steps:
       - uses: actions/checkout@v4
-      - id: changes
+      - id: filter
         uses: dorny/paths-filter@v3
         with:
           filters: |
             ui:
               - 'ui/**'
-              - '!ui/**/README*'
               - 'package.json'
               - 'package-lock.json'
+              - '.github/workflows/ci.yml'
             backend:
               - 'src/**'
               - 'tests/**'
               - 'schemas/**'
               - 'scripts/**'
               - 'pyproject.toml'
-              - '.flake8'
               - 'requirements*.txt'
+              - '.flake8'
+              - 'setup.cfg'
+              - '!ui/**'
+              - '!docs/**'
 
   ui:
     needs: detect
-    if: ${{ needs.detect.outputs.ui_changed == 'true' }}
-    defaults: { run: { working-directory: ui/cursor-dashboard } }
+    if: ${{ needs.detect.outputs.ui == 'true' }}
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ui/cursor-dashboard
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: '20', cache: 'npm', cache-dependency-path: 'ui/cursor-dashboard/package-lock.json' }
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: ui/cursor-dashboard/package-lock.json
       - run: npm ci || npm install
       - run: npx tsc --noEmit
       - run: npm run build
 
   backend:
     needs: detect
-    if: ${{ needs.detect.outputs.backend_changed == 'true' }}
+    if: ${{ needs.detect.outputs.backend == 'true' }}
     runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: ${{ github.workspace }}:${{ github.workspace }}/src
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with: { python-version: '3.11', cache: 'pip' }
+        with:
+          python-version: '3.11'
+          cache: 'pip'
       - run: pip install -r requirements.txt
+      - run: if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
       - run: flake8
       - run: black --check src tests
-      - run: pytest -q || true
+      - run: pytest -vv --maxfail=5 --disable-warnings
