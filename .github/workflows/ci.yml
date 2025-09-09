@@ -54,6 +54,9 @@ jobs:
       - name: Typecheck
         run: npx tsc --noEmit
 
+      - name: Contract Tests
+        run: npm run contracts
+
       - name: Build
         run: npm run build
 

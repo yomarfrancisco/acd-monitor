@@ -37,6 +37,9 @@ import { Button } from "@/components/ui/button"
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, ReferenceLine, Label } from "recharts"
 import { CalendarIcon } from "lucide-react"
 import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema } from "@/types/api.schemas"
+import { fetchTyped } from "@/lib/backendAdapter"
+import { safe } from "@/lib/safe"
+import { DegradedModeBanner } from "@/components/DegradedModeBanner"
 import type { RiskSummary, MetricsOverview, HealthRun, EventsResponse, DataSources, EvidenceExport } from "@/types/api"
 import {
   MessageSquare,
@@ -131,6 +134,10 @@ export default function CursorDashboard() {
   const [evidenceExport, setEvidenceExport] = useState<EvidenceExport | null>(null)
   const [evidenceLoading, setEvidenceLoading] = useState(false)
   const [evidenceError, setEvidenceError] = useState<string | null>(null)
+  
+  // Degraded mode state
+  const [isDegradedMode, setIsDegradedMode] = useState(false)
+  const [lastHeartbeat, setLastHeartbeat] = useState<number | null>(null)
   const [selectedDate, setSelectedDate] = useState<{ from: Date | undefined; to?: Date | undefined } | undefined>({
     from: new Date(),
     to: new Date(),
@@ -174,6 +181,29 @@ export default function CursorDashboard() {
     setIsClient(true)
   }, [])
 
+  // Heartbeat check for degraded mode
+  useEffect(() => {
+    const checkHeartbeat = async () => {
+      try {
+        const response = await fetch('/api/_status', { cache: 'no-store' })
+        if (response.ok) {
+          setLastHeartbeat(0) // Mock always fresh
+          setIsDegradedMode(false)
+        } else {
+          setIsDegradedMode(true)
+        }
+      } catch {
+        setIsDegradedMode(true)
+      }
+    }
+
+    if (isClient) {
+      checkHeartbeat()
+      const interval = setInterval(checkHeartbeat, 30000) // Check every 30s
+      return () => clearInterval(interval)
+    }
+  }, [isClient])
+
   // Fetch risk summary data when timeframe changes
   useEffect(() => {
     const fetchRiskSummary = async () => {
@@ -182,25 +212,20 @@ export default function CursorDashboard() {
       setRiskSummaryLoading(true)
       setRiskSummaryError(null)
       
-      try {
-        const timeframeParam = selectedTimeframe
-        const response = await fetch(`/api/risk/summary?timeframe=${timeframeParam}`, { 
-          cache: 'no-store' 
-        })
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-        
-        const json = await response.json()
-        const validated = RiskSummarySchema.parse(json)
-        setRiskSummary(validated)
-      } catch (error) {
-        console.error('Failed to fetch risk summary:', error)
-        setRiskSummaryError(error instanceof Error ? error.message : 'Failed to fetch risk summary')
-      } finally {
-        setRiskSummaryLoading(false)
+      const result = await safe(fetchTyped(`/risk/summary?timeframe=${selectedTimeframe}`, RiskSummarySchema, { 
+        cache: 'no-store' 
+      }))
+      
+      if (result.ok) {
+        setRiskSummary(result.data as RiskSummary)
+        setRiskSummaryError(null)
+        setIsDegradedMode(false)
+      } else {
+        setRiskSummaryError(result.error)
+        setIsDegradedMode(true)
       }
+      
+      setRiskSummaryLoading(false)
     }
 
     fetchRiskSummary()
@@ -214,25 +239,20 @@ export default function CursorDashboard() {
       setMetricsLoading(true)
       setMetricsError(null)
       
-      try {
-        const timeframeParam = selectedTimeframe
-        const response = await fetch(`/api/metrics/overview?timeframe=${timeframeParam}`, { 
-          cache: 'no-store' 
-        })
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-        
-        const json = await response.json()
-        const validated = MetricsOverviewSchema.parse(json)
-        setMetricsOverview(validated)
-      } catch (error) {
-        console.error('Failed to fetch metrics overview:', error)
-        setMetricsError(error instanceof Error ? error.message : 'Failed to fetch metrics overview')
-      } finally {
-        setMetricsLoading(false)
+      const result = await safe(fetchTyped(`/metrics/overview?timeframe=${selectedTimeframe}`, MetricsOverviewSchema, { 
+        cache: 'no-store' 
+      }))
+      
+      if (result.ok) {
+        setMetricsOverview(result.data as MetricsOverview)
+        setMetricsError(null)
+        setIsDegradedMode(false)
+      } else {
+        setMetricsError(result.error)
+        setIsDegradedMode(true)
       }
+      
+      setMetricsLoading(false)
     }
 
     fetchMetricsOverview()
@@ -246,22 +266,18 @@ export default function CursorDashboard() {
       setHealthLoading(true)
       setHealthError(null)
       
-      try {
-        const response = await fetch('/api/health/run', { cache: 'no-store' })
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-        
-        const json = await response.json()
-        const validated = HealthRunSchema.parse(json)
-        setHealthRun(validated)
-      } catch (error) {
-        console.error('Failed to fetch health run:', error)
-        setHealthError(error instanceof Error ? error.message : 'Failed to fetch health run')
-      } finally {
-        setHealthLoading(false)
+      const result = await safe(fetchTyped('/health/run', HealthRunSchema, { cache: 'no-store' }))
+      
+      if (result.ok) {
+        setHealthRun(result.data as HealthRun)
+        setHealthError(null)
+        setIsDegradedMode(false)
+      } else {
+        setHealthError(result.error)
+        setIsDegradedMode(true)
       }
+      
+      setHealthLoading(false)
     }
 
     fetchHealthRun()
@@ -275,25 +291,20 @@ export default function CursorDashboard() {
       setEventsLoading(true)
       setEventsError(null)
       
-      try {
-        const timeframeParam = selectedTimeframe
-        const response = await fetch(`/api/events?timeframe=${timeframeParam}`, { 
-          cache: 'no-store' 
-        })
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-        
-        const json = await response.json()
-        const validated = EventsResponseSchema.parse(json)
-        setEvents(validated)
-      } catch (error) {
-        console.error('Failed to fetch events:', error)
-        setEventsError(error instanceof Error ? error.message : 'Failed to fetch events')
-      } finally {
-        setEventsLoading(false)
+      const result = await safe(fetchTyped(`/events?timeframe=${selectedTimeframe}`, EventsResponseSchema, { 
+        cache: 'no-store' 
+      }))
+      
+      if (result.ok) {
+        setEvents(result.data as EventsResponse)
+        setEventsError(null)
+        setIsDegradedMode(false)
+      } else {
+        setEventsError(result.error)
+        setIsDegradedMode(true)
       }
+      
+      setEventsLoading(false)
     }
 
     fetchEvents()
@@ -307,22 +318,18 @@ export default function CursorDashboard() {
       setDataSourcesLoading(true)
       setDataSourcesError(null)
       
-      try {
-        const response = await fetch('/api/datasources/status', { cache: 'no-store' })
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-        
-        const json = await response.json()
-        const validated = DataSourcesSchema.parse(json)
-        setDataSources(validated)
-      } catch (error) {
-        console.error('Failed to fetch data sources:', error)
-        setDataSourcesError(error instanceof Error ? error.message : 'Failed to fetch data sources')
-      } finally {
-        setDataSourcesLoading(false)
+      const result = await safe(fetchTyped('/datasources/status', DataSourcesSchema, { cache: 'no-store' }))
+      
+      if (result.ok) {
+        setDataSources(result.data as DataSources)
+        setDataSourcesError(null)
+        setIsDegradedMode(false)
+      } else {
+        setDataSourcesError(result.error)
+        setIsDegradedMode(true)
       }
+      
+      setDataSourcesLoading(false)
     }
 
     fetchDataSources()
@@ -486,6 +493,9 @@ It would also be helpful if you described:
           </div>
         </div>
       </header>
+
+      {/* Degraded Mode Banner */}
+      <DegradedModeBanner isVisible={isDegradedMode} lastHeartbeat={lastHeartbeat || undefined} />
 
       {/* Extra spacing below header */}
       <div className="h-6"></div>
@@ -813,7 +823,7 @@ It would also be helpful if you described:
                     </div>
 
                     <div className="mb-4">
-                          <h3 className="text-xs font-medium text-[#f9fafb] mb-3">Your Algorithmic Cartel Risk</h3>
+                          <h3 className="text-xs font-medium text-[#f9fafb] mb-3">Algorithmic Cartel Diagnostic</h3>
                           <div className="grid grid-cols-2 gap-6 mb-10">
                             <div className="rounded-lg bg-[#212121] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 relative">
                               {/* Live indicator - pulsing green dot with frame */}

@@ -1,0 +1,12 @@
+{
+  "score": 14,
+  "band": "LOW",
+  "confidence": 96,
+  "updatedAt": "2025-09-09T09:17:08Z",
+  "timeframe": "ytd",
+  "source": {
+    "name": "Simulated: Internal Monitoring",
+    "freshnessSec": 20,
+    "quality": 0.96
+  }
+}

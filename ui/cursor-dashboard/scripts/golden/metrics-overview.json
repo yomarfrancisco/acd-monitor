@@ -1,0 +1,24 @@
+{
+  "timeframe": "ytd",
+  "updatedAt": "2025-09-09T09:17:08Z",
+  "items": [
+    {
+      "key": "stability",
+      "label": "Price Stability",
+      "score": 85,
+      "direction": "UP"
+    },
+    {
+      "key": "synchronization",
+      "label": "Price Synchronization",
+      "score": 72,
+      "direction": "FLAT"
+    },
+    {
+      "key": "environmentalSensitivity",
+      "label": "Environmental Sensitivity",
+      "score": 68,
+      "direction": "DOWN"
+    }
+  ]
+}
