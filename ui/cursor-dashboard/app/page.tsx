@@ -121,6 +121,14 @@ export default function CursorDashboard() {
   const [events, setEvents] = useState<EventsResponse | null>(null)
   const [eventsLoading, setEventsLoading] = useState(false)
   const [eventsError, setEventsError] = useState<string | null>(null)
+  const [eventsFilter, setEventsFilter] = useState<{ severity?: string; type?: string }>({})
+  
+  // Filter events based on current filter state
+  const filteredEvents = events?.items.filter(event => {
+    if (eventsFilter.severity && event.severity !== eventsFilter.severity) return false
+    if (eventsFilter.type && event.type !== eventsFilter.type) return false
+    return true
+  }) || []
   
   // Data sources state
   const [dataSources, setDataSources] = useState<DataSources | null>(null)
@@ -2333,31 +2341,93 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-[#1a1a1a] hover:text-[#f9fafb]"
+                              onClick={() => setSelectedTimeframe("30d")}
+                              className={`text-xs bg-transparent border-[#2a2a2a] ${selectedTimeframe === "30d" ? "text-[#f9fafb] bg-[#1a1a1a]" : "text-[#a1a1aa] hover:bg-[#1a1a1a] hover:text-[#f9fafb]"}`}
                             >
                               30d
                             </Button>
                             <Button
                               variant="outline"
                               size="sm"
-                              className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-[#1a1a1a] hover:text-[#f9fafb]"
+                              onClick={() => setSelectedTimeframe("6m")}
+                              className={`text-xs bg-transparent border-[#2a2a2a] ${selectedTimeframe === "6m" ? "text-[#f9fafb] bg-[#1a1a1a]" : "text-[#a1a1aa] hover:bg-[#1a1a1a] hover:text-[#f9fafb]"}`}
                             >
                               6m
                             </Button>
                             <Button
                               variant="outline"
                               size="sm"
-                              className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-[#1a1a1a] hover:text-[#f9fafb]"
+                              onClick={() => setSelectedTimeframe("1y")}
+                              className={`text-xs bg-transparent border-[#2a2a2a] ${selectedTimeframe === "1y" ? "text-[#f9fafb] bg-[#1a1a1a]" : "text-[#a1a1aa] hover:bg-[#1a1a1a] hover:text-[#f9fafb]"}`}
                             >
                               1y
                             </Button>
                             <Button
                               variant="outline"
                               size="sm"
-                              className="text-xs bg-[#1a1a1a] border-[#2a2a2a] text-[#f9fafb]"
+                              onClick={() => setSelectedTimeframe("ytd")}
+                              className={`text-xs bg-transparent border-[#2a2a2a] ${selectedTimeframe === "ytd" ? "text-[#f9fafb] bg-[#1a1a1a]" : "text-[#a1a1aa] hover:bg-[#1a1a1a] hover:text-[#f9fafb]"}`}
                             >
                               YTD
                             </Button>
+                          </div>
+                        </div>
+
+                        {/* Filter Chips */}
+                        <div className="flex gap-2 mt-2">
+                          <div className="flex gap-1">
+                            <span className="text-[10px] text-[#a1a1aa]">Severity:</span>
+                            <button
+                              onClick={() => setEventsFilter(prev => ({ ...prev, severity: undefined }))}
+                              className={`text-[9px] px-2 py-1 rounded ${!eventsFilter.severity ? 'bg-[#3a3a3a] text-[#f9fafb]' : 'text-[#a1a1aa] hover:text-[#f9fafb]'}`}
+                            >
+                              All
+                            </button>
+                            <button
+                              onClick={() => setEventsFilter(prev => ({ ...prev, severity: 'HIGH' }))}
+                              className={`text-[9px] px-2 py-1 rounded ${eventsFilter.severity === 'HIGH' ? 'bg-[#3a3a3a] text-[#f9fafb]' : 'text-[#a1a1aa] hover:text-[#f9fafb]'}`}
+                            >
+                              High
+                            </button>
+                            <button
+                              onClick={() => setEventsFilter(prev => ({ ...prev, severity: 'MEDIUM' }))}
+                              className={`text-[9px] px-2 py-1 rounded ${eventsFilter.severity === 'MEDIUM' ? 'bg-[#3a3a3a] text-[#f9fafb]' : 'text-[#a1a1aa] hover:text-[#f9fafb]'}`}
+                            >
+                              Medium
+                            </button>
+                            <button
+                              onClick={() => setEventsFilter(prev => ({ ...prev, severity: 'LOW' }))}
+                              className={`text-[9px] px-2 py-1 rounded ${eventsFilter.severity === 'LOW' ? 'bg-[#3a3a3a] text-[#f9fafb]' : 'text-[#a1a1aa] hover:text-[#f9fafb]'}`}
+                            >
+                              Low
+                            </button>
+                          </div>
+                          <div className="flex gap-1">
+                            <span className="text-[10px] text-[#a1a1aa]">Type:</span>
+                            <button
+                              onClick={() => setEventsFilter(prev => ({ ...prev, type: undefined }))}
+                              className={`text-[9px] px-2 py-1 rounded ${!eventsFilter.type ? 'bg-[#3a3a3a] text-[#f9fafb]' : 'text-[#a1a1aa] hover:text-[#f9fafb]'}`}
+                            >
+                              All
+                            </button>
+                            <button
+                              onClick={() => setEventsFilter(prev => ({ ...prev, type: 'MARKET' }))}
+                              className={`text-[9px] px-2 py-1 rounded ${eventsFilter.type === 'MARKET' ? 'bg-[#3a3a3a] text-[#f9fafb]' : 'text-[#a1a1aa] hover:text-[#f9fafb]'}`}
+                            >
+                              Market
+                            </button>
+                            <button
+                              onClick={() => setEventsFilter(prev => ({ ...prev, type: 'COORDINATION' }))}
+                              className={`text-[9px] px-2 py-1 rounded ${eventsFilter.type === 'COORDINATION' ? 'bg-[#3a3a3a] text-[#f9fafb]' : 'text-[#a1a1aa] hover:text-[#f9fafb]'}`}
+                            >
+                              Coordination
+                            </button>
+                            <button
+                              onClick={() => setEventsFilter(prev => ({ ...prev, type: 'USER' }))}
+                              className={`text-[9px] px-2 py-1 rounded ${eventsFilter.type === 'USER' ? 'bg-[#3a3a3a] text-[#f9fafb]' : 'text-[#a1a1aa] hover:text-[#f9fafb]'}`}
+                            >
+                              User
+                            </button>
                           </div>
                         </div>
 
@@ -2391,88 +2461,68 @@ It would also be helpful if you described:
                           <h2 className="text-sm font-medium text-[#f9fafb]">All Events</h2>
                         </div>
 
-                        {/* Event Status 1 */}
-                        <div className="p-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2.5">
-                              <CalendarCheck2 className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">ZAR depreciates 1.9%</div>
-                                <div className="text-[10px] text-[#a1a1aa]">
-                                  Broad CDS widening; sensitivity ↑ to 84
+                        {/* Events List */}
+                        {eventsLoading ? (
+                          <div className="p-6 text-center">
+                            <div className="text-[#a1a1aa] text-sm">Loading events...</div>
+                          </div>
+                        ) : eventsError ? (
+                          <div className="p-6 text-center">
+                            <div className="text-[#fca5a5] text-sm">Error loading events: {eventsError}</div>
+                            <button 
+                              onClick={() => window.location.reload()} 
+                              className="text-[#a1a1aa] text-xs hover:text-[#f9fafb] mt-2"
+                            >
+                              Retry
+                            </button>
+                          </div>
+                        ) : filteredEvents.length === 0 ? (
+                          <div className="p-6 text-center">
+                            <div className="text-[#a1a1aa] text-sm">No events found</div>
+                          </div>
+                        ) : (
+                          filteredEvents.map((event, index) => (
+                            <div key={event.id}>
+                              {index > 0 && (
+                                <div
+                                  className="border-t border-[#2a2a2a]/70 border-opacity-70"
+                                  style={{ borderTopWidth: "0.5px" }}
+                                ></div>
+                              )}
+                              <div className="p-3">
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-2.5">
+                                    <CalendarCheck2 className="w-4 h-4 text-[#a1a1aa]" />
+                                    <div>
+                                      <div className="text-[#f9fafb] font-medium text-xs">{event.title}</div>
+                                      <div className="text-[10px] text-[#a1a1aa]">
+                                        {event.description}
+                                      </div>
+                                      <div className="text-[9px] text-[#a1a1aa] mt-0.5">
+                                        {new Date(event.ts).toLocaleString()} • {event.durationMin ? `${event.durationMin}m` : 'N/A'}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="text-right">
+                                    <div className="flex items-center gap-1.5">
+                                      <div className="text-[#f9fafb] font-bold text-sm">{event.riskScore}</div>
+                                      <div className={`text-xs ${event.riskScore >= 50 ? 'text-[#a7f3d0]' : 'text-[#fca5a5]'}`}>
+                                        {event.riskScore >= 50 ? '✓' : '✗'}
+                                      </div>
+                                    </div>
+                                    <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
+                                  </div>
                                 </div>
-                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">2m ago • 45s</div>
                               </div>
                             </div>
-                            <div className="text-right">
-                              <div className="flex items-center gap-1.5">
-                                <div className="text-[#f9fafb] font-bold text-sm">66</div>
-                                <div className="text-[#fca5a5] text-xs">✗</div>
-                              </div>
-                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Separator line */}
-                        <div
-                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        ></div>
-
-                        {/* Event Status 2 */}
-                        <div className="p-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2.5">
-                              <CalendarCheck2 className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">SARB guidance unchanged</div>
-                                <div className="text-[10px] text-[#a1a1aa]">No regime break detected</div>
-                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">1m ago • 32s</div>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <div className="flex items-center gap-1.5">
-                                <div className="text-[#f9fafb] font-bold text-sm">43</div>
-                                <div className="text-[#a7f3d0] text-xs">✓</div>
-                              </div>
-                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Separator line */}
-                        <div
-                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        ></div>
-
-                        {/* Event Status 3 */}
-                        <div className="p-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2.5">
-                              <CalendarCheck2 className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">Sovereign outlook stable</div>
-                                <div className="text-[10px] text-[#a1a1aa]">Idiosyncratic responses across banks</div>
-                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">30s ago • 18s</div>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <div className="flex items-center gap-1.5">
-                                <div className="text-[#f9fafb] font-bold text-sm">18</div>
-                                <div className="text-[#fca5a5] text-xs">✗</div>
-                              </div>
-                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
-                            </div>
-                          </div>
-                        </div>
+                          ))
+                        )}
 
                         {/* Pagination Footer */}
                         <div className="px-4 py-3 border-t border-[#2a2a2a]">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-4 text-[10px] text-[#a1a1aa]">
-                              <span>Showing 1 - 3 of 3 events</span>
+                              <span>Showing 1 - {filteredEvents.length} of {events?.items.length || 0} events</span>
                               <div className="flex items-center gap-2">
                                 <span>Rows per page:</span>
                                 <select className="bg-transparent border border-[#2a2a2a] rounded px-2 py-1 text-[#f9fafb] text-[10px]">
