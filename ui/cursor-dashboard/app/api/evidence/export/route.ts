@@ -159,8 +159,10 @@ export async function GET(request: Request) {
     
     const filename = `acd-evidence-${now.toISOString().slice(0,16).replace(/[-:T]/g,'')}.zip`;
     
-    // Return a binary Response with download headers
-    return new NextResponse(binary, {
+    // Create a Blob from the binary data to fix TypeScript BodyInit error
+    const blob = new Blob([binary], { type: 'application/zip' });
+    
+    return new Response(blob, {
       status: 200,
       headers: {
         'Content-Type': 'application/zip',
@@ -220,8 +222,10 @@ export async function POST(request: Request) {
     
     const filename = `acd-evidence-${now.toISOString().slice(0,16).replace(/[-:T]/g,'')}.zip`;
     
-    // Return a binary Response with download headers
-    return new NextResponse(binary, {
+    // Create a Blob from the binary data to fix TypeScript BodyInit error
+    const blob = new Blob([binary], { type: 'application/zip' });
+    
+    return new Response(blob, {
       status: 200,
       headers: {
         'Content-Type': 'application/zip',

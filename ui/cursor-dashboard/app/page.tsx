@@ -153,7 +153,12 @@ export default function CursorDashboard() {
     setEvidenceError(null)
     
     try {
-      const response = await fetch('/api/evidence/export', { method: 'GET' })
+      // For binary downloads, we need to handle the URL construction manually
+      const MODE = process.env.NEXT_PUBLIC_DATA_MODE ?? 'mock';
+      const BASE = process.env.NEXT_PUBLIC_API_BASE ?? '';
+      const url = MODE === 'live' ? `${BASE.replace(/\/+$/, '')}/api/evidence/export` : '/api/evidence/export';
+      
+      const response = await fetch(url, { method: 'GET' })
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`)
       }
@@ -233,8 +238,8 @@ export default function CursorDashboard() {
   useEffect(() => {
     const checkHeartbeat = async () => {
       try {
-        const response = await fetch('/api/_status', { cache: 'no-store' })
-        if (response.ok) {
+        const response = await fetchTyped('/api/_status', { cache: 'no-store' })
+        if (response && response.ok) {
           setLastHeartbeat(0) // Mock always fresh
           setIsDegradedMode(false)
         } else {
@@ -260,7 +265,7 @@ export default function CursorDashboard() {
       setRiskSummaryLoading(true)
       setRiskSummaryError(null)
       
-      const result = await safe(fetchTyped(`/api/risk/summary?timeframe=${selectedTimeframe}`, RiskSummarySchema, { 
+      const result = await safe(fetchTyped(`/api/risk/summary?timeframe=${selectedTimeframe}`, { 
         cache: 'no-store' 
       }))
       
@@ -287,7 +292,7 @@ export default function CursorDashboard() {
       setMetricsLoading(true)
       setMetricsError(null)
       
-      const result = await safe(fetchTyped(`/api/metrics/overview?timeframe=${selectedTimeframe}`, MetricsOverviewSchema, { 
+      const result = await safe(fetchTyped(`/api/metrics/overview?timeframe=${selectedTimeframe}`, { 
         cache: 'no-store' 
       }))
       
@@ -314,7 +319,7 @@ export default function CursorDashboard() {
       setHealthLoading(true)
       setHealthError(null)
       
-      const result = await safe(fetchTyped('/api/health/run', HealthRunSchema, { cache: 'no-store' }))
+      const result = await safe(fetchTyped('/api/health/run', { cache: 'no-store' }))
       
       if (result.ok) {
         setHealthRun(result.data as HealthRun)
@@ -339,7 +344,7 @@ export default function CursorDashboard() {
       setEventsLoading(true)
       setEventsError(null)
       
-      const result = await safe(fetchTyped(`/api/events?timeframe=${selectedTimeframe}`, EventsResponseSchema, { 
+      const result = await safe(fetchTyped(`/api/events?timeframe=${selectedTimeframe}`, { 
         cache: 'no-store' 
       }))
       
@@ -366,7 +371,7 @@ export default function CursorDashboard() {
       setDataSourcesLoading(true)
       setDataSourcesError(null)
       
-      const result = await safe(fetchTyped('/api/datasources/status', DataSourcesSchema, { cache: 'no-store' }))
+      const result = await safe(fetchTyped('/api/datasources/status', { cache: 'no-store' }))
       
       if (result.ok) {
         setDataSources(result.data as DataSources)

@@ -1,37 +1,44 @@
-import type { ZodTypeAny } from "zod";
+// lib/backendAdapter.ts
+const MODE = process.env.NEXT_PUBLIC_DATA_MODE ?? 'mock';
+const BASE = process.env.NEXT_PUBLIC_API_BASE ?? '';
 
-const MODE = process.env.NEXT_PUBLIC_DATA_MODE; // 'mock' | 'live'
-const BASE = process.env.NEXT_PUBLIC_API_BASE;  // e.g. https://acd-monitor-backend.onrender.com
-
+/**
+ * Joins base + path safely (handles duplicate/missing slashes)
+ */
 function join(base: string, path: string) {
-  return base.endsWith('/') ? `${base.slice(0, -1)}${path}` : `${base}${path}`;
+  if (!base) return path;
+  return `${base.replace(/\/+$/, '')}/${path.replace(/^\/+/, '')}`;
 }
 
+/**
+ * Always build an absolute URL in Preview (MODE=live),
+ * keep relative only when MODE=mock (Production mock mode).
+ */
 export async function fetchTyped<T>(
   path: string,
-  schema: ZodTypeAny,
   init?: RequestInit
 ): Promise<T> {
-  const url =
-    MODE === 'live'
-      ? join(BASE || '', path.startsWith('/') ? path : `/${path}`)
-      : // mock mode keeps using the app's built-in API routes
-        (path.startsWith('/api') ? path : `/api${path.startsWith('/') ? '' : '/'}${path}`);
-  
-  const res = await fetch(url, { 
-    ...init, 
-    headers: { 
-      'Content-Type': 'application/json', 
-      ...(init?.headers || {}) 
+  const url = MODE === 'live' ? join(BASE, path) : join('', path);
+
+  // Temporary runtime verification
+  // (visible in browser console + Vercel logs)
+  // eslint-disable-next-line no-console
+  console.log('[ENV CHECK]', { MODE, BASE, url });
+
+  const res = await fetch(url, {
+    headers: {
+      'Content-Type': 'application/json',
+      ...(init?.headers || {}),
     },
-    next: { revalidate: 0 }
+    ...init,
+    // Don't send cookies cross-origin
+    credentials: MODE === 'live' ? 'omit' : init?.credentials,
+    cache: 'no-store',
   });
-  
+
   if (!res.ok) {
-    throw new Error(`${res.status} ${res.statusText}`);
+    const text = await res.text().catch(() => '');
+    throw new Error(`HTTP ${res.status} ${res.statusText} at ${url} :: ${text}`);
   }
-  
-  const json = await res.json();
-  const parsed = schema.parse(json); // Zod contract check
-  return parsed as T;
+  return (await res.json()) as T;
 }
