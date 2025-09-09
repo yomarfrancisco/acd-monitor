@@ -1,0 +1,29 @@
+{
+  "updatedAt": "2025-09-09T09:17:08Z",
+  "summary": {
+    "systemHealth": 84,
+    "complianceReadiness": 67,
+    "band": "PASS"
+  },
+  "spark": [
+    {
+      "ts": "2025-09-09T08:47:08Z",
+      "convergence": 25,
+      "dataIntegrity": 18,
+      "evidenceChain": 82,
+      "runtimeStability": 81
+    },
+    {
+      "ts": "2025-09-09T09:17:08Z",
+      "convergence": 25,
+      "dataIntegrity": 18,
+      "evidenceChain": 82,
+      "runtimeStability": 81
+    }
+  ],
+  "source": {
+    "name": "Simulated: Internal Monitoring",
+    "freshnessSec": 24,
+    "quality": 0.95
+  }
+}

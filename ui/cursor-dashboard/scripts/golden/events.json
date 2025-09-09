@@ -1,0 +1,28 @@
+{
+  "timeframe": "ytd",
+  "updatedAt": "2025-09-09T09:17:08Z",
+  "items": [
+    {
+      "id": "evt-001",
+      "ts": "2025-09-09T09:00:00Z",
+      "type": "MARKET",
+      "title": "ZAR depreciates 1.9%",
+      "description": "Broad CDS widening; sensitivity ↑ to 84",
+      "severity": "HIGH",
+      "riskScore": 66,
+      "durationMin": 45,
+      "affects": ["FNB", "Absa"]
+    },
+    {
+      "id": "evt-002",
+      "ts": "2025-09-08T14:30:00Z",
+      "type": "COORDINATION",
+      "title": "Market coordination detected",
+      "description": "Unusual price synchronization patterns",
+      "severity": "MEDIUM",
+      "riskScore": 38,
+      "durationMin": 120,
+      "affects": ["Standard Bank", "Nedbank"]
+    }
+  ]
+}

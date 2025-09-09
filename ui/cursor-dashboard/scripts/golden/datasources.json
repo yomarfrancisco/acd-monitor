@@ -1,0 +1,21 @@
+{
+  "updatedAt": "2025-09-09T09:17:08Z",
+  "items": [
+    {
+      "id": "ds-001",
+      "name": "Bloomberg Terminal",
+      "tier": "T1",
+      "status": "OK",
+      "freshnessSec": 30,
+      "quality": 0.98
+    },
+    {
+      "id": "ds-002",
+      "name": "Internal Feed",
+      "tier": "T2",
+      "status": "DEGRADED",
+      "freshnessSec": 120,
+      "quality": 0.85
+    }
+  ]
+}
