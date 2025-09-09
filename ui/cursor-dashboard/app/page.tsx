@@ -38,6 +38,7 @@ import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianG
 import { CalendarIcon } from "lucide-react"
 import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema } from "@/types/api.schemas"
 import type { RiskSummary, MetricsOverview, HealthRun, EventsResponse, DataSources, EvidenceExport } from "@/types/api"
+import { fetchJSON } from "@/lib/api"
 import {
   MessageSquare,
   GitBranch,
@@ -238,7 +239,7 @@ export default function CursorDashboard() {
     fetchMetricsOverview()
   }, [selectedTimeframe, isClient])
 
-  // Fetch health run data
+  // Fetch health run data when timeframe changes
   useEffect(() => {
     const fetchHealthRun = async () => {
       if (!isClient) return
@@ -247,7 +248,10 @@ export default function CursorDashboard() {
       setHealthError(null)
       
       try {
-        const response = await fetch('/api/health/run', { cache: 'no-store' })
+        const timeframeParam = selectedTimeframe
+        const response = await fetch(`/api/health/run?timeframe=${timeframeParam}`, { 
+          cache: 'no-store' 
+        })
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
@@ -265,7 +269,7 @@ export default function CursorDashboard() {
     }
 
     fetchHealthRun()
-  }, [isClient])
+  }, [selectedTimeframe, isClient])
 
   // Fetch events data when timeframe changes
   useEffect(() => {
@@ -2036,84 +2040,67 @@ It would also be helpful if you described:
                         </div>
 
                         <div className="grid grid-cols-2 gap-6 mb-10">
-                          <div className="rounded-lg bg-[#212121] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
-                            <div className="text-xl font-bold text-[#f9fafb]">84 out of 100</div>
-                            <div className="text-xs text-[#a7f3d0]">Pass</div>
-                          </div>
-                          <div className="rounded-lg bg-[#212121]/40 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
-                            <div className="text-xl font-bold text-[#f9fafb]">67%</div>
-                            <div className="text-xs text-[#a1a1aa]">Compliance Readiness</div>
-                          </div>
+                          {healthLoading ? (
+                            <>
+                              <div className="rounded-lg bg-[#212121] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
+                                <div className="text-xl font-bold text-[#f9fafb]">Loading...</div>
+                                <div className="text-xs text-[#a1a1aa]">System Health</div>
+                              </div>
+                              <div className="rounded-lg bg-[#212121]/40 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
+                                <div className="text-xl font-bold text-[#f9fafb]">Loading...</div>
+                                <div className="text-xs text-[#a1a1aa]">Compliance Readiness</div>
+                              </div>
+                            </>
+                          ) : healthError ? (
+                            <>
+                              <div className="rounded-lg bg-[#212121] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
+                                <div className="text-xl font-bold text-[#fca5a5]">Error</div>
+                                <div className="text-xs text-[#a1a1aa]">System Health</div>
+                              </div>
+                              <div className="rounded-lg bg-[#212121]/40 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
+                                <div className="text-xl font-bold text-[#fca5a5]">Error</div>
+                                <div className="text-xs text-[#a1a1aa]">Compliance Readiness</div>
+                              </div>
+                            </>
+                          ) : healthRun ? (
+                            <>
+                              <div className="rounded-lg bg-[#212121] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
+                                <div className="text-xl font-bold text-[#f9fafb]">{healthRun.summary.systemHealth} out of 100</div>
+                                <div className={`text-xs ${healthRun.summary.band === 'PASS' ? 'text-[#a7f3d0]' : healthRun.summary.band === 'WATCH' ? 'text-[#fbbf24]' : 'text-[#fca5a5]'}`}>
+                                  {healthRun.summary.band}
+                                </div>
+                              </div>
+                              <div className="rounded-lg bg-[#212121]/40 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
+                                <div className="text-xl font-bold text-[#f9fafb]">{healthRun.summary.complianceReadiness}%</div>
+                                <div className="text-xs text-[#a1a1aa]">Compliance Readiness</div>
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <div className="rounded-lg bg-[#212121] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
+                                <div className="text-xl font-bold text-[#f9fafb]">No data</div>
+                                <div className="text-xs text-[#a1a1aa]">System Health</div>
+                              </div>
+                              <div className="rounded-lg bg-[#212121]/40 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
+                                <div className="text-xl font-bold text-[#f9fafb]">No data</div>
+                                <div className="text-xs text-[#a1a1aa]">Compliance Readiness</div>
+                              </div>
+                            </>
+                          )}
                         </div>
 
                         <div className="h-80">
                           <ResponsiveContainer width="100%" height="100%">
                             <LineChart
-                              data={[
-                                {
-                                  date: "Jan 25",
-                                  "Convergence Rate": 25,
-                                  "Data Integrity": 18,
-                                  "Evidence Chain": 82,
-                                  "Runtime Stability": 81,
-                                },
-                                {
-                                  date: "Feb 25",
-                                  "Convergence Rate": 28,
-                                  "Data Integrity": 22,
-                                  "Evidence Chain": 85,
-                                  "Runtime Stability": 79,
-                                },
-                                {
-                                  date: "Mar 25",
-                                  "Convergence Rate": 32,
-                                  "Data Integrity": 25,
-                                  "Evidence Chain": 88,
-                                  "Runtime Stability": 83,
-                                },
-                                {
-                                  date: "Apr 25",
-                                  "Convergence Rate": 29,
-                                  "Data Integrity": 19,
-                                  "Evidence Chain": 84,
-                                  "Runtime Stability": 77,
-                                },
-                                {
-                                  date: "May 25",
-                                  "Convergence Rate": 35,
-                                  "Data Integrity": 28,
-                                  "Evidence Chain": 90,
-                                  "Runtime Stability": 85,
-                                },
-                                {
-                                  date: "Jun 25",
-                                  "Convergence Rate": 31,
-                                  "Data Integrity": 24,
-                                  "Evidence Chain": 87,
-                                  "Runtime Stability": 82,
-                                },
-                                {
-                                  date: "Jul 25",
-                                  "Convergence Rate": 38,
-                                  "Data Integrity": 31,
-                                  "Evidence Chain": 92,
-                                  "Runtime Stability": 88,
-                                },
-                                {
-                                  date: "Aug 25",
-                                  "Convergence Rate": 42,
-                                  "Data Integrity": 35,
-                                  "Evidence Chain": 94,
-                                  "Runtime Stability": 91,
-                                },
-                              ]}
+                              data={healthRun?.spark || []}
                               margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                             >
                               <XAxis
-                                dataKey="date"
+                                dataKey="ts"
                                 axisLine={false}
                                 tickLine={false}
                                 tick={{ fill: "#a1a1aa", fontSize: 10 }}
+                                tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                               />
                               <YAxis
                                 axisLine={false}
@@ -2154,7 +2141,7 @@ It would also be helpful if you described:
                               />
                               <Line
                                 type="monotone"
-                                dataKey="Convergence Rate"
+                                dataKey="convergence"
                                 stroke="#a8b2d1"
                                 strokeWidth={2}
                                 dot={{ fill: "#a8b2d1", strokeWidth: 0, r: 3 }}
@@ -2162,7 +2149,7 @@ It would also be helpful if you described:
                               />
                               <Line
                                 type="monotone"
-                                dataKey="Data Integrity"
+                                dataKey="dataIntegrity"
                                 stroke="#b5c4a8"
                                 strokeWidth={2}
                                 dot={{ fill: "#b5c4a8", strokeWidth: 0, r: 3 }}
@@ -2170,7 +2157,7 @@ It would also be helpful if you described:
                               />
                               <Line
                                 type="monotone"
-                                dataKey="Evidence Chain"
+                                dataKey="evidenceChain"
                                 stroke="#d4a5a5"
                                 strokeWidth={2}
                                 dot={{ fill: "#d4a5a5", strokeWidth: 0, r: 3 }}
@@ -2178,7 +2165,7 @@ It would also be helpful if you described:
                               />
                               <Line
                                 type="monotone"
-                                dataKey="Runtime Stability"
+                                dataKey="runtimeStability"
                                 stroke="#a8a8b5"
                                 strokeWidth={2}
                                 dot={{ fill: "#a8a8b5", strokeWidth: 0, r: 3 }}
@@ -2189,7 +2176,7 @@ It would also be helpful if you described:
                         </div>
                         {/* Data source indicator */}
                         <div className="text-[9px] text-[#71717a] mt-2 text-center">
-                          Data source: Internal Monitoring
+                          Data source: {healthRun?.source.name || 'Loading...'}
                         </div>
                       </CardContent>
                     </Card>
@@ -2212,8 +2199,10 @@ It would also be helpful if you described:
                             </div>
                             <div className="text-right">
                               <div className="flex items-center gap-1.5">
-                                <div className="text-[#f9fafb] font-bold text-sm">25</div>
-                                <div className="text-[#fca5a5] text-xs">✗</div>
+                                <div className="text-[#f9fafb] font-bold text-sm">{healthRun?.spark[healthRun.spark.length - 1]?.convergence || 'N/A'}</div>
+                                <div className={`text-xs ${(healthRun?.spark[healthRun.spark.length - 1]?.convergence || 0) >= 50 ? 'text-[#a7f3d0]' : 'text-[#fca5a5]'}`}>
+                                  {(healthRun?.spark[healthRun.spark.length - 1]?.convergence || 0) >= 50 ? '✓' : '✗'}
+                                </div>
                               </div>
                               <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
                             </div>
@@ -2241,8 +2230,10 @@ It would also be helpful if you described:
                             </div>
                             <div className="text-right">
                               <div className="flex items-center gap-1.5">
-                                <div className="text-[#f9fafb] font-bold text-sm">18</div>
-                                <div className="text-[#a7f3d0] text-xs">✓</div>
+                                <div className="text-[#f9fafb] font-bold text-sm">{healthRun?.spark[healthRun.spark.length - 1]?.dataIntegrity || 'N/A'}</div>
+                                <div className={`text-xs ${(healthRun?.spark[healthRun.spark.length - 1]?.dataIntegrity || 0) >= 50 ? 'text-[#a7f3d0]' : 'text-[#fca5a5]'}`}>
+                                  {(healthRun?.spark[healthRun.spark.length - 1]?.dataIntegrity || 0) >= 50 ? '✓' : '✗'}
+                                </div>
                               </div>
                               <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
                             </div>
@@ -2270,8 +2261,10 @@ It would also be helpful if you described:
                             </div>
                             <div className="text-right">
                               <div className="flex items-center gap-1.5">
-                                <div className="text-[#f9fafb] font-bold text-sm">82</div>
-                                <div className="text-[#a7f3d0] text-xs">✓</div>
+                                <div className="text-[#f9fafb] font-bold text-sm">{healthRun?.spark[healthRun.spark.length - 1]?.evidenceChain || 'N/A'}</div>
+                                <div className={`text-xs ${(healthRun?.spark[healthRun.spark.length - 1]?.evidenceChain || 0) >= 50 ? 'text-[#a7f3d0]' : 'text-[#fca5a5]'}`}>
+                                  {(healthRun?.spark[healthRun.spark.length - 1]?.evidenceChain || 0) >= 50 ? '✓' : '✗'}
+                                </div>
                               </div>
                               <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
                             </div>
@@ -2299,8 +2292,10 @@ It would also be helpful if you described:
                             </div>
                             <div className="text-right">
                               <div className="flex items-center gap-1.5">
-                                <div className="text-[#f9fafb] font-bold text-sm">81</div>
-                                <div className="text-[#a7f3d0] text-xs">✓</div>
+                                <div className="text-[#f9fafb] font-bold text-sm">{healthRun?.spark[healthRun.spark.length - 1]?.runtimeStability || 'N/A'}</div>
+                                <div className={`text-xs ${(healthRun?.spark[healthRun.spark.length - 1]?.runtimeStability || 0) >= 50 ? 'text-[#a7f3d0]' : 'text-[#fca5a5]'}`}>
+                                  {(healthRun?.spark[healthRun.spark.length - 1]?.runtimeStability || 0) >= 50 ? '✓' : '✗'}
+                                </div>
                               </div>
                               <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
                             </div>
