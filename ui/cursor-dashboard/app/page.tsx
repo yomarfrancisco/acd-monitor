@@ -1,13 +1,5 @@
 "use client"
 
-// Temporary debug logging for environment variables
-if (typeof window !== 'undefined') {
-  console.log('[ENV]', {
-    MODE: process.env.NEXT_PUBLIC_DATA_MODE,
-    BASE: process.env.NEXT_PUBLIC_API_BASE
-  });
-}
-
 import {
   Bot,
   ChevronDown,
@@ -153,12 +145,7 @@ export default function CursorDashboard() {
     setEvidenceError(null)
     
     try {
-      // For binary downloads, we need to handle the URL construction manually
-      const MODE = process.env.NEXT_PUBLIC_DATA_MODE ?? 'mock';
-      const BASE = process.env.NEXT_PUBLIC_API_BASE ?? '';
-      const requestUrl = MODE === 'live' ? `${BASE.replace(/\/+$/, '')}/api/evidence/export` : '/api/evidence/export';
-      
-      const response = await fetch(requestUrl, { method: 'GET' })
+      const response = await fetch('/api/evidence/export', { method: 'GET' })
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`)
       }
@@ -169,20 +156,20 @@ export default function CursorDashboard() {
       const fname = match?.[1] ?? 'acd-evidence.zip'
 
       const blob = await response.blob()
-      const blobUrl = URL.createObjectURL(blob)
+      const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
-      a.href = blobUrl
+      a.href = url
       a.download = fname
       document.body.appendChild(a)
       a.click()
       a.remove()
-      setTimeout(() => URL.revokeObjectURL(blobUrl), 0)
+      URL.revokeObjectURL(url)
       
       setEvidenceExport({
         requestedAt: new Date().toISOString(),
         status: 'READY',
         bundleId: fname.replace('.zip', ''),
-        url: blobUrl
+        url: url
       })
     } catch (error) {
       console.error('Evidence export failed', error)
@@ -238,8 +225,8 @@ export default function CursorDashboard() {
   useEffect(() => {
     const checkHeartbeat = async () => {
       try {
-        const response = await fetchTyped('/api/_status', { cache: 'no-store' })
-        if (response && (response as any).ok) {
+        const response = await fetch('/api/status', { cache: 'no-store' })
+        if (response.ok) {
           setLastHeartbeat(0) // Mock always fresh
           setIsDegradedMode(false)
         } else {
@@ -265,7 +252,7 @@ export default function CursorDashboard() {
       setRiskSummaryLoading(true)
       setRiskSummaryError(null)
       
-      const result = await safe(fetchTyped(`/api/risk/summary?timeframe=${selectedTimeframe}`, { 
+      const result = await safe(fetchTyped(`/risk/summary?timeframe=${selectedTimeframe}`, RiskSummarySchema, { 
         cache: 'no-store' 
       }))
       
@@ -292,7 +279,7 @@ export default function CursorDashboard() {
       setMetricsLoading(true)
       setMetricsError(null)
       
-      const result = await safe(fetchTyped(`/api/metrics/overview?timeframe=${selectedTimeframe}`, { 
+      const result = await safe(fetchTyped(`/metrics/overview?timeframe=${selectedTimeframe}`, MetricsOverviewSchema, { 
         cache: 'no-store' 
       }))
       
@@ -319,7 +306,7 @@ export default function CursorDashboard() {
       setHealthLoading(true)
       setHealthError(null)
       
-      const result = await safe(fetchTyped('/api/health/run', { cache: 'no-store' }))
+      const result = await safe(fetchTyped('/health/run', HealthRunSchema, { cache: 'no-store' }))
       
       if (result.ok) {
         setHealthRun(result.data as HealthRun)
@@ -344,7 +331,7 @@ export default function CursorDashboard() {
       setEventsLoading(true)
       setEventsError(null)
       
-      const result = await safe(fetchTyped(`/api/events?timeframe=${selectedTimeframe}`, { 
+      const result = await safe(fetchTyped(`/events?timeframe=${selectedTimeframe}`, EventsResponseSchema, { 
         cache: 'no-store' 
       }))
       
@@ -371,7 +358,7 @@ export default function CursorDashboard() {
       setDataSourcesLoading(true)
       setDataSourcesError(null)
       
-      const result = await safe(fetchTyped('/api/datasources/status', { cache: 'no-store' }))
+      const result = await safe(fetchTyped('/datasources/status', DataSourcesSchema, { cache: 'no-store' }))
       
       if (result.ok) {
         setDataSources(result.data as DataSources)
