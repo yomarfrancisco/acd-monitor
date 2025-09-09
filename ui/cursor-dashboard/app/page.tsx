@@ -138,6 +138,64 @@ export default function CursorDashboard() {
   // Degraded mode state
   const [isDegradedMode, setIsDegradedMode] = useState(false)
   const [lastHeartbeat, setLastHeartbeat] = useState<number | null>(null)
+
+  // Evidence export handler
+  const handleEvidenceExport = async () => {
+    setEvidenceLoading(true)
+    setEvidenceError(null)
+    
+    try {
+      const response = await fetch('/api/evidence/export', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ mode: 'ready' })
+      })
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      // Check if it's a zip file download
+      const contentType = response.headers.get('content-type')
+      if (contentType === 'application/zip') {
+        // Handle zip file download
+        const blob = await response.blob()
+        const url = window.URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        
+        // Get filename from Content-Disposition header
+        const contentDisposition = response.headers.get('content-disposition')
+        const filename = contentDisposition 
+          ? contentDisposition.split('filename=')[1]?.replace(/"/g, '')
+          : 'acd-evidence.zip'
+        
+        a.download = filename
+        document.body.appendChild(a)
+        a.click()
+        window.URL.revokeObjectURL(url)
+        document.body.removeChild(a)
+        
+        setEvidenceExport({
+          requestedAt: new Date().toISOString(),
+          status: 'READY',
+          bundleId: filename.replace('.zip', ''),
+          url: url
+        })
+      } else {
+        // Handle JSON response (QUEUED status)
+        const data = await response.json()
+        setEvidenceExport(data)
+      }
+    } catch (error) {
+      console.error('Evidence export error:', error)
+      setEvidenceError(error instanceof Error ? error.message : 'Failed to export evidence')
+    } finally {
+      setEvidenceLoading(false)
+    }
+  }
   const [selectedDate, setSelectedDate] = useState<{ from: Date | undefined; to?: Date | undefined } | undefined>({
     from: new Date(),
     to: new Date(),
@@ -1875,9 +1933,15 @@ It would also be helpful if you described:
                             </div>
                             <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
                           </button>
-                          <button className="w-full text-left p-3 bg-bg-surface hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
+                          <button 
+                            onClick={handleEvidenceExport}
+                            disabled={evidenceLoading}
+                            className="w-full text-left p-3 bg-bg-surface hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
                             <div>
-                              <div className="font-medium">Generate Evidence Package</div>
+                              <div className="font-medium">
+                                {evidenceLoading ? 'Generating...' : 'Generate Evidence Package'}
+                              </div>
                               <div className="text-[10px] text-[#a1a1aa] mt-0.5">
                                 Court-ready evidence bundle with cryptographic timestamps
                               </div>
