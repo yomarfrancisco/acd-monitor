@@ -6,6 +6,8 @@ export const maxDuration = 15
 import { NextResponse } from 'next/server';
 import JSZip from 'jszip';
 
+const BACKEND_URL = process.env.BACKEND_URL || 'https://acd-monitor-backend.onrender.com'
+
 // Mock data generators
 function generateRiskSummary() {
   return {
@@ -120,8 +122,53 @@ ${new Date().toISOString()}`;
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const mode = url.searchParams.get('mode') ?? 'ready'; // ready|queued
+  const mode = url.searchParams.get('mode') ?? 'ready';
+  const download = url.searchParams.get('download') === 'true';
 
+  // If download=true, proxy to backend ZIP endpoint
+  if (download) {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/evidence/export/zip`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      
+      if (!response.ok) {
+        throw new Error(`Backend responded with ${response.status}`)
+      }
+      
+      // Stream the ZIP file response
+      const arrayBuffer = await response.arrayBuffer()
+      return new Response(arrayBuffer, {
+        headers: {
+          'Content-Type': 'application/zip',
+          'Content-Disposition': response.headers.get('Content-Disposition') || 'attachment; filename="evidence.zip"',
+        },
+      })
+    } catch (error) {
+      console.error('Failed to fetch ZIP from backend:', error)
+      // Fall through to local ZIP generation
+    }
+  }
+
+  // Try to get metadata from backend first
+  try {
+    const response = await fetch(`${BACKEND_URL}/api/evidence/export`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    
+    if (response.ok) {
+      const data = await response.json()
+      return NextResponse.json(data)
+    }
+  } catch (error) {
+    console.error('Failed to fetch from backend:', error)
+  }
+
+  // Fallback to local generation
   const now = new Date();
   const bundleId = `acd-evidence-${now.toISOString().slice(0, 10).replace(/-/g, '')}-${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}`;
 
@@ -159,10 +206,8 @@ export async function GET(request: Request) {
     
     const filename = `acd-evidence-${now.toISOString().slice(0,16).replace(/[-:T]/g,'')}.zip`;
     
-    // Create a Blob from the binary data to fix TypeScript BodyInit error
-    const blob = new Blob([binary.buffer as ArrayBuffer], { type: 'application/zip' });
-    
-    return new Response(blob, {
+    // Return a binary Response with download headers
+    return new NextResponse(binary, {
       status: 200,
       headers: {
         'Content-Type': 'application/zip',
@@ -222,10 +267,8 @@ export async function POST(request: Request) {
     
     const filename = `acd-evidence-${now.toISOString().slice(0,16).replace(/[-:T]/g,'')}.zip`;
     
-    // Create a Blob from the binary data to fix TypeScript BodyInit error
-    const blob = new Blob([binary.buffer as ArrayBuffer], { type: 'application/zip' });
-    
-    return new Response(blob, {
+    // Return a binary Response with download headers
+    return new NextResponse(binary, {
       status: 200,
       headers: {
         'Content-Type': 'application/zip',

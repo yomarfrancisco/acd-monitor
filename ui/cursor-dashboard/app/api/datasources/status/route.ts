@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 
+const BACKEND_URL = process.env.BACKEND_URL || 'https://acd-monitor-backend.onrender.com'
+
 // Simple deterministic pseudo-random with jitter for "live-ish" feel
 const jitter = (base: number, span: number) => {
   const r = Math.sin(Date.now()/60000) * 0.5 + 0.5; // 0..1 minute wave
@@ -8,7 +10,25 @@ const jitter = (base: number, span: number) => {
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const mode = url.searchParams.get('mode') ?? 'normal'; // normal|degraded
+  
+  try {
+    const response = await fetch(`${BACKEND_URL}/api/datasources/status`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    
+    if (!response.ok) {
+      throw new Error(`Backend responded with ${response.status}`)
+    }
+    
+    const data = await response.json()
+    return NextResponse.json(data)
+  } catch (error) {
+    console.error('Failed to fetch from backend:', error)
+    
+    // Fallback to mock data
+    const mode = url.searchParams.get('mode') ?? 'normal';
 
   const payload = {
     updatedAt: new Date().toISOString(),
@@ -46,7 +66,8 @@ export async function GET(request: Request) {
         quality: mode === 'degraded' ? 0.85 : 0.97
       }
     ]
-  };
+    };
 
-  return NextResponse.json(payload);
+    return NextResponse.json(payload);
+  }
 }

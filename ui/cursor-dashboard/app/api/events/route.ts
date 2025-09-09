@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { EventsResponse, Event } from '@/types/api';
 
+const BACKEND_URL = process.env.BACKEND_URL || 'https://acd-monitor-backend.onrender.com'
+
 // Simple deterministic pseudo-random with jitter for "live-ish" feel
 const jitter = (base: number, span: number) => {
   const r = Math.sin(Date.now()/60000) * 0.5 + 0.5; // 0..1 minute wave
@@ -9,8 +11,29 @@ const jitter = (base: number, span: number) => {
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const timeframe = (url.searchParams.get('timeframe') ?? '30d') as '30d'|'6m'|'1y'|'ytd';
-  const mode = url.searchParams.get('mode') ?? 'normal'; // normal|degraded
+  const timeframe = url.searchParams.get('timeframe') ?? 'ytd';
+  
+  try {
+    const backendUrl = new URL(`${BACKEND_URL}/api/events`)
+    backendUrl.searchParams.set('timeframe', timeframe)
+    
+    const response = await fetch(backendUrl.toString(), {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    
+    if (!response.ok) {
+      throw new Error(`Backend responded with ${response.status}`)
+    }
+    
+    const data = await response.json()
+    return NextResponse.json(data)
+  } catch (error) {
+    console.error('Failed to fetch from backend:', error)
+    
+    // Fallback to mock data
+    const mode = url.searchParams.get('mode') ?? 'normal';
 
   // Generate events based on timeframe
   const events: Event[] = [];
@@ -62,11 +85,12 @@ export async function GET(request: Request) {
   // Sort by timestamp (most recent first)
   events.sort((a, b) => new Date(b.ts).getTime() - new Date(a.ts).getTime());
 
-  const response: EventsResponse = {
-    timeframe,
-    updatedAt: new Date().toISOString(),
-    items: events
-  };
+    const response: EventsResponse = {
+      timeframe,
+      updatedAt: new Date().toISOString(),
+      items: events
+    };
 
-  return NextResponse.json(response);
+    return NextResponse.json(response);
+  }
 }
