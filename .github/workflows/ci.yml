@@ -31,6 +31,9 @@ jobs:
               - 'tests/**'
               - 'requirements*.txt'
               - 'openapi/**'
+              - '.flake8'
+              - 'pyproject.toml'
+              - 'setup.cfg'
             other:
               - '!ui/**'
               - '!src/**'
@@ -38,6 +41,17 @@ jobs:
               - '!tests/**'
               - '!requirements*.txt'
               - '!openapi/**'
+              - '!.flake8'
+              - '!pyproject.toml'
+              - '!setup.cfg'
+              - '!.github/**'
+              - '!docs/**'
+              - '!README*'
+      - name: Debug filter outputs
+        run: |
+          echo "UI changes detected: ${{ steps.filter.outputs.ui }}"
+          echo "Backend changes detected: ${{ steps.filter.outputs.backend }}"
+          echo "Other changes detected: ${{ steps.filter.outputs.other }}"
 
   ui:
     name: UI (Next.js/Tailwind)
@@ -54,9 +68,12 @@ jobs:
           node-version: '20'
           cache: 'npm'
           cache-dependency-path: ui/cursor-dashboard/package-lock.json
-      - run: npm ci
-      - run: npm run typecheck --if-present || npx tsc --noEmit
-      - run: npm run build
+      - name: Install dependencies
+        run: npm ci || npm install
+      - name: Type check
+        run: npm run typecheck --if-present || npx tsc --noEmit
+      - name: Build
+        run: npm run build
 
   backend:
     name: Backend (Python)
