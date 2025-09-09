@@ -7,6 +7,7 @@ import { NextResponse } from 'next/server';
 import JSZip from 'jszip';
 
 const BACKEND_URL = process.env.BACKEND_URL || 'https://acd-monitor-backend.onrender.com'
+const IS_PREVIEW = process.env.VERCEL_ENV === 'preview' || process.env.NEXT_PUBLIC_DATA_MODE === 'live'
 
 // Mock data generators
 function generateRiskSummary() {
@@ -125,7 +126,53 @@ export async function GET(request: Request) {
   const mode = url.searchParams.get('mode') ?? 'ready';
   const download = url.searchParams.get('download') === 'true';
 
-  // If download=true, proxy to backend ZIP endpoint
+  // In production, always use local generation
+  if (!IS_PREVIEW) {
+    const now = new Date();
+    const bundleId = `acd-evidence-${now.toISOString().slice(0, 10).replace(/-/g, '')}-${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}`;
+
+    if (mode === 'queued') {
+      const payload = {
+        requestedAt: now.toISOString(),
+        status: 'QUEUED' as const,
+        bundleId,
+        estSeconds: 45
+      };
+      return NextResponse.json(payload);
+    }
+
+    // Generate local ZIP
+    try {
+      const zip = new JSZip();
+      
+      // Add summary.md
+      zip.file('summary.md', generateSummary());
+      
+      // Add risk_summary.json
+      zip.file('risk_summary.json', JSON.stringify(generateRiskSummary(), null, 2));
+      
+      // Add events.csv
+      zip.file('events.csv', generateEventsCSV());
+      
+      // Add data_source.json
+      zip.file('data_source.json', JSON.stringify(generateDataSources(), null, 2));
+
+      const zipBuffer = await zip.generateAsync({ type: 'arraybuffer' });
+      const filename = `acd-evidence-${now.toISOString().slice(0, 10).replace(/-/g, '')}-${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}.zip`;
+
+      return new Response(zipBuffer, {
+        headers: {
+          'Content-Type': 'application/zip',
+          'Content-Disposition': `attachment; filename="${filename}"`,
+        },
+      });
+    } catch (error) {
+      console.error('Failed to generate ZIP:', error);
+      return NextResponse.json({ error: 'Failed to generate evidence package' }, { status: 500 });
+    }
+  }
+
+  // In preview, try to fetch from backend
   if (download) {
     try {
       const response = await fetch(`${BACKEND_URL}/api/evidence/export/zip`, {
