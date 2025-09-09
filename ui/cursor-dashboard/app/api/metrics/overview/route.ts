@@ -88,7 +88,7 @@ export async function GET(request: Request) {
     'ytd': { stability: 72, synchronization: 20, environmentalSensitivity: 80 }
   };
 
-  const base = baseValues[timeframe];
+  const base = baseValues[timeframe as keyof typeof baseValues] || baseValues.ytd;
   const variance = mode === 'degraded' ? 15 : 8;
 
   const payload = {

@@ -68,6 +68,51 @@ function generateDataSources() {
   };
 }
 
+function generateEventsCSV() {
+  const events = [
+    {
+      id: 'e1',
+      timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+      type: 'MARKET',
+      title: 'Market coordination',
+      description: 'Detected potential coordination patterns',
+      severity: 'LOW',
+      riskScore: 16
+    },
+    {
+      id: 'e2',
+      timestamp: new Date(Date.now() - 10 * 60 * 60 * 1000).toISOString(),
+      type: 'INFO_FLOW',
+      title: 'Information flow anomaly',
+      description: 'Unusual information propagation detected',
+      severity: 'LOW',
+      riskScore: 12
+    },
+    {
+      id: 'e3',
+      timestamp: new Date(Date.now() - 15 * 60 * 60 * 1000).toISOString(),
+      type: 'REGIME_SWITCH',
+      title: 'Regime switch',
+      description: 'Market regime transition detected',
+      severity: 'LOW',
+      riskScore: 18
+    }
+  ];
+
+  const headers = ['id', 'timestamp', 'type', 'title', 'description', 'severity', 'riskScore'];
+  const csvRows = [headers.join(',')];
+  
+  events.forEach(event => {
+    const row = headers.map(header => {
+      const value = event[header as keyof typeof event];
+      return typeof value === 'string' && value.includes(',') ? `"${value}"` : value;
+    });
+    csvRows.push(row.join(','));
+  });
+
+  return csvRows.join('\n');
+}
+
 function generateSummary() {
   return `# Algorithmic Cartel Detection - Evidence Package
 
@@ -160,7 +205,7 @@ export async function GET(request: Request) {
       const zipBuffer = await zip.generateAsync({ type: 'arraybuffer' });
       const filename = `acd-evidence-${now.toISOString().slice(0, 10).replace(/-/g, '')}-${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}.zip`;
 
-      return new Response(zipBuffer, {
+      return new Response(zipBuffer as BodyInit, {
         headers: {
           'Content-Type': 'application/zip',
           'Content-Disposition': `attachment; filename="${filename}"`,
@@ -187,7 +232,7 @@ export async function GET(request: Request) {
       
       // Stream the ZIP file response
       const arrayBuffer = await response.arrayBuffer()
-      return new Response(arrayBuffer, {
+      return new Response(arrayBuffer as BodyInit, {
         headers: {
           'Content-Type': 'application/zip',
           'Content-Disposition': response.headers.get('Content-Disposition') || 'attachment; filename="evidence.zip"',
