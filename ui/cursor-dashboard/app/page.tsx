@@ -36,8 +36,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, ReferenceLine } from "recharts"
 import { CalendarIcon } from "lucide-react"
-import { RiskSummarySchema } from "@/types/api.schemas"
-import type { RiskSummary } from "@/types/api"
+import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema } from "@/types/api.schemas"
+import type { RiskSummary, MetricsOverview, HealthRun, EventsResponse, DataSources, EvidenceExport } from "@/types/api"
 import {
   MessageSquare,
   GitBranch,
@@ -105,6 +105,31 @@ export default function CursorDashboard() {
   const [riskSummary, setRiskSummary] = useState<RiskSummary | null>(null)
   const [riskSummaryLoading, setRiskSummaryLoading] = useState(false)
   const [riskSummaryError, setRiskSummaryError] = useState<string | null>(null)
+  
+  // Metrics overview state
+  const [metricsOverview, setMetricsOverview] = useState<MetricsOverview | null>(null)
+  const [metricsLoading, setMetricsLoading] = useState(false)
+  const [metricsError, setMetricsError] = useState<string | null>(null)
+  
+  // Health run state
+  const [healthRun, setHealthRun] = useState<HealthRun | null>(null)
+  const [healthLoading, setHealthLoading] = useState(false)
+  const [healthError, setHealthError] = useState<string | null>(null)
+  
+  // Events state
+  const [events, setEvents] = useState<EventsResponse | null>(null)
+  const [eventsLoading, setEventsLoading] = useState(false)
+  const [eventsError, setEventsError] = useState<string | null>(null)
+  
+  // Data sources state
+  const [dataSources, setDataSources] = useState<DataSources | null>(null)
+  const [dataSourcesLoading, setDataSourcesLoading] = useState(false)
+  const [dataSourcesError, setDataSourcesError] = useState<string | null>(null)
+  
+  // Evidence export state
+  const [evidenceExport, setEvidenceExport] = useState<EvidenceExport | null>(null)
+  const [evidenceLoading, setEvidenceLoading] = useState(false)
+  const [evidenceError, setEvidenceError] = useState<string | null>(null)
   const [selectedDate, setSelectedDate] = useState<{ from: Date | undefined; to?: Date | undefined } | undefined>({
     from: new Date(),
     to: new Date(),
@@ -179,6 +204,128 @@ export default function CursorDashboard() {
 
     fetchRiskSummary()
   }, [selectedTimeframe, isClient])
+
+  // Fetch metrics overview data when timeframe changes
+  useEffect(() => {
+    const fetchMetricsOverview = async () => {
+      if (!isClient) return
+      
+      setMetricsLoading(true)
+      setMetricsError(null)
+      
+      try {
+        const timeframeParam = selectedTimeframe === "YTD" ? "ytd" : selectedTimeframe.toLowerCase()
+        const response = await fetch(`/api/metrics/overview?timeframe=${timeframeParam}`, { 
+          cache: 'no-store' 
+        })
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        
+        const json = await response.json()
+        const validated = MetricsOverviewSchema.parse(json)
+        setMetricsOverview(validated)
+      } catch (error) {
+        console.error('Failed to fetch metrics overview:', error)
+        setMetricsError(error instanceof Error ? error.message : 'Failed to fetch metrics overview')
+      } finally {
+        setMetricsLoading(false)
+      }
+    }
+
+    fetchMetricsOverview()
+  }, [selectedTimeframe, isClient])
+
+  // Fetch health run data
+  useEffect(() => {
+    const fetchHealthRun = async () => {
+      if (!isClient) return
+      
+      setHealthLoading(true)
+      setHealthError(null)
+      
+      try {
+        const response = await fetch('/api/health/run', { cache: 'no-store' })
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        
+        const json = await response.json()
+        const validated = HealthRunSchema.parse(json)
+        setHealthRun(validated)
+      } catch (error) {
+        console.error('Failed to fetch health run:', error)
+        setHealthError(error instanceof Error ? error.message : 'Failed to fetch health run')
+      } finally {
+        setHealthLoading(false)
+      }
+    }
+
+    fetchHealthRun()
+  }, [isClient])
+
+  // Fetch events data when timeframe changes
+  useEffect(() => {
+    const fetchEvents = async () => {
+      if (!isClient) return
+      
+      setEventsLoading(true)
+      setEventsError(null)
+      
+      try {
+        const timeframeParam = selectedTimeframe === "YTD" ? "ytd" : selectedTimeframe.toLowerCase()
+        const response = await fetch(`/api/events?timeframe=${timeframeParam}`, { 
+          cache: 'no-store' 
+        })
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        
+        const json = await response.json()
+        const validated = EventsResponseSchema.parse(json)
+        setEvents(validated)
+      } catch (error) {
+        console.error('Failed to fetch events:', error)
+        setEventsError(error instanceof Error ? error.message : 'Failed to fetch events')
+      } finally {
+        setEventsLoading(false)
+      }
+    }
+
+    fetchEvents()
+  }, [selectedTimeframe, isClient])
+
+  // Fetch data sources status
+  useEffect(() => {
+    const fetchDataSources = async () => {
+      if (!isClient) return
+      
+      setDataSourcesLoading(true)
+      setDataSourcesError(null)
+      
+      try {
+        const response = await fetch('/api/datasources/status', { cache: 'no-store' })
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        
+        const json = await response.json()
+        const validated = DataSourcesSchema.parse(json)
+        setDataSources(validated)
+      } catch (error) {
+        console.error('Failed to fetch data sources:', error)
+        setDataSourcesError(error instanceof Error ? error.message : 'Failed to fetch data sources')
+      } finally {
+        setDataSourcesLoading(false)
+      }
+    }
+
+    fetchDataSources()
+  }, [isClient])
 
   // Close calendar when switching to agents tab and reset sidebar when switching to dashboard
   const handleTabChange = (tab: "agents" | "dashboard") => {
@@ -974,7 +1121,24 @@ It would also be helpful if you described:
                       </div>
                           {/* Data source indicator */}
                           <div className="text-[9px] text-[#71717a] mt-2 text-center">
-                            Data source: Bloomberg Terminal
+                            {dataSourcesLoading ? (
+                              <div className="animate-pulse">
+                                <div className="h-3 bg-[#2a2a2a] rounded w-32 mx-auto"></div>
+                              </div>
+                            ) : dataSourcesError ? (
+                              <div className="text-[#fca5a5]">Data source: Error</div>
+                            ) : dataSources ? (
+                              <>
+                                Data source: {dataSources.items[0]?.name || 'Bloomberg Terminal'} • 
+                                {dataSources.items[0]?.freshnessSec < 60 
+                                  ? `${dataSources.items[0]?.freshnessSec}s` 
+                                  : `${Math.round((dataSources.items[0]?.freshnessSec || 0) / 60)}m`
+                                } • 
+                                Quality {Math.round((dataSources.items[0]?.quality || 0.96) * 100)}%
+                              </>
+                            ) : (
+                              'Data source: Bloomberg Terminal'
+                            )}
                           </div>
                     </div>
                   </CardContent>
@@ -996,11 +1160,42 @@ It would also be helpful if you described:
                           </div>
                         </div>
                         <div className="text-right">
-                              <div className="flex items-center gap-1.5">
-                                <div className="text-[#f9fafb] font-bold text-sm">65</div>
-                                <div className="text-[#fca5a5] text-xs">✗</div>
-                              </div>
-                          <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
+                              {metricsLoading ? (
+                                <div className="animate-pulse">
+                                  <div className="h-4 bg-[#2a2a2a] rounded w-8 mb-1"></div>
+                                  <div className="h-3 bg-[#2a2a2a] rounded w-12"></div>
+                                </div>
+                              ) : metricsError ? (
+                                <div className="text-center">
+                                  <div className="text-xs text-[#fca5a5] mb-1">Error</div>
+                                  <div className="text-[10px] text-[#a1a1aa]">Retry</div>
+                                </div>
+                              ) : metricsOverview ? (
+                                <>
+                                  <div className="flex items-center gap-1.5">
+                                    <div className="text-[#f9fafb] font-bold text-sm">
+                                      {metricsOverview.items.find(m => m.key === 'stability')?.score || 65}
+                                    </div>
+                                    <div className={`text-xs ${
+                                      metricsOverview.items.find(m => m.key === 'stability')?.direction === 'UP' ? 'text-[#fca5a5]' :
+                                      metricsOverview.items.find(m => m.key === 'stability')?.direction === 'DOWN' ? 'text-[#a7f3d0]' :
+                                      'text-[#a1a1aa]'
+                                    }`}>
+                                      {metricsOverview.items.find(m => m.key === 'stability')?.direction === 'UP' ? '↑' :
+                                       metricsOverview.items.find(m => m.key === 'stability')?.direction === 'DOWN' ? '↓' : '→'}
+                                    </div>
+                                  </div>
+                                  <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
+                                </>
+                              ) : (
+                                <>
+                                  <div className="flex items-center gap-1.5">
+                                    <div className="text-[#f9fafb] font-bold text-sm">65</div>
+                                    <div className="text-[#fca5a5] text-xs">✗</div>
+                                  </div>
+                                  <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
+                                </>
+                              )}
                         </div>
                       </div>
                     </div>
@@ -1025,11 +1220,42 @@ It would also be helpful if you described:
                           </div>
                         </div>
                         <div className="text-right">
-                              <div className="flex items-center gap-1.5">
-                          <div className="text-[#f9fafb] font-bold text-sm">18</div>
-                                <div className="text-[#a7f3d0] text-xs">✓</div>
-                              </div>
-                          <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
+                              {metricsLoading ? (
+                                <div className="animate-pulse">
+                                  <div className="h-4 bg-[#2a2a2a] rounded w-8 mb-1"></div>
+                                  <div className="h-3 bg-[#2a2a2a] rounded w-12"></div>
+                                </div>
+                              ) : metricsError ? (
+                                <div className="text-center">
+                                  <div className="text-xs text-[#fca5a5] mb-1">Error</div>
+                                  <div className="text-[10px] text-[#a1a1aa]">Retry</div>
+                                </div>
+                              ) : metricsOverview ? (
+                                <>
+                                  <div className="flex items-center gap-1.5">
+                                    <div className="text-[#f9fafb] font-bold text-sm">
+                                      {metricsOverview.items.find(m => m.key === 'synchronization')?.score || 18}
+                                    </div>
+                                    <div className={`text-xs ${
+                                      metricsOverview.items.find(m => m.key === 'synchronization')?.direction === 'UP' ? 'text-[#fca5a5]' :
+                                      metricsOverview.items.find(m => m.key === 'synchronization')?.direction === 'DOWN' ? 'text-[#a7f3d0]' :
+                                      'text-[#a1a1aa]'
+                                    }`}>
+                                      {metricsOverview.items.find(m => m.key === 'synchronization')?.direction === 'UP' ? '↑' :
+                                       metricsOverview.items.find(m => m.key === 'synchronization')?.direction === 'DOWN' ? '↓' : '→'}
+                                    </div>
+                                  </div>
+                                  <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
+                                </>
+                              ) : (
+                                <>
+                                  <div className="flex items-center gap-1.5">
+                                    <div className="text-[#f9fafb] font-bold text-sm">18</div>
+                                    <div className="text-[#a7f3d0] text-xs">✓</div>
+                                  </div>
+                                  <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
+                                </>
+                              )}
                         </div>
                       </div>
                     </div>
@@ -1054,11 +1280,42 @@ It would also be helpful if you described:
                           </div>
                         </div>
                         <div className="text-right">
-                              <div className="flex items-center gap-1.5">
-                          <div className="text-[#f9fafb] font-bold text-sm">82</div>
-                                <div className="text-[#a7f3d0] text-xs">✓</div>
-                              </div>
-                          <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
+                              {metricsLoading ? (
+                                <div className="animate-pulse">
+                                  <div className="h-4 bg-[#2a2a2a] rounded w-8 mb-1"></div>
+                                  <div className="h-3 bg-[#2a2a2a] rounded w-12"></div>
+                                </div>
+                              ) : metricsError ? (
+                                <div className="text-center">
+                                  <div className="text-xs text-[#fca5a5] mb-1">Error</div>
+                                  <div className="text-[10px] text-[#a1a1aa]">Retry</div>
+                                </div>
+                              ) : metricsOverview ? (
+                                <>
+                                  <div className="flex items-center gap-1.5">
+                                    <div className="text-[#f9fafb] font-bold text-sm">
+                                      {metricsOverview.items.find(m => m.key === 'environmentalSensitivity')?.score || 82}
+                                    </div>
+                                    <div className={`text-xs ${
+                                      metricsOverview.items.find(m => m.key === 'environmentalSensitivity')?.direction === 'UP' ? 'text-[#fca5a5]' :
+                                      metricsOverview.items.find(m => m.key === 'environmentalSensitivity')?.direction === 'DOWN' ? 'text-[#a7f3d0]' :
+                                      'text-[#a1a1aa]'
+                                    }`}>
+                                      {metricsOverview.items.find(m => m.key === 'environmentalSensitivity')?.direction === 'UP' ? '↑' :
+                                       metricsOverview.items.find(m => m.key === 'environmentalSensitivity')?.direction === 'DOWN' ? '↓' : '→'}
+                                    </div>
+                                  </div>
+                                  <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
+                                </>
+                              ) : (
+                                <>
+                                  <div className="flex items-center gap-1.5">
+                                    <div className="text-[#f9fafb] font-bold text-sm">82</div>
+                                    <div className="text-[#a7f3d0] text-xs">✓</div>
+                                  </div>
+                                  <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
+                                </>
+                              )}
                         </div>
                       </div>
                     </div>
