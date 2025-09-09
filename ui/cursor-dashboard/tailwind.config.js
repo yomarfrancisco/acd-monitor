@@ -41,6 +41,28 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // V0 Palette Anchor - exact hex values
+        bg: {
+          DEFAULT: '#0f0f10',
+          tile: '#1a1a1a',
+          tile2: '#1e1e1e',
+          surface: '#212121',
+          border: '#2a2a2a'
+        },
+        text: {
+          primary: '#f9fafb',
+          secondary: '#a1a1aa',
+          muted: '#71717a'
+        },
+        brand: {
+          primary: '#2563eb',
+          primaryHover: '#1d4ed8'
+        },
+        status: {
+          green: '#10b981',
+          red: '#ef4444',
+          amber: '#f59e0b'
+        }
       },
       borderRadius: {
         lg: "var(--radius)",
