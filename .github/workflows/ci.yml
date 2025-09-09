@@ -2,143 +2,89 @@ name: ci
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, feature/** ]
   pull_request:
+  workflow_dispatch:
 
 jobs:
-  changes:
+  detect-changes:
     name: Detect changed areas
     runs-on: ubuntu-latest
     outputs:
-      backend: ${{ steps.filter.outputs.backend }}
       ui: ${{ steps.filter.outputs.ui }}
+      backend: ${{ steps.filter.outputs.backend }}
+      other: ${{ steps.filter.outputs.other }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Filter paths
-        id: filter
+      - uses: actions/checkout@v4
+      - id: filter
         uses: dorny/paths-filter@v3
         with:
-            # Treat these as "backend" changes
-            filters: |
-              backend:
-                - 'src/**'
-                - 'tests/**'
-                - 'schemas/**'
-                - 'openapi/**'
-                - 'scripts/**'
-                - 'requirements*.txt'
-                - '.flake8'
-                - 'pyproject.toml'
-                - 'setup.cfg'
-              # Treat these as "ui" changes
-              ui:
-                - 'ui/**'
-                - 'package.json'
-                - 'package-lock.json'
-                - 'pnpm-lock.yaml'
-                - 'npm-shrinkwrap.json'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          filters: |
+            ui:
+              - 'ui/**'
+              - 'package.json'
+              - 'package-lock.json'
+            backend:
+              - 'src/**'
+              - 'schemas/**'
+              - 'tests/**'
+              - 'requirements*.txt'
+              - 'openapi/**'
+            other:
+              - '!ui/**'
+              - '!src/**'
+              - '!schemas/**'
+              - '!tests/**'
+              - '!requirements*.txt'
+              - '!openapi/**'
 
-  # -------------------- Python backend CI --------------------
-  backend-test:
-    name: Backend: lint & tests
-    needs: changes
-    if: needs.changes.outputs.backend == 'true'
+  ui:
+    name: UI (Next.js/Tailwind)
+    needs: detect-changes
+    if: needs.detect-changes.outputs.ui == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ui/cursor-dashboard
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: ui/cursor-dashboard/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck --if-present || npx tsc --noEmit
+      - run: npm run build
+
+  backend:
+    name: Backend (Python)
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backend == 'true'
     runs-on: ubuntu-latest
     env:
       PYTHONPATH: ${{ github.workspace }}:${{ github.workspace }}/src
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-          cache: "pip"
-
-      - name: Show environment
-        run: |
-          python -V
-          pip -V
-          python - <<'PY'
-          import sys, platform, os
-          print("platform:", platform.platform())
-          print("cwd:", os.getcwd())
-          print("PYTHONPATH:", os.environ.get("PYTHONPATH"))
-          print("sys.path[0:5]:", sys.path[:5])
-          PY
-          echo "Repo tree (top-level):"
-          ls -la
-          echo "src tree:"
-          find src -maxdepth 2 -type f | sort
-
+          python-version: '3.11'
+          cache: 'pip'
       - name: Install deps
         run: |
           pip install -r requirements.txt
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
-
-      - name: Lint with flake8
+      - name: Lint
         run: flake8
-
-      - name: Format check with black
+      - name: Format check
         run: black --check src tests
-
-      - name: Pytest collect-only (debug)
-        if: always()
-        shell: bash
+      - name: Tests
         run: |
-          set +e
-          pytest --collect-only -q 2>&1 | tee collect.log
-          exit 0
-
-      - name: Run tests with pytest (verbose, keep logs)
-        shell: bash
-        continue-on-error: true
-        run: |
-          set -o pipefail
-          pytest -vv --maxfail=5 --disable-warnings --cov=src --cov-report=xml:coverage.xml 2>&1 | tee pytest.log
-          echo "${PIPESTATUS[0]}" > pytest_exit_code.txt
-          ls -l pytest.log pytest_exit_code.txt || true
-
-          echo "============================================"
-          echo " 🔎 CI Failure Summary"
-          echo "============================================"
-          if grep -q "FAILED" pytest.log; then
-            echo "❌ Failing tests detected:"
-            grep "FAILED" pytest.log | cut -d' ' -f1 | sort -u
-            echo "--------------------------------------------"
-            echo "First failure details:"
-            grep -m1 "FAILED" pytest.log
-            grep -m1 -A10 -B5 "FAILED" pytest.log || true
-            echo "--------------------------------------------"
-          else
-            echo "✅ All tests passed."
-          fi
-
-      - name: Upload debug artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: ci-debug-logs
-          path: |
-            pytest.log
-            pytest_exit_code.txt
-            coverage.xml
-          retention-days: 7
-          if-no-files-found: warn
-
-      - name: Fail job if tests failed
-        if: always()
-        run: |
-          exit_code=$(cat pytest_exit_code.txt 2>/dev/null || echo 0)
-          echo "pytest exit code: $exit_code"
-          if [ "$exit_code" != "0" ]; then exit 1; fi
-
-      - name: Upload coverage to Codecov
-        if: ${{ env.CODECOV_TOKEN != '' }}
+          pytest -vv --maxfail=5 --disable-warnings --cov=src --cov-report=xml:coverage.xml
+      - name: Upload coverage
+        if: env.CODECOV_TOKEN != ''
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -146,31 +92,11 @@ jobs:
           fail_ci_if_error: false
           verbose: true
 
-  # -------------------- UI CI --------------------
-  ui-check:
-    name: UI: typecheck & build
-    needs: changes
-    if: needs.changes.outputs.ui == 'true'
+  noop:
+    name: No-op (no matching changes)
+    needs: detect-changes
+    if: needs.detect-changes.outputs.ui != 'true' && needs.detect-changes.outputs.backend != 'true'
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ui/cursor-dashboard
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Use Node.js 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: ui/cursor-dashboard/package-lock.json
-
-      - name: Install deps
-        run: npm ci
-
-      - name: Type check
-        run: npx tsc --noEmit
-
-      - name: Build
-        run: npm run build
+      - run: |
+          echo "No UI or backend paths changed. (This is normal for docs/.github-only edits.)"
