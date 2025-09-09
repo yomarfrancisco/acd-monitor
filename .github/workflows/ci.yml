@@ -57,6 +57,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Verify static assets
+        run: test -d .next/static/css && test -d .next/static/chunks/app
+
   backend:
     needs: detect
     if: needs.detect.outputs.backend == 'true'
