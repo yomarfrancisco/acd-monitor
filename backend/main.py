@@ -19,12 +19,11 @@ PREVIEW_REGEX = r"^https://.*\.vercel\.app$"
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[PROD_ORIGIN, PREVIEW_ORIGIN],
-    allow_origin_regex=PREVIEW_REGEX,
+    allow_origins=["*"],  # Temporarily allow all origins for debugging
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
     expose_headers=["Content-Disposition"],
-    allow_credentials=False,  # no cookies; enables wide ACAO safely
+    allow_credentials=False,
     max_age=86400,
 )
 
