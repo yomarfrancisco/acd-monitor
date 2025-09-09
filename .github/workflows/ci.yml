@@ -4,22 +4,20 @@ on:
   push:
     branches: [ main, feature/** ]
   pull_request:
-  workflow_dispatch:
 
 jobs:
-  detect-changes:
-    name: Detect changed areas
+  # 1) Detect what changed
+  detect:
     runs-on: ubuntu-latest
     outputs:
       ui: ${{ steps.filter.outputs.ui }}
       backend: ${{ steps.filter.outputs.backend }}
-      other: ${{ steps.filter.outputs.other }}
     steps:
       - uses: actions/checkout@v4
       - id: filter
         uses: dorny/paths-filter@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          # If a path pattern isn't listed under a filter, it won't trigger that filter.
           filters: |
             ui:
               - 'ui/**'
@@ -27,93 +25,77 @@ jobs:
               - 'package-lock.json'
             backend:
               - 'src/**'
-              - 'schemas/**'
               - 'tests/**'
-              - 'requirements*.txt'
-              - 'openapi/**'
+              - 'schemas/**'
               - '.flake8'
               - 'pyproject.toml'
               - 'setup.cfg'
-            other:
-              - '!ui/**'
-              - '!src/**'
-              - '!schemas/**'
-              - '!tests/**'
-              - '!requirements*.txt'
-              - '!openapi/**'
-              - '!.flake8'
-              - '!pyproject.toml'
-              - '!setup.cfg'
-              - '!.github/**'
-              - '!docs/**'
-              - '!README*'
-      - name: Debug filter outputs
-        run: |
-          echo "UI changes detected: ${{ steps.filter.outputs.ui }}"
-          echo "Backend changes detected: ${{ steps.filter.outputs.backend }}"
-          echo "Other changes detected: ${{ steps.filter.outputs.other }}"
 
+  # 2) UI pipeline (Next.js/Tailwind) — only when UI changed
   ui:
     name: UI (Next.js/Tailwind)
-    needs: detect-changes
-    if: needs.detect-changes.outputs.ui == 'true'
+    needs: detect
+    if: needs.detect.outputs.ui == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ui/cursor-dashboard
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
           cache-dependency-path: ui/cursor-dashboard/package-lock.json
-      - name: Install dependencies
+
+      - name: Install deps (ci with fallback)
         run: npm ci || npm install
-      - name: Type check
-        run: npm run typecheck --if-present || npx tsc --noEmit
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
       - name: Build
         run: npm run build
 
+  # 3) Backend pipeline (Python) — only when backend changed
   backend:
     name: Backend (Python)
-    needs: detect-changes
-    if: needs.detect-changes.outputs.backend == 'true'
+    needs: detect
+    if: needs.detect.outputs.backend == 'true'
     runs-on: ubuntu-latest
     env:
       PYTHONPATH: ${{ github.workspace }}:${{ github.workspace }}/src
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-          cache: 'pip'
+          python-version: "3.11"
+          cache: "pip"
+
       - name: Install deps
         run: |
           pip install -r requirements.txt
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
-      - name: Lint
+
+      - name: Lint with flake8
         run: flake8
-      - name: Format check
+
+      - name: Format check with black
         run: black --check src tests
-      - name: Tests
-        run: |
-          pytest -vv --maxfail=5 --disable-warnings --cov=src --cov-report=xml:coverage.xml
-      - name: Upload coverage
-        if: env.CODECOV_TOKEN != ''
+
+      - name: Run tests with pytest (coverage)
+        run: pytest -vv --maxfail=5 --disable-warnings --cov=src --cov-report=xml:coverage.xml
+
+      - name: Upload coverage to Codecov
+        if: ${{ env.CODECOV_TOKEN != '' }}
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage.xml
           fail_ci_if_error: false
           verbose: true
-
-  noop:
-    name: No-op (no matching changes)
-    needs: detect-changes
-    if: needs.detect-changes.outputs.ui != 'true' && needs.detect-changes.outputs.backend != 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - run: |
-          echo "No UI or backend paths changed. (This is normal for docs/.github-only edits.)"
