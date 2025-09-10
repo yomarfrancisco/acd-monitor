@@ -124,6 +124,31 @@ async function testAgentChatAPI() {
         console.log('⚠ Agent Chat API - UI message format test returned error mode');
       }
     }
+
+    // Test minimal payload (first-turn scenario)
+    console.log('Testing Agent Chat API with minimal payload...');
+    const minimalResponse = await fetch('http://localhost:3004/api/agent/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        messages: [
+          { role: 'user', content: 'hi' }
+        ]
+      }),
+    });
+
+    if (minimalResponse.ok) {
+      const minimalData = await minimalResponse.json();
+      const agentMode = minimalResponse.headers.get('x-agent-mode');
+      
+      if (agentMode !== 'error' && minimalData.reply && typeof minimalData.reply === 'string') {
+        console.log('✓ Agent Chat API - minimal payload test passed');
+      } else {
+        console.log('⚠ Agent Chat API - minimal payload test failed');
+      }
+    }
     
   } catch (error) {
     console.error('Agent Chat API test failed:', error.message);

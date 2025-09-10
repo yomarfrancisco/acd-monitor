@@ -298,13 +298,15 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
     // Check if streaming is enabled (preview only)
     const streamEnabled = process.env.NEXT_PUBLIC_AGENT_CHAT_STREAM === 'true' && process.env.VERCEL_ENV === 'preview';
     
-    // Prepare correct Chatbase API payload
+    // Prepare correct Chatbase API payload - ALWAYS include required fields
+    const CHATBASE_URL = 'https://www.chatbase.co/api/v1/chat';
+    const CHATBOT_ID = process.env.CHATBASE_ASSISTANT_ID!;
     const chatbasePayload = {
-      chatbotId: assistantId,
-      messages: trimmedMessages,
-      sessionId: sessionId || `session_${Date.now()}`,
-      stream: streamEnabled,
-      temperature: 0
+      chatbotId: CHATBOT_ID,              // REQUIRED every request
+      messages: trimmedMessages,          // [{ role: 'user'|'assistant', content: string }]
+      sessionId: sessionId || `session_${Date.now()}`, // pass-through (optional)
+      stream: streamEnabled,              // explicit for non-stream
+      temperature: 0                      // deterministic
     };
 
     // If streaming is enabled, try streaming first with fallback to non-streaming
@@ -328,8 +330,13 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
 
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
-        // Debug logging for preview environment
+        // Preview-only diagnostics
         if (process.env.VERCEL_ENV === 'preview') {
+          console.info('CHATBASE OUTBOUND', {
+            chatbotIdPresent: Boolean(chatbasePayload.chatbotId),
+            messageCount: chatbasePayload.messages?.length ?? 0,
+            firstRoles: chatbasePayload.messages?.slice(0, 3).map(m => m.role),
+          });
           console.info('CHATBASE: Attempting API call');
           console.info('CHATBASE: URL:', `${baseUrl}/v1/chat`);
           console.info('CHATBASE: Headers:', {
@@ -361,6 +368,11 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
           if (debugMode) {
             headers['x-agent-payload'] = JSON.stringify(chatbasePayload).substring(0, 120);
           }
+          // Preview-only debug headers
+          if (process.env.VERCEL_ENV === 'preview') {
+            headers['x-agent-payload-has-chatbotid'] = Boolean(chatbasePayload.chatbotId).toString();
+            headers['x-agent-payload-message-count'] = (chatbasePayload.messages?.length ?? 0).toString();
+          }
           
           return NextResponse.json(
             { 
@@ -387,13 +399,15 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
           console.info(`CHATBASE: API call failed with ${response.status}:`, lastUpstreamBody.substring(0, 200));
         }
 
-        // Handle 4xx client errors - return error response, don't fall back to mock
-        if (response.status >= 400 && response.status < 500) {
-          const headers: Record<string, string> = { 'x-agent-mode': 'error' };
-          if (process.env.VERCEL_ENV === 'preview') {
-            headers['x-agent-upstream-status'] = response.status.toString();
-            headers['x-agent-upstream-body'] = lastUpstreamBody ? lastUpstreamBody.substring(0, 120).replace(/[^\x20-\x7E]/g, '') : 'No body';
-          }
+                    // Handle 4xx client errors - return error response, don't fall back to mock
+                    if (response.status >= 400 && response.status < 500) {
+                      const headers: Record<string, string> = { 'x-agent-mode': 'error' };
+                      if (process.env.VERCEL_ENV === 'preview') {
+                        headers['x-agent-upstream-status'] = response.status.toString();
+                        headers['x-agent-upstream-body'] = lastUpstreamBody ? lastUpstreamBody.substring(0, 120).replace(/[^\x20-\x7E]/g, '') : 'No body';
+                        headers['x-agent-payload-has-chatbotid'] = Boolean(chatbasePayload.chatbotId).toString();
+                        headers['x-agent-payload-message-count'] = (chatbasePayload.messages?.length ?? 0).toString();
+                      }
           
           return NextResponse.json(
             { 
