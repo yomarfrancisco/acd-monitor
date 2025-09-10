@@ -1,23 +1,29 @@
-import type { ZodTypeAny } from "zod";
+// lib/backendAdapter.ts
 
-const DATA_MODE = (process.env.NEXT_PUBLIC_DATA_MODE ?? "mock") as "mock"|"live";
-const BACKEND_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL ?? "";
-
+/**
+ * Always use Next.js API routes - no direct backend calls from browser
+ * This ensures we go through our server-side proxy which handles CORS properly
+ */
 export async function fetchTyped<T>(
   path: string,
-  schema: ZodTypeAny,
+  schema: any,
   init?: RequestInit
 ): Promise<T> {
-  const url =
-    DATA_MODE === "live"
-      ? `${BACKEND_BASE_URL}${path}`
-      : `${process.env.NEXT_PUBLIC_API_BASE ?? "/api"}${path}`;
+  // Always use Next.js API routes - prepend /api if not already present
+  const url = path.startsWith('/api/') ? path : `/api${path.startsWith('/') ? '' : '/'}${path}`;
 
-  const res = await fetch(url, { ...init, next: { revalidate: 0 } });
+  const res = await fetch(url, {
+    headers: {
+      'Content-Type': 'application/json',
+      ...(init?.headers || {}),
+    },
+    ...init,
+    cache: 'no-store',
+  });
+
   if (!res.ok) {
-    throw new Error(`HTTP ${res.status} ${res.statusText}`);
+    const text = await res.text().catch(() => '');
+    throw new Error(`HTTP ${res.status} ${res.statusText} at ${url} :: ${text}`);
   }
-  const json = await res.json();
-  const parsed = schema.parse(json); // Zod contract check
-  return parsed as T;
+  return (await res.json()) as T;
 }

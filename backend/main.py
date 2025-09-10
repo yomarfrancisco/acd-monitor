@@ -11,13 +11,20 @@ import zipfile
 app = FastAPI(title="ACD Monitor API", version="1.0.0")
 
 # CORS middleware for Vercel frontend
-origins = ["https://*.vercel.app", "https://acd-monitor.vercel.app", "http://localhost:3004"]
+PROD_ORIGIN = "https://acd-monitor.vercel.app"
+PREVIEW_ORIGIN = (
+    "https://acd-monitor-git-feat-pr-51da97-ygorfrancisco-gmailcoms-projects.vercel.app"
+)
+PREVIEW_REGEX = r"^https://.*\.vercel\.app$"
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
+    allow_origins=["*"],  # Temporarily allow all origins for debugging
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
+    expose_headers=["Content-Disposition"],
+    allow_credentials=False,
+    max_age=86400,
 )
 
 
