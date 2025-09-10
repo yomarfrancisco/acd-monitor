@@ -39,7 +39,7 @@ import { CalendarIcon } from "lucide-react"
 import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema } from "@/types/api.schemas"
 import { fetchTyped } from "@/lib/backendAdapter"
 import { safe } from "@/lib/safe"
-import { resilientFetch, resilientSafe } from "@/lib/resilient-api"
+import { resilientFetch } from "@/lib/resilient-api"
 import { DegradedModeBanner } from "@/components/DegradedModeBanner"
 import type { RiskSummary, MetricsOverview, HealthRun, EventsResponse, DataSources, EvidenceExport } from "@/types/api"
 import {
@@ -178,12 +178,12 @@ export default function CursorDashboard() {
         url: url
       })
       
-      toast.success('Evidence package downloaded successfully')
+      console.log('Evidence package downloaded successfully')
     } catch (error) {
       console.error('Evidence export failed', error)
       const errorMessage = error instanceof Error ? error.message : 'Failed to export evidence'
       setEvidenceError(errorMessage)
-      toast.error(`Evidence export failed: ${errorMessage}`)
+      console.error(`Evidence export failed: ${errorMessage}`)
     } finally {
       setEvidenceLoading(false)
     }
@@ -234,16 +234,9 @@ export default function CursorDashboard() {
   // Heartbeat check for degraded mode
   useEffect(() => {
     const checkHeartbeat = async () => {
-      const result = await resilientSafe(resilientFetch('/status', RiskSummarySchema, {
-        showWarmingToast: false // Don't show warming toast for background heartbeat
-      }))
-      
-      if (result.ok) {
-        setLastHeartbeat(0) // Mock always fresh
-        setIsDegradedMode(false)
-      } else {
-        setIsDegradedMode(true)
-      }
+      const result = await fetchTyped('/status', RiskSummarySchema)
+      setLastHeartbeat(0) // Mock always fresh
+      setIsDegradedMode(false)
     }
 
     if (isClient) {
@@ -261,16 +254,11 @@ export default function CursorDashboard() {
       setRiskSummaryLoading(true)
       setRiskSummaryError(null)
       
-      const result = await resilientSafe(resilientFetch(`/risk/summary?timeframe=${selectedTimeframe}`, RiskSummarySchema))
+      const result = await fetchTyped(`/risk/summary?timeframe=${selectedTimeframe}`, RiskSummarySchema)
       
-      if (result.ok) {
-        setRiskSummary(result.data as RiskSummary)
-        setRiskSummaryError(null)
-        setIsDegradedMode(false)
-      } else {
-        setRiskSummaryError(result.error)
-        setIsDegradedMode(true)
-      }
+      setRiskSummary(result as RiskSummary)
+      setRiskSummaryError(null)
+      setIsDegradedMode(false)
       
       setRiskSummaryLoading(false)
     }
@@ -286,16 +274,11 @@ export default function CursorDashboard() {
       setMetricsLoading(true)
       setMetricsError(null)
       
-      const result = await resilientSafe(resilientFetch(`/metrics/overview?timeframe=${selectedTimeframe}`, MetricsOverviewSchema))
+      const result = await fetchTyped(`/metrics/overview?timeframe=${selectedTimeframe}`, MetricsOverviewSchema)
       
-      if (result.ok) {
-        setMetricsOverview(result.data as MetricsOverview)
-        setMetricsError(null)
-        setIsDegradedMode(false)
-      } else {
-        setMetricsError(result.error)
-        setIsDegradedMode(true)
-      }
+      setMetricsOverview(result as MetricsOverview)
+      setMetricsError(null)
+      setIsDegradedMode(false)
       
       setMetricsLoading(false)
     }
@@ -311,16 +294,11 @@ export default function CursorDashboard() {
       setHealthLoading(true)
       setHealthError(null)
       
-      const result = await resilientSafe(resilientFetch('/health/run', HealthRunSchema))
+      const result = await fetchTyped('/health/run', HealthRunSchema)
       
-      if (result.ok) {
-        setHealthRun(result.data as HealthRun)
-        setHealthError(null)
-        setIsDegradedMode(false)
-      } else {
-        setHealthError(result.error)
-        setIsDegradedMode(true)
-      }
+      setHealthRun(result as HealthRun)
+      setHealthError(null)
+      setIsDegradedMode(false)
       
       setHealthLoading(false)
     }
@@ -336,16 +314,11 @@ export default function CursorDashboard() {
       setEventsLoading(true)
       setEventsError(null)
       
-      const result = await resilientSafe(resilientFetch(`/events?timeframe=${selectedTimeframe}`, EventsResponseSchema))
+      const result = await fetchTyped(`/events?timeframe=${selectedTimeframe}`, EventsResponseSchema)
       
-      if (result.ok) {
-        setEvents(result.data as EventsResponse)
-        setEventsError(null)
-        setIsDegradedMode(false)
-      } else {
-        setEventsError(result.error)
-        setIsDegradedMode(true)
-      }
+      setEvents(result as EventsResponse)
+      setEventsError(null)
+      setIsDegradedMode(false)
       
       setEventsLoading(false)
     }
@@ -361,16 +334,11 @@ export default function CursorDashboard() {
       setDataSourcesLoading(true)
       setDataSourcesError(null)
       
-      const result = await resilientSafe(resilientFetch('/datasources/status', DataSourcesSchema))
+      const result = await fetchTyped('/datasources/status', DataSourcesSchema)
       
-      if (result.ok) {
-        setDataSources(result.data as DataSources)
-        setDataSourcesError(null)
-        setIsDegradedMode(false)
-      } else {
-        setDataSourcesError(result.error)
-        setIsDegradedMode(true)
-      }
+      setDataSources(result as DataSources)
+      setDataSourcesError(null)
+      setIsDegradedMode(false)
       
       setDataSourcesLoading(false)
     }
