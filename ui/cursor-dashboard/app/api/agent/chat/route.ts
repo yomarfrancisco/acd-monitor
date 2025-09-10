@@ -132,12 +132,17 @@ async function handleStreamingResponse(
       throw new Error(`Chatbase streaming API responded with ${response.status}: ${response.statusText}`);
     }
 
-    // Create a streaming response
+    // Check if response is actually streaming
+    if (!response.headers.get('content-type')?.includes('text/event-stream')) {
+      throw new Error('Response is not a streaming response');
+    }
+
+    // Create a streaming response with proper reader guards
     const stream = new ReadableStream({
-      start(controller) {
+      start(streamController) {
         const reader = response.body?.getReader();
         if (!reader) {
-          controller.close();
+          streamController.close();
           return;
         }
 
@@ -145,9 +150,16 @@ async function handleStreamingResponse(
         let buffer = '';
 
         function pump(): Promise<void> {
+          // TypeScript guard: reader is guaranteed to be non-null here
+          if (!reader) {
+            streamController.close();
+            return Promise.resolve();
+          }
+          
           return reader.read().then(({ done, value }) => {
             if (done) {
-              controller.close();
+              streamController.close();
+              if (reader) reader.releaseLock();
               return;
             }
 
@@ -163,14 +175,15 @@ async function handleStreamingResponse(
                 if (line.startsWith('data: ')) {
                   const data = line.slice(6);
                   if (data === '[DONE]') {
-                    controller.close();
+                    streamController.close();
+                    if (reader) reader.releaseLock();
                     return;
                   }
                   
                   const parsed = JSON.parse(data);
                   if (parsed.text) {
                     // Send the text chunk to client
-                    controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({ text: parsed.text })}\n\n`));
+                    streamController.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({ text: parsed.text })}\n\n`));
                   }
                 }
               } catch (e) {
@@ -182,6 +195,12 @@ async function handleStreamingResponse(
             }
 
             return pump();
+          }).catch((error) => {
+            if (process.env.VERCEL_ENV === 'preview') {
+              console.error('CHATBASE: Streaming error:', error);
+            }
+            streamController.close();
+            if (reader) reader.releaseLock();
           });
         }
 
@@ -339,6 +358,28 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
 
         if (process.env.VERCEL_ENV === 'preview') {
           console.info(`CHATBASE: API call failed with ${response.status}:`, lastUpstreamBody.substring(0, 200));
+        }
+
+        // Handle 4xx client errors - return error response, don't fall back to mock
+        if (response.status >= 400 && response.status < 500) {
+          const headers: Record<string, string> = { 'x-agent-mode': 'error' };
+          if (process.env.VERCEL_ENV === 'preview') {
+            headers['x-agent-upstream-status'] = response.status.toString();
+            headers['x-agent-upstream-body'] = lastUpstreamBody ? lastUpstreamBody.substring(0, 120).replace(/[^\x20-\x7E]/g, '') : 'No body';
+          }
+          
+          return NextResponse.json(
+            { 
+              error: 'Chatbase API client error',
+              upstream_status: response.status,
+              upstream_body: lastUpstreamBody ? lastUpstreamBody.substring(0, 120) : null,
+              sessionId: sessionId || `session_${Date.now()}`
+            },
+            { 
+              status: 400, 
+              headers
+            }
+          );
         }
 
         // Only retry on 5xx server errors

@@ -453,14 +453,26 @@ export default function CursorDashboard() {
               return // Exit early if streaming succeeded
             } else {
               // Fallback to non-streaming if response is not streamed
-              const { reply, sessionId: newId } = await res.json()
-              const agentResponse = {
-                id: (Date.now() + 1).toString(),
-                type: "agent" as const,
-                content: reply,
-                timestamp: new Date(),
+              const data = await res.json()
+              
+              // Check if this is an error response
+              if (data.error) {
+                const agentResponse = {
+                  id: (Date.now() + 1).toString(),
+                  type: "agent" as const,
+                  content: `I encountered an error: ${data.error}. Please try again.`,
+                  timestamp: new Date(),
+                }
+                setMessages((prev) => [...prev, agentResponse])
+              } else {
+                const agentResponse = {
+                  id: (Date.now() + 1).toString(),
+                  type: "agent" as const,
+                  content: data.reply,
+                  timestamp: new Date(),
+                }
+                setMessages((prev) => [...prev, agentResponse])
               }
-              setMessages((prev) => [...prev, agentResponse])
               return // Exit early if non-streaming fallback succeeded
             }
           } catch (streamError) {
@@ -481,15 +493,26 @@ export default function CursorDashboard() {
             signal: abortController.signal,
           })
           
-          const { reply, sessionId: newId } = await res.json()
+          const data = await res.json()
           
-          const agentResponse = {
-            id: (Date.now() + 1).toString(),
-            type: "agent" as const,
-            content: reply,
-            timestamp: new Date(),
+          // Check if this is an error response
+          if (data.error) {
+            const agentResponse = {
+              id: (Date.now() + 1).toString(),
+              type: "agent" as const,
+              content: `I encountered an error: ${data.error}. Please try again.`,
+              timestamp: new Date(),
+            }
+            setMessages((prev) => [...prev, agentResponse])
+          } else {
+            const agentResponse = {
+              id: (Date.now() + 1).toString(),
+              type: "agent" as const,
+              content: data.reply,
+              timestamp: new Date(),
+            }
+            setMessages((prev) => [...prev, agentResponse])
           }
-          setMessages((prev) => [...prev, agentResponse])
         }
       } catch (error) {
         console.error('API call failed:', error)
