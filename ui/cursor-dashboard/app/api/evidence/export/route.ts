@@ -232,15 +232,19 @@ export async function GET(request: Request) {
   // Generate local ZIP (fallback or production mode)
   try {
     console.log('Generating local ZIP fallback');
-    const zipBuffer = await generateFallbackZip();
+    const zipBytes: Uint8Array = await generateFallbackZip();
     const now = new Date();
     const filename = `acd-evidence-${now.toISOString().slice(0, 10).replace(/-/g, '')}-${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}.zip`;
+
+    // Convert to Node Buffer for Response
+    const zipBuffer = Buffer.from(zipBytes);
 
     return new Response(zipBuffer, {
       status: 200,
       headers: {
         'Content-Type': 'application/zip',
         'Content-Disposition': `attachment; filename="${filename}"`,
+        'Content-Length': String(zipBuffer.byteLength),
         'Cache-Control': 'no-store',
       },
     });
@@ -274,15 +278,19 @@ export async function POST(request: Request) {
   // Generate ZIP for POST requests
   try {
     console.log('Generating ZIP for POST request');
-    const zipBuffer = await generateFallbackZip();
+    const zipBytes: Uint8Array = await generateFallbackZip();
     const now = new Date();
     const filename = `acd-evidence-${now.toISOString().slice(0, 10).replace(/-/g, '')}-${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}.zip`;
+
+    // Convert to Node Buffer for Response
+    const zipBuffer = Buffer.from(zipBytes);
 
     return new Response(zipBuffer, {
       status: 200,
       headers: {
         'Content-Type': 'application/zip',
         'Content-Disposition': `attachment; filename="${filename}"`,
+        'Content-Length': String(zipBuffer.byteLength),
         'Cache-Control': 'no-store',
       },
     });
