@@ -455,7 +455,7 @@ It would also be helpful if you described:
             <p className="text-[10px] text-[#a1a1aa] mb-2.5">Additional shell content for {pageTitle} page.</p>
             <Button
               variant="outline"
-              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2"
+              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
             >
               Shell Action
             </Button>
@@ -1386,7 +1386,7 @@ It would also be helpful if you described:
                         <Button
                           variant="outline"
                           size="sm"
-                          className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2"
+                          className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
                         >
                           Connect
                         </Button>
@@ -1404,7 +1404,7 @@ It would also be helpful if you described:
                     </p>
                     <Button
                       variant="outline"
-                      className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2"
+                      className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
                     >
                       Invite Your Team
                     </Button>
@@ -1747,7 +1747,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2"
+                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
                             >
                               Connect
                             </Button>
@@ -1772,7 +1772,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2"
+                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
                             >
                               Connect
                             </Button>
@@ -1797,7 +1797,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2"
+                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
                             >
                               Connect
                             </Button>
@@ -1822,7 +1822,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2"
+                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
                             >
                               Connect
                             </Button>
@@ -1938,7 +1938,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2"
+                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
                             >
                               Deploy
                             </Button>
@@ -1963,7 +1963,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2"
+                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
                             >
                               Deploy
                             </Button>
@@ -1988,7 +1988,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2"
+                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
                             >
                               Deploy
                             </Button>
@@ -2013,7 +2013,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2"
+                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
                             >
                               Deploy
                             </Button>
@@ -2708,7 +2708,7 @@ It would also be helpful if you described:
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2"
+                                className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
                               >
                                 Download
                               </Button>
@@ -2739,7 +2739,7 @@ It would also be helpful if you described:
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2"
+                                className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
                               >
                                 Download
                               </Button>
@@ -2770,7 +2770,7 @@ It would also be helpful if you described:
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2"
+                                className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
                               >
                                 Download
                               </Button>
