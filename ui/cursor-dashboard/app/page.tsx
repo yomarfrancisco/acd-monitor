@@ -226,6 +226,7 @@ export default function CursorDashboard() {
     Array<{ id: string; type: "user" | "agent"; content: string; timestamp: Date }>
   >([])
   const [hasEngaged, setHasEngaged] = useState<boolean>(false)
+  const [isAssistantTyping, setIsAssistantTyping] = useState<boolean>(false)
 
   useEffect(() => {
     setIsClient(true)
@@ -360,6 +361,9 @@ export default function CursorDashboard() {
     const messageContent = customMessage || inputValue.trim()
     if (!messageContent) return
 
+    // Show typing loader immediately
+    setIsAssistantTyping(true)
+
     // Add user message
     const userMessage = {
       id: Date.now().toString(),
@@ -416,6 +420,7 @@ export default function CursorDashboard() {
                 content: '',
                 timestamp: new Date(),
               }
+              setIsAssistantTyping(false) // Hide loader when streaming starts
               setMessages((prev) => [...prev, agentResponse])
               
               // Read streaming chunks
@@ -463,6 +468,7 @@ export default function CursorDashboard() {
                   content: `I encountered an error: ${data.error}. Please try again.`,
                   timestamp: new Date(),
                 }
+                setIsAssistantTyping(false) // Hide loader
                 setMessages((prev) => [...prev, agentResponse])
               } else {
                 const agentResponse = {
@@ -471,6 +477,7 @@ export default function CursorDashboard() {
                   content: data.reply,
                   timestamp: new Date(),
                 }
+                setIsAssistantTyping(false) // Hide loader
                 setMessages((prev) => [...prev, agentResponse])
               }
               return // Exit early if non-streaming fallback succeeded
@@ -503,6 +510,7 @@ export default function CursorDashboard() {
               content: `I encountered an error: ${data.error}. Please try again.`,
               timestamp: new Date(),
             }
+            setIsAssistantTyping(false) // Hide loader
             setMessages((prev) => [...prev, agentResponse])
           } else {
             const agentResponse = {
@@ -511,6 +519,7 @@ export default function CursorDashboard() {
               content: data.reply,
               timestamp: new Date(),
             }
+            setIsAssistantTyping(false) // Hide loader
             setMessages((prev) => [...prev, agentResponse])
           }
         }
@@ -523,6 +532,7 @@ export default function CursorDashboard() {
           content: `I apologize, but I'm experiencing technical difficulties. Please try again in a moment.`,
           timestamp: new Date(),
         }
+        setIsAssistantTyping(false) // Hide loader
         setMessages((prev) => [...prev, agentResponse])
       }
     } else {
@@ -547,6 +557,7 @@ It would also be helpful if you described:
           content: agentResponseContent,
           timestamp: new Date(),
         }
+        setIsAssistantTyping(false) // Hide loader
         setMessages((prev) => [...prev, agentResponse])
       }, 1000)
     }
@@ -803,6 +814,17 @@ It would also be helpful if you described:
                           )}
                         </div>
                       ))}
+                      {/* Typing Loader */}
+                      {isAssistantTyping && (
+                        <div className="w-full">
+                          <div className="flex items-start gap-3">
+                            <Bot className="w-4 h-4 text-[#86a789] mt-1 flex-shrink-0" />
+                            <div className="flex-1 text-xs text-[#f9fafb] leading-relaxed">
+                              <div className="inline-block w-2 h-2 bg-[#86a789] rounded-full animate-pulse"></div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
 
