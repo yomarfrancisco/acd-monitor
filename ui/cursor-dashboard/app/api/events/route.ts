@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
 import { EventsResponse, Event } from '@/types/api';
-
-const BACKEND_URL = process.env.BACKEND_URL || 'https://acd-monitor-backend.onrender.com'
-const IS_PREVIEW = process.env.VERCEL_ENV === 'preview' || process.env.NEXT_PUBLIC_DATA_MODE === 'live'
+import { proxyJson } from '@/lib/proxy-utils';
 
 // Simple deterministic pseudo-random with jitter for "live-ish" feel
 const jitter = (base: number, span: number) => {
@@ -79,32 +77,25 @@ export async function GET(request: Request) {
   const timeframe = url.searchParams.get('timeframe') ?? 'ytd';
   const mode = url.searchParams.get('mode') ?? 'normal';
   
-  // In production, always use mock data
-  if (!IS_PREVIEW) {
-    return NextResponse.json(generateMockEvents(timeframe, mode));
+  const result = await proxyJson(`/api/events?timeframe=${timeframe}`, {
+    mockFallback: () => generateMockEvents(timeframe, mode)
+  });
+
+  if (!result.success) {
+    return NextResponse.json(
+      { error: 'Service unavailable' },
+      { status: 503 }
+    );
   }
 
-  // In preview, try to fetch from backend
-  try {
-    const backendUrl = new URL(`${BACKEND_URL}/api/events`)
-    backendUrl.searchParams.set('timeframe', timeframe)
-    
-    const response = await fetch(backendUrl.toString(), {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-    
-    if (!response.ok) {
-      throw new Error(`Backend responded with ${response.status}`)
-    }
-    
-    const data = await response.json()
-    return NextResponse.json(data)
-  } catch (error) {
-    console.error('Failed to fetch from backend:', error)
-    
-    // Fallback to mock data
-    return NextResponse.json(generateMockEvents(timeframe, mode));
+  const response = NextResponse.json(result.data, { status: result.status });
+  
+  // Add custom headers
+  if (result.headers) {
+    Object.entries(result.headers).forEach(([key, value]) => {
+      response.headers.set(key, value);
+    });
   }
+
+  return response;
 }

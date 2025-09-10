@@ -39,6 +39,7 @@ import { CalendarIcon } from "lucide-react"
 import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema } from "@/types/api.schemas"
 import { fetchTyped } from "@/lib/backendAdapter"
 import { safe } from "@/lib/safe"
+import { resilientFetch, resilientSafe } from "@/lib/resilient-api"
 import { DegradedModeBanner } from "@/components/DegradedModeBanner"
 import type { RiskSummary, MetricsOverview, HealthRun, EventsResponse, DataSources, EvidenceExport } from "@/types/api"
 import {
@@ -145,7 +146,12 @@ export default function CursorDashboard() {
     setEvidenceError(null)
     
     try {
-      const response = await fetch('/api/evidence/export', { method: 'GET' })
+      // Use resilient fetch for evidence export with longer timeout
+      const response = await fetch('/api/evidence/export', { 
+        method: 'GET',
+        signal: AbortSignal.timeout(30000) // 30 second timeout for file generation
+      })
+      
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`)
       }
@@ -171,9 +177,13 @@ export default function CursorDashboard() {
         bundleId: fname.replace('.zip', ''),
         url: url
       })
+      
+      toast.success('Evidence package downloaded successfully')
     } catch (error) {
       console.error('Evidence export failed', error)
-      setEvidenceError(error instanceof Error ? error.message : 'Failed to export evidence')
+      const errorMessage = error instanceof Error ? error.message : 'Failed to export evidence'
+      setEvidenceError(errorMessage)
+      toast.error(`Evidence export failed: ${errorMessage}`)
     } finally {
       setEvidenceLoading(false)
     }
@@ -224,15 +234,14 @@ export default function CursorDashboard() {
   // Heartbeat check for degraded mode
   useEffect(() => {
     const checkHeartbeat = async () => {
-      try {
-        const response = await fetch('/api/status', { cache: 'no-store' })
-        if (response.ok) {
-          setLastHeartbeat(0) // Mock always fresh
-          setIsDegradedMode(false)
-        } else {
-          setIsDegradedMode(true)
-        }
-      } catch {
+      const result = await resilientSafe(resilientFetch('/status', RiskSummarySchema, {
+        showWarmingToast: false // Don't show warming toast for background heartbeat
+      }))
+      
+      if (result.ok) {
+        setLastHeartbeat(0) // Mock always fresh
+        setIsDegradedMode(false)
+      } else {
         setIsDegradedMode(true)
       }
     }
@@ -252,9 +261,7 @@ export default function CursorDashboard() {
       setRiskSummaryLoading(true)
       setRiskSummaryError(null)
       
-      const result = await safe(fetchTyped(`/risk/summary?timeframe=${selectedTimeframe}`, RiskSummarySchema, { 
-        cache: 'no-store' 
-      }))
+      const result = await resilientSafe(resilientFetch(`/risk/summary?timeframe=${selectedTimeframe}`, RiskSummarySchema))
       
       if (result.ok) {
         setRiskSummary(result.data as RiskSummary)
@@ -279,9 +286,7 @@ export default function CursorDashboard() {
       setMetricsLoading(true)
       setMetricsError(null)
       
-      const result = await safe(fetchTyped(`/metrics/overview?timeframe=${selectedTimeframe}`, MetricsOverviewSchema, { 
-        cache: 'no-store' 
-      }))
+      const result = await resilientSafe(resilientFetch(`/metrics/overview?timeframe=${selectedTimeframe}`, MetricsOverviewSchema))
       
       if (result.ok) {
         setMetricsOverview(result.data as MetricsOverview)
@@ -306,7 +311,7 @@ export default function CursorDashboard() {
       setHealthLoading(true)
       setHealthError(null)
       
-      const result = await safe(fetchTyped('/health/run', HealthRunSchema, { cache: 'no-store' }))
+      const result = await resilientSafe(resilientFetch('/health/run', HealthRunSchema))
       
       if (result.ok) {
         setHealthRun(result.data as HealthRun)
@@ -331,9 +336,7 @@ export default function CursorDashboard() {
       setEventsLoading(true)
       setEventsError(null)
       
-      const result = await safe(fetchTyped(`/events?timeframe=${selectedTimeframe}`, EventsResponseSchema, { 
-        cache: 'no-store' 
-      }))
+      const result = await resilientSafe(resilientFetch(`/events?timeframe=${selectedTimeframe}`, EventsResponseSchema))
       
       if (result.ok) {
         setEvents(result.data as EventsResponse)
@@ -358,7 +361,7 @@ export default function CursorDashboard() {
       setDataSourcesLoading(true)
       setDataSourcesError(null)
       
-      const result = await safe(fetchTyped('/datasources/status', DataSourcesSchema, { cache: 'no-store' }))
+      const result = await resilientSafe(resilientFetch('/datasources/status', DataSourcesSchema))
       
       if (result.ok) {
         setDataSources(result.data as DataSources)
