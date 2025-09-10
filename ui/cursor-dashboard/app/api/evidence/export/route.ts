@@ -238,19 +238,20 @@ export async function GET(request: Request) {
     const now = new Date();
     const filename = `acd-evidence-${now.toISOString().slice(0, 10).replace(/-/g, '')}-${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}.zip`;
 
-    // Convert to ArrayBuffer for NextResponse
-    const arrayBuffer = zipBytes.buffer;
+    // Convert to proper Uint8Array and wrap in Blob for reliable binary handling
+    const properUint8Array = new Uint8Array(zipBytes);
+    const blob = new Blob([properUint8Array], { type: 'application/zip' });
 
     // Debug logging
     console.log('ZIP buffer length:', zipBytes.length);
     console.log('ZIP buffer first 4 bytes:', Array.from(zipBytes.slice(0, 4)).map(b => b.toString(16).padStart(2, '0')).join(' '));
 
-    return new NextResponse(arrayBuffer, {
+    return new NextResponse(blob, {
       status: 200,
       headers: {
         'Content-Type': 'application/zip',
         'Content-Disposition': `attachment; filename="${filename}"`,
-        'Content-Length': String(zipBytes.length),
+        'Content-Length': String(zipBytes.byteLength),
         'Cache-Control': 'no-store',
       },
     });
@@ -288,19 +289,20 @@ export async function POST(request: Request) {
     const now = new Date();
     const filename = `acd-evidence-${now.toISOString().slice(0, 10).replace(/-/g, '')}-${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}.zip`;
 
-    // Convert to ArrayBuffer for NextResponse
-    const arrayBuffer = zipBytes.buffer;
+    // Convert to proper Uint8Array and wrap in Blob for reliable binary handling
+    const properUint8Array = new Uint8Array(zipBytes);
+    const blob = new Blob([properUint8Array], { type: 'application/zip' });
 
     // Debug logging
     console.log('ZIP buffer length:', zipBytes.length);
     console.log('ZIP buffer first 4 bytes:', Array.from(zipBytes.slice(0, 4)).map(b => b.toString(16).padStart(2, '0')).join(' '));
 
-    return new NextResponse(arrayBuffer, {
+    return new NextResponse(blob, {
       status: 200,
       headers: {
         'Content-Type': 'application/zip',
         'Content-Disposition': `attachment; filename="${filename}"`,
-        'Content-Length': String(zipBytes.length),
+        'Content-Length': String(zipBytes.byteLength),
         'Cache-Control': 'no-store',
       },
     });
