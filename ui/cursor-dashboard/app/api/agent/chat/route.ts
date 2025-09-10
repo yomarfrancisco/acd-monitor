@@ -46,15 +46,44 @@ const getMockResponse = (messages: ChatMessage[]): string => {
   return '[mock] Thank you for your message. I\'m your AI economist assistant and I\'m here to help you analyze market data, check compliance, and generate reports. How can I assist you today?';
 };
 
+// Normalize UI messages to Chatbase schema
+const normalizeMessagesForChatbase = (messages: any[]): {role: "user" | "assistant"; content: string}[] => {
+  return messages
+    .map(msg => {
+      // If it already has role, keep {role, content}
+      if (msg.role && msg.content) {
+        return { role: msg.role, content: msg.content };
+      }
+      
+      // If it has type, map to role
+      if (msg.type && msg.content) {
+        let role: "user" | "assistant";
+        if (msg.type === "user") {
+          role = "user";
+        } else if (msg.type === "agent" || msg.type === "assistant" || msg.type === "bot") {
+          role = "assistant";
+        } else {
+          return null; // Drop unknown types
+        }
+        return { role, content: msg.content };
+      }
+      
+      return null; // Drop messages without role/content
+    })
+    .filter((msg): msg is {role: "user" | "assistant"; content: string} => 
+      msg !== null && ["user", "assistant"].includes(msg.role)
+    );
+};
+
 // Multi-turn session hygiene: trim messages if total content exceeds token limit
-const trimMessagesForTokenLimit = (messages: ChatMessage[], maxChars: number = 15000): ChatMessage[] => {
+const trimMessagesForTokenLimit = (messages: {role: "user" | "assistant"; content: string}[], maxChars: number = 15000): {role: "user" | "assistant"; content: string}[] => {
   // Calculate total character count
   const totalChars = messages.reduce((sum, msg) => sum + msg.content.length, 0);
-  
+
   if (totalChars <= maxChars) {
     return messages;
   }
-  
+
   // Find the last assistant message
   let lastAssistantIndex = -1;
   for (let i = messages.length - 1; i >= 0; i--) {
@@ -63,20 +92,20 @@ const trimMessagesForTokenLimit = (messages: ChatMessage[], maxChars: number = 1
       break;
     }
   }
-  
+
   // Keep the last assistant message and last 3 user messages
-  const trimmedMessages: ChatMessage[] = [];
-  
+  const trimmedMessages: {role: "user" | "assistant"; content: string}[] = [];
+
   // Add the last assistant message if it exists
   if (lastAssistantIndex >= 0) {
     trimmedMessages.push(messages[lastAssistantIndex]);
   }
-  
+
   // Add the last 3 user messages
   const userMessages = messages.filter(msg => msg.role === 'user');
   const lastUserMessages = userMessages.slice(-3);
   trimmedMessages.push(...lastUserMessages);
-  
+
   // If we still exceed the limit, trim the oldest user messages
   let currentChars = trimmedMessages.reduce((sum, msg) => sum + msg.content.length, 0);
   while (currentChars > maxChars && trimmedMessages.length > 1) {
@@ -89,7 +118,7 @@ const trimMessagesForTokenLimit = (messages: ChatMessage[], maxChars: number = 1
       break;
     }
   }
-  
+
   return trimmedMessages;
 };
 
@@ -262,8 +291,9 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
       );
     }
 
-    // Apply multi-turn session hygiene: trim messages if they exceed token limit
-    const trimmedMessages = trimMessagesForTokenLimit(messages);
+    // Normalize UI messages to Chatbase schema and apply token limit
+    const normalizedMessages = normalizeMessagesForChatbase(messages);
+    const trimmedMessages = trimMessagesForTokenLimit(normalizedMessages);
     
     // Check if streaming is enabled (preview only)
     const streamEnabled = process.env.NEXT_PUBLIC_AGENT_CHAT_STREAM === 'true' && process.env.VERCEL_ENV === 'preview';
@@ -271,11 +301,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
     // Prepare correct Chatbase API payload
     const chatbasePayload = {
       chatbotId: assistantId,
-      messages: trimmedMessages.map(msg => ({
-        role: msg.role,
-        content: msg.content
-      })),
-      conversationId: sessionId || `session_${Date.now()}`,
+      messages: trimmedMessages,
+      sessionId: sessionId || `session_${Date.now()}`,
       stream: streamEnabled,
       temperature: 0
     };
@@ -338,7 +365,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
           return NextResponse.json(
             { 
               reply: data.text || data.reply || data.message || 'No response from agent',
-              sessionId: data.conversationId || chatbasePayload.conversationId,
+              sessionId: data.conversationId || chatbasePayload.sessionId,
               usage: data.usage
             },
             { 

@@ -96,6 +96,34 @@ async function testAgentChatAPI() {
         console.log('✓ Agent Chat API - debug parameter accepted');
       }
     }
+
+    // Test UI message format normalization
+    console.log('Testing Agent Chat API with UI message format...');
+    const uiFormatResponse = await fetch('http://localhost:3004/api/agent/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        messages: [
+          { type: 'user', content: 'Hello from UI format', id: '1', timestamp: new Date() },
+          { type: 'agent', content: 'Previous agent response', id: '2', timestamp: new Date() },
+          { type: 'user', content: 'Follow-up message', id: '3', timestamp: new Date() }
+        ],
+        sessionId: 'ui-format-test-session'
+      }),
+    });
+
+    if (uiFormatResponse.ok) {
+      const uiFormatData = await uiFormatResponse.json();
+      const agentMode = uiFormatResponse.headers.get('x-agent-mode');
+      
+      if (agentMode !== 'error') {
+        console.log('✓ Agent Chat API - UI message format normalization passed');
+      } else {
+        console.log('⚠ Agent Chat API - UI message format test returned error mode');
+      }
+    }
     
   } catch (error) {
     console.error('Agent Chat API test failed:', error.message);
