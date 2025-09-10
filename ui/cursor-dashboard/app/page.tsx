@@ -356,7 +356,7 @@ export default function CursorDashboard() {
     }
   }
 
-  const handleSendMessage = (customMessage?: string) => {
+  const handleSendMessage = async (customMessage?: string) => {
     const messageContent = customMessage || inputValue.trim()
     if (!messageContent) return
 
@@ -371,29 +371,71 @@ export default function CursorDashboard() {
     setMessages((prev) => [...prev, userMessage])
     setHasEngaged(true)
 
-    // Generate agent response based on message content
-    setTimeout(() => {
-      let agentResponseContent = ""
+    // Check if we should use the API or local mock
+    const useApi = process.env.NEXT_PUBLIC_AGENT_CHAT_ENABLED === 'true'
 
-      if (messageContent === "Help me log a market event") {
-        agentResponseContent = `Sounds good, I'll help you log a market event for analysis. I need to understand what happened and its potential implications. Don't worry if you don't have all the details - we can work through this together. What caught your attention that made you want to log this event?
+    if (useApi) {
+      // Use API route
+      try {
+        const messagesForApi = [
+          ...messages,
+          { role: 'user' as const, content: messageContent }
+        ]
+        
+        const res = await fetch('/api/agent/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            messages: messagesForApi,
+            sessionId: `session_${Date.now()}`
+          }),
+        })
+        
+        const { reply, sessionId: newId } = await res.json()
+        
+        const agentResponse = {
+          id: (Date.now() + 1).toString(),
+          type: "agent" as const,
+          content: reply,
+          timestamp: new Date(),
+        }
+        setMessages((prev) => [...prev, agentResponse])
+      } catch (error) {
+        console.error('API call failed:', error)
+        // Fallback to mock response on API error
+        const agentResponse = {
+          id: (Date.now() + 1).toString(),
+          type: "agent" as const,
+          content: `I apologize, but I'm experiencing technical difficulties. Please try again in a moment.`,
+          timestamp: new Date(),
+        }
+        setMessages((prev) => [...prev, agentResponse])
+      }
+    } else {
+      // Use local mock (original behavior)
+      setTimeout(() => {
+        let agentResponseContent = ""
+
+        if (messageContent === "Help me log a market event") {
+          agentResponseContent = `Sounds good, I'll help you log a market event for analysis. I need to understand what happened and its potential implications. Don't worry if you don't have all the details - we can work through this together. What caught your attention that made you want to log this event?
 
 It would also be helpful if you described:
 • What market behavior did you observe?
 • When did this occur?
 • Which companies or participants were involved?`
-      } else {
-        agentResponseContent = `Thank you for your message: "${messageContent}". I'm your AI economist assistant and I'm here to help you analyze market data, check compliance, and generate reports. How can I assist you today?`
-      }
+        } else {
+          agentResponseContent = `Thank you for your message: "${messageContent}". I'm your AI economist assistant and I'm here to help you analyze market data, check compliance, and generate reports. How can I assist you today?`
+        }
 
-      const agentResponse = {
-        id: (Date.now() + 1).toString(),
-        type: "agent" as const,
-        content: agentResponseContent,
-        timestamp: new Date(),
-      }
-      setMessages((prev) => [...prev, agentResponse])
-    }, 1000)
+        const agentResponse = {
+          id: (Date.now() + 1).toString(),
+          type: "agent" as const,
+          content: agentResponseContent,
+          timestamp: new Date(),
+        }
+        setMessages((prev) => [...prev, agentResponse])
+      }, 1000)
+    }
 
     setInputValue("")
   }
