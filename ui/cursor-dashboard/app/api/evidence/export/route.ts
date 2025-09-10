@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic'
 export const maxDuration = 15
 
 import { NextResponse } from 'next/server';
+import { Buffer } from 'buffer';
 import JSZip from 'jszip';
 
 const BACKEND_URL = process.env.BACKEND_URL || 'https://acd-monitor-backend.onrender.com'
@@ -211,7 +212,7 @@ export async function GET(request: Request) {
         const zipBuffer = await response.arrayBuffer();
         const filename = response.headers.get('content-disposition')?.match(/filename="(.+)"/)?.[1] || 'acd-evidence.zip';
         
-        return new Response(zipBuffer, {
+        return new NextResponse(zipBuffer, {
           status: 200,
           headers: {
             'Content-Type': 'application/zip',
@@ -239,7 +240,7 @@ export async function GET(request: Request) {
     // Convert to Node Buffer for Response
     const zipBuffer = Buffer.from(zipBytes);
 
-    return new Response(zipBuffer, {
+    return new NextResponse(zipBuffer, {
       status: 200,
       headers: {
         'Content-Type': 'application/zip',
@@ -285,7 +286,7 @@ export async function POST(request: Request) {
     // Convert to Node Buffer for Response
     const zipBuffer = Buffer.from(zipBytes);
 
-    return new Response(zipBuffer, {
+    return new NextResponse(zipBuffer, {
       status: 200,
       headers: {
         'Content-Type': 'application/zip',
