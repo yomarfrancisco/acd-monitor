@@ -295,18 +295,17 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
     const normalizedMessages = normalizeMessagesForChatbase(messages);
     const trimmedMessages = trimMessagesForTokenLimit(normalizedMessages);
     
-    // Check if streaming is enabled (preview only)
-    const streamEnabled = process.env.NEXT_PUBLIC_AGENT_CHAT_STREAM === 'true' && process.env.VERCEL_ENV === 'preview';
-    
     // Prepare correct Chatbase API payload - ALWAYS include required fields
     const CHATBASE_URL = 'https://www.chatbase.co/api/v1/chat';
     const CHATBOT_ID = process.env.CHATBASE_ASSISTANT_ID!;
+    const streamEnabled = process.env.NEXT_PUBLIC_AGENT_CHAT_STREAM === 'true' ? true : false;
+    
     const chatbasePayload = {
-      chatbotId: CHATBOT_ID,              // REQUIRED every request
-      messages: trimmedMessages,          // [{ role: 'user'|'assistant', content: string }]
-      sessionId: sessionId || `session_${Date.now()}`, // pass-through (optional)
-      stream: streamEnabled,              // explicit for non-stream
-      temperature: 0                      // deterministic
+      chatbotId: CHATBOT_ID,                  // required
+      messages: trimmedMessages,              // [{ role, content }]
+      conversationId: sessionId || undefined, // map from our sessionId (optional but correct name)
+      stream: streamEnabled,                  // optional; defaults false
+      temperature: 0                          // optional; keep deterministic
     };
 
     // If streaming is enabled, try streaming first with fallback to non-streaming
@@ -377,7 +376,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
           return NextResponse.json(
             { 
               reply: data.text || data.reply || data.message || 'No response from agent',
-              sessionId: data.conversationId || chatbasePayload.sessionId,
+              sessionId: data.conversationId || chatbasePayload.conversationId,
               usage: data.usage
             },
             { 

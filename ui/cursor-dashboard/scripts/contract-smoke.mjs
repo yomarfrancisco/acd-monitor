@@ -149,6 +149,33 @@ async function testAgentChatAPI() {
         console.log('⚠ Agent Chat API - minimal payload test failed');
       }
     }
+
+    // Test with API key present (if enabled)
+    if (process.env.NEXT_PUBLIC_AGENT_CHAT_ENABLED === 'true') {
+      console.log('Testing Agent Chat API with live mode...');
+      const liveResponse = await fetch('http://localhost:3004/api/agent/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: [
+            { role: 'user', content: 'test live mode' }
+          ]
+        }),
+      });
+
+      if (liveResponse.ok) {
+        const liveData = await liveResponse.json();
+        const agentMode = liveResponse.headers.get('x-agent-mode');
+        
+        if (agentMode === 'live' && liveData.reply && typeof liveData.reply === 'string') {
+          console.log('✓ Agent Chat API - live mode test passed');
+        } else {
+          console.log('⚠ Agent Chat API - live mode test failed (mode:', agentMode, ')');
+        }
+      }
+    }
     
   } catch (error) {
     console.error('Agent Chat API test failed:', error.message);
