@@ -2,8 +2,12 @@ name: ci
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - feat/**      # run CI on feature branches too
   pull_request:
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   detect:
