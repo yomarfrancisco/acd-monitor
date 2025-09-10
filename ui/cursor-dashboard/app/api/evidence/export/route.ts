@@ -238,12 +238,13 @@ export async function GET(request: Request) {
     const now = new Date();
     const filename = `acd-evidence-${now.toISOString().slice(0, 10).replace(/-/g, '')}-${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}.zip`;
 
-    return new NextResponse(zipBytes, {
+    const buf = Buffer.from(zipBytes);
+    return new NextResponse(buf, {
       status: 200,
       headers: {
         'Content-Type': 'application/zip',
         'Content-Disposition': `attachment; filename="${filename}"`,
-        'Content-Length': String(zipBytes.byteLength),
+        'Content-Length': String(buf.byteLength),
         'Cache-Control': 'no-store',
       },
     });
@@ -281,12 +282,13 @@ export async function POST(request: Request) {
     const now = new Date();
     const filename = `acd-evidence-${now.toISOString().slice(0, 10).replace(/-/g, '')}-${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}.zip`;
 
-    return new NextResponse(zipBytes, {
+    const buf = Buffer.from(zipBytes);
+    return new NextResponse(buf, {
       status: 200,
       headers: {
         'Content-Type': 'application/zip',
         'Content-Disposition': `attachment; filename="${filename}"`,
-        'Content-Length': String(zipBytes.byteLength),
+        'Content-Length': String(buf.byteLength),
         'Cache-Control': 'no-store',
       },
     });
