@@ -226,10 +226,50 @@ export default function CursorDashboard() {
     Array<{ id: string; type: "user" | "agent"; content: string; timestamp: Date }>
   >([])
   const [hasEngaged, setHasEngaged] = useState<boolean>(false)
+  const [chatLoading, setChatLoading] = useState<boolean>(false)
+  const [chatError, setChatError] = useState<string | null>(null)
+  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null)
 
   useEffect(() => {
     setIsClient(true)
+    
+    // Load messages from localStorage
+    if (typeof window !== 'undefined') {
+      const savedMessages = localStorage.getItem('acd-chat-messages')
+      const savedSessionId = localStorage.getItem('acd-chat-session-id')
+      
+      if (savedMessages) {
+        try {
+          const parsedMessages = JSON.parse(savedMessages).map((msg: any) => ({
+            ...msg,
+            timestamp: new Date(msg.timestamp)
+          }))
+          setMessages(parsedMessages)
+          setHasEngaged(parsedMessages.length > 0)
+        } catch (error) {
+          console.error('Failed to parse saved messages:', error)
+        }
+      }
+      
+      if (savedSessionId) {
+        setCurrentSessionId(savedSessionId)
+      }
+    }
   }, [])
+
+  // Save messages to localStorage whenever they change
+  useEffect(() => {
+    if (isClient && messages.length > 0) {
+      localStorage.setItem('acd-chat-messages', JSON.stringify(messages))
+    }
+  }, [messages, isClient])
+
+  // Save session ID to localStorage whenever it changes
+  useEffect(() => {
+    if (isClient && currentSessionId) {
+      localStorage.setItem('acd-chat-session-id', currentSessionId)
+    }
+  }, [currentSessionId, isClient])
 
   // Heartbeat check for degraded mode
   useEffect(() => {
@@ -356,9 +396,9 @@ export default function CursorDashboard() {
     }
   }
 
-  const handleSendMessage = (customMessage?: string) => {
+  const handleSendMessage = async (customMessage?: string) => {
     const messageContent = customMessage || inputValue.trim()
-    if (!messageContent) return
+    if (!messageContent || chatLoading) return
 
     // Add user message
     const userMessage = {
@@ -370,30 +410,70 @@ export default function CursorDashboard() {
 
     setMessages((prev) => [...prev, userMessage])
     setHasEngaged(true)
+    setChatLoading(true)
+    setChatError(null)
 
-    // Generate agent response based on message content
-    setTimeout(() => {
-      let agentResponseContent = ""
+    try {
+      // Prepare messages for Chatbase API
+      const chatMessages = [
+        ...messages.map(msg => ({
+          role: msg.type === 'user' ? 'user' as const : 'assistant' as const,
+          content: msg.content
+        })),
+        {
+          role: 'user' as const,
+          content: messageContent
+        }
+      ]
 
-      if (messageContent === "Help me log a market event") {
-        agentResponseContent = `Sounds good, I'll help you log a market event for analysis. I need to understand what happened and its potential implications. Don't worry if you don't have all the details - we can work through this together. What caught your attention that made you want to log this event?
+      // Call our Chatbase proxy API
+      const response = await fetch('/api/agent/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: chatMessages,
+          sessionId: currentSessionId,
+          userId: 'anonymous'
+        }),
+      })
 
-It would also be helpful if you described:
-• What market behavior did you observe?
-• When did this occur?
-• Which companies or participants were involved?`
-      } else {
-        agentResponseContent = `Thank you for your message: "${messageContent}". I'm your AI economist assistant and I'm here to help you analyze market data, check compliance, and generate reports. How can I assist you today?`
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`)
       }
 
+      const data = await response.json()
+      
+      // Update session ID if provided
+      if (data.sessionId) {
+        setCurrentSessionId(data.sessionId)
+      }
+
+      // Add agent response
       const agentResponse = {
         id: (Date.now() + 1).toString(),
         type: "agent" as const,
-        content: agentResponseContent,
+        content: data.reply,
         timestamp: new Date(),
       }
       setMessages((prev) => [...prev, agentResponse])
-    }, 1000)
+
+    } catch (error) {
+      console.error('Chat API error:', error)
+      setChatError(error instanceof Error ? error.message : 'Failed to send message')
+      
+      // Fallback to a simple error message
+      const errorResponse = {
+        id: (Date.now() + 1).toString(),
+        type: "agent" as const,
+        content: "I apologize, but I'm experiencing technical difficulties. Please try again in a moment.",
+        timestamp: new Date(),
+      }
+      setMessages((prev) => [...prev, errorResponse])
+    } finally {
+      setChatLoading(false)
+    }
 
     setInputValue("")
   }
@@ -615,6 +695,24 @@ It would also be helpful if you described:
           <main className={`flex-1 p-5 max-w-3xl ${activeTab === "agents" ? "mx-auto" : ""}`}>
             {activeTab === "agents" && (
               <div className="max-w-xl mx-auto">
+                {/* Feature Flag Check */}
+                {process.env.NEXT_PUBLIC_AGENT_CHAT_ENABLED !== 'true' && (
+                  <div className="flex flex-col items-center justify-center min-h-[45vh] space-y-4">
+                    <div className="text-center">
+                      <h2 className="text-lg font-medium text-[#f9fafb] mb-2">Agent Chat</h2>
+                      <p className="text-sm text-[#a1a1aa] mb-4">Coming soon</p>
+                      <div className="bg-bg-tile rounded-lg p-4 border border-[#2a2a2a]">
+                        <p className="text-xs text-[#71717a]">
+                          AI-powered chat functionality is currently being developed and will be available in a future update.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Chat Interface - only show if enabled */}
+                {process.env.NEXT_PUBLIC_AGENT_CHAT_ENABLED === 'true' && (
+                  <>
                 {/* Initial Agent Message */}
                 {initialAgentMessage && (
                   <div className="mb-4 p-3 bg-bg-surface rounded-lg border border-[#2a2a2a]">
@@ -647,6 +745,25 @@ It would also be helpful if you described:
                           )}
                         </div>
                       ))}
+                      
+                      {/* Typing Indicator */}
+                      {chatLoading && (
+                        <div className="w-full">
+                          <div className="flex items-start gap-3">
+                            <Bot className="w-4 h-4 text-[#86a789] mt-1 flex-shrink-0" />
+                            <div className="flex-1 text-xs text-[#71717a] leading-relaxed">
+                              <div className="flex items-center gap-1">
+                                <span>Thinking</span>
+                                <div className="flex gap-1">
+                                  <div className="w-1 h-1 bg-[#71717a] rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                                  <div className="w-1 h-1 bg-[#71717a] rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                                  <div className="w-1 h-1 bg-[#71717a] rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -664,7 +781,8 @@ It would also be helpful if you described:
                               handleSendMessage()
                             }
                           }}
-                          className="w-full h-28 bg-bg-tile rounded-lg text-[#f9fafb] placeholder-[#71717a] pr-16 px-4 py-4 text-xs resize-none focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50"
+                          disabled={chatLoading}
+                          className="w-full h-28 bg-bg-tile rounded-lg text-[#f9fafb] placeholder-[#71717a] pr-16 px-4 py-4 text-[10px] resize-none focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50 disabled:opacity-50 disabled:cursor-not-allowed"
                           rows={5}
                         />
                         {/* Blinking cursor overlay - only shows when empty */}
@@ -706,13 +824,15 @@ It would also be helpful if you described:
                             <CloudUpload className="w-4 h-4 text-[#71717a] hover:text-[#a1a1aa]" />
                           </div>
                           <div
-                            className="h-6 w-6 flex items-center justify-center cursor-pointer"
+                            className={`h-6 w-6 flex items-center justify-center ${chatLoading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                             onClick={(e) => {
-                              e.preventDefault();
-                              handleSendMessage();
+                              if (!chatLoading) {
+                                e.preventDefault();
+                                handleSendMessage();
+                              }
                             }}
                           >
-                            <Send className="w-4 h-4 text-[#71717a] hover:text-[#a1a1aa]" />
+                            <Send className={`w-4 h-4 ${chatLoading ? 'text-[#71717a]' : 'text-[#71717a] hover:text-[#a1a1aa]'}`} />
                           </div>
                         </div>
                       </div>
@@ -748,6 +868,8 @@ It would also be helpful if you described:
                   </div>
                 </div>
               </div>
+              </>
+                )}
               </div>
             )}
             {activeTab === "dashboard" && (
