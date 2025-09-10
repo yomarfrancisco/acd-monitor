@@ -95,11 +95,22 @@ export async function proxyJson(
 
       if (response.ok) {
         const data = await response.json();
+        
+        // Filter out problematic headers that cause double-decoding
+        const filteredHeaders: Record<string, string> = {};
+        for (const [key, value] of response.headers.entries()) {
+          const lowerKey = key.toLowerCase();
+          // Skip content-encoding, content-length, and transfer-encoding headers
+          if (!['content-encoding', 'content-length', 'transfer-encoding'].includes(lowerKey)) {
+            filteredHeaders[key] = value;
+          }
+        }
+        
         return {
           success: true,
           data,
           status: response.status,
-          headers: Object.fromEntries(response.headers.entries())
+          headers: filteredHeaders
         };
       }
 
