@@ -50,6 +50,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
   try {
     const body: ChatRequest = await request.json();
     const { messages, sessionId, userId } = body;
+    const url = new URL(request.url);
+    const debugMode = url.searchParams.get('debug') === '1' && process.env.VERCEL_ENV === 'preview';
 
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
       return NextResponse.json(
@@ -79,23 +81,64 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
       );
     }
 
-    // Prepare Chatbase API request
-    const chatbaseRequest = {
-      messages: messages.map(msg => ({
-        role: msg.role,
-        content: msg.content
-      })),
-      assistantId,
-      sessionId: sessionId || `session_${Date.now()}`,
-      userId: userId || 'anonymous'
-    };
+    // Define payload variants to try
+    const payloadVariants = [
+      // Variant A (current): { assistant_id, messages: [{ role, content }], session_id }
+      {
+        name: 'A',
+        payload: {
+          assistant_id: assistantId,
+          messages: messages.map(msg => ({
+            role: msg.role,
+            content: msg.content
+          })),
+          session_id: sessionId || `session_${Date.now()}`,
+          user_id: userId || 'anonymous'
+        }
+      },
+      // Variant B (common): { assistant_id, input: "<user text>", session_id }
+      {
+        name: 'B',
+        payload: {
+          assistant_id: assistantId,
+          input: messages.filter(msg => msg.role === 'user').map(msg => msg.content).join('\n'),
+          session_id: sessionId || `session_${Date.now()}`,
+          user_id: userId || 'anonymous'
+        }
+      },
+      // Variant C (alt message shape): { assistant_id, messages: [{ sender, text }], session_id }
+      {
+        name: 'C',
+        payload: {
+          assistant_id: assistantId,
+          messages: messages.map(msg => ({
+            sender: msg.role,
+            text: msg.content
+          })),
+          session_id: sessionId || `session_${Date.now()}`,
+          user_id: userId || 'anonymous'
+        }
+      }
+    ];
 
-    // Call Chatbase API with retries
+    // Try each payload variant
     let lastError: Error | null = null;
-    const retries = [250, 750]; // 250ms, 750ms delays
+    let lastUpstreamStatus: number | null = null;
+    let lastUpstreamBody: string | null = null;
 
-    for (let attempt = 0; attempt <= retries.length; attempt++) {
+    for (const variant of payloadVariants) {
       try {
+        // Debug logging for preview environment
+        if (process.env.VERCEL_ENV === 'preview') {
+          console.info('CHATBASE: Attempting variant', variant.name);
+          console.info('CHATBASE: URL:', `${baseUrl}/v1/chat`);
+          console.info('CHATBASE: Headers:', {
+            'Authorization': `Bearer ${apiKey.substring(0, 8)}...`,
+            'Content-Type': 'application/json'
+          });
+          console.info('CHATBASE: Payload:', JSON.stringify(variant.payload, null, 2));
+        }
+
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
@@ -105,7 +148,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
             'Authorization': `Bearer ${apiKey}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(chatbaseRequest),
+          body: JSON.stringify(variant.payload),
           signal: controller.signal,
         });
 
@@ -114,58 +157,77 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
         if (response.ok) {
           const data = await response.json();
           
+          const headers: Record<string, string> = { 'x-agent-mode': 'live' };
+          if (debugMode) {
+            headers['x-agent-variant'] = variant.name;
+            headers['x-agent-payload'] = JSON.stringify(variant.payload).substring(0, 120);
+          }
+          
           return NextResponse.json(
             { 
               reply: data.reply || data.message || 'No response from agent',
-              sessionId: data.sessionId || chatbaseRequest.sessionId,
-              usage: data.usage
+              sessionId: data.sessionId || variant.payload.session_id,
+              usage: { ...data.usage, variant: variant.name }
             },
             { 
               status: 200, 
-              headers: { 'x-agent-mode': 'live' } 
+              headers
             }
           );
         }
 
-        // If not successful, throw error for retry logic
-        throw new Error(`Chatbase API responded with ${response.status}: ${response.statusText}`);
+        // Capture upstream error details for debugging
+        lastUpstreamStatus = response.status;
+        try {
+          lastUpstreamBody = await response.text();
+        } catch (e) {
+          lastUpstreamBody = 'Failed to read response body';
+        }
+
+        if (process.env.VERCEL_ENV === 'preview') {
+          console.info(`CHATBASE: Variant ${variant.name} failed with ${response.status}:`, lastUpstreamBody.substring(0, 200));
+        }
+
+        // Continue to next variant
+        continue;
 
       } catch (error) {
         lastError = error as Error;
-        console.error(`Chatbase API attempt ${attempt + 1} failed:`, error);
-
-        // If this was a timeout or connection error and we have retries left
-        if (attempt < retries.length && (
-          error instanceof Error && (
-            error.name === 'AbortError' || 
-            error.message.includes('fetch') ||
-            error.message.includes('ECONNREFUSED') ||
-            error.message.includes('ETIMEDOUT')
-          )
-        )) {
-          console.log(`Retrying in ${retries[attempt]}ms (attempt ${attempt + 1}/${retries.length + 1})`);
-          await new Promise(resolve => setTimeout(resolve, retries[attempt]));
-          continue;
+        if (process.env.VERCEL_ENV === 'preview') {
+          console.info(`CHATBASE: Variant ${variant.name} error:`, error);
         }
-
-        // If we've exhausted retries or it's a non-retryable error, break
-        break;
+        continue;
       }
     }
 
-    // All attempts failed, use mock fallback
-    console.log('All Chatbase API attempts failed, using mock fallback');
+    // All variants failed, use mock fallback with debug info
     const mockReply = getMockResponse(messages);
+    const headers: Record<string, string> = { 'x-agent-mode': 'mock' };
+    
+    if (process.env.VERCEL_ENV === 'preview') {
+      if (lastUpstreamStatus) {
+        headers['x-agent-upstream-status'] = lastUpstreamStatus.toString();
+        headers['x-agent-upstream-body'] = lastUpstreamBody ? lastUpstreamBody.substring(0, 120).replace(/[^\x20-\x7E]/g, '') : 'No body';
+      }
+    }
     
     return NextResponse.json(
       { 
         reply: mockReply, 
         sessionId: sessionId || `session_${Date.now()}`,
-        usage: { mode: 'mock', reason: 'api_failed', error: lastError?.message }
+        usage: { 
+          mode: 'mock', 
+          reason: 'all_variants_failed', 
+          error: lastError?.message,
+          error_details: process.env.VERCEL_ENV === 'preview' ? {
+            upstream_status: lastUpstreamStatus,
+            upstream_body: lastUpstreamBody ? lastUpstreamBody.substring(0, 120) : null
+          } : undefined
+        }
       },
       { 
         status: 200, 
-        headers: { 'x-agent-mode': 'mock' } 
+        headers
       }
     );
 
