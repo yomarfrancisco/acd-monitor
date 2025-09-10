@@ -46,7 +46,169 @@ const getMockResponse = (messages: ChatMessage[]): string => {
   return '[mock] Thank you for your message. I\'m your AI economist assistant and I\'m here to help you analyze market data, check compliance, and generate reports. How can I assist you today?';
 };
 
-export async function POST(request: NextRequest): Promise<NextResponse<ChatResponse>> {
+// Multi-turn session hygiene: trim messages if total content exceeds token limit
+const trimMessagesForTokenLimit = (messages: ChatMessage[], maxChars: number = 15000): ChatMessage[] => {
+  // Calculate total character count
+  const totalChars = messages.reduce((sum, msg) => sum + msg.content.length, 0);
+  
+  if (totalChars <= maxChars) {
+    return messages;
+  }
+  
+  // Find the last assistant message
+  let lastAssistantIndex = -1;
+  for (let i = messages.length - 1; i >= 0; i--) {
+    if (messages[i].role === 'assistant') {
+      lastAssistantIndex = i;
+      break;
+    }
+  }
+  
+  // Keep the last assistant message and last 3 user messages
+  const trimmedMessages: ChatMessage[] = [];
+  
+  // Add the last assistant message if it exists
+  if (lastAssistantIndex >= 0) {
+    trimmedMessages.push(messages[lastAssistantIndex]);
+  }
+  
+  // Add the last 3 user messages
+  const userMessages = messages.filter(msg => msg.role === 'user');
+  const lastUserMessages = userMessages.slice(-3);
+  trimmedMessages.push(...lastUserMessages);
+  
+  // If we still exceed the limit, trim the oldest user messages
+  let currentChars = trimmedMessages.reduce((sum, msg) => sum + msg.content.length, 0);
+  while (currentChars > maxChars && trimmedMessages.length > 1) {
+    // Remove the oldest user message (skip the first assistant message)
+    const firstUserIndex = trimmedMessages.findIndex((msg, index) => msg.role === 'user' && index > 0);
+    if (firstUserIndex > 0) {
+      currentChars -= trimmedMessages[firstUserIndex].content.length;
+      trimmedMessages.splice(firstUserIndex, 1);
+    } else {
+      break;
+    }
+  }
+  
+  return trimmedMessages;
+};
+
+// Streaming response handler for Chatbase
+async function handleStreamingResponse(
+  chatbasePayload: any,
+  apiKey: string,
+  baseUrl: string,
+  sessionId: string,
+  debugMode: boolean
+): Promise<Response> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
+  try {
+    // Debug logging for preview environment
+    if (process.env.VERCEL_ENV === 'preview') {
+      console.info('CHATBASE: Attempting streaming API call');
+      console.info('CHATBASE: URL:', `${baseUrl}/v1/chat`);
+      console.info('CHATBASE: Headers:', {
+        'Authorization': `Bearer ${apiKey.substring(0, 8)}...`,
+        'Content-Type': 'application/json'
+      });
+      console.info('CHATBASE: Payload:', JSON.stringify(chatbasePayload, null, 2));
+    }
+
+    const response = await fetch(`${baseUrl}/v1/chat`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(chatbasePayload),
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      throw new Error(`Chatbase streaming API responded with ${response.status}: ${response.statusText}`);
+    }
+
+    // Create a streaming response
+    const stream = new ReadableStream({
+      start(controller) {
+        const reader = response.body?.getReader();
+        if (!reader) {
+          controller.close();
+          return;
+        }
+
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        function pump(): Promise<void> {
+          return reader.read().then(({ done, value }) => {
+            if (done) {
+              controller.close();
+              return;
+            }
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop() || '';
+
+            for (const line of lines) {
+              if (line.trim() === '') continue;
+              
+              try {
+                // Handle SSE format: data: {...}
+                if (line.startsWith('data: ')) {
+                  const data = line.slice(6);
+                  if (data === '[DONE]') {
+                    controller.close();
+                    return;
+                  }
+                  
+                  const parsed = JSON.parse(data);
+                  if (parsed.text) {
+                    // Send the text chunk to client
+                    controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({ text: parsed.text })}\n\n`));
+                  }
+                }
+              } catch (e) {
+                // Ignore malformed JSON
+                if (process.env.VERCEL_ENV === 'preview') {
+                  console.warn('CHATBASE: Ignoring malformed streaming data:', line);
+                }
+              }
+            }
+
+            return pump();
+          });
+        }
+
+        return pump();
+      }
+    });
+
+    const headers: Record<string, string> = {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+      'x-agent-mode': 'live'
+    };
+
+    if (debugMode) {
+      headers['x-agent-payload'] = JSON.stringify(chatbasePayload).substring(0, 120);
+    }
+
+    return new Response(stream, { headers });
+
+  } catch (error) {
+    clearTimeout(timeoutId);
+    throw error;
+  }
+}
+
+export async function POST(request: NextRequest): Promise<NextResponse<ChatResponse> | Response> {
   try {
     const body: ChatRequest = await request.json();
     const { messages, sessionId, userId } = body;
@@ -81,25 +243,44 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
       );
     }
 
+    // Apply multi-turn session hygiene: trim messages if they exceed token limit
+    const trimmedMessages = trimMessagesForTokenLimit(messages);
+    
+    // Check if streaming is enabled (preview only)
+    const streamEnabled = process.env.NEXT_PUBLIC_AGENT_CHAT_STREAM === 'true' && process.env.VERCEL_ENV === 'preview';
+    
     // Prepare correct Chatbase API payload
     const chatbasePayload = {
       chatbotId: assistantId,
-      messages: messages.map(msg => ({
+      messages: trimmedMessages.map(msg => ({
         role: msg.role,
         content: msg.content
       })),
       conversationId: sessionId || `session_${Date.now()}`,
-      stream: false,
+      stream: streamEnabled,
       temperature: 0
     };
 
-    // Call Chatbase API with retries
+    // If streaming is enabled, try streaming first with fallback to non-streaming
+    if (streamEnabled) {
+      try {
+        return await handleStreamingResponse(chatbasePayload, apiKey, baseUrl, sessionId || `session_${Date.now()}`, debugMode);
+      } catch (error) {
+        if (process.env.VERCEL_ENV === 'preview') {
+          console.info('CHATBASE: Streaming failed, falling back to non-streaming:', error);
+        }
+        // Fall through to non-streaming implementation
+      }
+    }
+
+    // Call Chatbase API with retries (only for 5xx errors)
     let lastError: Error | null = null;
     let lastUpstreamStatus: number | null = null;
     let lastUpstreamBody: string | null = null;
-    const retries = [250, 750]; // 250ms, 750ms delays
+    const maxRetries = 1; // Single retry for 5xx errors only
+    const retryDelay = 500; // 500ms backoff
 
-    for (let attempt = 0; attempt <= retries.length; attempt++) {
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
         // Debug logging for preview environment
         if (process.env.VERCEL_ENV === 'preview') {
@@ -160,15 +341,10 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
           console.info(`CHATBASE: API call failed with ${response.status}:`, lastUpstreamBody.substring(0, 200));
         }
 
-        // If this was a timeout or connection error and we have retries left
-        if (attempt < retries.length && (
-          response.status >= 500 || 
-          response.status === 429 ||
-          lastUpstreamBody?.includes('timeout') ||
-          lastUpstreamBody?.includes('connection')
-        )) {
-          console.log(`Retrying in ${retries[attempt]}ms (attempt ${attempt + 1}/${retries.length + 1})`);
-          await new Promise(resolve => setTimeout(resolve, retries[attempt]));
+        // Only retry on 5xx server errors
+        if (attempt < maxRetries && response.status >= 500 && response.status < 600) {
+          console.log(`Retrying in ${retryDelay}ms (attempt ${attempt + 1}/${maxRetries + 1}) - Server error ${response.status}`);
+          await new Promise(resolve => setTimeout(resolve, retryDelay));
           continue;
         }
 
@@ -181,8 +357,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
           console.info(`CHATBASE: API call error:`, error);
         }
 
-        // If this was a timeout or connection error and we have retries left
-        if (attempt < retries.length && (
+        // Only retry on network/timeout errors (not 4xx client errors)
+        if (attempt < maxRetries && (
           error instanceof Error && (
             error.name === 'AbortError' || 
             error.message.includes('fetch') ||
@@ -190,8 +366,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
             error.message.includes('ETIMEDOUT')
           )
         )) {
-          console.log(`Retrying in ${retries[attempt]}ms (attempt ${attempt + 1}/${retries.length + 1})`);
-          await new Promise(resolve => setTimeout(resolve, retries[attempt]));
+          console.log(`Retrying in ${retryDelay}ms (attempt ${attempt + 1}/${maxRetries + 1}) - Network error`);
+          await new Promise(resolve => setTimeout(resolve, retryDelay));
           continue;
         }
 

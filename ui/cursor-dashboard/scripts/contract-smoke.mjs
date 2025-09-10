@@ -71,6 +71,32 @@ async function testAgentChatAPI() {
 
     console.log('✓ Agent Chat API - mock response validation passed');
     
+    // Test debug parameter (preview only)
+    console.log('Testing Agent Chat API with debug parameter...');
+    const debugResponse = await fetch('http://localhost:3004/api/agent/chat?debug=1', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        messages: [
+          { role: 'user', content: 'Debug test message' }
+        ],
+        sessionId: 'debug-test-session'
+      }),
+    });
+
+    if (debugResponse.ok) {
+      const debugData = await debugResponse.json();
+      const agentMode = debugResponse.headers.get('x-agent-mode');
+      
+      if (agentMode === 'mock' && debugData.usage?.error_details) {
+        console.log('✓ Agent Chat API - debug headers validation passed');
+      } else {
+        console.log('✓ Agent Chat API - debug parameter accepted');
+      }
+    }
+    
   } catch (error) {
     console.error('Agent Chat API test failed:', error.message);
     // Don't fail the entire test suite if the server isn't running

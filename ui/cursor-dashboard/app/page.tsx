@@ -373,6 +373,7 @@ export default function CursorDashboard() {
 
     // Check if we should use the API or local mock
     const useApi = process.env.NEXT_PUBLIC_AGENT_CHAT_ENABLED === 'true'
+    const streamEnabled = process.env.NEXT_PUBLIC_AGENT_CHAT_STREAM === 'true'
 
     if (useApi) {
       // Use API route
@@ -382,24 +383,114 @@ export default function CursorDashboard() {
           { role: 'user' as const, content: messageContent }
         ]
         
-        const res = await fetch('/api/agent/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            messages: messagesForApi,
-            sessionId: `session_${Date.now()}`
-          }),
-        })
+        // Create AbortController for request cancellation
+        const abortController = new AbortController()
+        let res: Response | null = null
         
-        const { reply, sessionId: newId } = await res.json()
-        
-        const agentResponse = {
-          id: (Date.now() + 1).toString(),
-          type: "agent" as const,
-          content: reply,
-          timestamp: new Date(),
+        if (streamEnabled) {
+          // Streaming mode
+          try {
+            res = await fetch('/api/agent/chat', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ 
+                messages: messagesForApi,
+                sessionId: `session_${Date.now()}`
+              }),
+              signal: abortController.signal,
+            })
+            
+            if (res.headers.get('content-type')?.includes('text/event-stream')) {
+              // Handle streaming response
+              const reader = res.body?.getReader()
+              if (!reader) throw new Error('No reader available')
+              
+              const decoder = new TextDecoder()
+              let buffer = ''
+              
+              // Create initial agent message
+              const agentMessageId = (Date.now() + 1).toString()
+              const agentResponse = {
+                id: agentMessageId,
+                type: "agent" as const,
+                content: '',
+                timestamp: new Date(),
+              }
+              setMessages((prev) => [...prev, agentResponse])
+              
+              // Read streaming chunks
+              while (true) {
+                const { done, value } = await reader.read()
+                if (done) break
+                
+                buffer += decoder.decode(value, { stream: true })
+                const lines = buffer.split('\n')
+                buffer = lines.pop() || ''
+                
+                for (const line of lines) {
+                  if (line.trim() === '') continue
+                  
+                  if (line.startsWith('data: ')) {
+                    const data = line.slice(6)
+                    if (data === '[DONE]') break
+                    
+                    try {
+                      const parsed = JSON.parse(data)
+                      if (parsed.text) {
+                        // Append text to existing agent message
+                        setMessages((prev) => prev.map(msg => 
+                          msg.id === agentMessageId 
+                            ? { ...msg, content: msg.content + parsed.text }
+                            : msg
+                        ))
+                      }
+                    } catch (e) {
+                      // Ignore malformed JSON
+                    }
+                  }
+                }
+              }
+              return // Exit early if streaming succeeded
+            } else {
+              // Fallback to non-streaming if response is not streamed
+              const { reply, sessionId: newId } = await res.json()
+              const agentResponse = {
+                id: (Date.now() + 1).toString(),
+                type: "agent" as const,
+                content: reply,
+                timestamp: new Date(),
+              }
+              setMessages((prev) => [...prev, agentResponse])
+              return // Exit early if non-streaming fallback succeeded
+            }
+          } catch (streamError) {
+            console.error('Streaming failed, falling back to non-streaming:', streamError)
+            // Fall through to non-streaming implementation
+          }
         }
-        setMessages((prev) => [...prev, agentResponse])
+        
+        // Non-streaming mode (fallback or default)
+        if (!streamEnabled || !res) {
+          res = await fetch('/api/agent/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              messages: messagesForApi,
+              sessionId: `session_${Date.now()}`
+            }),
+            signal: abortController.signal,
+          })
+          
+          const { reply, sessionId: newId } = await res.json()
+          
+          const agentResponse = {
+            id: (Date.now() + 1).toString(),
+            type: "agent" as const,
+            content: reply,
+            timestamp: new Date(),
+          }
+          setMessages((prev) => [...prev, agentResponse])
+        }
       } catch (error) {
         console.error('API call failed:', error)
         // Fallback to mock response on API error
