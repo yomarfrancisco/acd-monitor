@@ -102,6 +102,14 @@ const analyticsDataYTD = [
 ]
 
 // Financial Compliance Dashboard - Main Component (CI Test)
+// Dashboard button styling
+const dashboardBtnClass = "inline-flex items-center justify-center rounded-md px-3.5 py-2 text-sm font-medium " +
+  "bg-[#AFC8FF] text-black shadow-sm " +
+  "hover:bg-[#9FBCFF] active:bg-[#95B4FF] " +
+  "ring-1 ring-inset ring-[#8FB3FF]/80 " +
+  "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6FA0FF] " +
+  "disabled:opacity-50 disabled:cursor-not-allowed"
+
 export default function CursorDashboard() {
   const [activeTab, setActiveTab] = useState<"agents" | "dashboard">("agents")
   const [selectedTimeframe, setSelectedTimeframe] = useState<"30d" | "6m" | "1y" | "ytd">("ytd")
@@ -239,9 +247,6 @@ export default function CursorDashboard() {
   // Role dropdown state
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState<boolean>(false)
   const [roleDropdownFocusIndex, setRoleDropdownFocusIndex] = useState<number>(-1)
-  
-  // Robot icon fallback state
-  const [robotIconError, setRobotIconError] = useState<boolean>(false)
 
   useEffect(() => {
     setIsClient(true)
@@ -569,29 +574,29 @@ export default function CursorDashboard() {
       }
     } else {
       // Use local mock (original behavior)
-      setTimeout(() => {
-        let agentResponseContent = ""
+    setTimeout(() => {
+      let agentResponseContent = ""
 
-        if (messageContent === "Help me log a market event") {
-          agentResponseContent = `Sounds good, I'll help you log a market event for analysis. I need to understand what happened and its potential implications. Don't worry if you don't have all the details - we can work through this together. What caught your attention that made you want to log this event?
+      if (messageContent === "Help me log a market event") {
+        agentResponseContent = `Sounds good, I'll help you log a market event for analysis. I need to understand what happened and its potential implications. Don't worry if you don't have all the details - we can work through this together. What caught your attention that made you want to log this event?
 
 It would also be helpful if you described:
 • What market behavior did you observe?
 • When did this occur?
 • Which companies or participants were involved?`
-        } else {
-          agentResponseContent = `Thank you for your message: "${messageContent}". I'm your AI economist assistant and I'm here to help you analyze market data, check compliance, and generate reports. How can I assist you today?`
-        }
+      } else {
+        agentResponseContent = `Thank you for your message: "${messageContent}". I'm your AI economist assistant and I'm here to help you analyze market data, check compliance, and generate reports. How can I assist you today?`
+      }
 
-        const agentResponse = {
-          id: (Date.now() + 1).toString(),
-          type: "agent" as const,
-          content: agentResponseContent,
-          timestamp: new Date(),
-        }
+      const agentResponse = {
+        id: (Date.now() + 1).toString(),
+        type: "agent" as const,
+        content: agentResponseContent,
+        timestamp: new Date(),
+      }
         setIsAssistantTyping(false) // Hide loader
-        setMessages((prev) => [...prev, agentResponse])
-      }, 1000)
+      setMessages((prev) => [...prev, agentResponse])
+    }, 1000)
     }
 
     setInputValue("")
@@ -1268,16 +1273,14 @@ It would also be helpful if you described:
                         )}
                         {/* Model selector - bottom left */}
                         <div className="absolute left-3 bottom-3 flex items-center gap-1.5">
-                          {!robotIconError ? (
-                            <img
-                              src="/icons/icon-robot.png"
-                              alt="Robot"
-                              className="w-3.5 h-3.5"
-                              onError={() => setRobotIconError(true)}
-                            />
-                          ) : (
-                            <Bot className="w-3.5 h-3.5 text-[#71717a]" />
-                          )}
+                          <Image
+                            src="/icons/icon-americas.png"
+                            alt="Agent"
+                            width={18}
+                            height={18}
+                            className="shrink-0 rounded-none"
+                            priority
+                          />
                           <div className="relative role-dropdown-container">
                             <button
                               className="bg-transparent text-[10px] text-[#71717a] font-medium border-none outline-none cursor-pointer hover:text-[#a1a1aa] flex items-center gap-1"
@@ -1316,21 +1319,21 @@ It would also be helpful if you described:
                               </div>
                             )}
                           </div>
-                        </div>
+                    </div>
 
                         {/* Action buttons - bottom right */}
                         <div className="absolute right-3 bottom-3 flex gap-1.5">
                           <div className="relative">
                             <button
                               ref={setUploadMenuAnchorRef}
-                              className="h-6 w-6 flex items-center justify-center cursor-pointer"
+                            className="h-6 w-6 flex items-center justify-center cursor-pointer"
                               onClick={handleUploadMenuToggle}
                               onKeyDown={handleUploadMenuKeyDown}
                               aria-haspopup="menu"
                               aria-expanded={isUploadMenuOpen}
                               aria-label="Upload options"
-                            >
-                              <CloudUpload className="w-4 h-4 text-[#71717a] hover:text-[#a1a1aa]" />
+                          >
+                            <CloudUpload className="w-4 h-4 text-[#71717a] hover:text-[#a1a1aa]" />
                             </button>
                             
                             {/* Upload Menu Popover */}
@@ -2066,7 +2069,7 @@ It would also be helpful if you described:
                         <Button
                           variant="outline"
                           size="sm"
-                          className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
+                          className={dashboardBtnClass}
                         >
                           Connect
                         </Button>
@@ -2084,7 +2087,7 @@ It would also be helpful if you described:
                     </p>
                     <Button
                       variant="outline"
-                      className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
+                      className={dashboardBtnClass}
                     >
                       Invite Your Team
                     </Button>
@@ -2427,7 +2430,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
+                              className={dashboardBtnClass}
                             >
                               Connect
                             </Button>
@@ -2452,7 +2455,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
+                              className={dashboardBtnClass}
                             >
                               Connect
                             </Button>
@@ -2477,7 +2480,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
+                              className={dashboardBtnClass}
                             >
                               Connect
                             </Button>
@@ -2502,7 +2505,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
+                              className={dashboardBtnClass}
                             >
                               Connect
                             </Button>
@@ -2618,7 +2621,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
+                              className={dashboardBtnClass}
                             >
                               Deploy
                             </Button>
@@ -2643,7 +2646,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
+                              className={dashboardBtnClass}
                             >
                               Deploy
                             </Button>
@@ -2668,7 +2671,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
+                              className={dashboardBtnClass}
                             >
                               Deploy
                             </Button>
@@ -2693,7 +2696,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
+                              className={dashboardBtnClass}
                             >
                               Deploy
                             </Button>
@@ -3388,7 +3391,7 @@ It would also be helpful if you described:
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
+                                className={dashboardBtnClass}
                               >
                                 Download
                               </Button>
@@ -3419,7 +3422,7 @@ It would also be helpful if you described:
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
+                                className={dashboardBtnClass}
                               >
                                 Download
                               </Button>
@@ -3450,7 +3453,7 @@ It would also be helpful if you described:
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
+                                className={dashboardBtnClass}
                               >
                                 Download
                               </Button>
