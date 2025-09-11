@@ -30,6 +30,7 @@ import {
 } from "lucide-react"
 
 import { Separator } from "@/components/ui/separator"
+import Image from "next/image"
 
 import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
@@ -1004,7 +1005,15 @@ It would also be helpful if you described:
                         <div key={message.id} className="w-full">
                           {message.type === "agent" ? (
                             <div className="flex items-start gap-3">
-                              <Bot className="w-4 h-4 text-white mt-1 flex-shrink-0" />
+                              <div className="h-6 w-6 rounded-full flex items-center justify-center overflow-hidden bg-transparent mt-1 flex-shrink-0">
+                                <Image
+                                  src="/icons/icon-americas.png"
+                                  alt="Agent"
+                                  width={24}
+                                  height={24}
+                                  className="h-4 w-4 object-contain"
+                                />
+                              </div>
                               <div className="flex-1">
                                 <div className="text-xs text-[#f9fafb] leading-relaxed">{message.content}</div>
                                 {/* Control icons for assistant messages (left-aligned) */}
@@ -1035,7 +1044,15 @@ It would also be helpful if you described:
                       {isAssistantTyping && (
                         <div className="w-full">
                           <div className="flex items-start gap-3">
-                            <Bot className="w-4 h-4 text-white mt-1 flex-shrink-0" />
+                            <div className="h-6 w-6 rounded-full flex items-center justify-center overflow-hidden bg-transparent mt-1 flex-shrink-0">
+                              <Image
+                                src="/icons/icon-americas.png"
+                                alt="Agent"
+                                width={24}
+                                height={24}
+                                className="h-4 w-4 object-contain"
+                              />
+                            </div>
                             <div className="flex-1 text-xs text-[#f9fafb] leading-relaxed">
                               <div className="inline-block w-2 h-2 bg-white rounded-full animate-pulse"></div>
                             </div>
