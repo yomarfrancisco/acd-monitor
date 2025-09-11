@@ -1018,13 +1018,23 @@ It would also be helpful if you described:
       <header className="border-b border-[#1a1a1a] px-5 py-1.5 relative">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Image
-              src="/icons/icon-americas.png"
-              alt="RBB Economics"
-              width={112}
-              height={112}
-              className="h-28 w-28 opacity-90 hover:opacity-100 transition-opacity"
-            />
+            <div
+              className="header-logo-icon"
+              data-testid="header-logo-icon"
+              style={{ 
+                display: 'inline-flex', 
+                transform: 'scale(0.35)', 
+                transformOrigin: 'center' 
+              }}
+            >
+              <Image
+                src="/icons/icon-americas.png"
+                alt="RBB Economics"
+                width={112}
+                height={112}
+                className="h-28 w-28 opacity-90 hover:opacity-100 transition-opacity"
+              />
+            </div>
           </div>
 
           <nav className="flex gap-5 absolute left-1/2 transform -translate-x-1/2">
