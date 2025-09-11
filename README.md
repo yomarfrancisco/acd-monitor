@@ -168,6 +168,12 @@ acd-monitor/
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+## Specs & Docs
+
+- **Product Specification v2.2 (current):** [Markdown](docs/product_spec_v2.2.md) • [PDF](docs/ACD_Product_Spec_v2.2.pdf)
+- **Brief 55+ (immutable):** docs/briefs/Brief-55+.pdf
+- **Mission Control (immutable):** docs/mission_control.md
+
 ## Support & Documentation
 
 - **Documentation**: [docs/](docs/)
