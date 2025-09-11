@@ -36,7 +36,7 @@ import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, ReferenceLine, Label } from "recharts"
-import { CalendarIcon, Copy, RefreshCw } from "lucide-react"
+import { CalendarIcon, Copy, RefreshCw, ImageUp, Camera, FolderClosed } from "lucide-react"
 import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema } from "@/types/api.schemas"
 import { fetchTyped } from "@/lib/backendAdapter"
 import { safe } from "@/lib/safe"
@@ -228,10 +228,31 @@ export default function CursorDashboard() {
   >([])
   const [hasEngaged, setHasEngaged] = useState<boolean>(false)
   const [isAssistantTyping, setIsAssistantTyping] = useState<boolean>(false)
+  
+  // Upload menu state
+  const [isUploadMenuOpen, setIsUploadMenuOpen] = useState<boolean>(false)
+  const [uploadMenuAnchorRef, setUploadMenuAnchorRef] = useState<HTMLButtonElement | null>(null)
+  const [uploadMenuFocusIndex, setUploadMenuFocusIndex] = useState<number>(-1)
+  const [isGitHubModalOpen, setIsGitHubModalOpen] = useState<boolean>(false)
+  const [gitHubRepoUrl, setGitHubRepoUrl] = useState<string>("")
 
   useEffect(() => {
     setIsClient(true)
   }, [])
+
+  // Handle click outside to close upload menu
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isUploadMenuOpen && uploadMenuAnchorRef && !uploadMenuAnchorRef.contains(event.target as Node)) {
+        handleUploadMenuClose()
+      }
+    }
+
+    if (isUploadMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isUploadMenuOpen, uploadMenuAnchorRef])
 
   // Heartbeat check for degraded mode
   useEffect(() => {
@@ -768,6 +789,84 @@ It would also be helpful if you described:
     }
   }
 
+  // Upload menu handlers
+  const handleFiles = (files: FileList) => {
+    console.info('Files selected:', Array.from(files).map(f => ({ name: f.name, size: f.size, type: f.type })))
+    // TODO: Wire real file ingestion later
+  }
+
+  const handleUploadMenuToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault()
+    event.stopPropagation()
+    setUploadMenuAnchorRef(event.currentTarget)
+    setIsUploadMenuOpen(!isUploadMenuOpen)
+    setUploadMenuFocusIndex(-1)
+  }
+
+  const handleUploadMenuClose = () => {
+    setIsUploadMenuOpen(false)
+    setUploadMenuFocusIndex(-1)
+    uploadMenuAnchorRef?.focus()
+  }
+
+  const handleUploadMenuKeyDown = (event: React.KeyboardEvent) => {
+    if (!isUploadMenuOpen) return
+
+    switch (event.key) {
+      case 'Escape':
+        handleUploadMenuClose()
+        break
+      case 'ArrowDown':
+        event.preventDefault()
+        setUploadMenuFocusIndex(prev => (prev + 1) % 4)
+        break
+      case 'ArrowUp':
+        event.preventDefault()
+        setUploadMenuFocusIndex(prev => (prev - 1 + 4) % 4)
+        break
+      case 'Enter':
+        event.preventDefault()
+        if (uploadMenuFocusIndex >= 0) {
+          handleUploadAction(uploadMenuFocusIndex)
+        }
+        break
+    }
+  }
+
+  const handleUploadAction = (index: number) => {
+    const actions = ['photoLibrary', 'takePhoto', 'chooseFiles', 'linkGitHub']
+    const action = actions[index]
+    
+    switch (action) {
+      case 'photoLibrary':
+        document.getElementById('photo-library-input')?.click()
+        break
+      case 'takePhoto':
+        document.getElementById('camera-input')?.click()
+        break
+      case 'chooseFiles':
+        document.getElementById('file-input')?.click()
+        break
+      case 'linkGitHub':
+        setIsGitHubModalOpen(true)
+        break
+    }
+    handleUploadMenuClose()
+  }
+
+  const handleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>, type: string) => {
+    if (event.target.files) {
+      console.info(`${type} files selected:`, Array.from(event.target.files).map(f => ({ name: f.name, size: f.size, type: f.type })))
+      handleFiles(event.target.files)
+    }
+  }
+
+  const handleGitHubConnect = () => {
+    console.info({ repoUrl: gitHubRepoUrl })
+    setGitHubRepoUrl("")
+    setIsGitHubModalOpen(false)
+  }
+
   // Get the appropriate data based on selected timeframe
   const getAnalyticsData = () => {
     switch (selectedTimeframe) {
@@ -839,6 +938,30 @@ It would also be helpful if you described:
 
   return (
     <div className="min-h-screen bg-[#0f0f10] text-[#f9fafb] font-sans p-4">
+      {/* Hidden file inputs for upload menu */}
+      <input
+        id="photo-library-input"
+        type="file"
+        accept="image/*"
+        multiple
+        style={{ display: 'none' }}
+        onChange={(e) => handleFileInputChange(e, 'Photo Library')}
+      />
+      <input
+        id="camera-input"
+        type="file"
+        accept="image/*,video/*"
+        capture="environment"
+        style={{ display: 'none' }}
+        onChange={(e) => handleFileInputChange(e, 'Camera')}
+      />
+      <input
+        id="file-input"
+        type="file"
+        multiple
+        style={{ display: 'none' }}
+        onChange={(e) => handleFileInputChange(e, 'Files')}
+      />
       {/* Header */}
       <header className="border-b border-[#1a1a1a] px-5 py-1.5 relative">
         <div className="flex items-center justify-between">
@@ -1108,14 +1231,70 @@ It would also be helpful if you described:
 
                         {/* Action buttons - bottom right */}
                         <div className="absolute right-3 bottom-3 flex gap-1.5">
-                          <div
-                            className="h-6 w-6 flex items-center justify-center cursor-pointer"
-                            onClick={() => {
-                              // Simulate file upload
-                              setUploadedFiles((prev) => [...prev, "pricing_data.csv"])
-                            }}
-                          >
-                            <CloudUpload className="w-4 h-4 text-[#71717a] hover:text-[#a1a1aa]" />
+                          <div className="relative">
+                            <button
+                              ref={setUploadMenuAnchorRef}
+                              className="h-6 w-6 flex items-center justify-center cursor-pointer"
+                              onClick={handleUploadMenuToggle}
+                              onKeyDown={handleUploadMenuKeyDown}
+                              aria-haspopup="menu"
+                              aria-expanded={isUploadMenuOpen}
+                              aria-label="Upload options"
+                            >
+                              <CloudUpload className="w-4 h-4 text-[#71717a] hover:text-[#a1a1aa]" />
+                            </button>
+                            
+                            {/* Upload Menu Popover */}
+                            {isUploadMenuOpen && (
+                              <div
+                                className="absolute z-50 mt-2 w-56 rounded-md border border-zinc-800 bg-zinc-900/95 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-zinc-900/80"
+                                role="menu"
+                                aria-orientation="vertical"
+                              >
+                                <div className="py-1">
+                                  <button
+                                    className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#86a789] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
+                                      uploadMenuFocusIndex === 0 ? 'bg-zinc-800 text-[#86a789]' : ''
+                                    }`}
+                                    onClick={() => handleUploadAction(0)}
+                                    role="menuitem"
+                                  >
+                                    <ImageUp className="w-4 h-4" />
+                                    Photo Library
+                                  </button>
+                                  <button
+                                    className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#86a789] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
+                                      uploadMenuFocusIndex === 1 ? 'bg-zinc-800 text-[#86a789]' : ''
+                                    }`}
+                                    onClick={() => handleUploadAction(1)}
+                                    role="menuitem"
+                                  >
+                                    <Camera className="w-4 h-4" />
+                                    Take Photo or Video
+                                  </button>
+                                  <button
+                                    className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#86a789] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
+                                      uploadMenuFocusIndex === 2 ? 'bg-zinc-800 text-[#86a789]' : ''
+                                    }`}
+                                    onClick={() => handleUploadAction(2)}
+                                    role="menuitem"
+                                  >
+                                    <FolderClosed className="w-4 h-4" />
+                                    Choose Files
+                                  </button>
+                                  <button
+                                    className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#86a789] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
+                                      uploadMenuFocusIndex === 3 ? 'bg-zinc-800 text-[#86a789]' : ''
+                                    }`}
+                                    onClick={() => handleUploadAction(3)}
+                                    role="menuitem"
+                                  >
+                                    <img src="/icons/logo-github.png" alt="GitHub" className="h-4 w-4" />
+                                    Link GitHub
+                                  </button>
+                                </div>
+                              </div>
+                            )}
                           </div>
                           <div
                             className="h-6 w-6 flex items-center justify-center cursor-pointer"
@@ -3289,6 +3468,47 @@ It would also be helpful if you described:
           </main>
         </div>
       </div>
+
+      {/* GitHub Modal */}
+      {isGitHubModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 w-96 max-w-[90vw] shadow-xl">
+            <div className="flex items-center gap-3 mb-4">
+              <img src="/icons/logo-github.png" alt="GitHub" className="h-6 w-6" />
+              <h3 className="text-lg font-medium text-[#f9fafb]">Link GitHub Repository</h3>
+            </div>
+            <p className="text-sm text-zinc-300 mb-4">
+              Enter the URL of the GitHub repository you want to connect:
+            </p>
+            <input
+              type="url"
+              value={gitHubRepoUrl}
+              onChange={(e) => setGitHubRepoUrl(e.target.value)}
+              placeholder="https://github.com/username/repository"
+              className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md text-[#f9fafb] placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#86a789] focus:border-transparent"
+              autoFocus
+            />
+            <div className="flex gap-3 mt-6 justify-end">
+              <button
+                onClick={() => {
+                  setGitHubRepoUrl("")
+                  setIsGitHubModalOpen(false)
+                }}
+                className="px-4 py-2 text-sm text-zinc-300 hover:text-[#f9fafb] border border-zinc-700 rounded-md hover:bg-zinc-800 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleGitHubConnect}
+                disabled={!gitHubRepoUrl.trim()}
+                className="px-4 py-2 text-sm bg-[#86a789] text-white rounded-md hover:bg-[#7a9a7a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                Connect
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <style jsx>{`
         @keyframes blink {
