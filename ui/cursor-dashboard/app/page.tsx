@@ -36,7 +36,7 @@ import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, ReferenceLine, Label } from "recharts"
-import { CalendarIcon, Copy, RefreshCw, ImageUp, Camera, FolderClosed } from "lucide-react"
+import { CalendarIcon, Copy, RefreshCw, ImageUp, Camera, FolderClosed, Github } from "lucide-react"
 import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema } from "@/types/api.schemas"
 import { fetchTyped } from "@/lib/backendAdapter"
 import { safe } from "@/lib/safe"
@@ -235,24 +235,31 @@ export default function CursorDashboard() {
   const [uploadMenuFocusIndex, setUploadMenuFocusIndex] = useState<number>(-1)
   const [isGitHubModalOpen, setIsGitHubModalOpen] = useState<boolean>(false)
   const [gitHubRepoUrl, setGitHubRepoUrl] = useState<string>("")
+  
+  // Role dropdown state
+  const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState<boolean>(false)
+  const [roleDropdownFocusIndex, setRoleDropdownFocusIndex] = useState<number>(-1)
 
   useEffect(() => {
     setIsClient(true)
   }, [])
 
-  // Handle click outside to close upload menu
+  // Handle click outside to close upload menu and role dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (isUploadMenuOpen && uploadMenuAnchorRef && !uploadMenuAnchorRef.contains(event.target as Node)) {
         handleUploadMenuClose()
       }
+      if (isRoleDropdownOpen && !(event.target as Element).closest('.role-dropdown-container')) {
+        handleRoleDropdownClose()
+      }
     }
 
-    if (isUploadMenuOpen) {
+    if (isUploadMenuOpen || isRoleDropdownOpen) {
       document.addEventListener('mousedown', handleClickOutside)
       return () => document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [isUploadMenuOpen, uploadMenuAnchorRef])
+  }, [isUploadMenuOpen, uploadMenuAnchorRef, isRoleDropdownOpen])
 
   // Heartbeat check for degraded mode
   useEffect(() => {
@@ -867,6 +874,48 @@ It would also be helpful if you described:
     setIsGitHubModalOpen(false)
   }
 
+  // Role dropdown handlers
+  const handleRoleDropdownToggle = () => {
+    setIsRoleDropdownOpen(!isRoleDropdownOpen)
+    setRoleDropdownFocusIndex(-1)
+  }
+
+  const handleRoleDropdownClose = () => {
+    setIsRoleDropdownOpen(false)
+    setRoleDropdownFocusIndex(-1)
+  }
+
+  const handleRoleSelect = (role: string) => {
+    setSelectedAgent(role)
+    handleRoleDropdownClose()
+  }
+
+  const handleRoleDropdownKeyDown = (event: React.KeyboardEvent) => {
+    if (!isRoleDropdownOpen) return
+
+    const roles = ["Jnr Economist", "Legal", "Snr Economist", "Statistician"]
+
+    switch (event.key) {
+      case 'Escape':
+        handleRoleDropdownClose()
+        break
+      case 'ArrowDown':
+        event.preventDefault()
+        setRoleDropdownFocusIndex(prev => (prev + 1) % roles.length)
+        break
+      case 'ArrowUp':
+        event.preventDefault()
+        setRoleDropdownFocusIndex(prev => (prev - 1 + roles.length) % roles.length)
+        break
+      case 'Enter':
+        event.preventDefault()
+        if (roleDropdownFocusIndex >= 0) {
+          handleRoleSelect(roles[roleDropdownFocusIndex])
+        }
+        break
+    }
+  }
+
   // Get the appropriate data based on selected timeframe
   const getAnalyticsData = () => {
     switch (selectedTimeframe) {
@@ -1217,17 +1266,45 @@ It would also be helpful if you described:
                         {/* Model selector - bottom left */}
                         <div className="absolute left-3 bottom-3 flex items-center gap-1.5">
                           <Bot className="w-3.5 h-3.5 text-[#71717a]" />
-                          <select
-                            value={selectedAgent}
-                            onChange={(e) => setSelectedAgent(e.target.value)}
-                            className="bg-transparent text-[10px] text-[#71717a] font-medium border-none outline-none cursor-pointer hover:text-[#a1a1aa]"
-                          >
-                            <option value="Jnr Economist">Jnr Economist</option>
-                            <option value="Legal">Legal</option>
-                            <option value="Snr Economist">Snr Economist</option>
-                            <option value="Statistician">Statistician</option>
-                          </select>
-                    </div>
+                          <div className="relative role-dropdown-container">
+                            <button
+                              className="bg-transparent text-[10px] text-[#71717a] font-medium border-none outline-none cursor-pointer hover:text-[#a1a1aa] flex items-center gap-1"
+                              onClick={handleRoleDropdownToggle}
+                              onKeyDown={handleRoleDropdownKeyDown}
+                              aria-haspopup="listbox"
+                              aria-expanded={isRoleDropdownOpen}
+                              aria-label="Select agent role"
+                            >
+                              {selectedAgent}
+                              <ChevronDown className="w-3 h-3 text-[#71717a]" />
+                            </button>
+                            
+                            {/* Role Dropdown Menu */}
+                            {isRoleDropdownOpen && (
+                              <div
+                                className="absolute z-50 mt-2 w-40 rounded-md border border-white/10 bg-neutral-900/90 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-neutral-900/80"
+                                role="listbox"
+                                aria-orientation="vertical"
+                              >
+                                <div className="py-1">
+                                  {["Jnr Economist", "Legal", "Snr Economist", "Statistician"].map((role, index) => (
+                                    <button
+                                      key={role}
+                                      className={`flex items-center gap-2 px-3 py-2 text-sm text-gray-200 hover:text-white hover:bg-white/5 w-full text-left ${
+                                        roleDropdownFocusIndex === index ? 'bg-white/5 text-white' : ''
+                                      } ${selectedAgent === role ? 'bg-white/5' : ''}`}
+                                      onClick={() => handleRoleSelect(role)}
+                                      role="option"
+                                      aria-selected={selectedAgent === role}
+                                    >
+                                      {role}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
 
                         {/* Action buttons - bottom right */}
                         <div className="absolute right-3 bottom-3 flex gap-1.5">
@@ -1289,7 +1366,7 @@ It would also be helpful if you described:
                                     onClick={() => handleUploadAction(3)}
                                     role="menuitem"
                                   >
-                                    <img src="/icons/logo-github.png" alt="GitHub" className="h-4 w-4" />
+                                    <Github className="w-4 h-4" />
                                     Link GitHub
                                   </button>
                                 </div>
@@ -3474,7 +3551,7 @@ It would also be helpful if you described:
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 w-96 max-w-[90vw] shadow-xl">
             <div className="flex items-center gap-3 mb-4">
-              <img src="/icons/logo-github.png" alt="GitHub" className="h-6 w-6" />
+              <Github className="h-6 w-6 text-[#f9fafb]" />
               <h3 className="text-lg font-medium text-[#f9fafb]">Link GitHub Repository</h3>
             </div>
             <p className="text-sm text-zinc-300 mb-4">
