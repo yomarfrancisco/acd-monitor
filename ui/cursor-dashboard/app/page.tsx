@@ -1004,18 +1004,20 @@ It would also be helpful if you described:
                         <div key={message.id} className="w-full">
                           {message.type === "agent" ? (
                             <div className="flex items-start gap-3">
-                              <Bot className="w-4 h-4 text-[#86a789] mt-1 flex-shrink-0" />
+                              <Bot className="w-4 h-4 text-white mt-1 flex-shrink-0" />
                               <div className="flex-1">
                                 <div className="text-xs text-[#f9fafb] leading-relaxed">{message.content}</div>
-                                {/* Control icons for assistant messages */}
-                                <div className="flex gap-2 mt-1 text-gray-400 hover:text-gray-600 cursor-pointer justify-end">
+                                {/* Control icons for assistant messages (left-aligned) */}
+                                <div className="flex gap-2 mt-1 text-gray-400 hover:text-gray-600 cursor-pointer justify-start">
                                   <Copy 
                                     className="w-3 h-3 hover:text-[#86a789]" 
                                     onClick={() => handleCopy(message.content)}
+                                    aria-label="Copy"
                                   />
                                   <RefreshCw 
                                     className="w-3 h-3 hover:text-[#86a789]" 
                                     onClick={() => handleRegenerate(index)}
+                                    aria-label="Regenerate"
                                   />
                                 </div>
                               </div>
@@ -1033,9 +1035,9 @@ It would also be helpful if you described:
                       {isAssistantTyping && (
                         <div className="w-full">
                           <div className="flex items-start gap-3">
-                            <Bot className="w-4 h-4 text-[#86a789] mt-1 flex-shrink-0" />
+                            <Bot className="w-4 h-4 text-white mt-1 flex-shrink-0" />
                             <div className="flex-1 text-xs text-[#f9fafb] leading-relaxed">
-                              <div className="inline-block w-2 h-2 bg-[#86a789] rounded-full animate-pulse"></div>
+                              <div className="inline-block w-2 h-2 bg-white rounded-full animate-pulse"></div>
                             </div>
                           </div>
                         </div>
