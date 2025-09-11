@@ -1181,13 +1181,23 @@ It would also be helpful if you described:
                           {message.type === "agent" ? (
                             <div className="flex items-start gap-3">
                               <div className="h-6 w-6 rounded-full flex items-center justify-center overflow-hidden bg-transparent mt-1 flex-shrink-0">
-                                <Image
-                                  src="/icons/icon-americas.png"
-                                  alt="Agent"
-                                  width={24}
-                                  height={24}
-                                  className="h-4 w-4 object-contain"
-                                />
+                                <div
+                                  className="agent-message-icon"
+                                  data-testid="agent-message-icon"
+                                  style={{ 
+                                    display: 'inline-flex', 
+                                    transform: 'scale(1.2)', 
+                                    transformOrigin: 'center' 
+                                  }}
+                                >
+                                  <Image
+                                    src="/icons/icon-americas.png"
+                                    alt="Agent"
+                                    width={24}
+                                    height={24}
+                                    className="h-4 w-4 object-contain"
+                                  />
+                                </div>
                               </div>
                               <div className="flex-1">
                                 <div className="text-xs text-[#f9fafb] leading-relaxed">{message.content}</div>
@@ -1220,13 +1230,23 @@ It would also be helpful if you described:
                         <div className="w-full">
                           <div className="flex items-start gap-3">
                             <div className="h-6 w-6 rounded-full flex items-center justify-center overflow-hidden bg-transparent mt-1 flex-shrink-0">
-                              <Image
-                                src="/icons/icon-americas.png"
-                                alt="Agent"
-                                width={24}
-                                height={24}
-                                className="h-4 w-4 object-contain"
-                              />
+                              <div
+                                className="agent-typing-icon"
+                                data-testid="agent-typing-icon"
+                                style={{ 
+                                  display: 'inline-flex', 
+                                  transform: 'scale(1.2)', 
+                                  transformOrigin: 'center' 
+                                }}
+                              >
+                                <Image
+                                  src="/icons/icon-americas.png"
+                                  alt="Agent"
+                                  width={24}
+                                  height={24}
+                                  className="h-4 w-4 object-contain"
+                                />
+                              </div>
                             </div>
                             <div className="flex-1 text-xs text-[#f9fafb] leading-relaxed">
                               <div className="inline-block w-2 h-2 bg-white rounded-full animate-pulse"></div>
