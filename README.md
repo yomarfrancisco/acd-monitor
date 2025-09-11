@@ -28,9 +28,9 @@ The ACD platform is built on three foundational documents:
 
 - **[Brief 55+](docs/briefs/brief55+.md)** - Methodological foundation (dual pillars: ICP + VMM)
 - **[Mission Control](docs/mission_control.md)** - Operational execution framework  
-- **[Product Spec v1.8](docs/product_spec_v1.8.md)** - Complete technical specification
+- **[Product Spec v2.2](docs/product_spec_v2.2.md)** - Complete technical specification
 
-*Note: Brief 55+ and Mission Control are immutable reference anchors. The Product Spec evolves with development (v1.9, v2.0, etc.).*
+*Note: Brief 55+ and Mission Control are immutable reference anchors. The Product Spec evolves with development (v1.9, v2.0, v2.2, etc.).*
 
 ## Methodology
 
@@ -131,7 +131,7 @@ acd-monitor/
 │   ├── briefs/             # Methodological foundations
 │   │   └── brief55+.md     # RBB Brief 55+ (immutable)
 │   ├── mission_control.md  # Operational framework (immutable)
-│   └── product_spec_v1.8.md # Technical specification (evolving)
+│   └── product_spec_v2.2.md # Technical specification (evolving)
 ├── src/                    # Source code
 │   ├── backend/           # FastAPI backend
 │   ├── frontend/          # React frontend
