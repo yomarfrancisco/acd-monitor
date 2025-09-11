@@ -105,6 +105,9 @@ const analyticsDataYTD = [
 // Dashboard button styling - keep original sizing, only change colors
 const dashboardBtnClass = "border-[#AFC8FF] text-black bg-[#AFC8FF] hover:bg-[#9FBCFF] text-[9px] h-5 px-2 font-normal"
 
+// Dashboard CTA button styling - white text for the 13 specific CTA buttons
+const dashboardCtaBtnClass = "border-[#AFC8FF] text-white bg-[#AFC8FF] hover:bg-[#9FBCFF] text-[9px] h-5 px-2 font-normal"
+
 export default function CursorDashboard() {
   const [activeTab, setActiveTab] = useState<"agents" | "dashboard">("agents")
   const [selectedTimeframe, setSelectedTimeframe] = useState<"30d" | "6m" | "1y" | "ytd">("ytd")
@@ -2064,7 +2067,7 @@ It would also be helpful if you described:
                         <Button
                           variant="outline"
                           size="sm"
-                          className={dashboardBtnClass}
+                          className={dashboardCtaBtnClass}
                         >
                           Connect
                         </Button>
@@ -2082,7 +2085,7 @@ It would also be helpful if you described:
                     </p>
                     <Button
                       variant="outline"
-                      className={dashboardBtnClass}
+                      className={dashboardCtaBtnClass}
                     >
                       Invite Your Team
                     </Button>
@@ -2425,7 +2428,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className={dashboardBtnClass}
+                              className={dashboardCtaBtnClass}
                             >
                               Connect
                             </Button>
@@ -2450,7 +2453,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className={dashboardBtnClass}
+                              className={dashboardCtaBtnClass}
                             >
                               Connect
                             </Button>
@@ -2475,7 +2478,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className={dashboardBtnClass}
+                              className={dashboardCtaBtnClass}
                             >
                               Connect
                             </Button>
@@ -2500,7 +2503,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className={dashboardBtnClass}
+                              className={dashboardCtaBtnClass}
                             >
                               Connect
                             </Button>
@@ -2616,7 +2619,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className={dashboardBtnClass}
+                              className={dashboardCtaBtnClass}
                             >
                               Deploy
                             </Button>
@@ -2641,7 +2644,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className={dashboardBtnClass}
+                              className={dashboardCtaBtnClass}
                             >
                               Deploy
                             </Button>
@@ -2666,7 +2669,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className={dashboardBtnClass}
+                              className={dashboardCtaBtnClass}
                             >
                               Deploy
                             </Button>
@@ -2691,7 +2694,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className={dashboardBtnClass}
+                              className={dashboardCtaBtnClass}
                             >
                               Deploy
                             </Button>
@@ -3386,7 +3389,7 @@ It would also be helpful if you described:
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className={dashboardBtnClass}
+                                className={dashboardCtaBtnClass}
                               >
                                 Download
                               </Button>
@@ -3417,7 +3420,7 @@ It would also be helpful if you described:
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className={dashboardBtnClass}
+                                className={dashboardCtaBtnClass}
                               >
                                 Download
                               </Button>
@@ -3448,7 +3451,7 @@ It would also be helpful if you described:
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className={dashboardBtnClass}
+                                className={dashboardCtaBtnClass}
                               >
                                 Download
                               </Button>
