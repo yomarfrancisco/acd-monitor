@@ -35,7 +35,7 @@ import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, ReferenceLine, Label } from "recharts"
-import { CalendarIcon } from "lucide-react"
+import { CalendarIcon, Copy, RefreshCw } from "lucide-react"
 import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema } from "@/types/api.schemas"
 import { fetchTyped } from "@/lib/backendAdapter"
 import { safe } from "@/lib/safe"
@@ -565,6 +565,208 @@ It would also be helpful if you described:
     setInputValue("")
   }
 
+  // Helper function to copy message content to clipboard
+  const handleCopy = async (content: string) => {
+    try {
+      await navigator.clipboard.writeText(content)
+    } catch (error) {
+      console.error('Failed to copy to clipboard:', error)
+    }
+  }
+
+  // Helper function to regenerate assistant response
+  const handleRegenerate = async (messageIndex: number) => {
+    // Show typing loader immediately
+    setIsAssistantTyping(true)
+
+    try {
+      // Remove the current assistant message at the specified index
+      setMessages((prev) => prev.filter((_, idx) => idx !== messageIndex))
+
+      // Get all messages up to the point where we want to regenerate
+      const messagesUpToIndex = messages.slice(0, messageIndex)
+      
+      // Find the last user message to use as the query
+      const lastUserMessage = messagesUpToIndex.reverse().find(msg => msg.type === "user")
+      
+      if (!lastUserMessage) {
+        console.error('No user message found for regeneration')
+        setIsAssistantTyping(false)
+        return
+      }
+
+      // Check if we should use the API or local mock
+      if (process.env.NEXT_PUBLIC_AGENT_CHAT_ENABLED === 'true') {
+        const streamEnabled = process.env.NEXT_PUBLIC_AGENT_CHAT_STREAM === 'true'
+        let res: Response | null = null
+
+        if (streamEnabled) {
+          // Streaming mode
+          try {
+            res = await fetch('/api/agent/chat', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ 
+                messages: messagesUpToIndex.map(msg => ({ role: msg.type, content: msg.content })),
+                sessionId: `session_${Date.now()}`
+              }),
+            })
+
+            if (res.ok && res.headers.get('content-type')?.includes('text/event-stream')) {
+              const reader = res.body?.getReader()
+              if (!reader) throw new Error('No reader available')
+              
+              const decoder = new TextDecoder()
+              let buffer = ''
+              
+              // Create initial agent message
+              const agentMessageId = (Date.now() + 1).toString()
+              const agentResponse = {
+                id: agentMessageId,
+                type: "agent" as const,
+                content: '',
+                timestamp: new Date(),
+              }
+              setIsAssistantTyping(false) // Hide loader when streaming starts
+              setMessages((prev) => [...prev, agentResponse])
+              
+              // Read streaming chunks
+              while (true) {
+                const { done, value } = await reader.read()
+                if (done) break
+                
+                buffer += decoder.decode(value, { stream: true })
+                const lines = buffer.split('\n')
+                buffer = lines.pop() || ''
+                
+                for (const line of lines) {
+                  if (line.startsWith('data: ')) {
+                    const data = line.slice(6)
+                    if (data === '[DONE]') continue
+                    
+                    try {
+                      const parsed = JSON.parse(data)
+                      if (parsed.text) {
+                        // Append text to existing agent message
+                        setMessages((prev) => prev.map(msg => 
+                          msg.id === agentMessageId 
+                            ? { ...msg, content: msg.content + parsed.text }
+                            : msg
+                        ))
+                      }
+                    } catch (e) {
+                      // Ignore parsing errors for malformed chunks
+                    }
+                  }
+                }
+              }
+              return // Exit early if streaming succeeded
+            } else {
+              // Fallback to non-streaming if response is not streamed
+              const data = await res.json()
+              
+              // Check if this is an error response
+              if (data.error) {
+                const agentResponse = {
+                  id: (Date.now() + 1).toString(),
+                  type: "agent" as const,
+                  content: `I encountered an error: ${data.error}. Please try again.`,
+                  timestamp: new Date(),
+                }
+                setIsAssistantTyping(false) // Hide loader
+                setMessages((prev) => [...prev, agentResponse])
+              } else {
+                const agentResponse = {
+                  id: (Date.now() + 1).toString(),
+                  type: "agent" as const,
+                  content: data.reply,
+                  timestamp: new Date(),
+                }
+                setIsAssistantTyping(false) // Hide loader
+                setMessages((prev) => [...prev, agentResponse])
+              }
+              return // Exit early if non-streaming fallback succeeded
+            }
+          } catch (streamError) {
+            console.error('Streaming failed, falling back to non-streaming:', streamError)
+            // Fall through to non-streaming implementation
+          }
+        }
+        
+        // Non-streaming mode (fallback or default)
+        if (!streamEnabled || !res) {
+          res = await fetch('/api/agent/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              messages: messagesUpToIndex.map(msg => ({ role: msg.type, content: msg.content })),
+              sessionId: `session_${Date.now()}`
+            }),
+          })
+          
+          const data = await res.json()
+          
+          // Check if this is an error response
+          if (data.error) {
+            const agentResponse = {
+              id: (Date.now() + 1).toString(),
+              type: "agent" as const,
+              content: `I encountered an error: ${data.error}. Please try again.`,
+              timestamp: new Date(),
+            }
+            setIsAssistantTyping(false) // Hide loader
+            setMessages((prev) => [...prev, agentResponse])
+          } else {
+            const agentResponse = {
+              id: (Date.now() + 1).toString(),
+              type: "agent" as const,
+              content: data.reply,
+              timestamp: new Date(),
+            }
+            setIsAssistantTyping(false) // Hide loader
+            setMessages((prev) => [...prev, agentResponse])
+          }
+        }
+      } else {
+        // Use local mock (original behavior)
+        setTimeout(() => {
+          let agentResponseContent = ""
+
+          if (lastUserMessage.content === "Help me log a market event") {
+            agentResponseContent = `Sounds good, I'll help you log a market event for analysis. I need to understand what happened and its potential implications. Don't worry if you don't have all the details - we can work through this together. What caught your attention that made you want to log this event?
+
+It would also be helpful if you described:
+• What market behavior did you observe?
+• When did this occur?
+• Which companies or participants were involved?`
+          } else {
+            agentResponseContent = `Thank you for your message: "${lastUserMessage.content}". I'm your AI economist assistant and I'm here to help you analyze market data, check compliance, and generate reports. How can I assist you today?`
+          }
+
+          const agentResponse = {
+            id: (Date.now() + 1).toString(),
+            type: "agent" as const,
+            content: agentResponseContent,
+            timestamp: new Date(),
+          }
+          setIsAssistantTyping(false) // Hide loader
+          setMessages((prev) => [...prev, agentResponse])
+        }, 1000)
+      }
+    } catch (error) {
+      console.error('Regeneration failed:', error)
+      // Fallback to mock response on API error
+      const agentResponse = {
+        id: (Date.now() + 1).toString(),
+        type: "agent" as const,
+        content: `I apologize, but I'm experiencing technical difficulties. Please try again in a moment.`,
+        timestamp: new Date(),
+      }
+      setIsAssistantTyping(false) // Hide loader
+      setMessages((prev) => [...prev, agentResponse])
+    }
+  }
+
   // Get the appropriate data based on selected timeframe
   const getAnalyticsData = () => {
     switch (selectedTimeframe) {
@@ -798,12 +1000,25 @@ It would also be helpful if you described:
                   {/* Chat Messages Area */}
                   {hasEngaged && (
                     <div className="flex-1 overflow-y-auto mb-4 space-y-4">
-                      {messages.map((message) => (
+                      {messages.map((message, index) => (
                         <div key={message.id} className="w-full">
                           {message.type === "agent" ? (
                             <div className="flex items-start gap-3">
                               <Bot className="w-4 h-4 text-[#86a789] mt-1 flex-shrink-0" />
-                              <div className="flex-1 text-xs text-[#f9fafb] leading-relaxed">{message.content}</div>
+                              <div className="flex-1">
+                                <div className="text-xs text-[#f9fafb] leading-relaxed">{message.content}</div>
+                                {/* Control icons for assistant messages */}
+                                <div className="flex gap-2 mt-1 text-gray-400 hover:text-gray-600 cursor-pointer justify-end">
+                                  <Copy 
+                                    className="w-3 h-3 hover:text-[#86a789]" 
+                                    onClick={() => handleCopy(message.content)}
+                                  />
+                                  <RefreshCw 
+                                    className="w-3 h-3 hover:text-[#86a789]" 
+                                    onClick={() => handleRegenerate(index)}
+                                  />
+                                </div>
+                              </div>
                             </div>
                           ) : (
                             <div className="flex justify-end">
