@@ -239,6 +239,9 @@ export default function CursorDashboard() {
   // Role dropdown state
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState<boolean>(false)
   const [roleDropdownFocusIndex, setRoleDropdownFocusIndex] = useState<number>(-1)
+  
+  // Robot icon fallback state
+  const [robotIconError, setRobotIconError] = useState<boolean>(false)
 
   useEffect(() => {
     setIsClient(true)
@@ -1265,7 +1268,16 @@ It would also be helpful if you described:
                         )}
                         {/* Model selector - bottom left */}
                         <div className="absolute left-3 bottom-3 flex items-center gap-1.5">
-                          <Bot className="w-3.5 h-3.5 text-[#71717a]" />
+                          {!robotIconError ? (
+                            <img
+                              src="/icons/icon-robot.png"
+                              alt="Robot"
+                              className="w-3.5 h-3.5"
+                              onError={() => setRobotIconError(true)}
+                            />
+                          ) : (
+                            <Bot className="w-3.5 h-3.5 text-[#71717a]" />
+                          )}
                           <div className="relative role-dropdown-container">
                             <button
                               className="bg-transparent text-[10px] text-[#71717a] font-medium border-none outline-none cursor-pointer hover:text-[#a1a1aa] flex items-center gap-1"
