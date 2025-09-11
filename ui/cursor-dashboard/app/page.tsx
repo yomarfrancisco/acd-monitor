@@ -102,13 +102,8 @@ const analyticsDataYTD = [
 ]
 
 // Financial Compliance Dashboard - Main Component (CI Test)
-// Dashboard button styling
-const dashboardBtnClass = "inline-flex items-center justify-center rounded-md px-3.5 py-2 text-sm font-medium " +
-  "bg-[#AFC8FF] text-black shadow-sm " +
-  "hover:bg-[#9FBCFF] active:bg-[#95B4FF] " +
-  "ring-1 ring-inset ring-[#8FB3FF]/80 " +
-  "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6FA0FF] " +
-  "disabled:opacity-50 disabled:cursor-not-allowed"
+// Dashboard button styling - keep original sizing, only change colors
+const dashboardBtnClass = "border-[#AFC8FF] text-black bg-[#AFC8FF] hover:bg-[#9FBCFF] text-[9px] h-5 px-2 font-normal"
 
 export default function CursorDashboard() {
   const [activeTab, setActiveTab] = useState<"agents" | "dashboard">("agents")
