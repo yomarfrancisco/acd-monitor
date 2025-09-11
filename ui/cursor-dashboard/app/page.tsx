@@ -1018,10 +1018,12 @@ It would also be helpful if you described:
       <header className="border-b border-[#1a1a1a] px-5 py-1.5 relative">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img 
-              src="/rbb-economics-logo.png" 
-              alt="RBB Economics" 
-              className="h-28 w-auto opacity-90 hover:opacity-100 transition-opacity"
+            <Image
+              src="/icons/icon-americas.png"
+              alt="RBB Economics"
+              width={112}
+              height={112}
+              className="h-28 w-28 opacity-90 hover:opacity-100 transition-opacity"
             />
           </div>
 
