@@ -1268,14 +1268,24 @@ It would also be helpful if you described:
                         )}
                         {/* Model selector - bottom left */}
                         <div className="absolute left-3 bottom-3 flex items-center gap-1.5">
-                          <Image
-                            src="/icons/icon-americas.png"
-                            alt="Agent"
-                            width={18}
-                            height={18}
-                            className="shrink-0 rounded-none"
-                            priority
-                          />
+                          <div
+                            className="agents-scope-icon"
+                            data-testid="agents-scope-icon"
+                            style={{ 
+                              display: 'inline-flex', 
+                              transform: 'scale(1.1)', 
+                              transformOrigin: 'center' 
+                            }}
+                          >
+                            <Image
+                              src="/icons/icon-americas.png"
+                              alt="Agent"
+                              width={18}
+                              height={18}
+                              className="shrink-0 rounded-none"
+                              priority
+                            />
+                          </div>
                           <div className="relative role-dropdown-container">
                             <button
                               className="bg-transparent text-[10px] text-[#71717a] font-medium border-none outline-none cursor-pointer hover:text-[#a1a1aa] flex items-center gap-1"
