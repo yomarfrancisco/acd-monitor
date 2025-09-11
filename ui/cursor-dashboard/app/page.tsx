@@ -30,12 +30,13 @@ import {
 } from "lucide-react"
 
 import { Separator } from "@/components/ui/separator"
+import Image from "next/image"
 
 import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, ReferenceLine, Label } from "recharts"
-import { CalendarIcon } from "lucide-react"
+import { CalendarIcon, Copy, RefreshCw, ImageUp, Camera, FolderClosed, Github } from "lucide-react"
 import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema } from "@/types/api.schemas"
 import { fetchTyped } from "@/lib/backendAdapter"
 import { safe } from "@/lib/safe"
@@ -101,6 +102,9 @@ const analyticsDataYTD = [
 ]
 
 // Financial Compliance Dashboard - Main Component (CI Test)
+// Dashboard button styling - keep original sizing, only change colors
+const dashboardBtnClass = "border-[#AFC8FF] text-black bg-[#AFC8FF] hover:bg-[#9FBCFF] text-[9px] h-5 px-2 font-normal"
+
 export default function CursorDashboard() {
   const [activeTab, setActiveTab] = useState<"agents" | "dashboard">("agents")
   const [selectedTimeframe, setSelectedTimeframe] = useState<"30d" | "6m" | "1y" | "ytd">("ytd")
@@ -226,10 +230,39 @@ export default function CursorDashboard() {
     Array<{ id: string; type: "user" | "agent"; content: string; timestamp: Date }>
   >([])
   const [hasEngaged, setHasEngaged] = useState<boolean>(false)
+  const [isAssistantTyping, setIsAssistantTyping] = useState<boolean>(false)
+  
+  // Upload menu state
+  const [isUploadMenuOpen, setIsUploadMenuOpen] = useState<boolean>(false)
+  const [uploadMenuAnchorRef, setUploadMenuAnchorRef] = useState<HTMLButtonElement | null>(null)
+  const [uploadMenuFocusIndex, setUploadMenuFocusIndex] = useState<number>(-1)
+  const [isGitHubModalOpen, setIsGitHubModalOpen] = useState<boolean>(false)
+  const [gitHubRepoUrl, setGitHubRepoUrl] = useState<string>("")
+  
+  // Role dropdown state
+  const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState<boolean>(false)
+  const [roleDropdownFocusIndex, setRoleDropdownFocusIndex] = useState<number>(-1)
 
   useEffect(() => {
     setIsClient(true)
   }, [])
+
+  // Handle click outside to close upload menu and role dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isUploadMenuOpen && uploadMenuAnchorRef && !uploadMenuAnchorRef.contains(event.target as Node)) {
+        handleUploadMenuClose()
+      }
+      if (isRoleDropdownOpen && !(event.target as Element).closest('.role-dropdown-container')) {
+        handleRoleDropdownClose()
+      }
+    }
+
+    if (isUploadMenuOpen || isRoleDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isUploadMenuOpen, uploadMenuAnchorRef, isRoleDropdownOpen])
 
   // Heartbeat check for degraded mode
   useEffect(() => {
@@ -356,9 +389,12 @@ export default function CursorDashboard() {
     }
   }
 
-  const handleSendMessage = (customMessage?: string) => {
+  const handleSendMessage = async (customMessage?: string) => {
     const messageContent = customMessage || inputValue.trim()
     if (!messageContent) return
+
+    // Show typing loader immediately
+    setIsAssistantTyping(true)
 
     // Add user message
     const userMessage = {
@@ -371,7 +407,168 @@ export default function CursorDashboard() {
     setMessages((prev) => [...prev, userMessage])
     setHasEngaged(true)
 
-    // Generate agent response based on message content
+    // Check if we should use the API or local mock
+    const useApi = process.env.NEXT_PUBLIC_AGENT_CHAT_ENABLED === 'true'
+    const streamEnabled = process.env.NEXT_PUBLIC_AGENT_CHAT_STREAM === 'true'
+
+    if (useApi) {
+      // Use API route
+      try {
+        const messagesForApi = [
+          ...messages,
+          { role: 'user' as const, content: messageContent }
+        ]
+        
+        // Create AbortController for request cancellation
+        const abortController = new AbortController()
+        let res: Response | null = null
+        
+        if (streamEnabled) {
+          // Streaming mode
+          try {
+            res = await fetch('/api/agent/chat', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ 
+                messages: messagesForApi,
+                sessionId: `session_${Date.now()}`
+              }),
+              signal: abortController.signal,
+            })
+            
+            if (res.headers.get('content-type')?.includes('text/event-stream')) {
+              // Handle streaming response
+              const reader = res.body?.getReader()
+              if (!reader) throw new Error('No reader available')
+              
+              const decoder = new TextDecoder()
+              let buffer = ''
+              
+              // Create initial agent message
+              const agentMessageId = (Date.now() + 1).toString()
+              const agentResponse = {
+                id: agentMessageId,
+                type: "agent" as const,
+                content: '',
+                timestamp: new Date(),
+              }
+              setIsAssistantTyping(false) // Hide loader when streaming starts
+              setMessages((prev) => [...prev, agentResponse])
+              
+              // Read streaming chunks
+              while (true) {
+                const { done, value } = await reader.read()
+                if (done) break
+                
+                buffer += decoder.decode(value, { stream: true })
+                const lines = buffer.split('\n')
+                buffer = lines.pop() || ''
+                
+                for (const line of lines) {
+                  if (line.trim() === '') continue
+                  
+                  if (line.startsWith('data: ')) {
+                    const data = line.slice(6)
+                    if (data === '[DONE]') break
+                    
+                    try {
+                      const parsed = JSON.parse(data)
+                      if (parsed.text) {
+                        // Append text to existing agent message
+                        setMessages((prev) => prev.map(msg => 
+                          msg.id === agentMessageId 
+                            ? { ...msg, content: msg.content + parsed.text }
+                            : msg
+                        ))
+                      }
+                    } catch (e) {
+                      // Ignore malformed JSON
+                    }
+                  }
+                }
+              }
+              return // Exit early if streaming succeeded
+            } else {
+              // Fallback to non-streaming if response is not streamed
+              const data = await res.json()
+              
+              // Check if this is an error response
+              if (data.error) {
+                const agentResponse = {
+                  id: (Date.now() + 1).toString(),
+                  type: "agent" as const,
+                  content: `I encountered an error: ${data.error}. Please try again.`,
+                  timestamp: new Date(),
+                }
+                setIsAssistantTyping(false) // Hide loader
+                setMessages((prev) => [...prev, agentResponse])
+              } else {
+                const agentResponse = {
+                  id: (Date.now() + 1).toString(),
+                  type: "agent" as const,
+                  content: data.reply,
+                  timestamp: new Date(),
+                }
+                setIsAssistantTyping(false) // Hide loader
+                setMessages((prev) => [...prev, agentResponse])
+              }
+              return // Exit early if non-streaming fallback succeeded
+            }
+          } catch (streamError) {
+            console.error('Streaming failed, falling back to non-streaming:', streamError)
+            // Fall through to non-streaming implementation
+          }
+        }
+        
+        // Non-streaming mode (fallback or default)
+        if (!streamEnabled || !res) {
+          res = await fetch('/api/agent/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              messages: messagesForApi,
+              sessionId: `session_${Date.now()}`
+            }),
+            signal: abortController.signal,
+          })
+          
+          const data = await res.json()
+          
+          // Check if this is an error response
+          if (data.error) {
+            const agentResponse = {
+              id: (Date.now() + 1).toString(),
+              type: "agent" as const,
+              content: `I encountered an error: ${data.error}. Please try again.`,
+              timestamp: new Date(),
+            }
+            setIsAssistantTyping(false) // Hide loader
+            setMessages((prev) => [...prev, agentResponse])
+          } else {
+            const agentResponse = {
+              id: (Date.now() + 1).toString(),
+              type: "agent" as const,
+              content: data.reply,
+              timestamp: new Date(),
+            }
+            setIsAssistantTyping(false) // Hide loader
+            setMessages((prev) => [...prev, agentResponse])
+          }
+        }
+      } catch (error) {
+        console.error('API call failed:', error)
+        // Fallback to mock response on API error
+        const agentResponse = {
+          id: (Date.now() + 1).toString(),
+          type: "agent" as const,
+          content: `I apologize, but I'm experiencing technical difficulties. Please try again in a moment.`,
+          timestamp: new Date(),
+        }
+        setIsAssistantTyping(false) // Hide loader
+        setMessages((prev) => [...prev, agentResponse])
+      }
+    } else {
+      // Use local mock (original behavior)
     setTimeout(() => {
       let agentResponseContent = ""
 
@@ -392,10 +589,334 @@ It would also be helpful if you described:
         content: agentResponseContent,
         timestamp: new Date(),
       }
+        setIsAssistantTyping(false) // Hide loader
       setMessages((prev) => [...prev, agentResponse])
     }, 1000)
+    }
 
     setInputValue("")
+  }
+
+  // Helper function to copy message content to clipboard
+  const handleCopy = async (content: string) => {
+    try {
+      await navigator.clipboard.writeText(content)
+    } catch (error) {
+      console.error('Failed to copy to clipboard:', error)
+    }
+  }
+
+  // Helper function to regenerate assistant response
+  const handleRegenerate = async (messageIndex: number) => {
+    // Show typing loader immediately
+    setIsAssistantTyping(true)
+
+    try {
+      // Remove the current assistant message at the specified index
+      setMessages((prev) => prev.filter((_, idx) => idx !== messageIndex))
+
+      // Get all messages up to the point where we want to regenerate
+      const messagesUpToIndex = messages.slice(0, messageIndex)
+      
+      // Find the last user message to use as the query
+      const lastUserMessage = messagesUpToIndex.reverse().find(msg => msg.type === "user")
+      
+      if (!lastUserMessage) {
+        console.error('No user message found for regeneration')
+        setIsAssistantTyping(false)
+        return
+      }
+
+      // Check if we should use the API or local mock
+      if (process.env.NEXT_PUBLIC_AGENT_CHAT_ENABLED === 'true') {
+        const streamEnabled = process.env.NEXT_PUBLIC_AGENT_CHAT_STREAM === 'true'
+        let res: Response | null = null
+
+        if (streamEnabled) {
+          // Streaming mode
+          try {
+            res = await fetch('/api/agent/chat', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ 
+                messages: messagesUpToIndex.map(msg => ({ role: msg.type, content: msg.content })),
+                sessionId: `session_${Date.now()}`
+              }),
+            })
+
+            if (res.ok && res.headers.get('content-type')?.includes('text/event-stream')) {
+              const reader = res.body?.getReader()
+              if (!reader) throw new Error('No reader available')
+              
+              const decoder = new TextDecoder()
+              let buffer = ''
+              
+              // Create initial agent message
+              const agentMessageId = (Date.now() + 1).toString()
+              const agentResponse = {
+                id: agentMessageId,
+                type: "agent" as const,
+                content: '',
+                timestamp: new Date(),
+              }
+              setIsAssistantTyping(false) // Hide loader when streaming starts
+              setMessages((prev) => [...prev, agentResponse])
+              
+              // Read streaming chunks
+              while (true) {
+                const { done, value } = await reader.read()
+                if (done) break
+                
+                buffer += decoder.decode(value, { stream: true })
+                const lines = buffer.split('\n')
+                buffer = lines.pop() || ''
+                
+                for (const line of lines) {
+                  if (line.startsWith('data: ')) {
+                    const data = line.slice(6)
+                    if (data === '[DONE]') continue
+                    
+                    try {
+                      const parsed = JSON.parse(data)
+                      if (parsed.text) {
+                        // Append text to existing agent message
+                        setMessages((prev) => prev.map(msg => 
+                          msg.id === agentMessageId 
+                            ? { ...msg, content: msg.content + parsed.text }
+                            : msg
+                        ))
+                      }
+                    } catch (e) {
+                      // Ignore parsing errors for malformed chunks
+                    }
+                  }
+                }
+              }
+              return // Exit early if streaming succeeded
+            } else {
+              // Fallback to non-streaming if response is not streamed
+              const data = await res.json()
+              
+              // Check if this is an error response
+              if (data.error) {
+                const agentResponse = {
+                  id: (Date.now() + 1).toString(),
+                  type: "agent" as const,
+                  content: `I encountered an error: ${data.error}. Please try again.`,
+                  timestamp: new Date(),
+                }
+                setIsAssistantTyping(false) // Hide loader
+                setMessages((prev) => [...prev, agentResponse])
+              } else {
+                const agentResponse = {
+                  id: (Date.now() + 1).toString(),
+                  type: "agent" as const,
+                  content: data.reply,
+                  timestamp: new Date(),
+                }
+                setIsAssistantTyping(false) // Hide loader
+                setMessages((prev) => [...prev, agentResponse])
+              }
+              return // Exit early if non-streaming fallback succeeded
+            }
+          } catch (streamError) {
+            console.error('Streaming failed, falling back to non-streaming:', streamError)
+            // Fall through to non-streaming implementation
+          }
+        }
+        
+        // Non-streaming mode (fallback or default)
+        if (!streamEnabled || !res) {
+          res = await fetch('/api/agent/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              messages: messagesUpToIndex.map(msg => ({ role: msg.type, content: msg.content })),
+              sessionId: `session_${Date.now()}`
+            }),
+          })
+          
+          const data = await res.json()
+          
+          // Check if this is an error response
+          if (data.error) {
+            const agentResponse = {
+              id: (Date.now() + 1).toString(),
+              type: "agent" as const,
+              content: `I encountered an error: ${data.error}. Please try again.`,
+              timestamp: new Date(),
+            }
+            setIsAssistantTyping(false) // Hide loader
+            setMessages((prev) => [...prev, agentResponse])
+          } else {
+            const agentResponse = {
+              id: (Date.now() + 1).toString(),
+              type: "agent" as const,
+              content: data.reply,
+              timestamp: new Date(),
+            }
+            setIsAssistantTyping(false) // Hide loader
+            setMessages((prev) => [...prev, agentResponse])
+          }
+        }
+      } else {
+        // Use local mock (original behavior)
+        setTimeout(() => {
+          let agentResponseContent = ""
+
+          if (lastUserMessage.content === "Help me log a market event") {
+            agentResponseContent = `Sounds good, I'll help you log a market event for analysis. I need to understand what happened and its potential implications. Don't worry if you don't have all the details - we can work through this together. What caught your attention that made you want to log this event?
+
+It would also be helpful if you described:
+• What market behavior did you observe?
+• When did this occur?
+• Which companies or participants were involved?`
+          } else {
+            agentResponseContent = `Thank you for your message: "${lastUserMessage.content}". I'm your AI economist assistant and I'm here to help you analyze market data, check compliance, and generate reports. How can I assist you today?`
+          }
+
+          const agentResponse = {
+            id: (Date.now() + 1).toString(),
+            type: "agent" as const,
+            content: agentResponseContent,
+            timestamp: new Date(),
+          }
+          setIsAssistantTyping(false) // Hide loader
+          setMessages((prev) => [...prev, agentResponse])
+        }, 1000)
+      }
+    } catch (error) {
+      console.error('Regeneration failed:', error)
+      // Fallback to mock response on API error
+      const agentResponse = {
+        id: (Date.now() + 1).toString(),
+        type: "agent" as const,
+        content: `I apologize, but I'm experiencing technical difficulties. Please try again in a moment.`,
+        timestamp: new Date(),
+      }
+      setIsAssistantTyping(false) // Hide loader
+      setMessages((prev) => [...prev, agentResponse])
+    }
+  }
+
+  // Upload menu handlers
+  const handleFiles = (files: FileList) => {
+    console.info('Files selected:', Array.from(files).map(f => ({ name: f.name, size: f.size, type: f.type })))
+    // TODO: Wire real file ingestion later
+  }
+
+  const handleUploadMenuToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault()
+    event.stopPropagation()
+    setUploadMenuAnchorRef(event.currentTarget)
+    setIsUploadMenuOpen(!isUploadMenuOpen)
+    setUploadMenuFocusIndex(-1)
+  }
+
+  const handleUploadMenuClose = () => {
+    setIsUploadMenuOpen(false)
+    setUploadMenuFocusIndex(-1)
+    uploadMenuAnchorRef?.focus()
+  }
+
+  const handleUploadMenuKeyDown = (event: React.KeyboardEvent) => {
+    if (!isUploadMenuOpen) return
+
+    switch (event.key) {
+      case 'Escape':
+        handleUploadMenuClose()
+        break
+      case 'ArrowDown':
+        event.preventDefault()
+        setUploadMenuFocusIndex(prev => (prev + 1) % 4)
+        break
+      case 'ArrowUp':
+        event.preventDefault()
+        setUploadMenuFocusIndex(prev => (prev - 1 + 4) % 4)
+        break
+      case 'Enter':
+        event.preventDefault()
+        if (uploadMenuFocusIndex >= 0) {
+          handleUploadAction(uploadMenuFocusIndex)
+        }
+        break
+    }
+  }
+
+  const handleUploadAction = (index: number) => {
+    const actions = ['photoLibrary', 'takePhoto', 'chooseFiles', 'linkGitHub']
+    const action = actions[index]
+    
+    switch (action) {
+      case 'photoLibrary':
+        document.getElementById('photo-library-input')?.click()
+        break
+      case 'takePhoto':
+        document.getElementById('camera-input')?.click()
+        break
+      case 'chooseFiles':
+        document.getElementById('file-input')?.click()
+        break
+      case 'linkGitHub':
+        setIsGitHubModalOpen(true)
+        break
+    }
+    handleUploadMenuClose()
+  }
+
+  const handleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>, type: string) => {
+    if (event.target.files) {
+      console.info(`${type} files selected:`, Array.from(event.target.files).map(f => ({ name: f.name, size: f.size, type: f.type })))
+      handleFiles(event.target.files)
+    }
+  }
+
+  const handleGitHubConnect = () => {
+    console.info({ repoUrl: gitHubRepoUrl })
+    setGitHubRepoUrl("")
+    setIsGitHubModalOpen(false)
+  }
+
+  // Role dropdown handlers
+  const handleRoleDropdownToggle = () => {
+    setIsRoleDropdownOpen(!isRoleDropdownOpen)
+    setRoleDropdownFocusIndex(-1)
+  }
+
+  const handleRoleDropdownClose = () => {
+    setIsRoleDropdownOpen(false)
+    setRoleDropdownFocusIndex(-1)
+  }
+
+  const handleRoleSelect = (role: string) => {
+    setSelectedAgent(role)
+    handleRoleDropdownClose()
+  }
+
+  const handleRoleDropdownKeyDown = (event: React.KeyboardEvent) => {
+    if (!isRoleDropdownOpen) return
+
+    const roles = ["Jnr Economist", "Legal", "Snr Economist", "Statistician"]
+
+    switch (event.key) {
+      case 'Escape':
+        handleRoleDropdownClose()
+        break
+      case 'ArrowDown':
+        event.preventDefault()
+        setRoleDropdownFocusIndex(prev => (prev + 1) % roles.length)
+        break
+      case 'ArrowUp':
+        event.preventDefault()
+        setRoleDropdownFocusIndex(prev => (prev - 1 + roles.length) % roles.length)
+        break
+      case 'Enter':
+        event.preventDefault()
+        if (roleDropdownFocusIndex >= 0) {
+          handleRoleSelect(roles[roleDropdownFocusIndex])
+        }
+        break
+    }
   }
 
   // Get the appropriate data based on selected timeframe
@@ -469,6 +990,30 @@ It would also be helpful if you described:
 
   return (
     <div className="min-h-screen bg-[#0f0f10] text-[#f9fafb] font-sans p-4">
+      {/* Hidden file inputs for upload menu */}
+      <input
+        id="photo-library-input"
+        type="file"
+        accept="image/*"
+        multiple
+        style={{ display: 'none' }}
+        onChange={(e) => handleFileInputChange(e, 'Photo Library')}
+      />
+      <input
+        id="camera-input"
+        type="file"
+        accept="image/*,video/*"
+        capture="environment"
+        style={{ display: 'none' }}
+        onChange={(e) => handleFileInputChange(e, 'Camera')}
+      />
+      <input
+        id="file-input"
+        type="file"
+        multiple
+        style={{ display: 'none' }}
+        onChange={(e) => handleFileInputChange(e, 'Files')}
+      />
       {/* Header */}
       <header className="border-b border-[#1a1a1a] px-5 py-1.5 relative">
         <div className="flex items-center justify-between">
@@ -631,12 +1176,35 @@ It would also be helpful if you described:
                   {/* Chat Messages Area */}
                   {hasEngaged && (
                     <div className="flex-1 overflow-y-auto mb-4 space-y-4">
-                      {messages.map((message) => (
+                      {messages.map((message, index) => (
                         <div key={message.id} className="w-full">
                           {message.type === "agent" ? (
                             <div className="flex items-start gap-3">
-                              <Bot className="w-4 h-4 text-[#86a789] mt-1 flex-shrink-0" />
-                              <div className="flex-1 text-xs text-[#f9fafb] leading-relaxed">{message.content}</div>
+                              <div className="h-6 w-6 rounded-full flex items-center justify-center overflow-hidden bg-transparent mt-1 flex-shrink-0">
+                                <Image
+                                  src="/icons/icon-americas.png"
+                                  alt="Agent"
+                                  width={24}
+                                  height={24}
+                                  className="h-4 w-4 object-contain"
+                                />
+                              </div>
+                              <div className="flex-1">
+                                <div className="text-xs text-[#f9fafb] leading-relaxed">{message.content}</div>
+                                {/* Control icons for assistant messages (left-aligned) */}
+                                <div className="flex gap-2 mt-1 text-gray-400 hover:text-gray-600 cursor-pointer justify-start">
+                                  <Copy 
+                                    className="w-3 h-3 hover:text-[#86a789]" 
+                                    onClick={() => handleCopy(message.content)}
+                                    aria-label="Copy"
+                                  />
+                                  <RefreshCw 
+                                    className="w-3 h-3 hover:text-[#86a789]" 
+                                    onClick={() => handleRegenerate(index)}
+                                    aria-label="Regenerate"
+                                  />
+                                </div>
+                              </div>
                             </div>
                           ) : (
                             <div className="flex justify-end">
@@ -647,6 +1215,25 @@ It would also be helpful if you described:
                           )}
                         </div>
                       ))}
+                      {/* Typing Loader */}
+                      {isAssistantTyping && (
+                        <div className="w-full">
+                          <div className="flex items-start gap-3">
+                            <div className="h-6 w-6 rounded-full flex items-center justify-center overflow-hidden bg-transparent mt-1 flex-shrink-0">
+                              <Image
+                                src="/icons/icon-americas.png"
+                                alt="Agent"
+                                width={24}
+                                height={24}
+                                className="h-4 w-4 object-contain"
+                              />
+                            </div>
+                            <div className="flex-1 text-xs text-[#f9fafb] leading-relaxed">
+                              <div className="inline-block w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -681,29 +1268,120 @@ It would also be helpful if you described:
                         )}
                         {/* Model selector - bottom left */}
                         <div className="absolute left-3 bottom-3 flex items-center gap-1.5">
-                          <Bot className="w-3.5 h-3.5 text-[#71717a]" />
-                          <select
-                            value={selectedAgent}
-                            onChange={(e) => setSelectedAgent(e.target.value)}
-                            className="bg-transparent text-[10px] text-[#71717a] font-medium border-none outline-none cursor-pointer hover:text-[#a1a1aa]"
-                          >
-                            <option value="Jnr Economist">Jnr Economist</option>
-                            <option value="Legal">Legal</option>
-                            <option value="Snr Economist">Snr Economist</option>
-                            <option value="Statistician">Statistician</option>
-                          </select>
+                          <Image
+                            src="/icons/icon-americas.png"
+                            alt="Agent"
+                            width={18}
+                            height={18}
+                            className="shrink-0 rounded-none"
+                            priority
+                          />
+                          <div className="relative role-dropdown-container">
+                            <button
+                              className="bg-transparent text-[10px] text-[#71717a] font-medium border-none outline-none cursor-pointer hover:text-[#a1a1aa] flex items-center gap-1"
+                              onClick={handleRoleDropdownToggle}
+                              onKeyDown={handleRoleDropdownKeyDown}
+                              aria-haspopup="listbox"
+                              aria-expanded={isRoleDropdownOpen}
+                              aria-label="Select agent role"
+                            >
+                              {selectedAgent}
+                              <ChevronDown className="w-3 h-3 text-[#71717a]" />
+                            </button>
+                            
+                            {/* Role Dropdown Menu */}
+                            {isRoleDropdownOpen && (
+                              <div
+                                className="absolute z-50 mt-2 w-40 rounded-md border border-white/10 bg-neutral-900/90 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-neutral-900/80"
+                                role="listbox"
+                                aria-orientation="vertical"
+                              >
+                                <div className="py-1">
+                                  {["Jnr Economist", "Legal", "Snr Economist", "Statistician"].map((role, index) => (
+                                    <button
+                                      key={role}
+                                      className={`flex items-center gap-2 px-3 py-2 text-sm text-gray-200 hover:text-white hover:bg-white/5 w-full text-left ${
+                                        roleDropdownFocusIndex === index ? 'bg-white/5 text-white' : ''
+                                      } ${selectedAgent === role ? 'bg-white/5' : ''}`}
+                                      onClick={() => handleRoleSelect(role)}
+                                      role="option"
+                                      aria-selected={selectedAgent === role}
+                                    >
+                                      {role}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
                     </div>
 
                         {/* Action buttons - bottom right */}
                         <div className="absolute right-3 bottom-3 flex gap-1.5">
-                          <div
+                          <div className="relative">
+                            <button
+                              ref={setUploadMenuAnchorRef}
                             className="h-6 w-6 flex items-center justify-center cursor-pointer"
-                            onClick={() => {
-                              // Simulate file upload
-                              setUploadedFiles((prev) => [...prev, "pricing_data.csv"])
-                            }}
+                              onClick={handleUploadMenuToggle}
+                              onKeyDown={handleUploadMenuKeyDown}
+                              aria-haspopup="menu"
+                              aria-expanded={isUploadMenuOpen}
+                              aria-label="Upload options"
                           >
                             <CloudUpload className="w-4 h-4 text-[#71717a] hover:text-[#a1a1aa]" />
+                            </button>
+                            
+                            {/* Upload Menu Popover */}
+                            {isUploadMenuOpen && (
+                              <div
+                                className="absolute z-50 mt-2 w-56 rounded-md border border-zinc-800 bg-zinc-900/95 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-zinc-900/80"
+                                role="menu"
+                                aria-orientation="vertical"
+                              >
+                                <div className="py-1">
+                                  <button
+                                    className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#86a789] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
+                                      uploadMenuFocusIndex === 0 ? 'bg-zinc-800 text-[#86a789]' : ''
+                                    }`}
+                                    onClick={() => handleUploadAction(0)}
+                                    role="menuitem"
+                                  >
+                                    <ImageUp className="w-4 h-4" />
+                                    Photo Library
+                                  </button>
+                                  <button
+                                    className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#86a789] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
+                                      uploadMenuFocusIndex === 1 ? 'bg-zinc-800 text-[#86a789]' : ''
+                                    }`}
+                                    onClick={() => handleUploadAction(1)}
+                                    role="menuitem"
+                                  >
+                                    <Camera className="w-4 h-4" />
+                                    Take Photo or Video
+                                  </button>
+                                  <button
+                                    className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#86a789] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
+                                      uploadMenuFocusIndex === 2 ? 'bg-zinc-800 text-[#86a789]' : ''
+                                    }`}
+                                    onClick={() => handleUploadAction(2)}
+                                    role="menuitem"
+                                  >
+                                    <FolderClosed className="w-4 h-4" />
+                                    Choose Files
+                                  </button>
+                                  <button
+                                    className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#86a789] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
+                                      uploadMenuFocusIndex === 3 ? 'bg-zinc-800 text-[#86a789]' : ''
+                                    }`}
+                                    onClick={() => handleUploadAction(3)}
+                                    role="menuitem"
+                                  >
+                                    <Github className="w-4 h-4" />
+                                    Link GitHub
+                                  </button>
+                                </div>
+                              </div>
+                            )}
                           </div>
                           <div
                             className="h-6 w-6 flex items-center justify-center cursor-pointer"
@@ -1386,7 +2064,7 @@ It would also be helpful if you described:
                         <Button
                           variant="outline"
                           size="sm"
-                          className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
+                          className={dashboardBtnClass}
                         >
                           Connect
                         </Button>
@@ -1404,7 +2082,7 @@ It would also be helpful if you described:
                     </p>
                     <Button
                       variant="outline"
-                      className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
+                      className={dashboardBtnClass}
                     >
                       Invite Your Team
                     </Button>
@@ -1747,7 +2425,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
+                              className={dashboardBtnClass}
                             >
                               Connect
                             </Button>
@@ -1772,7 +2450,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
+                              className={dashboardBtnClass}
                             >
                               Connect
                             </Button>
@@ -1797,7 +2475,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
+                              className={dashboardBtnClass}
                             >
                               Connect
                             </Button>
@@ -1822,7 +2500,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
+                              className={dashboardBtnClass}
                             >
                               Connect
                             </Button>
@@ -1938,7 +2616,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
+                              className={dashboardBtnClass}
                             >
                               Deploy
                             </Button>
@@ -1963,7 +2641,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
+                              className={dashboardBtnClass}
                             >
                               Deploy
                             </Button>
@@ -1988,7 +2666,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
+                              className={dashboardBtnClass}
                             >
                               Deploy
                             </Button>
@@ -2013,7 +2691,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
+                              className={dashboardBtnClass}
                             >
                               Deploy
                             </Button>
@@ -2708,7 +3386,7 @@ It would also be helpful if you described:
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
+                                className={dashboardBtnClass}
                               >
                                 Download
                               </Button>
@@ -2739,7 +3417,7 @@ It would also be helpful if you described:
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
+                                className={dashboardBtnClass}
                               >
                                 Download
                               </Button>
@@ -2770,7 +3448,7 @@ It would also be helpful if you described:
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
+                                className={dashboardBtnClass}
                               >
                                 Download
                               </Button>
@@ -2877,6 +3555,47 @@ It would also be helpful if you described:
           </main>
         </div>
       </div>
+
+      {/* GitHub Modal */}
+      {isGitHubModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 w-96 max-w-[90vw] shadow-xl">
+            <div className="flex items-center gap-3 mb-4">
+              <Github className="h-6 w-6 text-[#f9fafb]" />
+              <h3 className="text-lg font-medium text-[#f9fafb]">Link GitHub Repository</h3>
+            </div>
+            <p className="text-sm text-zinc-300 mb-4">
+              Enter the URL of the GitHub repository you want to connect:
+            </p>
+            <input
+              type="url"
+              value={gitHubRepoUrl}
+              onChange={(e) => setGitHubRepoUrl(e.target.value)}
+              placeholder="https://github.com/username/repository"
+              className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md text-[#f9fafb] placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#86a789] focus:border-transparent"
+              autoFocus
+            />
+            <div className="flex gap-3 mt-6 justify-end">
+              <button
+                onClick={() => {
+                  setGitHubRepoUrl("")
+                  setIsGitHubModalOpen(false)
+                }}
+                className="px-4 py-2 text-sm text-zinc-300 hover:text-[#f9fafb] border border-zinc-700 rounded-md hover:bg-zinc-800 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleGitHubConnect}
+                disabled={!gitHubRepoUrl.trim()}
+                className="px-4 py-2 text-sm bg-[#86a789] text-white rounded-md hover:bg-[#7a9a7a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                Connect
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <style jsx>{`
         @keyframes blink {
