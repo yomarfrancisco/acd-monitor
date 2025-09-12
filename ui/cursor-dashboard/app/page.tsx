@@ -1018,7 +1018,7 @@ It would also be helpful if you described:
         onChange={(e) => handleFileInputChange(e, 'Files')}
       />
       {/* Header */}
-      <header className="border-b border-[#1a1a1a] px-5 py-1.5 relative">
+      <header className="border-b border-[#1a1a1a] px-5 py-1.5 relative md:static">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
 <img 
@@ -1028,7 +1028,7 @@ It would also be helpful if you described:
 />
           </div>
 
-          <nav className="flex gap-4 sm:gap-5 absolute left-1/2 transform -translate-x-1/2">
+          <nav className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 z-10 md:static md:transform-none flex items-center gap-6">
             <button
               onClick={() => handleTabChange("agents")}
               className={`px-2.5 py-1 text-xs font-medium ${
@@ -1243,24 +1243,26 @@ It would also be helpful if you described:
                   {/* Input Area */}
                   <div className={`${hasEngaged ? "mt-auto" : "flex flex-col items-center justify-center space-y-5"}`}>
                   <div className="w-full space-y-3 mx-4 sm:mx-0">
-                    <div className="relative">
-                      <textarea
-                          placeholder="Help me audit my pricing algorithms."
-                          value={inputValue}
-                          onChange={(e) => setInputValue(e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" && !e.shiftKey) {
-                              e.preventDefault()
-                              handleSendMessage()
-                            }
-                          }}
-                          className="w-full h-28 bg-bg-tile rounded-lg text-[#f9fafb] placeholder-[#71717a] pr-16 px-4 py-4 text-xs resize-none focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50"
-                          rows={5}
-                        />
+                    {/* MOBILE ONLY: scale container to preserve previous visual size while textarea stays 16px to avoid iOS zoom */}
+                    <div className="sm:scale-100 scale-90 transform-gpu origin-top-left">
+                      <div className="relative">
+                        <textarea
+                            placeholder="Help me audit my pricing algorithms."
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" && !e.shiftKey) {
+                                e.preventDefault()
+                                handleSendMessage()
+                              }
+                            }}
+                            className="w-full h-28 bg-bg-tile rounded-lg text-[#f9fafb] placeholder-[#71717a] pr-16 px-4 py-4 text-base sm:text-xs resize-none focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50"
+                            rows={5}
+                          />
                         {/* Blinking cursor overlay - only shows when empty */}
                         {inputValue === "" && (
                           <div
-                            className="absolute left-4 top-4 text-[#f9fafb] text-xs"
+                            className="absolute left-4 top-4 text-[#f9fafb] text-base sm:text-xs"
                             style={{
                               animation: "blink 1s infinite",
                               display: "inline-block",
@@ -1397,6 +1399,7 @@ It would also be helpful if you described:
                           </div>
                         </div>
                       </div>
+                    </div>
 
                       {/* Quick Action Buttons - only show when not engaged */}
                       {!hasEngaged && (
