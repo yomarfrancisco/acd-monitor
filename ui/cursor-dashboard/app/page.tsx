@@ -1,6 +1,6 @@
 "use client"
 
-import { dashboardCtaBtnClass } from "@/lib/ui"
+import { dashboardCtaBtnClass } from "../lib/ui"
 import {
   Bot,
   ChevronDown,
