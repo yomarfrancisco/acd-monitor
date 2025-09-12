@@ -1325,7 +1325,7 @@ It would also be helpful if you described:
                           <div className="relative">
                             <button
                               ref={setUploadMenuAnchorRef}
-                            className="h-6 w-6 flex items-center justify-center cursor-pointer"
+                            className="h-6 w-6 flex items-center justify-center cursor-pointer mr-3"
                               onClick={handleUploadMenuToggle}
                               onKeyDown={handleUploadMenuKeyDown}
                               aria-haspopup="menu"
