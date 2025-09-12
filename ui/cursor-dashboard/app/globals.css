@@ -65,3 +65,22 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Agents-only iOS focus-zoom prevention with visual parity */
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 640px) {
+    .agents-no-zoom-wrapper {
+      /* visually scale down while keeping layout width identical */
+      transform: translateZ(0) scale(0.75);
+      transform-origin: top left;
+      width: calc(100% / 0.75);
+      will-change: transform;
+    }
+    .agents-no-zoom-wrapper textarea {
+      font-size: 16px; /* iOS-safe threshold to avoid zoom */
+    }
+    .agents-no-zoom-wrapper .agents-caret {
+      font-size: 16px; /* keep overlay glyphs aligned with text metrics */
+    }
+  }
+}

@@ -36,7 +36,7 @@ import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, ReferenceLine, Label } from "recharts"
-import { CalendarIcon, Copy, RefreshCw, ImageUp, Camera, FolderClosed, Github } from "lucide-react"
+import { CalendarIcon, Copy, RefreshCw, ImageUp, Camera, FolderClosed, Github, AlertTriangle } from "lucide-react"
 import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema } from "@/types/api.schemas"
 import { fetchTyped } from "@/lib/backendAdapter"
 import { safe } from "@/lib/safe"
@@ -104,6 +104,9 @@ const analyticsDataYTD = [
 // Financial Compliance Dashboard - Main Component (CI Test)
 // Dashboard button styling - keep original sizing, only change colors
 const dashboardBtnClass = "border-[#AFC8FF] text-black bg-[#AFC8FF] hover:bg-[#9FBCFF] text-[9px] h-5 px-2 font-normal"
+
+// Dashboard CTA button styling - white text for the 13 specific CTA buttons
+const dashboardCtaBtnClass = "border-[#AFC8FF] text-black bg-[#AFC8FF] hover:bg-[#9FBCFF] text-[9px] h-5 px-2 font-normal"
 
 export default function CursorDashboard() {
   const [activeTab, setActiveTab] = useState<"agents" | "dashboard">("agents")
@@ -1018,14 +1021,14 @@ It would also be helpful if you described:
       <header className="border-b border-[#1a1a1a] px-5 py-1.5 relative">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img 
-              src="/rbb-economics-logo.png" 
-              alt="RBB Economics" 
-              className="h-28 w-auto opacity-90 hover:opacity-100 transition-opacity"
-            />
+<img 
+  src="/ninja-glow-positive.png" 
+  alt="Ninja Glow" 
+              className="h-14 sm:h-16 md:h-24 w-auto opacity-90 hover:opacity-100 transition-opacity -ml-3 sm:ml-0"
+/>
           </div>
 
-          <nav className="flex gap-5 absolute left-1/2 transform -translate-x-1/2">
+          <nav className="flex gap-4 sm:gap-5 absolute left-1/2 transform -translate-x-1/2">
             <button
               onClick={() => handleTabChange("agents")}
               className={`px-2.5 py-1 text-xs font-medium ${
@@ -1239,10 +1242,11 @@ It would also be helpful if you described:
 
                   {/* Input Area */}
                   <div className={`${hasEngaged ? "mt-auto" : "flex flex-col items-center justify-center space-y-5"}`}>
-                  <div className="w-full space-y-3">
-                    <div className="relative">
+                  <div className="w-full space-y-3 mx-4 sm:mx-0">
+                    <div className="agents-no-zoom-wrapper" data-testid="agents-no-zoom-wrapper">
+                      <div className="relative">
                       <textarea
-                          placeholder="Is my pricing behaviour competitive or collusive?"
+                          placeholder="Help me audit my pricing algorithms."
                           value={inputValue}
                           onChange={(e) => setInputValue(e.target.value)}
                           onKeyDown={(e) => {
@@ -1257,7 +1261,7 @@ It would also be helpful if you described:
                         {/* Blinking cursor overlay - only shows when empty */}
                         {inputValue === "" && (
                           <div
-                            className="absolute left-4 top-4 text-[#f9fafb] text-xs"
+                            className="agents-caret absolute left-4 top-4 text-[#f9fafb] text-xs"
                             style={{
                               animation: "blink 1s infinite",
                               display: "inline-block",
@@ -1390,35 +1394,36 @@ It would also be helpful if you described:
                               handleSendMessage();
                             }}
                           >
-                            <Send className="w-4 h-4 text-[#71717a] hover:text-[#a1a1aa]" />
+                            <Send className="w-6 h-6 text-[#71717a] hover:text-[#a1a1aa]" />
                           </div>
                         </div>
                       </div>
+                    </div>
 
                       {/* Quick Action Buttons - only show when not engaged */}
                       {!hasEngaged && (
                         <div className="space-y-4 mt-8">
                       <p className="text-[10px] text-[#a1a1aa] text-center">Try these examples to get started</p>
 
-                          <div className="flex gap-2 justify-center max-w-4xl mx-auto">
-                            <button className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 whitespace-nowrap">
+                          <div className="flex flex-wrap gap-2 justify-center max-w-4xl mx-auto sm:flex-nowrap">
+                            <button className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 sm:whitespace-nowrap">
                               <Zap className="w-2 h-2" />
                               Analyze pricing patterns
                         </button>
-                            <button className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 whitespace-nowrap">
+                            <button className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 sm:whitespace-nowrap">
                               <ShieldCheck className="w-2 h-2" />
                               Check compliance status
                         </button>
-                            <button className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 whitespace-nowrap">
+                            <button className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 sm:whitespace-nowrap">
                               <FileText className="w-2 h-2" />
                               Generate report
                             </button>
                             <button
-                              onClick={() => handleSendMessage("Help me log a market event")}
-                              className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 whitespace-nowrap"
+                              onClick={() => handleSendMessage("Help me report a cartel")}
+                              className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 sm:whitespace-nowrap"
                             >
-                              <SquarePen className="w-2 h-2" />
-                              Log a market event
+                              <AlertTriangle className="w-2 h-2" />
+                              Report a cartel
                         </button>
                       </div>
                     </div>
@@ -1703,6 +1708,36 @@ It would also be helpful if you described:
                                         Nedbank: 16,
                                       }
 
+                                      // Compute HHI and CR4 from market shares with guardrails
+                                      function computeHHIandCR4(sharesPct: (number | null | undefined)[]) {
+                                        // Filter out null/undefined/NaN values
+                                        const validShares = sharesPct.filter(s => 
+                                          s !== null && s !== undefined && !isNaN(s)
+                                        );
+                                        
+                                        // Need at least 2 valid shares to compute meaningful metrics
+                                        if (validShares.length < 2) {
+                                          return null;
+                                        }
+                                        
+                                        // Round to integers (HHI rule: integer, no commas)
+                                        const pctPts = validShares.map(s => Math.round(s as number));
+                                        
+                                        // HHI: sum of squared percentage points
+                                        const hhi = pctPts.reduce((acc, p) => acc + p*p, 0);
+                                        
+                                        // CR4: sum of top 4 firms, rounded to nearest whole percent
+                                        const cr4 = Math.round(
+                                          [...pctPts].sort((a,b)=>b-a).slice(0,4).reduce((a,b)=>a+b,0)
+                                        );
+                                        
+                                        return { hhi, cr4 };
+                                      }
+
+                                      // Extract shares from marketShare object
+                                      const shares = Object.values(marketShare);
+                                      const concentrationData = computeHHIandCR4(shares);
+
                                       // Event data for significant dates
                                       const eventData = {
                                         "Feb '25": {
@@ -1727,6 +1762,14 @@ It would also be helpful if you described:
                                   return (
                                         <div className="bg-black border border-[#1a1a1a] rounded-lg p-3 shadow-2xl shadow-black/50">
                                           <p className="text-[#a1a1aa] text-[10px] mb-1.5">{label}</p>
+                                          
+                                          {/* Concentration Information - only show if valid data */}
+                                          {/* Date → Concentration (HHI | CR4) → Optional Event → Bank rows */}
+                                          {concentrationData && (
+                                            <p className="text-gray-300 text-[10px] font-medium mb-1.5">
+                                              Concentration  HHI {concentrationData.hhi} | {concentrationData.cr4}%
+                                            </p>
+                                          )}
 
                                           {/* Event Information */}
                                           {currentEvent && (
@@ -2064,7 +2107,7 @@ It would also be helpful if you described:
                         <Button
                           variant="outline"
                           size="sm"
-                          className={dashboardBtnClass}
+                          className={dashboardCtaBtnClass}
                         >
                           Connect
                         </Button>
@@ -2082,7 +2125,7 @@ It would also be helpful if you described:
                     </p>
                     <Button
                       variant="outline"
-                      className={dashboardBtnClass}
+                      className={dashboardCtaBtnClass}
                     >
                       Invite Your Team
                     </Button>
@@ -2425,7 +2468,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className={dashboardBtnClass}
+                              className={dashboardCtaBtnClass}
                             >
                               Connect
                             </Button>
@@ -2450,7 +2493,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className={dashboardBtnClass}
+                              className={dashboardCtaBtnClass}
                             >
                               Connect
                             </Button>
@@ -2475,7 +2518,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className={dashboardBtnClass}
+                              className={dashboardCtaBtnClass}
                             >
                               Connect
                             </Button>
@@ -2500,7 +2543,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className={dashboardBtnClass}
+                              className={dashboardCtaBtnClass}
                             >
                               Connect
                             </Button>
@@ -2616,7 +2659,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className={dashboardBtnClass}
+                              className={dashboardCtaBtnClass}
                             >
                               Deploy
                             </Button>
@@ -2641,7 +2684,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className={dashboardBtnClass}
+                              className={dashboardCtaBtnClass}
                             >
                               Deploy
                             </Button>
@@ -2666,7 +2709,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className={dashboardBtnClass}
+                              className={dashboardCtaBtnClass}
                             >
                               Deploy
                             </Button>
@@ -2691,7 +2734,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className={dashboardBtnClass}
+                              className={dashboardCtaBtnClass}
                             >
                               Deploy
                             </Button>
@@ -3386,7 +3429,7 @@ It would also be helpful if you described:
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className={dashboardBtnClass}
+                                className={dashboardCtaBtnClass}
                               >
                                 Download
                               </Button>
@@ -3417,7 +3460,7 @@ It would also be helpful if you described:
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className={dashboardBtnClass}
+                                className={dashboardCtaBtnClass}
                               >
                                 Download
                               </Button>
@@ -3448,7 +3491,7 @@ It would also be helpful if you described:
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className={dashboardBtnClass}
+                                className={dashboardCtaBtnClass}
                               >
                                 Download
                               </Button>
