@@ -1243,7 +1243,8 @@ It would also be helpful if you described:
                   {/* Input Area */}
                   <div className={`${hasEngaged ? "mt-auto" : "flex flex-col items-center justify-center space-y-5"}`}>
                   <div className="w-full space-y-3 mx-4 sm:mx-0">
-                    <div className="relative">
+                    <div className="agents-no-zoom-wrapper" data-testid="agents-no-zoom-wrapper">
+                      <div className="relative">
                       <textarea
                           placeholder="Help me audit my pricing algorithms."
                           value={inputValue}
@@ -1260,7 +1261,7 @@ It would also be helpful if you described:
                         {/* Blinking cursor overlay - only shows when empty */}
                         {inputValue === "" && (
                           <div
-                            className="absolute left-4 top-4 text-[#f9fafb] text-xs"
+                            className="agents-caret absolute left-4 top-4 text-[#f9fafb] text-xs"
                             style={{
                               animation: "blink 1s infinite",
                               display: "inline-block",
@@ -1397,6 +1398,7 @@ It would also be helpful if you described:
                           </div>
                         </div>
                       </div>
+                    </div>
 
                       {/* Quick Action Buttons - only show when not engaged */}
                       {!hasEngaged && (
