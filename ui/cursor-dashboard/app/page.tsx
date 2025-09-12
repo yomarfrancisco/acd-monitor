@@ -1018,17 +1018,18 @@ It would also be helpful if you described:
         onChange={(e) => handleFileInputChange(e, 'Files')}
       />
       {/* Header */}
-      <header className="border-b border-[#1a1a1a] px-5 py-1.5 relative md:static">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-<img 
-  src="/ninja glow - positive.png" 
-  alt="Ninja Glow" 
-              className="h-14 sm:h-16 md:h-24 w-auto opacity-90 hover:opacity-100 transition-opacity -ml-3 sm:ml-0"
-/>
-          </div>
+      <header className="border-b border-[#1a1a1a]">
+        {/* Desktop Header (≥md) - CSS Grid for true center alignment */}
+        <div className="hidden md:grid grid-cols-[auto_1fr_auto] items-center px-5 py-4">
+          {/* Col 1: Logo */}
+          <img 
+            src="/ninja glow - positive.png" 
+            alt="Ninja Glow" 
+            className="h-24 w-auto opacity-90 hover:opacity-100 transition-opacity"
+          />
 
-          <nav className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 z-10 md:static md:transform-none flex items-center gap-6">
+          {/* Col 2: Nav - truly centered */}
+          <nav className="flex items-center justify-center gap-6">
             <button
               onClick={() => handleTabChange("agents")}
               className={`px-2.5 py-1 text-xs font-medium ${
@@ -1047,7 +1048,45 @@ It would also be helpful if you described:
             </button>
           </nav>
 
+          {/* Col 3: Avatar */}
           <div className="text-xs font-medium text-[#f9fafb] bg-bg-tile rounded-full w-7 h-7 flex items-center justify-center">
+            YF
+          </div>
+        </div>
+
+        {/* Mobile Header (<md) - Flex with spacers for proper centering */}
+        <div className="md:hidden flex items-center px-4 py-3">
+          {/* Left: Logo with PNG padding fix */}
+          <img 
+            src="/ninja glow - positive.png" 
+            alt="Ninja Glow" 
+            className="h-14 w-auto -ml-3 opacity-90 hover:opacity-100 transition-opacity"
+          />
+
+          {/* Center: Nav */}
+          <div className="flex-1 flex items-center justify-center">
+            <nav className="flex items-center gap-6">
+              <button
+                onClick={() => handleTabChange("agents")}
+                className={`px-2.5 py-1 text-xs font-medium ${
+                  activeTab === "agents" ? "text-[#f9fafb]" : "text-[#a1a1aa] hover:text-[#f9fafb]"
+                }`}
+              >
+                Agents
+              </button>
+              <button
+                onClick={() => handleTabChange("dashboard")}
+                className={`px-2.5 py-1 text-xs font-medium ${
+                  activeTab === "dashboard" ? "text-[#f9fafb]" : "text-[#a1a1aa] hover:text-[#f9fafb]"
+                }`}
+              >
+                Dashboard
+              </button>
+            </nav>
+          </div>
+
+          {/* Right: Avatar */}
+          <div className="shrink-0 ml-4 text-xs font-medium text-[#f9fafb] bg-bg-tile rounded-full w-7 h-7 flex items-center justify-center">
             YF
           </div>
         </div>
@@ -1242,9 +1281,9 @@ It would also be helpful if you described:
 
                   {/* Input Area */}
                   <div className={`${hasEngaged ? "mt-auto" : "flex flex-col items-center justify-center space-y-5"}`}>
-                  <div className="w-full space-y-3 mx-4 sm:mx-0">
+                  <div className="mx-4 sm:mx-auto max-w-[680px] w-auto space-y-3">
                     {/* MOBILE ONLY: scale container to preserve previous visual size while textarea stays 16px to avoid iOS zoom */}
-                    <div className="sm:scale-100 scale-90 transform-gpu origin-top-left">
+                    <div className="sm:scale-100 scale-[0.88] origin-top-left w-full">
                       <div className="relative">
                         <textarea
                             placeholder="Help me audit my pricing algorithms."
