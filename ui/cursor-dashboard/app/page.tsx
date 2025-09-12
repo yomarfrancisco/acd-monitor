@@ -1706,6 +1706,20 @@ It would also be helpful if you described:
                                         Nedbank: 16,
                                       }
 
+                                      // Compute HHI and CR4 from market shares
+                                      function computeHHIandCR4(sharesPct: number[]) {
+                                        const pctPts = sharesPct.map(s => Math.round(s)); // assume numbers like 21.3 → 21
+                                        const hhi = pctPts.reduce((acc, p) => acc + p*p, 0);
+                                        const cr4 = Math.round(
+                                          [...pctPts].sort((a,b)=>b-a).slice(0,4).reduce((a,b)=>a+b,0)
+                                        );
+                                        return { hhi, cr4 };
+                                      }
+
+                                      // Extract shares from marketShare object
+                                      const shares = Object.values(marketShare);
+                                      const { hhi, cr4 } = computeHHIandCR4(shares);
+
                                       // Event data for significant dates
                                       const eventData = {
                                         "Feb '25": {
@@ -1730,6 +1744,11 @@ It would also be helpful if you described:
                                   return (
                                         <div className="bg-black border border-[#1a1a1a] rounded-lg p-3 shadow-2xl shadow-black/50">
                                           <p className="text-[#a1a1aa] text-[10px] mb-1.5">{label}</p>
+                                          
+                                          {/* Concentration Information */}
+                                          <p className="text-gray-300 text-[10px] font-medium mb-1.5">
+                                            Concentration  HHI {hhi} | {cr4}%
+                                          </p>
 
                                           {/* Event Information */}
                                           {currentEvent && (
