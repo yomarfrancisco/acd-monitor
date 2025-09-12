@@ -106,7 +106,7 @@ const analyticsDataYTD = [
 const dashboardBtnClass = "border-[#AFC8FF] text-black bg-[#AFC8FF] hover:bg-[#9FBCFF] text-[9px] h-5 px-2 font-normal"
 
 // Dashboard CTA button styling - white text for the 13 specific CTA buttons
-const dashboardCtaBtnClass = "border-[#AFC8FF] text-white bg-[#AFC8FF] hover:bg-[#9FBCFF] text-[9px] h-5 px-2 font-normal"
+const dashboardCtaBtnClass = "border-[#AFC8FF] text-black bg-[#AFC8FF] hover:bg-[#9FBCFF] text-[9px] h-5 px-2 font-normal"
 
 export default function CursorDashboard() {
   const [activeTab, setActiveTab] = useState<"agents" | "dashboard">("agents")
