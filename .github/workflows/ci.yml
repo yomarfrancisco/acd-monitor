@@ -67,6 +67,12 @@ jobs:
       - name: Verify static assets
         run: test -d .next/static/css && test -d .next/static/chunks/app
 
+      - name: Install Playwright
+        run: npx playwright install --with-deps
+
+      - name: Run E2E Tests
+        run: npm run e2e:ci
+
   backend:
     needs: detect
     if: needs.detect.outputs.backend == 'true'

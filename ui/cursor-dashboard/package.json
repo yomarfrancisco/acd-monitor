@@ -10,8 +10,10 @@
     "dev": "next dev -p 3004",
     "dev:clean": "npm run clean && NEXT_TELEMETRY_DISABLED=1 next dev -p 3004",
     "lint": "next lint",
-    "start": "next start -p 3004",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "start": "next start -p 3000",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test:e2e": "playwright test",
+    "e2e:ci": "next build && next start -p 3000 & npx wait-on http://localhost:3000 && playwright test"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -68,11 +70,13 @@
     "zod": "^3.25.67"
   },
   "devDependencies": {
+    "@playwright/test": "^1.40.0",
     "@types/node": "^22",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.13",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wait-on": "^7.2.0"
   }
 }
