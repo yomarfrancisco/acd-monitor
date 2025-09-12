@@ -1338,7 +1338,7 @@ It would also be helpful if you described:
                             {/* Upload Menu Popover */}
                             {isUploadMenuOpen && (
                               <div
-                                className="absolute z-50 mt-2 w-56 rounded-md border border-zinc-800 bg-zinc-900/95 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-zinc-900/80"
+                                className="absolute right-0 top-full mt-2 z-50 origin-top-right w-[min(280px,calc(100vw-24px))] sm:w-56 max-w-[calc(100vw-24px)] max-h-[60vh] overflow-y-auto rounded-md border border-zinc-800 bg-zinc-900/95 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-zinc-900/80"
                                 role="menu"
                                 aria-orientation="vertical"
                               >
