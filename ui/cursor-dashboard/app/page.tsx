@@ -1024,7 +1024,7 @@ It would also be helpful if you described:
 <img 
   src="/ninja glow - positive.png" 
   alt="Ninja Glow" 
-  className="h-21 w-auto opacity-90 hover:opacity-100 transition-opacity"
+              className="h-20 w-auto opacity-90 hover:opacity-100 transition-opacity"
 />
           </div>
 
