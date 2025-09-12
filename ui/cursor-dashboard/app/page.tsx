@@ -1394,7 +1394,7 @@ It would also be helpful if you described:
                               handleSendMessage();
                             }}
                           >
-                            <Send className="w-4 h-4 text-[#71717a] hover:text-[#a1a1aa]" />
+                            <Send className="w-6 h-6 text-[#71717a] hover:text-[#a1a1aa]" />
                           </div>
                         </div>
                       </div>
