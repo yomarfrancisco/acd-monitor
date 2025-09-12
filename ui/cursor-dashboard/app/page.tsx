@@ -1021,11 +1021,11 @@ It would also be helpful if you described:
       <header className="border-b border-[#1a1a1a] px-5 py-1.5 relative">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img 
-              src="/ninja glow - positive.png" 
-              alt="Ninja Glow" 
-              className="h-28 w-auto opacity-90 hover:opacity-100 transition-opacity"
-            />
+<img 
+  src="/ninja glow - positive.png" 
+  alt="Ninja Glow" 
+  className="h-21 w-auto opacity-90 hover:opacity-100 transition-opacity"
+/>
           </div>
 
           <nav className="flex gap-5 absolute left-1/2 transform -translate-x-1/2">
