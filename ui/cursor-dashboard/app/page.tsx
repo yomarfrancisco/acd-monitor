@@ -105,8 +105,8 @@ const analyticsDataYTD = [
 // Dashboard button styling - keep original sizing, only change colors
 const dashboardBtnClass = "border-[#AFC8FF] text-black bg-[#AFC8FF] hover:bg-[#9FBCFF] text-[9px] h-5 px-2 font-normal"
 
-// Dashboard CTA button styling - white text for the 13 specific CTA buttons
-const dashboardCtaBtnClass = "border-[#AFC8FF] text-black bg-[#AFC8FF] hover:bg-[#9FBCFF] text-[9px] h-5 px-2 font-normal"
+// Dashboard CTA button styling - pastel blue bg + black text for the 13 specific CTA buttons
+const dashboardCtaBtnClass = "bg-[#AFC8FF] text-black hover:bg-[#9FBCFF] active:bg-[#95B4FF] ring-1 ring-inset ring-[#8FB3FF]/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6FA0FF] shadow-sm text-[9px] h-5 px-2 font-normal rounded-full disabled:bg-[#AFC8FF]/60 disabled:text-black/60 disabled:ring-[#8FB3FF]/50 disabled:cursor-not-allowed disabled:opacity-100"
 
 export default function CursorDashboard() {
   const [activeTab, setActiveTab] = useState<"agents" | "dashboard">("agents")
@@ -2105,7 +2105,6 @@ It would also be helpful if you described:
                           </div>
                         </div>
                         <Button
-                          variant="outline"
                           size="sm"
                           className={dashboardCtaBtnClass}
                         >
@@ -2124,7 +2123,6 @@ It would also be helpful if you described:
                       Ensure independent oversight of monitoring outputs.
                     </p>
                     <Button
-                      variant="outline"
                       className={dashboardCtaBtnClass}
                     >
                       Invite Your Team
@@ -2466,7 +2464,6 @@ It would also be helpful if you described:
                               </div>
                             </div>
                             <Button
-                              variant="outline"
                               size="sm"
                               className={dashboardCtaBtnClass}
                             >
@@ -2491,7 +2488,6 @@ It would also be helpful if you described:
                               </div>
                             </div>
                             <Button
-                              variant="outline"
                               size="sm"
                               className={dashboardCtaBtnClass}
                             >
@@ -2516,7 +2512,6 @@ It would also be helpful if you described:
                               </div>
                             </div>
                             <Button
-                              variant="outline"
                               size="sm"
                               className={dashboardCtaBtnClass}
                             >
@@ -2541,7 +2536,6 @@ It would also be helpful if you described:
                               </div>
                             </div>
                             <Button
-                              variant="outline"
                               size="sm"
                               className={dashboardCtaBtnClass}
                             >
@@ -2657,7 +2651,6 @@ It would also be helpful if you described:
                               </div>
                             </div>
                             <Button
-                              variant="outline"
                               size="sm"
                               className={dashboardCtaBtnClass}
                             >
@@ -2682,7 +2675,6 @@ It would also be helpful if you described:
                               </div>
                             </div>
                             <Button
-                              variant="outline"
                               size="sm"
                               className={dashboardCtaBtnClass}
                             >
@@ -2707,7 +2699,6 @@ It would also be helpful if you described:
                               </div>
                             </div>
                             <Button
-                              variant="outline"
                               size="sm"
                               className={dashboardCtaBtnClass}
                             >
@@ -2732,7 +2723,6 @@ It would also be helpful if you described:
                               </div>
                             </div>
                             <Button
-                              variant="outline"
                               size="sm"
                               className={dashboardCtaBtnClass}
                             >
