@@ -36,7 +36,7 @@ import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, ReferenceLine, Label } from "recharts"
-import { CalendarIcon, Copy, RefreshCw, ImageUp, Camera, FolderClosed, Github } from "lucide-react"
+import { CalendarIcon, Copy, RefreshCw, ImageUp, Camera, FolderClosed, Github, AlertTriangle } from "lucide-react"
 import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema } from "@/types/api.schemas"
 import { fetchTyped } from "@/lib/backendAdapter"
 import { safe } from "@/lib/safe"
@@ -104,6 +104,9 @@ const analyticsDataYTD = [
 // Financial Compliance Dashboard - Main Component (CI Test)
 // Dashboard button styling - keep original sizing, only change colors
 const dashboardBtnClass = "border-[#AFC8FF] text-black bg-[#AFC8FF] hover:bg-[#9FBCFF] text-[9px] h-5 px-2 font-normal"
+
+// Dashboard CTA button styling - white text for the 13 specific CTA buttons
+const dashboardCtaBtnClass = "border-[#AFC8FF] text-black bg-[#AFC8FF] hover:bg-[#9FBCFF] text-[9px] h-5 px-2 font-normal"
 
 export default function CursorDashboard() {
   const [activeTab, setActiveTab] = useState<"agents" | "dashboard">("agents")
@@ -1018,11 +1021,11 @@ It would also be helpful if you described:
       <header className="border-b border-[#1a1a1a] px-5 py-1.5 relative">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img 
-              src="/rbb-economics-logo.png" 
-              alt="RBB Economics" 
-              className="h-28 w-auto opacity-90 hover:opacity-100 transition-opacity"
-            />
+<img 
+  src="/ninja glow - positive.png" 
+  alt="Ninja Glow" 
+              className="h-20 w-auto opacity-90 hover:opacity-100 transition-opacity"
+/>
           </div>
 
           <nav className="flex gap-5 absolute left-1/2 transform -translate-x-1/2">
@@ -1242,7 +1245,7 @@ It would also be helpful if you described:
                   <div className="w-full space-y-3">
                     <div className="relative">
                       <textarea
-                          placeholder="Is my pricing behaviour competitive or collusive?"
+                          placeholder="Help me audit my pricing algorithms."
                           value={inputValue}
                           onChange={(e) => setInputValue(e.target.value)}
                           onKeyDown={(e) => {
@@ -1414,11 +1417,11 @@ It would also be helpful if you described:
                               Generate report
                             </button>
                             <button
-                              onClick={() => handleSendMessage("Help me log a market event")}
+                              onClick={() => handleSendMessage("Help me report a cartel")}
                               className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 whitespace-nowrap"
                             >
-                              <SquarePen className="w-2 h-2" />
-                              Log a market event
+                              <AlertTriangle className="w-2 h-2" />
+                              Report a cartel
                         </button>
                       </div>
                     </div>
@@ -2064,7 +2067,7 @@ It would also be helpful if you described:
                         <Button
                           variant="outline"
                           size="sm"
-                          className={dashboardBtnClass}
+                          className={dashboardCtaBtnClass}
                         >
                           Connect
                         </Button>
@@ -2082,7 +2085,7 @@ It would also be helpful if you described:
                     </p>
                     <Button
                       variant="outline"
-                      className={dashboardBtnClass}
+                      className={dashboardCtaBtnClass}
                     >
                       Invite Your Team
                     </Button>
@@ -2425,7 +2428,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className={dashboardBtnClass}
+                              className={dashboardCtaBtnClass}
                             >
                               Connect
                             </Button>
@@ -2450,7 +2453,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className={dashboardBtnClass}
+                              className={dashboardCtaBtnClass}
                             >
                               Connect
                             </Button>
@@ -2475,7 +2478,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className={dashboardBtnClass}
+                              className={dashboardCtaBtnClass}
                             >
                               Connect
                             </Button>
@@ -2500,7 +2503,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className={dashboardBtnClass}
+                              className={dashboardCtaBtnClass}
                             >
                               Connect
                             </Button>
@@ -2616,7 +2619,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className={dashboardBtnClass}
+                              className={dashboardCtaBtnClass}
                             >
                               Deploy
                             </Button>
@@ -2641,7 +2644,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className={dashboardBtnClass}
+                              className={dashboardCtaBtnClass}
                             >
                               Deploy
                             </Button>
@@ -2666,7 +2669,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className={dashboardBtnClass}
+                              className={dashboardCtaBtnClass}
                             >
                               Deploy
                             </Button>
@@ -2691,7 +2694,7 @@ It would also be helpful if you described:
                             <Button
                               variant="outline"
                               size="sm"
-                              className={dashboardBtnClass}
+                              className={dashboardCtaBtnClass}
                             >
                               Deploy
                             </Button>
@@ -3386,7 +3389,7 @@ It would also be helpful if you described:
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className={dashboardBtnClass}
+                                className={dashboardCtaBtnClass}
                               >
                                 Download
                               </Button>
@@ -3417,7 +3420,7 @@ It would also be helpful if you described:
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className={dashboardBtnClass}
+                                className={dashboardCtaBtnClass}
                               >
                                 Download
                               </Button>
@@ -3448,7 +3451,7 @@ It would also be helpful if you described:
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className={dashboardBtnClass}
+                                className={dashboardCtaBtnClass}
                               >
                                 Download
                               </Button>
