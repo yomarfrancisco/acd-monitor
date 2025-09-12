@@ -1024,7 +1024,7 @@ It would also be helpful if you described:
 <img 
   src="/ninja glow - positive.png" 
   alt="Ninja Glow" 
-              className="h-14 sm:h-16 md:h-24 w-auto opacity-90 hover:opacity-100 transition-opacity"
+              className="h-14 sm:h-16 md:h-24 w-auto opacity-90 hover:opacity-100 transition-opacity -ml-3 sm:ml-0"
 />
           </div>
 
@@ -1254,13 +1254,13 @@ It would also be helpful if you described:
                               handleSendMessage()
                             }
                           }}
-                          className="w-full h-28 bg-bg-tile rounded-lg text-[#f9fafb] placeholder-[#71717a] pr-16 px-4 py-4 text-[16px] sm:text-xs resize-none focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50"
+                          className="w-full h-28 bg-bg-tile rounded-lg text-[#f9fafb] placeholder-[#71717a] pr-16 px-4 py-4 text-xs resize-none focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50"
                           rows={5}
                         />
                         {/* Blinking cursor overlay - only shows when empty */}
                         {inputValue === "" && (
                           <div
-                            className="absolute left-4 top-4 text-[#f9fafb] text-[16px] sm:text-xs"
+                            className="absolute left-4 top-4 text-[#f9fafb] text-xs"
                             style={{
                               animation: "blink 1s infinite",
                               display: "inline-block",
