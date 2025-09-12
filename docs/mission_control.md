@@ -1,7 +1,7 @@
 # Mission Control — ACD Platform (Brief 55+ Continuation)
 
 **Owner:** Theo (Senior Econometrician, RBB Economics)  
-**Version:** 1.0  
+**Version:** 1.1  
 **Date:** January 2025  
 **Classification:** Internal Build Plan  
 
@@ -155,3 +155,35 @@ Every design choice should answer:
 - Can it run in production without collapse?
 
 Ship v1.9 with these priorities locked.
+
+---
+
+## 10. Deployment Protocols (Anchor for Theo)
+
+### 10.1 Source of Truth
+- All deploys must flow through GitHub → Vercel integration.
+- Repo: yomarfrancisco/acd-monitor.
+- Production branch: main.
+- Root directory: ui/cursor-dashboard.
+- CLI deploys are strictly prohibited.
+
+### 10.2 Workflow
+1. Create branch for changes.
+2. Commit + push to GitHub.
+3. Open PR → main.
+4. Vercel auto-builds preview from GitHub PR.
+5. Verify preview scope (only intended changes).
+6. Merge PR → auto production deploy.
+
+### 10.3 Guardrails
+- ❌ Do not use vercel deploy from CLI.
+- ❌ Do not re-link project to cursor-dashboard.
+- ✅ Always verify .vercel/project.json points to acd-monitor with root ui/cursor-dashboard.
+
+### 10.4 Verification Checklist
+
+Theo must confirm on each deploy:
+- ✅ PR link + commit hash.
+- ✅ Preview URL (GitHub-sourced).
+- ✅ Scope confirmation (only intended changes).
+- ✅ Production URL after merge.
