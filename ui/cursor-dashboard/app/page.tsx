@@ -1022,8 +1022,8 @@ It would also be helpful if you described:
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <img 
-              src="/rbb-economics-logo.png" 
-              alt="RBB Economics" 
+              src="/ninja glow - positive.png" 
+              alt="Ninja Glow" 
               className="h-28 w-auto opacity-90 hover:opacity-100 transition-opacity"
             />
           </div>
