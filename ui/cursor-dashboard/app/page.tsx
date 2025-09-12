@@ -1024,11 +1024,11 @@ It would also be helpful if you described:
 <img 
   src="/ninja glow - positive.png" 
   alt="Ninja Glow" 
-              className="h-24 w-auto opacity-90 hover:opacity-100 transition-opacity"
+              className="h-14 sm:h-16 md:h-24 w-auto opacity-90 hover:opacity-100 transition-opacity"
 />
           </div>
 
-          <nav className="flex gap-5 absolute left-1/2 transform -translate-x-1/2">
+          <nav className="flex gap-4 sm:gap-5 absolute left-1/2 transform -translate-x-1/2">
             <button
               onClick={() => handleTabChange("agents")}
               className={`px-2.5 py-1 text-xs font-medium ${
@@ -1242,7 +1242,7 @@ It would also be helpful if you described:
 
                   {/* Input Area */}
                   <div className={`${hasEngaged ? "mt-auto" : "flex flex-col items-center justify-center space-y-5"}`}>
-                  <div className="w-full space-y-3">
+                  <div className="w-full space-y-3 mx-4 sm:mx-0">
                     <div className="relative">
                       <textarea
                           placeholder="Help me audit my pricing algorithms."
@@ -1254,13 +1254,13 @@ It would also be helpful if you described:
                               handleSendMessage()
                             }
                           }}
-                          className="w-full h-28 bg-bg-tile rounded-lg text-[#f9fafb] placeholder-[#71717a] pr-16 px-4 py-4 text-xs resize-none focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50"
+                          className="w-full h-28 bg-bg-tile rounded-lg text-[#f9fafb] placeholder-[#71717a] pr-16 px-4 py-4 text-[16px] sm:text-xs resize-none focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50"
                           rows={5}
                         />
                         {/* Blinking cursor overlay - only shows when empty */}
                         {inputValue === "" && (
                           <div
-                            className="absolute left-4 top-4 text-[#f9fafb] text-xs"
+                            className="absolute left-4 top-4 text-[#f9fafb] text-[16px] sm:text-xs"
                             style={{
                               animation: "blink 1s infinite",
                               display: "inline-block",
@@ -1403,22 +1403,22 @@ It would also be helpful if you described:
                         <div className="space-y-4 mt-8">
                       <p className="text-[10px] text-[#a1a1aa] text-center">Try these examples to get started</p>
 
-                          <div className="flex gap-2 justify-center max-w-4xl mx-auto">
-                            <button className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 whitespace-nowrap">
+                          <div className="flex flex-wrap gap-2 justify-center max-w-4xl mx-auto sm:flex-nowrap">
+                            <button className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 sm:whitespace-nowrap">
                               <Zap className="w-2 h-2" />
                               Analyze pricing patterns
                         </button>
-                            <button className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 whitespace-nowrap">
+                            <button className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 sm:whitespace-nowrap">
                               <ShieldCheck className="w-2 h-2" />
                               Check compliance status
                         </button>
-                            <button className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 whitespace-nowrap">
+                            <button className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 sm:whitespace-nowrap">
                               <FileText className="w-2 h-2" />
                               Generate report
                             </button>
                             <button
                               onClick={() => handleSendMessage("Help me report a cartel")}
-                              className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 whitespace-nowrap"
+                              className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 sm:whitespace-nowrap"
                             >
                               <AlertTriangle className="w-2 h-2" />
                               Report a cartel
