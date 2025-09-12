@@ -42,6 +42,8 @@ import { fetchTyped } from "@/lib/backendAdapter"
 import { safe } from "@/lib/safe"
 import { resilientFetch } from "@/lib/resilient-api"
 import { DegradedModeBanner } from "@/components/DegradedModeBanner"
+import DashboardLayout from "@/components/dashboard/Layout"
+import DashboardContent from "@/components/dashboard/DashboardContent"
 import type { RiskSummary, MetricsOverview, HealthRun, EventsResponse, DataSources, EvidenceExport } from "@/types/api"
 import {
   MessageSquare,
@@ -1059,108 +1061,11 @@ It would also be helpful if you described:
       {/* Extra spacing below header */}
       <div className="h-6"></div>
 
-      <div className="flex justify-center">
-        <div className="flex max-w-5xl w-full">
-          {/* Sidebar - Only show on dashboard */}
-          {activeTab === "dashboard" && (
-            <aside className="w-64 bg-[#0f0f10] p-3 flex-shrink-0">
-              <div className="space-y-3">
-                {/* User Info */}
-                <div>
-                  <h3 className="text-xs font-semibold text-[#f9fafb] mb-1">Ygor Francisco</h3>
-                  <p className="text-[10px] text-[#a1a1aa] mb-2.5">Ent Plan · ygor.francisco@gmail.com</p>
-
-                  <div
-                    className={`rounded-md p-1.5 mb-2.5 cursor-pointer ${activeSidebarItem === "overview" ? "bg-bg-tile" : "hover:bg-bg-tile"}`}
-                    onClick={() => setActiveSidebarItem("overview")}
-                  >
-                    <div className="flex items-center gap-2 text-xs font-medium text-[#f9fafb]">
-                      <User className="w-3.5 h-3.5" />
-                      Overview
-                    </div>
-                  </div>
-
-                  <div className="space-y-1 text-xs">
-                    <div
-                      className={`flex items-center gap-2 px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "configuration" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
-                      onClick={() => setActiveSidebarItem("configuration")}
-                    >
-                      <Settings className="w-3.5 h-3.5" />
-                      Configuration
-                    </div>
-                  </div>
-                </div>
-
-                <Separator className="bg-bg-tile" />
-
-                {/* Navigation */}
-                <nav className="space-y-0.5">
-                  <div
-                    className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "data-sources" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
-                    onClick={() => setActiveSidebarItem("data-sources")}
-                  >
-                    <Database className="w-3.5 h-3.5" />
-                    Data Sources
-                  </div>
-                  <div
-                    className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "ai-economists" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
-                    onClick={() => setActiveSidebarItem("ai-economists")}
-                  >
-                    <Bot className="w-3.5 h-3.5" />
-                    AI Agents
-                  </div>
-                  <div
-                    className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "health-checks" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
-                    onClick={() => setActiveSidebarItem("health-checks")}
-                  >
-                    <Zap className="w-3.5 h-3.5" />
-                    Health Checks
-                  </div>
-                </nav>
-
-                <Separator className="bg-bg-tile" />
-
-                <nav className="space-y-0.5">
-                  <div
-                    className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "events-log" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
-                    onClick={() => setActiveSidebarItem("events-log")}
-                  >
-                    <ClipboardList className="w-3.5 h-3.5" />
-                    Events Log
-                  </div>
-                  <div
-                    className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "billing" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
-                    onClick={() => setActiveSidebarItem("billing")}
-                  >
-                    <CreditCard className="w-3.5 h-3.5" />
-                    Billing & Invoices
-                  </div>
-                </nav>
-
-                <Separator className="bg-bg-tile" />
-
-                <nav className="space-y-0.5">
-                  <div
-                    className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "compliance" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
-                    onClick={() => setActiveSidebarItem("compliance")}
-                  >
-                    <FileText className="w-3.5 h-3.5" />
-                    Compliance Reports
-                  </div>
-                  <div
-                    className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "contact" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
-                    onClick={() => setActiveSidebarItem("contact")}
-                  >
-                    <MessageSquare className="w-3.5 h-3.5" />
-                    Contact Us
-                  </div>
-                </nav>
-              </div>
-            </aside>
-          )}
-
-          {/* Main Content */}
-          <main className={`flex-1 p-5 max-w-3xl ${activeTab === "agents" ? "mx-auto" : ""}`}>
+      {/* Main Content */}
+      {activeTab === "agents" ? (
+        <div className="flex justify-center">
+          <div className="flex max-w-5xl w-full">
+            <main className="flex-1 p-5 max-w-3xl mx-auto">
             {activeTab === "agents" && (
               <div className="max-w-xl mx-auto">
                 {/* Initial Agent Message */}
@@ -1433,12 +1338,7 @@ It would also be helpful if you described:
               </div>
               </div>
             )}
-            {activeTab === "dashboard" && (
-              /* Dashboard View */
-              <>
-                {activeSidebarItem === "overview" && (
-              <div className="space-y-3 max-w-2xl">
-                <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+              {/* Old dashboard content removed - using new responsive layout */}
                   <CardContent className="p-4">
                         <div className="grid grid-cols-2 gap-6">
                           <div className="rounded-lg bg-bg-tile shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
@@ -3587,7 +3487,38 @@ It would also be helpful if you described:
             )}
           </main>
         </div>
-      </div>
+      ) : (
+        <DashboardLayout 
+          activeSidebarItem={activeSidebarItem} 
+          setActiveSidebarItem={setActiveSidebarItem}
+        >
+          <DashboardContent
+            activeSidebarItem={activeSidebarItem}
+            selectedTimeframe={selectedTimeframe}
+            isClient={isClient}
+            isCalendarOpen={isCalendarOpen}
+            setIsCalendarOpen={setIsCalendarOpen}
+            riskSummaryLoading={riskSummaryLoading}
+            riskSummaryError={riskSummaryError}
+            riskSummary={riskSummary}
+            metricsLoading={metricsLoading}
+            metricsError={metricsError}
+            metricsOverview={metricsOverview}
+            healthLoading={healthLoading}
+            healthError={healthError}
+            healthRun={healthRun}
+            eventsLoading={eventsLoading}
+            eventsError={eventsError}
+            eventsResponse={events}
+            dataSourcesLoading={dataSourcesLoading}
+            dataSourcesError={dataSourcesError}
+            dataSources={dataSources}
+            evidenceLoading={evidenceLoading}
+            evidenceExport={evidenceExport}
+            handleEvidenceExport={handleEvidenceExport}
+          />
+        </DashboardLayout>
+      )}
 
       {/* GitHub Modal */}
       {isGitHubModalOpen && (
