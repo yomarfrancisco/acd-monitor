@@ -1,19 +1,25 @@
 "use client";
-import { ReactNode, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { dashContainer, dashGrid } from "@/lib/ui";
 import SideNav from "./SideNav";
 
-export default function DashboardLayout({ children }: { children: ReactNode }) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const gridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const v = "STACK-DIAG v3"; // bump if you redeploy again
     const log = () => {
-      if (!gridRef.current) return;
-      const cs = window.getComputedStyle(gridRef.current);
+      const el = gridRef.current;
+      if (!el) return;
+      const cs = window.getComputedStyle(el);
       // eslint-disable-next-line no-console
-      console.log("[dash grid] grid-template-columns:", cs.gridTemplateColumns, "width:", gridRef.current.offsetWidth);
-      // eslint-disable-next-line no-console
-      console.log("[dash grid] className:", gridRef.current?.className);
+      console.log(v, {
+        className: el.className,
+        display: cs.display,
+        gridTemplateColumns: cs.gridTemplateColumns,
+        width: el.offsetWidth,
+        deviceWidth: window.innerWidth,
+      });
     };
     log();
     window.addEventListener("resize", log);
@@ -23,7 +29,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
     <div className={dashContainer}>
       <div ref={gridRef} className={dashGrid}>
-        {/* Nav renders FIRST so it appears above content on mobile */}
         <SideNav />
         <main className="min-w-0 flex flex-col gap-6">{children}</main>
       </div>

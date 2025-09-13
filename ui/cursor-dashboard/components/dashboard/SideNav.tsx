@@ -17,7 +17,7 @@ const items = [
 export default function SideNav() {
   const pathname = usePathname();
   return (
-    <aside className="w-full lg:sticky lg:top-16 self-start">
+    <aside className="w-full min-w-0 lg:sticky lg:top-16 self-start">
       <nav className="flex flex-col gap-1" aria-label="Dashboard sections">
         {items.map(i => {
           const active = pathname === i.href;
