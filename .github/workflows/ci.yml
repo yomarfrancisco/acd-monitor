@@ -64,6 +64,9 @@ jobs:
       - name: Install UI package deps
         run: pnpm --filter ./ui/cursor-dashboard install --frozen-lockfile=false
 
+      - name: Verify UI deps
+        run: pnpm --filter ./ui/cursor-dashboard ls zod react react-dom || true
+
       - name: Typecheck
         run: pnpm --filter ./ui/cursor-dashboard run typecheck
 
@@ -71,7 +74,7 @@ jobs:
         run: pnpm --filter ./ui/cursor-dashboard run build
 
       - name: Verify static assets
-        run: pnpm --filter ./ui/cursor-dashboard run export || true
+        run: pnpm --filter ./ui/cursor-dashboard run verify
 
   backend:
     needs: detect
