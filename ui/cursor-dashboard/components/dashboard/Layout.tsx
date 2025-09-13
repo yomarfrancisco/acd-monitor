@@ -9,7 +9,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       <div className={dashGrid}>
         {/* Nav renders FIRST so it appears above content on mobile */}
         <SideNav />
-        <main className="flex flex-col gap-6">{children}</main>
+        <main className="min-w-0 flex flex-col gap-6">{children}</main>
       </div>
     </div>
   );
