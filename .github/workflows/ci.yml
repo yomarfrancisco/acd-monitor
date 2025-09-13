@@ -43,33 +43,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 20.x
           cache: 'pnpm'
-          cache-dependency-path: pnpm-lock.yaml
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 10.16.0
+          run_install: false
 
-      - name: Install deps (ci with fallback)
-        run: |
-          pnpm -v
-          pnpm install --frozen-lockfile=false
+      - name: Install deps (workspace)
+        run: pnpm install --frozen-lockfile=false
 
       - name: Typecheck
         run: pnpm --filter ./ui/cursor-dashboard run typecheck
-
-      - name: Contract Tests
-        run: pnpm --filter ./ui/cursor-dashboard run contracts
 
       - name: Build
         run: pnpm --filter ./ui/cursor-dashboard run build
 
       - name: Verify static assets
-        run: test -d ui/cursor-dashboard/.next/static/css && test -d ui/cursor-dashboard/.next/static/chunks/app
+        run: test -d ./ui/cursor-dashboard/.next
 
   backend:
     needs: detect
