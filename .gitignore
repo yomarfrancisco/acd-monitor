@@ -62,3 +62,4 @@ dist/
 build/
 *.tsbuildinfo
 .vercel
+.vercel
