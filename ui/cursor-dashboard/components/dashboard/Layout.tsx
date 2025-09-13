@@ -7,48 +7,30 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const gridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const v = "STACK-DIAG v4"; // bump if you redeploy again
-    // eslint-disable-next-line no-console
-    console.log("STACK-DIAG v4 mounted");
-    // eslint-disable-next-line no-console
-    window.__stackDiagRan = true;
-    
-    const log = () => {
-      const el = gridRef.current;
-      if (!el) {
-        // eslint-disable-next-line no-console
-        console.log(v, "ERROR: gridRef.current is null");
-        return;
-      }
-      const cs = window.getComputedStyle(el);
-      const diagData = {
-        className: el.className,
-        display: cs.display,
-        gridTemplateColumns: cs.gridTemplateColumns,
-        width: el.clientWidth,
-        deviceWidth: window.innerWidth,
-      };
-      // eslint-disable-next-line no-console
-      console.log(v, diagData);
-      
-      // Write visible on-page readout
-      const diagEl = document.getElementById("stack-diag");
-      if (diagEl) {
-        diagEl.textContent = JSON.stringify(diagData, null, 2);
-      }
-    };
-    
-    // Add a small delay to ensure DOM is ready
-    setTimeout(log, 100);
-    window.addEventListener("resize", log);
-    return () => window.removeEventListener("resize", log);
+    const el = document.querySelector('[data-root-grid="dash"]') as HTMLElement | null;
+    if (!el) return console.log('ROOT-DIAG: no root grid');
+    const kids = Array.from(el.children).map(n => n.tagName.toLowerCase());
+    const cs = getComputedStyle(el);
+    console.log('ROOT-DIAG', {
+      className: el.className,
+      kids,                        // should be ['aside','main']
+      display: cs.display,
+      gridTemplateColumns: cs.gridTemplateColumns,
+      width: el.getBoundingClientRect().width,
+      innerWidth,
+    });
   }, []);
 
   return (
     <div className={dashContainer}>
-      <div ref={gridRef} className={dashGrid} data-stack-diag="dashGrid">
+      <div
+        ref={gridRef}
+        data-root-grid="dash"
+        className={dashGrid}
+        style={{ outline: '2px solid red' }}
+      >
         <SideNav />
-        <main className="min-w-0 flex flex-col gap-6">{children}</main>
+        <main className="min-w-0 flex flex-col gap-6" data-stack-diag="main">{children}</main>
       </div>
       <pre id="stack-diag" data-stack-diag="dashGrid" className="sr-only"></pre>
     </div>
