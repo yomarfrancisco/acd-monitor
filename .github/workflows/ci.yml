@@ -56,7 +56,7 @@ jobs:
         run: npm ci || npm install
 
       - name: Typecheck
-        run: npx tsc --noEmit
+        run: pnpm --filter ./ui/cursor-dashboard run typecheck
 
       - name: Contract Tests
         run: npm run contracts
