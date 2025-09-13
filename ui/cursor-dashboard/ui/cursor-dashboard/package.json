@@ -1,5 +1,9 @@
 {
   "scripts": {
     "vercel-build": "next build"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.24",
+    "@types/react-dom": "^18.3.7"
   }
 }

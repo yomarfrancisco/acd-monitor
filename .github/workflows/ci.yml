@@ -59,6 +59,10 @@ jobs:
       - name: Install deps (workspace)
         run: pnpm install --frozen-lockfile=false
 
+      - name: Verify UI deps
+        run: |
+          pnpm --filter ./ui/cursor-dashboard ls react react-dom
+          node -e "require.resolve('react');require.resolve('react-dom');console.log('deps ok')"
       - name: Typecheck
         run: |
           cd ui/cursor-dashboard
