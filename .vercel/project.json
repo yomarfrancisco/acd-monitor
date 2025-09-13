@@ -1,1 +1,16 @@
-{"projectId":"prj_VDZcMWhvVScazqVVlymnldHNezpR","orgId":"team_iYeO7yeANF0HbheM3m4mHjUl","projectName":"acd-monitor"}
+{
+  "projectId": "prj_VDZcMWhvVScazqVVlymnldHNezpR",
+  "orgId": "team_iYeO7yeANF0HbheM3m4mHjUl",
+  "projectName": "acd-monitor",
+  "settings": {
+    "createdAt": 1757412037212,
+    "framework": "nextjs",
+    "devCommand": null,
+    "installCommand": null,
+    "buildCommand": null,
+    "outputDirectory": null,
+    "rootDirectory": "ui/cursor-dashboard",
+    "directoryListing": false,
+    "nodeVersion": "22.x"
+  }
+}

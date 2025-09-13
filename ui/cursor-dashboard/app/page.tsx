@@ -1698,7 +1698,7 @@ It would also be helpful if you described:
 
                             <Tooltip
                                   cursor={false}
-                              content={({ active, payload, label }) => {
+                              content={({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string | number }) => {
                                 if (active && payload && payload.length) {
                                       // Market share data for each bank
                                       const marketShare = {
@@ -1791,7 +1791,7 @@ It would also be helpful if you described:
                                           )}
 
                                           {/* Bank Data */}
-                                      {payload.map((entry, index) => (
+                                      {payload.map((entry: any, index: number) => (
                                             <div key={index} className="flex items-center gap-2 text-[9px]">
                                           <div 
                                             className="w-2 h-2 rounded-full" 
@@ -2865,12 +2865,12 @@ It would also be helpful if you described:
 
                               <Tooltip
                                 cursor={false}
-                                content={({ active, payload, label }) => {
+                                content={({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string | number }) => {
                                   if (active && payload && payload.length) {
                                     return (
                                       <div className="bg-black border border-[#1a1a1a] rounded-lg p-3 shadow-2xl shadow-black/50">
                                         <p className="text-[#a1a1aa] text-[10px] mb-1.5">{label}</p>
-                                        {payload.map((entry, index) => (
+                                        {payload.map((entry: any, index: number) => (
                                           <div key={index} className="flex items-center gap-2 text-[9px]">
                                             <div
                                               className="w-2 h-2 rounded-full"
