@@ -4,6 +4,13 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { CalendarIcon, Clock } from "lucide-react";
 
+// Temporary proof wrapper to test if page renders but layout is skipped
+const PageWrapper = ({ children }: { children: React.ReactNode }) => (
+  <div data-root-grid="page-dash" style={{outline: '2px solid blue'}}>
+    {children}
+  </div>
+);
+
 // Different data sets for different time periods
 const analyticsData30d = [
   { date: "Aug 6", fnb: 100, absa: 95, standard: 105, nedbank: 98 },
@@ -66,7 +73,8 @@ export default function Page() {
                      selectedTimeframe === "1y" ? analyticsData1y : analyticsDataYTD;
 
   return (
-    <div className="space-y-3 max-w-2xl">
+    <PageWrapper>
+      <div className="space-y-3 max-w-2xl">
       <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
         <CardContent className="p-4">
           <div className="grid grid-cols-2 gap-6">
@@ -214,6 +222,7 @@ export default function Page() {
           </div>
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </PageWrapper>
   );
 }
