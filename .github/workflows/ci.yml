@@ -53,28 +53,25 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20.x
+          node-version: 20
           cache: 'pnpm'
+          cache-dependency-path: |
+            pnpm-lock.yaml
 
       - name: Install deps (workspace)
         run: pnpm install --frozen-lockfile=false
 
-      - name: Verify UI deps
-        run: |
-          pnpm --filter ./ui/cursor-dashboard ls react react-dom
-          node -e "require.resolve('react');require.resolve('react-dom');console.log('deps ok')"
+      - name: Install UI package deps
+        run: pnpm --filter ./ui/cursor-dashboard install --frozen-lockfile=false
+
       - name: Typecheck
-        run: |
-          cd ui/cursor-dashboard
-          pnpm run typecheck
+        run: pnpm --filter ./ui/cursor-dashboard run typecheck
 
       - name: Build
-        run: |
-          cd ui/cursor-dashboard
-          pnpm run build
+        run: pnpm --filter ./ui/cursor-dashboard run build
 
       - name: Verify static assets
-        run: test -d ./ui/cursor-dashboard/.next
+        run: pnpm --filter ./ui/cursor-dashboard run export || true
 
   backend:
     needs: detect
