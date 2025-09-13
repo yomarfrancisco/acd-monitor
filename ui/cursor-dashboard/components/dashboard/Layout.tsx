@@ -21,14 +21,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         return;
       }
       const cs = window.getComputedStyle(el);
-      // eslint-disable-next-line no-console
-      console.log(v, {
+      const diagData = {
         className: el.className,
         display: cs.display,
         gridTemplateColumns: cs.gridTemplateColumns,
-        width: el.offsetWidth,
+        width: el.clientWidth,
         deviceWidth: window.innerWidth,
-      });
+      };
+      // eslint-disable-next-line no-console
+      console.log(v, diagData);
+      
+      // Write visible on-page readout
+      const diagEl = document.getElementById("stack-diag");
+      if (diagEl) {
+        diagEl.textContent = JSON.stringify(diagData, null, 2);
+      }
     };
     
     // Add a small delay to ensure DOM is ready
@@ -43,6 +50,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <SideNav />
         <main className="min-w-0 flex flex-col gap-6">{children}</main>
       </div>
+      <pre id="stack-diag" data-stack-diag="dashGrid" className="sr-only"></pre>
     </div>
   );
 }
