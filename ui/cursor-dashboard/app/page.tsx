@@ -2994,7 +2994,7 @@ It would also be helpful if you described:
                         <div className="p-3">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2.5">
-                              <Link className="w-4 h-4 text-[#a1a1aa]" />
+                              <LinkIcon className="w-4 h-4 text-[#a1a1aa]" />
                               <div>
                                 <div className="text-[#f9fafb] font-medium text-xs">Evidence Chain</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
