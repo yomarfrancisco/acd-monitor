@@ -1698,7 +1698,7 @@ It would also be helpful if you described:
 
                             <Tooltip
                                   cursor={false}
-                              content={({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string | number }) => {
+                              content={({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string }) => {
                                 if (active && payload && payload.length) {
                                       // Market share data for each bank
                                       const marketShare = {
@@ -2865,7 +2865,7 @@ It would also be helpful if you described:
 
                               <Tooltip
                                 cursor={false}
-                                content={({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string | number }) => {
+                                content={({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string }) => {
                                   if (active && payload && payload.length) {
                                     return (
                                       <div className="bg-black border border-[#1a1a1a] rounded-lg p-3 shadow-2xl shadow-black/50">

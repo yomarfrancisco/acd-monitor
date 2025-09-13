@@ -13,9 +13,7 @@
     "strict": true,
     "noEmit": true,
     "types": [
-      "node",
-      "react",
-      "react-dom"
+      "node"
     ],
     "lib": [
       "dom",
