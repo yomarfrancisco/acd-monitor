@@ -9,7 +9,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   useEffect(() => {
     const v = "STACK-DIAG v4"; // bump if you redeploy again
     // eslint-disable-next-line no-console
-    console.log(v, "Component mounted, starting diagnostics...");
+    console.log("STACK-DIAG v4 mounted");
+    // eslint-disable-next-line no-console
+    window.__stackDiagRan = true;
     
     const log = () => {
       const el = gridRef.current;
@@ -37,7 +39,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className={dashContainer}>
-      <div ref={gridRef} className={dashGrid}>
+      <div ref={gridRef} className={dashGrid} data-stack-diag="dashGrid">
         <SideNav />
         <main className="min-w-0 flex flex-col gap-6">{children}</main>
       </div>
