@@ -60,10 +60,14 @@ jobs:
         run: pnpm install --frozen-lockfile=false
 
       - name: Typecheck
-        run: pnpm --filter ./ui/cursor-dashboard run typecheck
+        run: |
+          cd ui/cursor-dashboard
+          pnpm run typecheck
 
       - name: Build
-        run: pnpm --filter ./ui/cursor-dashboard run build
+        run: |
+          cd ui/cursor-dashboard
+          pnpm run build
 
       - name: Verify static assets
         run: test -d ./ui/cursor-dashboard/.next
