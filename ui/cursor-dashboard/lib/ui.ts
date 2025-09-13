@@ -1,5 +1,5 @@
 export const dashContainer = "mx-auto max-w-[1120px] px-3 sm:px-4 lg:px-6";
-export const dashGrid      = "grid gap-6 lg:grid-cols-[18rem_1fr]";
+export const dashGrid      = "grid grid-cols-1 gap-6 lg:grid-cols-[18rem_1fr]";
 export const sectionTitle  = "text-lg font-medium tracking-tight";
 export const card          = "rounded-xl border border-white/10 bg-white/5 p-4 md:p-6";
 export const navList       = "flex flex-col gap-1";
