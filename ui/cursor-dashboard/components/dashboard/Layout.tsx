@@ -7,10 +7,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const gridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const v = "STACK-DIAG v3"; // bump if you redeploy again
+    const v = "STACK-DIAG v4"; // bump if you redeploy again
+    // eslint-disable-next-line no-console
+    console.log(v, "Component mounted, starting diagnostics...");
+    
     const log = () => {
       const el = gridRef.current;
-      if (!el) return;
+      if (!el) {
+        // eslint-disable-next-line no-console
+        console.log(v, "ERROR: gridRef.current is null");
+        return;
+      }
       const cs = window.getComputedStyle(el);
       // eslint-disable-next-line no-console
       console.log(v, {
@@ -21,7 +28,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         deviceWidth: window.innerWidth,
       });
     };
-    log();
+    
+    // Add a small delay to ensure DOM is ready
+    setTimeout(log, 100);
     window.addEventListener("resize", log);
     return () => window.removeEventListener("resize", log);
   }, []);
