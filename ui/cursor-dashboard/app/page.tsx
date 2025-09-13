@@ -23,7 +23,7 @@ import {
   Brain,
   Target,
   Shield,
-  Link as LinkIcon,
+  Link,
   Gauge,
   Moon,
   Scale,
@@ -31,8 +31,6 @@ import {
 
 import { Separator } from "@/components/ui/separator"
 import Image from "next/image"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
 
 import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
@@ -111,8 +109,7 @@ const dashboardBtnClass = "border-[#AFC8FF] text-black bg-[#AFC8FF] hover:bg-[#9
 const dashboardCtaBtnClass = "bg-[#AFC8FF] text-black hover:bg-[#9FBCFF] active:bg-[#95B4FF] ring-1 ring-inset ring-[#8FB3FF]/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6FA0FF] shadow-sm text-[9px] h-5 px-2 font-normal rounded-full disabled:bg-[#AFC8FF]/60 disabled:text-black/60 disabled:ring-[#8FB3FF]/50 disabled:cursor-not-allowed disabled:opacity-100"
 
 export default function CursorDashboard() {
-  const pathname = usePathname()
-  const isDashboard = pathname.startsWith('/dashboard')
+  const [activeTab, setActiveTab] = useState<"agents" | "dashboard">("agents")
   const [selectedTimeframe, setSelectedTimeframe] = useState<"30d" | "6m" | "1y" | "ytd">("ytd")
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
   
@@ -1032,22 +1029,22 @@ It would also be helpful if you described:
           </div>
 
           <nav className="flex gap-4 sm:gap-5 absolute left-1/2 transform -translate-x-1/2">
-            <Link
-              href="/"
+            <button
+              onClick={() => handleTabChange("agents")}
               className={`px-2.5 py-1 text-xs font-medium ${
-                !isDashboard ? "text-[#f9fafb]" : "text-[#a1a1aa] hover:text-[#f9fafb]"
+                activeTab === "agents" ? "text-[#f9fafb]" : "text-[#a1a1aa] hover:text-[#f9fafb]"
               }`}
             >
               Agents
-            </Link>
-            <Link
-              href="/dashboard"
+            </button>
+            <button
+              onClick={() => handleTabChange("dashboard")}
               className={`px-2.5 py-1 text-xs font-medium ${
-                isDashboard ? "text-[#f9fafb]" : "text-[#a1a1aa] hover:text-[#f9fafb]"
+                activeTab === "dashboard" ? "text-[#f9fafb]" : "text-[#a1a1aa] hover:text-[#f9fafb]"
               }`}
             >
               Dashboard
-            </Link>
+            </button>
           </nav>
 
           <div className="text-xs font-medium text-[#f9fafb] bg-bg-tile rounded-full w-7 h-7 flex items-center justify-center">
@@ -1064,7 +1061,8 @@ It would also be helpful if you described:
 
       <div className="flex justify-center">
         <div className="flex max-w-5xl w-full">
-          {/* Old dashboard sidebar removed - using dedicated routes */}
+          {/* Sidebar - Only show on dashboard */}
+          {activeTab === "dashboard" && (
             <aside className="w-64 bg-[#0f0f10] p-3 flex-shrink-0">
               <div className="space-y-3">
                 {/* User Info */}
@@ -1162,8 +1160,8 @@ It would also be helpful if you described:
           )}
 
           {/* Main Content */}
-          <main className={`flex-1 p-5 max-w-3xl ${!isDashboard ? "mx-auto" : ""}`}>
-            {!isDashboard && (
+          <main className={`flex-1 p-5 max-w-3xl ${activeTab === "agents" ? "mx-auto" : ""}`}>
+            {activeTab === "agents" && (
               <div className="max-w-xl mx-auto">
                 {/* Initial Agent Message */}
                 {initialAgentMessage && (
@@ -1435,7 +1433,7 @@ It would also be helpful if you described:
               </div>
               </div>
             )}
-            {/* Old dashboard content removed - using dedicated routes */}
+            {activeTab === "dashboard" && (
               /* Dashboard View */
               <>
                 {activeSidebarItem === "overview" && (
