@@ -113,20 +113,11 @@ function AgentsHeroStatic() {
   return (
     <div
       data-probe="agents-hero"
-      className="w-full flex items-center justify-center gap-2 sm:gap-3 text-center 
-                  flex-col sm:flex-row mt-10 sm:mt-12 mb-8 sm:mb-12"
+      className="w-full flex justify-center mt-10 sm:mt-12 mb-8 sm:mb-12"
     >
-      <Image
-        src="/icons/icon-americas.png"
-        alt="Americas"
-        width={18}
-        height={18}
-        className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 opacity-80"
-        priority
-      />
-      <h1 className="font-lato text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-[#e7e7e9] sm:whitespace-nowrap">
+      <div className="max-w-[60%] bg-[#2a2a2a] rounded-lg px-3 py-2 text-xs text-[#f9fafb]">
         Back at it, Ygor
-      </h1>
+      </div>
     </div>
   );
 }
