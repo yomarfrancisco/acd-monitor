@@ -17,7 +17,7 @@ const items = [
 export default function SideNav() {
   const pathname = usePathname();
   return (
-    <nav className="flex flex-col gap-1 w-full" aria-label="Dashboard sections">
+    <nav className="flex flex-col gap-2" aria-label="Dashboard sections">
         {items.map(i => {
           const active = pathname === i.href;
           const IconComponent = i.icon;

@@ -220,9 +220,9 @@ export default function Page() {
       </Card>
         </section>
 
-      {/* Chart/Table: full-width below cards */}
-      <section className="w-full mt-6">
-        {/* Chart/Table content goes here */}
+      {/* Chart/Table below cards, full width */}
+      <section className="mt-6 lg:mt-8">
+        {/* Chart / Table component */}
       </section>
     </div>
   );

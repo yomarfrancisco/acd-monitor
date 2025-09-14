@@ -1,7 +1,7 @@
-import type React from "react";
+import type { ReactNode } from "react";
 import SideNav from "@/components/dashboard/SideNav";
 
-export default function DashboardRouteLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardRouteLayout({ children }: { children: ReactNode }) {
   return (
     <>
       {/* DASH LAYOUT v3 beacon */}
@@ -12,24 +12,22 @@ export default function DashboardRouteLayout({ children }: { children: React.Rea
         DASH LAYOUT v3 — {process.env.VERCEL_GIT_COMMIT_SHA?.slice(0,7) ?? 'no-sha'}
       </div>
 
-      {/* Outer responsive shell: mobile 1-col; desktop 18rem / 1fr */}
+      {/* Root responsive grid wrapper */}
       <div
         data-root-grid="dash"
         className="
           grid grid-cols-1 gap-6
-          lg:grid-cols-[18rem_1fr] lg:gap-8
+          lg:[grid-template-columns:18rem_1fr] lg:gap-8
           px-4 sm:px-6 lg:px-8
         "
       >
-        {/* Left column: SideNav */}
-        <aside className="lg:sticky lg:top-16 lg:self-start">
+        {/* Sidebar first = appears above on mobile, left column on desktop */}
+        <aside className="lg:sticky lg:top-16 lg:self-start lg:h-[calc(100dvh-4rem)]">
           <SideNav />
         </aside>
 
-        {/* Right column: page content */}
-        <main className="min-w-0 w-full">
-          {children}
-        </main>
+        {/* Main content column */}
+        <main className="min-w-0">{children}</main>
       </div>
     </>
   );
