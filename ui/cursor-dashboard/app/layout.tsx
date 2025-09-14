@@ -38,11 +38,6 @@ export default function RootLayout({
         </div> */}
         
         <Suspense fallback={null}>{children}</Suspense>
-        
-        {/* Build SHA in footer */}
-        <div style={{position:'fixed',bottom:0,left:0,background:'#333',color:'#fff',padding:'4px 8px',fontSize:10,zIndex:99999}}>
-          build: {process.env.VERCEL_GIT_COMMIT_SHA}
-        </div>
       </body>
     </html>
   )
