@@ -73,7 +73,7 @@ export default function Page() {
       <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
             <CardContent className="p-4">
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 <div className="rounded-lg bg-bg-tile shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
                   <div>
                     <h2 className="text-sm font-medium text-[#f9fafb] mb-1">Enterprise Plan</h2>
@@ -151,7 +151,7 @@ export default function Page() {
 
           <div className="mb-4">
             <h3 className="text-xs font-medium text-[#f9fafb] mb-3">Algorithmic Cartel Diagnostic</h3>
-            <div className="grid grid-cols-2 gap-6 mb-10">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 mb-10">
               <div className="rounded-lg bg-bg-surface shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 relative">
                 <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-bg-tile border border-[#2a2a2a] rounded-full px-2 py-1">
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>

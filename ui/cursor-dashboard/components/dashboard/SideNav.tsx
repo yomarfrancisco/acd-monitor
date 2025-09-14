@@ -17,8 +17,7 @@ const items = [
 export default function SideNav() {
   const pathname = usePathname();
   return (
-    <aside className="w-full min-w-0 lg:sticky lg:top-16 self-start" data-stack-diag="sidenav">
-      <nav className="flex flex-col gap-1" aria-label="Dashboard sections">
+    <nav className="flex flex-col gap-1 w-full" aria-label="Dashboard sections">
         {items.map(i => {
           const active = pathname === i.href;
           const IconComponent = i.icon;
@@ -33,7 +32,6 @@ export default function SideNav() {
           <MessageSquare className="w-3.5 h-3.5" />
           <span>Contact Us</span>
         </Link>
-      </nav>
-    </aside>
+    </nav>
   );
 }
