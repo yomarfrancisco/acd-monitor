@@ -109,18 +109,6 @@ const dashboardBtnClass = "border-[#AFC8FF] text-black bg-[#AFC8FF] hover:bg-[#9
 // Dashboard CTA button styling - pastel blue bg + black text for the 13 specific CTA buttons
 const dashboardCtaBtnClass = "bg-[#AFC8FF] text-black hover:bg-[#9FBCFF] active:bg-[#95B4FF] ring-1 ring-inset ring-[#8FB3FF]/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6FA0FF] shadow-sm text-[9px] h-5 px-2 font-normal rounded-full disabled:bg-[#AFC8FF]/60 disabled:text-black/60 disabled:ring-[#8FB3FF]/50 disabled:cursor-not-allowed disabled:opacity-100"
 
-function AgentsHeroStatic() {
-  return (
-    <div
-      data-probe="agents-hero"
-      className="w-full flex justify-center mt-10 sm:mt-12 mb-8 sm:mb-12"
-    >
-      <div className="max-w-[60%] bg-[#2a2a2a] rounded-lg px-3 py-2 text-xs text-[#f9fafb]">
-        Back at it, Ygor
-      </div>
-    </div>
-  );
-}
 
 export default function CursorDashboard() {
   const [activeTab, setActiveTab] = useState<"agents" | "dashboard">("agents")
@@ -1176,10 +1164,7 @@ It would also be helpful if you described:
           {/* Main Content */}
           <main className={`${activeTab === "dashboard" ? "min-w-0 p-5" : "flex-1 p-5 max-w-3xl mx-auto"}`}>
             {activeTab === "agents" && (
-              <div className="px-4 sm:px-6 lg:px-8">
-                <AgentsHeroStatic />
-
-                <div className="max-w-xl mx-auto mt-8 sm:mt-12">
+              <div className="max-w-xl mx-auto">
                   {/* Initial Agent Message */}
                 {initialAgentMessage && (
                   <div className="mb-4 p-3 bg-bg-surface rounded-lg border border-[#2a2a2a]">
@@ -1456,8 +1441,6 @@ It would also be helpful if you described:
                       )}
                   </div>
                 </div>
-              </div>
-              </div>
               </div>
             )}
             {activeTab === "dashboard" && (
