@@ -17,17 +17,17 @@ export default function DashboardRouteLayout({ children }: { children: React.Rea
         data-root-grid="dash"
         className="
           grid grid-cols-1 gap-6
-          lg:[grid-template-columns:18rem_1fr] lg:gap-8
+          lg:grid-cols-[18rem_1fr] lg:gap-8
           px-4 sm:px-6 lg:px-8
         "
       >
         {/* Left column: SideNav */}
-        <aside className="lg:sticky lg:top-16 lg:h-[calc(100dvh-4rem)]">
+        <aside className="lg:sticky lg:top-16 lg:self-start">
           <SideNav />
         </aside>
 
         {/* Right column: page content */}
-        <main className="min-w-0">
+        <main className="min-w-0 w-full">
           {children}
         </main>
       </div>
