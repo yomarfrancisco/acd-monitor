@@ -1164,12 +1164,14 @@ It would also be helpful if you described:
           <main className={`${activeTab === "dashboard" ? "min-w-0 p-5" : "flex-1 p-5 max-w-3xl mx-auto"}`}>
             {activeTab === "agents" && (
               <div className="max-w-xl mx-auto">
-                {/* <CHANGE> Added main headline for Agents tab */}
-                <div className="text-center mb-12">
-                  <h1 className="font-headline text-4xl md:text-6xl lg:text-7xl text-blue-50 font-light leading-tight">
-                    Algorithmic Collusion? Defensible.
-                  </h1>
-                </div>
+                {/* <CHANGE> Added main headline for Agents tab - only show when no messages */}
+                {messages.length === 0 && (
+                  <div className="text-center mb-12">
+                    <h1 className="font-headline text-4xl md:text-6xl lg:text-7xl text-blue-50 font-light leading-tight max-w-4xl mx-auto">
+                      Algorithmic Collusion? Defensible.
+                    </h1>
+                  </div>
+                )}
                 {/* Initial Agent Message */}
                 {initialAgentMessage && (
                   <div className="mb-4 p-3 bg-bg-surface rounded-lg border border-[#2a2a2a]">
