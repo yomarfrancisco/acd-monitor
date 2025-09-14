@@ -1163,7 +1163,7 @@ It would also be helpful if you described:
           {/* Main Content */}
           <main className={`${activeTab === "dashboard" ? "min-w-0 p-5" : "flex-1 p-5 max-w-3xl mx-auto"}`}>
             {activeTab === "agents" && (
-              <div className="max-w-4xl mx-auto">
+              <div className="max-w-5xl mx-auto">
                 {/* <CHANGE> Added main headline for Agents tab - only show when no messages */}
                 {messages.length === 0 && (
                   <div className="text-center mb-12">
