@@ -4,9 +4,15 @@ on:
   push:
     branches:
       - main
-      - feat/**      # run CI on feature branches too
+      - 'feature/**'
+      - 'baseline/**'
+      - 'fix/**'
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
+      - 'feature/**'
+      - 'baseline/**'
+      - 'fix/**'
   workflow_dispatch:
 
 jobs:
