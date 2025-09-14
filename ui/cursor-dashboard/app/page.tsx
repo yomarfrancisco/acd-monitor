@@ -27,6 +27,7 @@ import {
   Gauge,
   Moon,
   Scale,
+  Search,
 } from "lucide-react"
 
 import { Separator } from "@/components/ui/separator"
@@ -1246,7 +1247,7 @@ It would also be helpful if you described:
                     <div className="agents-no-zoom-wrapper" data-testid="agents-no-zoom-wrapper">
                       <div className="relative">
                       <textarea
-                          placeholder="Help me audit my pricing algorithms."
+                          placeholder="How can I help defend your algorithms today?"
                           value={inputValue}
                           onChange={(e) => setInputValue(e.target.value)}
                           onKeyDown={(e) => {
@@ -1406,25 +1407,34 @@ It would also be helpful if you described:
                       <p className="text-[10px] text-[#a1a1aa] text-center">Try these examples to get started</p>
 
                           <div className="flex flex-wrap gap-2 justify-center max-w-4xl mx-auto sm:flex-nowrap">
-                            <button className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 sm:whitespace-nowrap">
-                              <Zap className="w-2 h-2" />
-                              Analyze pricing patterns
-                        </button>
-                            <button className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 sm:whitespace-nowrap">
-                              <ShieldCheck className="w-2 h-2" />
-                              Check compliance status
-                        </button>
-                            <button className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 sm:whitespace-nowrap">
-                              <FileText className="w-2 h-2" />
-                              Generate report
-                            </button>
-                            <button
-                              onClick={() => handleSendMessage("Help me report a cartel")}
+                            <button 
                               className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 sm:whitespace-nowrap"
+                              aria-label="Analyze algorithms"
                             >
-                              <AlertTriangle className="w-2 h-2" />
-                              Report a cartel
-                        </button>
+                              <Search className="w-2 h-2" />
+                              Analyze algorithms
+                            </button>
+                            <button 
+                              className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 sm:whitespace-nowrap"
+                              aria-label="Calculate damages"
+                            >
+                              <BarChart3 className="w-2 h-2" />
+                              Calculate damages
+                            </button>
+                            <button 
+                              className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 sm:whitespace-nowrap"
+                              aria-label="Compliance check"
+                            >
+                              <Scale className="w-2 h-2" />
+                              Compliance check
+                            </button>
+                            <button 
+                              className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 sm:whitespace-nowrap"
+                              aria-label="Court-ready report"
+                            >
+                              <ClipboardList className="w-2 h-2" />
+                              Court-ready report
+                            </button>
                       </div>
                     </div>
                       )}
