@@ -124,7 +124,7 @@ function AgentsHeroStatic() {
         className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 opacity-80"
         priority
       />
-      <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-medium tracking-tight text-[#e7e7e9] sm:whitespace-nowrap">
+      <h1 className="font-lato text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-[#e7e7e9] sm:whitespace-nowrap">
         Back at it, Ygor
       </h1>
     </div>
