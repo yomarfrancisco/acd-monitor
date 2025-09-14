@@ -1060,10 +1060,10 @@ It would also be helpful if you described:
       <div className="h-6"></div>
 
       <div className="flex justify-center">
-        <div className="flex max-w-5xl w-full">
+        <div className={`max-w-5xl w-full ${activeTab === "dashboard" ? "grid grid-cols-1 gap-6 lg:grid-cols-[18rem_1fr] lg:gap-8" : "flex"}`} data-root-grid={activeTab === "dashboard" ? "dash" : undefined}>
           {/* Sidebar - Only show on dashboard */}
           {activeTab === "dashboard" && (
-            <aside className="w-64 bg-[#0f0f10] p-3 flex-shrink-0">
+            <aside className="lg:sticky lg:top-16 lg:h-[calc(100dvh-4rem)] bg-[#0f0f10] p-3">
               <div className="space-y-3">
                 {/* User Info */}
                 <div>
@@ -1160,7 +1160,7 @@ It would also be helpful if you described:
           )}
 
           {/* Main Content */}
-          <main className={`flex-1 p-5 max-w-3xl ${activeTab === "agents" ? "mx-auto" : ""}`}>
+          <main className={`${activeTab === "dashboard" ? "min-w-0 p-5" : "flex-1 p-5 max-w-3xl mx-auto"}`}>
             {activeTab === "agents" && (
               <div className="max-w-xl mx-auto">
                 {/* Initial Agent Message */}
@@ -1437,7 +1437,7 @@ It would also be helpful if you described:
               /* Dashboard View */
               <>
                 {activeSidebarItem === "overview" && (
-              <div className="space-y-3 max-w-2xl">
+              <div className="space-y-3 max-w-2xl" data-probe="dash-cards-section">
                 <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                   <CardContent className="p-4">
                         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
