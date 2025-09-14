@@ -114,17 +114,17 @@ function AgentsHeroStatic() {
     <div
       data-probe="agents-hero"
       className="w-full flex items-center justify-center gap-2 sm:gap-3 text-center 
-                  flex-col sm:flex-row mt-10 sm:mt-12 mb-4 sm:mb-6"
+                  flex-col sm:flex-row mt-10 sm:mt-12 mb-8 sm:mb-12"
     >
       <Image
         src="/icons/icon-americas.png"
         alt="Americas"
-        width={20}
-        height={20}
-        className="w-5 h-5 sm:w-6 sm:h-6 shrink-0"
+        width={18}
+        height={18}
+        className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 opacity-80"
         priority
       />
-      <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#f9fafb] sm:whitespace-nowrap">
+      <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-medium tracking-tight text-[#e7e7e9] sm:whitespace-nowrap">
         Back at it, Ygor
       </h1>
     </div>
@@ -1188,7 +1188,7 @@ It would also be helpful if you described:
               <div className="px-4 sm:px-6 lg:px-8">
                 <AgentsHeroStatic />
 
-                <div className="max-w-xl mx-auto mt-4 sm:mt-6">
+                <div className="max-w-xl mx-auto mt-8 sm:mt-12">
                   {/* Initial Agent Message */}
                 {initialAgentMessage && (
                   <div className="mb-4 p-3 bg-bg-surface rounded-lg border border-[#2a2a2a]">
