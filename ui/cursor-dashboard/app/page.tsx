@@ -1264,7 +1264,7 @@ It would also be helpful if you described:
                               handleSendMessage()
                             }
                           }}
-                          className="w-full h-28 bg-bg-tile rounded-lg text-[#f9fafb] placeholder-[#71717a] pr-16 px-4 py-4 text-xs resize-none focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50"
+                          className="w-full h-28 bg-bg-tile rounded-lg text-[#f9fafb] placeholder-[#71717a] pr-16 px-4 py-4 text-xs md:text-sm resize-none focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50"
                           rows={5}
                         />
                         {/* Blinking cursor overlay - only shows when empty */}
