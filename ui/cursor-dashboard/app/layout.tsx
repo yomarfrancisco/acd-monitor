@@ -1,6 +1,7 @@
 import type React from "react"
 import type { Metadata, Viewport } from "next"
 import { Inter } from "next/font/google"
+import localFont from 'next/font/local'
 import { Suspense } from "react"
 import "./globals.css"
 
@@ -8,6 +9,19 @@ const inter = Inter({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-inter",
+})
+
+const americanTypewriter = localFont({
+  src: [
+    {
+      path: '../public/fonts/AmericanTypewriter-Light.woff2',
+      weight: '300',
+      style: 'normal',
+    }
+  ],
+  variable: '--font-american-typewriter',
+  display: 'swap',
+  fallback: ['ui-serif', 'Georgia', 'Cambria', 'Times New Roman', 'serif']
 })
 
 export const viewport: Viewport = {
@@ -28,7 +42,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full dark" data-build-sha={process.env.VERCEL_GIT_COMMIT_SHA} data-env={process.env.VERCEL_ENV}>
-      <body className={`min-h-full antialiased ${inter.variable}`} data-probe="root-layout">
+      <body className={`min-h-full antialiased ${inter.variable} ${americanTypewriter.variable}`} data-probe="root-layout">
         {/* beacon TEMP off */}
         {/* <div
           data-ssr-beacon="v3"
