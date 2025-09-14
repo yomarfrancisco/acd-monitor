@@ -4,12 +4,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { CalendarIcon, Clock } from "lucide-react";
 
-// Temporary proof wrapper to test if page renders but layout is skipped
-const PageWrapper = ({ children }: { children: React.ReactNode }) => (
-  <div data-root-grid="page-dash" style={{outline: '2px solid blue'}}>
-    {children}
-  </div>
-);
+// PageWrapper removed - was causing layout conflicts
 
 // Different data sets for different time periods
 const analyticsData30d = [
@@ -73,10 +68,9 @@ export default function Page() {
                      selectedTimeframe === "1y" ? analyticsData1y : analyticsDataYTD;
 
   return (
-    <PageWrapper>
-      <div className="space-y-6">
-        {/* Cards: 2x2 on desktop, single column on mobile */}
-        <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+    <div className="space-y-6">
+      {/* Cards: 2x2 on desktop, single column on mobile */}
+      <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
             <CardContent className="p-4">
               <div className="grid grid-cols-2 gap-6">
@@ -226,11 +220,10 @@ export default function Page() {
       </Card>
         </section>
 
-        {/* Chart/Table: full-width below cards */}
-        <section className="w-full">
-          {/* Chart/Table content goes here */}
-        </section>
-      </div>
-    </PageWrapper>
+      {/* Chart/Table: full-width below cards */}
+      <section className="w-full mt-6">
+        {/* Chart/Table content goes here */}
+      </section>
+    </div>
   );
 }
