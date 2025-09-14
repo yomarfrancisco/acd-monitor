@@ -22,7 +22,7 @@ export default function DashboardRouteLayout({ children }: { children: React.Rea
         "
       >
         {/* Left column: SideNav */}
-        <aside className="lg:sticky lg:top-0 lg:self-start lg:h-[calc(100dvh-4rem)]">
+        <aside className="lg:sticky lg:top-16 lg:h-[calc(100dvh-4rem)]">
           <SideNav />
         </aside>
 
