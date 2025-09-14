@@ -28,14 +28,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full dark" data-build-sha={process.env.VERCEL_GIT_COMMIT_SHA} data-env={process.env.VERCEL_ENV}>
-      <body className={`min-h-full antialiased ${inter.variable}`}>
-        {/* BEACON v3 — root app/layout.tsx */}
-        <div
+      <body className={`min-h-full antialiased ${inter.variable}`} data-probe="root-layout">
+        {/* beacon TEMP off */}
+        {/* <div
           data-ssr-beacon="v3"
           style={{position:'fixed',top:0,left:0,right:0,zIndex:99999,background:'#ff0000',color:'#fff',padding:'8px',fontWeight:700,textAlign:'center'}}
         >
           BEACON v3 — root app/layout.tsx — {process.env.VERCEL_GIT_COMMIT_SHA?.slice(0,7) ?? 'no-sha'}
-        </div>
+        </div> */}
         
         <Suspense fallback={null}>{children}</Suspense>
         

@@ -70,7 +70,7 @@ export default function Page() {
   return (
     <div className="space-y-6">
       {/* Cards: 2x2 on desktop, single column on mobile */}
-      <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <section className="grid grid-cols-1 gap-6 lg:grid-cols-2" data-probe="dash-cards-section">
           <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
             <CardContent className="p-4">
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
