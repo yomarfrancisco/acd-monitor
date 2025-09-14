@@ -1060,7 +1060,7 @@ It would also be helpful if you described:
       <div className="h-6"></div>
 
       <div className="flex justify-center">
-        <div className={`max-w-5xl w-full ${activeTab === "dashboard" ? "grid grid-cols-1 gap-6 lg:grid-cols-[18rem_1fr] lg:gap-8" : "flex"}`} data-root-grid={activeTab === "dashboard" ? "dash" : undefined}>
+        <div className={`max-w-5xl w-full ${activeTab === "dashboard" ? "grid grid-cols-1 gap-6 lg:grid-cols-[18rem_1fr] lg:gap-8 px-4 sm:px-6 lg:px-8" : "flex"}`} data-root-grid={activeTab === "dashboard" ? "dash" : undefined}>
           {/* Sidebar - Only show on dashboard */}
           {activeTab === "dashboard" && (
             <aside className="lg:sticky lg:top-16 lg:h-[calc(100dvh-4rem)] bg-[#0f0f10] p-3">
