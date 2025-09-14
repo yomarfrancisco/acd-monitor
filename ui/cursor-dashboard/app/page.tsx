@@ -1183,8 +1183,8 @@ It would also be helpful if you described:
                   </div>
                 )}
 
-                {/* Chat Interface */}
-                <div className={`${hasEngaged ? "h-[60vh]" : "min-h-[45vh]"} flex flex-col mt-32`}>
+              {/* Chat Interface */}
+              <div className={`${hasEngaged ? "h-[60vh]" : "min-h-[45vh]"} flex flex-col mt-24`}>
                   {/* Chat Messages Area */}
                   {hasEngaged && (
                     <div className="flex-1 overflow-y-auto mb-4 space-y-4">
