@@ -945,7 +945,7 @@ It would also be helpful if you described:
         {/* First shell tile with left and right containers */}
         <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
           <CardContent className="p-4">
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="rounded-lg bg-bg-tile shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
                 <div>
                   <h2 className="text-sm font-medium text-[#f9fafb] mb-1">Left Container</h2>
@@ -1440,7 +1440,7 @@ It would also be helpful if you described:
               <div className="space-y-3 max-w-2xl">
                 <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                   <CardContent className="p-4">
-                        <div className="grid grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                           <div className="rounded-lg bg-bg-tile shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
                             <div>
                         <h2 className="text-sm font-medium text-[#f9fafb] mb-1">Enterprise Plan</h2>
@@ -1518,7 +1518,7 @@ It would also be helpful if you described:
 
                     <div className="mb-4">
                           <h3 className="text-xs font-medium text-[#f9fafb] mb-3">Algorithmic Cartel Diagnostic</h3>
-                          <div className="grid grid-cols-2 gap-6 mb-10">
+                          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 mb-10">
                             <div className="rounded-lg bg-bg-surface shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 relative">
                               {/* Live indicator - pulsing green dot with frame */}
                               <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-bg-tile border border-[#2a2a2a] rounded-full px-2 py-1">
@@ -2770,7 +2770,7 @@ It would also be helpful if you described:
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-6 mb-10">
+                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 mb-10">
                           <div className="rounded-lg bg-bg-surface shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
                             <div className="text-xl font-bold text-[#f9fafb]">84 out of 100</div>
                             <div className="text-xs text-[#a7f3d0]">Pass</div>
@@ -3290,7 +3290,7 @@ It would also be helpful if you described:
                         </div>
 
                         {/* Left and Right Containers */}
-                        <div className="grid grid-cols-2 gap-6 mb-10">
+                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 mb-10">
                           {/* Left Container - Pricing Info */}
                           <div className="rounded-lg bg-bg-surface shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
                             <div className="text-xl font-bold text-[#f9fafb]">US$ 0.00</div>
