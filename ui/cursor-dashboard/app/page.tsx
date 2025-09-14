@@ -113,21 +113,18 @@ function AgentsHeroStatic() {
   return (
     <div
       data-probe="agents-hero"
-      className="w-full flex flex-col items-center text-center pt-10 sm:pt-12 lg:pt-14"
+      className="w-full flex items-center justify-center gap-2 sm:gap-3 text-center 
+                  flex-col sm:flex-row mt-10 sm:mt-12 mb-4 sm:mb-6"
     >
-      <div className="mb-4 sm:mb-5">
-        <Image
-          src="/icons/icon-americas.png"
-          alt=""
-          aria-hidden="true"
-          width={56}
-          height={56}
-          sizes="(min-width:1024px) 56px, (min-width:640px) 48px, 40px"
-          className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14"
-          priority
-        />
-      </div>
-      <h1 className="font-semibold tracking-tight text-[#e7e7e9] text-3xl sm:text-4xl md:text-5xl">
+      <Image
+        src="/icons/icon-americas.png"
+        alt="Americas"
+        width={20}
+        height={20}
+        className="w-5 h-5 sm:w-6 sm:h-6 shrink-0"
+        priority
+      />
+      <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#f9fafb] sm:whitespace-nowrap">
         Back at it, Ygor
       </h1>
     </div>
@@ -1191,7 +1188,7 @@ It would also be helpful if you described:
               <div className="px-4 sm:px-6 lg:px-8">
                 <AgentsHeroStatic />
 
-                <div className="max-w-xl mx-auto">
+                <div className="max-w-xl mx-auto mt-4 sm:mt-6">
                   {/* Initial Agent Message */}
                 {initialAgentMessage && (
                   <div className="mb-4 p-3 bg-bg-surface rounded-lg border border-[#2a2a2a]">
