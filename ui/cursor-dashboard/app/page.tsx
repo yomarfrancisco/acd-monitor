@@ -109,6 +109,31 @@ const dashboardBtnClass = "border-[#AFC8FF] text-black bg-[#AFC8FF] hover:bg-[#9
 // Dashboard CTA button styling - pastel blue bg + black text for the 13 specific CTA buttons
 const dashboardCtaBtnClass = "bg-[#AFC8FF] text-black hover:bg-[#9FBCFF] active:bg-[#95B4FF] ring-1 ring-inset ring-[#8FB3FF]/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6FA0FF] shadow-sm text-[9px] h-5 px-2 font-normal rounded-full disabled:bg-[#AFC8FF]/60 disabled:text-black/60 disabled:ring-[#8FB3FF]/50 disabled:cursor-not-allowed disabled:opacity-100"
 
+function AgentsHeroStatic() {
+  return (
+    <div
+      data-probe="agents-hero"
+      className="w-full flex flex-col items-center text-center pt-10 sm:pt-12 lg:pt-14"
+    >
+      <div className="mb-4 sm:mb-5">
+        <Image
+          src="/icons/icon-americas.png"
+          alt=""
+          aria-hidden="true"
+          width={56}
+          height={56}
+          sizes="(min-width:1024px) 56px, (min-width:640px) 48px, 40px"
+          className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14"
+          priority
+        />
+      </div>
+      <h1 className="font-semibold tracking-tight text-[#e7e7e9] text-3xl sm:text-4xl md:text-5xl">
+        Back at it, Ygor
+      </h1>
+    </div>
+  );
+}
+
 export default function CursorDashboard() {
   const [activeTab, setActiveTab] = useState<"agents" | "dashboard">("agents")
   const [selectedTimeframe, setSelectedTimeframe] = useState<"30d" | "6m" | "1y" | "ytd">("ytd")
@@ -1163,8 +1188,11 @@ It would also be helpful if you described:
           {/* Main Content */}
           <main className={`${activeTab === "dashboard" ? "min-w-0 p-5" : "flex-1 p-5 max-w-3xl mx-auto"}`}>
             {activeTab === "agents" && (
-              <div className="max-w-xl mx-auto">
-                {/* Initial Agent Message */}
+              <div className="px-4 sm:px-6 lg:px-8">
+                <AgentsHeroStatic />
+
+                <div className="max-w-xl mx-auto">
+                  {/* Initial Agent Message */}
                 {initialAgentMessage && (
                   <div className="mb-4 p-3 bg-bg-surface rounded-lg border border-[#2a2a2a]">
                     <div className="flex items-center gap-2 mb-2">
@@ -1440,6 +1468,7 @@ It would also be helpful if you described:
                       )}
                   </div>
                 </div>
+              </div>
               </div>
               </div>
             )}
