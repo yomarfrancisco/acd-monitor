@@ -1167,7 +1167,7 @@ It would also be helpful if you described:
                 {/* <CHANGE> Added main headline for Agents tab - only show when no messages */}
                 {messages.length === 0 && (
                   <div className="text-center">
-                    <h1 className="font-headline text-4xl md:text-6xl lg:text-7xl text-blue-50 font-light leading-tight max-w-4xl mx-auto">
+                    <h1 className="font-headline text-5xl md:text-7xl lg:text-8xl text-blue-50 font-light leading-tight max-w-4xl mx-auto">
                       Algorithmic Collusion? Defensible.
                     </h1>
                   </div>
