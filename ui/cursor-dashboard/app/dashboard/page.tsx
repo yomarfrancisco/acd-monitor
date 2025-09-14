@@ -74,35 +74,37 @@ export default function Page() {
 
   return (
     <PageWrapper>
-      <div className="space-y-3 max-w-2xl">
-      <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-        <CardContent className="p-4">
-          <div className="grid grid-cols-2 gap-6">
-            <div className="rounded-lg bg-bg-tile shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
-              <div>
-                <h2 className="text-sm font-medium text-[#f9fafb] mb-1">Enterprise Plan</h2>
-                <p className="text-xs text-[#a1a1aa] mb-3 leading-relaxed">
-                  Live monitoring with compliance tracking
-                </p>
+      <div className="space-y-6">
+        {/* Cards: 2x2 on desktop, single column on mobile */}
+        <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+            <CardContent className="p-4">
+              <div className="grid grid-cols-2 gap-6">
+                <div className="rounded-lg bg-bg-tile shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
+                  <div>
+                    <h2 className="text-sm font-medium text-[#f9fafb] mb-1">Enterprise Plan</h2>
+                    <p className="text-xs text-[#a1a1aa] mb-3 leading-relaxed">
+                      Live monitoring with compliance tracking
+                    </p>
+                  </div>
+                  <button className="rounded-full px-3 py-1 text-xs border border-[#2a2a2a] bg-transparent hover:bg-bg-tile text-[#a1a1aa] hover:text-[#f9fafb] self-start">
+                    Manage Subscription
+                  </button>
+                </div>
+                <div className="rounded-lg bg-bg-tile2 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
+                  <div>
+                    <div className="text-xs font-bold text-[#f9fafb] mb-1">$0 / $6k</div>
+                    <p className="text-xs text-[#a1a1aa] mb-2">Usage-Based Spending this Month</p>
+                  </div>
+                  <button className="rounded-full px-3 py-1 text-xs border border-[#2a2a2a] bg-transparent hover:bg-bg-tile text-[#a1a1aa] hover:text-[#f9fafb] self-start">
+                    Edit Limit
+                  </button>
+                </div>
               </div>
-              <button className="rounded-full px-3 py-1 text-xs border border-[#2a2a2a] bg-transparent hover:bg-bg-tile text-[#a1a1aa] hover:text-[#f9fafb] self-start">
-                Manage Subscription
-              </button>
-            </div>
-            <div className="rounded-lg bg-bg-tile2 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
-              <div>
-                <div className="text-xs font-bold text-[#f9fafb] mb-1">$0 / $6k</div>
-                <p className="text-xs text-[#a1a1aa] mb-2">Usage-Based Spending this Month</p>
-              </div>
-              <button className="rounded-full px-3 py-1 text-xs border border-[#2a2a2a] bg-transparent hover:bg-bg-tile text-[#a1a1aa] hover:text-[#f9fafb] self-start">
-                Edit Limit
-              </button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
 
-      <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+          <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
         <CardContent className="p-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2 text-xs text-[#a1a1aa]">
@@ -222,6 +224,12 @@ export default function Page() {
           </div>
         </CardContent>
       </Card>
+        </section>
+
+        {/* Chart/Table: full-width below cards */}
+        <section className="w-full">
+          {/* Chart/Table content goes here */}
+        </section>
       </div>
     </PageWrapper>
   );

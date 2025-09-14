@@ -23,13 +23,13 @@ export default function SideNav() {
           const active = pathname === i.href;
           const IconComponent = i.icon;
           return (
-            <Link key={i.href} href={i.href} className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${active ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}>
+            <Link key={i.href} href={i.href} className={`w-full text-left px-3 py-2 rounded hover:bg-muted/50 flex items-center gap-2 text-xs ${active ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}>
               <IconComponent className="w-3.5 h-3.5" />
               <span>{i.label}</span>
             </Link>
           );
         })}
-        <Link href="/dashboard/contact" className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${pathname === "/dashboard/contact" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}>
+        <Link href="/dashboard/contact" className={`w-full text-left px-3 py-2 rounded hover:bg-muted/50 flex items-center gap-2 text-xs ${pathname === "/dashboard/contact" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}>
           <MessageSquare className="w-3.5 h-3.5" />
           <span>Contact Us</span>
         </Link>
