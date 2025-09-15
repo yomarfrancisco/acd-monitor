@@ -1397,11 +1397,10 @@ It would also be helpful if you described:
                             aria-label="Send"
                             className="
                               h-6 w-6 flex items-center justify-center cursor-pointer
-                              text-[#f9fafb]/90 hover:text-white
-                              hover:bg-white/5
+                              text-[#f9fafb]
                               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa]
                               focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]
-                              disabled:text-[#a1a1aa]/50 disabled:hover:bg-transparent
+                              disabled:text-[#a1a1aa]/50
                               transition-colors motion-reduce:transition-none
                             "
                             onClick={(e) => {
@@ -1409,7 +1408,10 @@ It would also be helpful if you described:
                               handleSendMessage();
                             }}
                           >
-                            <Send className="w-6 h-6" />
+                            <Send 
+                              className="w-6 h-6 opacity-85 hover:opacity-100 text-current transition-opacity duration-200"
+                              stroke="currentColor"
+                            />
                           </button>
                         </div>
                       </div>
