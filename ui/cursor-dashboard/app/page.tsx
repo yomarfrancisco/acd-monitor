@@ -215,7 +215,7 @@ export default function CursorDashboard() {
   >("overview")
 
   // Add state for selected agent type
-  const [selectedAgent, setSelectedAgent] = useState("General Analysis")
+  const [selectedAgent, setSelectedAgent] = useState("Jurisdiction")
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([])
 
   // Configuration input field states
@@ -928,7 +928,7 @@ It would also be helpful if you described:
   const handleRoleDropdownKeyDown = (event: React.KeyboardEvent) => {
     if (!isRoleDropdownOpen) return
 
-    const roles = ["Jnr Economist", "Legal", "Snr Economist", "Statistician"]
+    const roles = ["Europe", "South Africa", "United States", "Australia"]
 
     switch (event.key) {
       case 'Escape':
@@ -1365,7 +1365,7 @@ It would also be helpful if you described:
                             aria-orientation="vertical"
                           >
                             <div className="py-1">
-                              {["Jnr Economist", "Legal", "Snr Economist", "Statistician"].map((role, index) => (
+                              {["Europe", "South Africa", "United States", "Australia"].map((role, index) => (
                                 <button
                                   key={role}
                                   ref={index === 0 ? firstOptionRef : null}
