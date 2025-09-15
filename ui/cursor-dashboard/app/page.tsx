@@ -1167,7 +1167,7 @@ It would also be helpful if you described:
                 {/* <CHANGE> Added main headline for Agents tab - only show when no messages */}
                 {messages.length === 0 && (
                   <div className="text-center mb-12">
-                    <h1 className="font-headline text-5xl md:text-6xl lg:text-7xl text-blue-50 font-light leading-tight max-w-4xl mx-auto">
+                    <h1 className="font-headline text-6xl md:text-6xl lg:text-7xl text-blue-50 font-light leading-tight max-w-4xl mx-auto">
                       Algorithmic Collusion? Defensible.
                     </h1>
                   </div>
@@ -1264,7 +1264,7 @@ It would also be helpful if you described:
                               handleSendMessage()
                             }
                           }}
-                          className="w-full h-28 bg-bg-tile rounded-lg text-[#f9fafb] placeholder-[#71717a] pr-16 px-4 py-4 text-xs md:text-sm resize-none focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50"
+                          className="w-full h-28 bg-bg-tile rounded-lg text-[#f9fafb] placeholder-[#71717a] pr-16 px-4 py-4 text-[10px] md:text-sm resize-none focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50"
                           rows={5}
                         />
                         {/* Blinking cursor overlay - only shows when empty */}
