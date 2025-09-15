@@ -1023,8 +1023,8 @@ It would also be helpful if you described:
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
 <img 
-  src="/big-brother-hypnotic.png" 
-  alt="Big Brother Hypnotic" 
+  src="/ninja-glow-positive.png" 
+  alt="Ninja Glow" 
               className="h-14 sm:h-16 md:h-24 w-auto opacity-90 hover:opacity-100 transition-opacity -ml-3 sm:ml-0"
 />
           </div>
