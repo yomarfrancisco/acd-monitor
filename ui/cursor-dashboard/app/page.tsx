@@ -1166,7 +1166,7 @@ It would also be helpful if you described:
               <div className="max-w-5xl mx-auto">
                 {/* <CHANGE> Added main headline for Agents tab - only show when no messages */}
                 {messages.length === 0 && (
-                  <div className="text-center mb-20">
+                  <div className="text-center mb-12">
                     <h1 className="font-headline text-5xl md:text-6xl lg:text-7xl text-blue-50 font-light leading-tight max-w-4xl mx-auto">
                       Algorithmic Collusion? Defensible.
                     </h1>
@@ -1184,7 +1184,7 @@ It would also be helpful if you described:
                 )}
 
               {/* Chat Interface */}
-              <div className={`${hasEngaged ? "h-[60vh]" : "min-h-[45vh]"} flex flex-col mt-8`}>
+              <div className={`${hasEngaged ? "h-[60vh]" : "min-h-[45vh]"} flex flex-col mt-2`}>
                   {/* Chat Messages Area */}
                   {hasEngaged && (
                     <div className="flex-1 overflow-y-auto mb-4 space-y-4">
