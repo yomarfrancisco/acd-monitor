@@ -144,9 +144,9 @@
 }
 
 .agents-quick-btn {
-  @apply rounded-full px-3 py-2 text-[11px] md:text-[13px] leading-[1.2];
-  @apply border border-[#2a2a2a] bg-[#2a2a2a] hover:bg-[#3a3a3a];
-  @apply text-[#f9fafb];
+  @apply rounded-full px-3 py-1.5 text-[9px] md:text-[11px] leading-[1.2];
+  @apply border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a];
+  @apply text-[#a1a1aa] hover:text-[#f9fafb];
   @apply focus:outline-none focus:ring-2 focus:ring-[#60a5fa] focus:ring-offset-2 focus:ring-offset-[#0f0f10];
   @apply transition-colors duration-200 motion-reduce:transition-none;
   @apply flex items-center gap-2 sm:whitespace-nowrap;
