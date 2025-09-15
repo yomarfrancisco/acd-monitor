@@ -1412,31 +1412,31 @@ It would also be helpful if you described:
 
                           <div className="flex flex-wrap gap-2 justify-center max-w-4xl mx-auto sm:flex-nowrap">
                             <button 
-                              className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 sm:whitespace-nowrap"
+                              className="rounded-full px-2 py-1 text-[9px] md:text-[11px] leading-none md:leading-none border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 md:gap-1.5 sm:whitespace-nowrap"
                               aria-label="Analyze algorithms"
                             >
-                              <Search className="w-2 h-2" />
+                              <Search className="w-2 h-2 md:w-2.5 md:h-2.5" />
                               Analyze algorithms
                             </button>
                             <button 
-                              className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 sm:whitespace-nowrap"
+                              className="rounded-full px-2 py-1 text-[9px] md:text-[11px] leading-none md:leading-none border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 md:gap-1.5 sm:whitespace-nowrap"
                               aria-label="Calculate damages"
                             >
-                              <BarChart3 className="w-2 h-2" />
+                              <BarChart3 className="w-2 h-2 md:w-2.5 md:h-2.5" />
                               Calculate damages
                             </button>
                             <button 
-                              className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 sm:whitespace-nowrap"
+                              className="rounded-full px-2 py-1 text-[9px] md:text-[11px] leading-none md:leading-none border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 md:gap-1.5 sm:whitespace-nowrap"
                               aria-label="Compliance check"
                             >
-                              <Scale className="w-2 h-2" />
+                              <Scale className="w-2 h-2 md:w-2.5 md:h-2.5" />
                               Compliance check
                             </button>
                             <button 
-                              className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 sm:whitespace-nowrap"
+                              className="rounded-full px-2 py-1 text-[9px] md:text-[11px] leading-none md:leading-none border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 md:gap-1.5 sm:whitespace-nowrap"
                               aria-label="Court-ready report"
                             >
-                              <ClipboardList className="w-2 h-2" />
+                              <ClipboardList className="w-2 h-2 md:w-2.5 md:h-2.5" />
                               Court-ready report
                             </button>
                       </div>
