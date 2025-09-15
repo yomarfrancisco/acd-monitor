@@ -1264,13 +1264,13 @@ It would also be helpful if you described:
                               handleSendMessage()
                             }
                           }}
-                          className="w-full h-28 bg-bg-tile rounded-lg text-[#f9fafb] placeholder-[#71717a] pr-16 px-4 py-4 text-[10px] sm:text-xs md:text-sm resize-none focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50"
+                          className="w-full h-28 bg-bg-tile rounded-lg text-[#f9fafb] pr-16 px-4 py-4 text-base sm:text-sm md:text-base leading-5 caret-transparent placeholder:text-xs sm:placeholder:text-sm md:placeholder:text-base placeholder:text-[#71717a] resize-none focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50"
                           rows={5}
                         />
                         {/* Blinking cursor overlay - only shows when empty */}
                         {inputValue === "" && (
                           <div
-                            className="agents-caret absolute left-4 top-4 text-[#f9fafb] text-[10px] md:text-xs"
+                            className="agents-caret absolute left-4 top-1/2 -translate-y-1/2 text-[#f9fafb] h-[1.1em] w-[2px] bg-white animate-[blink_1s_steps(1)_infinite] pointer-events-none"
                             style={{
                               animation: "blink 1s infinite",
                               display: "inline-block",
