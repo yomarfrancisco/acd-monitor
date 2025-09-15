@@ -142,3 +142,12 @@
 @keyframes blink { 
   50% { opacity: 0; } 
 }
+
+.agents-quick-btn {
+  @apply rounded-full px-2 py-1 text-[9px] md:text-[11px] leading-none md:leading-[1.15];
+  @apply border border-[#2a2a2a] bg-[#2a2a2a] hover:bg-[#3a3a3a];
+  @apply text-[#f9fafb] hover:text-[#f9fafb];
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10];
+  @apply transition-colors duration-200 motion-reduce:transition-none;
+  @apply flex items-center gap-1 md:gap-1.5 sm:whitespace-nowrap;
+}
