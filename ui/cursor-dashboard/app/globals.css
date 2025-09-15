@@ -132,4 +132,9 @@
                  'Palatino', 'Georgia', serif;
     font-weight: 300;
   }
+  
+  .agents-no-zoom-wrapper input,
+  .agents-no-zoom-wrapper textarea {
+    font-size: 16px !important;
+  }
 }
