@@ -1392,15 +1392,25 @@ It would also be helpful if you described:
                               </div>
                             )}
                           </div>
-                          <div
-                            className="h-6 w-6 flex items-center justify-center cursor-pointer"
+                          <button
+                            type="button"
+                            aria-label="Send"
+                            className="
+                              h-6 w-6 flex items-center justify-center cursor-pointer
+                              text-[#f9fafb]/90 hover:text-white
+                              hover:bg-white/5
+                              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa]
+                              focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]
+                              disabled:text-[#a1a1aa]/50 disabled:hover:bg-transparent
+                              transition-colors motion-reduce:transition-none
+                            "
                             onClick={(e) => {
                               e.preventDefault();
                               handleSendMessage();
                             }}
                           >
-                            <Send className="w-6 h-6 text-[#71717a] hover:text-[#a1a1aa]" />
-                          </div>
+                            <Send className="w-6 h-6" />
+                          </button>
                         </div>
                       </div>
                     </div>
