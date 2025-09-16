@@ -1359,7 +1359,7 @@ It would also be helpful if you described:
                         {isRoleDropdownOpen && (
                           <div
                             id="role-dropdown"
-                            className="absolute z-50 left-3 bottom-12 w-40 rounded-md border border-white/10 bg-neutral-900/90 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-neutral-900/80"
+                            className="absolute z-50 left-3 top-12 w-40 rounded-md border border-white/10 bg-neutral-900/90 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-neutral-900/80"
                             role="listbox"
                             aria-label="Analysis mode"
                             aria-orientation="vertical"
