@@ -13,10 +13,6 @@ const CHATBASE_API_KEY = process.env.CHATBASE_API_KEY!;
 const USE_LEGACY = process.env.CHATBASE_USE_LEGACY === "true"; // set to "true" in env
 const CHAT_URL = "https://www.chatbase.co/api/v1/chat";
 
-// Assert env presence once at startup
-if (!process.env.CHATBASE_API_KEY || !process.env.CHATBASE_ASSISTANT_ID) {
-  throw new Error("Missing Chatbase env vars");
-}
 
 const LEGACY_URL = `${ROOT}/chat`;                            // <- legacy family
 // NOTE: do NOT call /chatbot/{id}/message for this bot
@@ -202,6 +198,23 @@ async function handleStreamingResponse(
 
 export async function POST(request: NextRequest): Promise<NextResponse<ChatResponse> | Response> {
   try {
+    const apiKey = process.env.CHATBASE_API_KEY ?? "";
+    const chatbotId = process.env.CHATBASE_ASSISTANT_ID ?? "";
+
+    if (!apiKey || !chatbotId) {
+      console.error("[CB][ENV] missing vars", {
+        hasApiKey: !!apiKey,
+        hasChatbotId: !!chatbotId,
+      });
+      return NextResponse.json(
+        {
+          error: "server_missing_env",
+          details: { hasApiKey: !!apiKey, hasChatbotId: !!chatbotId },
+        },
+        { status: 500 }
+      );
+    }
+
     const body: ChatRequest = await request.json();
     const { messages, sessionId, userId, stream = false } = body;
 
@@ -245,7 +258,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
 
     // Build the legacy payload
     const payload = {
-      chatbotId: CHATBOT_ID,             // <- legacy requires this IN the body
+      chatbotId: chatbotId,             // <- legacy requires this IN the body
       messages: trimmedMessages,
       stream: stream && isStreamingEnabled,  // enable streaming if requested and enabled
       temperature: 0
@@ -257,7 +270,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
     // Diagnostic logging
     console.error("[CB][LEGACY-STREAM] req stream:", payload.stream);
     console.error("[CB][LEGACY-STREAM] url:", url);
-    console.error("[CB][LEGACY-STREAM] headers ok:", !!CHATBASE_API_KEY);
+    console.error("[CB][LEGACY-STREAM] headers ok:", !!apiKey);
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
@@ -266,7 +279,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
       const response = await fetch(url, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${CHATBASE_API_KEY}`,
+          'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload),
