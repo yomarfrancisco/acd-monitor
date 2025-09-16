@@ -9,6 +9,15 @@ const ROOT = 'https://www.chatbase.co/api/v1';
 const CHATBOT_ID = process.env.CHATBASE_ASSISTANT_ID!;        // already set (see your screenshots)
 const CHATBASE_API_KEY = process.env.CHATBASE_API_KEY!;
 
+// Feature flag to switch between legacy and new endpoints
+const USE_LEGACY = process.env.CHATBASE_USE_LEGACY === "true"; // set to "true" in env
+const CHAT_URL = "https://www.chatbase.co/api/v1/chat";
+
+// Assert env presence once at startup
+if (!process.env.CHATBASE_API_KEY || !process.env.CHATBASE_ASSISTANT_ID) {
+  throw new Error("Missing Chatbase env vars");
+}
+
 const LEGACY_URL = `${ROOT}/chat`;                            // <- legacy family
 // NOTE: do NOT call /chatbot/{id}/message for this bot
 
@@ -242,8 +251,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
       temperature: 0
     };
 
-    // Use legacy endpoint
-    const url = LEGACY_URL;
+    // Use endpoint based on feature flag
+    const url = USE_LEGACY ? LEGACY_URL : CHAT_URL;
 
     // Diagnostic logging
     console.error("[CB][LEGACY-STREAM] req stream:", payload.stream);
