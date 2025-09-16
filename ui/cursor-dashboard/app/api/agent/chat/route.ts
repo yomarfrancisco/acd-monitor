@@ -4,7 +4,8 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 interface ChatMessage {
-  role: 'user' | 'assistant' | 'system';
+  role?: 'user' | 'assistant' | 'system';
+  type?: 'user' | 'agent' | 'assistant' | 'bot';
   content: string;
 }
 
@@ -46,98 +47,87 @@ const getMockResponse = (messages: ChatMessage[]): string => {
   return '[mock] Thank you for your message. I\'m your AI economist assistant and I\'m here to help you analyze market data, check compliance, and generate reports. How can I assist you today?';
 };
 
-// Normalize UI messages to Chatbase schema
-const normalizeMessagesForChatbase = (messages: any[]): {role: "user" | "assistant"; content: string}[] => {
-  return messages
-    .map(msg => {
-      // If it already has role, keep {role, content}
-      if (msg.role && msg.content) {
-        return { role: msg.role, content: msg.content };
+// Normalize UI messages to Chatbase schema - preserve system messages
+const normalizeMessagesForChatbase = (messages: ChatMessage[]): {role: "user" | "assistant"; content: string}[] => {
+  const sysParts: string[] = [];
+  const norm: { role: "user" | "assistant"; content: string }[] = [];
+
+  for (const m of messages) {
+    // Preserve system messages by collecting them
+    if (m.role === "system") {
+      if (m.content) sysParts.push(m.content);
+      continue;
+    }
+    
+    // Handle role-based messages
+    if (m.role && m.content) {
+      if (m.role === "user" || m.role === "assistant") {
+        norm.push({ role: m.role, content: m.content });
       }
-      
-      // If it has type, map to role
-      if (msg.type && msg.content) {
-        let role: "user" | "assistant";
-        if (msg.type === "user") {
-          role = "user";
-        } else if (msg.type === "agent" || msg.type === "assistant" || msg.type === "bot") {
-          role = "assistant";
-        } else {
-          return null; // Drop unknown types
-        }
-        return { role, content: msg.content };
+      continue;
+    }
+    
+    // Handle type-based messages (legacy support)
+    if (m.type && m.content) {
+      let role: "user" | "assistant";
+      if (m.type === "user") {
+        role = "user";
+      } else if (m.type === "agent" || m.type === "assistant" || m.type === "bot") {
+        role = "assistant";
+      } else {
+        continue; // Skip unknown types
       }
-      
-      return null; // Drop messages without role/content
-    })
-    .filter((msg): msg is {role: "user" | "assistant"; content: string} => 
-      msg !== null && ["user", "assistant"].includes(msg.role)
-    );
+      norm.push({ role, content: m.content });
+    }
+  }
+
+  // Prepend system messages to first user message to preserve guidance
+  if (sysParts.length && norm.length) {
+    const firstUserIndex = norm.findIndex(m => m.role === "user");
+    if (firstUserIndex >= 0) {
+      norm[firstUserIndex].content = `${sysParts.join("\n\n")}\n\n${norm[firstUserIndex].content}`;
+    }
+  }
+
+  return norm;
 };
 
-// Multi-turn session hygiene: trim messages if total content exceeds token limit
-const trimMessagesForTokenLimit = (messages: {role: "user" | "assistant"; content: string}[], maxChars: number = 15000): {role: "user" | "assistant"; content: string}[] => {
-  // Calculate total character count
-  const totalChars = messages.reduce((sum, msg) => sum + msg.content.length, 0);
+// Gentle trimming that preserves conversation continuity
+const trimMessagesForTokenLimit = (
+  messages: { role: "user" | "assistant"; content: string }[],
+  maxChars = 15000
+): { role: "user" | "assistant"; content: string }[] => {
+  let total = 0;
+  const out: typeof messages = [];
 
-  if (totalChars <= maxChars) {
-    return messages;
-  }
-
-  // Find the last assistant message
-  let lastAssistantIndex = -1;
+  // Walk from the end (most recent first) to preserve recent context
   for (let i = messages.length - 1; i >= 0; i--) {
-    if (messages[i].role === 'assistant') {
-      lastAssistantIndex = i;
-      break;
-    }
+    const m = messages[i];
+    const len = (m.content || "").length;
+    if (total + len > maxChars && out.length) break;
+    out.push(m);
+    total += len;
   }
-
-  // Keep the last assistant message and last 3 user messages
-  const trimmedMessages: {role: "user" | "assistant"; content: string}[] = [];
-
-  // Add the last assistant message if it exists
-  if (lastAssistantIndex >= 0) {
-    trimmedMessages.push(messages[lastAssistantIndex]);
-  }
-
-  // Add the last 3 user messages
-  const userMessages = messages.filter(msg => msg.role === 'user');
-  const lastUserMessages = userMessages.slice(-3);
-  trimmedMessages.push(...lastUserMessages);
-
-  // If we still exceed the limit, trim the oldest user messages
-  let currentChars = trimmedMessages.reduce((sum, msg) => sum + msg.content.length, 0);
-  while (currentChars > maxChars && trimmedMessages.length > 1) {
-    // Remove the oldest user message (skip the first assistant message)
-    const firstUserIndex = trimmedMessages.findIndex((msg, index) => msg.role === 'user' && index > 0);
-    if (firstUserIndex > 0) {
-      currentChars -= trimmedMessages[firstUserIndex].content.length;
-      trimmedMessages.splice(firstUserIndex, 1);
-    } else {
-      break;
-    }
-  }
-
-  return trimmedMessages;
+  
+  return out.reverse(); // restore chronological order
 };
 
 // Streaming response handler for Chatbase
 async function handleStreamingResponse(
   chatbasePayload: any,
   apiKey: string,
-  baseUrl: string,
+  endpoint: string,
   sessionId: string,
   debugMode: boolean
 ): Promise<Response> {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+  const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
 
   try {
     // Debug logging for preview environment
     if (process.env.VERCEL_ENV === 'preview') {
       console.info('CHATBASE: Attempting streaming API call');
-      console.info('CHATBASE: URL:', `${baseUrl}/v1/chat`);
+      console.info('CHATBASE: URL:', endpoint);
       console.info('CHATBASE: Headers:', {
         'Authorization': `Bearer ${apiKey.substring(0, 8)}...`,
         'Content-Type': 'application/json'
@@ -145,7 +135,7 @@ async function handleStreamingResponse(
       console.info('CHATBASE: Payload:', JSON.stringify(chatbasePayload, null, 2));
     }
 
-    const response = await fetch(`${baseUrl}/v1/chat`, {
+    const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
@@ -272,8 +262,12 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
 
     // Environment variables
     const apiKey = process.env.CHATBASE_API_KEY;
-    const assistantId = process.env.CHATBASE_ASSISTANT_ID || '2wO054pAvier4ISsuZd_X';
-    const baseUrl = process.env.CHATBASE_BASE_URL || 'https://www.chatbase.co/api';
+    
+    // Single source of truth for URL and ID
+    const CHATBASE_API_URL = process.env.CHATBASE_BASE_URL?.replace(/\/+$/, '') || "https://www.chatbase.co/api";
+    const CHATBASE_CHAT_ENDPOINT = `${CHATBASE_API_URL}/v1/chat`;
+    const CHATBASE_ID = process.env.CHATBASE_ASSISTANT_ID || '2wO054pAvier4ISsuZd_X';
+    const CHATBASE_ID_FIELD = "chatbotId"; // Use correct field name for Chatbase API
 
     // If no API key, use mock response
     if (!apiKey) {
@@ -296,22 +290,23 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
     const trimmedMessages = trimMessagesForTokenLimit(normalizedMessages);
     
     // Prepare correct Chatbase API payload - ALWAYS include required fields
-    const CHATBASE_URL = 'https://www.chatbase.co/api/v1/chat';
-    const CHATBOT_ID = process.env.CHATBASE_ASSISTANT_ID!;
     const streamEnabled = process.env.NEXT_PUBLIC_AGENT_CHAT_STREAM === 'true' ? true : false;
+    const maxOutputTokens = Number(process.env.NEXT_PUBLIC_AGENT_MAX_TOKENS ?? 1200);
     
     const chatbasePayload = {
-      chatbotId: CHATBOT_ID,                  // required
+      [CHATBASE_ID_FIELD]: CHATBASE_ID,       // Use correct field name
       messages: trimmedMessages,              // [{ role, content }]
       conversationId: sessionId || undefined, // map from our sessionId (optional but correct name)
       stream: streamEnabled,                  // optional; defaults false
-      temperature: 0                          // optional; keep deterministic
+      temperature: 0,                         // optional; keep deterministic
+      maxTokens: maxOutputTokens,             // Add runtime knobs for better responses
+      useKnowledge: true                      // Enable knowledge base usage
     };
 
     // If streaming is enabled, try streaming first with fallback to non-streaming
     if (streamEnabled) {
       try {
-        return await handleStreamingResponse(chatbasePayload, apiKey, baseUrl, sessionId || `session_${Date.now()}`, debugMode);
+        return await handleStreamingResponse(chatbasePayload, apiKey, CHATBASE_CHAT_ENDPOINT, sessionId || `session_${Date.now()}`, debugMode);
       } catch (error) {
         if (process.env.VERCEL_ENV === 'preview') {
           console.info('CHATBASE: Streaming failed, falling back to non-streaming:', error);
@@ -337,7 +332,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
             firstRoles: chatbasePayload.messages?.slice(0, 3).map(m => m.role),
           });
           console.info('CHATBASE: Attempting API call');
-          console.info('CHATBASE: URL:', `${baseUrl}/v1/chat`);
+          console.info('CHATBASE: URL:', CHATBASE_CHAT_ENDPOINT);
           console.info('CHATBASE: Headers:', {
             'Authorization': `Bearer ${apiKey.substring(0, 8)}...`,
             'Content-Type': 'application/json'
@@ -346,9 +341,9 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
         }
 
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
 
-        const response = await fetch(`${baseUrl}/v1/chat`, {
+        const response = await fetch(CHATBASE_CHAT_ENDPOINT, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${apiKey}`,
@@ -457,7 +452,27 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
       }
     }
 
-    // All attempts failed, use mock fallback with debug info
+    // All attempts failed - check if we should mock or return error
+    const inMockMode = process.env.NEXT_PUBLIC_DATA_MODE === "mock";
+
+    if (!inMockMode) {
+      // Return proper error instead of silent mocking
+      return NextResponse.json(
+        {
+          error: "chatbase_unavailable",
+          upstream_status: lastUpstreamStatus,
+          upstream_body: lastUpstreamBody?.slice(0, 200),
+          detail: lastError?.message,
+          sessionId: sessionId || `session_${Date.now()}`
+        },
+        { 
+          status: 502, 
+          headers: { 'x-agent-mode': 'error' } 
+        }
+      );
+    }
+
+    // Explicit mock mode fallback
     const mockReply = getMockResponse(messages);
     const headers: Record<string, string> = { 'x-agent-mode': 'mock' };
     
