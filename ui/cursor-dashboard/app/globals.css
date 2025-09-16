@@ -152,11 +152,12 @@
   @apply flex items-center gap-2 sm:whitespace-nowrap;
 }
 
-/* Scoped markdown container: NO global font changes */
+/* Scoped markdown container: Match user bubble typography */
 .assistant-md {
-  font: inherit;
-  line-height: inherit;
-  color: inherit;
+  font-size: 0.75rem; /* text-xs - matches user bubble */
+  line-height: 1.5;   /* leading-relaxed equivalent */
+  color: #f9fafb;     /* matches user bubble text color */
+  font-weight: 400;   /* normal weight */
   --gap: 0.5rem;
   word-break: break-word;   /* long tokens/URLs wrap */
   white-space: pre-wrap;    /* preserve single newlines for readability */
