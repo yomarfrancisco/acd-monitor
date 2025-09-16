@@ -1291,7 +1291,7 @@ It would also be helpful if you described:
                   )}
 
                   {/* Input Area */}
-                  <div className={`${hasEngaged ? "mt-auto" : "flex flex-col items-center justify-center space-y-5"}`}>
+                  <div className={`${hasEngaged ? "mt-auto" : "flex flex-col items-center justify-center space-y-5"} ${hasEngaged ? "pb-3" : "pb-6"}`}>
                   <div className="w-full space-y-3 mx-4 sm:mx-0">
                     <div className="agents-no-zoom-wrapper" data-testid="agents-no-zoom-wrapper">
                       <div className="relative">
