@@ -33,7 +33,7 @@ import {
 import { Separator } from "@/components/ui/separator"
 import Image from "next/image"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useMemo } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { AssistantBubble } from "@/components/AssistantBubble"
@@ -237,6 +237,18 @@ export default function CursorDashboard() {
   const [hasEngaged, setHasEngaged] = useState<boolean>(false)
   const [isAssistantTyping, setIsAssistantTyping] = useState<boolean>(false)
   
+  // track whether at least one user message has been sent in this session
+  const [hasStartedChat, setHasStartedChat] = useState(false)
+
+  // if you already have `messages` state, you can also derive it:
+  const chatStartedFromHistory = useMemo(
+    () => messages?.some(m => m.type === 'user') ?? false,
+    [messages]
+  )
+
+  // prefer explicit flip on first send; keep derived as safety net
+  const chatStarted = hasStartedChat || chatStartedFromHistory
+  
   // Upload menu state
   const [isUploadMenuOpen, setIsUploadMenuOpen] = useState<boolean>(false)
   const [uploadMenuAnchorRef, setUploadMenuAnchorRef] = useState<HTMLButtonElement | null>(null)
@@ -430,6 +442,8 @@ export default function CursorDashboard() {
 
     setMessages((prev) => [...prev, userMessage])
     setHasEngaged(true)
+    // once the first message is actually sent, lock this in
+    setHasStartedChat(true)
 
     // Check if we should use the API or local mock
     const useApi = process.env.NEXT_PUBLIC_AGENT_CHAT_ENABLED === 'true'
@@ -1291,7 +1305,7 @@ It would also be helpful if you described:
                   )}
 
                   {/* Input Area */}
-                  <div className={`${hasEngaged ? "mt-auto" : "flex flex-col items-center justify-center space-y-5"} ${hasEngaged ? "pb-3" : "pb-6"}`}>
+                  <div className={`composer ${chatStarted ? 'composer--tight' : ''} ${hasEngaged ? "mt-auto" : "flex flex-col items-center justify-center space-y-5"}`}>
                   <div className="w-full space-y-3 mx-4 sm:mx-0">
                     <div className="agents-no-zoom-wrapper" data-testid="agents-no-zoom-wrapper">
                       <div className="relative">
