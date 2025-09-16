@@ -5,12 +5,11 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 // Single source of truth for Chatbase configuration
-const CHATBASE_API_ROOT = 'https://www.chatbase.co/api/v1';
-const CHATBASE_CHATBOT_ID = process.env.CHATBASE_ASSISTANT_ID!;
-const CHATBASE_API_KEY = process.env.CHATBASE_API_KEY!;
+const ROOT = 'https://www.chatbase.co/api/v1';
+const CHATBOT_ID = process.env.CHATBASE_ASSISTANT_ID!;   // same ID the widget uses
 
-const CHATBASE_MESSAGE_URL = `${CHATBASE_API_ROOT}/chatbot/${CHATBASE_CHATBOT_ID}/message`;
-const CHATBASE_STREAM_URL = `${CHATBASE_API_ROOT}/chatbot/${CHATBASE_CHATBOT_ID}/message/stream`;
+const MESSAGE_URL = `${ROOT}/chatbot/${CHATBOT_ID}/message`;
+const STREAM_URL = `${ROOT}/chatbot/${CHATBOT_ID}/message/stream`;
 
 // Identity Verification helper
 function ivHeaders(userId: string): Record<string, string> {
@@ -215,7 +214,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
     }
 
     // If no API key, use mock response
-    if (!CHATBASE_API_KEY) {
+    if (!process.env.CHATBASE_API_KEY) {
       const mockReply = getMockResponse(messages);
       return NextResponse.json(
         { 
@@ -234,18 +233,22 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
     const normalizedMessages = normalizeMessagesForChatbase(messages);
     const trimmedMessages = trimMessagesForTokenLimit(normalizedMessages);
 
-    // Build payload according to Chatbase API docs
+    // Build minimal payload according to Chatbase API docs
     const payload = {
-      messages: trimmedMessages,
-      stream: stream && isStreamingEnabled,
+      messages: trimmedMessages,   // roles ONLY "user"|"assistant"
+      stream: stream && isStreamingEnabled,       // true only if using STREAM_URL
       temperature: 0
     };
 
     // Use correct endpoint based on streaming preference
-    const url = (stream && isStreamingEnabled) ? CHATBASE_STREAM_URL : CHATBASE_MESSAGE_URL;
+    const url = (stream && isStreamingEnabled) ? STREAM_URL : MESSAGE_URL;
 
-    console.info('CHATBASE: URL:', url);
-    console.info('CHATBASE: Payload:', JSON.stringify(payload, null, 2));
+    // Diagnostic logging
+    console.error("[CB] URL:", url);
+    console.error("[CB] METHOD:", "POST");
+    console.error("[CB] CHATBOT_ID present:", Boolean(CHATBOT_ID), "len:", (CHATBOT_ID||"").length);
+    console.error("[CB] HEADERS:", { auth: !!process.env.CHATBASE_API_KEY });
+    console.error("[CB] BODY.keys:", Object.keys(payload));
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
@@ -254,7 +257,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
       const response = await fetch(url, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${CHATBASE_API_KEY}`,
+          'Authorization': `Bearer ${process.env.CHATBASE_API_KEY}`,
           'Content-Type': 'application/json',
           ...ivHeaders(userId || '')
         },
@@ -264,11 +267,14 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
 
       clearTimeout(timeoutId);
 
+      const body = await response.text();
+      console.error("[CB] STATUS:", response.status);
+      console.error("[CB] RESP BODY (first 300):", body.slice(0,300));
+
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Chatbase API error:', response.status, errorText);
+        console.error('Chatbase API error:', response.status, body);
         return NextResponse.json(
-          { error: `Chatbase API error: ${response.status} ${errorText}` },
+          { error: `Chatbase API error: ${response.status} ${body}` },
           { status: response.status }
         );
       }
@@ -283,7 +289,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
           },
         });
       } else {
-        const data = await response.json();
+        const data = JSON.parse(body);
         return NextResponse.json(data);
       }
 
