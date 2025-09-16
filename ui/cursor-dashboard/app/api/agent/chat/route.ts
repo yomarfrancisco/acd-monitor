@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 
 // Single source of truth for Chatbase configuration
 const ROOT = 'https://www.chatbase.co/api/v1';
-const CHATBOT_ID = process.env.CHATBASE_ASSISTANT_ID!;   // same ID the widget uses
+const CHATBOT_ID = process.env.CHATBASE_ASSISTANT_ID || '2wO054pAvier4ISsuZd_X';   // fallback for testing
 
 const MESSAGE_URL = `${ROOT}/chatbot/${CHATBOT_ID}/message`;
 const STREAM_URL = `${ROOT}/chatbot/${CHATBOT_ID}/message/stream`;
