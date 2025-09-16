@@ -1084,7 +1084,7 @@ It would also be helpful if you described:
                 activeTab === "dashboard" ? "text-[#f9fafb]" : "text-[#a1a1aa] hover:text-[#f9fafb]"
               }`}
             >
-              Dashboard
+              Diagnostic
             </button>
           </nav>
 
