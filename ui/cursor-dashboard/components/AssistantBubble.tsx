@@ -4,8 +4,7 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import rehypeHighlight from 'rehype-highlight';
 
-// CSS for KaTeX and a minimal highlight theme (choose one theme you like)
-import 'katex/dist/katex.min.css';
+// CSS for highlight theme (KaTeX CSS imported globally in layout.tsx)
 import 'highlight.js/styles/github-dark-dimmed.css';
 
 export function AssistantBubble({ text }: { text: string }) {
