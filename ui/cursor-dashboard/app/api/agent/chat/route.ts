@@ -274,7 +274,17 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
       if (!response.ok) {
         console.error('Chatbase API error:', response.status, body);
         return NextResponse.json(
-          { error: `Chatbase API error: ${response.status} ${body}` },
+          { 
+            error: `Chatbase API error: ${response.status} ${body}`,
+            debug: {
+              url: url,
+              chatbotId: CHATBOT_ID,
+              chatbotIdPresent: Boolean(CHATBOT_ID),
+              chatbotIdLength: (CHATBOT_ID || '').length,
+              apiKeyPresent: Boolean(process.env.CHATBASE_API_KEY),
+              payload: payload
+            }
+          },
           { status: response.status }
         );
       }
