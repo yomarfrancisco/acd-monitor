@@ -6,10 +6,11 @@ export const dynamic = 'force-dynamic';
 
 // Single source of truth for Chatbase configuration
 const ROOT = 'https://www.chatbase.co/api/v1';
-const CHATBOT_ID = process.env.CHATBASE_ASSISTANT_ID || '2wO054pAvier4ISsuZd_X';   // fallback for testing
+const CHATBOT_ID = process.env.CHATBASE_ASSISTANT_ID!;        // already set (see your screenshots)
+const CHATBASE_API_KEY = process.env.CHATBASE_API_KEY!;
 
-const MESSAGE_URL = `${ROOT}/chatbot/${CHATBOT_ID}/message`;
-const STREAM_URL = `${ROOT}/chatbot/${CHATBOT_ID}/message/stream`;
+const LEGACY_URL = `${ROOT}/chat`;                            // <- legacy family
+// NOTE: do NOT call /chatbot/{id}/message for this bot
 
 // Identity Verification helper
 function ivHeaders(userId: string): Record<string, string> {
@@ -233,15 +234,16 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
     const normalizedMessages = normalizeMessagesForChatbase(messages);
     const trimmedMessages = trimMessagesForTokenLimit(normalizedMessages);
 
-    // Build minimal payload according to Chatbase API docs
+    // Build the legacy payload
     const payload = {
-      messages: trimmedMessages,   // roles ONLY "user"|"assistant"
-      stream: stream && isStreamingEnabled,       // true only if using STREAM_URL
+      chatbotId: CHATBOT_ID,             // <- legacy requires this IN the body
+      messages: trimmedMessages,
+      stream: false,                     // set true only if you handle SSE (see below)
       temperature: 0
     };
 
-    // Use correct endpoint based on streaming preference
-    const url = (stream && isStreamingEnabled) ? STREAM_URL : MESSAGE_URL;
+    // Use legacy endpoint
+    const url = LEGACY_URL;
 
     // Diagnostic logging
     console.error("[CB] URL:", url);
@@ -257,9 +259,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
       const response = await fetch(url, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${process.env.CHATBASE_API_KEY}`,
+          'Authorization': `Bearer ${CHATBASE_API_KEY}`,
           'Content-Type': 'application/json',
-          ...ivHeaders(userId || '')
         },
         body: JSON.stringify(payload),
         signal: controller.signal
@@ -267,41 +268,24 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
 
       clearTimeout(timeoutId);
 
-      const body = await response.text();
-      console.error("[CB] STATUS:", response.status);
-      console.error("[CB] RESP BODY (first 300):", body.slice(0,300));
+      // LOG DIAGNOSTICS
+      const bodyText = await response.text();
+      console.error("[CB][LEGACY] status:", response.status);
+      console.error("[CB][LEGACY] body[0..300]:", bodyText.slice(0,300));
 
       if (!response.ok) {
-        console.error('Chatbase API error:', response.status, body);
         return NextResponse.json(
-          { 
-            error: `Chatbase API error: ${response.status} ${body}`,
-            debug: {
-              url: url,
-              chatbotId: CHATBOT_ID,
-              chatbotIdPresent: Boolean(CHATBOT_ID),
-              chatbotIdLength: (CHATBOT_ID || '').length,
-              apiKeyPresent: Boolean(process.env.CHATBASE_API_KEY),
-              payload: payload
-            }
-          },
-          { status: response.status }
+          { error: `chatbase_${response.status}`, upstream: bodyText.slice(0,300) },
+          { status: 502 }
         );
       }
 
-      if (stream && isStreamingEnabled) {
-        const stream = await handleStreamingResponse(response, url);
-        return new NextResponse(stream, {
-          headers: {
-            'Content-Type': 'text/event-stream',
-            'Cache-Control': 'no-cache',
-            'Connection': 'keep-alive',
-          },
-        });
-      } else {
-        const data = JSON.parse(body);
-        return NextResponse.json(data);
-      }
+      // Legacy returns JSON with a text/message field
+      const data = JSON.parse(bodyText);
+      return NextResponse.json({
+        reply: data.text || data.reply || data.message || "",
+        sessionId: sessionId || payload.chatbotId,
+      });
 
     } catch (error) {
       clearTimeout(timeoutId);
