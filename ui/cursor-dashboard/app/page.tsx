@@ -1220,7 +1220,7 @@ It would also be helpful if you described:
                       <Bot className="w-4 h-4 text-[#86a789]" />
                       <span className="text-xs font-medium text-[#f9fafb]">{selectedAgent}</span>
                     </div>
-                    <p className="text-xs text-[#f9fafb]">{initialAgentMessage}</p>
+                    <AssistantBubble text={initialAgentMessage} />
                   </div>
                 )}
 
