@@ -238,7 +238,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
     const payload = {
       chatbotId: CHATBOT_ID,             // <- legacy requires this IN the body
       messages: trimmedMessages,
-      stream: false,                     // set true only if you handle SSE (see below)
+      stream: stream && isStreamingEnabled,  // enable streaming if requested and enabled
       temperature: 0
     };
 
@@ -246,11 +246,9 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
     const url = LEGACY_URL;
 
     // Diagnostic logging
-    console.error("[CB] URL:", url);
-    console.error("[CB] METHOD:", "POST");
-    console.error("[CB] CHATBOT_ID present:", Boolean(CHATBOT_ID), "len:", (CHATBOT_ID||"").length);
-    console.error("[CB] HEADERS:", { auth: !!process.env.CHATBASE_API_KEY });
-    console.error("[CB] BODY.keys:", Object.keys(payload));
+    console.error("[CB][LEGACY-STREAM] req stream:", payload.stream);
+    console.error("[CB][LEGACY-STREAM] url:", url);
+    console.error("[CB][LEGACY-STREAM] headers ok:", !!CHATBASE_API_KEY);
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
@@ -268,24 +266,43 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
 
       clearTimeout(timeoutId);
 
-      // LOG DIAGNOSTICS
-      const bodyText = await response.text();
-      console.error("[CB][LEGACY] status:", response.status);
-      console.error("[CB][LEGACY] body[0..300]:", bodyText.slice(0,300));
+      // Check if this is a streaming response
+      const isSse = response.headers.get("content-type")?.includes("text/event-stream");
+      console.error("[CB][LEGACY-STREAM] content-type:", response.headers.get("content-type"));
 
       if (!response.ok) {
+        const bodyText = await response.text();
+        console.error("[CB][LEGACY] status:", response.status);
+        console.error("[CB][LEGACY] body[0..300]:", bodyText.slice(0,300));
         return NextResponse.json(
           { error: `chatbase_${response.status}`, upstream: bodyText.slice(0,300) },
           { status: 502 }
         );
       }
 
-      // Legacy returns JSON with a text/message field
-      const data = JSON.parse(bodyText);
-      return NextResponse.json({
-        reply: data.text || data.reply || data.message || "",
-        sessionId: sessionId || payload.chatbotId,
-      });
+      // Handle streaming response
+      if (payload.stream && isSse) {
+        const stream = await handleStreamingResponse(response, url);
+        return new NextResponse(stream, {
+          headers: {
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive',
+          },
+        });
+      } else {
+        // Fallback to non-streaming
+        if (payload.stream && !isSse) {
+          console.error("[CB][LEGACY-STREAM] fallback to non-streaming");
+        }
+        
+        const bodyText = await response.text();
+        const data = JSON.parse(bodyText);
+        return NextResponse.json({
+          reply: data.text || data.reply || data.message || "",
+          sessionId: sessionId || payload.chatbotId,
+        });
+      }
 
     } catch (error) {
       clearTimeout(timeoutId);
