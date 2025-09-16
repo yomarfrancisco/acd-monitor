@@ -13,10 +13,7 @@ export function AssistantBubble({ text }: { text: string }) {
     <div className="assistant-bubble">
       <div className="assistant-md">
         <ReactMarkdown
-          remarkPlugins={[
-            remarkGfm,
-            [remarkMath, { singleDollarTextMath: true }]
-          ]}
+          remarkPlugins={[remarkGfm, remarkMath]}
           rehypePlugins={[
             [rehypeKatex, { output: 'html' }],
             // auto-detects language; if perf becomes an issue, we can restrict languages
