@@ -27,12 +27,13 @@ import {
   Gauge,
   Moon,
   Scale,
+  Search,
 } from "lucide-react"
 
 import { Separator } from "@/components/ui/separator"
 import Image from "next/image"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, ReferenceLine, Label } from "recharts"
@@ -214,7 +215,7 @@ export default function CursorDashboard() {
   >("overview")
 
   // Add state for selected agent type
-  const [selectedAgent, setSelectedAgent] = useState("General Analysis")
+  const [selectedAgent, setSelectedAgent] = useState("Jurisdiction")
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([])
 
   // Configuration input field states
@@ -245,6 +246,13 @@ export default function CursorDashboard() {
   // Role dropdown state
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState<boolean>(false)
   const [roleDropdownFocusIndex, setRoleDropdownFocusIndex] = useState<number>(-1)
+  
+  // Dual-trigger dropdown refs and state
+  const triggerClusterRef = useRef<HTMLDivElement | null>(null)
+  const triggerIconRef = useRef<HTMLButtonElement | null>(null)
+  const triggerTextRef = useRef<HTMLButtonElement | null>(null)
+  const firstOptionRef = useRef<HTMLButtonElement | null>(null)
+  const lastTriggerUsed = useRef<'icon' | 'text'>('text')
 
   useEffect(() => {
     setIsClient(true)
@@ -256,8 +264,13 @@ export default function CursorDashboard() {
       if (isUploadMenuOpen && uploadMenuAnchorRef && !uploadMenuAnchorRef.contains(event.target as Node)) {
         handleUploadMenuClose()
       }
-      if (isRoleDropdownOpen && !(event.target as Element).closest('.role-dropdown-container')) {
-        handleRoleDropdownClose()
+      if (isRoleDropdownOpen) {
+        const target = event.target as Node
+        // Check if click is inside trigger cluster or dropdown
+        if (triggerClusterRef.current?.contains(target)) return
+        if (document.getElementById('role-dropdown')?.contains(target)) return
+        closeRoleDropdown()
+        restoreFocusToTrigger(lastTriggerUsed.current)
       }
     }
 
@@ -266,6 +279,13 @@ export default function CursorDashboard() {
       return () => document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [isUploadMenuOpen, uploadMenuAnchorRef, isRoleDropdownOpen])
+
+  // Focus first option when opening dropdown
+  useEffect(() => {
+    if (isRoleDropdownOpen) {
+      requestAnimationFrame(() => firstOptionRef.current?.focus())
+    }
+  }, [isRoleDropdownOpen])
 
   // Heartbeat check for degraded mode
   useEffect(() => {
@@ -886,6 +906,15 @@ It would also be helpful if you described:
     setRoleDropdownFocusIndex(-1)
   }
 
+  // Dual-trigger dropdown functions
+  const openRoleDropdown = () => setIsRoleDropdownOpen(true)
+  const closeRoleDropdown = () => setIsRoleDropdownOpen(false)
+  
+  const restoreFocusToTrigger = (lastTrigger: 'icon' | 'text') => {
+    if (lastTrigger === 'icon') triggerIconRef.current?.focus()
+    else triggerTextRef.current?.focus()
+  }
+
   const handleRoleDropdownClose = () => {
     setIsRoleDropdownOpen(false)
     setRoleDropdownFocusIndex(-1)
@@ -899,7 +928,7 @@ It would also be helpful if you described:
   const handleRoleDropdownKeyDown = (event: React.KeyboardEvent) => {
     if (!isRoleDropdownOpen) return
 
-    const roles = ["Jnr Economist", "Legal", "Snr Economist", "Statistician"]
+    const roles = ["Europe", "South Africa", "United States", "Australia"]
 
     switch (event.key) {
       case 'Escape':
@@ -919,6 +948,18 @@ It would also be helpful if you described:
           handleRoleSelect(roles[roleDropdownFocusIndex])
         }
         break
+    }
+  }
+
+  // Dual-trigger keyboard handler
+  const onTriggerKeyDown: React.KeyboardEventHandler<HTMLButtonElement> = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { 
+      e.preventDefault(); 
+      openRoleDropdown(); 
+    }
+    if (e.key === 'ArrowDown') { 
+      e.preventDefault(); 
+      openRoleDropdown(); 
     }
   }
 
@@ -945,7 +986,7 @@ It would also be helpful if you described:
         {/* First shell tile with left and right containers */}
         <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
           <CardContent className="p-4">
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="rounded-lg bg-bg-tile shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
                 <div>
                   <h2 className="text-sm font-medium text-[#f9fafb] mb-1">Left Container</h2>
@@ -1060,10 +1101,10 @@ It would also be helpful if you described:
       <div className="h-6"></div>
 
       <div className="flex justify-center">
-        <div className="flex max-w-5xl w-full">
+        <div className={`max-w-5xl w-full ${activeTab === "dashboard" ? "grid grid-cols-1 gap-6 lg:grid-cols-[18rem_1fr] lg:gap-8 px-4 sm:px-6 lg:px-8" : "flex"}`} data-root-grid={activeTab === "dashboard" ? "dash" : undefined}>
           {/* Sidebar - Only show on dashboard */}
           {activeTab === "dashboard" && (
-            <aside className="w-64 bg-[#0f0f10] p-3 flex-shrink-0">
+            <aside className="lg:sticky lg:top-16 lg:h-[calc(100dvh-4rem)] bg-[#0f0f10] p-3">
               <div className="space-y-3">
                 {/* User Info */}
                 <div>
@@ -1160,9 +1201,17 @@ It would also be helpful if you described:
           )}
 
           {/* Main Content */}
-          <main className={`flex-1 p-5 max-w-3xl ${activeTab === "agents" ? "mx-auto" : ""}`}>
+          <main className={`${activeTab === "dashboard" ? "min-w-0 p-5" : "flex-1 pt-8 px-5 pb-5 max-w-5xl mx-auto"}`}>
             {activeTab === "agents" && (
-              <div className="max-w-xl mx-auto">
+              <div className="max-w-5xl mx-auto">
+                {/* <CHANGE> Added main headline for Agents tab - only show when no messages */}
+                {messages.length === 0 && (
+                  <div className="text-center mb-12">
+                    <h1 className="font-headline text-6xl md:text-6xl lg:text-7xl text-blue-50 font-light leading-tight max-w-4xl mx-auto">
+                      Algorithmic Collusion? Defensible.
+                    </h1>
+                  </div>
+                )}
                 {/* Initial Agent Message */}
                 {initialAgentMessage && (
                   <div className="mb-4 p-3 bg-bg-surface rounded-lg border border-[#2a2a2a]">
@@ -1174,8 +1223,8 @@ It would also be helpful if you described:
                   </div>
                 )}
 
-                {/* Chat Interface */}
-                <div className={`${hasEngaged ? "h-[60vh]" : "min-h-[45vh]"} flex flex-col`}>
+              {/* Chat Interface */}
+              <div className={`${hasEngaged ? "h-[60vh]" : "min-h-[45vh]"} flex flex-col mt-2`}>
                   {/* Chat Messages Area */}
                   {hasEngaged && (
                     <div className="flex-1 overflow-y-auto mb-4 space-y-4">
@@ -1246,7 +1295,7 @@ It would also be helpful if you described:
                     <div className="agents-no-zoom-wrapper" data-testid="agents-no-zoom-wrapper">
                       <div className="relative">
                       <textarea
-                          placeholder="Help me audit my pricing algorithms."
+                          placeholder="How can I help defend your algorithms today?"
                           value={inputValue}
                           onChange={(e) => setInputValue(e.target.value)}
                           onKeyDown={(e) => {
@@ -1255,70 +1304,88 @@ It would also be helpful if you described:
                               handleSendMessage()
                             }
                           }}
-                          className="w-full h-28 bg-bg-tile rounded-lg text-[#f9fafb] placeholder-[#71717a] pr-16 px-4 py-4 text-xs resize-none focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50"
+                          className="w-full h-28 bg-bg-tile rounded-lg text-[#f9fafb] pr-16 px-4 py-4 text-base md:text-base leading-5 placeholder:text-xs md:placeholder:text-base placeholder:text-[#71717a] resize-none focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50"
+                          style={{ caretColor: "transparent" }}
                           rows={5}
                         />
                         {/* Blinking cursor overlay - only shows when empty */}
                         {inputValue === "" && (
-                          <div
-                            className="agents-caret absolute left-4 top-4 text-[#f9fafb] text-xs"
-                            style={{
-                              animation: "blink 1s infinite",
-                              display: "inline-block",
-                            }}
-                          >
-                            |
-                          </div>
+                          <span
+                            aria-hidden
+                            className="pointer-events-none absolute left-4 top-4 h-[1em] md:h-[1.2em] w-[1px] md:w-[2px] bg-white animate-[blink_1s_steps(1)_infinite]"
+                          />
                         )}
                         {/* Model selector - bottom left */}
-                        <div className="absolute left-3 bottom-3 flex items-center gap-1.5">
-                          <Image
-                            src="/icons/icon-americas.png"
-                            alt="Agent"
-                            width={18}
-                            height={18}
-                            className="shrink-0 rounded-none"
-                            priority
-                          />
-                          <div className="relative role-dropdown-container">
-                            <button
-                              className="bg-transparent text-[10px] text-[#71717a] font-medium border-none outline-none cursor-pointer hover:text-[#a1a1aa] flex items-center gap-1"
-                              onClick={handleRoleDropdownToggle}
-                              onKeyDown={handleRoleDropdownKeyDown}
-                              aria-haspopup="listbox"
-                              aria-expanded={isRoleDropdownOpen}
-                              aria-label="Select agent role"
-                            >
-                              {selectedAgent}
-                              <ChevronDown className="w-3 h-3 text-[#71717a]" />
-                            </button>
-                            
-                            {/* Role Dropdown Menu */}
-                            {isRoleDropdownOpen && (
-                              <div
-                                className="absolute z-50 mt-2 w-40 rounded-md border border-white/10 bg-neutral-900/90 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-neutral-900/80"
-                                role="listbox"
-                                aria-orientation="vertical"
-                              >
-                                <div className="py-1">
-                                  {["Jnr Economist", "Legal", "Snr Economist", "Statistician"].map((role, index) => (
-                                    <button
-                                      key={role}
-                                      className={`flex items-center gap-2 px-3 py-2 text-sm text-gray-200 hover:text-white hover:bg-white/5 w-full text-left ${
-                                        roleDropdownFocusIndex === index ? 'bg-white/5 text-white' : ''
-                                      } ${selectedAgent === role ? 'bg-white/5' : ''}`}
-                                      onClick={() => handleRoleSelect(role)}
-                                      role="option"
-                                      aria-selected={selectedAgent === role}
-                                    >
-                                      {role}
-                                    </button>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
+                        <div ref={triggerClusterRef} className="absolute left-3 bottom-3 flex items-center gap-1.5">
+                          {/* ICON TRIGGER */}
+                          <button
+                            ref={triggerIconRef}
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); lastTriggerUsed.current = 'icon'; openRoleDropdown(); }}
+                            onKeyDown={onTriggerKeyDown}
+                            aria-haspopup="listbox"
+                            aria-controls="role-dropdown"
+                            aria-expanded={isRoleDropdownOpen}
+                            aria-label="Select analysis mode"
+                            className="flex items-center justify-center p-1.5 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]"
+                          >
+                            <Image
+                              src="/icons/icon-americas.png"
+                              alt="Select analysis mode"
+                              width={18}
+                              height={18}
+                              draggable={false}
+                              className="shrink-0"
+                            />
+                          </button>
+
+                          {/* TEXT TRIGGER */}
+                          <button
+                            ref={triggerTextRef}
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); lastTriggerUsed.current = 'text'; openRoleDropdown(); }}
+                            onKeyDown={onTriggerKeyDown}
+                            aria-haspopup="listbox"
+                            aria-controls="role-dropdown"
+                            aria-expanded={isRoleDropdownOpen}
+                            className="bg-transparent text-[10px] text-[#71717a] font-medium border-none outline-none cursor-pointer hover:text-[#a1a1aa] flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]"
+                          >
+                            {selectedAgent}
+                            <ChevronDown className="w-3 h-3 text-[#71717a]" aria-hidden="true" />
+                          </button>
+                        </div>
+
+                        {/* Role Dropdown Menu */}
+                        {isRoleDropdownOpen && (
+                          <div
+                            id="role-dropdown"
+                            className="absolute z-50 left-3 top-12 w-40 rounded-md border border-white/10 bg-neutral-900/90 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-neutral-900/80"
+                            role="listbox"
+                            aria-label="Analysis mode"
+                            aria-orientation="vertical"
+                          >
+                            <div className="py-1">
+                              {["Europe", "South Africa", "United States", "Australia"].map((role, index) => (
+                                <button
+                                  key={role}
+                                  ref={index === 0 ? firstOptionRef : null}
+                                  className={`flex items-center gap-2 px-3 py-2 text-sm text-gray-200 hover:text-white hover:bg-white/5 w-full text-left ${
+                                    roleDropdownFocusIndex === index ? 'bg-white/5 text-white' : ''
+                                  } ${selectedAgent === role ? 'bg-white/5' : ''}`}
+                                  onClick={() => {
+                                    setSelectedAgent(role)
+                                    closeRoleDropdown()
+                                    restoreFocusToTrigger(lastTriggerUsed.current)
+                                  }}
+                                  role="option"
+                                  aria-selected={selectedAgent === role}
+                                >
+                                  {role}
+                                </button>
+                              ))}
+                            </div>
                           </div>
-                    </div>
+                        )}
 
                         {/* Action buttons - bottom right */}
                         <div className="absolute right-3 bottom-3 flex gap-1.5">
@@ -1387,15 +1454,27 @@ It would also be helpful if you described:
                               </div>
                             )}
                           </div>
-                          <div
-                            className="h-6 w-6 flex items-center justify-center cursor-pointer"
+                          <button
+                            type="button"
+                            aria-label="Send"
+                            className="
+                              h-6 w-6 flex items-center justify-center cursor-pointer
+                              text-[#f9fafb]
+                              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa]
+                              focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]
+                              disabled:text-[#a1a1aa]/50
+                              transition-colors motion-reduce:transition-none
+                            "
                             onClick={(e) => {
                               e.preventDefault();
                               handleSendMessage();
                             }}
                           >
-                            <Send className="w-6 h-6 text-[#71717a] hover:text-[#a1a1aa]" />
-                          </div>
+                            <Send 
+                              className="w-6 h-6 opacity-85 hover:opacity-100 text-current transition-opacity duration-200"
+                              stroke="currentColor"
+                            />
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -1406,25 +1485,34 @@ It would also be helpful if you described:
                       <p className="text-[10px] text-[#a1a1aa] text-center">Try these examples to get started</p>
 
                           <div className="flex flex-wrap gap-2 justify-center max-w-4xl mx-auto sm:flex-nowrap">
-                            <button className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 sm:whitespace-nowrap">
-                              <Zap className="w-2 h-2" />
-                              Analyze pricing patterns
-                        </button>
-                            <button className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 sm:whitespace-nowrap">
-                              <ShieldCheck className="w-2 h-2" />
-                              Check compliance status
-                        </button>
-                            <button className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 sm:whitespace-nowrap">
-                              <FileText className="w-2 h-2" />
-                              Generate report
-                            </button>
-                            <button
-                              onClick={() => handleSendMessage("Help me report a cartel")}
-                              className="rounded-full px-2 py-1 text-[9px] border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1 sm:whitespace-nowrap"
+                            <button 
+                              type="button"
+                              className="agents-quick-btn"
                             >
-                              <AlertTriangle className="w-2 h-2" />
-                              Report a cartel
-                        </button>
+                              <Search className="w-2 h-2 md:w-2.5 md:h-2.5" />
+                              Analyze algorithms
+                            </button>
+                            <button 
+                              type="button"
+                              className="agents-quick-btn"
+                            >
+                              <BarChart3 className="w-2 h-2 md:w-2.5 md:h-2.5" />
+                              Calculate damages
+                            </button>
+                            <button 
+                              type="button"
+                              className="agents-quick-btn"
+                            >
+                              <Scale className="w-2 h-2 md:w-2.5 md:h-2.5" />
+                              Compliance check
+                            </button>
+                            <button 
+                              type="button"
+                              className="agents-quick-btn"
+                            >
+                              <ClipboardList className="w-2 h-2 md:w-2.5 md:h-2.5" />
+                              Court-ready report
+                            </button>
                       </div>
                     </div>
                       )}
@@ -1437,10 +1525,10 @@ It would also be helpful if you described:
               /* Dashboard View */
               <>
                 {activeSidebarItem === "overview" && (
-              <div className="space-y-3 max-w-2xl">
+              <div className="space-y-3 max-w-2xl" data-probe="dash-cards-section">
                 <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                   <CardContent className="p-4">
-                        <div className="grid grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                           <div className="rounded-lg bg-bg-tile shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
                             <div>
                         <h2 className="text-sm font-medium text-[#f9fafb] mb-1">Enterprise Plan</h2>
@@ -1518,7 +1606,7 @@ It would also be helpful if you described:
 
                     <div className="mb-4">
                           <h3 className="text-xs font-medium text-[#f9fafb] mb-3">Algorithmic Cartel Diagnostic</h3>
-                          <div className="grid grid-cols-2 gap-6 mb-10">
+                          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 mb-10">
                             <div className="rounded-lg bg-bg-surface shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 relative">
                               {/* Live indicator - pulsing green dot with frame */}
                               <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-bg-tile border border-[#2a2a2a] rounded-full px-2 py-1">
@@ -1698,7 +1786,7 @@ It would also be helpful if you described:
 
                             <Tooltip
                                   cursor={false}
-                              content={({ active, payload, label }) => {
+                              content={({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string }) => {
                                 if (active && payload && payload.length) {
                                       // Market share data for each bank
                                       const marketShare = {
@@ -1791,7 +1879,7 @@ It would also be helpful if you described:
                                           )}
 
                                           {/* Bank Data */}
-                                      {payload.map((entry, index) => (
+                                      {payload.map((entry: any, index: number) => (
                                             <div key={index} className="flex items-center gap-2 text-[9px]">
                                           <div 
                                             className="w-2 h-2 rounded-full" 
@@ -2770,7 +2858,7 @@ It would also be helpful if you described:
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-6 mb-10">
+                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 mb-10">
                           <div className="rounded-lg bg-bg-surface shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
                             <div className="text-xl font-bold text-[#f9fafb]">84 out of 100</div>
                             <div className="text-xs text-[#a7f3d0]">Pass</div>
@@ -2865,12 +2953,12 @@ It would also be helpful if you described:
 
                               <Tooltip
                                 cursor={false}
-                                content={({ active, payload, label }) => {
+                                content={({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string }) => {
                                   if (active && payload && payload.length) {
                                     return (
                                       <div className="bg-black border border-[#1a1a1a] rounded-lg p-3 shadow-2xl shadow-black/50">
                                         <p className="text-[#a1a1aa] text-[10px] mb-1.5">{label}</p>
-                                        {payload.map((entry, index) => (
+                                        {payload.map((entry: any, index: number) => (
                                           <div key={index} className="flex items-center gap-2 text-[9px]">
                                             <div
                                               className="w-2 h-2 rounded-full"
@@ -3290,7 +3378,7 @@ It would also be helpful if you described:
                         </div>
 
                         {/* Left and Right Containers */}
-                        <div className="grid grid-cols-2 gap-6 mb-10">
+                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 mb-10">
                           {/* Left Container - Pricing Info */}
                           <div className="rounded-lg bg-bg-surface shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
                             <div className="text-xl font-bold text-[#f9fafb]">US$ 0.00</div>
