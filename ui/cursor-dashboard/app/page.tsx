@@ -36,6 +36,7 @@ import Image from "next/image"
 import { useState, useEffect, useRef } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { AssistantBubble } from "@/components/AssistantBubble"
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, ReferenceLine, Label } from "recharts"
 import { CalendarIcon, Copy, RefreshCw, ImageUp, Camera, FolderClosed, Github, AlertTriangle } from "lucide-react"
 import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema } from "@/types/api.schemas"
@@ -1242,7 +1243,7 @@ It would also be helpful if you described:
                                 />
                               </div>
                               <div className="flex-1">
-                                <div className="text-xs text-[#f9fafb] leading-relaxed">{message.content}</div>
+                                <AssistantBubble text={message.content} />
                                 {/* Control icons for assistant messages (left-aligned) */}
                                 <div className="flex gap-2 mt-1 text-gray-400 hover:text-gray-600 cursor-pointer justify-start">
                                   <Copy 

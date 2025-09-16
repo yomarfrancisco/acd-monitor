@@ -151,3 +151,42 @@
   @apply transition-colors duration-200 motion-reduce:transition-none;
   @apply flex items-center gap-2 sm:whitespace-nowrap;
 }
+
+/* Scoped markdown container: NO global font changes */
+.assistant-md {
+  font: inherit;
+  line-height: inherit;
+  color: inherit;
+  --gap: 0.5rem;
+  word-break: break-word;   /* long tokens/URLs wrap */
+  white-space: pre-wrap;    /* preserve single newlines for readability */
+}
+
+.assistant-md p { margin: var(--gap) 0; }
+.assistant-md ul, .assistant-md ol { margin: var(--gap) 0; padding-left: 1.25rem; }
+.assistant-md li { margin: .25rem 0; list-style: initial; }
+.assistant-md strong { font-weight: 700; }
+.assistant-md em { font-style: italic; }
+
+/* Inline code + blocks (compatible with highlight.js theme) */
+.assistant-md code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  background: rgba(255, 255, 255, .06);
+  padding: .1em .35em;
+  border-radius: 4px;
+}
+
+/* Ensure fenced blocks are readable and scroll horizontally if long */
+.assistant-md pre {
+  background: rgba(255, 255, 255, .06);
+  border-radius: 8px;
+  padding: .75rem;
+  overflow-x: auto;
+  margin: var(--gap) 0;
+}
+
+/* Math blocks may overflow; allow horizontal scroll */
+.assistant-md .katex-display {
+  overflow-x: auto;
+  padding: .25rem 0;
+}
