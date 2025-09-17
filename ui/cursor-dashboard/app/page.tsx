@@ -1260,7 +1260,7 @@ It would also be helpful if you described:
                 )}
 
               {/* Chat Interface */}
-              <div className={`chat-layout mt-2`}>
+              <div className={`${hasEngaged ? 'chat-layout' : 'prechat-layout'} mt-2`}>
                 <div id="chat-scroll" ref={scrollRef} className="chat-scroll">
                   {hasEngaged ? (
                     <div className="space-y-4">

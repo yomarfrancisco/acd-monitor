@@ -203,17 +203,27 @@
   padding-bottom: 12px;
 }
 
-/* Chat layout owns the viewport and prevents page scroll */
-.chat-layout {
-  height: 100dvh;              /* correct mobile viewport height */
-  display: grid;
-  grid-template-rows: 1fr auto;/* messages area + composer */
-  overflow: hidden;            /* body never scrolls */
+/* Pre-chat: normal document flow, no fixed height */
+.prechat-layout {
+  display: block;
+  height: auto;
+  overflow: visible;
+}
+.prechat-layout .chat-scroll {
+  min-height: auto;
+  height: auto;
+  overflow: visible;
 }
 
-/* The scrollable messages pane */
+/* Engaged chat: own the viewport, internal scroll */
+.chat-layout {
+  height: 100dvh;                 /* keep fixed viewport height */
+  display: grid;
+  grid-template-rows: 1fr auto;   /* messages + composer */
+  overflow: hidden;               /* body never scrolls */
+}
 .chat-scroll {
-  min-height: 0;               /* allow the grid child to shrink */
+  min-height: 0;                  /* allow shrinking */
   overflow-y: auto;
 }
 
