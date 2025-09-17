@@ -1244,13 +1244,13 @@ It would also be helpful if you described:
                 )}
 
               {/* Chat Interface */}
-              <div className={`${hasEngaged ? "h-[60vh]" : "min-h-[45vh]"} flex flex-col mt-2`}>
+              <div className={`chat-layout ${hasEngaged ? "h-[60vh]" : "min-h-[45vh]"} flex flex-col mt-2 ${chatStarted ? 'chat-started' : ''}`}>
                   {/* Chat Messages Area */}
                   {hasEngaged && (
                     <div
                       id="chat-scroll"
-                      className={`flex-1 overflow-y-auto min-h-0 space-y-4 ${
-                        chatStarted ? "mb-2 h-auto" : "mb-4 h-[60vh] min-h-[45vh]"
+                      className={`chat-scroll flex-1 overflow-y-auto min-h-0 space-y-4 ${
+                        chatStarted ? "h-auto" : "h-[60vh] min-h-[45vh]"
                       }`}
                     >
                       {messages.map((message, index) => (
@@ -1315,7 +1315,7 @@ It would also be helpful if you described:
                   )}
 
                   {/* Input Area */}
-                  <div className={`composer ${chatStarted ? 'composer--tight' : ''} ${hasEngaged ? "mt-auto" : "flex flex-col items-center justify-center space-y-5"}`}>
+                  <div className={`composer ${hasEngaged ? "mt-auto" : "flex flex-col items-center justify-center space-y-5"}`}>
                   <div className="w-full space-y-3 mx-4 sm:mx-0">
                     <div className="agents-no-zoom-wrapper" data-testid="agents-no-zoom-wrapper">
                       <div className="relative">

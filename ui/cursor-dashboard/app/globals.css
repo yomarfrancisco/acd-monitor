@@ -192,17 +192,17 @@
   padding: .25rem 0;
 }
 
-/* Composer spacing - default padding (current look) */
-.composer { 
-  padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)); 
-  padding-left: .75rem; 
-  padding-right: .75rem; 
-  padding-top: .5rem; 
+/* Default composer padding (pre-chat look) */
+.composer {
+  padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)); /* ~24px + safe-area */
+  padding-left: .75rem;
+  padding-right: .75rem;
+  padding-top: .5rem;
 }
 
-/* tighter gap only after chat has started */
-.composer--tight { 
-  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom)); 
+/* After chat starts: visibly tighter to frame (~50% of old gap) */
+.chat-started .composer {
+  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom)); /* ~12px + safe-area */
 }
 
 /* ensure grid row can shrink; safe no-op if class is present */
