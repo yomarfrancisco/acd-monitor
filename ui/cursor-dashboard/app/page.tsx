@@ -266,10 +266,26 @@ export default function CursorDashboard() {
   const triggerTextRef = useRef<HTMLButtonElement | null>(null)
   const firstOptionRef = useRef<HTMLButtonElement | null>(null)
   const lastTriggerUsed = useRef<'icon' | 'text'>('text')
+  
+  // Messages scroll ref
+  const scrollRef = useRef<HTMLDivElement | null>(null)
+
+  // Scroll to bottom helper
+  function scrollToBottom(behavior: ScrollBehavior = 'auto') {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollTo({ top: el.scrollHeight, behavior });
+  }
 
   useEffect(() => {
     setIsClient(true)
   }, [])
+
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    if (!scrollRef.current) return;
+    scrollToBottom('smooth');
+  }, [messages.length])
 
   // Handle click outside to close upload menu and role dropdown
   useEffect(() => {
@@ -429,6 +445,9 @@ export default function CursorDashboard() {
     const messageContent = customMessage || inputValue.trim()
     if (!messageContent) return
 
+    // Clear input immediately
+    setInputValue("")
+    
     // Show typing loader immediately
     setIsAssistantTyping(true)
 
@@ -444,6 +463,9 @@ export default function CursorDashboard() {
     setHasEngaged(true)
     // once the first message is actually sent, lock this in
     setHasStartedChat(true)
+    
+    // Scroll to bottom after adding user message
+    requestAnimationFrame(() => scrollToBottom('auto'))
 
     // Check if we should use the API or local mock
     const useApi = process.env.NEXT_PUBLIC_AGENT_CHAT_ENABLED === 'true'
@@ -631,8 +653,6 @@ It would also be helpful if you described:
       setMessages((prev) => [...prev, agentResponse])
     }, 1000)
     }
-
-    setInputValue("")
   }
 
   // Helper function to copy message content to clipboard
@@ -1242,7 +1262,10 @@ It would also be helpful if you described:
               <div className={`${hasEngaged ? "h-[60vh]" : "min-h-[55vh]"} flex flex-col mt-2`}>
                   {/* Chat Messages Area */}
                   {hasEngaged && (
-                    <div className="flex-1 overflow-y-auto mb-4 space-y-4">
+                    <div
+                      ref={scrollRef}
+                      className="flex-1 overflow-y-auto mb-4 space-y-4"
+                    >
                       {messages.map((message, index) => (
                         <div key={message.id} className="w-full">
                           {message.type === "agent" ? (
