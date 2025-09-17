@@ -192,50 +192,15 @@
   padding: .25rem 0;
 }
 
-/* Page frame: controls the margin to the device edge */
-.page-frame {
-  /* keep whatever existing side/top padding you had */
-  padding-bottom: 24px; /* current look */
+/* Composer spacing - default padding (current look) */
+.composer { 
+  padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)); 
+  padding-left: .75rem; 
+  padding-right: .75rem; 
+  padding-top: .5rem; 
 }
 
-/* After the first user message: reduce the gap ~50% */
-.page-frame--tight {
-  padding-bottom: 12px;
+/* tighter gap only after chat has started */
+.composer--tight { 
+  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom)); 
 }
-
-/* Pre-chat: normal document flow, no fixed height */
-.prechat-layout {
-  display: block;
-  height: auto;
-  overflow: visible;
-}
-.prechat-layout .chat-scroll {
-  min-height: auto;
-  height: auto;
-  overflow: visible;
-}
-
-/* Engaged chat: own the viewport, internal scroll */
-.chat-layout {
-  height: 100dvh;                 /* keep fixed viewport height */
-  display: grid;
-  grid-template-rows: 1fr auto;   /* messages + composer */
-  overflow: hidden;               /* body never scrolls */
-}
-.chat-scroll {
-  min-height: 0;                  /* allow shrinking */
-  overflow-y: auto;
-}
-
-/* Composer spacing (unchanged look by default) */
-.composer {
-  padding: 10px 12px calc(16px + env(safe-area-inset-bottom));
-}
-
-/* Tighter bottom gap ONLY after chat is engaged */
-.composer--engaged {
-  padding-bottom: calc(8px + env(safe-area-inset-bottom));
-}
-
-/* ensure grid row can shrink; safe no-op if class is present */
-#chat-scroll { min-height: 0; }
