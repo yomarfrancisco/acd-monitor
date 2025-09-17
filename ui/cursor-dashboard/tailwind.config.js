@@ -8,18 +8,29 @@ module.exports = {
   theme: {
     extend: {
       animation: {
-        'glow': 'glow 2s ease-in-out infinite',
+        'multiState': 'multiState 4s ease-in-out infinite',
       },
       keyframes: {
-        glow: {
-          '0%': { 
-            filter: 'drop-shadow(0 0 5px rgba(255, 255, 255, 0.3)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.2)) drop-shadow(0 0 15px rgba(255, 255, 255, 0.1))'
+        multiState: {
+          '0%, 20%': {
+            opacity: '1',
+            transform: 'scale(1)',
           },
-          '50%': { 
-            filter: 'drop-shadow(0 0 10px rgba(255, 255, 255, 0.6)) drop-shadow(0 0 20px rgba(255, 255, 255, 0.4)) drop-shadow(0 0 30px rgba(255, 255, 255, 0.2))'
+          '25%, 45%': {
+            opacity: '0',
+            transform: 'scale(0.8)',
           },
-          '100%': { 
-            filter: 'drop-shadow(0 0 5px rgba(255, 255, 255, 0.3)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.2)) drop-shadow(0 0 15px rgba(255, 255, 255, 0.1))'
+          '50%, 70%': {
+            opacity: '0',
+            transform: 'scale(0.8)',
+          },
+          '75%, 95%': {
+            opacity: '0',
+            transform: 'scale(0.8)',
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'scale(1)',
           },
         },
       },
