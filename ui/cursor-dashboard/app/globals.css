@@ -167,14 +167,14 @@
   line-height: 1.5;   /* leading-relaxed equivalent */
   color: #f9fafb;     /* matches user bubble text color */
   font-weight: 400;   /* normal weight */
-  --gap: 0.2rem;
   word-break: break-word;   /* long tokens/URLs wrap */
   white-space: pre-wrap;    /* preserve single newlines for readability */
 }
 
-.assistant-md p { margin: var(--gap) 0; }
-.assistant-md ul, .assistant-md ol { margin: var(--gap) 0; padding-left: 1.25rem; }
-.assistant-md li { margin: .25rem 0; list-style: initial; }
+/* Remove all paragraph spacing - tight paragraphs only */
+.assistant-md p { margin: 0; }
+.assistant-md ul, .assistant-md ol { margin: 0; padding-left: 1.25rem; }
+.assistant-md li { margin: 0; list-style: initial; }
 .assistant-md strong { font-weight: 700; }
 .assistant-md em { font-style: italic; }
 
@@ -192,7 +192,7 @@
   border-radius: 8px;
   padding: .75rem;
   overflow-x: auto;
-  margin: var(--gap) 0;
+  margin: 0;
 }
 
 /* Math blocks may overflow; allow horizontal scroll */
