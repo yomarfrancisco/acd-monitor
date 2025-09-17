@@ -1325,8 +1325,17 @@ It would also be helpful if you described:
                     </div>
                   ) : (
                     <div className="flex flex-col items-center justify-center space-y-5 h-full">
-                      {/* Quick action buttons */}
-                      <div className="flex flex-wrap gap-2 justify-center">
+                      {/* Empty state content can go here if needed */}
+                    </div>
+                  )}
+                </div>
+
+                {/* Composer */}
+                <div className={`composer ${hasEngaged ? "composer--engaged" : ""}`}>
+                  <div className="w-full space-y-3 mx-4 sm:mx-0">
+                    {/* Quick Action Buttons - only show when not engaged */}
+                    {!hasEngaged && (
+                      <div className="flex flex-wrap gap-2 justify-center mb-4">
                         <button
                           className="agents-quick-btn"
                           onClick={() => handleSendMessage("Analyze algorithms")}
@@ -1356,13 +1365,7 @@ It would also be helpful if you described:
                           Court-ready report
                         </button>
                       </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Composer */}
-                <div className={`composer ${hasEngaged ? "composer--engaged" : ""}`}>
-                  <div className="w-full space-y-3 mx-4 sm:mx-0">
+                    )}
                     <div className="agents-no-zoom-wrapper" data-testid="agents-no-zoom-wrapper">
                       <div className="relative">
                       <textarea
