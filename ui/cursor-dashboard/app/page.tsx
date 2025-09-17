@@ -1318,8 +1318,11 @@ It would also be helpful if you described:
                                 className="h-4 w-4 object-contain"
                               />
                             </div>
-                            <div className="flex-1 text-xs text-[#f9fafb] leading-relaxed">
-                              <div className="inline-block w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                            <div className="flex-1 text-xs lg:text-base lg:leading-5 text-[#f9fafb] leading-relaxed">
+                              <div className="flex items-center gap-2">
+                                <div className="inline-block w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                                <span className="text-gray-400 opacity-70">Thinking...</span>
+                              </div>
                             </div>
                           </div>
                         </div>
