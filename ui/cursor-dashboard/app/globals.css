@@ -143,14 +143,13 @@
   50% { opacity: 0; } 
 }
 
-/* Custom animation for rotating tigre logo */
-@keyframes rotation {
-  0% { 
-    transform: rotate(0deg);
-  }
-  100% { 
-    transform: rotate(360deg);
-  }
+/* Custom animation for scale + pulse tigre logo */
+@keyframes scalePulse {
+  0% { transform: scale(1); opacity: 0.8; }
+  25% { transform: scale(1.1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.9; }
+  75% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.8; }
 }
 
 .agents-quick-btn {
