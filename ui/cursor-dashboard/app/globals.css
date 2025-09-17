@@ -205,11 +205,13 @@
   padding-bottom: calc(0.75rem + env(safe-area-inset-bottom)); 
 }
 
-/* Desktop-only message font equal to composer/input font */
+/* Desktop-only: match assistant message font size to input */
 @media (min-width: 1024px) {
-  .assistant-bubble .assistant-md,
-  .max-w-\[60\%\].bg-\[#2a2a2a\] {
-    font-size: 1rem;       /* match the textarea text-base (16px) */
-    line-height: 1.5;      /* match the textarea leading-5 */
+  .assistant-md p,
+  .assistant-md li,
+  .assistant-md code,
+  .assistant-md pre {
+    font-size: inherit;
+    line-height: inherit;
   }
 }

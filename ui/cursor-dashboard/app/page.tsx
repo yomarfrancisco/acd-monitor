@@ -1298,7 +1298,7 @@ It would also be helpful if you described:
                             </div>
                           ) : (
                             <div className="flex justify-end">
-                              <div className="max-w-[60%] bg-[#2a2a2a] rounded-lg px-3 py-2 text-xs text-[#f9fafb]">
+                              <div className="max-w-[60%] bg-[#2a2a2a] rounded-lg px-3 py-2 text-xs lg:text-base lg:leading-5 text-[#f9fafb]">
                                 {message.content}
                               </div>
                             </div>
