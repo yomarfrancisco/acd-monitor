@@ -1270,13 +1270,13 @@ It would also be helpful if you described:
                         <div key={message.id} className="w-full">
                           {message.type === "agent" ? (
                             <div className="flex items-start gap-3">
-                              <div className="h-20 w-20 rounded-full flex items-center justify-center overflow-hidden bg-transparent mt-1 flex-shrink-0">
+                              <div className="h-24 w-24 rounded-full flex items-center justify-center overflow-hidden bg-transparent mt-1 flex-shrink-0">
                                 <Image
                                   src="/icons/tigre.png"
                                   alt="Agent"
-                                  width={80}
-                                  height={80}
-                                  className="h-14 w-14 object-contain"
+                                  width={96}
+                                  height={96}
+                                  className="h-18 w-18 object-contain"
                                 />
                               </div>
                               <div className="flex-1">
@@ -1309,13 +1309,13 @@ It would also be helpful if you described:
                       {isAssistantTyping && (
                         <div className="w-full">
                           <div className="flex items-start gap-3">
-                            <div className="h-20 w-20 rounded-full flex items-center justify-center overflow-hidden bg-transparent mt-1 flex-shrink-0">
+                            <div className="h-24 w-24 rounded-full flex items-center justify-center overflow-hidden bg-transparent mt-1 flex-shrink-0">
                               <Image
                                 src="/icons/tigre.png"
                                 alt="Agent"
-                                width={80}
-                                height={80}
-                                className="h-14 w-14 object-contain"
+                                width={96}
+                                height={96}
+                                className="h-18 w-18 object-contain"
                               />
                             </div>
                             <div className="flex-1 text-xs lg:text-base lg:leading-5 text-[#f9fafb] leading-relaxed">
