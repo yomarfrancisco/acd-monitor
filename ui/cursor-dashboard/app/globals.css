@@ -241,12 +241,14 @@
     to bottom,
     transparent 0%,
     black 10px,
-    black 100%
+    black calc(100% - 10px),
+    transparent 100%
   );
   -webkit-mask-image: linear-gradient(
     to bottom,
     transparent 0%,
     black 10px,
-    black 100%
+    black calc(100% - 10px),
+    transparent 100%
   );
 }
