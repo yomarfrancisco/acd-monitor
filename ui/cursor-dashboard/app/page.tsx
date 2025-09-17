@@ -1259,7 +1259,7 @@ It would also be helpful if you described:
                 )}
 
               {/* Chat Interface */}
-              <div className={`${hasEngaged ? "h-[60vh]" : "min-h-[55vh]"} flex flex-col mt-2`}>
+              <div className={`${hasEngaged ? "h-[75vh]" : "min-h-[70vh]"} flex flex-col mt-2`}>
                   {/* Chat Messages Area */}
                   {hasEngaged && (
                     <div
