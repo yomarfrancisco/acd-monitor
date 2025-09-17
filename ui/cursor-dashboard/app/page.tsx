@@ -1244,14 +1244,12 @@ It would also be helpful if you described:
                 )}
 
               {/* Chat Interface */}
-              <div className={`chat-layout ${hasEngaged ? "h-[60vh]" : "min-h-[45vh]"} flex flex-col mt-2 ${chatStarted ? 'chat-started' : ''}`}>
+              <div className={`chat-layout ${hasEngaged ? "h-[60vh] chat-layout--engaged" : "min-h-[45vh]"} flex flex-col mt-2`}>
                   {/* Chat Messages Area */}
                   {hasEngaged && (
                     <div
                       id="chat-scroll"
-                      className={`chat-scroll flex-1 overflow-y-auto min-h-0 space-y-4 ${
-                        chatStarted ? "h-auto" : "h-[60vh] min-h-[45vh]"
-                      }`}
+                      className="chat-scroll flex-1 overflow-y-auto min-h-0 space-y-4 h-auto"
                     >
                       {messages.map((message, index) => (
                         <div key={message.id} className="w-full">
