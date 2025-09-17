@@ -1221,7 +1221,7 @@ It would also be helpful if you described:
           )}
 
           {/* Main Content */}
-          <main className={`${activeTab === "dashboard" ? "min-w-0 p-5" : "flex-1 pt-8 px-5 pb-5 max-w-5xl mx-auto"}`}>
+          <main className={`page-frame ${hasEngaged ? 'page-frame--tight' : ''} ${activeTab === "dashboard" ? "min-w-0 p-5" : "flex-1 pt-8 px-5 pb-5 max-w-5xl mx-auto"}`}>
             {activeTab === "agents" && (
               <div className="max-w-5xl mx-auto">
                 {/* <CHANGE> Added main headline for Agents tab - only show when no messages */}
@@ -1244,7 +1244,7 @@ It would also be helpful if you described:
                 )}
 
               {/* Chat Interface */}
-              <div className={`chat-layout ${hasEngaged ? "h-[60vh] chat-layout--engaged" : "min-h-[45vh]"} flex flex-col mt-2`}>
+              <div className={`chat-layout mt-2`}>
                   {/* Chat Messages Area */}
                   {hasEngaged && (
                     <div

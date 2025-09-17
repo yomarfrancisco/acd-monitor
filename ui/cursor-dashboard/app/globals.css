@@ -192,16 +192,22 @@
   padding: .25rem 0;
 }
 
+/* Page frame: controls the margin to the device edge */
+.page-frame {
+  /* keep whatever existing side/top padding you had */
+  padding-bottom: 24px; /* current look */
+}
+
+/* After the first user message: reduce the gap ~50% */
+.page-frame--tight {
+  padding-bottom: 12px;
+}
+
 /* Chat layout grid - default: lots of space above input */
 .chat-layout {
   display: grid;
   grid-template-rows: 1fr auto;
   height: 100%;
-}
-
-/* After engagement: less space above input (input moves closer to bottom) */
-.chat-layout--engaged {
-  grid-template-rows: 2fr 1fr;
 }
 
 /* Composer padding - consistent regardless of engagement */
