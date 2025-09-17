@@ -8,30 +8,15 @@ module.exports = {
   theme: {
     extend: {
       animation: {
-        'multiState': 'multiState 4s ease-in-out infinite',
+        'scalePulse': 'scalePulse 2s ease-in-out infinite',
       },
       keyframes: {
-        multiState: {
-          '0%, 20%': {
-            opacity: '1',
-            transform: 'scale(1)',
-          },
-          '25%, 45%': {
-            opacity: '0',
-            transform: 'scale(0.8)',
-          },
-          '50%, 70%': {
-            opacity: '0',
-            transform: 'scale(0.8)',
-          },
-          '75%, 95%': {
-            opacity: '0',
-            transform: 'scale(0.8)',
-          },
-          '100%': {
-            opacity: '1',
-            transform: 'scale(1)',
-          },
+        scalePulse: {
+          '0%': { transform: 'scale(1)', opacity: '0.8' },
+          '25%': { transform: 'scale(1.1)', opacity: '1' },
+          '50%': { transform: 'scale(1.2)', opacity: '0.9' },
+          '75%': { transform: 'scale(1.1)', opacity: '1' },
+          '100%': { transform: 'scale(1)', opacity: '0.8' },
         },
       },
       colors: {

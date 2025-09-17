@@ -1310,29 +1310,13 @@ It would also be helpful if you described:
                         <div className="w-full">
                           <div className="flex items-start gap-3">
                             <div className="h-24 w-24 rounded-full flex items-center justify-center overflow-hidden bg-transparent mt-1 flex-shrink-0">
-                              <div className="relative h-18 w-18">
-                                <Image
-                                  src="/icons/tigre.png"
-                                  alt="Agent"
-                                  width={96}
-                                  height={96}
-                                  className="h-18 w-18 object-contain absolute inset-0 animate-pulse opacity-0 animate-[multiState_4s_ease-in-out_infinite]"
-                                />
-                                <Image
-                                  src="/icons/tigre2.png"
-                                  alt="Agent"
-                                  width={96}
-                                  height={96}
-                                  className="h-18 w-18 object-contain absolute inset-0 animate-pulse opacity-0 animate-[multiState_4s_ease-in-out_infinite_1s]"
-                                />
-                                <Image
-                                  src="/icons/tigre3.png"
-                                  alt="Agent"
-                                  width={96}
-                                  height={96}
-                                  className="h-18 w-18 object-contain absolute inset-0 animate-pulse opacity-0 animate-[multiState_4s_ease-in-out_infinite_2s]"
-                                />
-                              </div>
+                              <Image
+                                src="/icons/tigre3.png"
+                                alt="Agent"
+                                width={96}
+                                height={96}
+                                className="h-18 w-18 object-contain animate-scalePulse"
+                              />
                             </div>
                             <div className="flex-1 text-xs lg:text-base lg:leading-5 text-[#f9fafb] leading-relaxed">
                               <div className="flex items-center gap-2">
