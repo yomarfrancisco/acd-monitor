@@ -1270,13 +1270,13 @@ It would also be helpful if you described:
                         <div key={message.id} className="w-full">
                           {message.type === "agent" ? (
                             <div className="flex items-start gap-3">
-                              <div className="h-6 w-6 rounded-full flex items-center justify-center overflow-hidden bg-transparent mt-1 flex-shrink-0">
+                              <div className="h-18 w-18 rounded-full flex items-center justify-center overflow-hidden bg-transparent mt-1 flex-shrink-0">
                                 <Image
                                   src="/icons/icon-americas.png"
                                   alt="Agent"
-                                  width={24}
-                                  height={24}
-                                  className="h-4 w-4 object-contain"
+                                  width={72}
+                                  height={72}
+                                  className="h-12 w-12 object-contain"
                                 />
                               </div>
                               <div className="flex-1">
