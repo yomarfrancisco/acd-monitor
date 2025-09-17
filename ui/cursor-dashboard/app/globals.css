@@ -143,6 +143,15 @@
   50% { opacity: 0; } 
 }
 
+/* Custom animation for color shifting tigre logo */
+@keyframes colorShift {
+  0% { filter: hue-rotate(0deg) saturate(1); }
+  25% { filter: hue-rotate(90deg) saturate(1.2); }
+  50% { filter: hue-rotate(180deg) saturate(1); }
+  75% { filter: hue-rotate(270deg) saturate(1.2); }
+  100% { filter: hue-rotate(360deg) saturate(1); }
+}
+
 .agents-quick-btn {
   @apply rounded-full px-3 py-2 text-[11px] md:text-[13px] leading-[1.2];
   @apply border border-[#2a2a2a] bg-bg-tile hover:bg-[#2a2a2a];
