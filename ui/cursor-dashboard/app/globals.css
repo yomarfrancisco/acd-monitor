@@ -230,13 +230,13 @@
   mask-image: linear-gradient(
     to bottom,
     transparent 0%,
-    black 20px,
+    black 10px,
     black 100%
   );
   -webkit-mask-image: linear-gradient(
     to bottom,
     transparent 0%,
-    black 20px,
+    black 10px,
     black 100%
   );
 }
