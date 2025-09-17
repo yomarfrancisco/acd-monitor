@@ -1264,7 +1264,7 @@ It would also be helpful if you described:
                   {hasEngaged && (
                     <div
                       ref={scrollRef}
-                      className="flex-1 overflow-y-auto mb-4 space-y-4"
+                      className="flex-1 overflow-y-auto mb-4 space-y-4 messages-container"
                     >
                       {messages.map((message, index) => (
                         <div key={message.id} className="w-full">

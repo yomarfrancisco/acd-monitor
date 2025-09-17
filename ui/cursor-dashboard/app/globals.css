@@ -224,3 +224,19 @@
     line-height: inherit;
   }
 }
+
+/* Smooth fade-out effect for scrollable message container */
+.messages-container {
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 20px,
+    black 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 20px,
+    black 100%
+  );
+}
