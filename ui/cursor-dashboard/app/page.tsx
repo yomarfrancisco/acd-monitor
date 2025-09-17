@@ -1284,12 +1284,12 @@ It would also be helpful if you described:
                                 {/* Control icons for assistant messages (left-aligned) */}
                                 <div className="flex gap-2 mt-1 text-gray-400 hover:text-gray-600 cursor-pointer justify-start">
                                   <Copy 
-                                    className="w-3 h-3 hover:text-[#86a789]" 
+                                    className="w-3 h-3 lg:w-4 lg:h-4 hover:text-[#86a789]" 
                                     onClick={() => handleCopy(message.content)}
                                     aria-label="Copy"
                                   />
                                   <RefreshCw 
-                                    className="w-3 h-3 hover:text-[#86a789]" 
+                                    className="w-3 h-3 lg:w-4 lg:h-4 hover:text-[#86a789]" 
                                     onClick={() => handleRegenerate(index)}
                                     aria-label="Regenerate"
                                   />
