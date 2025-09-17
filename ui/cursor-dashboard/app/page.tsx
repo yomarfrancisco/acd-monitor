@@ -249,6 +249,11 @@ export default function CursorDashboard() {
   // prefer explicit flip on first send; keep derived as safety net
   const chatStarted = hasStartedChat || chatStartedFromHistory
   
+  // Debug: Log chat state changes
+  useEffect(() => {
+    console.log('Chat State:', { hasStartedChat, chatStartedFromHistory, chatStarted, hasEngaged })
+  }, [hasStartedChat, chatStartedFromHistory, chatStarted, hasEngaged])
+  
   // Upload menu state
   const [isUploadMenuOpen, setIsUploadMenuOpen] = useState<boolean>(false)
   const [uploadMenuAnchorRef, setUploadMenuAnchorRef] = useState<HTMLButtonElement | null>(null)
@@ -1242,7 +1247,7 @@ It would also be helpful if you described:
               <div className={`${hasEngaged ? "h-[60vh]" : "min-h-[45vh]"} flex flex-col mt-2`}>
                   {/* Chat Messages Area */}
                   {hasEngaged && (
-                    <div className="flex-1 overflow-y-auto mb-4 space-y-4">
+                    <div className={`flex-1 overflow-y-auto space-y-4 ${chatStarted ? "mb-2" : "mb-4"} ${chatStarted ? "h-auto" : "h-[60vh] min-h-[45vh]"}`}>
                       {messages.map((message, index) => (
                         <div key={message.id} className="w-full">
                           {message.type === "agent" ? (
