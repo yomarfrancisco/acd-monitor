@@ -1239,7 +1239,7 @@ It would also be helpful if you described:
                 )}
 
               {/* Chat Interface */}
-              <div className={`${hasEngaged ? "h-[60vh]" : "min-h-[45vh]"} flex flex-col mt-2`}>
+              <div className={`${hasEngaged ? "h-[60vh]" : "min-h-[55vh]"} flex flex-col mt-2`}>
                   {/* Chat Messages Area */}
                   {hasEngaged && (
                     <div className="flex-1 overflow-y-auto mb-4 space-y-4">
@@ -1305,7 +1305,7 @@ It would also be helpful if you described:
                   )}
 
                   {/* Input Area */}
-                  <div className={`composer ${chatStarted ? 'composer--tight' : ''} ${hasEngaged ? "mt-auto" : "flex flex-col items-center justify-center space-y-5"}`}>
+                  <div className={`composer ${chatStarted ? 'composer--tight' : ''} ${hasEngaged ? "mt-auto pb-2" : "flex flex-col items-center justify-center space-y-5"}`}>
                   <div className="w-full space-y-3 mx-4 sm:mx-0">
                     <div className="agents-no-zoom-wrapper" data-testid="agents-no-zoom-wrapper">
                       <div className="relative">
@@ -1496,7 +1496,7 @@ It would also be helpful if you described:
 
                       {/* Quick Action Buttons - only show when not engaged */}
                       {!hasEngaged && (
-                        <div className="space-y-4 mt-8">
+                        <div className="space-y-4 mt-6">
                       <p className="text-[10px] text-[#a1a1aa] text-center">Try these examples to get started</p>
 
                           <div className="flex flex-wrap gap-2 justify-center max-w-4xl mx-auto sm:flex-nowrap">
