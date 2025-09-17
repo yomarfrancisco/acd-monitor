@@ -16,6 +16,7 @@ import {
   Download,
   User,
   SquareChevronRight,
+  Calculator,
   SquarePlus,
   ShieldCheck,
   Upload,
@@ -203,6 +204,14 @@ export default function CursorDashboard() {
   })
   const [isClient, setIsClient] = useState(false)
   const [inputValue, setInputValue] = useState("")
+  const scrollRef = useRef<HTMLDivElement | null>(null)
+
+  function scrollToBottom(smooth = true) {
+    const el = scrollRef.current;
+    if (!el) return;
+    const behavior = smooth ? "smooth" : "auto";
+    el.scrollTo({ top: el.scrollHeight, behavior });
+  }
   const [activeSidebarItem, setActiveSidebarItem] = useState<
     | "overview"
     | "configuration"
@@ -434,10 +443,14 @@ export default function CursorDashboard() {
     const messageContent = customMessage || inputValue.trim()
     if (!messageContent) return
 
-    // Show typing loader immediately
-    setIsAssistantTyping(true)
+    // 1) Flip layout immediately and clear the input
+    setHasEngaged(true)
+    setInputValue("")
 
-    // Add user message
+    // 2) Scroll to bottom right away (no jump)
+    requestAnimationFrame(() => scrollToBottom(false))
+
+    // 3) Add the user message immediately
     const userMessage = {
       id: Date.now().toString(),
       type: "user" as const,
@@ -446,7 +459,9 @@ export default function CursorDashboard() {
     }
 
     setMessages((prev) => [...prev, userMessage])
-    setHasEngaged(true)
+
+    // Show typing loader immediately
+    setIsAssistantTyping(true)
     // once the first message is actually sent, lock this in
     setHasStartedChat(true)
 
@@ -637,7 +652,8 @@ It would also be helpful if you described:
     }, 1000)
     }
 
-    setInputValue("")
+    // 6) Keep the scroll pinned as tokens stream/arrive
+    requestAnimationFrame(() => scrollToBottom(true))
   }
 
   // Helper function to copy message content to clipboard
@@ -1245,12 +1261,9 @@ It would also be helpful if you described:
 
               {/* Chat Interface */}
               <div className={`chat-layout mt-2`}>
-                  {/* Chat Messages Area */}
-                  {hasEngaged && (
-                    <div
-                      id="chat-scroll"
-                      className="chat-scroll flex-1 overflow-y-auto min-h-0 space-y-4 h-auto"
-                    >
+                <div id="chat-scroll" ref={scrollRef} className="chat-scroll">
+                  {hasEngaged ? (
+                    <div className="space-y-4">
                       {messages.map((message, index) => (
                         <div key={message.id} className="w-full">
                           {message.type === "agent" ? (
@@ -1310,10 +1323,45 @@ It would also be helpful if you described:
                         </div>
                       )}
                     </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center space-y-5 h-full">
+                      {/* Quick action buttons */}
+                      <div className="flex flex-wrap gap-2 justify-center">
+                        <button
+                          className="agents-quick-btn"
+                          onClick={() => handleSendMessage("Analyze algorithms")}
+                        >
+                          <Bot className="w-3 h-3" />
+                          Analyze algorithms
+                        </button>
+                        <button
+                          className="agents-quick-btn"
+                          onClick={() => handleSendMessage("Calculate damages")}
+                        >
+                          <Calculator className="w-3 h-3" />
+                          Calculate damages
+                        </button>
+                        <button
+                          className="agents-quick-btn"
+                          onClick={() => handleSendMessage("Compliance check")}
+                        >
+                          <Shield className="w-3 h-3" />
+                          Compliance check
+                        </button>
+                        <button
+                          className="agents-quick-btn"
+                          onClick={() => handleSendMessage("Court-ready report")}
+                        >
+                          <FileText className="w-3 h-3" />
+                          Court-ready report
+                        </button>
+                      </div>
+                    </div>
                   )}
+                </div>
 
-                  {/* Input Area */}
-                  <div className={`composer ${hasEngaged ? "mt-auto" : "flex flex-col items-center justify-center space-y-5"}`}>
+                {/* Composer */}
+                <div className={`composer ${hasEngaged ? "composer--engaged" : ""}`}>
                   <div className="w-full space-y-3 mx-4 sm:mx-0">
                     <div className="agents-no-zoom-wrapper" data-testid="agents-no-zoom-wrapper">
                       <div className="relative">
@@ -1324,7 +1372,7 @@ It would also be helpful if you described:
                           onKeyDown={(e) => {
                             if (e.key === "Enter" && !e.shiftKey) {
                               e.preventDefault()
-                              handleSendMessage()
+                              void handleSendMessage()
                             }
                           }}
                           className="w-full h-28 bg-bg-tile rounded-lg text-[#f9fafb] pr-16 px-4 py-4 text-base md:text-base leading-5 placeholder:text-xs md:placeholder:text-base placeholder:text-[#71717a] resize-none focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50"
@@ -1502,53 +1550,14 @@ It would also be helpful if you described:
                       </div>
                     </div>
 
-                      {/* Quick Action Buttons - only show when not engaged */}
-                      {!hasEngaged && (
-                        <div className="space-y-4 mt-8">
-                      <p className="text-[10px] text-[#a1a1aa] text-center">Try these examples to get started</p>
-
-                          <div className="flex flex-wrap gap-2 justify-center max-w-4xl mx-auto sm:flex-nowrap">
-                            <button 
-                              type="button"
-                              className="agents-quick-btn"
-                            >
-                              <Search className="w-2 h-2 md:w-2.5 md:h-2.5" />
-                              Analyze algorithms
-                            </button>
-                            <button 
-                              type="button"
-                              className="agents-quick-btn"
-                            >
-                              <BarChart3 className="w-2 h-2 md:w-2.5 md:h-2.5" />
-                              Calculate damages
-                            </button>
-                            <button 
-                              type="button"
-                              className="agents-quick-btn"
-                            >
-                              <Scale className="w-2 h-2 md:w-2.5 md:h-2.5" />
-                              Compliance check
-                            </button>
-                            <button 
-                              type="button"
-                              className="agents-quick-btn"
-                            >
-                              <ClipboardList className="w-2 h-2 md:w-2.5 md:h-2.5" />
-                              Court-ready report
-                            </button>
-                      </div>
-                    </div>
-                      )}
-                  </div>
                 </div>
-              </div>
-              </div>
+              </div>              </div>
+            </div>
             )}
             {activeTab === "dashboard" && (
-              /* Dashboard View */
               <>
                 {activeSidebarItem === "overview" && (
-              <div className="space-y-3 max-w-2xl" data-probe="dash-cards-section">
+                  <div className="space-y-3 max-w-2xl" data-probe="dash-cards-section">
                 <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                   <CardContent className="p-4">
                         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">

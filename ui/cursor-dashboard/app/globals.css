@@ -203,19 +203,28 @@
   padding-bottom: 12px;
 }
 
-/* Chat layout grid - default: lots of space above input */
+/* Chat layout owns the viewport and prevents page scroll */
 .chat-layout {
+  height: 100dvh;              /* correct mobile viewport height */
   display: grid;
-  grid-template-rows: 1fr auto;
-  height: 100%;
+  grid-template-rows: 1fr auto;/* messages area + composer */
+  overflow: hidden;            /* body never scrolls */
 }
 
-/* Composer padding - consistent regardless of engagement */
+/* The scrollable messages pane */
+.chat-scroll {
+  min-height: 0;               /* allow the grid child to shrink */
+  overflow-y: auto;
+}
+
+/* Composer spacing (unchanged look by default) */
 .composer {
-  padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
-  padding-left: .75rem;
-  padding-right: .75rem;
-  padding-top: .5rem;
+  padding: 10px 12px calc(16px + env(safe-area-inset-bottom));
+}
+
+/* Tighter bottom gap ONLY after chat is engaged */
+.composer--engaged {
+  padding-bottom: calc(8px + env(safe-area-inset-bottom));
 }
 
 /* ensure grid row can shrink; safe no-op if class is present */
