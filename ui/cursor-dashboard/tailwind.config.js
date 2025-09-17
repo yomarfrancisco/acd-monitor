@@ -8,15 +8,19 @@ module.exports = {
   theme: {
     extend: {
       animation: {
-        'scalePulse': 'scalePulse 2s ease-in-out infinite',
+        'glow': 'glow 2s ease-in-out infinite',
       },
       keyframes: {
-        scalePulse: {
-          '0%': { transform: 'scale(1)', opacity: '0.8' },
-          '25%': { transform: 'scale(1.1)', opacity: '1' },
-          '50%': { transform: 'scale(1.2)', opacity: '0.9' },
-          '75%': { transform: 'scale(1.1)', opacity: '1' },
-          '100%': { transform: 'scale(1)', opacity: '0.8' },
+        glow: {
+          '0%': { 
+            filter: 'drop-shadow(0 0 5px rgba(255, 255, 255, 0.3)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.2)) drop-shadow(0 0 15px rgba(255, 255, 255, 0.1))'
+          },
+          '50%': { 
+            filter: 'drop-shadow(0 0 10px rgba(255, 255, 255, 0.6)) drop-shadow(0 0 20px rgba(255, 255, 255, 0.4)) drop-shadow(0 0 30px rgba(255, 255, 255, 0.2))'
+          },
+          '100%': { 
+            filter: 'drop-shadow(0 0 5px rgba(255, 255, 255, 0.3)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.2)) drop-shadow(0 0 15px rgba(255, 255, 255, 0.1))'
+          },
         },
       },
       colors: {

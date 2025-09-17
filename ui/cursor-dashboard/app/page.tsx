@@ -1315,7 +1315,7 @@ It would also be helpful if you described:
                                 alt="Agent"
                                 width={96}
                                 height={96}
-                                className="h-18 w-18 object-contain animate-scalePulse"
+                                className="h-18 w-18 object-contain animate-glow"
                               />
                             </div>
                             <div className="flex-1 text-xs lg:text-base lg:leading-5 text-[#f9fafb] leading-relaxed">
