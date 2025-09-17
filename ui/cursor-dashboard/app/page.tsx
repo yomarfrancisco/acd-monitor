@@ -1247,7 +1247,12 @@ It would also be helpful if you described:
               <div className={`${hasEngaged ? "h-[60vh]" : "min-h-[45vh]"} flex flex-col mt-2`}>
                   {/* Chat Messages Area */}
                   {hasEngaged && (
-                    <div className={`flex-1 overflow-y-auto space-y-4 ${chatStarted ? "mb-2" : "mb-4"} ${chatStarted ? "h-auto" : "h-[60vh] min-h-[45vh]"}`}>
+                    <div
+                      id="chat-scroll"
+                      className={`flex-1 overflow-y-auto min-h-0 space-y-4 ${
+                        chatStarted ? "mb-2 h-auto" : "mb-4 h-[60vh] min-h-[45vh]"
+                      }`}
+                    >
                       {messages.map((message, index) => (
                         <div key={message.id} className="w-full">
                           {message.type === "agent" ? (

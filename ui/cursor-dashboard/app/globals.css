@@ -204,3 +204,6 @@
 .composer--tight { 
   padding-bottom: calc(0.75rem + env(safe-area-inset-bottom)); 
 }
+
+/* ensure grid row can shrink; safe no-op if class is present */
+#chat-scroll { min-height: 0; }
