@@ -1236,7 +1236,7 @@ It would also be helpful if you described:
           )}
 
           {/* Main Content */}
-          <main className={`${activeTab === "dashboard" ? "min-w-0 p-5" : "flex-1 pt-10 px-5 pb-5 max-w-5xl mx-auto"}`}>
+          <main className={`${activeTab === "dashboard" ? "min-w-0 p-5" : "flex-1 pt-6 px-5 pb-5 max-w-5xl mx-auto"}`}>
             {activeTab === "agents" && (
               <div className="max-w-5xl mx-auto">
                 {/* <CHANGE> Added main headline for Agents tab - only show when no messages */}
@@ -1259,7 +1259,7 @@ It would also be helpful if you described:
                 )}
 
               {/* Chat Interface */}
-              <div className={`${hasEngaged ? "h-[75vh]" : "min-h-[70vh]"} flex flex-col mt-2`}>
+              <div className={`${hasEngaged ? "h-[calc(75vh+16px)]" : "min-h-[calc(70vh+16px)]"} flex flex-col mt-2`}>
                   {/* Chat Messages Area */}
                   {hasEngaged && (
                     <div
