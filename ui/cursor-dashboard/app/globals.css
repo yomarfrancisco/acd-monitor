@@ -178,6 +178,15 @@
 .assistant-md strong { font-weight: 700; }
 .assistant-md em { font-style: italic; }
 
+/* Agent message bubble styling - matches user message bubbles */
+.assistant-bubble {
+  background: #2a2a2a;        /* Same as user: bg-[#2a2a2a] */
+  border-radius: 0.5rem;      /* Same as user: rounded-lg */
+  padding: 0.5rem 0.75rem;    /* Same as user: px-3 py-2 */
+  max-width: 60%;             /* Same as user: max-w-[60%] */
+  color: #f9fafb;             /* Same as user: text-[#f9fafb] */
+}
+
 /* Inline code + blocks (compatible with highlight.js theme) */
 .assistant-md code {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
