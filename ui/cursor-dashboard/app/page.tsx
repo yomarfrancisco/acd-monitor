@@ -1361,7 +1361,15 @@ It would also be helpful if you described:
                           value={inputValue}
                           onChange={(e) => setInputValue(e.target.value)}
                           onFocus={() => setIsInputFocused(true)}
-                          onBlur={() => setIsInputFocused(false)}
+                          onBlur={() => {
+                            setIsInputFocused(false)
+                            // Reset scroll position when keyboard dismisses on mobile
+                            if (!isDesktop) {
+                              setTimeout(() => {
+                                window.scrollTo(0, 0)
+                              }, 100)
+                            }
+                          }}
                           onKeyDown={(e) => {
                             if (e.key === "Enter" && !e.shiftKey) {
                               e.preventDefault()
