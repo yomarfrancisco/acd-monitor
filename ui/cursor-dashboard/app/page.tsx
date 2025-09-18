@@ -1285,7 +1285,7 @@ It would also be helpful if you described:
                 )}
 
               {/* Chat Interface */}
-              <div className={`${hasEngaged ? "h-[calc(75vh+16px)]" : "min-h-[calc(70vh+16px)]"} flex flex-col mt-2`}>
+              <div className={`${hasEngaged ? "h-[calc(75vh+16px)]" : "min-h-[calc(50vh+16px)]"} flex flex-col mt-2`}>
                   {/* Chat Messages Area */}
                   {hasEngaged && (
                     <div
