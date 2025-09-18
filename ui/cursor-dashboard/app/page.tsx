@@ -1429,7 +1429,7 @@ It would also be helpful if you described:
                             aria-expanded={isRoleDropdownOpen}
                             className="bg-transparent text-[10px] text-[#71717a] font-medium border-none outline-none cursor-pointer hover:text-[#a1a1aa] flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]"
                           >
-                            {selectedAgent}
+                            {selectedAgent || "Jurisdiction"}
                             <ChevronDown className="w-3 h-3 text-[#71717a]" aria-hidden="true" />
                           </button>
                         </div>
@@ -1676,18 +1676,11 @@ It would also be helpful if you described:
                                     role="option"
                                     aria-selected={selectedAgent === role}
                                     tabIndex={index === 0 ? 0 : -1}
-                                    className={`px-3 py-2 text-sm cursor-pointer flex items-center gap-2 ${
+                                    className={`px-3 py-2 text-sm cursor-pointer ${
                                       roleDropdownFocusIndex === index ? 'bg-zinc-700 text-[#86a789]' : 'text-zinc-300 hover:bg-zinc-700 hover:text-[#86a789]'
                                     }`}
                                     onClick={() => handleRoleSelect(role)}
                                   >
-                                    <Image
-                                      src="/icons/icon-americas.png"
-                                      alt={role}
-                                      width={16}
-                                      height={16}
-                                      className="w-4 h-4 opacity-70"
-                                    />
                                     {role}
                                   </div>
                                 ))}
