@@ -29,7 +29,7 @@ export async function GET(request: Request) {
           updatedAt: new Date().toISOString(),
           timeframe,
           source: {
-            name: result.isFallback ? 'Simulated: Internal Monitoring (Fallback)' : 'Simulated: Internal Monitoring',
+            name: 'Simulated: Internal Monitoring',
             freshnessSec: mode === 'degraded' ? 1800 : 20,
             quality: mode === 'degraded' ? 0.78 : 0.96,
           },
