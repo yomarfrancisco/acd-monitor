@@ -1603,7 +1603,7 @@ It would also be helpful if you described:
               {/* Fixed Input Area for Chat State */}
               {hasEngaged && (
                 <div className="fixed bottom-0 left-0 right-0 bg-black border-t border-[#2a2a2a] z-50 fixed-input-container">
-                  <div className="max-w-5xl mx-auto px-5 py-4 pb-0 md:pb-4">
+                  <div className="max-w-5xl mx-auto px-5 py-4 pb-8 md:pb-6">
                     <div className="w-full space-y-3">
                       <div className="agents-no-zoom-wrapper" data-testid="agents-no-zoom-wrapper">
                         <div className="relative">
