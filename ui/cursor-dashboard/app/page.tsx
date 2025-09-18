@@ -38,7 +38,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { AssistantBubble } from "@/components/AssistantBubble"
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, ReferenceLine, Label } from "recharts"
-import { CalendarIcon, Copy, RefreshCw, ImageUp, Camera, FolderClosed, Github, AlertTriangle } from "lucide-react"
+import { CalendarIcon, Copy, RefreshCw, ImageUp, Camera, FolderClosed, Github, AlertTriangle, Paperclip } from "lucide-react"
 import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema } from "@/types/api.schemas"
 import { fetchTyped } from "@/lib/backendAdapter"
 import { safe } from "@/lib/safe"
@@ -1290,7 +1290,7 @@ It would also be helpful if you described:
                   {hasEngaged && (
                     <div
                       ref={scrollRef}
-                      className="flex-1 overflow-y-auto mb-4 space-y-4 messages-container"
+                      className="flex-1 overflow-y-auto mb-4 space-y-4 messages-container pb-32"
                     >
                       {messages.map((message, index) => (
                         <div key={message.id} className="w-full">
@@ -1357,7 +1357,8 @@ It would also be helpful if you described:
                   )}
 
                   {/* Input Area */}
-                  <div className={`composer ${chatStarted ? 'composer--tight' : ''} ${hasEngaged ? "mt-auto pb-2" : "flex flex-col items-center justify-center space-y-5"}`}>
+                  {!hasEngaged && (
+                    <div className={`composer ${chatStarted ? 'composer--tight' : ''} flex flex-col items-center justify-center space-y-5`}>
                   <div className="w-full space-y-3 mx-4 sm:mx-0">
                     <div className="agents-no-zoom-wrapper" data-testid="agents-no-zoom-wrapper">
                       <div className="relative">
@@ -1596,7 +1597,205 @@ It would also be helpful if you described:
                       )}
                   </div>
                 </div>
+                  )}
               </div>
+
+              {/* Fixed Input Area for Chat State */}
+              {hasEngaged && (
+                <div className="fixed bottom-0 left-0 right-0 bg-[#0f0f10] border-t border-[#2a2a2a] z-50">
+                  <div className="max-w-5xl mx-auto px-5 py-4">
+                    <div className="w-full space-y-3">
+                      <div className="agents-no-zoom-wrapper" data-testid="agents-no-zoom-wrapper">
+                        <div className="relative">
+                          <textarea
+                            ref={textareaRef}
+                            placeholder="How can I help defend your algorithms today?"
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            onFocus={() => setIsInputFocused(true)}
+                            onBlur={() => {
+                              setIsInputFocused(false)
+                              // Reset scroll position when keyboard dismisses on mobile
+                              if (!isDesktop) {
+                                setTimeout(() => {
+                                  window.scrollTo(0, 0)
+                                }, 100)
+                              }
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" && !e.shiftKey) {
+                                e.preventDefault()
+                                handleSendMessage()
+                              }
+                            }}
+                            className="w-full h-28 bg-bg-tile rounded-lg text-[#f9fafb] pr-16 px-4 py-4 text-xs md:text-base leading-5 placeholder:text-xs md:placeholder:text-base placeholder:text-[#71717a] resize-none focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50"
+                            style={{ caretColor: "rgba(249, 250, 251, 0.8)" }}
+                            rows={5}
+                          />
+                          {/* Blinking cursor overlay - only shows when empty, on mobile, and not focused */}
+                          {inputValue === "" && !isDesktop && !isInputFocused && (
+                            <span
+                              aria-hidden
+                              className="pointer-events-none absolute left-4 top-4 h-[1em] md:h-[1.2em] w-[1px] md:w-[2px] bg-white animate-[blink_1s_steps(1)_infinite]"
+                            />
+                          )}
+                          {/* Model selector - bottom left */}
+                          <div ref={triggerClusterRef} className="absolute left-3 bottom-3 flex items-center gap-1.5">
+                            {/* ICON TRIGGER */}
+                            <button
+                              ref={triggerIconRef}
+                              type="button"
+                              onClick={(e) => { e.stopPropagation(); lastTriggerUsed.current = 'icon'; openRoleDropdown(); }}
+                              onKeyDown={onTriggerKeyDown}
+                              aria-haspopup="listbox"
+                              aria-controls="role-dropdown"
+                              aria-expanded={isRoleDropdownOpen}
+                              aria-label="Select analysis mode"
+                              className="flex items-center justify-center p-1.5 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]"
+                            >
+                              <Image
+                                src="/icons/icon-americas.png"
+                                alt="Americas"
+                                width={16}
+                                height={16}
+                                className="w-4 h-4 opacity-70"
+                              />
+                            </button>
+
+                            {/* Role Dropdown */}
+                            {isRoleDropdownOpen && (
+                              <div
+                                id="role-dropdown"
+                                role="listbox"
+                                aria-label="Select analysis mode"
+                                className="absolute bottom-full mb-2 left-0 min-w-[200px] bg-zinc-800 border border-zinc-700 rounded-lg shadow-lg py-1 z-50"
+                              >
+                                <div
+                                  role="option"
+                                  aria-selected={selectedAgent === "Jurisdiction"}
+                                  tabIndex={0}
+                                  className={`px-3 py-2 text-sm cursor-pointer flex items-center gap-2 ${
+                                    roleDropdownFocusIndex === 0 ? 'bg-zinc-700 text-[#86a789]' : 'text-zinc-300 hover:bg-zinc-700 hover:text-[#86a789]'
+                                  }`}
+                                  onClick={() => handleRoleSelect("Jurisdiction")}
+                                >
+                                  <Image
+                                    src="/icons/icon-americas.png"
+                                    alt="Americas"
+                                    width={16}
+                                    height={16}
+                                    className="w-4 h-4 opacity-70"
+                                  />
+                                  Jurisdiction
+                                </div>
+                                <div
+                                  role="option"
+                                  aria-selected={selectedAgent === "Competition"}
+                                  tabIndex={-1}
+                                  className={`px-3 py-2 text-sm cursor-pointer flex items-center gap-2 ${
+                                    roleDropdownFocusIndex === 1 ? 'bg-zinc-700 text-[#86a789]' : 'text-zinc-300 hover:bg-zinc-700 hover:text-[#86a789]'
+                                  }`}
+                                  onClick={() => handleRoleSelect("Competition")}
+                                >
+                                  <BarChart3 className="w-4 h-4 opacity-70" />
+                                  Competition
+                                </div>
+                                <div
+                                  role="option"
+                                  aria-selected={selectedAgent === "Compliance"}
+                                  tabIndex={-1}
+                                  className={`px-3 py-2 text-sm cursor-pointer flex items-center gap-2 ${
+                                    roleDropdownFocusIndex === 2 ? 'bg-zinc-700 text-[#86a789]' : 'text-zinc-300 hover:bg-zinc-700 hover:text-[#86a789]'
+                                  }`}
+                                  onClick={() => handleRoleSelect("Compliance")}
+                                >
+                                  <FileText className="w-4 h-4 opacity-70" />
+                                  Compliance
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Upload Button - bottom right before send */}
+                          <div className="absolute right-12 bottom-3 flex items-center gap-1.5">
+                            <button
+                              type="button"
+                              aria-label="Upload files"
+                              className="h-6 w-6 flex items-center justify-center cursor-pointer text-[#a1a1aa] hover:text-[#86a789] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10] transition-colors motion-reduce:transition-none"
+                              onClick={handleUploadMenuToggle}
+                            >
+                              <Paperclip className="w-4 h-4" />
+                            </button>
+
+                            {/* Upload Menu */}
+                            {isUploadMenuOpen && (
+                              <div className="absolute bottom-full mb-2 right-0 min-w-[180px] bg-zinc-800 border border-zinc-700 rounded-lg shadow-lg py-1 z-50">
+                                <button
+                                  className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#86a789] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
+                                    uploadMenuFocusIndex === 0 ? 'bg-zinc-800 text-[#86a789]' : ''
+                                  }`}
+                                  onClick={() => handleUploadAction(0)}
+                                  role="menuitem"
+                                >
+                                  <FileText className="w-4 h-4" />
+                                  Upload Document
+                                </button>
+                                <button
+                                  className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#86a789] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
+                                    uploadMenuFocusIndex === 1 ? 'bg-zinc-800 text-[#86a789]' : ''
+                                  }`}
+                                  onClick={() => handleUploadAction(1)}
+                                  role="menuitem"
+                                >
+                                  <Camera className="w-4 h-4" />
+                                  Take Photo or Video
+                                </button>
+                                <button
+                                  className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#86a789] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
+                                    uploadMenuFocusIndex === 2 ? 'bg-zinc-800 text-[#86a789]' : ''
+                                  }`}
+                                  onClick={() => handleUploadAction(2)}
+                                  role="menuitem"
+                                >
+                                  <FolderClosed className="w-4 h-4" />
+                                  Choose Files
+                                </button>
+                                <button
+                                  className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#86a789] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
+                                    uploadMenuFocusIndex === 3 ? 'bg-zinc-800 text-[#86a789]' : ''
+                                  }`}
+                                  onClick={() => handleUploadAction(3)}
+                                  role="menuitem"
+                                >
+                                  <Github className="w-4 h-4" />
+                                  Link GitHub
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                          {/* Send Button - bottom right */}
+                          <div className="absolute right-3 bottom-3 flex items-center gap-1.5">
+                            <button
+                              type="button"
+                              aria-label="Send"
+                              className="h-6 w-6 flex items-center justify-center cursor-pointer text-[#f9fafb] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10] disabled:text-[#a1a1aa]/50 transition-colors motion-reduce:transition-none"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                handleSendMessage();
+                              }}
+                            >
+                              <Send 
+                                className="w-6 h-6 opacity-85 hover:opacity-100 text-current transition-opacity duration-200"
+                                stroke="currentColor"
+                              />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
               </div>
             )}
             {activeTab === "dashboard" && (
