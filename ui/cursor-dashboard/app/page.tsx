@@ -1641,7 +1641,7 @@ It would also be helpful if you described:
                           )}
                           {/* Model selector - bottom left */}
                           <div ref={triggerClusterRef} className="absolute left-3 bottom-3 flex items-center gap-1.5">
-                            {/* ICON TRIGGER */}
+                            {/* UNIFIED GLOBE + TEXT BUTTON */}
                             <button
                               ref={triggerIconRef}
                               type="button"
@@ -1651,24 +1651,20 @@ It would also be helpful if you described:
                               aria-controls="role-dropdown"
                               aria-expanded={isRoleDropdownOpen}
                               aria-label="Select analysis mode"
-                              className="flex items-center justify-center p-1.5 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]"
+                              className="flex items-center gap-1.5 p-1.5 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]"
                             >
                               <Image
                                 src="/icons/icon-americas.png"
-                                alt="Americas"
-                                width={16}
-                                height={16}
-                                className="w-4 h-4 opacity-70"
+                                alt="Select analysis mode"
+                                width={18}
+                                height={18}
+                                draggable={false}
+                                className="shrink-0"
                               />
-                            </button>
-
-                            {/* JURISDICTION DROPDOWN */}
-                            <button 
-                              className="bg-transparent text-white px-2 py-1 text-xs rounded border border-gray-600 hover:bg-gray-700 flex items-center gap-1"
-                              onClick={(e) => { e.stopPropagation(); openRoleDropdown(); }}
-                            >
-                              {selectedAgent || "Jurisdiction"}
-                              <ChevronDown className="w-3 h-3" />
+                              <span className="text-sm text-white font-medium">
+                                {selectedAgent || "Jurisdiction"}
+                              </span>
+                              <ChevronDown className="w-3 h-3 text-[#71717a]" aria-hidden="true" />
                             </button>
 
                             {/* Role Dropdown */}
