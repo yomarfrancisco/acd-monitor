@@ -301,6 +301,18 @@ export default function CursorDashboard() {
     }
   }, [isDesktop])
 
+  // Restore focus after assistant finishes typing (desktop only)
+  useEffect(() => {
+    if (isDesktop && !isAssistantTyping && textareaRef.current) {
+      // Small delay to ensure the UI has updated
+      setTimeout(() => {
+        if (textareaRef.current) {
+          textareaRef.current.focus()
+        }
+      }, 100)
+    }
+  }, [isAssistantTyping, isDesktop])
+
   // Auto-scroll to bottom when messages change
   useEffect(() => {
     if (!scrollRef.current) return;
@@ -464,6 +476,11 @@ export default function CursorDashboard() {
   const handleSendMessage = async (customMessage?: string) => {
     const messageContent = customMessage || inputValue.trim()
     if (!messageContent) return
+
+    // Remove focus from input during message sending (desktop only)
+    if (isDesktop && textareaRef.current) {
+      textareaRef.current.blur()
+    }
 
     // Clear input immediately
     setInputValue("")
@@ -1367,6 +1384,7 @@ It would also be helpful if you described:
                           placeholder="How can I help defend your algorithms today?"
                           value={inputValue}
                           onChange={(e) => setInputValue(e.target.value)}
+                          autoFocus={isDesktop}
                           onFocus={() => setIsInputFocused(true)}
                           onBlur={() => {
                             setIsInputFocused(false)
@@ -1612,6 +1630,7 @@ It would also be helpful if you described:
                             placeholder="How can I help defend your algorithms today?"
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
+                            autoFocus={isDesktop}
                             onFocus={() => setIsInputFocused(true)}
                             onBlur={() => {
                               setIsInputFocused(false)
