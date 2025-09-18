@@ -1662,6 +1662,11 @@ It would also be helpful if you described:
                               />
                             </button>
 
+                            {/* TEST BUTTON */}
+                            <button className="bg-red-500 text-white px-2 py-1 text-xs rounded">
+                              Button
+                            </button>
+
                             {/* Role Dropdown */}
                             {isRoleDropdownOpen && (
                               <div
