@@ -1661,7 +1661,7 @@ It would also be helpful if you described:
                                 draggable={false}
                                 className="shrink-0"
                               />
-                              <span className="text-sm text-white font-medium">
+                              <span className="text-[10px] text-[#71717a] font-medium">
                                 {selectedAgent || "Jurisdiction"}
                               </span>
                               <ChevronDown className="w-3 h-3 text-[#71717a]" aria-hidden="true" />
