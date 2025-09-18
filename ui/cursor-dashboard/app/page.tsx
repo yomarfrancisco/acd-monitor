@@ -1662,9 +1662,13 @@ It would also be helpful if you described:
                               />
                             </button>
 
-                            {/* TEST BUTTON */}
-                            <button className="bg-red-500 text-white px-2 py-1 text-xs rounded">
-                              Button
+                            {/* JURISDICTION DROPDOWN */}
+                            <button 
+                              className="bg-transparent text-white px-2 py-1 text-xs rounded border border-gray-600 hover:bg-gray-700 flex items-center gap-1"
+                              onClick={(e) => { e.stopPropagation(); openRoleDropdown(); }}
+                            >
+                              {selectedAgent || "Jurisdiction"}
+                              <ChevronDown className="w-3 h-3" />
                             </button>
 
                             {/* Role Dropdown */}
