@@ -1096,11 +1096,11 @@ It would also be helpful if you described:
       {/* Header */}
       <header className="border-b border-[#1a1a1a] px-5 py-1.5 relative">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-shrink-0">
 <img 
-  src="/ninja-glow-positive.png" 
-  alt="Ninja Glow" 
-              className="h-14 sm:h-16 md:h-24 w-auto opacity-90 hover:opacity-100 transition-opacity -ml-3 sm:ml-0"
+  src="/big-brother-hypnotic.png" 
+  alt="Big Brother Hypnotic" 
+              className="h-14 sm:h-16 md:h-24 w-auto opacity-90 hover:opacity-100 transition-opacity -ml-3 sm:ml-0 flex-shrink-0 object-contain"
 />
           </div>
 
