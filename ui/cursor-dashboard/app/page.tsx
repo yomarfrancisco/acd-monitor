@@ -1682,7 +1682,7 @@ It would also be helpful if you described:
                                     aria-selected={selectedAgent === role}
                                     tabIndex={index === 0 ? 0 : -1}
                                     className={`px-3 py-2 text-sm cursor-pointer ${
-                                      roleDropdownFocusIndex === index ? 'bg-zinc-700 text-[#86a789]' : 'text-zinc-300 hover:bg-zinc-700 hover:text-[#86a789]'
+                                      roleDropdownFocusIndex === index ? 'bg-zinc-700 text-[#a1a1aa]' : 'text-zinc-300 hover:bg-zinc-700 hover:text-[#a1a1aa]'
                                     }`}
                                     onClick={() => handleRoleSelect(role)}
                                   >
@@ -1698,7 +1698,7 @@ It would also be helpful if you described:
                             <button
                               type="button"
                               aria-label="Upload files"
-                              className="h-6 w-6 flex items-center justify-center cursor-pointer text-[#a1a1aa] hover:text-[#86a789] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10] transition-colors motion-reduce:transition-none"
+                              className="h-6 w-6 flex items-center justify-center cursor-pointer text-[#71717a] hover:text-[#a1a1aa] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10] transition-colors motion-reduce:transition-none"
                               onClick={handleUploadMenuToggle}
                             >
                               <CloudUpload className="w-4 h-4" />
