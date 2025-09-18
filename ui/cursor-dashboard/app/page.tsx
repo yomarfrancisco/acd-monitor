@@ -115,6 +115,7 @@ export default function CursorDashboard() {
   const [selectedTimeframe, setSelectedTimeframe] = useState<"30d" | "6m" | "1y" | "ytd">("ytd")
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
   const [isDesktop, setIsDesktop] = useState(false)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
   
   // Risk summary state
   const [riskSummary, setRiskSummary] = useState<RiskSummary | null>(null)
@@ -291,6 +292,13 @@ export default function CursorDashboard() {
     window.addEventListener('resize', checkDesktop)
     return () => window.removeEventListener('resize', checkDesktop)
   }, [])
+
+  // Manual focus for desktop (after isDesktop is determined)
+  useEffect(() => {
+    if (isDesktop && textareaRef.current) {
+      textareaRef.current.focus()
+    }
+  }, [isDesktop])
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
@@ -1347,6 +1355,7 @@ It would also be helpful if you described:
                     <div className="agents-no-zoom-wrapper" data-testid="agents-no-zoom-wrapper">
                       <div className="relative">
                       <textarea
+                          ref={textareaRef}
                           placeholder="How can I help defend your algorithms today?"
                           value={inputValue}
                           onChange={(e) => setInputValue(e.target.value)}
@@ -1359,7 +1368,6 @@ It would also be helpful if you described:
                           className="w-full h-28 bg-bg-tile rounded-lg text-[#f9fafb] pr-16 px-4 py-4 text-base md:text-base leading-5 placeholder:text-xs md:placeholder:text-base placeholder:text-[#71717a] resize-none focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50"
                           style={{ caretColor: "rgba(249, 250, 251, 0.8)" }}
                           rows={5}
-                          {...(isDesktop ? { autoFocus: true } : {})}
                         />
                         {/* Blinking cursor overlay - only shows when empty and on mobile */}
                         {inputValue === "" && !isDesktop && (
