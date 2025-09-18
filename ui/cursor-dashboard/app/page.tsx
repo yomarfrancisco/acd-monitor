@@ -1357,7 +1357,7 @@ It would also be helpful if you described:
                   )}
 
                   {/* Input Area */}
-                  <div className={`composer ${chatStarted ? 'composer--tight' : ''} ${hasEngaged ? "mt-auto pb-2" : "flex flex-col items-center justify-center space-y-5"}`}>
+                  <div className={`composer ${chatStarted ? 'composer--tight' : ''} ${hasEngaged ? "mt-auto pb-2" : "flex flex-col items-center justify-center space-y-5 mt-8"}`}>
                   <div className="w-full space-y-3 mx-4 sm:mx-0">
                     <div className="agents-no-zoom-wrapper" data-testid="agents-no-zoom-wrapper">
                       <div className="relative">
