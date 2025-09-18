@@ -115,6 +115,7 @@ export default function CursorDashboard() {
   const [selectedTimeframe, setSelectedTimeframe] = useState<"30d" | "6m" | "1y" | "ytd">("ytd")
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
   const [isDesktop, setIsDesktop] = useState(false)
+  const [isInputFocused, setIsInputFocused] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   
   // Risk summary state
@@ -1359,6 +1360,8 @@ It would also be helpful if you described:
                           placeholder="How can I help defend your algorithms today?"
                           value={inputValue}
                           onChange={(e) => setInputValue(e.target.value)}
+                          onFocus={() => setIsInputFocused(true)}
+                          onBlur={() => setIsInputFocused(false)}
                           onKeyDown={(e) => {
                             if (e.key === "Enter" && !e.shiftKey) {
                               e.preventDefault()
@@ -1369,8 +1372,8 @@ It would also be helpful if you described:
                           style={{ caretColor: "rgba(249, 250, 251, 0.8)" }}
                           rows={5}
                         />
-                        {/* Blinking cursor overlay - only shows when empty and on mobile */}
-                        {inputValue === "" && !isDesktop && (
+                        {/* Blinking cursor overlay - only shows when empty, on mobile, and not focused */}
+                        {inputValue === "" && !isDesktop && !isInputFocused && (
                           <span
                             aria-hidden
                             className="pointer-events-none absolute left-4 top-4 h-[1em] md:h-[1.2em] w-[1px] md:w-[2px] bg-white animate-[blink_1s_steps(1)_infinite]"
