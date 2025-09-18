@@ -256,4 +256,25 @@
     black calc(100% - 10px),
     transparent 100%
   );
+  
+  /* Scrollbar styling for dark theme */
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #2a2a2a transparent; /* Firefox */
+}
+
+.messages-container::-webkit-scrollbar {
+  width: 6px; /* Chrome/Safari/Edge */
+}
+
+.messages-container::-webkit-scrollbar-track {
+  background: transparent; /* Chrome/Safari/Edge */
+}
+
+.messages-container::-webkit-scrollbar-thumb {
+  background: #2a2a2a; /* Chrome/Safari/Edge */
+  border-radius: 3px;
+}
+
+.messages-container::-webkit-scrollbar-thumb:hover {
+  background: #3a3a3a; /* Chrome/Safari/Edge */
 }
