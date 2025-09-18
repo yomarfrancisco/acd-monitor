@@ -1272,7 +1272,7 @@ It would also be helpful if you described:
                             <div className="flex items-start gap-3">
                               <div className="h-24 w-24 rounded-full flex items-center justify-center overflow-hidden bg-transparent mt-1 flex-shrink-0">
                                 <Image
-                                  src="/icons/tigre3.png"
+                                  src="/icons/tigre.png"
                                   alt="Agent"
                                   width={96}
                                   height={96}
@@ -1311,7 +1311,7 @@ It would also be helpful if you described:
                           <div className="flex items-start gap-3">
                             <div className="h-24 w-24 rounded-full flex items-center justify-center overflow-hidden bg-transparent mt-1 flex-shrink-0">
                               <Image
-                                src="/icons/tigre3.png"
+                                src="/icons/tigre.png"
                                 alt="Agent"
                                 width={96}
                                 height={96}
