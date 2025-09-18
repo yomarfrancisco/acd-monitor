@@ -1490,8 +1490,8 @@ It would also be helpful if you described:
                               >
                                 <div className="py-1">
                                   <button
-                                    className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#86a789] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
-                                      uploadMenuFocusIndex === 0 ? 'bg-zinc-800 text-[#86a789]' : ''
+                                    className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#a1a1aa] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
+                                      uploadMenuFocusIndex === 0 ? 'bg-zinc-800 text-[#a1a1aa]' : ''
                                     }`}
                                     onClick={() => handleUploadAction(0)}
                                     role="menuitem"
@@ -1500,8 +1500,8 @@ It would also be helpful if you described:
                                     Photo Library
                                   </button>
                                   <button
-                                    className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#86a789] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
-                                      uploadMenuFocusIndex === 1 ? 'bg-zinc-800 text-[#86a789]' : ''
+                                    className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#a1a1aa] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
+                                      uploadMenuFocusIndex === 1 ? 'bg-zinc-800 text-[#a1a1aa]' : ''
                                     }`}
                                     onClick={() => handleUploadAction(1)}
                                     role="menuitem"
@@ -1510,8 +1510,8 @@ It would also be helpful if you described:
                                     Take Photo or Video
                                   </button>
                                   <button
-                                    className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#86a789] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
-                                      uploadMenuFocusIndex === 2 ? 'bg-zinc-800 text-[#86a789]' : ''
+                                    className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#a1a1aa] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
+                                      uploadMenuFocusIndex === 2 ? 'bg-zinc-800 text-[#a1a1aa]' : ''
                                     }`}
                                     onClick={() => handleUploadAction(2)}
                                     role="menuitem"
@@ -1520,8 +1520,8 @@ It would also be helpful if you described:
                                     Choose Files
                                   </button>
                                   <button
-                                    className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#86a789] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
-                                      uploadMenuFocusIndex === 3 ? 'bg-zinc-800 text-[#86a789]' : ''
+                                    className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#a1a1aa] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
+                                      uploadMenuFocusIndex === 3 ? 'bg-zinc-800 text-[#a1a1aa]' : ''
                                     }`}
                                     onClick={() => handleUploadAction(3)}
                                     role="menuitem"
@@ -1708,8 +1708,8 @@ It would also be helpful if you described:
                             {isUploadMenuOpen && (
                               <div className="absolute bottom-full mb-2 right-0 min-w-[180px] bg-zinc-800 border border-zinc-700 rounded-lg shadow-lg py-1 z-50">
                                 <button
-                                  className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#86a789] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
-                                    uploadMenuFocusIndex === 0 ? 'bg-zinc-800 text-[#86a789]' : ''
+                                  className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#a1a1aa] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
+                                    uploadMenuFocusIndex === 0 ? 'bg-zinc-800 text-[#a1a1aa]' : ''
                                   }`}
                                   onClick={() => handleUploadAction(0)}
                                   role="menuitem"
@@ -1718,8 +1718,8 @@ It would also be helpful if you described:
                                   Upload Document
                                 </button>
                                 <button
-                                  className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#86a789] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
-                                    uploadMenuFocusIndex === 1 ? 'bg-zinc-800 text-[#86a789]' : ''
+                                  className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#a1a1aa] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
+                                    uploadMenuFocusIndex === 1 ? 'bg-zinc-800 text-[#a1a1aa]' : ''
                                   }`}
                                   onClick={() => handleUploadAction(1)}
                                   role="menuitem"
@@ -1728,8 +1728,8 @@ It would also be helpful if you described:
                                   Take Photo or Video
                                 </button>
                                 <button
-                                  className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#86a789] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
-                                    uploadMenuFocusIndex === 2 ? 'bg-zinc-800 text-[#86a789]' : ''
+                                  className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#a1a1aa] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
+                                    uploadMenuFocusIndex === 2 ? 'bg-zinc-800 text-[#a1a1aa]' : ''
                                   }`}
                                   onClick={() => handleUploadAction(2)}
                                   role="menuitem"
@@ -1738,8 +1738,8 @@ It would also be helpful if you described:
                                   Choose Files
                                 </button>
                                 <button
-                                  className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#86a789] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
-                                    uploadMenuFocusIndex === 3 ? 'bg-zinc-800 text-[#86a789]' : ''
+                                  className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#a1a1aa] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
+                                    uploadMenuFocusIndex === 3 ? 'bg-zinc-800 text-[#a1a1aa]' : ''
                                   }`}
                                   onClick={() => handleUploadAction(3)}
                                   role="menuitem"
