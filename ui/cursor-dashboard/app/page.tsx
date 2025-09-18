@@ -1117,11 +1117,17 @@ It would also be helpful if you described:
       <header className="border-b border-[#1a1a1a] px-5 py-1.5 relative">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 flex-shrink-0">
-<img 
-  src="/ninja-glow-positive.png" 
-  alt="Ninja Glow" 
-              className="h-14 sm:h-16 md:h-24 w-auto opacity-90 hover:opacity-100 transition-opacity -ml-3 sm:ml-0 flex-shrink-0 object-contain"
-/>
+            <button 
+              onClick={() => window.location.reload()}
+              className="cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#60a5fa] focus:ring-offset-2 focus:ring-offset-[#0f0f10] rounded-md"
+              aria-label="Refresh page"
+            >
+              <img 
+                src="/ninja-glow-positive.png" 
+                alt="Ninja Glow" 
+                className="h-14 sm:h-16 md:h-24 w-auto opacity-90 hover:opacity-100 transition-opacity -ml-3 sm:ml-0 flex-shrink-0 object-contain"
+              />
+            </button>
           </div>
 
           <nav className="flex gap-4 sm:gap-5 absolute left-1/2 transform -translate-x-1/2">
