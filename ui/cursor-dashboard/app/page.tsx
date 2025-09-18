@@ -1119,7 +1119,7 @@ It would also be helpful if you described:
           <div className="flex items-center gap-2 flex-shrink-0">
             <button 
               onClick={() => window.location.reload()}
-              className="cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#60a5fa] focus:ring-offset-2 focus:ring-offset-[#0f0f10] rounded-md"
+              className="cursor-pointer focus:outline-none"
               aria-label="Refresh page"
             >
               <img 
