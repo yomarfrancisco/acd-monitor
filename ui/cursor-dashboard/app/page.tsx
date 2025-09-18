@@ -38,7 +38,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { AssistantBubble } from "@/components/AssistantBubble"
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, ReferenceLine, Label } from "recharts"
-import { CalendarIcon, Copy, RefreshCw, ImageUp, Camera, FolderClosed, Github, AlertTriangle, Paperclip } from "lucide-react"
+import { CalendarIcon, Copy, RefreshCw, ImageUp, Camera, FolderClosed, Github, AlertTriangle } from "lucide-react"
 import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema } from "@/types/api.schemas"
 import { fetchTyped } from "@/lib/backendAdapter"
 import { safe } from "@/lib/safe"
@@ -1701,7 +1701,7 @@ It would also be helpful if you described:
                               className="h-6 w-6 flex items-center justify-center cursor-pointer text-[#a1a1aa] hover:text-[#86a789] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10] transition-colors motion-reduce:transition-none"
                               onClick={handleUploadMenuToggle}
                             >
-                              <Paperclip className="w-4 h-4" />
+                              <CloudUpload className="w-4 h-4" />
                             </button>
 
                             {/* Upload Menu */}
