@@ -1427,7 +1427,7 @@ It would also be helpful if you described:
                             aria-haspopup="listbox"
                             aria-controls="role-dropdown"
                             aria-expanded={isRoleDropdownOpen}
-                            className="bg-transparent text-[10px] text-[#71717a] font-medium border-none outline-none cursor-pointer hover:text-[#a1a1aa] flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]"
+                            className="bg-transparent text-xs text-[#71717a] font-medium border-none outline-none cursor-pointer hover:text-[#a1a1aa] flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]"
                           >
                             {selectedAgent || "Jurisdiction"}
                             <ChevronDown className="w-3 h-3 text-[#71717a]" aria-hidden="true" />
