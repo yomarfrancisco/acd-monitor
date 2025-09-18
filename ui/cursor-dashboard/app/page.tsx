@@ -1262,7 +1262,7 @@ It would also be helpful if you described:
           )}
 
           {/* Main Content */}
-          <main className={`${activeTab === "dashboard" ? "min-w-0 p-5" : "flex-1 pt-6 px-5 pb-5 max-w-5xl mx-auto"}`}>
+          <main className={`${activeTab === "dashboard" ? "min-w-0 p-5" : "flex-1 pt-12 px-5 pb-5 max-w-5xl mx-auto"}`}>
             {activeTab === "agents" && (
               <div className="max-w-5xl mx-auto">
                 {/* <CHANGE> Added main headline for Agents tab - only show when no messages */}
@@ -1357,7 +1357,7 @@ It would also be helpful if you described:
                   )}
 
                   {/* Input Area */}
-                  <div className={`composer ${chatStarted ? 'composer--tight' : ''} ${hasEngaged ? "mt-auto pb-2" : "flex flex-col items-center justify-center space-y-5 mt-8"}`}>
+                  <div className={`composer ${chatStarted ? 'composer--tight' : ''} ${hasEngaged ? "mt-auto pb-2" : "flex flex-col items-center justify-center space-y-5"}`}>
                   <div className="w-full space-y-3 mx-4 sm:mx-0">
                     <div className="agents-no-zoom-wrapper" data-testid="agents-no-zoom-wrapper">
                       <div className="relative">
