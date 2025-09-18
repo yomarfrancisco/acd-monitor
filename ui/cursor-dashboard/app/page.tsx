@@ -1670,48 +1670,27 @@ It would also be helpful if you described:
                                 aria-label="Select analysis mode"
                                 className="absolute bottom-full mb-2 left-0 min-w-[200px] bg-zinc-800 border border-zinc-700 rounded-lg shadow-lg py-1 z-50"
                               >
-                                <div
-                                  role="option"
-                                  aria-selected={selectedAgent === "Jurisdiction"}
-                                  tabIndex={0}
-                                  className={`px-3 py-2 text-sm cursor-pointer flex items-center gap-2 ${
-                                    roleDropdownFocusIndex === 0 ? 'bg-zinc-700 text-[#86a789]' : 'text-zinc-300 hover:bg-zinc-700 hover:text-[#86a789]'
-                                  }`}
-                                  onClick={() => handleRoleSelect("Jurisdiction")}
-                                >
-                                  <Image
-                                    src="/icons/icon-americas.png"
-                                    alt="Americas"
-                                    width={16}
-                                    height={16}
-                                    className="w-4 h-4 opacity-70"
-                                  />
-                                  Jurisdiction
-                                </div>
-                                <div
-                                  role="option"
-                                  aria-selected={selectedAgent === "Competition"}
-                                  tabIndex={-1}
-                                  className={`px-3 py-2 text-sm cursor-pointer flex items-center gap-2 ${
-                                    roleDropdownFocusIndex === 1 ? 'bg-zinc-700 text-[#86a789]' : 'text-zinc-300 hover:bg-zinc-700 hover:text-[#86a789]'
-                                  }`}
-                                  onClick={() => handleRoleSelect("Competition")}
-                                >
-                                  <BarChart3 className="w-4 h-4 opacity-70" />
-                                  Competition
-                                </div>
-                                <div
-                                  role="option"
-                                  aria-selected={selectedAgent === "Compliance"}
-                                  tabIndex={-1}
-                                  className={`px-3 py-2 text-sm cursor-pointer flex items-center gap-2 ${
-                                    roleDropdownFocusIndex === 2 ? 'bg-zinc-700 text-[#86a789]' : 'text-zinc-300 hover:bg-zinc-700 hover:text-[#86a789]'
-                                  }`}
-                                  onClick={() => handleRoleSelect("Compliance")}
-                                >
-                                  <FileText className="w-4 h-4 opacity-70" />
-                                  Compliance
-                                </div>
+                                {["Europe", "South Africa", "United States", "Australia"].map((role, index) => (
+                                  <div
+                                    key={role}
+                                    role="option"
+                                    aria-selected={selectedAgent === role}
+                                    tabIndex={index === 0 ? 0 : -1}
+                                    className={`px-3 py-2 text-sm cursor-pointer flex items-center gap-2 ${
+                                      roleDropdownFocusIndex === index ? 'bg-zinc-700 text-[#86a789]' : 'text-zinc-300 hover:bg-zinc-700 hover:text-[#86a789]'
+                                    }`}
+                                    onClick={() => handleRoleSelect(role)}
+                                  >
+                                    <Image
+                                      src="/icons/icon-americas.png"
+                                      alt={role}
+                                      width={16}
+                                      height={16}
+                                      className="w-4 h-4 opacity-70"
+                                    />
+                                    {role}
+                                  </div>
+                                ))}
                               </div>
                             )}
                           </div>
