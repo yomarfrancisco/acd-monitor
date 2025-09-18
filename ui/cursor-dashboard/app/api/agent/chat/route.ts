@@ -294,10 +294,23 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
 
       if (!response.ok) {
         const bodyText = await response.text();
-        console.error("[CB][LEGACY] status:", response.status);
-        console.error("[CB][LEGACY] body[0..300]:", bodyText.slice(0,300));
+        console.error("[CB][ERROR] status:", response.status);
+        console.error("[CB][ERROR] body:", bodyText);
+        console.error("[CB][ERROR] request payload:", JSON.stringify(payload));
+        console.error("[CB][ERROR] url:", url);
+        console.error("[CB][ERROR] headers:", {
+          'Authorization': `Bearer ${apiKey.substring(0, 10)}...`,
+          'Content-Type': 'application/json'
+        });
+        
         return NextResponse.json(
-          { error: `chatbase_${response.status}`, upstream: bodyText.slice(0,300) },
+          { 
+            error: `chatbase_${response.status}`, 
+            upstreamStatus: response.status,
+            upstreamBody: bodyText.slice(0, 500),
+            requestUrl: url,
+            requestPayload: payload
+          },
           { status: 502 }
         );
       }
@@ -330,24 +343,43 @@ export async function POST(request: NextRequest): Promise<NextResponse<ChatRespo
       clearTimeout(timeoutId);
       
       if (error instanceof Error && error.name === 'AbortError') {
-        console.error('Chatbase API timeout');
+        console.error('[CB][TIMEOUT] Chatbase API timeout after 30s');
+        console.error('[CB][TIMEOUT] url:', url);
+        console.error('[CB][TIMEOUT] payload:', JSON.stringify(payload));
         return NextResponse.json(
-          { error: 'Chatbase API timeout' },
+          { error: 'Chatbase API timeout', timeout: true },
           { status: 504 }
         );
       }
 
-      console.error('Chatbase API error:', error);
+      console.error('[CB][FETCH_ERROR] Chatbase API error:', error);
+      console.error('[CB][FETCH_ERROR] url:', url);
+      console.error('[CB][FETCH_ERROR] payload:', JSON.stringify(payload));
+      console.error('[CB][FETCH_ERROR] error name:', error instanceof Error ? error.name : 'unknown');
+      console.error('[CB][FETCH_ERROR] error message:', error instanceof Error ? error.message : 'unknown');
+      
       return NextResponse.json(
-        { error: 'Chatbase API client error' },
+        { 
+          error: 'Chatbase API client error',
+          errorType: error instanceof Error ? error.name : 'unknown',
+          errorMessage: error instanceof Error ? error.message : 'unknown'
+        },
         { status: 502 }
       );
     }
 
   } catch (error) {
-    console.error('Route error:', error);
+    console.error('[CB][ROUTE_ERROR] Route error:', error);
+    console.error('[CB][ROUTE_ERROR] error name:', error instanceof Error ? error.name : 'unknown');
+    console.error('[CB][ROUTE_ERROR] error message:', error instanceof Error ? error.message : 'unknown');
+    console.error('[CB][ROUTE_ERROR] error stack:', error instanceof Error ? error.stack : 'unknown');
+    
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { 
+        error: 'Internal server error',
+        errorType: error instanceof Error ? error.name : 'unknown',
+        errorMessage: error instanceof Error ? error.message : 'unknown'
+      },
       { status: 500 }
     );
   }
