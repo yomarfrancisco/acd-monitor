@@ -10,7 +10,7 @@ import 'highlight.js/styles/github-dark-dimmed.css';
 export function AssistantBubble({ text }: { text: string }) {
   return (
     <div className="assistant-bubble">
-      <div className="assistant-md lg:text-base lg:leading-5">
+      <div className="assistant-md lg:text-base lg:leading-5 font-messages">
         <ReactMarkdown
           remarkPlugins={[remarkGfm, remarkMath]}
           rehypePlugins={[
