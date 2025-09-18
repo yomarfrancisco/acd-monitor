@@ -1290,7 +1290,7 @@ It would also be helpful if you described:
                   {hasEngaged && (
                     <div
                       ref={scrollRef}
-                      className="flex-1 overflow-y-auto mb-4 space-y-4 messages-container pb-32"
+                      className="flex-1 overflow-y-auto mb-4 space-y-4 messages-container pb-32 chat-messages-container"
                     >
                       {messages.map((message, index) => (
                         <div key={message.id} className="w-full">
@@ -1602,7 +1602,7 @@ It would also be helpful if you described:
 
               {/* Fixed Input Area for Chat State */}
               {hasEngaged && (
-                <div className="fixed bottom-0 left-0 right-0 bg-[#0f0f10] border-t border-[#2a2a2a] z-50">
+                <div className="fixed bottom-0 left-0 right-0 bg-[#0f0f10] border-t border-[#2a2a2a] z-50 fixed-input-container">
                   <div className="max-w-5xl mx-auto px-5 py-4">
                     <div className="w-full space-y-3">
                       <div className="agents-no-zoom-wrapper" data-testid="agents-no-zoom-wrapper">
