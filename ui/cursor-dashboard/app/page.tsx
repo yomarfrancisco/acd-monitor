@@ -994,8 +994,8 @@ It would also be helpful if you described:
   const closeRoleDropdown = () => setIsRoleDropdownOpen(false)
   
   const restoreFocusToTrigger = (lastTrigger: 'icon' | 'text') => {
-    if (lastTrigger === 'icon') triggerIconRef.current?.focus()
-    else triggerTextRef.current?.focus()
+    // Both default and chat views now use unified button with triggerIconRef
+    triggerIconRef.current?.focus()
   }
 
   const handleRoleDropdownClose = () => {
@@ -1425,7 +1425,7 @@ It would also be helpful if you described:
                         )}
                         {/* Model selector - bottom left */}
                         <div ref={triggerClusterRef} className="absolute left-3 bottom-3 flex items-center gap-1.5">
-                          {/* ICON TRIGGER */}
+                          {/* UNIFIED GLOBE + TEXT BUTTON */}
                           <button
                             ref={triggerIconRef}
                             type="button"
@@ -1435,7 +1435,7 @@ It would also be helpful if you described:
                             aria-controls="role-dropdown"
                             aria-expanded={isRoleDropdownOpen}
                             aria-label="Select analysis mode"
-                            className="flex items-center justify-center p-1.5 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]"
+                            className="flex items-center gap-1.5 p-1.5 rounded-md bg-transparent border border-[#2a2a2a] hover:border-[#3a3a3a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]"
                           >
                             <Image
                               src="/icons/icon-americas.png"
@@ -1445,20 +1445,9 @@ It would also be helpful if you described:
                               draggable={false}
                               className="shrink-0"
                             />
-                          </button>
-
-                          {/* TEXT TRIGGER */}
-                          <button
-                            ref={triggerTextRef}
-                            type="button"
-                            onClick={(e) => { e.stopPropagation(); lastTriggerUsed.current = 'text'; openRoleDropdown(); }}
-                            onKeyDown={onTriggerKeyDown}
-                            aria-haspopup="listbox"
-                            aria-controls="role-dropdown"
-                            aria-expanded={isRoleDropdownOpen}
-                            className="bg-black text-xs text-[#71717a] font-medium border border-[#2a2a2a] hover:border-[#3a3a3a] outline-none cursor-pointer hover:text-[#a1a1aa] flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10] relative z-10"
-                          >
-                            {getRegionAcronym(selectedAgent)}
+                            <span className="text-xs text-[#71717a] font-medium">
+                              {getRegionAcronym(selectedAgent)}
+                            </span>
                             <ChevronDown className="w-3 h-3 text-[#71717a]" aria-hidden="true" />
                           </button>
                         </div>
@@ -1681,7 +1670,7 @@ It would also be helpful if you described:
                               aria-controls="role-dropdown"
                               aria-expanded={isRoleDropdownOpen}
                               aria-label="Select analysis mode"
-                              className="flex items-center gap-1.5 p-1.5 rounded-md bg-black border border-[#2a2a2a] hover:border-[#3a3a3a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]"
+                              className="flex items-center gap-1.5 p-1.5 rounded-md bg-transparent border border-[#2a2a2a] hover:border-[#3a3a3a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]"
                             >
                               <Image
                                 src="/icons/icon-americas.png"
