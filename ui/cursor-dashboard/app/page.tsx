@@ -220,7 +220,7 @@ export default function CursorDashboard() {
 
   // Add state for selected agent type
   const [selectedAgent, setSelectedAgent] = useState("Europe")
-  const [selectedIndustry, setSelectedIndustry] = useState("All Sectors")
+  const [selectedIndustry, setSelectedIndustry] = useState("All")
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([])
 
   // Helper function to map region names to acronyms
@@ -237,21 +237,15 @@ export default function CursorDashboard() {
   // Helper function to map industry names to acronyms
   const getIndustryAcronym = (industryName: string): string => {
     const mapping: Record<string, string> = {
-      "All Sectors": "All",
-      "Auto": "Auto",
-      "Airlines": "Air",
-      "Hospitality": "Hosp",
+      "All": "All",
+      "Travel & Hospitality": "Travel",
       "E-commerce": "E-com",
-      "Shipping": "Ship",
-      "Mobility": "Mob",
-      "Media": "Med",
+      "Shipping & Logistics": "Logistics",
+      "Media": "Media",
       "Real-Estate": "Real",
       "Advertising": "Adv",
-      "Gaming": "Game",
       "Telecoms": "Tel",
-      "Insurance": "Ins",
-      "Crypto": "Crypto",
-      "Banking": "Bank"
+      "Financial services": "Finance"
     }
     return mapping[industryName] || "All"
   }
@@ -1554,7 +1548,7 @@ It would also be helpful if you described:
                             aria-orientation="vertical"
                           >
                             <div className="py-1">
-                              {["All Sectors", "Auto", "Airlines", "Hospitality", "E-commerce", "Shipping", "Mobility", "Media", "Real-Estate", "Advertising", "Gaming", "Telecoms", "Insurance", "Crypto", "Banking"].map((industry, index) => (
+                              {["All", "Travel & Hospitality", "E-commerce", "Shipping & Logistics", "Media", "Real-Estate", "Advertising", "Telecoms", "Financial services"].map((industry, index) => (
                                 <button
                                   key={industry}
                                   className={`flex items-center gap-2 px-3 py-2 text-sm text-gray-200 hover:text-white hover:bg-white/5 w-full text-left ${
@@ -1827,7 +1821,7 @@ It would also be helpful if you described:
                                 aria-label="Select industry"
                                 className="absolute bottom-full mb-2 left-0 min-w-[200px] bg-zinc-800 border border-zinc-700 rounded-lg shadow-lg py-1 z-50"
                               >
-                                {["All Sectors", "Auto", "Airlines", "Hospitality", "E-commerce", "Shipping", "Mobility", "Media", "Real-Estate", "Advertising", "Gaming", "Telecoms", "Insurance", "Crypto", "Banking"].map((industry, index) => (
+                                {["All", "Travel & Hospitality", "E-commerce", "Shipping & Logistics", "Media", "Real-Estate", "Advertising", "Telecoms", "Financial services"].map((industry, index) => (
                                   <div
                                     key={industry}
                                     role="option"
