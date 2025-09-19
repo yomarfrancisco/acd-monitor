@@ -34,6 +34,7 @@ import { Separator } from "@/components/ui/separator"
 import Image from "next/image"
 
 import { useState, useEffect, useRef, useMemo } from "react"
+import * as React from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { AssistantBubble } from "@/components/AssistantBubble"
@@ -109,6 +110,46 @@ const dashboardBtnClass = "border-[#AFC8FF] text-black bg-[#AFC8FF] hover:bg-[#9
 
 // Dashboard CTA button styling - pastel blue bg + black text for the 13 specific CTA buttons
 const dashboardCtaBtnClass = "bg-[#AFC8FF] text-black hover:bg-[#9FBCFF] active:bg-[#95B4FF] ring-1 ring-inset ring-[#8FB3FF]/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6FA0FF] shadow-sm text-[9px] h-5 px-2 font-normal rounded-full disabled:bg-[#AFC8FF]/60 disabled:text-black/60 disabled:ring-[#8FB3FF]/50 disabled:cursor-not-allowed disabled:opacity-100"
+
+// Custom hook for auto-resizing textarea
+function useAutosizeTextarea(
+  ref: React.RefObject<HTMLTextAreaElement>,
+  value: string,
+  opts: { minPx?: number; maxVh?: number } = {}
+) {
+  const { minPx = 112, maxVh = 40 } = opts;
+
+  React.useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    // apply min/max every run (cheap & avoids CSS drift)
+    el.style.minHeight = `${minPx}px`;
+    el.style.maxHeight = `${maxVh}vh`;
+
+    // measure -> grow to content, clamped by CSS max-height
+    el.style.height = "auto";
+    const next = el.scrollHeight;
+    el.style.height = next + "px";
+
+    // show scrollbar only when clamped
+    const computed = getComputedStyle(el);
+    const maxPx = parseFloat(computed.maxHeight);
+    el.style.overflowY = el.scrollHeight > maxPx ? "auto" : "hidden";
+  }, [ref, value, minPx, maxVh]);
+
+  // keep height sensible on viewport changes
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const onResize = () => {
+      el.style.height = "auto";
+      el.style.height = el.scrollHeight + "px";
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [ref]);
+}
 
 export default function CursorDashboard() {
   const [activeTab, setActiveTab] = useState<"agents" | "dashboard">("agents")
@@ -306,6 +347,9 @@ export default function CursorDashboard() {
   
   // Messages scroll ref
   const scrollRef = useRef<HTMLDivElement | null>(null)
+
+  // Activate auto-resize for textarea
+  useAutosizeTextarea(textareaRef, inputValue, { minPx: 112, maxVh: 40 })
 
   // Scroll to bottom helper
   function scrollToBottom(behavior: ScrollBehavior = 'auto') {
@@ -1429,7 +1473,7 @@ It would also be helpful if you described:
                           ref={textareaRef}
                           placeholder="How can I help defend your algorithms today?"
                           value={inputValue}
-                          onChange={(e) => setInputValue(e.target.value)}
+                          onChange={(e) => setInputValue(e.target.value.slice(0, 25000))}
                           autoFocus={isDesktop}
                           onFocus={() => setIsInputFocused(true)}
                           onBlur={() => {
@@ -1447,9 +1491,9 @@ It would also be helpful if you described:
                               handleSendMessage()
                             }
                           }}
-                          className="w-full h-28 bg-bg-tile rounded-lg text-[#f9fafb] pr-16 px-4 py-4 text-xs md:text-base leading-5 placeholder:text-xs md:placeholder:text-base placeholder:text-[#71717a] resize-none focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50"
+                          className="w-full bg-bg-tile rounded-lg text-[#f9fafb] pr-16 px-4 py-4 text-xs md:text-base leading-5 placeholder:text-xs md:placeholder:text-base placeholder:text-[#71717a] resize-none overflow-y-hidden focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50 composer-textarea min-h-[112px] max-h-[40vh]"
                           style={{ caretColor: "rgba(249, 250, 251, 0.8)" }}
-                          rows={5}
+                          rows={1}
                         />
                         {/* Blinking cursor overlay - only shows when empty, on mobile, and not focused */}
                         {inputValue === "" && !isDesktop && !isInputFocused && (
@@ -1712,7 +1756,7 @@ It would also be helpful if you described:
                             ref={textareaRef}
                             placeholder="How can I help defend your algorithms today?"
                             value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
+                            onChange={(e) => setInputValue(e.target.value.slice(0, 25000))}
                             autoFocus={isDesktop}
                             onFocus={() => setIsInputFocused(true)}
                             onBlur={() => {
@@ -1730,9 +1774,9 @@ It would also be helpful if you described:
                                 handleSendMessage()
                               }
                             }}
-                            className="w-full h-28 bg-bg-tile rounded-lg text-[#f9fafb] pr-16 px-4 py-4 text-xs md:text-base leading-5 placeholder:text-xs md:placeholder:text-base placeholder:text-[#71717a] resize-none focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50"
+                            className="w-full bg-bg-tile rounded-lg text-[#f9fafb] pr-16 px-4 py-4 text-xs md:text-base leading-5 placeholder:text-xs md:placeholder:text-base placeholder:text-[#71717a] resize-none overflow-y-hidden focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50 composer-textarea min-h-[112px] max-h-[40vh]"
                             style={{ caretColor: "rgba(249, 250, 251, 0.8)" }}
-                            rows={5}
+                            rows={1}
                           />
                           {/* Blinking cursor overlay - only shows when empty, on mobile, and not focused */}
                           {inputValue === "" && !isDesktop && !isInputFocused && (
