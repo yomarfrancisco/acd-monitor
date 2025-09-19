@@ -220,6 +220,7 @@ export default function CursorDashboard() {
 
   // Add state for selected agent type
   const [selectedAgent, setSelectedAgent] = useState("Europe")
+  const [selectedIndustry, setSelectedIndustry] = useState("All Sectors")
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([])
 
   // Helper function to map region names to acronyms
@@ -231,6 +232,28 @@ export default function CursorDashboard() {
       "Australia": "AUS"
     }
     return mapping[regionName] || "EU"
+  }
+
+  // Helper function to map industry names to acronyms
+  const getIndustryAcronym = (industryName: string): string => {
+    const mapping: Record<string, string> = {
+      "All Sectors": "ALL",
+      "Auto": "AUTO",
+      "Airlines": "AIR",
+      "Hospitality": "HOSP",
+      "E-commerce": "E-COM",
+      "Shipping": "SHIP",
+      "Mobility": "MOB",
+      "Media": "MED",
+      "Real-Estate": "REAL",
+      "Advertising": "ADV",
+      "Gaming": "GAME",
+      "Telecoms": "TEL",
+      "Insurance": "INS",
+      "Crypto": "CRYPTO",
+      "Banking": "BANK"
+    }
+    return mapping[industryName] || "ALL"
   }
 
   // Configuration input field states
@@ -273,6 +296,10 @@ export default function CursorDashboard() {
   // Role dropdown state
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState<boolean>(false)
   const [roleDropdownFocusIndex, setRoleDropdownFocusIndex] = useState<number>(-1)
+
+  // Industry dropdown state
+  const [isIndustryDropdownOpen, setIsIndustryDropdownOpen] = useState<boolean>(false)
+  const [industryDropdownFocusIndex, setIndustryDropdownFocusIndex] = useState<number>(-1)
   
   // Dual-trigger dropdown refs and state
   const triggerClusterRef = useRef<HTMLDivElement | null>(null)
@@ -280,6 +307,9 @@ export default function CursorDashboard() {
   const triggerTextRef = useRef<HTMLButtonElement | null>(null)
   const firstOptionRef = useRef<HTMLButtonElement | null>(null)
   const lastTriggerUsed = useRef<'icon' | 'text'>('text')
+
+  // Industry dropdown refs
+  const industryTriggerRef = useRef<HTMLButtonElement | null>(null)
   
   // Messages scroll ref
   const scrollRef = useRef<HTMLDivElement | null>(null)
@@ -341,16 +371,18 @@ export default function CursorDashboard() {
         // Check if click is inside trigger cluster or dropdown
         if (triggerClusterRef.current?.contains(target)) return
         if (document.getElementById('role-dropdown')?.contains(target)) return
+        if (document.getElementById('industry-dropdown')?.contains(target)) return
         closeRoleDropdown()
+        closeIndustryDropdown()
         restoreFocusToTrigger(lastTriggerUsed.current)
       }
     }
 
-    if (isUploadMenuOpen || isRoleDropdownOpen) {
+    if (isUploadMenuOpen || isRoleDropdownOpen || isIndustryDropdownOpen) {
       document.addEventListener('mousedown', handleClickOutside)
       return () => document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [isUploadMenuOpen, uploadMenuAnchorRef, isRoleDropdownOpen])
+  }, [isUploadMenuOpen, uploadMenuAnchorRef, isRoleDropdownOpen, isIndustryDropdownOpen])
 
   // Focus first option when opening dropdown
   useEffect(() => {
@@ -1008,6 +1040,16 @@ It would also be helpful if you described:
     handleRoleDropdownClose()
   }
 
+  // Industry dropdown functions
+  const openIndustryDropdown = () => setIsIndustryDropdownOpen(true)
+  const closeIndustryDropdown = () => setIsIndustryDropdownOpen(false)
+  
+  const handleIndustrySelect = (industry: string) => {
+    setSelectedIndustry(industry)
+    setIsIndustryDropdownOpen(false)
+    setIndustryDropdownFocusIndex(-1)
+  }
+
   const handleRoleDropdownKeyDown = (event: React.KeyboardEvent) => {
     if (!isRoleDropdownOpen) return
 
@@ -1450,6 +1492,31 @@ It would also be helpful if you described:
                             </span>
                             <ChevronDown className="w-3 h-3 text-[#71717a]" aria-hidden="true" />
                           </button>
+
+                          {/* INDUSTRY BUTTON */}
+                          <button
+                            ref={industryTriggerRef}
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); openIndustryDropdown(); }}
+                            aria-haspopup="listbox"
+                            aria-controls="industry-dropdown"
+                            aria-expanded={isIndustryDropdownOpen}
+                            aria-label="Select industry"
+                            className="flex items-center gap-1.5 p-1.5 rounded-md bg-transparent border border-[#2a2a2a] hover:border-[#3a3a3a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]"
+                          >
+                            <Image
+                              src="/icons/building.png"
+                              alt="Select industry"
+                              width={18}
+                              height={18}
+                              draggable={false}
+                              className="shrink-0"
+                            />
+                            <span className="text-xs text-[#71717a] font-medium">
+                              {getIndustryAcronym(selectedIndustry)}
+                            </span>
+                            <ChevronDown className="w-3 h-3 text-[#71717a]" aria-hidden="true" />
+                          </button>
                         </div>
 
                         {/* Role Dropdown Menu */}
@@ -1478,6 +1545,36 @@ It would also be helpful if you described:
                                   aria-selected={selectedAgent === role}
                                 >
                                   {role}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Industry Dropdown Menu */}
+                        {isIndustryDropdownOpen && (
+                          <div
+                            id="industry-dropdown"
+                            role="listbox"
+                            aria-label="Select industry"
+                            className="absolute z-50 left-3 top-12 w-40 rounded-md border border-white/10 bg-neutral-900/90 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-neutral-900/80"
+                            aria-orientation="vertical"
+                          >
+                            <div className="py-1">
+                              {["All Sectors", "Auto", "Airlines", "Hospitality", "E-commerce", "Shipping", "Mobility", "Media", "Real-Estate", "Advertising", "Gaming", "Telecoms", "Insurance", "Crypto", "Banking"].map((industry, index) => (
+                                <button
+                                  key={industry}
+                                  className={`flex items-center gap-2 px-3 py-2 text-sm text-gray-200 hover:text-white hover:bg-white/5 w-full text-left ${
+                                    industryDropdownFocusIndex === index ? 'bg-white/5 text-white' : ''
+                                  } ${selectedIndustry === industry ? 'bg-white/5' : ''}`}
+                                  onClick={() => {
+                                    setSelectedIndustry(industry)
+                                    closeIndustryDropdown()
+                                  }}
+                                  role="option"
+                                  aria-selected={selectedIndustry === industry}
+                                >
+                                  {industry}
                                 </button>
                               ))}
                             </div>
@@ -1686,6 +1783,31 @@ It would also be helpful if you described:
                               <ChevronDown className="w-3 h-3 text-[#71717a]" aria-hidden="true" />
                             </button>
 
+                            {/* INDUSTRY BUTTON */}
+                            <button
+                              ref={industryTriggerRef}
+                              type="button"
+                              onClick={(e) => { e.stopPropagation(); openIndustryDropdown(); }}
+                              aria-haspopup="listbox"
+                              aria-controls="industry-dropdown"
+                              aria-expanded={isIndustryDropdownOpen}
+                              aria-label="Select industry"
+                              className="flex items-center gap-1.5 p-1.5 rounded-md bg-transparent border border-[#2a2a2a] hover:border-[#3a3a3a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]"
+                            >
+                              <Image
+                                src="/icons/building.png"
+                                alt="Select industry"
+                                width={18}
+                                height={18}
+                                draggable={false}
+                                className="shrink-0"
+                              />
+                              <span className="text-xs text-[#71717a] font-medium">
+                                {getIndustryAcronym(selectedIndustry)}
+                              </span>
+                              <ChevronDown className="w-3 h-3 text-[#71717a]" aria-hidden="true" />
+                            </button>
+
                             {/* Role Dropdown */}
                             {isRoleDropdownOpen && (
                               <div
@@ -1706,6 +1828,31 @@ It would also be helpful if you described:
                                     onClick={() => handleRoleSelect(role)}
                                   >
                                     {role}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+
+                            {/* Industry Dropdown */}
+                            {isIndustryDropdownOpen && (
+                              <div
+                                id="industry-dropdown"
+                                role="listbox"
+                                aria-label="Select industry"
+                                className="absolute bottom-full mb-2 left-0 min-w-[200px] bg-zinc-800 border border-zinc-700 rounded-lg shadow-lg py-1 z-50"
+                              >
+                                {["All Sectors", "Auto", "Airlines", "Hospitality", "E-commerce", "Shipping", "Mobility", "Media", "Real-Estate", "Advertising", "Gaming", "Telecoms", "Insurance", "Crypto", "Banking"].map((industry, index) => (
+                                  <div
+                                    key={industry}
+                                    role="option"
+                                    aria-selected={selectedIndustry === industry}
+                                    tabIndex={index === 0 ? 0 : -1}
+                                    className={`px-3 py-2 text-sm cursor-pointer ${
+                                      industryDropdownFocusIndex === index ? 'bg-zinc-700 text-[#a1a1aa]' : 'text-zinc-300 hover:bg-zinc-700 hover:text-[#a1a1aa]'
+                                    }`}
+                                    onClick={() => handleIndustrySelect(industry)}
+                                  >
+                                    {industry}
                                   </div>
                                 ))}
                               </div>
