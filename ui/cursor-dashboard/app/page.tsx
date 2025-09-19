@@ -241,10 +241,9 @@ export default function CursorDashboard() {
       "Travel & Hospitality": "Travel",
       "E-commerce": "E-com",
       "Shipping & Logistics": "Logistics",
-      "Media": "Media",
+      "Media & Advertising": "Media",
       "Real-Estate": "Real",
-      "Advertising": "Adv",
-      "Telecoms": "Tel",
+      "Telecommunications": "Telecom",
       "Financial services": "Finance"
     }
     return mapping[industryName] || "All"
@@ -1548,7 +1547,7 @@ It would also be helpful if you described:
                             aria-orientation="vertical"
                           >
                             <div className="py-1">
-                              {["All", "Travel & Hospitality", "E-commerce", "Shipping & Logistics", "Media", "Real-Estate", "Advertising", "Telecoms", "Financial services"].map((industry, index) => (
+                              {["All", "Travel & Hospitality", "E-commerce", "Shipping & Logistics", "Media & Advertising", "Real-Estate", "Telecommunications", "Financial services"].map((industry, index) => (
                                 <button
                                   key={industry}
                                   className={`flex items-center gap-2 px-3 py-2 text-sm text-gray-200 hover:text-white hover:bg-white/5 w-full text-left ${
@@ -1821,7 +1820,7 @@ It would also be helpful if you described:
                                 aria-label="Select industry"
                                 className="absolute bottom-full mb-2 left-0 min-w-[200px] bg-zinc-800 border border-zinc-700 rounded-lg shadow-lg py-1 z-50"
                               >
-                                {["All", "Travel & Hospitality", "E-commerce", "Shipping & Logistics", "Media", "Real-Estate", "Advertising", "Telecoms", "Financial services"].map((industry, index) => (
+                                {["All", "Travel & Hospitality", "E-commerce", "Shipping & Logistics", "Media & Advertising", "Real-Estate", "Telecommunications", "Financial services"].map((industry, index) => (
                                   <div
                                     key={industry}
                                     role="option"
