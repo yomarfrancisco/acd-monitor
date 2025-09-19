@@ -38,7 +38,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { AssistantBubble } from "@/components/AssistantBubble"
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, ReferenceLine, Label } from "recharts"
-import { CalendarIcon, Copy, RefreshCw, ImageUp, Camera, FolderClosed, Github, AlertTriangle } from "lucide-react"
+import { CalendarIcon, Copy, RefreshCw, ImageUp, Camera, FolderClosed, Github, AlertTriangle, Factory } from "lucide-react"
 import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema } from "@/types/api.schemas"
 import { fetchTyped } from "@/lib/backendAdapter"
 import { safe } from "@/lib/safe"
@@ -237,23 +237,23 @@ export default function CursorDashboard() {
   // Helper function to map industry names to acronyms
   const getIndustryAcronym = (industryName: string): string => {
     const mapping: Record<string, string> = {
-      "All Sectors": "ALL",
-      "Auto": "AUTO",
-      "Airlines": "AIR",
-      "Hospitality": "HOSP",
-      "E-commerce": "E-COM",
-      "Shipping": "SHIP",
-      "Mobility": "MOB",
-      "Media": "MED",
-      "Real-Estate": "REAL",
-      "Advertising": "ADV",
-      "Gaming": "GAME",
-      "Telecoms": "TEL",
-      "Insurance": "INS",
-      "Crypto": "CRYPTO",
-      "Banking": "BANK"
+      "All Sectors": "All",
+      "Auto": "Auto",
+      "Airlines": "Air",
+      "Hospitality": "Hosp",
+      "E-commerce": "E-com",
+      "Shipping": "Ship",
+      "Mobility": "Mob",
+      "Media": "Med",
+      "Real-Estate": "Real",
+      "Advertising": "Adv",
+      "Gaming": "Game",
+      "Telecoms": "Tel",
+      "Insurance": "Ins",
+      "Crypto": "Crypto",
+      "Banking": "Bank"
     }
-    return mapping[industryName] || "ALL"
+    return mapping[industryName] || "All"
   }
 
   // Configuration input field states
@@ -1502,17 +1502,10 @@ It would also be helpful if you described:
                             aria-controls="industry-dropdown"
                             aria-expanded={isIndustryDropdownOpen}
                             aria-label="Select industry"
-                            className="flex items-center gap-1.5 p-1.5 rounded-md bg-transparent border border-[#2a2a2a] hover:border-[#3a3a3a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]"
+                            className="flex items-center gap-1.5 p-1.5 rounded-md bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]"
                           >
-                            <Image
-                              src="/icons/building.png"
-                              alt="Select industry"
-                              width={18}
-                              height={18}
-                              draggable={false}
-                              className="shrink-0"
-                            />
-                            <span className="text-xs text-[#71717a] font-medium">
+                            <Factory className="w-4 h-4 text-[#71717a]" />
+                            <span className="text-[10px] text-[#71717a] font-medium">
                               {getIndustryAcronym(selectedIndustry)}
                             </span>
                             <ChevronDown className="w-3 h-3 text-[#71717a]" aria-hidden="true" />
@@ -1792,17 +1785,10 @@ It would also be helpful if you described:
                               aria-controls="industry-dropdown"
                               aria-expanded={isIndustryDropdownOpen}
                               aria-label="Select industry"
-                              className="flex items-center gap-1.5 p-1.5 rounded-md bg-transparent border border-[#2a2a2a] hover:border-[#3a3a3a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]"
+                              className="flex items-center gap-1.5 p-1.5 rounded-md bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]"
                             >
-                              <Image
-                                src="/icons/building.png"
-                                alt="Select industry"
-                                width={18}
-                                height={18}
-                                draggable={false}
-                                className="shrink-0"
-                              />
-                              <span className="text-xs text-[#71717a] font-medium">
+                              <Factory className="w-4 h-4 text-[#71717a]" />
+                              <span className="text-[10px] text-[#71717a] font-medium">
                                 {getIndustryAcronym(selectedIndustry)}
                               </span>
                               <ChevronDown className="w-3 h-3 text-[#71717a]" aria-hidden="true" />
