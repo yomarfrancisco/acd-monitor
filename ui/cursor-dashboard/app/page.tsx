@@ -219,8 +219,19 @@ export default function CursorDashboard() {
   >("overview")
 
   // Add state for selected agent type
-  const [selectedAgent, setSelectedAgent] = useState("")
+  const [selectedAgent, setSelectedAgent] = useState("Europe")
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([])
+
+  // Helper function to map region names to acronyms
+  const getRegionAcronym = (regionName: string): string => {
+    const mapping: Record<string, string> = {
+      "Europe": "EU",
+      "South Africa": "SA", 
+      "United States": "USA",
+      "Australia": "AUS"
+    }
+    return mapping[regionName] || "EU"
+  }
 
   // Configuration input field states
   const [changeThreshold, setChangeThreshold] = useState("5%")
@@ -1447,7 +1458,7 @@ It would also be helpful if you described:
                             aria-expanded={isRoleDropdownOpen}
                             className="bg-transparent text-xs text-[#71717a] font-medium border-none outline-none cursor-pointer hover:text-[#a1a1aa] flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10] relative z-10"
                           >
-                            {selectedAgent || "Jurisdiction"}
+                            {getRegionAcronym(selectedAgent)}
                             <ChevronDown className="w-3 h-3 text-[#71717a]" aria-hidden="true" />
                           </button>
                         </div>
@@ -1681,7 +1692,7 @@ It would also be helpful if you described:
                                 className="shrink-0"
                               />
                               <span className="text-xs text-[#71717a] font-medium">
-                                {selectedAgent || "Jurisdiction"}
+                                {getRegionAcronym(selectedAgent)}
                               </span>
                               <ChevronDown className="w-3 h-3 text-[#71717a]" aria-hidden="true" />
                             </button>
