@@ -1491,7 +1491,14 @@ It would also be helpful if you described:
                               handleSendMessage()
                             }
                           }}
-                          className="w-full bg-bg-tile rounded-lg text-[#f9fafb] pr-16 px-4 py-4 text-xs md:text-base leading-5 placeholder:text-xs md:placeholder:text-base placeholder:text-[#71717a] resize-none overflow-y-hidden focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50 composer-textarea min-h-[112px] max-h-[40vh]"
+                          className="w-full bg-bg-tile rounded-lg text-[#f9fafb]
+                            px-4 pt-4 pb-16 md:pb-[76px] pr-16
+                            text-xs md:text-base leading-5
+                            placeholder:text-xs md:placeholder:text-base placeholder:text-[#71717a]
+                            whitespace-pre-wrap break-words
+                            resize-none overflow-y-hidden focus:outline-none
+                            shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50
+                            min-h-[112px] max-h-[40vh]"
                           style={{ caretColor: "rgba(249, 250, 251, 0.8)" }}
                           rows={1}
                         />
@@ -1774,7 +1781,14 @@ It would also be helpful if you described:
                                 handleSendMessage()
                               }
                             }}
-                            className="w-full bg-bg-tile rounded-lg text-[#f9fafb] pr-16 px-4 py-4 text-xs md:text-base leading-5 placeholder:text-xs md:placeholder:text-base placeholder:text-[#71717a] resize-none overflow-y-hidden focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50 composer-textarea min-h-[112px] max-h-[40vh]"
+                            className="w-full bg-bg-tile rounded-lg text-[#f9fafb]
+                              px-4 pt-4 pb-16 md:pb-[76px] pr-16
+                              text-xs md:text-base leading-5
+                              placeholder:text-xs md:placeholder:text-base placeholder:text-[#71717a]
+                              whitespace-pre-wrap break-words
+                              resize-none overflow-y-hidden focus:outline-none
+                              shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50
+                              min-h-[112px] max-h-[40vh]"
                             style={{ caretColor: "rgba(249, 250, 251, 0.8)" }}
                             rows={1}
                           />

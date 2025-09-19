@@ -279,17 +279,6 @@
   background: #3a3a3a; /* Chrome/Safari/Edge */
 }
 
-/* Reserve space for the absolute button row inside the textarea */
-.composer-textarea {
-  padding-bottom: calc(56px + env(safe-area-inset-bottom));
-}
-
-/* Optional: slightly more on desktop if you prefer */
-@media (min-width: 1024px) {
-  .composer-textarea {
-    padding-bottom: calc(60px + env(safe-area-inset-bottom));
-  }
-}
 
 /* Mobile keyboard handling for fixed input */
 @media (max-width: 768px) {
