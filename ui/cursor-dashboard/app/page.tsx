@@ -1721,7 +1721,7 @@ It would also be helpful if you described:
                               className="agents-quick-btn"
                             >
                               <Search className="w-2 h-2 md:w-2.5 md:h-2.5" />
-                              Analyze algorithms
+                              Audit my algorithm
                             </button>
                             <button 
                               type="button"
