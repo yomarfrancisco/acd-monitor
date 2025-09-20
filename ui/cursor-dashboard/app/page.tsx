@@ -1397,7 +1397,7 @@ It would also be helpful if you described:
                   {hasEngaged && (
                     <div
                       ref={scrollRef}
-                      className="flex-1 overflow-y-auto mb-4 space-y-4 messages-container pb-32 chat-messages-container"
+                      className="flex-1 overflow-y-auto mb-4 space-y-4 messages-container pb-32 pt-6 chat-messages-container"
                     >
                       {messages.map((message, index) => (
                         <div key={message.id} className="w-full">
@@ -1431,7 +1431,7 @@ It would also be helpful if you described:
                             </div>
                           ) : (
                             <div className="flex justify-end">
-                              <div className="max-w-[60%] bg-[#2a2a2a] rounded-lg px-3 py-2 text-xs lg:text-base lg:leading-5 text-[#f9fafb] font-messages">
+                              <div className="max-w-[60%] bg-[#2a2a2a] rounded-lg px-6 py-4 text-xs lg:text-base lg:leading-5 text-[#f9fafb]">
                                 {message.content}
                               </div>
                             </div>

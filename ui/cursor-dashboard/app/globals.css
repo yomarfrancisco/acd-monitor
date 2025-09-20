@@ -188,7 +188,7 @@
   background: #000000;        /* Black background */
   border: 1px solid #2a2a2a; /* Border line matching page backdrop */
   border-radius: 0.5rem;      /* Same as user: rounded-lg */
-  padding: 0.5rem 0.75rem;    /* Same as user: px-3 py-2 */
+  padding: 1rem 1.5rem;       /* Increased padding: px-6 py-4 */
   max-width: 85%;             /* Increased from 60% to 85% */
   color: #000000;             /* Black text */
 }
@@ -245,15 +245,15 @@
   mask-image: linear-gradient(
     to bottom,
     transparent 0%,
-    black 10px,
-    black calc(100% - 10px),
+    black 5px,
+    black calc(100% - 5px),
     transparent 100%
   );
   -webkit-mask-image: linear-gradient(
     to bottom,
     transparent 0%,
-    black 10px,
-    black calc(100% - 10px),
+    black 5px,
+    black calc(100% - 5px),
     transparent 100%
   );
   
