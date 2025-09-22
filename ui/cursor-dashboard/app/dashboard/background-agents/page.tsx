@@ -10,6 +10,7 @@ const dashboardCtaBtnClass = "bg-[#AFC8FF] text-black hover:bg-[#9FBCFF] active:
 
 export default function Page() {
   const [evidenceLoading, setEvidenceLoading] = useState(false);
+  const [activeAgent, setActiveAgent] = useState<string | null>(null);
 
   const handleEvidenceExport = () => {
     setEvidenceLoading(true);
@@ -75,7 +76,7 @@ export default function Page() {
         <CardContent className="p-0">
           {/* Section Header */}
           <div className="px-4 py-3 border-b border-[#2a2a2a]">
-            <h2 className="text-sm font-medium text-[#f9fafb]">Agent Persona</h2>
+            <h2 className="text-sm font-medium text-[#f9fafb]">Agent Type</h2>
           </div>
           {/* Configuration Items */}
           <div className="p-4">
@@ -91,12 +92,18 @@ export default function Page() {
                   </div>
                 </div>
               </div>
-              <Button
-                size="sm"
-                className={dashboardCtaBtnClass}
+              <button
+                type="button"
+                onClick={() => setActiveAgent(activeAgent === "general" ? null : "general")}
+                aria-pressed={activeAgent === "general"}
+                className={`rounded-full px-4 py-1 text-sm font-normal transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6FA0FF] ${
+                  activeAgent === "general" 
+                    ? "bg-[#AFC8FF] text-black" 
+                    : "bg-[#2a2a2a] text-[#a1a1aa] hover:bg-[#3a3a3a]"
+                }`}
               >
-                Select
-              </Button>
+                {activeAgent === "general" ? "Selected" : "Select"}
+              </button>
             </div>
           </div>
           <div
@@ -115,12 +122,18 @@ export default function Page() {
                   </div>
                 </div>
               </div>
-              <Button
-                size="sm"
-                className={dashboardCtaBtnClass}
+              <button
+                type="button"
+                onClick={() => setActiveAgent(activeAgent === "compliance" ? null : "compliance")}
+                aria-pressed={activeAgent === "compliance"}
+                className={`rounded-full px-4 py-1 text-sm font-normal transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6FA0FF] ${
+                  activeAgent === "compliance" 
+                    ? "bg-[#AFC8FF] text-black" 
+                    : "bg-[#2a2a2a] text-[#a1a1aa] hover:bg-[#3a3a3a]"
+                }`}
               >
-                Select
-              </Button>
+                {activeAgent === "compliance" ? "Selected" : "Select"}
+              </button>
             </div>
           </div>
           <div
@@ -139,12 +152,18 @@ export default function Page() {
                   </div>
                 </div>
               </div>
-              <Button
-                size="sm"
-                className={dashboardCtaBtnClass}
+              <button
+                type="button"
+                onClick={() => setActiveAgent(activeAgent === "risk" ? null : "risk")}
+                aria-pressed={activeAgent === "risk"}
+                className={`rounded-full px-4 py-1 text-sm font-normal transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6FA0FF] ${
+                  activeAgent === "risk" 
+                    ? "bg-[#AFC8FF] text-black" 
+                    : "bg-[#2a2a2a] text-[#a1a1aa] hover:bg-[#3a3a3a]"
+                }`}
               >
-                Select
-              </Button>
+                {activeAgent === "risk" ? "Selected" : "Select"}
+              </button>
             </div>
           </div>
           <div
@@ -163,12 +182,18 @@ export default function Page() {
                   </div>
                 </div>
               </div>
-              <Button
-                size="sm"
-                className={dashboardCtaBtnClass}
+              <button
+                type="button"
+                onClick={() => setActiveAgent(activeAgent === "security" ? null : "security")}
+                aria-pressed={activeAgent === "security"}
+                className={`rounded-full px-4 py-1 text-sm font-normal transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6FA0FF] ${
+                  activeAgent === "security" 
+                    ? "bg-[#AFC8FF] text-black" 
+                    : "bg-[#2a2a2a] text-[#a1a1aa] hover:bg-[#3a3a3a]"
+                }`}
               >
-                Select
-              </Button>
+                {activeAgent === "security" ? "Selected" : "Select"}
+              </button>
             </div>
           </div>
         </CardContent>
