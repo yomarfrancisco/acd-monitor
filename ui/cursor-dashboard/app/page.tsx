@@ -2182,6 +2182,11 @@ It would also be helpful if you described:
                               axisLine={false}
                               tickLine={false}
                               tick={{ fill: "#a1a1aa", fontSize: 10 }}
+                              label={{
+                                value: "Time",
+                                position: "insideBottom",
+                                style: { textAnchor: "middle", fill: "#a1a1aa", fontSize: 10 },
+                              }}
                             />
                             <YAxis
                               axisLine={false}
@@ -2669,7 +2674,7 @@ It would also be helpful if you described:
                   <CardContent className="p-4 text-center">
                     <h3 className="text-[#f9fafb] font-medium mb-1.5 text-xs">Assign Reviewers</h3>
                     <p className="text-[10px] text-[#a1a1aa] mb-2.5">
-                      Ensure independent oversight of monitoring outputs.
+                      Invite oversight to review monitoring outputs.
                     </p>
                     <Button
                       className={dashboardCtaBtnClass}

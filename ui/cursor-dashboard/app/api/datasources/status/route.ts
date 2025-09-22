@@ -22,7 +22,7 @@ function generateMockDataSources(mode: string) {
       },
       {
         id: 'ds2',
-        name: 'External Data Feed',
+        name: 'Exchange Feeds',
         tier: 'T1',
         status: 'OK',
         freshnessSec: jitter(30, 10),
