@@ -2,9 +2,6 @@
 Unit tests for mirroring validation layer
 """
 
-import pytest
-import numpy as np
-import pandas as pd
 from src.acd.validation.mirroring import MirroringValidator, MirroringConfig
 
 

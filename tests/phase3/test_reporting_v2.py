@@ -2,13 +2,9 @@
 Tests for ACD Reporting v2 - Attribution Tables and Provenance-Tracked Outputs
 """
 
-import json
-import pytest
-import pandas as pd
-import numpy as np
 from datetime import datetime
-from pathlib import Path
-from unittest.mock import Mock, patch, mock_open
+
+# from unittest.mock import Mock  # noqa: F401, patch, mock_open
 
 from src.acd.analytics.report_v2 import (
     ReportV2Generator,

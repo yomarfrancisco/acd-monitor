@@ -5,10 +5,10 @@ Tests that both Chatbase and Offline providers implement the same interface
 and can be used interchangeably.
 """
 
-import pytest
 import os
-from unittest.mock import patch, MagicMock
-from typing import Dict, Any
+
+# from unittest.mock import patch, MagicMock  # noqa: F401
+# from typing import Dict  # noqa: F401, Any
 
 # Import providers
 from src.agent.providers.chatbase_adapter import ChatbaseAdapter, AgentMessage, Health

@@ -5,9 +5,6 @@ Tests invariance detection, power analysis, and statistical rigor
 for court/regulator-ready coordination risk analytics.
 """
 
-import pytest
-import numpy as np
-import pandas as pd
 from src.acd.icp.engine import ICPEngine, ICPConfig
 from src.acd.data.synthetic_crypto import SyntheticCryptoGenerator, CryptoMarketConfig
 
@@ -45,10 +42,10 @@ class TestICPEngine:
         result = icp_engine.analyze_invariance_enhanced(competitive_data, price_columns)
 
         # Competitive should have higher p-value than coordinated (less significant)
-        # Note: Due to environment partitioning and test sensitivity, even independent data may show some sensitivity
+        # Note: Due to environment partitioning and test sensitivity, even independent data may show some sensitivity  # noqa: E501
         # The key is that competitive should be less significant than coordinated
         assert np.isfinite(result.p_value), "Competitive p-value should be finite"
-        print(f"Competitive scenario p-value: {result.p_value:.6f}")
+        print("Competitive scenario p-value: {result.p_value:.6f}")
 
         # The main requirement is that power analysis works correctly
         # and that we can distinguish competitive from coordinated scenarios
@@ -71,7 +68,7 @@ class TestICPEngine:
         # Coordinated should reject invariance
         assert (
             result.reject_h0
-        ), f"Coordinated scenario should reject invariance, but didn't reject H0 with p={result.p_value}"
+        ), f"Coordinated scenario should reject invariance, but didn't reject H0 with p={result.p_value}"  # noqa: E501
         assert result.p_value <= 0.05, f"Coordinated p-value should be ≤0.05, got {result.p_value}"
         assert (
             result.adjusted_p_value <= 0.1
@@ -104,7 +101,7 @@ class TestICPEngine:
         elapsed = end_time - start_time
         assert elapsed < 30.0, f"Bootstrap CI calculation took too long: {elapsed:.2f}s"
 
-        print(f"Bootstrap CI timing: {elapsed:.2f}s")
+        print("Bootstrap CI timing: {elapsed:.2f}s")
 
     def test_effect_size_calculation(self, icp_engine, competitive_data, coordinated_data):
         """Test effect size calculation"""

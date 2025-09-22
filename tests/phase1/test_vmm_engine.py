@@ -5,9 +5,6 @@ Tests convergence, over-identification, and structural stability
 for court/regulator-ready coordination risk analytics.
 """
 
-import pytest
-import numpy as np
-import pandas as pd
 from src.acd.vmm.engine import VMMEngine, VMMConfig
 from src.acd.data.synthetic_crypto import SyntheticCryptoGenerator, CryptoMarketConfig
 
@@ -59,7 +56,7 @@ class TestVMMEngine:
         assert np.all(np.isfinite(result.rho_estimates)), "Rho estimates should be finite"
 
         print(
-            f"Convergence: {result.convergence_status}, iterations: {result.iterations}, loss: {result.final_loss:.6f}"
+            f"Convergence: {result.convergence_status}, iterations: {result.iterations}, loss: {result.final_loss:.6f}"  # noqa: E501
         )
 
     def test_over_identification(self, vmm_engine, competitive_data):
@@ -79,15 +76,15 @@ class TestVMMEngine:
         # This is a soft check - competitive data should not show strong over-identification
         if result.over_identification_p_value > 0.05:
             print(
-                f"Competitive data shows no over-identification (p={result.over_identification_p_value:.6f})"
+                f"Competitive data shows no over-identification (p={result.over_identification_p_value:.6f})"  # noqa: E501
             )
         else:
             print(
-                f"Competitive data shows over-identification (p={result.over_identification_p_value:.6f})"
+                f"Competitive data shows over-identification (p={result.over_identification_p_value:.6f})"  # noqa: E501
             )
 
-        print(f"Over-ID J-statistic: {result.over_identification_stat:.6f}")
-        print(f"Over-ID p-value: {result.over_identification_p_value:.6f}")
+        print("Over-ID J-statistic: {result.over_identification_stat:.6f}")
+        print("Over-ID p-value: {result.over_identification_p_value:.6f}")
 
     def test_stability_range(self, vmm_engine, competitive_data, coordinated_data):
         """Test that structural stability is bounded in [0,1]"""
@@ -111,7 +108,7 @@ class TestVMMEngine:
                 0.0 <= result.structural_stability <= 1.0
             ), f"{scenario} stability should be in [0,1], got {result.structural_stability}"
 
-            print(f"{scenario.capitalize()} stability: {result.structural_stability:.6f}")
+            print("{scenario.capitalize()} stability: {result.structural_stability:.6f}")
 
     def test_regime_confidence(self, vmm_engine, competitive_data):
         """Test regime confidence calculation"""
@@ -125,7 +122,7 @@ class TestVMMEngine:
             0.0 <= result.regime_confidence <= 1.0
         ), f"Regime confidence should be in [0,1], got {result.regime_confidence}"
 
-        print(f"Regime confidence: {result.regime_confidence:.6f}")
+        print("Regime confidence: {result.regime_confidence:.6f}")
 
     def test_moment_conditions(self, vmm_engine, competitive_data):
         """Test moment condition calculation"""
@@ -142,8 +139,8 @@ class TestVMMEngine:
         assert np.all(np.isfinite(moments)), "All moment conditions should be finite"
         assert len(moments) > 0, "Should have at least one moment condition"
 
-        print(f"Number of moment conditions: {len(moments)}")
-        print(f"Moment conditions range: [{np.min(moments):.6f}, {np.max(moments):.6f}]")
+        print("Number of moment conditions: {len(moments)}")
+        print("Moment conditions range: [{np.min(moments):.6f}, {np.max(moments):.6f}]")
 
     def test_gradient_calculation(self, vmm_engine, competitive_data):
         """Test gradient calculation"""
@@ -161,7 +158,7 @@ class TestVMMEngine:
         assert np.all(np.isfinite(gradients)), "All gradients should be finite"
         assert len(gradients) == len(beta), "Gradients should match beta dimension"
 
-        print(f"Gradient norm: {np.linalg.norm(gradients):.6f}")
+        print("Gradient norm: {np.linalg.norm(gradients):.6f}")
 
     def test_parameter_initialization(self, vmm_engine, competitive_data):
         """Test parameter initialization"""
@@ -185,7 +182,7 @@ class TestVMMEngine:
         assert rho_init.shape == (beta_dim, beta_dim), "Rho should be square"
 
         print(
-            f"Parameter shapes: beta={beta_init.shape}, sigma={sigma_init.shape}, rho={rho_init.shape}"
+            f"Parameter shapes: beta={beta_init.shape}, sigma={sigma_init.shape}, rho={rho_init.shape}"  # noqa: E501
         )
 
 

@@ -4,11 +4,6 @@ Phase 1 Integration Tests
 Tests for the integrated ACD engine with ICP, VMM, and crypto moments.
 """
 
-import pytest
-import numpy as np
-import pandas as pd
-from datetime import datetime, timedelta
-
 from src.acd.data.synthetic_crypto import SyntheticCryptoGenerator, CryptoMarketConfig
 from src.acd.icp.engine import ICPEngine, ICPConfig
 from src.acd.vmm.crypto_moments import CryptoMomentCalculator, CryptoMomentConfig
@@ -164,10 +159,10 @@ class TestPhase1Integration:
         assert result_coordinated.composite_risk_score >= result_competitive.composite_risk_score
 
         # Check that we can distinguish the scenarios
-        print(f"Competitive risk score: {result_competitive.composite_risk_score:.2f}")
-        print(f"Coordinated risk score: {result_coordinated.composite_risk_score:.2f}")
-        print(f"Competitive classification: {result_competitive.risk_classification}")
-        print(f"Coordinated classification: {result_coordinated.risk_classification}")
+        print("Competitive risk score: {result_competitive.composite_risk_score:.2f}")
+        print("Coordinated risk score: {result_coordinated.composite_risk_score:.2f}")
+        print("Competitive classification: {result_competitive.risk_classification}")
+        print("Coordinated classification: {result_coordinated.risk_classification}")
 
     def test_diagnostic_report_generation(self, synthetic_data, integrated_config):
         """Test diagnostic report generation"""
@@ -228,8 +223,8 @@ if __name__ == "__main__":
     coordinated_data = generator.generate_coordinated_scenario()
 
     print("Generated synthetic data:")
-    print(f"Competitive data shape: {competitive_data.shape}")
-    print(f"Coordinated data shape: {coordinated_data.shape}")
+    print("Competitive data shape: {competitive_data.shape}")
+    print("Coordinated data shape: {coordinated_data.shape}")
 
     # Test integrated analysis
     integrated_config = IntegratedConfig(
@@ -246,16 +241,16 @@ if __name__ == "__main__":
     result_competitive = integrated_engine.analyze_coordination_risk(competitive_data, price_cols)
     result_coordinated = integrated_engine.analyze_coordination_risk(coordinated_data, price_cols)
 
-    print(f"\nCompetitive scenario:")
-    print(f"  Risk classification: {result_competitive.risk_classification}")
-    print(f"  Composite score: {result_competitive.composite_risk_score:.2f}")
-    print(f"  Confidence: {result_competitive.confidence_level:.2f}")
+    print("\nCompetitive scenario:")
+    print("  Risk classification: {result_competitive.risk_classification}")
+    print("  Composite score: {result_competitive.composite_risk_score:.2f}")
+    print("  Confidence: {result_competitive.confidence_level:.2f}")
 
-    print(f"\nCoordinated scenario:")
-    print(f"  Risk classification: {result_coordinated.risk_classification}")
-    print(f"  Composite score: {result_coordinated.composite_risk_score:.2f}")
-    print(f"  Confidence: {result_coordinated.confidence_level:.2f}")
+    print("\nCoordinated scenario:")
+    print("  Risk classification: {result_coordinated.risk_classification}")
+    print("  Composite score: {result_coordinated.composite_risk_score:.2f}")
+    print("  Confidence: {result_coordinated.confidence_level:.2f}")
 
     print(
-        f"\nDistinction achieved: {result_coordinated.composite_risk_score > result_competitive.composite_risk_score}"
+        f"\nDistinction achieved: {result_coordinated.composite_risk_score > result_competitive.composite_risk_score}"  # noqa: E501
     )

@@ -5,7 +5,6 @@ Tests for the 10 provided scripted compliance queries plus 5 additional
 high-value queries for real compliance operations.
 """
 
-import pytest
 from src.agent.providers.offline_mock import OfflineMockProvider
 
 
@@ -28,8 +27,8 @@ class TestScriptedComplianceQueries:
         assert result.usage.get("mode") == "offline_mock"
 
     def test_query_2_price_leader(self, offline_provider):
-        """Test: Which exchange acted as price leader for BTC/USD yesterday, and how persistent was that leadership?"""
-        query = "Which exchange acted as price leader for BTC/USD yesterday, and how persistent was that leadership?"
+        """Test: Which exchange acted as price leader for BTC/USD yesterday, and how persistent was that leadership?"""  # noqa: E501
+        query = "Which exchange acted as price leader for BTC/USD yesterday, and how persistent was that leadership?"  # noqa: E501
         result = offline_provider.generate(prompt=query)
 
         assert "lead" in result.content.lower() or "lag" in result.content.lower()
@@ -55,8 +54,8 @@ class TestScriptedComplianceQueries:
         assert result.usage.get("mode") == "offline_mock"
 
     def test_query_5_risk_bands(self, offline_provider):
-        """Test: Summarize coordination risk bands (LOW/AMBER/RED) across the top 3 venues for BTC/USD in the last week."""
-        query = "Summarize coordination risk bands (LOW/AMBER/RED) across the top 3 venues for BTC/USD in the last week."
+        """Test: Summarize coordination risk bands (LOW/AMBER/RED) across the top 3 venues for BTC/USD in the last week."""  # noqa: E501
+        query = "Summarize coordination risk bands (LOW/AMBER/RED) across the top 3 venues for BTC/USD in the last week."  # noqa: E501
         result = offline_provider.generate(prompt=query)
 
         assert "risk" in result.content.lower() or "verdict" in result.content.lower()
@@ -64,8 +63,8 @@ class TestScriptedComplianceQueries:
         assert result.usage.get("mode") == "offline_mock"
 
     def test_query_6_alternative_explanations(self, offline_provider):
-        """Test: List all alternative explanations that could account for the coordination signal flagged on 2025-09-15."""
-        query = "List all alternative explanations that could account for the coordination signal flagged on 2025-09-15."
+        """Test: List all alternative explanations that could account for the coordination signal flagged on 2025-09-15."""  # noqa: E501
+        query = "List all alternative explanations that could account for the coordination signal flagged on 2025-09-15."  # noqa: E501
         result = offline_provider.generate(prompt=query)
 
         assert "alternative" in result.content.lower() or "explanation" in result.content.lower()
@@ -75,8 +74,8 @@ class TestScriptedComplianceQueries:
         assert result.usage.get("mode") == "offline_mock"
 
     def test_query_7_icp_invariance(self, offline_provider):
-        """Test: Summarize ICP invariance results by environment for BTC/USD over the last 14 days; include FDR q-values and sample sizes."""
-        query = "Summarize ICP invariance results by environment for BTC/USD over the last 14 days; include FDR q-values and sample sizes."
+        """Test: Summarize ICP invariance results by environment for BTC/USD over the last 14 days; include FDR q-values and sample sizes."""  # noqa: E501
+        query = "Summarize ICP invariance results by environment for BTC/USD over the last 14 days; include FDR q-values and sample sizes."  # noqa: E501
         result = offline_provider.generate(prompt=query)
 
         assert "icp" in result.content.lower()
@@ -85,8 +84,8 @@ class TestScriptedComplianceQueries:
         assert result.usage.get("mode") == "offline_mock"
 
     def test_query_8_vmm_analysis(self, offline_provider):
-        """Test: Report VMM over-identification p-values and stability for BTC/USD (seed 42), plus moment scaling provenance."""
-        query = "Report VMM over-identification p-values and stability for BTC/USD (seed 42), plus moment scaling provenance."
+        """Test: Report VMM over-identification p-values and stability for BTC/USD (seed 42), plus moment scaling provenance."""  # noqa: E501
+        query = "Report VMM over-identification p-values and stability for BTC/USD (seed 42), plus moment scaling provenance."  # noqa: E501
         result = offline_provider.generate(prompt=query)
 
         assert "vmm" in result.content.lower()
@@ -94,8 +93,8 @@ class TestScriptedComplianceQueries:
         assert result.usage.get("mode") == "offline_mock"
 
     def test_query_9_alternative_explanations_eth(self, offline_provider):
-        """Test: Which alternative explanations (arbitrage latency, fee tiers, inventory shocks) were triggered for ETH/USD in the last 72h?"""
-        query = "Which alternative explanations (arbitrage latency, fee tiers, inventory shocks) were triggered for ETH/USD in the last 72h?"
+        """Test: Which alternative explanations (arbitrage latency, fee tiers, inventory shocks) were triggered for ETH/USD in the last 72h?"""  # noqa: E501
+        query = "Which alternative explanations (arbitrage latency, fee tiers, inventory shocks) were triggered for ETH/USD in the last 72h?"  # noqa: E501
         result = offline_provider.generate(prompt=query)
 
         assert "alternative" in result.content.lower() or "explanation" in result.content.lower()
@@ -105,8 +104,8 @@ class TestScriptedComplianceQueries:
         assert result.usage.get("mode") == "offline_mock"
 
     def test_query_10_screening_memo(self, offline_provider):
-        """Test: Generate a screening memo for BTC/USD (past week): headline verdict (LOW/AMBER/RED), top drivers (lead-lag, mirroring, regimes), and caveats."""
-        query = "Generate a screening memo for BTC/USD (past week): headline verdict (LOW/AMBER/RED), top drivers (lead-lag, mirroring, regimes), and caveats."
+        """Test: Generate a screening memo for BTC/USD (past week): headline verdict (LOW/AMBER/RED), top drivers (lead-lag, mirroring, regimes), and caveats."""  # noqa: E501
+        query = "Generate a screening memo for BTC/USD (past week): headline verdict (LOW/AMBER/RED), top drivers (lead-lag, mirroring, regimes), and caveats."  # noqa: E501
         result = offline_provider.generate(prompt=query)
 
         assert "risk" in result.content.lower() or "verdict" in result.content.lower()
@@ -123,8 +122,8 @@ class TestAdditionalComplianceQueries:
         return OfflineMockProvider()
 
     def test_query_11_mev_coordination(self, offline_provider):
-        """Test: Analyze MEV bot coordination patterns in Ethereum mempool for the last 48 hours. Focus on sandwich attacks and front-running."""
-        query = "Analyze MEV bot coordination patterns in Ethereum mempool for the last 48 hours. Focus on sandwich attacks and front-running."
+        """Test: Analyze MEV bot coordination patterns in Ethereum mempool for the last 48 hours. Focus on sandwich attacks and front-running."""  # noqa: E501
+        query = "Analyze MEV bot coordination patterns in Ethereum mempool for the last 48 hours. Focus on sandwich attacks and front-running."  # noqa: E501
         result = offline_provider.generate(prompt=query)
 
         assert "mev" in result.content.lower() or "coordination" in result.content.lower()
@@ -132,8 +131,8 @@ class TestAdditionalComplianceQueries:
         # Should fall back to default since MEV-specific patterns aren't implemented yet
 
     def test_query_12_venue_comparison(self, offline_provider):
-        """Test: Compare coordination risk scores across Binance, Coinbase, and Kraken for BTC/USD over the past 30 days. Rank venues by risk level."""
-        query = "Compare coordination risk scores across Binance, Coinbase, and Kraken for BTC/USD over the past 30 days. Rank venues by risk level."
+        """Test: Compare coordination risk scores across Binance, Coinbase, and Kraken for BTC/USD over the past 30 days. Rank venues by risk level."""  # noqa: E501
+        query = "Compare coordination risk scores across Binance, Coinbase, and Kraken for BTC/USD over the past 30 days. Rank venues by risk level."  # noqa: E501
         result = offline_provider.generate(prompt=query)
 
         assert "risk" in result.content.lower() or "coordination" in result.content.lower()
@@ -141,8 +140,8 @@ class TestAdditionalComplianceQueries:
         assert result.usage.get("mode") == "offline_mock"
 
     def test_query_13_rolling_weekly_summary(self, offline_provider):
-        """Test: Generate a rolling weekly summary of coordination signals for ETH/USD. Include trend analysis and alert escalation recommendations."""
-        query = "Generate a rolling weekly summary of coordination signals for ETH/USD. Include trend analysis and alert escalation recommendations."
+        """Test: Generate a rolling weekly summary of coordination signals for ETH/USD. Include trend analysis and alert escalation recommendations."""  # noqa: E501
+        query = "Generate a rolling weekly summary of coordination signals for ETH/USD. Include trend analysis and alert escalation recommendations."  # noqa: E501
         result = offline_provider.generate(prompt=query)
 
         assert "summary" in result.content.lower() or "coordination" in result.content.lower()
@@ -150,8 +149,8 @@ class TestAdditionalComplianceQueries:
         assert result.usage.get("mode") == "offline_mock"
 
     def test_query_14_alert_triage(self, offline_provider):
-        """Test: Triage the coordination alerts from the last 24 hours. Prioritize by severity and provide recommended actions for each alert."""
-        query = "Triage the coordination alerts from the last 24 hours. Prioritize by severity and provide recommended actions for each alert."
+        """Test: Triage the coordination alerts from the last 24 hours. Prioritize by severity and provide recommended actions for each alert."""  # noqa: E501
+        query = "Triage the coordination alerts from the last 24 hours. Prioritize by severity and provide recommended actions for each alert."  # noqa: E501
         result = offline_provider.generate(prompt=query)
 
         assert "alert" in result.content.lower() or "coordination" in result.content.lower()
@@ -159,8 +158,8 @@ class TestAdditionalComplianceQueries:
         # Should fall back to default since alert triage isn't implemented yet
 
     def test_query_15_regulatory_reporting(self, offline_provider):
-        """Test: Prepare a regulatory reporting summary for Q3 2024 coordination monitoring. Include key findings, statistical significance, and compliance recommendations."""
-        query = "Prepare a regulatory reporting summary for Q3 2024 coordination monitoring. Include key findings, statistical significance, and compliance recommendations."
+        """Test: Prepare a regulatory reporting summary for Q3 2024 coordination monitoring. Include key findings, statistical significance, and compliance recommendations."""  # noqa: E501
+        query = "Prepare a regulatory reporting summary for Q3 2024 coordination monitoring. Include key findings, statistical significance, and compliance recommendations."  # noqa: E501
         result = offline_provider.generate(prompt=query)
 
         assert (

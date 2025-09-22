@@ -5,9 +5,6 @@ Tests runtime and memory usage for synthetic data analysis
 to catch performance regressions.
 """
 
-import pytest
-import numpy as np
-import pandas as pd
 import time
 import psutil
 import os
@@ -84,12 +81,12 @@ class TestPerformance:
         assert result.risk_classification in ["LOW", "AMBER", "RED"], "Invalid risk classification"
         assert 0.0 <= result.composite_risk_score <= 100.0, "Invalid composite score"
 
-        print(f"Competitive Performance:")
-        print(f"  Runtime: {runtime:.2f}s")
-        print(f"  Memory used: {memory_used:.1f}MB")
-        print(f"  Peak memory: {peak_memory:.1f}MB")
-        print(f"  Risk classification: {result.risk_classification}")
-        print(f"  Composite score: {result.composite_risk_score:.2f}")
+        print("Competitive Performance:")
+        print("  Runtime: {runtime:.2f}s")
+        print("  Memory used: {memory_used:.1f}MB")
+        print("  Peak memory: {peak_memory:.1f}MB")
+        print("  Risk classification: {result.risk_classification}")
+        print("  Composite score: {result.composite_risk_score:.2f}")
 
     def test_coordinated_performance(self, integrated_engine, coordinated_data):
         """Benchmark coordinated scenario analysis"""
@@ -124,12 +121,12 @@ class TestPerformance:
         assert result.risk_classification in ["LOW", "AMBER", "RED"], "Invalid risk classification"
         assert 0.0 <= result.composite_risk_score <= 100.0, "Invalid composite score"
 
-        print(f"Coordinated Performance:")
-        print(f"  Runtime: {runtime:.2f}s")
-        print(f"  Memory used: {memory_used:.1f}MB")
-        print(f"  Peak memory: {peak_memory:.1f}MB")
-        print(f"  Risk classification: {result.risk_classification}")
-        print(f"  Composite score: {result.composite_risk_score:.2f}")
+        print("Coordinated Performance:")
+        print("  Runtime: {runtime:.2f}s")
+        print("  Memory used: {memory_used:.1f}MB")
+        print("  Peak memory: {peak_memory:.1f}MB")
+        print("  Risk classification: {result.risk_classification}")
+        print("  Composite score: {result.composite_risk_score:.2f}")
 
     def test_both_scenarios_performance(
         self, integrated_engine, competitive_data, coordinated_data
@@ -177,15 +174,15 @@ class TestPerformance:
             competitive_result.composite_risk_score != coordinated_result.composite_risk_score
         ), "Scenarios should have different scores"
 
-        print(f"Both Scenarios Performance:")
-        print(f"  Total runtime: {runtime:.2f}s")
-        print(f"  Total memory used: {memory_used:.1f}MB")
-        print(f"  Peak memory: {peak_memory:.1f}MB")
+        print("Both Scenarios Performance:")
+        print("  Total runtime: {runtime:.2f}s")
+        print("  Total memory used: {memory_used:.1f}MB")
+        print("  Peak memory: {peak_memory:.1f}MB")
         print(
-            f"  Competitive: {competitive_result.composite_risk_score:.2f} → {competitive_result.risk_classification}"
+            f"  Competitive: {competitive_result.composite_risk_score:.2f} → {competitive_result.risk_classification}"  # noqa: E501
         )
         print(
-            f"  Coordinated: {coordinated_result.composite_risk_score:.2f} → {coordinated_result.risk_classification}"
+            f"  Coordinated: {coordinated_result.composite_risk_score:.2f} → {coordinated_result.risk_classification}"  # noqa: E501
         )
 
     def test_memory_efficiency(self, integrated_engine, competitive_data):
@@ -216,10 +213,10 @@ class TestPerformance:
             memory_variance < 5000.0
         ), f"Memory usage variance too high: {memory_variance:.1f}MB² (possible memory leak)"
 
-        print(f"Memory Efficiency Test:")
-        print(f"  Memory usage per run: {memory_usage}")
-        print(f"  Memory variance: {memory_variance:.1f}MB²")
-        print(f"  Average memory per run: {np.mean(memory_usage):.1f}MB")
+        print("Memory Efficiency Test:")
+        print("  Memory usage per run: {memory_usage}")
+        print("  Memory variance: {memory_variance:.1f}MB²")
+        print("  Average memory per run: {np.mean(memory_usage):.1f}MB")
 
 
 if __name__ == "__main__":

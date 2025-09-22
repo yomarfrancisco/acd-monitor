@@ -2,9 +2,6 @@
 Unit tests for lead-lag validation layer
 """
 
-import pytest
-import numpy as np
-import pandas as pd
 from src.acd.validation.lead_lag import LeadLagValidator, LeadLagConfig
 
 

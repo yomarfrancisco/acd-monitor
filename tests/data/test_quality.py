@@ -11,9 +11,6 @@ Tests data quality assessment functionality:
 
 from datetime import datetime, timezone
 
-import numpy as np
-import pandas as pd
-import pytest
 
 from src.acd.data.quality import (
     DataQualityAssessment,

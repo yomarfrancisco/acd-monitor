@@ -5,9 +5,6 @@ Tests end-to-end pipeline with competitive vs coordinated scenarios
 for court/regulator-ready coordination risk analytics.
 """
 
-import pytest
-import numpy as np
-import pandas as pd
 from src.acd.analytics.integrated_engine import IntegratedACDEngine, IntegratedConfig
 from src.acd.icp.engine import ICPConfig
 from src.acd.vmm.engine import VMMConfig
@@ -74,10 +71,10 @@ class TestIntegration:
         ), f"Coordinated score should be ≥67, got {coordinated_result.composite_risk_score}"
 
         print(
-            f"Competitive: {competitive_result.composite_risk_score:.2f} → {competitive_result.risk_classification}"
+            f"Competitive: {competitive_result.composite_risk_score:.2f} → {competitive_result.risk_classification}"  # noqa: E501
         )
         print(
-            f"Coordinated: {coordinated_result.composite_risk_score:.2f} → {coordinated_result.risk_classification}"
+            f"Coordinated: {coordinated_result.composite_risk_score:.2f} → {coordinated_result.risk_classification}"  # noqa: E501
         )
 
     def test_report_fields(self, integrated_engine, competitive_data):
@@ -154,12 +151,12 @@ class TestIntegration:
             competitive_result.icp_result.p_value > coordinated_result.icp_result.p_value
         ), "Competitive p-value should be higher than coordinated"
 
-        print(f"ICP Analysis:")
+        print("ICP Analysis:")
         print(
-            f"  Competitive: p={competitive_result.icp_result.p_value:.6f}, reject_H0={competitive_result.icp_result.reject_h0}"
+            f"  Competitive: p={competitive_result.icp_result.p_value:.6f}, reject_H0={competitive_result.icp_result.reject_h0}"  # noqa: E501
         )
         print(
-            f"  Coordinated: p={coordinated_result.icp_result.p_value:.6f}, reject_H0={coordinated_result.icp_result.reject_h0}"
+            f"  Coordinated: p={coordinated_result.icp_result.p_value:.6f}, reject_H0={coordinated_result.icp_result.reject_h0}"  # noqa: E501
         )
 
     def test_vmm_analysis_integration(self, integrated_engine, competitive_data, coordinated_data):
@@ -192,9 +189,9 @@ class TestIntegration:
             0.0 <= coordinated_result.vmm_result.structural_stability <= 1.0
         ), "Coordinated stability should be bounded"
 
-        print(f"VMM Analysis:")
-        print(f"  Competitive: stability={competitive_result.vmm_result.structural_stability:.6f}")
-        print(f"  Coordinated: stability={coordinated_result.vmm_result.structural_stability:.6f}")
+        print("VMM Analysis:")
+        print("  Competitive: stability={competitive_result.vmm_result.structural_stability:.6f}")
+        print("  Coordinated: stability={coordinated_result.vmm_result.structural_stability:.6f}")
 
     def test_crypto_moments_integration(self, integrated_engine, competitive_data):
         """Test crypto moments integration"""
@@ -262,9 +259,9 @@ class TestIntegration:
             0.0 <= coordinated_result.composite_risk_score <= 100.0
         ), "Coordinated score should be bounded"
 
-        print(f"Composite Score Calculation:")
-        print(f"  Competitive: {competitive_result.composite_risk_score:.2f}")
-        print(f"  Coordinated: {coordinated_result.composite_risk_score:.2f}")
+        print("Composite Score Calculation:")
+        print("  Competitive: {competitive_result.composite_risk_score:.2f}")
+        print("  Coordinated: {coordinated_result.composite_risk_score:.2f}")
 
     def test_risk_classification_logic(self, integrated_engine, competitive_data, coordinated_data):
         """Test risk classification logic"""
@@ -300,12 +297,12 @@ class TestIntegration:
         else:
             assert coordinated_result.risk_classification == "RED", "Score ≥67 should be RED"
 
-        print(f"Risk Classification Logic:")
+        print("Risk Classification Logic:")
         print(
-            f"  Competitive: {competitive_result.composite_risk_score:.2f} → {competitive_result.risk_classification}"
+            f"  Competitive: {competitive_result.composite_risk_score:.2f} → {competitive_result.risk_classification}"  # noqa: E501
         )
         print(
-            f"  Coordinated: {coordinated_result.composite_risk_score:.2f} → {coordinated_result.risk_classification}"
+            f"  Coordinated: {coordinated_result.composite_risk_score:.2f} → {coordinated_result.risk_classification}"  # noqa: E501
         )
 
 

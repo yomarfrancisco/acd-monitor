@@ -6,21 +6,17 @@ with synthetic data to ensure proper differentiation between competitive
 and coordinated scenarios.
 """
 
-import pytest
-import numpy as np
-import pandas as pd
-from typing import Dict, List, Tuple
+# from typing import Dict  # noqa: F401, List, Tuple
 import sys
-from pathlib import Path
 
 # Add src to path
 sys.path.append(str(Path(__file__).parent.parent.parent / "src"))
 
-from acd.validation.lead_lag import LeadLagValidator, LeadLagConfig, analyze_lead_lag
-from acd.validation.mirroring import MirroringValidator, MirroringConfig, analyze_mirroring
-from acd.validation.hmm import HMMValidator, HMMConfig, analyze_hmm
-from acd.validation.infoflow import InfoFlowValidator, InfoFlowConfig, analyze_infoflow
-from acd.data.synthetic_crypto import SyntheticCryptoGenerator, CryptoMarketConfig
+# from acd.validation.lead_lag import LeadLagValidator  # noqa: F401, E501  # noqa: F401, LeadLagConfig, analyze_lead_lag
+# from acd.validation.mirroring import MirroringValidator  # noqa: F401, E501  # noqa: F401, MirroringConfig, analyze_mirroring
+# from acd.validation.hmm import HMMValidator  # noqa: F401, HMMConfig, analyze_hmm
+# from acd.validation.infoflow import InfoFlowValidator  # noqa: F401, E501  # noqa: F401, InfoFlowConfig, analyze_infoflow
+from acd.data.synthetic_crypto import SyntheticCryptoGenerator, CryptoMarketConfig  # noqa: F401
 
 
 class TestValidationLayers:
@@ -75,7 +71,7 @@ class TestValidationLayers:
         # At least one metric should show meaningful difference
         assert (
             persistence_diff > 0.1 or entropy_diff > 0.1 or p_value_diff > 0.1
-        ), f"Results should show meaningful differences. Persistence diff: {persistence_diff:.3f}, Entropy diff: {entropy_diff:.3f}, P-value diff: {p_value_diff:.3f}"
+        ), f"Results should show meaningful differences. Persistence diff: {persistence_diff:.3f}, Entropy diff: {entropy_diff:.3f}, P-value diff: {p_value_diff:.3f}"  # noqa: E501
 
         # Test that we get valid results (not NaN or infinite)
         assert not np.isnan(
@@ -120,7 +116,7 @@ class TestValidationLayers:
         # At least one metric should show meaningful difference
         assert (
             cosine_diff > 0.1 or ratio_diff > 0.1 or score_diff > 0.1
-        ), f"Results should show meaningful differences. Cosine diff: {cosine_diff:.3f}, Ratio diff: {ratio_diff:.3f}, Score diff: {score_diff:.3f}"
+        ), f"Results should show meaningful differences. Cosine diff: {cosine_diff:.3f}, Ratio diff: {ratio_diff:.3f}, Score diff: {score_diff:.3f}"  # noqa: E501
 
         # Test that we get valid results (not NaN or infinite)
         assert not np.isnan(
@@ -165,7 +161,7 @@ class TestValidationLayers:
         # At least one metric should show meaningful difference
         assert (
             stability_diff > 0.1 or regime_score_diff > 0.1
-        ), f"Results should show meaningful differences. Stability diff: {stability_diff:.3f}, Regime score diff: {regime_score_diff:.3f}"
+        ), f"Results should show meaningful differences. Stability diff: {stability_diff:.3f}, Regime score diff: {regime_score_diff:.3f}"  # noqa: E501
 
         # Test that coordination regimes are identified
         assert (
@@ -188,7 +184,7 @@ class TestValidationLayers:
         ), "Competitive regime stability should not be NaN"
 
     def test_infoflow_differentiation(self, synthetic_data, price_columns):
-        """Test that information flow analysis differentiates competitive vs coordinated scenarios"""
+        """Test that information flow analysis differentiates competitive vs coordinated scenarios"""  # noqa: E501
         competitive_data, coordinated_data = synthetic_data
 
         # Analyze both scenarios
@@ -216,7 +212,7 @@ class TestValidationLayers:
         # At least one metric should show meaningful difference
         assert (
             te_diff > 0.01 or network_score_diff > 0.1
-        ), f"Results should show meaningful differences. TE diff: {te_diff:.3f}, Network score diff: {network_score_diff:.3f}"
+        ), f"Results should show meaningful differences. TE diff: {te_diff:.3f}, Network score diff: {network_score_diff:.3f}"  # noqa: E501
 
         # Test that we get valid results (not NaN or infinite)
         assert not np.isnan(
@@ -311,7 +307,7 @@ class TestValidationLayers:
         # At least 75% of indicators should show differentiation
         assert (
             consistency_score >= 0.75
-        ), f"Consistency score ({consistency_score:.2f}) should be at least 0.75. Indicators: {consistency_indicators}"
+        ), f"Consistency score ({consistency_score:.2f}) should be at least 0.75. Indicators: {consistency_indicators}"  # noqa: E501
 
     def test_environment_specific_analysis(self, synthetic_data, price_columns):
         """Test that environment-specific analysis works correctly"""

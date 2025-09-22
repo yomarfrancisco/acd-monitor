@@ -2,9 +2,6 @@
 Unit tests for crypto-specific VMM moment conditions
 """
 
-import pytest
-import numpy as np
-import pandas as pd
 from src.acd.vmm.crypto_moments import CryptoMomentCalculator, CryptoMomentConfig
 from src.acd.vmm.engine import VMMEngine, VMMConfig
 from src.acd.data.synthetic_crypto import SyntheticCryptoGenerator, CryptoMarketConfig
@@ -111,7 +108,7 @@ class TestCryptoMoments:
         assert np.all(moments.undercut_response_time >= 0)
 
     def test_vmm_differentiation_with_crypto_moments(self, competitive_data, coordinated_data):
-        """Test that VMM with crypto moments produces different results for competitive vs coordinated"""
+        """Test that VMM with crypto moments produces different results for competitive vs coordinated"""  # noqa: E501
         price_columns = ["Exchange_0", "Exchange_1", "Exchange_2", "Exchange_3"]
 
         # Create VMM engine with crypto calculator

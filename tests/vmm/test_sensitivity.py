@@ -2,9 +2,6 @@
 VMM Sensitivity Tests and Wire Tests for Normalization Issues
 """
 
-import pytest
-import numpy as np
-import pandas as pd
 import hashlib
 from src.acd.data.synthetic_crypto import SyntheticCryptoGenerator, CryptoMarketConfig
 from src.acd.vmm.crypto_moments import CryptoMomentCalculator, CryptoMomentConfig
@@ -73,11 +70,11 @@ class TestVMMSensitivity:
         # Print results table
         print("\nCoordination Strength Sensitivity Test:")
         print("=" * 60)
-        print(f"{'Strength':<10} {'J-stat':<10} {'p-value':<10} {'Stability':<10}")
+        print("{'Strength':<10} {'J-stat':<10} {'p-value':<10} {'Stability':<10}")
         print("-" * 60)
         for r in results:
             print(
-                f"{r['strength']:<10.2f} {r['j_stat']:<10.6f} {r['p_value']:<10.6f} {r['stability']:<10.6f}"
+                f"{r['strength']:<10.2f} {r['j_stat']:<10.6f} {r['p_value']:<10.6f} {r['stability']:<10.6f}"  # noqa: E501
             )
 
         # Assert monotonic behavior
@@ -154,11 +151,11 @@ class TestVMMSensitivity:
         comp_hash = hashlib.sha256(comp_vector.tobytes()).hexdigest()[:16]
         coord_hash = hashlib.sha256(coord_vector.tobytes()).hexdigest()[:16]
 
-        print(f"\nRaw Moment Vector Analysis:")
-        print(f"Competitive hash: {comp_hash}")
-        print(f"Coordinated hash: {coord_hash}")
-        print(f"L2 distance: {l2_distance:.6f}")
-        print(f"Cosine similarity: {cosine_sim:.6f}")
+        print("\nRaw Moment Vector Analysis:")
+        print("Competitive hash: {comp_hash}")
+        print("Coordinated hash: {coord_hash}")
+        print("L2 distance: {l2_distance:.6f}")
+        print("Cosine similarity: {cosine_sim:.6f}")
 
         # Assert differentiation
         assert comp_hash != coord_hash, "Raw moment vectors should have different hashes"
@@ -224,11 +221,11 @@ class TestVMMSensitivity:
             np.linalg.norm(comp_normalized) * np.linalg.norm(coord_normalized)
         )
 
-        print(f"\nNormalization Impact Analysis:")
-        print(f"Pre-normalization  - L2: {pre_l2:.6f}, Cosine: {pre_cosine:.6f}")
-        print(f"Post-normalization - L2: {post_l2:.6f}, Cosine: {post_cosine:.6f}")
-        print(f"L2 ratio (post/pre): {post_l2/pre_l2:.6f}")
-        print(f"Cosine change: {post_cosine - pre_cosine:.6f}")
+        print("\nNormalization Impact Analysis:")
+        print("Pre-normalization  - L2: {pre_l2:.6f}, Cosine: {pre_cosine:.6f}")
+        print("Post-normalization - L2: {post_l2:.6f}, Cosine: {post_cosine:.6f}")
+        print("L2 ratio (post/pre): {post_l2/pre_l2:.6f}")
+        print("Cosine change: {post_cosine - pre_cosine:.6f}")
 
         # Assert that normalization doesn't collapse differences
         assert post_l2 > 0.001, f"Post-normalization L2 distance should be > 0.001, got {post_l2}"
@@ -260,15 +257,15 @@ class TestVMMSensitivity:
         competitive_result = vmm_engine.run_vmm(competitive_data, price_columns)
         coordinated_result = vmm_engine.run_vmm(coordinated_data, price_columns)
 
-        print(f"\nVMM Differentiation Test:")
+        print("\nVMM Differentiation Test:")
         print("=" * 50)
-        print(f"{'Scenario':<12} {'J-stat':<10} {'p-value':<10} {'Stability':<10}")
+        print("{'Scenario':<12} {'J-stat':<10} {'p-value':<10} {'Stability':<10}")
         print("-" * 50)
         print(
-            f"{'Competitive':<12} {competitive_result.over_identification_stat:<10.6f} {competitive_result.over_identification_p_value:<10.6f} {competitive_result.structural_stability:<10.6f}"
+            f"{'Competitive':<12} {competitive_result.over_identification_stat:<10.6f} {competitive_result.over_identification_p_value:<10.6f} {competitive_result.structural_stability:<10.6f}"  # noqa: E501
         )
         print(
-            f"{'Coordinated':<12} {coordinated_result.over_identification_stat:<10.6f} {coordinated_result.over_identification_p_value:<10.6f} {coordinated_result.structural_stability:<10.6f}"
+            f"{'Coordinated':<12} {coordinated_result.over_identification_stat:<10.6f} {coordinated_result.over_identification_p_value:<10.6f} {coordinated_result.structural_stability:<10.6f}"  # noqa: E501
         )
 
         # Assert differentiation
@@ -289,8 +286,8 @@ class TestVMMSensitivity:
         # Assert expected patterns
         assert (
             competitive_result.over_identification_p_value > 0.05
-        ), f"Competitive scenario should have p > 0.05, got {competitive_result.over_identification_p_value}"
+        ), f"Competitive scenario should have p > 0.05, got {competitive_result.over_identification_p_value}"  # noqa: E501
 
         assert (
             coordinated_result.over_identification_p_value < 0.05
-        ), f"Coordinated scenario should have p < 0.05, got {coordinated_result.over_identification_p_value}"
+        ), f"Coordinated scenario should have p < 0.05, got {coordinated_result.over_identification_p_value}"  # noqa: E501

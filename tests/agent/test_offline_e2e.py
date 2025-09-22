@@ -5,11 +5,7 @@ Tests the offline provider with scripted compliance queries to ensure
 it can generate appropriate responses with metrics and provenance.
 """
 
-import pytest
-import json
-import tempfile
-from pathlib import Path
-from unittest.mock import patch, MagicMock
+# # from unittest.mock import patch, MagicMock  # noqa: F401  # noqa: F401
 
 from src.agent.providers.offline_mock import OfflineMockProvider
 from src.agent.retrieval.loader import ACDArtifactLoader
@@ -122,7 +118,7 @@ class TestOfflineE2E:
 
     def test_lead_lag_analysis_query(self, offline_provider):
         """Test lead-lag analysis query"""
-        query = "Which exchange acted as price leader for BTC/USD yesterday, and how persistent was that leadership?"
+        query = "Which exchange acted as price leader for BTC/USD yesterday, and how persistent was that leadership?"  # noqa: E501
 
         result = offline_provider.generate(prompt=query, session_id="test_session_2")
 
@@ -156,7 +152,7 @@ class TestOfflineE2E:
 
     def test_icp_analysis_query(self, offline_provider):
         """Test ICP analysis query"""
-        query = "Summarize ICP invariance results by environment for BTC/USD over the last 14 days; include FDR q-values and sample sizes."
+        query = "Summarize ICP invariance results by environment for BTC/USD over the last 14 days; include FDR q-values and sample sizes."  # noqa: E501
 
         result = offline_provider.generate(prompt=query, session_id="test_session_4")
 
@@ -174,7 +170,7 @@ class TestOfflineE2E:
 
     def test_vmm_analysis_query(self, offline_provider):
         """Test VMM analysis query"""
-        query = "Report VMM over-identification p-values and stability for BTC/USD (seed 42), plus moment scaling provenance."
+        query = "Report VMM over-identification p-values and stability for BTC/USD (seed 42), plus moment scaling provenance."  # noqa: E501
 
         result = offline_provider.generate(prompt=query, session_id="test_session_5")
 
@@ -193,7 +189,7 @@ class TestOfflineE2E:
 
     def test_risk_summary_query(self, offline_provider):
         """Test risk summary query"""
-        query = "Generate a screening memo for BTC/USD (past week): headline verdict (LOW/AMBER/RED), top drivers (lead-lag, mirroring, regimes), and caveats."
+        query = "Generate a screening memo for BTC/USD (past week): headline verdict (LOW/AMBER/RED), top drivers (lead-lag, mirroring, regimes), and caveats."  # noqa: E501
 
         result = offline_provider.generate(prompt=query, session_id="test_session_6")
 
@@ -210,7 +206,7 @@ class TestOfflineE2E:
 
     def test_artifacts_list_query(self, offline_provider):
         """Test artifacts list query"""
-        query = "Show all artifacts and seeds used in the last run for BTC/USD; include file paths for audit."
+        query = "Show all artifacts and seeds used in the last run for BTC/USD; include file paths for audit."  # noqa: E501
 
         result = offline_provider.generate(prompt=query, session_id="test_session_7")
 
@@ -314,8 +310,8 @@ class TestScriptedComplianceQueries:
         assert result.usage.get("intent") == "mirroring_analysis"
 
     def test_scripted_query_2(self, offline_provider):
-        """Test: Which exchange acted as price leader for BTC/USD yesterday, and how persistent was that leadership?"""
-        query = "Which exchange acted as price leader for BTC/USD yesterday, and how persistent was that leadership?"
+        """Test: Which exchange acted as price leader for BTC/USD yesterday, and how persistent was that leadership?"""  # noqa: E501
+        query = "Which exchange acted as price leader for BTC/USD yesterday, and how persistent was that leadership?"  # noqa: E501
         result = offline_provider.generate(prompt=query)
 
         assert "lead" in result.content.lower() or "lag" in result.content.lower()
@@ -338,24 +334,24 @@ class TestScriptedComplianceQueries:
         assert result.usage.get("intent") == "lead_lag_analysis"
 
     def test_scripted_query_5(self, offline_provider):
-        """Test: Summarize coordination risk bands (LOW/AMBER/RED) across the top 3 venues for BTC/USD in the last week."""
-        query = "Summarize coordination risk bands (LOW/AMBER/RED) across the top 3 venues for BTC/USD in the last week."
+        """Test: Summarize coordination risk bands (LOW/AMBER/RED) across the top 3 venues for BTC/USD in the last week."""  # noqa: E501
+        query = "Summarize coordination risk bands (LOW/AMBER/RED) across the top 3 venues for BTC/USD in the last week."  # noqa: E501
         result = offline_provider.generate(prompt=query)
 
         assert "risk" in result.content.lower() or "verdict" in result.content.lower()
         assert result.usage.get("intent") == "risk_summary"
 
     def test_scripted_query_6(self, offline_provider):
-        """Test: List all alternative explanations that could account for the coordination signal flagged on 2025-09-15."""
-        query = "List all alternative explanations that could account for the coordination signal flagged on 2025-09-15."
+        """Test: List all alternative explanations that could account for the coordination signal flagged on 2025-09-15."""  # noqa: E501
+        query = "List all alternative explanations that could account for the coordination signal flagged on 2025-09-15."  # noqa: E501
         result = offline_provider.generate(prompt=query)
 
         assert "alternative" in result.content.lower() or "explanation" in result.content.lower()
         assert result.usage.get("intent") == "default"  # Should fall back to default
 
     def test_scripted_query_7(self, offline_provider):
-        """Test: Summarize ICP invariance results by environment for BTC/USD over the last 14 days; include FDR q-values and sample sizes."""
-        query = "Summarize ICP invariance results by environment for BTC/USD over the last 14 days; include FDR q-values and sample sizes."
+        """Test: Summarize ICP invariance results by environment for BTC/USD over the last 14 days; include FDR q-values and sample sizes."""  # noqa: E501
+        query = "Summarize ICP invariance results by environment for BTC/USD over the last 14 days; include FDR q-values and sample sizes."  # noqa: E501
         result = offline_provider.generate(prompt=query)
 
         assert "icp" in result.content.lower()
@@ -363,24 +359,24 @@ class TestScriptedComplianceQueries:
         assert result.usage.get("intent") == "icp_analysis"
 
     def test_scripted_query_8(self, offline_provider):
-        """Test: Report VMM over-identification p-values and stability for BTC/USD (seed 42), plus moment scaling provenance."""
-        query = "Report VMM over-identification p-values and stability for BTC/USD (seed 42), plus moment scaling provenance."
+        """Test: Report VMM over-identification p-values and stability for BTC/USD (seed 42), plus moment scaling provenance."""  # noqa: E501
+        query = "Report VMM over-identification p-values and stability for BTC/USD (seed 42), plus moment scaling provenance."  # noqa: E501
         result = offline_provider.generate(prompt=query)
 
         assert "vmm" in result.content.lower()
         assert result.usage.get("intent") == "vmm_analysis"
 
     def test_scripted_query_9(self, offline_provider):
-        """Test: Which alternative explanations (arbitrage latency, fee tiers, inventory shocks) were triggered for ETH/USD in the last 72h?"""
-        query = "Which alternative explanations (arbitrage latency, fee tiers, inventory shocks) were triggered for ETH/USD in the last 72h?"
+        """Test: Which alternative explanations (arbitrage latency, fee tiers, inventory shocks) were triggered for ETH/USD in the last 72h?"""  # noqa: E501
+        query = "Which alternative explanations (arbitrage latency, fee tiers, inventory shocks) were triggered for ETH/USD in the last 72h?"  # noqa: E501
         result = offline_provider.generate(prompt=query)
 
         assert "alternative" in result.content.lower() or "explanation" in result.content.lower()
         assert result.usage.get("intent") == "default"  # Should fall back to default
 
     def test_scripted_query_10(self, offline_provider):
-        """Test: Generate a screening memo for BTC/USD (past week): headline verdict (LOW/AMBER/RED), top drivers (lead-lag, mirroring, regimes), and caveats."""
-        query = "Generate a screening memo for BTC/USD (past week): headline verdict (LOW/AMBER/RED), top drivers (lead-lag, mirroring, regimes), and caveats."
+        """Test: Generate a screening memo for BTC/USD (past week): headline verdict (LOW/AMBER/RED), top drivers (lead-lag, mirroring, regimes), and caveats."""  # noqa: E501
+        query = "Generate a screening memo for BTC/USD (past week): headline verdict (LOW/AMBER/RED), top drivers (lead-lag, mirroring, regimes), and caveats."  # noqa: E501
         result = offline_provider.generate(prompt=query)
 
         assert "risk" in result.content.lower() or "verdict" in result.content.lower()

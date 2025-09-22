@@ -12,12 +12,12 @@ This test suite validates the system's capability to:
 4. Support regulatory compliance and reporting
 """
 
-import json
 import os
 import sys
 import time
-from datetime import datetime, timedelta
-from typing import Dict, List, Any
+from datetime import datetime
+
+# from typing import Dict  # noqa: F401, Any
 
 # Add the src directory to the path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
@@ -44,37 +44,40 @@ class ExchangeOpsQueryTester:
         exchange_queries = [
             {
                 "id": "exch_001",
-                "query": "Flag periods where our spread floor persisted despite high volatility last 7d; attach evidence pack.",
+                "query": (
+                    "Flag periods where our spread floor persisted despite high volatility last 7d; "  # noqa: E501
+                    "attach evidence pack."
+                ),
                 "category": "surveillance",
                 "expected_components": ["spread_floor", "volatility", "evidence_pack"],
             },
             {
                 "id": "exch_002",
-                "query": "Who led BTC/USDT on our venue vs Coinbase and Binance between 10:00–14:00 UTC yesterday? Show persistence & switching entropy.",
+                "query": "Who led BTC/USDT on our venue vs Coinbase and Binance between 10:00–14:00 UTC yesterday? Show persistence & switching entropy.",  # noqa: E501
                 "category": "lead_lag",
                 "expected_components": ["lead_lag", "persistence", "switching_entropy"],
             },
             {
                 "id": "exch_003",
-                "query": "List mirroring episodes on top-10 depth vs external venues; annotate arbitrage windows.",
+                "query": "List mirroring episodes on top-10 depth vs external venues; annotate arbitrage windows.",  # noqa: E501
                 "category": "mirroring",
                 "expected_components": ["mirroring", "depth_analysis", "arbitrage_windows"],
             },
             {
                 "id": "exch_004",
-                "query": "Explain whether our VIP fee ladder or inventory shocks could explain the signal on 2025-09-15.",
+                "query": "Explain whether our VIP fee ladder or inventory shocks could explain the signal on 2025-09-15.",  # noqa: E501
                 "category": "analysis",
                 "expected_components": ["fee_ladder", "inventory_shocks", "signal_explanation"],
             },
             {
                 "id": "exch_005",
-                "query": "Generate a case file for alert #23198 with ICP/VMM excerpts and provenance hashes.",
+                "query": "Generate a case file for alert #23198 with ICP/VMM excerpts and provenance hashes.",  # noqa: E501
                 "category": "case_management",
                 "expected_components": ["case_file", "icp_vmm", "provenance_hashes"],
             },
             {
                 "id": "exch_006",
-                "query": "Compare today's AMBER period to last week's baseline; what changed in moments/validation layers?",
+                "query": "Compare today's AMBER period to last week's baseline; what changed in moments/validation layers?",  # noqa: E501
                 "category": "comparison",
                 "expected_components": [
                     "baseline_comparison",
@@ -90,13 +93,13 @@ class ExchangeOpsQueryTester:
             },
             {
                 "id": "exch_008",
-                "query": "Summarize risk bands for BTC/ETH spot; include ops actions taken and open tickets.",
+                "query": "Summarize risk bands for BTC/ETH spot; include ops actions taken and open tickets.",  # noqa: E501
                 "category": "risk_summary",
                 "expected_components": ["risk_bands", "ops_actions", "open_tickets"],
             },
             {
                 "id": "exch_009",
-                "query": "Export an internal memo for CCO: findings, caveats, alternative explanations, next steps.",
+                "query": "Export an internal memo for CCO: findings, caveats, alternative explanations, next steps.",  # noqa: E501
                 "category": "reporting",
                 "expected_components": [
                     "internal_memo",
@@ -107,13 +110,13 @@ class ExchangeOpsQueryTester:
             },
             {
                 "id": "exch_010",
-                "query": "Show order-book mirroring heatmap by depth tier for yesterday's U.S. trading hours.",
+                "query": "Show order-book mirroring heatmap by depth tier for yesterday's U.S. trading hours.",  # noqa: E501
                 "category": "visualization",
                 "expected_components": ["heatmap", "depth_tier", "trading_hours"],
             },
             {
                 "id": "exch_011",
-                "query": "Identify undercut initiation episodes by market maker; escalate if repeated.",
+                "query": "Identify undercut initiation episodes by market maker; escalate if repeated.",  # noqa: E501
                 "category": "market_maker",
                 "expected_components": ["undercut_initiation", "market_maker", "escalation"],
             },
@@ -139,8 +142,8 @@ class ExchangeOpsQueryTester:
         category = query_obj["category"]
         expected_components = query_obj["expected_components"]
 
-        print(f"\n🔍 Testing Query {query_id}: {category}")
-        print(f"Query: {query_text}")
+        print("\n🔍 Testing Query {query_id}: {category}")
+        print("Query: {query_text}")
 
         start_time = time.time()
 
@@ -184,10 +187,10 @@ class ExchangeOpsQueryTester:
 
             # Print result
             status = "✅ PASS" if success else "❌ FAIL"
-            print(f"Result: {status}")
-            print(f"Execution Time: {execution_time:.3f}s")
-            print(f"Component Coverage: {component_coverage:.1%}")
-            print(f"Components Found: {components_found}")
+            print("Result: {status}")
+            print("Execution Time: {execution_time:.3f}s")
+            print("Component Coverage: {component_coverage:.1%}")
+            print("Components Found: {components_found}")
 
         except Exception as e:
             execution_time = time.time() - start_time
@@ -203,9 +206,9 @@ class ExchangeOpsQueryTester:
 
             self.test_results.append(test_result)
 
-            print(f"Result: ❌ ERROR")
-            print(f"Error: {str(e)}")
-            print(f"Execution Time: {execution_time:.3f}s")
+            print("Result: ❌ ERROR")
+            print("Error: {str(e)}")
+            print("Execution Time: {execution_time:.3f}s")
 
     def _generate_summary_report(self) -> Dict[str, Any]:
         """Generate summary report of all tests"""
@@ -249,18 +252,18 @@ class ExchangeOpsQueryTester:
         print("\n" + "=" * 60)
         print("📊 EXCHANGE OPERATIONS QUERY TEST SUMMARY")
         print("=" * 60)
-        print(f"Total Tests: {total_tests}")
-        print(f"Successful: {successful_tests}")
-        print(f"Failed: {failed_tests}")
-        print(f"Success Rate: {success_rate:.1f}%")
-        print(f"Total Execution Time: {total_execution_time:.3f}s")
-        print(f"Average Execution Time: {avg_execution_time:.3f}s")
+        print("Total Tests: {total_tests}")
+        print("Successful: {successful_tests}")
+        print("Failed: {failed_tests}")
+        print("Success Rate: {success_rate:.1f}%")
+        print("Total Execution Time: {total_execution_time:.3f}s")
+        print("Average Execution Time: {avg_execution_time:.3f}s")
 
-        print(f"\n📈 Category Breakdown:")
+        print("\n📈 Category Breakdown:")
         for category, stats in category_stats.items():
             category_success_rate = (stats["successful"] / stats["total"]) * 100
             print(
-                f"  {category}: {stats['successful']}/{stats['total']} ({category_success_rate:.1f}%)"
+                f"  {category}: {stats['successful']}/{stats['total']} ({category_success_rate:.1f}%)"  # noqa: E501
             )
 
         # Determine overall status
@@ -273,7 +276,7 @@ class ExchangeOpsQueryTester:
         else:
             status = "❌ NEEDS IMPROVEMENT"
 
-        print(f"\n🎯 Overall Status: {status}")
+        print("\n🎯 Overall Status: {status}")
 
         return summary
 
@@ -297,7 +300,7 @@ def main():
     with open(output_file, "w") as f:
         json.dump(results, f, indent=2)
 
-    print(f"\n💾 Results saved to: {output_file}")
+    print("\n💾 Results saved to: {output_file}")
 
     # Return exit code based on success rate
     success_rate = results["test_summary"]["success_rate"]
