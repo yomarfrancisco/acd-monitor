@@ -2409,7 +2409,7 @@ It would also be helpful if you described:
                               <div className="text-[#fca5a5]">Data source: Error</div>
                             ) : dataSources ? (
                               <>
-                                Data source: {dataSources.items[0]?.name || 'Exchanges (WebSocket)'} • 
+                                Data source: {dataSources.items[0]?.name || 'Exchange feeds'} • 
                                 {dataSources.items[0]?.freshnessSec < 60 
                                   ? `${dataSources.items[0]?.freshnessSec}s` 
                                   : `${Math.round((dataSources.items[0]?.freshnessSec || 0) / 60)}m`
@@ -2417,7 +2417,7 @@ It would also be helpful if you described:
                                 Quality {Math.round((dataSources.items[0]?.quality || 0.96) * 100)}%
                               </>
                             ) : (
-                              'Data source: Exchanges (WebSocket)'
+                              'Data source: Exchange feeds'
                             )}
                       </div>
                     </div>
@@ -2434,7 +2434,7 @@ It would also be helpful if you described:
                           <div>
                             <div className="text-[#f9fafb] font-medium text-xs">Price Stability</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
-                                  How steady your prices are compared to competitors
+                                  How steady your prices are vs competitors
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">2m ago • 45s</div>
                           </div>
@@ -2494,7 +2494,7 @@ It would also be helpful if you described:
                           <div>
                             <div className="text-[#f9fafb] font-medium text-xs">Price Sync</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
-                                  How much your prices move together with other banks
+                                  How closely prices move with others
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">1m ago • 32s</div>
                           </div>
@@ -2554,7 +2554,7 @@ It would also be helpful if you described:
                           <div>
                             <div className="text-[#f9fafb] font-medium text-xs">Environmental Sensitivity</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
-                                  How well you respond to market changes and economic events
+                                  How well you react to shifts
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">30s ago • 18s</div>
                           </div>
@@ -2611,10 +2611,10 @@ It would also be helpful if you described:
                         <div className="flex items-center gap-2.5">
                               <Database className="w-4 h-4 text-[#a1a1aa]" />
                           <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">Enable Bloomberg Data Feed</div>
-                                <div className="text-[10px] text-[#a1a1aa]">Real-time market data and analytics</div>
+                                <div className="text-[#f9fafb] font-medium text-xs">Enable Exchange Data Feed</div>
+                                <div className="text-[10px] text-[#a1a1aa]">Real-time trading data and analytics</div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">
-                                  Live pricing • Market depth • News feed
+                                  Live pricing • Depth • Order flow
                             </div>
                           </div>
                         </div>
@@ -2649,7 +2649,7 @@ It would also be helpful if you described:
                           <div>
                             <div className="text-[#f9fafb] font-medium text-xs">Regulatory Notices</div>
                             <div className="text-[10px] text-[#a1a1aa]">
-                              Important updates and compliance notifications
+                              Key compliance updates
                             </div>
                           </div>
                         </div>
