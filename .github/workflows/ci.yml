@@ -101,7 +101,7 @@ jobs:
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
 
       - name: Lint with flake8
-        run: flake8
+        run: flake8 backend src
 
       - name: Format check with black
         run: black --check src tests
