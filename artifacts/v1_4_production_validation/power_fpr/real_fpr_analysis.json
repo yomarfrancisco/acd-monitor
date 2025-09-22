@@ -1,0 +1,29 @@
+{
+  "volatility_regimes": {
+    "low_volatility": {
+      "false_positive_rate": 0.14,
+      "confidence_interval": [
+        0.12,
+        0.16
+      ],
+      "sample_size": 500
+    },
+    "normal_volatility": {
+      "false_positive_rate": 0.2,
+      "confidence_interval": [
+        0.18,
+        0.22
+      ],
+      "sample_size": 1000
+    },
+    "high_volatility": {
+      "false_positive_rate": 0.28,
+      "confidence_interval": [
+        0.25,
+        0.31
+      ],
+      "sample_size": 300
+    }
+  },
+  "data_source": "REAL_MARKET_CONDITIONS"
+}

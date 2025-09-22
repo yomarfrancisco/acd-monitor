@@ -1,0 +1,248 @@
+{
+  "timestamp": "2025-09-21T19:23:19.016191",
+  "week": 2,
+  "phase": "Phase-4",
+  "test_results": {
+    "chatbase": {
+      "adapter_initialization": true,
+      "error_handling": false,
+      "fallback_functionality": true,
+      "response_structure": true,
+      "error_details": null
+    },
+    "crypto": {
+      "schema_validation": true,
+      "data_integrity": true,
+      "collection_pipeline": true,
+      "validation_output": true,
+      "error_details": null
+    },
+    "compliance": {
+      "total_queries": 30,
+      "successful_queries": 30,
+      "failed_queries": 0,
+      "success_rate": 100.0,
+      "query_results": [
+        {
+          "query": "Generate a regulatory bundle for BTC/USD coordination signals last week",
+          "success": true,
+          "intent": "bundle_generation",
+          "content_length": 962
+        },
+        {
+          "query": "Refine the bundle to include alternative explanations and attribution tables",
+          "success": true,
+          "intent": "alternative_explanations",
+          "content_length": 1207
+        },
+        {
+          "query": "Summarize risk levels and recommendations in regulator-friendly language",
+          "success": true,
+          "intent": "risk_assessment",
+          "content_length": 394
+        },
+        {
+          "query": "Generate a full regulatory bundle (PDF + JSON) for ETH/USD for the past 14 days",
+          "success": true,
+          "intent": "bundle_generation",
+          "content_length": 970
+        },
+        {
+          "query": "Explain which validation layers contributed most to the coordination score in the latest bundle",
+          "success": true,
+          "intent": "bundle_generation",
+          "content_length": 986
+        },
+        {
+          "query": "Highlight all provenance metadata for the CMA Poster Frames case bundle",
+          "success": true,
+          "intent": "bundle_generation",
+          "content_length": 962
+        },
+        {
+          "query": "Compare bundle outputs for BTC/USD between seed 42 and seed 99 \u2014 note differences",
+          "success": true,
+          "intent": "bundle_generation",
+          "content_length": 972
+        },
+        {
+          "query": "Produce an executive summary bundle for Q3 2025 coordination monitoring",
+          "success": true,
+          "intent": "risk_assessment",
+          "content_length": 394
+        },
+        {
+          "query": "Refine the ETH/USD bundle to emphasize MEV coordination risks",
+          "success": true,
+          "intent": "bundle_generation",
+          "content_length": 952
+        },
+        {
+          "query": "Prepare a draft escalation memo suitable for submission to regulators from last week's BTC/USD findings",
+          "success": true,
+          "intent": "bundle_generation",
+          "content_length": 994
+        },
+        {
+          "query": "List alternative explanations explicitly addressed in the current bundle, with references",
+          "success": true,
+          "intent": "alternative_explanations",
+          "content_length": 1220
+        },
+        {
+          "query": "Summarize attribution tables for BTC/USD and ETH/USD side by side",
+          "success": true,
+          "intent": "default",
+          "content_length": 952
+        },
+        {
+          "query": "Generate a highly compressed bundle for BTC/USD with only essential information",
+          "success": true,
+          "intent": "bundle_generation",
+          "content_length": 970
+        },
+        {
+          "query": "Create a verbose, detailed bundle for ETH/USD with all possible explanations",
+          "success": true,
+          "intent": "bundle_generation",
+          "content_length": 967
+        },
+        {
+          "query": "Refine the bundle to handle missing data scenarios and conflicting signals",
+          "success": true,
+          "intent": "bundle_generation",
+          "content_length": 965
+        },
+        {
+          "query": "Generate a compliance memo for ADA/USD coordination analysis",
+          "success": true,
+          "intent": "bundle_generation",
+          "content_length": 951
+        },
+        {
+          "query": "Create a risk assessment bundle for multiple crypto pairs simultaneously",
+          "success": true,
+          "intent": "risk_assessment",
+          "content_length": 394
+        },
+        {
+          "query": "Refine the bundle to include cross-venue arbitrage analysis",
+          "success": true,
+          "intent": "bundle_generation",
+          "content_length": 950
+        },
+        {
+          "query": "Generate a regulatory bundle with focus on spread floor detection",
+          "success": true,
+          "intent": "spread_floor_analysis",
+          "content_length": 409
+        },
+        {
+          "query": "Create a compliance report for undercut initiation patterns",
+          "success": true,
+          "intent": "default",
+          "content_length": 946
+        },
+        {
+          "query": "Generate a bundle with emphasis on lead-lag relationships",
+          "success": true,
+          "intent": "lead_lag_analysis",
+          "content_length": 401
+        },
+        {
+          "query": "Refine the bundle to include mirroring pattern analysis",
+          "success": true,
+          "intent": "bundle_generation",
+          "content_length": 946
+        },
+        {
+          "query": "Create a regulatory memo for HMM regime detection results",
+          "success": true,
+          "intent": "spread_floor_analysis",
+          "content_length": 409
+        },
+        {
+          "query": "Generate a bundle with information flow analysis",
+          "success": true,
+          "intent": "bundle_generation",
+          "content_length": 939
+        },
+        {
+          "query": "Refine the bundle to include MEV coordination scoring",
+          "success": true,
+          "intent": "bundle_generation",
+          "content_length": 944
+        },
+        {
+          "query": "Create a compliance report for inventory shock analysis",
+          "success": true,
+          "intent": "default",
+          "content_length": 942
+        },
+        {
+          "query": "Generate a bundle with fee tier impact assessment",
+          "success": true,
+          "intent": "risk_assessment",
+          "content_length": 394
+        },
+        {
+          "query": "Refine the bundle to include volatility regime analysis",
+          "success": true,
+          "intent": "spread_floor_analysis",
+          "content_length": 409
+        },
+        {
+          "query": "Create a regulatory memo for regulatory event impact",
+          "success": true,
+          "intent": "bundle_generation",
+          "content_length": 943
+        },
+        {
+          "query": "Generate a bundle with comprehensive alternative explanations",
+          "success": true,
+          "intent": "alternative_explanations",
+          "content_length": 1192
+        }
+      ],
+      "bundle_level_tests": true,
+      "attribution_tests": true,
+      "provenance_tests": true
+    },
+    "performance": {
+      "latency_tests": true,
+      "memory_tests": true,
+      "bundle_generation_tests": true,
+      "success_rate_tests": true,
+      "benchmark_metrics": {
+        "latency": {
+          "average": 0.0013519922892252605,
+          "maximum": 0.0017461776733398438,
+          "target": 2.0,
+          "meets_target": true
+        },
+        "memory": {
+          "usage_mb": 0.0,
+          "target_mb": 200.0,
+          "meets_target": true
+        },
+        "success_rate": {
+          "rate_percent": 100.0,
+          "target_percent": 95.0,
+          "meets_target": true
+        },
+        "bundle_generation": {
+          "average_speed": 0.001570415496826172,
+          "target_speed": 2.0,
+          "meets_target": true
+        }
+      },
+      "error_details": null
+    }
+  },
+  "summary": {
+    "chatbase_integration": true,
+    "crypto_data_collection": true,
+    "compliance_regression": true,
+    "performance_benchmarks": true
+  }
+}

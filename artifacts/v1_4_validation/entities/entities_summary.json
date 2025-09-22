@@ -1,0 +1,65 @@
+{
+  "top_accounts": [
+    {
+      "entity_id": "entity_001",
+      "coordination_share": 0.25,
+      "confidence_level": "High Confidence"
+    },
+    {
+      "entity_id": "entity_002",
+      "coordination_share": 0.2,
+      "confidence_level": "High Confidence"
+    },
+    {
+      "entity_id": "entity_003",
+      "coordination_share": 0.15,
+      "confidence_level": "Medium Confidence"
+    },
+    {
+      "entity_id": "entity_004",
+      "coordination_share": 0.12,
+      "confidence_level": "Medium Confidence"
+    },
+    {
+      "entity_id": "entity_005",
+      "coordination_share": 0.08,
+      "confidence_level": "Requires Verification"
+    }
+  ],
+  "shares": {
+    "top_5_share": 0.8,
+    "top_3_share": 0.6,
+    "concentration_ratio": 0.75
+  },
+  "confidence_labels": {
+    "high_confidence": 2,
+    "medium_confidence": 2,
+    "requires_verification": 1
+  },
+  "network_metrics": {
+    "clustering_coefficient": 0.73,
+    "network_density": 0.45,
+    "top_entities": [
+      "entity_001",
+      "entity_002",
+      "entity_003"
+    ]
+  },
+  "behavioral_metrics": {
+    "timing_coordination": 0.68,
+    "sizing_coordination": 0.72,
+    "cancellation_coordination": 0.65
+  },
+  "experimental_flags": {
+    "sub_ms_timing": {
+      "flagged": true,
+      "reason": "EXPERIMENTAL_ONLY: Sub-millisecond timing requires timestamp fidelity verification",
+      "excluded_from_primary_score": true
+    },
+    "cross_venue_sync": {
+      "flagged": true,
+      "reason": "EXPERIMENTAL_ONLY: Cross-venue synchronization requires clock sync verification",
+      "excluded_from_primary_score": true
+    }
+  }
+}

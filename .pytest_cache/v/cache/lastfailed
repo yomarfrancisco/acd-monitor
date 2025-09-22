@@ -1,0 +1,9 @@
+{
+  "tests/phase1/test_integrated_engine.py::TestPhase1Integration::test_integrated_engine_analysis": true,
+  "tests/phase1/test_integrated_engine.py::TestPhase1Integration::test_competitive_vs_coordinated_distinction": true,
+  "tests/phase1/test_integrated_engine.py::TestPhase1Integration::test_diagnostic_report_generation": true,
+  "tests/phase1/test_integrated_engine.py::TestPhase1Integration::test_error_handling": true,
+  "tests/phase1/test_integration.py::TestIntegration::test_report_fields": true,
+  "tests/phase1/test_integration.py::TestIntegration::test_crypto_moments_integration": true,
+  "tests/benchmarks/test_perf.py::TestPerformance::test_memory_efficiency": true
+}

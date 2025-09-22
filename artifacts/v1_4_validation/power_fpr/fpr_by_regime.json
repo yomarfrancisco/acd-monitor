@@ -1,0 +1,36 @@
+{
+  "volatility_regimes": {
+    "low_volatility": {
+      "false_positive_rate": 0.12,
+      "confidence_interval": [
+        0.1,
+        0.14
+      ],
+      "sample_size": 500,
+      "volatility_threshold": 0.08
+    },
+    "normal_volatility": {
+      "false_positive_rate": 0.18,
+      "confidence_interval": [
+        0.16,
+        0.2
+      ],
+      "sample_size": 1000,
+      "volatility_threshold": 0.15
+    },
+    "high_volatility": {
+      "false_positive_rate": 0.25,
+      "confidence_interval": [
+        0.22,
+        0.28
+      ],
+      "sample_size": 300,
+      "volatility_threshold": 0.25
+    }
+  },
+  "methodology": {
+    "backtest_periods": 12,
+    "confidence_level": 0.95,
+    "volatility_sensitivity": 0.15
+  }
+}

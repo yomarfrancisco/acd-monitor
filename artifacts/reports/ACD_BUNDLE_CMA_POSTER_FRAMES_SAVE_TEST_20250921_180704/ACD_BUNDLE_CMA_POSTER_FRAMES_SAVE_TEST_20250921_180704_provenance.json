@@ -1,0 +1,21 @@
+{
+  "analysis_id": "CMA_POSTER_FRAMES_SAVE_TEST",
+  "timestamp": "2025-09-21 18:07:04.642409",
+  "version": "2.0.0",
+  "seed": 42,
+  "data_file_paths": [
+    "cases/cma_poster_frames/data/cma_data_seed_42.csv"
+  ],
+  "config_files": [],
+  "icp_config": {
+    "significance_level": 0.05
+  },
+  "vmm_config": {},
+  "validation_configs": {},
+  "result_file_paths": {
+    "icp": "artifacts/reports/icp_results.json"
+  },
+  "intermediate_artifacts": [],
+  "content_hash": "2d6a2a59f4f55833c4fdd80b681c1c6893d962b09ce63dd1c1d25c39a395bfda",
+  "signature": "ACD_SIG_2d6a2a59f4f55833"
+}

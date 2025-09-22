@@ -66,6 +66,8 @@ export async function GET(request: Request) {
   const response = NextResponse.json(result.data, { status: result.status });
   
   // Add custom headers
+  response.headers.set('x-acd-bundle-version', 'v1.9+');
+  response.headers.set('x-case-library-version', 'v1.9');
   if (result.headers) {
     Object.entries(result.headers).forEach(([key, value]) => {
       response.headers.set(key, value);

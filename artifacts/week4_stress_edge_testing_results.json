@@ -1,0 +1,368 @@
+{
+  "test_metadata": {
+    "test_date": "2025-09-21 20:21:37",
+    "total_stress_queries": 15,
+    "total_bundle_conditions": 5,
+    "test_duration": 0.021007061004638672,
+    "test_type": "Week 4 Stress & Edge Testing"
+  },
+  "overall_metrics": {
+    "stress_query_success_rate": 100.0,
+    "bundle_stress_success_rate": 100.0,
+    "avg_response_time": 0.00135801633199056,
+    "avg_quality_score": 4.6066666666666665,
+    "throughput": 42842.73748723187
+  },
+  "subcategory_breakdown": {
+    "mev_shocks": {
+      "total": 3,
+      "successful": 3,
+      "avg_quality": 4.766666666666667,
+      "success_rate": 100.0
+    },
+    "flash_crashes": {
+      "total": 3,
+      "successful": 3,
+      "avg_quality": 4.3999999999999995,
+      "success_rate": 100.0
+    },
+    "latency_coordination": {
+      "total": 3,
+      "successful": 3,
+      "avg_quality": 4.733333333333333,
+      "success_rate": 100.0
+    },
+    "extreme_conditions": {
+      "total": 3,
+      "successful": 3,
+      "avg_quality": 4.3999999999999995,
+      "success_rate": 100.0
+    },
+    "advanced_edge_cases": {
+      "total": 3,
+      "successful": 3,
+      "avg_quality": 4.733333333333333,
+      "success_rate": 100.0
+    }
+  },
+  "stress_test_results": {
+    "total_queries": 15,
+    "successful_queries": 15,
+    "success_rate": 100.0,
+    "total_time": 0.021007061004638672,
+    "avg_response_time": 0.00135801633199056,
+    "avg_quality_score": 4.6066666666666665,
+    "throughput": 42842.73748723187,
+    "results": [
+      {
+        "query_id": 46,
+        "query": "Analyze the impact of MEV (Miner Extractable Value) shocks on apparent coordination patterns in BTC/USD. How do sudden MEV events affect coordination detection and what alternative explanations should be considered?",
+        "category": "stress_test",
+        "subcategory": "mev_shocks",
+        "expected_complexity": "extreme",
+        "stress_factors": [
+          "mev_events",
+          "sudden_shocks",
+          "alternative_explanations"
+        ],
+        "status": "PASS",
+        "response_time": 0.0012249946594238281,
+        "quality_score": 4.7,
+        "response_length": 1672,
+        "error": null
+      },
+      {
+        "query_id": 47,
+        "query": "Generate a regulatory bundle for ETH/USD during a major MEV extraction event. How should MEV coordination be distinguished from traditional market coordination, and what evidence would be needed to prove MEV-based coordination?",
+        "category": "stress_test",
+        "subcategory": "mev_shocks",
+        "expected_complexity": "extreme",
+        "stress_factors": [
+          "mev_extraction",
+          "coordination_distinction",
+          "evidence_requirements"
+        ],
+        "status": "PASS",
+        "response_time": 0.0017991065979003906,
+        "quality_score": 4.8,
+        "response_length": 1427,
+        "error": null
+      },
+      {
+        "query_id": 48,
+        "query": "Refine the ADA/USD bundle to handle scenarios with multiple simultaneous MEV events across different blockchains. How does cross-chain MEV coordination affect traditional coordination detection methods?",
+        "category": "stress_test",
+        "subcategory": "mev_shocks",
+        "expected_complexity": "extreme",
+        "stress_factors": [
+          "cross_chain_mev",
+          "simultaneous_events",
+          "coordination_methods"
+        ],
+        "status": "PASS",
+        "response_time": 0.0016732215881347656,
+        "quality_score": 4.8,
+        "response_length": 1403,
+        "error": null
+      },
+      {
+        "query_id": 49,
+        "query": "Analyze coordination patterns during a flash crash event in BTC/USD where prices dropped 20% in 5 minutes. How should flash crash coordination be distinguished from normal market volatility, and what evidence indicates intentional coordination vs. cascading effects?",
+        "category": "stress_test",
+        "subcategory": "flash_crashes",
+        "expected_complexity": "extreme",
+        "stress_factors": [
+          "flash_crash",
+          "rapid_price_movement",
+          "coordination_vs_cascading"
+        ],
+        "status": "PASS",
+        "response_time": 0.0008358955383300781,
+        "quality_score": 3.5999999999999996,
+        "response_length": 719,
+        "error": null
+      },
+      {
+        "query_id": 50,
+        "query": "Generate a compliance report for ETH/USD during a coordinated flash crash across multiple exchanges. What analysis methods are most effective for detecting coordinated flash crash attacks, and how should regulatory responses be prioritized?",
+        "category": "stress_test",
+        "subcategory": "flash_crashes",
+        "expected_complexity": "extreme",
+        "stress_factors": [
+          "coordinated_attack",
+          "multi_exchange",
+          "regulatory_response"
+        ],
+        "status": "PASS",
+        "response_time": 0.0016529560089111328,
+        "quality_score": 4.8,
+        "response_length": 1441,
+        "error": null
+      },
+      {
+        "query_id": 51,
+        "query": "Create a regulatory memo for ADA/USD analyzing the difference between organic flash crashes and coordinated manipulation. What statistical thresholds should be used to distinguish between natural market events and coordinated attacks?",
+        "category": "stress_test",
+        "subcategory": "flash_crashes",
+        "expected_complexity": "extreme",
+        "stress_factors": [
+          "organic_vs_coordinated",
+          "statistical_thresholds",
+          "manipulation_detection"
+        ],
+        "status": "PASS",
+        "response_time": 0.0016529560089111328,
+        "quality_score": 4.8,
+        "response_length": 1435,
+        "error": null
+      },
+      {
+        "query_id": 52,
+        "query": "Analyze ultra-low latency coordination patterns in BTC/USD where coordination occurs within 1-5 milliseconds. How does microsecond-level coordination affect traditional analysis methods, and what new detection techniques are needed for high-frequency coordination?",
+        "category": "stress_test",
+        "subcategory": "latency_coordination",
+        "expected_complexity": "extreme",
+        "stress_factors": [
+          "ultra_low_latency",
+          "microsecond_coordination",
+          "detection_techniques"
+        ],
+        "status": "PASS",
+        "response_time": 0.0008349418640136719,
+        "quality_score": 4.6,
+        "response_length": 1427,
+        "error": null
+      },
+      {
+        "query_id": 53,
+        "query": "Generate a bundle for ETH/USD analyzing coordination patterns that exploit colocation advantages. How should colocation-based coordination be detected and regulated, and what evidence is needed to prove colocation coordination?",
+        "category": "stress_test",
+        "subcategory": "latency_coordination",
+        "expected_complexity": "extreme",
+        "stress_factors": [
+          "colocation",
+          "exploitation",
+          "regulatory_detection"
+        ],
+        "status": "PASS",
+        "response_time": 0.0016472339630126953,
+        "quality_score": 4.8,
+        "response_length": 1428,
+        "error": null
+      },
+      {
+        "query_id": 54,
+        "query": "Refine the ADA/USD bundle to handle scenarios where coordination occurs through high-frequency trading algorithms with sub-millisecond response times. How should algorithmic coordination be distinguished from normal HFT behavior?",
+        "category": "stress_test",
+        "subcategory": "latency_coordination",
+        "expected_complexity": "extreme",
+        "stress_factors": [
+          "hft_algorithms",
+          "sub_millisecond",
+          "algorithmic_coordination"
+        ],
+        "status": "PASS",
+        "response_time": 0.0016531944274902344,
+        "quality_score": 4.8,
+        "response_length": 1430,
+        "error": null
+      },
+      {
+        "query_id": 55,
+        "query": "Analyze coordination patterns during extreme market stress when BTC/USD experiences 50% volatility in a single day. How should coordination detection be adjusted for extreme market conditions, and what confidence intervals are appropriate during market stress?",
+        "category": "stress_test",
+        "subcategory": "extreme_conditions",
+        "expected_complexity": "extreme",
+        "stress_factors": [
+          "extreme_volatility",
+          "market_stress",
+          "confidence_intervals"
+        ],
+        "status": "PASS",
+        "response_time": 0.0008289813995361328,
+        "quality_score": 3.5999999999999996,
+        "response_length": 718,
+        "error": null
+      },
+      {
+        "query_id": 56,
+        "query": "Generate a regulatory bundle for ETH/USD during a market-wide liquidity crisis where bid-ask spreads widen to 10% of mid-price. How does liquidity crisis affect coordination detection, and what alternative explanations should be considered during liquidity stress?",
+        "category": "stress_test",
+        "subcategory": "extreme_conditions",
+        "expected_complexity": "extreme",
+        "stress_factors": [
+          "liquidity_crisis",
+          "wide_spreads",
+          "alternative_explanations"
+        ],
+        "status": "PASS",
+        "response_time": 0.0008227825164794922,
+        "quality_score": 4.8,
+        "response_length": 1721,
+        "error": null
+      },
+      {
+        "query_id": 57,
+        "query": "Create a compliance report for ADA/USD analyzing coordination patterns during a regulatory announcement that causes 30% price movement. How should event-driven coordination be distinguished from market reaction to news, and what evidence indicates coordinated response vs. natural market reaction?",
+        "category": "stress_test",
+        "subcategory": "extreme_conditions",
+        "expected_complexity": "extreme",
+        "stress_factors": [
+          "regulatory_announcement",
+          "event_driven",
+          "coordinated_vs_natural"
+        ],
+        "status": "PASS",
+        "response_time": 0.0016410350799560547,
+        "quality_score": 4.8,
+        "response_length": 1498,
+        "error": null
+      },
+      {
+        "query_id": 58,
+        "query": "Analyze coordination patterns in BTC/USD when one major exchange goes offline for 2 hours during peak trading. How does exchange outage affect coordination detection across remaining exchanges, and what analysis adjustments are needed for partial market data?",
+        "category": "stress_test",
+        "subcategory": "advanced_edge_cases",
+        "expected_complexity": "extreme",
+        "stress_factors": [
+          "exchange_outage",
+          "partial_data",
+          "coordination_detection"
+        ],
+        "status": "PASS",
+        "response_time": 0.0008299350738525391,
+        "quality_score": 4.6,
+        "response_length": 1422,
+        "error": null
+      },
+      {
+        "query_id": 59,
+        "query": "Generate a bundle for ETH/USD analyzing coordination patterns during a hard fork event where the network splits into two chains. How should coordination analysis be adapted for blockchain network splits, and what new coordination patterns emerge during chain splits?",
+        "category": "stress_test",
+        "subcategory": "advanced_edge_cases",
+        "expected_complexity": "extreme",
+        "stress_factors": [
+          "hard_fork",
+          "chain_split",
+          "network_coordination"
+        ],
+        "status": "PASS",
+        "response_time": 0.0016369819641113281,
+        "quality_score": 4.8,
+        "response_length": 1467,
+        "error": null
+      },
+      {
+        "query_id": 60,
+        "query": "Refine the ADA/USD bundle to handle scenarios with conflicting coordination signals where some indicators suggest coordination while others suggest competition. How should conflicting signals be resolved, and what methodology should be used to determine the dominant pattern?",
+        "category": "stress_test",
+        "subcategory": "advanced_edge_cases",
+        "expected_complexity": "extreme",
+        "stress_factors": [
+          "conflicting_signals",
+          "signal_resolution",
+          "dominant_pattern"
+        ],
+        "status": "PASS",
+        "response_time": 0.0016360282897949219,
+        "quality_score": 4.8,
+        "response_length": 1476,
+        "error": null
+      }
+    ]
+  },
+  "bundle_stress_results": {
+    "total_conditions": 5,
+    "successful_conditions": 5,
+    "success_rate": 100.0,
+    "avg_response_time": 0.0016324043273925782,
+    "avg_quality_score": 4.62,
+    "results": [
+      {
+        "condition_name": "Long Data Span",
+        "description": "Bundle generation with 180 days of data",
+        "status": "PASS",
+        "response_time": 0.0016360282897949219,
+        "quality_score": 4.6000000000000005,
+        "response_length": 1296,
+        "error": null
+      },
+      {
+        "condition_name": "Large Dataset",
+        "description": "Bundle generation with >100k data points",
+        "status": "PASS",
+        "response_time": 0.0016341209411621094,
+        "quality_score": 4.6000000000000005,
+        "response_length": 1308,
+        "error": null
+      },
+      {
+        "condition_name": "Multiple Asset Pairs",
+        "description": "Bundle generation with 5+ asset pairs",
+        "status": "PASS",
+        "response_time": 0.001631021499633789,
+        "quality_score": 4.6000000000000005,
+        "response_length": 1311,
+        "error": null
+      },
+      {
+        "condition_name": "Complex Refinement",
+        "description": "Bundle generation with multiple refinement steps",
+        "status": "PASS",
+        "response_time": 0.001631021499633789,
+        "quality_score": 4.7,
+        "response_length": 1374,
+        "error": null
+      },
+      {
+        "condition_name": "Concurrent Generation",
+        "description": "Multiple bundle generation requests",
+        "status": "PASS",
+        "response_time": 0.0016298294067382812,
+        "quality_score": 4.6000000000000005,
+        "response_length": 1305,
+        "error": null
+      }
+    ]
+  }
+}

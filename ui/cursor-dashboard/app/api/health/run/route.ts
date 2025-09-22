@@ -6,7 +6,7 @@ const IS_PREVIEW = process.env.VERCEL_ENV === 'preview' || process.env.NEXT_PUBL
 export async function GET() {
   // In production, always use mock data
   if (!IS_PREVIEW) {
-    return NextResponse.json({
+    const response = NextResponse.json({
       status: 'healthy',
       timestamp: new Date().toISOString(),
       checks: {
@@ -16,6 +16,9 @@ export async function GET() {
       },
       mode: 'mock'
     });
+    response.headers.set('x-acd-bundle-version', 'v1.9+');
+    response.headers.set('x-case-library-version', 'v1.9');
+    return response;
   }
 
   // In preview, try to fetch from backend
@@ -31,12 +34,15 @@ export async function GET() {
     }
     
     const data = await response.json()
-    return NextResponse.json(data)
+    const res = NextResponse.json(data)
+    res.headers.set('x-acd-bundle-version', 'v1.9+');
+    res.headers.set('x-case-library-version', 'v1.9');
+    return res
   } catch (error) {
     console.error('Failed to fetch from backend:', error)
     
     // Fallback to mock data if backend is unavailable
-    return NextResponse.json({
+    const response = NextResponse.json({
       status: 'healthy',
       timestamp: new Date().toISOString(),
       checks: {
@@ -46,5 +52,8 @@ export async function GET() {
       },
       mode: 'fallback'
     });
+    response.headers.set('x-acd-bundle-version', 'v1.9+');
+    response.headers.set('x-case-library-version', 'v1.9');
+    return response;
   }
 }

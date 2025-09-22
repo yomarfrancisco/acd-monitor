@@ -1,0 +1,104 @@
+{
+  "icp": {
+    "error": "'ICPEngine' object has no attribute 'run_icp'",
+    "status": "failed"
+  },
+  "vmm": {
+    "error": "float division by zero",
+    "status": "failed"
+  },
+  "validation": {
+    "lead_lag": {
+      "switching_entropy": 0.9854752972273343,
+      "avg_granger_p": 0.27086734868402446,
+      "significant_relationships": 5,
+      "persistence_scores": {
+        "Airline_0": 1.0,
+        "Airline_1": 1.0,
+        "Airline_2": 0.6666666666666666,
+        "Airline_3": 0.6666666666666666
+      },
+      "status": "success"
+    },
+    "mirroring": {
+      "coordination_score": 0.5445276611641298,
+      "mirroring_ratio": 1.0,
+      "avg_cosine_similarity": 0.9760952310659509,
+      "high_mirroring_pairs": 6,
+      "status": "success"
+    },
+    "hmm": {
+      "regime_stability": 0.6601779696123169,
+      "coordination_regime_score": 0.32554945054945056,
+      "wide_spread_regime": "1",
+      "lockstep_regime": "2",
+      "log_likelihood": 7.443159982480518,
+      "status": "success"
+    },
+    "infoflow": {
+      "coordination_network_score": 2.1487780619146757,
+      "avg_transfer_entropy": 0.9712097398357981,
+      "out_degree_concentration": 0.04038878091973319,
+      "significant_te_links": 4,
+      "status": "success"
+    }
+  },
+  "integrated": {
+    "error": "'IntegratedACDEngine' object has no attribute 'run_integrated_analysis'",
+    "status": "failed"
+  },
+  "report": {
+    "analysis_timestamp": "2025-09-21T16:10:58.545955",
+    "seed": 42,
+    "summary": {
+      "overall_risk_assessment": "AMBER",
+      "coordination_detected": false,
+      "confidence_level": "Medium",
+      "key_findings": [
+        "High mirroring ratio (1.000) suggests coordinated pricing"
+      ]
+    },
+    "coordination_indicators": {
+      "lead_lag_persistence": {
+        "switching_entropy": 0.9854752972273343,
+        "significant_relationships": 5
+      },
+      "mirroring_coordination": {
+        "coordination_score": 0.5445276611641298,
+        "mirroring_ratio": 1.0
+      },
+      "regime_stability": {
+        "regime_stability": 0.6601779696123169,
+        "coordination_regime_score": 0.32554945054945056
+      },
+      "information_flow": {
+        "coordination_network_score": 2.1487780619146757,
+        "significant_te_links": 4
+      }
+    },
+    "statistical_significance": {
+      "icp_p_value": null,
+      "vmm_p_value": null,
+      "granger_p_values": 0.27086734868402446,
+      "transfer_entropy_significance": 4
+    },
+    "environment_analysis": {
+      "volatility_regimes": [
+        "low",
+        "high"
+      ],
+      "market_conditions": [
+        "bullish",
+        "bearish"
+      ],
+      "coordination_periods": true,
+      "environment_sensitivity": "High"
+    },
+    "recommendations": [
+      "Continue monitoring for coordination patterns",
+      "Regular analysis recommended for early detection",
+      "Validate findings with additional data sources",
+      "Consider alternative explanations (fuel costs, capacity constraints)"
+    ]
+  }
+}
