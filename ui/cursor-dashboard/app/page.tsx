@@ -2706,7 +2706,7 @@ It would also be helpful if you described:
                                     Automatically Detect Market Changes
                           </div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    Enable automatic detection of significant market changes
+                                    Auto-detect significant market shifts
                                   </div>
                                 </div>
                               </div>
@@ -2743,7 +2743,7 @@ It would also be helpful if you described:
                                 <div>
                                   <div className="text-xs font-medium text-[#f9fafb]">Price Change Threshold</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    Minimum change required to trigger analysis
+                                    Trigger level for analysis
                           </div>
                         </div>
                               </div>
@@ -2780,7 +2780,7 @@ It would also be helpful if you described:
                                 <div>
                             <div className="text-xs font-medium text-[#f9fafb]">Confidence Level</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    Statistical confidence required for alerts
+                                    Confidence required for alerts
                           </div>
                         </div>
                               </div>
@@ -2821,7 +2821,7 @@ It would also be helpful if you described:
                                 <div>
                             <div className="text-xs font-medium text-[#f9fafb]">Enable Live Monitoring</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    Real-time analysis and risk assessment
+                                    Real-time risk analysis
                           </div>
                                 </div>
                               </div>
@@ -2857,7 +2857,7 @@ It would also be helpful if you described:
                                 <Clock className="w-4 h-4 text-[#a1a1aa] self-center" />
                                 <div>
                             <div className="text-xs font-medium text-[#f9fafb]">Update Frequency</div>
-                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">How often to run analysis</div>
+                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">Analysis interval</div>
                           </div>
                         </div>
                             </div>
@@ -2894,7 +2894,7 @@ It would also be helpful if you described:
                                 <div>
                             <div className="text-xs font-medium text-[#f9fafb]">Sensitivity Level</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    How sensitive the detection should be
+                                    Detection sensitivity
                           </div>
                         </div>
                               </div>
@@ -2932,7 +2932,7 @@ It would also be helpful if you described:
                                 <div>
                             <div className="text-xs font-medium text-[#f9fafb]">Check Data Quality</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    Validate data accuracy and consistency
+                                    Validate accuracy and consistency
                           </div>
                                 </div>
                               </div>
@@ -2969,7 +2969,7 @@ It would also be helpful if you described:
                                 <div>
                             <div className="text-xs font-medium text-[#f9fafb]">Max Data Age</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    Maximum age before switching to backup
+                                    Max age before backup
                           </div>
                         </div>
                               </div>
