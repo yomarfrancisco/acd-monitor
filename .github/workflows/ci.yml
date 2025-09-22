@@ -104,32 +104,14 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install "black==24.8.0" "flake8==7.1.0"
-          # show versions deterministically
           python - <<'PY'
           import black, sys
           print("CI black", black.__version__)
           print("Python", sys.version.split()[0])
           PY
 
-      - name: Clear black cache
-        run: rm -rf .cache/black || true
-
       - name: Lint with flake8
         run: flake8 backend src
 
-      - name: Format check with black
+      - name: Black check
         run: black --config pyproject.toml --check --diff backend src
-
-      # Optional: show exactly what Black wants for the flagged file if the step fails
-      - name: Black diff for the flagged file (diagnose)
-        if: failure()
-        run: |
-          black --config pyproject.toml --diff src/acd/vmm/adaptive_thresholds.py || true
-          printf "\n--- EOL stats ---\n"
-          python - <<'PY'
-          from pathlib import Path
-          p = Path("src/acd/vmm/adaptive_thresholds.py")
-          b = p.read_bytes()
-          print("CR bytes count:", b.count(b'\r'))
-          print("File size:", len(b))
-          PY

@@ -4,7 +4,9 @@ repos:
     hooks:
       - id: black
         args: ["--line-length=100"]
+        files: ^(backend|src)/
   - repo: https://github.com/pycqa/flake8
     rev: 7.1.0
     hooks:
       - id: flake8
+        files: ^(backend|src)/
