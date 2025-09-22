@@ -45,6 +45,8 @@ import { fetchTyped } from "@/lib/backendAdapter"
 import { safe } from "@/lib/safe"
 import { resilientFetch } from "@/lib/resilient-api"
 import { DegradedModeBanner } from "@/components/DegradedModeBanner"
+import { EventsTable } from "@/components/EventsTable"
+import { SelftestIndicator } from "@/components/SelftestIndicator"
 import type { RiskSummary, MetricsOverview, HealthRun, EventsResponse, DataSources, EvidenceExport } from "@/types/api"
 import {
   MessageSquare,
@@ -2062,7 +2064,10 @@ It would also be helpful if you described:
                     </div>
 
                     <div className="mb-4">
-                          <h3 className="text-xs font-medium text-[#f9fafb] mb-3">Algorithmic Cartel Diagnostic</h3>
+                          <div className="flex items-center justify-between mb-3">
+                            <h3 className="text-xs font-medium text-[#f9fafb]">Algorithmic Cartel Diagnostic</h3>
+                            <SelftestIndicator />
+                          </div>
                           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 mb-10">
                             <div className="rounded-lg bg-bg-surface shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 relative">
                               {/* Live indicator - pulsing green dot with frame */}
@@ -3663,164 +3668,19 @@ It would also be helpful if you described:
                       </div>
                     </div>
 
-                    {/* Option 3: Text Labels Metrics Tile */}
-                    <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                      <CardContent className="p-0">
-                        {/* Title Section */}
-                        <div className="px-4 py-3 border-b border-[#2a2a2a]">
-                          <h2 className="text-sm font-medium text-[#f9fafb]">All Events</h2>
-                        </div>
-
-                        {/* Event Status 1 */}
-                        <div className="p-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2.5">
-                              <CalendarCheck2 className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">ZAR depreciates 1.9%</div>
-                                <div className="text-[10px] text-[#a1a1aa]">
-                                  Broad CDS widening; sensitivity ↑ to 84
-                                </div>
-                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">2m ago • 45s</div>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <div className="flex items-center gap-1.5">
-                                <div className="text-[#f9fafb] font-bold text-sm">66</div>
-                                <div className="text-[#fca5a5] text-xs">✗</div>
-                              </div>
-                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Separator line */}
-                        <div
-                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        ></div>
-
-                        {/* Event Status 2 */}
-                        <div className="p-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2.5">
-                              <CalendarCheck2 className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">SARB guidance unchanged</div>
-                                <div className="text-[10px] text-[#a1a1aa]">No regime break detected</div>
-                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">1m ago • 32s</div>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <div className="flex items-center gap-1.5">
-                                <div className="text-[#f9fafb] font-bold text-sm">43</div>
-                                <div className="text-[#a7f3d0] text-xs">✓</div>
-                              </div>
-                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Separator line */}
-                        <div
-                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        ></div>
-
-                        {/* Event Status 3 */}
-                        <div className="p-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2.5">
-                              <CalendarCheck2 className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">Sovereign outlook stable</div>
-                                <div className="text-[10px] text-[#a1a1aa]">Idiosyncratic responses across banks</div>
-                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">30s ago • 18s</div>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <div className="flex items-center gap-1.5">
-                                <div className="text-[#f9fafb] font-bold text-sm">18</div>
-                                <div className="text-[#fca5a5] text-xs">✗</div>
-                              </div>
-                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Pagination Footer */}
-                        <div className="px-4 py-3 border-t border-[#2a2a2a]">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-4 text-[10px] text-[#a1a1aa]">
-                              <span>Showing 1 - 3 of 3 events</span>
-                              <div className="flex items-center gap-2">
-                                <span>Rows per page:</span>
-                                <select className="bg-transparent border border-[#2a2a2a] rounded px-2 py-1 text-[#f9fafb] text-[10px]">
-                                  <option value="100">100</option>
-                                </select>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-2 text-[10px] text-[#a1a1aa]">
-                              <span>Page 1 of 1</span>
-                              <div className="flex gap-1">
-                                <button
-                                  className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50"
-                                  disabled
-                                >
-                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
-                                    />
-                                  </svg>
-                                </button>
-                                <button
-                                  className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50"
-                                  disabled
-                                >
-                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M15 19l-7-7 7-7"
-                                    />
-                                  </svg>
-                                </button>
-                                <button
-                                  className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50"
-                                  disabled
-                                >
-                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M9 5l7 7-7 7"
-                                    />
-                                  </svg>
-                                </button>
-                                <button
-                                  className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50"
-                                  disabled
-                                >
-                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M13 5l7 7-7 7M5 5l7 7-7 7"
-                                    />
-                                  </svg>
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
+                    <EventsTable 
+                      timeframe={selectedTimeframe}
+                      region="US"
+                      industry="CRYPTO"
+                      onLogEvent={() => {
+                        setActiveTab("agents")
+                        setInitialAgentMessage("")
+                        // Trigger the event logging flow
+                        setTimeout(() => {
+                          handleSendMessage("Help me log a market event")
+                        }, 100)
+                      }}
+                    />
                   </div>
                 )}
 
@@ -3932,9 +3792,11 @@ It would also be helpful if you described:
                             variant="outline"
                             size="sm"
                             className="text-xs bg-transparent border-[#2a2a2a] text-[#f9fafb] hover:bg-bg-tile"
+                            onClick={handleEvidenceExport}
+                            disabled={evidenceLoading}
                           >
                             <Download className="w-3 h-3 mr-1" />
-                            Export ZIP
+                            {evidenceLoading ? 'Generating...' : 'Export ZIP'}
                           </Button>
                         </div>
                       </div>

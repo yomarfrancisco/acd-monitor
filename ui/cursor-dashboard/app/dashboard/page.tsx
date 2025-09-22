@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { CalendarIcon, Clock } from "lucide-react";
+import { TimeseriesChart } from "@/components/TimeseriesChart";
 
 // PageWrapper removed - was causing layout conflicts
 
@@ -209,12 +210,12 @@ export default function Page() {
               </div>
             </div>
 
-            <div className="h-80 relative focus:outline-none bg-bg-surface rounded-lg flex items-center justify-center">
-              <div className="text-center">
-                <div className="text-sm text-[#a1a1aa] mb-2">Chart Placeholder</div>
-                <div className="text-xs text-[#71717a]">Interactive chart will be rendered here</div>
-              </div>
-            </div>
+            <TimeseriesChart 
+              timeframe={selectedTimeframe}
+              region="US"
+              industry="CRYPTO"
+              height={320}
+            />
           </div>
         </CardContent>
       </Card>
