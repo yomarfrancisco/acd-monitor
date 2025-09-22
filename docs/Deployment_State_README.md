@@ -3,7 +3,7 @@
 **Generated**: 2024-12-19  
 **Updated**: 2024-12-19  
 **Branch**: `fix/restore-agents-from-preview`  
-**Commit**: `ec23e38` - "Change button text from 'Analyze algorithms' to 'Audit my algorithm'"
+**Commit**: `bf000b5` - "ui: wire charts/events/tiles to APIs, export zip, selftest"
 
 ## 🚀 Deployment Configuration
 
@@ -75,14 +75,15 @@
 - **Events**: ✅ Compliant with severity/type/riskScore structure
 - **Evidence Export**: ✅ Compliant with ZIP bundle format
 
+### New Components Added
+1. **TimeseriesChart**: Interactive chart with threshold bands wired to `/api/metrics/timeseries`
+2. **EventsTable**: Dynamic events list wired to `/api/events` with pagination support
+3. **SelftestIndicator**: System health monitoring wired to `/api/selftest`
+
 ### Identified Placeholders
-1. **Chart Visualization**: Dashboard shows "Chart Placeholder" text
-2. **Timeseries Metrics**: `/api/metrics/timeseries` route not implemented
-3. **Interactive Elements**: Some buttons show placeholder functionality
+1. **Interactive Elements**: Some buttons show placeholder functionality
 
 ### UI Customizations Required
-- **Chart Integration**: Replace placeholder with actual chart component
-- **Timeseries API**: Implement missing metrics endpoint
 - **Button Actions**: Connect placeholder buttons to actual functionality
 
 ## 📁 File Structure Analysis
@@ -167,23 +168,22 @@ ui/cursor-dashboard/archive/
 - [x] Build process successful (411 kB bundle)
 
 ### ❌ Outstanding Issues
-- [ ] Chart placeholder needs replacement
 - [ ] Legacy file cleanup required
 - [ ] Button action connections needed
 
 ### 🔄 Next Steps
-1. Replace chart placeholder with actual visualization
-2. Clean up legacy files
-3. Connect placeholder button actions
-4. Update documentation with new features
+1. Clean up legacy files
+2. Connect placeholder button actions
+3. Update documentation with new features
 
 ## 📊 Bundle Analysis
 
 ### Current Bundle Size
-- **Main Page**: 317 kB (411 kB First Load JS)
+- **Main Page**: 218 kB (413 kB First Load JS)
+- **Dashboard Page**: 9.19 kB (204 kB First Load JS)
 - **Shared Chunks**: 87.4 kB
 - **Middleware**: 26.5 kB
-- **Total**: ~411 kB (within acceptable range)
+- **Total**: ~413 kB (within acceptable range)
 
 ### Bundle Composition
 - **React/Next.js**: Core framework
