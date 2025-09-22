@@ -5,13 +5,13 @@ import { User, Settings, Database, Bot, Zap, ClipboardList, CreditCard, FileText
 
 const items = [
   { href: "/dashboard",                  label: "Overview",           icon: User },
-  { href: "/dashboard/settings",         label: "Configuration",      icon: Settings },
+  { href: "/dashboard/settings",         label: "Settings",      icon: Settings },
   { href: "/dashboard/integrations",     label: "Data Sources",       icon: Database },
   { href: "/dashboard/background-agents",label: "Analyst Agents",          icon: Bot },
   { href: "/dashboard/usage",            label: "Health Checks",      icon: Zap },
-  { href: "/dashboard/billing",          label: "Events Log",         icon: ClipboardList },
-  { href: "/dashboard/docs",             label: "Billing & Invoices", icon: CreditCard },
-  { href: "/dashboard/contact",          label: "Compliance Reports", icon: FileText }
+  { href: "/dashboard/billing",          label: "Event Log",         icon: ClipboardList },
+  { href: "/dashboard/docs",             label: "Billing", icon: CreditCard },
+  { href: "/dashboard/contact",          label: "Reports", icon: FileText }
 ];
 
 export default function SideNav() {

@@ -1297,7 +1297,7 @@ It would also be helpful if you described:
                       onClick={() => setActiveSidebarItem("configuration")}
                     >
                       <Settings className="w-3.5 h-3.5" />
-                      Configuration
+                      Settings
                     </div>
                   </div>
                 </div>
@@ -1337,14 +1337,14 @@ It would also be helpful if you described:
                     onClick={() => setActiveSidebarItem("events-log")}
                   >
                     <ClipboardList className="w-3.5 h-3.5" />
-                    Events Log
+                    Event Log
                   </div>
                   <div
                     className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "billing" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
                     onClick={() => setActiveSidebarItem("billing")}
                   >
                     <CreditCard className="w-3.5 h-3.5" />
-                    Billing & Invoices
+                    Billing
                   </div>
                 </nav>
 
@@ -1356,7 +1356,7 @@ It would also be helpful if you described:
                     onClick={() => setActiveSidebarItem("compliance")}
                   >
                     <FileText className="w-3.5 h-3.5" />
-                    Compliance Reports
+                    Reports
                   </div>
                   <div
                     className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "contact" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
@@ -1730,7 +1730,7 @@ It would also be helpful if you described:
                               className="agents-quick-btn"
                             >
                               <BarChart3 className="w-2 h-2 md:w-2.5 md:h-2.5" />
-                              Damages (beta)
+                              Calculate damages
                             </button>
                             <button 
                               type="button"
@@ -2066,7 +2066,6 @@ It would also be helpful if you described:
                     <div className="mb-4">
                           <div className="flex items-center justify-between mb-3">
                             <h3 className="text-xs font-medium text-[#f9fafb]">Collusion Risk Score</h3>
-                            <SelftestIndicator />
                           </div>
                           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 mb-10">
                             <div className="rounded-lg bg-bg-surface shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 relative">
@@ -2189,7 +2188,7 @@ It would also be helpful if you described:
                               tickLine={false}
                               tick={{ fill: "#a1a1aa", fontSize: 10 }}
                               label={{
-                                    value: "SA Bank CDS Spread %",
+                                    value: "Market Spread %",
                                 angle: -90,
                                 position: "insideLeft",
                                 style: { textAnchor: "middle", fill: "#a1a1aa", fontSize: 10 },
@@ -2410,7 +2409,7 @@ It would also be helpful if you described:
                               <div className="text-[#fca5a5]">Data source: Error</div>
                             ) : dataSources ? (
                               <>
-                                Data source: {dataSources.items[0]?.name || 'Bloomberg Terminal'} • 
+                                Data source: {dataSources.items[0]?.name || 'Exchanges (WebSocket)'} • 
                                 {dataSources.items[0]?.freshnessSec < 60 
                                   ? `${dataSources.items[0]?.freshnessSec}s` 
                                   : `${Math.round((dataSources.items[0]?.freshnessSec || 0) / 60)}m`
@@ -2418,7 +2417,7 @@ It would also be helpful if you described:
                                 Quality {Math.round((dataSources.items[0]?.quality || 0.96) * 100)}%
                               </>
                             ) : (
-                              'Data source: Bloomberg Terminal'
+                              'Data source: Exchanges (WebSocket)'
                             )}
                       </div>
                     </div>
