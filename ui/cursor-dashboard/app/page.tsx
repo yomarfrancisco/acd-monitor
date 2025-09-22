@@ -263,7 +263,7 @@ export default function CursorDashboard() {
 
   // Add state for selected agent type
   const [selectedAgent, setSelectedAgent] = useState("Europe")
-  const [selectedIndustry, setSelectedIndustry] = useState("All")
+  const [selectedIndustry, setSelectedIndustry] = useState("Crypto")
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([])
 
   // Helper function to map region names to acronyms
@@ -289,7 +289,7 @@ export default function CursorDashboard() {
       "Telecommunications": "Telecom",
       "Financial services": "Finance"
     }
-    return mapping[industryName] || "All"
+    return mapping[industryName] || "Crypto"
   }
 
   // Configuration input field states
@@ -1318,7 +1318,7 @@ It would also be helpful if you described:
                     onClick={() => setActiveSidebarItem("ai-economists")}
                   >
                     <Bot className="w-3.5 h-3.5" />
-                    AI Agents
+                    Analyst Agents
                   </div>
                   <div
                     className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "health-checks" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
@@ -1378,7 +1378,7 @@ It would also be helpful if you described:
                 {messages.length === 0 && (
                   <div className="text-center mb-12 mt-8">
                     <h1 className="font-headline text-6xl md:text-6xl lg:text-7xl text-blue-50 font-light leading-tight max-w-4xl mx-auto">
-                      Algorithmic Collusion? Defensible.
+                      Algorithmic Collusion? Detectable.
                     </h1>
                   </div>
                 )}
@@ -1473,7 +1473,7 @@ It would also be helpful if you described:
                       <div className="relative">
                       <textarea
                           ref={textareaRef}
-                          placeholder="How can I help defend your algorithms today?"
+                          placeholder="How can I help test your algorithm today?"
                           value={inputValue}
                           onChange={(e) => setInputValue(e.target.value.slice(0, 25000))}
                           autoFocus={isDesktop}
@@ -1600,7 +1600,7 @@ It would also be helpful if you described:
                             aria-orientation="vertical"
                           >
                             <div className="py-1">
-                              {["All", "Travel & Hospitality", "E-commerce", "Shipping & Logistics", "Media & Advertising", "Real-Estate", "Telecommunications", "Financial services"].map((industry, index) => (
+                              {["Crypto", "Travel & Hospitality", "E-commerce", "Shipping & Logistics", "Media & Advertising", "Real-Estate", "Telecommunications", "Financial services"].map((industry, index) => (
                                 <button
                                   key={industry}
                                   className={`flex items-center gap-2 px-3 py-2 text-sm text-gray-200 hover:text-white hover:bg-white/5 w-full text-left ${
@@ -1730,21 +1730,21 @@ It would also be helpful if you described:
                               className="agents-quick-btn"
                             >
                               <BarChart3 className="w-2 h-2 md:w-2.5 md:h-2.5" />
-                              Calculate damages
+                              Damages (beta)
                             </button>
                             <button 
                               type="button"
                               className="agents-quick-btn"
                             >
                               <Scale className="w-2 h-2 md:w-2.5 md:h-2.5" />
-                              Compliance check
+                              Compliance risks
                             </button>
                             <button 
                               type="button"
                               className="agents-quick-btn"
                             >
                               <ClipboardList className="w-2 h-2 md:w-2.5 md:h-2.5" />
-                              Court-ready report
+                              Evidence bundle
                             </button>
                       </div>
                     </div>
@@ -1763,7 +1763,7 @@ It would also be helpful if you described:
                         <div className="relative">
                           <textarea
                             ref={textareaRef}
-                            placeholder="How can I help defend your algorithms today?"
+                            placeholder="How can I help test your algorithm today?"
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value.slice(0, 25000))}
                             autoFocus={isDesktop}
@@ -1880,7 +1880,7 @@ It would also be helpful if you described:
                                 aria-label="Select industry"
                                 className="absolute bottom-full mb-2 left-0 min-w-[200px] bg-zinc-800 border border-zinc-700 rounded-lg shadow-lg py-1 z-50"
                               >
-                                {["All", "Travel & Hospitality", "E-commerce", "Shipping & Logistics", "Media & Advertising", "Real-Estate", "Telecommunications", "Financial services"].map((industry, index) => (
+                                {["Crypto", "Travel & Hospitality", "E-commerce", "Shipping & Logistics", "Media & Advertising", "Real-Estate", "Telecommunications", "Financial services"].map((industry, index) => (
                                   <div
                                     key={industry}
                                     role="option"
@@ -2065,7 +2065,7 @@ It would also be helpful if you described:
 
                     <div className="mb-4">
                           <div className="flex items-center justify-between mb-3">
-                            <h3 className="text-xs font-medium text-[#f9fafb]">Algorithmic Cartel Diagnostic</h3>
+                            <h3 className="text-xs font-medium text-[#f9fafb]">Collusion Risk Score</h3>
                             <SelftestIndicator />
                           </div>
                           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 mb-10">
@@ -2125,28 +2125,28 @@ It would also be helpful if you described:
                                   <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white">
                                     <img 
                                       src="/fnb-logo.png" 
-                                      alt="FNB" 
+                                      alt="Binance" 
                                       className="w-full h-full object-contain p-0.5"
                                     />
                                   </div>
                                   <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-80">
                                     <img 
                                       src="/absa-logo.png" 
-                                      alt="ABSA" 
+                                      alt="Coinbase" 
                                       className="w-full h-full object-contain p-0.5"
                                     />
                                   </div>
                                   <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-60">
                                     <img 
                                       src="/nedbank-logo.png" 
-                                      alt="Nedbank" 
+                                      alt="Bybit" 
                                       className="w-full h-full object-contain p-0.5"
                                     />
                                   </div>
                                   <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-40">
                                     <img 
                                       src="/standard-logo.png" 
-                                      alt="Standard Bank" 
+                                      alt="Kraken" 
                                       className="w-full h-full object-contain p-0.5"
                                     />
                                   </div>
@@ -2291,8 +2291,8 @@ It would also be helpful if you described:
                                       // Event data for significant dates
                                       const eventData = {
                                         "Feb '25": {
-                                          type: "SARB Rate Cut",
-                                          impact: "Price Adaptation",
+                                          type: "Fed/Crypto Liquidity Shift",
+                                          impact: "Spread/Depth Adaptation",
                                           color: "#ef4444",
                                         },
                                         "Jun '25": {
@@ -2301,7 +2301,7 @@ It would also be helpful if you described:
                                           color: "#f59e0b",
                                         },
                                         "Jul '25": {
-                                          type: "Price Adaptation",
+                                          type: "Spread/Depth Adaptation",
                                           impact: "Competitive Response",
                                           color: "#10b981",
                                         },
@@ -2368,7 +2368,7 @@ It would also be helpful if you described:
                               strokeWidth={2}
                               dot={{ fill: "#60a5fa", strokeWidth: 2, r: 3 }}
                               activeDot={{ r: 4, fill: "#60a5fa" }}
-                              name="FNB"
+                              name="Binance"
                             />
                             <Line
                               type="monotone"
@@ -2377,7 +2377,7 @@ It would also be helpful if you described:
                               strokeWidth={1.5}
                               dot={{ fill: "#a1a1aa", strokeWidth: 1.5, r: 2 }}
                               activeDot={{ r: 3, fill: "#a1a1aa" }}
-                              name="ABSA"
+                              name="Coinbase"
                             />
                             <Line
                               type="monotone"
@@ -2386,7 +2386,7 @@ It would also be helpful if you described:
                               strokeWidth={1.5}
                               dot={{ fill: "#71717a", strokeWidth: 1.5, r: 2 }}
                               activeDot={{ r: 3, fill: "#71717a" }}
-                              name="Standard Bank"
+                              name="Kraken"
                             />
                             <Line
                               type="monotone"
@@ -2395,7 +2395,7 @@ It would also be helpful if you described:
                               strokeWidth={1.5}
                               dot={{ fill: "#52525b", strokeWidth: 1.5, r: 2 }}
                               activeDot={{ r: 3, fill: "#52525b" }}
-                              name="Nedbank"
+                              name="Bybit"
                             />
                           </LineChart>
                         </ResponsiveContainer>
@@ -2493,7 +2493,7 @@ It would also be helpful if you described:
                         <div className="flex items-center gap-2.5">
                           <GitBranch className="w-4 h-4 text-[#a1a1aa]" />
                           <div>
-                            <div className="text-[#f9fafb] font-medium text-xs">Price Synchronization</div>
+                            <div className="text-[#f9fafb] font-medium text-xs">Price Sync</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
                                   How much your prices move together with other banks
                                 </div>

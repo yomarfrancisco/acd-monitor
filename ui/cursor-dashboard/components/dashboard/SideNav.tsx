@@ -7,7 +7,7 @@ const items = [
   { href: "/dashboard",                  label: "Overview",           icon: User },
   { href: "/dashboard/settings",         label: "Configuration",      icon: Settings },
   { href: "/dashboard/integrations",     label: "Data Sources",       icon: Database },
-  { href: "/dashboard/background-agents",label: "AI Agents",          icon: Bot },
+  { href: "/dashboard/background-agents",label: "Analyst Agents",          icon: Bot },
   { href: "/dashboard/usage",            label: "Health Checks",      icon: Zap },
   { href: "/dashboard/billing",          label: "Events Log",         icon: ClipboardList },
   { href: "/dashboard/docs",             label: "Billing & Invoices", icon: CreditCard },

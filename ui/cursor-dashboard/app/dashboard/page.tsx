@@ -151,7 +151,7 @@ export default function Page() {
           </div>
 
           <div className="mb-4">
-            <h3 className="text-xs font-medium text-[#f9fafb] mb-3">Algorithmic Cartel Diagnostic</h3>
+            <h3 className="text-xs font-medium text-[#f9fafb] mb-3">Collusion Risk Score</h3>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 mb-10">
               <div className="rounded-lg bg-bg-surface shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 relative">
                 <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-bg-tile border border-[#2a2a2a] rounded-full px-2 py-1">
@@ -180,28 +180,28 @@ export default function Page() {
                     <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white">
                       <img 
                         src="/fnb-logo.png" 
-                        alt="FNB" 
+                        alt="Binance" 
                         className="w-full h-full object-contain p-0.5"
                       />
                     </div>
                     <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-80">
                       <img 
                         src="/absa-logo.png" 
-                        alt="ABSA" 
+                        alt="Coinbase" 
                         className="w-full h-full object-contain p-0.5"
                       />
                     </div>
                     <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-60">
                       <img 
                         src="/nedbank-logo.png" 
-                        alt="Nedbank" 
+                        alt="Bybit" 
                         className="w-full h-full object-contain p-0.5"
                       />
                     </div>
                     <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-40">
                       <img 
                         src="/standard-logo.png" 
-                        alt="Standard Bank" 
+                        alt="Kraken" 
                         className="w-full h-full object-contain p-0.5"
                       />
                     </div>
