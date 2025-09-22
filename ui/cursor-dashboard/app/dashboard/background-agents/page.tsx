@@ -26,27 +26,27 @@ export default function Page() {
           <div className="space-y-2">
             <button className="w-full text-left p-3 bg-bg-surface hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
               <div>
-                <div className="font-medium">Analyze pricing patterns</div>
+                <div className="font-medium">Analyze Pricing</div>
                 <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                  Identify trends and anomalies in market data
+                  Identify trends and anomalies
                 </div>
               </div>
               <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
             </button>
             <button className="w-full text-left p-3 bg-bg-surface hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
               <div>
-                <div className="font-medium">Check compliance status</div>
+                <div className="font-medium">Check Compliance</div>
                 <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                  Review regulatory requirements and violations
+                  Review regulatory gaps
                 </div>
               </div>
               <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
             </button>
             <button className="w-full text-left p-3 bg-bg-surface hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
               <div>
-                <div className="font-medium">Generate report</div>
+                <div className="font-medium">Generate Report</div>
                 <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                  Create comprehensive analysis document
+                  Comprehensive analysis doc
                 </div>
               </div>
               <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
@@ -58,19 +58,10 @@ export default function Page() {
             >
               <div>
                 <div className="font-medium">
-                  {evidenceLoading ? 'Generating...' : 'Generate Evidence Package'}
+                  {evidenceLoading ? 'Generating...' : 'Evidence Bundle'}
                 </div>
                 <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                  Court-ready evidence bundle with cryptographic timestamps
-                </div>
-              </div>
-              <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
-            </button>
-            <button className="w-full text-left p-3 bg-bg-surface hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
-              <div>
-                <div className="font-medium">Assess Statistical Confidence</div>
-                <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                  P-values, confidence intervals, and methodological validation
+                  Cryptographic timestamps
                 </div>
               </div>
               <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
@@ -93,7 +84,7 @@ export default function Page() {
                 <div className="flex items-start gap-2">
                   <Brain className="w-4 h-4 text-[#a1a1aa] self-center" />
                   <div>
-                    <div className="text-xs font-medium text-[#f9fafb]">General Analysis</div>
+                    <div className="text-xs font-medium text-[#f9fafb]">General Analyst</div>
                     <div className="text-[10px] text-[#a1a1aa] mt-0.5">
                       Accuracy: 94.2% • Response time: 1.2s
                     </div>
@@ -184,4 +175,5 @@ export default function Page() {
       </Card>
     </div>
   );
+}
 }
