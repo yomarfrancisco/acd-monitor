@@ -105,7 +105,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install "black==24.8.0" "flake8==7.1.0"
           python - <<'PY'
-import black,sys; print("CI black", black.__version__)
+import black, sys
+print("CI black", black.__version__)
 PY
 
       - name: Clear black cache
@@ -114,7 +115,7 @@ PY
       - name: Lint with flake8
         run: flake8 backend src
 
-      - name: Format check with black (show diff if any)
+      - name: Format check with black
         run: black --config pyproject.toml --check --diff backend src
 
       - name: Debug EOL & CR count for the flagged file
