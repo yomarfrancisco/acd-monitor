@@ -1311,21 +1311,21 @@ It would also be helpful if you described:
                     onClick={() => setActiveSidebarItem("data-sources")}
                   >
                     <Database className="w-3.5 h-3.5" />
-                    Data Sources
+                    Data
                   </div>
                   <div
                     className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "ai-economists" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
                     onClick={() => setActiveSidebarItem("ai-economists")}
                   >
                     <Bot className="w-3.5 h-3.5" />
-                    Analyst Agents
+                    Analysts
                   </div>
                   <div
                     className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "health-checks" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
                     onClick={() => setActiveSidebarItem("health-checks")}
                   >
                     <Zap className="w-3.5 h-3.5" />
-                    Health Checks
+                    Health
                   </div>
                 </nav>
 
@@ -1337,7 +1337,7 @@ It would also be helpful if you described:
                     onClick={() => setActiveSidebarItem("events-log")}
                   >
                     <ClipboardList className="w-3.5 h-3.5" />
-                    Event Log
+                    Events
                   </div>
                   <div
                     className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "billing" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
@@ -1363,7 +1363,7 @@ It would also be helpful if you described:
                     onClick={() => setActiveSidebarItem("contact")}
                   >
                     <MessageSquare className="w-3.5 h-3.5" />
-                    Contact Us
+                    Contact
                   </div>
                 </nav>
               </div>
