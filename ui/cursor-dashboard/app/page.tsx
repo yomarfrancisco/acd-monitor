@@ -3179,7 +3179,7 @@ It would also be helpful if you described:
                       <CardContent className="p-0">
                         {/* Section Header */}
                         <div className="px-4 py-3 border-b border-[#2a2a2a]">
-                          <h2 className="text-sm font-medium text-[#f9fafb]">Available Agents</h2>
+                          <h2 className="text-sm font-medium text-[#f9fafb]">Agent Persona</h2>
                         </div>
                         {/* Configuration Items */}
                         <div className="p-4">
@@ -3199,7 +3199,7 @@ It would also be helpful if you described:
                               size="sm"
                               className={dashboardCtaBtnClass}
                             >
-                              Deploy
+                              Select
                             </Button>
                           </div>
                         </div>
@@ -3223,7 +3223,7 @@ It would also be helpful if you described:
                               size="sm"
                               className={dashboardCtaBtnClass}
                             >
-                              Deploy
+                              Select
                             </Button>
                           </div>
                         </div>
@@ -3247,7 +3247,7 @@ It would also be helpful if you described:
                               size="sm"
                               className={dashboardCtaBtnClass}
                             >
-                              Deploy
+                              Select
                             </Button>
                           </div>
                         </div>
@@ -3271,7 +3271,7 @@ It would also be helpful if you described:
                               size="sm"
                               className={dashboardCtaBtnClass}
                             >
-                              Deploy
+                              Select
                             </Button>
                           </div>
                         </div>
