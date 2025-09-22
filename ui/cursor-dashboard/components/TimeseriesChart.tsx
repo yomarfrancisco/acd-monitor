@@ -1,6 +1,6 @@
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, ReferenceLine, Area, ComposedChart } from 'recharts';
-import { useTimeseriesData } from '@/lib/useTimeseriesData';
+import { useTimeseriesData } from '../lib/useTimeseriesData';
 
 interface TimeseriesChartProps {
   timeframe: string;
@@ -51,7 +51,7 @@ export function TimeseriesChart({
   }
 
   // Transform data for Recharts
-  const chartData = data.series.map(item => ({
+  const chartData = data.series.map((item: { t: string; v: number }) => ({
     date: new Date(item.t).toLocaleDateString('en-US', { 
       month: 'short', 
       day: 'numeric' 
