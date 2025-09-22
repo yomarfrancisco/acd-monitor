@@ -3485,7 +3485,7 @@ It would also be helpful if you described:
                               <div>
                                 <div className="text-[#f9fafb] font-medium text-xs">Convergence Rate</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
-                                  Shows how often the risk model finishes its job without errors
+                                  How often the model runs without errors
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">2m ago • 45s</div>
                               </div>
@@ -3514,7 +3514,7 @@ It would also be helpful if you described:
                               <div>
                                 <div className="text-[#f9fafb] font-medium text-xs">Data Integrity</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
-                                  Checks if incoming market data is in the right format and free from errors
+                                  Checks if market data is valid and clean
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">5m ago • 1m 12s</div>
                               </div>
@@ -3543,7 +3543,7 @@ It would also be helpful if you described:
                               <div>
                                 <div className="text-[#f9fafb] font-medium text-xs">Evidence Chain</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
-                                  Confirms all results are time-stamped and stored for audit and legal use
+                                  Ensures results are timestamped for audit
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">30s ago • 18s</div>
                               </div>
@@ -3572,7 +3572,7 @@ It would also be helpful if you described:
                               <div>
                                 <div className="text-[#f9fafb] font-medium text-xs">Runtime Stability</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
-                                  Tracks how fast the system runs compared to targets (slow runs may signal problems)
+                                  Tracks run speed vs targets
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">Updated just now</div>
                               </div>
