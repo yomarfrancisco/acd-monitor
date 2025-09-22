@@ -205,3 +205,6 @@ def get_profile(profile_name: str = "balanced") -> AdaptiveThresholdConfig:
         raise ValueError(f"Unknown profile '{profile_name}'. Available: {available}")
 
     return DEFAULT_PROFILES[profile_name]
+
+
+# Force change
