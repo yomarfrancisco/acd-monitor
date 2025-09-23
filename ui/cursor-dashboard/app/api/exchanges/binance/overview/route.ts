@@ -38,7 +38,12 @@ export async function GET(req: Request) {
   }
 
   // Fallback: direct Binance via Fly.io proxy
-  const PROXY = "https://binance-proxy-broken-night-96.fly.dev/binance";
+  const PROXY_BASE = process.env.NEXT_PUBLIC_BINANCE_PROXY_BASE
+    ?? "https://binance-proxy-broken-night-96.fly.dev/binance";
+  
+  const klinesUrl = `${PROXY_BASE}/klines?symbol=${symbol}&interval=${tf}&limit=288`;
+  const tickerUrl = `${PROXY_BASE}/ticker/bookTicker?symbol=${symbol}`;
+  
   const opt = { 
     cache: 'no-store' as RequestCache, 
     headers: {'user-agent': 'acd-monitor/preview'}, 
@@ -46,9 +51,10 @@ export async function GET(req: Request) {
   };
 
   try {
+    console.log(`[UI API] using proxy fallback: ${klinesUrl}`);
     const [klRes, tkRes] = await Promise.all([
-      fetch(`${PROXY}/klines?symbol=${symbol}&interval=${tf}&limit=288`, opt),
-      fetch(`${PROXY}/ticker/bookTicker?symbol=${symbol}`, opt),
+      fetch(klinesUrl, opt),
+      fetch(tickerUrl, opt),
     ]);
     console.log('[UI API] klines status=', klRes.status, 'ticker status=', tkRes.status);
     const rawBars:any[] = klRes.ok ? await klRes.json() : [];
