@@ -486,7 +486,9 @@ export default function CursorDashboard() {
       
       console.log(`✅ [UI Frontend] Received result from fetchTyped`)
       console.log(`📊 [UI Frontend] Result type: ${typeof result}`)
-      console.log(`📊 [UI Frontend] Result keys:`, Object.keys(result))
+      if (result && typeof result === "object") {
+        console.log(`📊 [UI Frontend] Result keys:`, Object.keys(result as Record<string, unknown>))
+      }
       
       // Convert Binance data to metrics overview format
       const binanceData = result as any
