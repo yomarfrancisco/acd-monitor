@@ -81,11 +81,19 @@ jobs:
 
       - name: Verify static assets
         run: |
-          test -f ui/cursor-dashboard/public/binance_circle.png \
-          && test -f ui/cursor-dashboard/public/coinbase_circle.png \
-          && test -f ui/cursor-dashboard/public/bybit_circle.png \
-          && test -f ui/cursor-dashboard/public/kraken_circle.png \
-          && echo "✅ All exchange logo files present"
+          echo "📁 Listing public directory contents:"
+          ls -la ui/cursor-dashboard/public
+          echo ""
+          echo "🔍 Checking for exchange logo files:"
+          for f in binance_circle.png coinbase_circle.png bybit_circle.png kraken_circle.png; do
+            if test -f "ui/cursor-dashboard/public/$f"; then
+              echo "✅ Found: $f"
+            else
+              echo "❌ Missing: $f"
+              exit 1
+            fi
+          done
+          echo "✅ All exchange logo files present"
 
   backend:
     needs: detect
