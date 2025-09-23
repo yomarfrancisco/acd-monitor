@@ -3622,56 +3622,11 @@ It would also be helpful if you described:
                 {/* Events Log Page */}
                 {activeSidebarItem === "events-log" && (
                   <div className="space-y-3 max-w-2xl">
-                    {/* First shell tile with left and right containers */}
-                    <div className="bg-transparent">
-                      <div className="flex items-center justify-between mb-4">
-                        {/* Left Container - Date Range and Time Tabs */}
-                        <div className="flex items-center gap-4">
-                          {/* Date Range Button */}
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="text-xs bg-transparent border-[#2a2a2a] text-[#f9fafb] hover:bg-bg-tile"
-                          >
-                            Jan 01 - Sep 05
-                            <ChevronDown className="w-3 h-3 ml-1" />
-                          </Button>
-
-                          {/* Time Tabs */}
-                          <div className="flex gap-1">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-bg-tile hover:text-[#f9fafb]"
-                            >
-                              30d
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-bg-tile hover:text-[#f9fafb]"
-                            >
-                              6m
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-bg-tile hover:text-[#f9fafb]"
-                            >
-                              1y
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="text-xs bg-bg-tile border-[#2a2a2a] text-[#f9fafb]"
-                            >
-                              YTD
-                            </Button>
-                          </div>
-                        </div>
-
-                        {/* Right Container - Post Button */}
-                        <div className="flex justify-end">
+                    {/* Simplified header with responsive layout */}
+                    <div className="bg-transparent overflow-x-hidden px-4">
+                      <div className="flex flex-wrap items-center gap-2 justify-between mb-4">
+                        {/* Left Container - Log Event Button */}
+                        <div className="flex justify-start">
                           <Button
                             variant="outline"
                             size="sm"
