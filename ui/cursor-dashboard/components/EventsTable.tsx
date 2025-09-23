@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CalendarCheck2, ChevronDown, SquarePen, Check, AlertTriangle, X } from 'lucide-react';
+import { CalendarCheck2, ChevronDown, SquarePen } from 'lucide-react';
 import { fetchTyped } from '@/lib/backendAdapter';
 import { EventsResponseSchema } from '@/types/api.schemas';
 import type { EventsResponse } from '@/types/api';
-import { clsx } from 'clsx';
 
 interface EventsTableProps {
   timeframe: string;
@@ -63,36 +62,40 @@ export function EventsTable({
     fetchEvents();
   }, [timeframe, region, industry]);
 
-  // New scoring format with icons
-  const getScoreStatus = (score: number) => {
-    if (score >= 70) return "pass";
-    if (score >= 40) return "amber";
-    return "fail";
-  };
-
-  const getScoreIcon = (status: string) => {
-    switch (status) {
-      case "pass":
-        return Check;
-      case "amber":
-        return AlertTriangle;
-      case "fail":
-        return X;
+  const getSeverityColor = (severity: string) => {
+    switch (severity.toLowerCase()) {
+      case 'low':
+        return 'text-[#a7f3d0]';
+      case 'medium':
+      case 'med':
+        return 'text-[#fde047]';
+      case 'high':
+        return 'text-[#fca5a5]';
       default:
-        return X;
+        return 'text-[#a1a1aa]';
     }
   };
 
-  const getScoreColor = (status: string) => {
-    switch (status) {
-      case "pass":
-        return "text-green-400";
-      case "amber":
-        return "text-amber-400";
-      case "fail":
-        return "text-red-400";
+  const getSeverityBg = (severity: string) => {
+    switch (severity.toLowerCase()) {
+      case 'low':
+        return 'bg-[#a7f3d0]/10';
+      case 'medium':
+      case 'med':
+        return 'bg-[#fde047]/10';
+      case 'high':
+        return 'bg-[#fca5a5]/10';
       default:
-        return "text-red-400";
+        return 'bg-[#2a2a2a]';
+    }
+  };
+
+  const formatSeverity = (severity: string) => {
+    switch (severity.toLowerCase()) {
+      case 'medium':
+        return 'MED';
+      default:
+        return severity.toUpperCase();
     }
   };
 
@@ -171,37 +174,32 @@ export function EventsTable({
         {/* Events List */}
         {events?.items && events.items.length > 0 ? (
           <div className="divide-y divide-[#2a2a2a]">
-            {events.items.map((event, index) => {
-              const status = getScoreStatus(event.riskScore);
-              const Icon = getScoreIcon(status);
-              const color = getScoreColor(status);
-              
-              return (
-                <div key={event.id || index} className="p-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2.5">
-                      <CalendarCheck2 className="w-4 h-4 text-[#a1a1aa] opacity-70" />
-                      <div>
-                        <div className="text-[#f9fafb] font-medium text-xs">{event.title}</div>
-                        <div className="text-[10px] text-[#a1a1aa] line-clamp-2">
-                          {truncate(event.description)}
-                        </div>
-                        <div className="text-xs text-muted-foreground mt-0.5">
-                          {formatTimeAgo(event.ts)} • {event.durationMin ? `${event.durationMin}m` : 'ongoing'}
-                        </div>
+            {events.items.map((event, index) => (
+              <div key={event.id || index} className="p-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <CalendarCheck2 className="w-4 h-4 text-[#a1a1aa] opacity-70" />
+                    <div>
+                      <div className="text-[#f9fafb] font-medium text-xs">{event.title}</div>
+                      <div className="text-[10px] text-[#a1a1aa] line-clamp-2">
+                        {truncate(event.description)}
+                      </div>
+                      <div className="text-xs text-muted-foreground mt-0.5">
+                        {formatTimeAgo(event.ts)} • {event.durationMin ? `${event.durationMin}m` : 'ongoing'}
                       </div>
                     </div>
-                    <div className="text-right leading-tight">
-                      <div className="flex items-center justify-end gap-2">
-                        <span className="text-2xl font-semibold">{event.riskScore}</span>
-                        <Icon className={clsx("h-5 w-5", color)} aria-label={status} />
+                  </div>
+                  <div className="text-right">
+                    <div className="flex items-center gap-1.5">
+                      <div className="text-[#f9fafb] font-bold text-sm">{event.riskScore}</div>
+                      <div className={`px-2 py-1 rounded-full text-[10px] font-medium ${getSeverityBg(event.severity)} ${getSeverityColor(event.severity)}`}>
+                        {formatSeverity(event.severity)}
                       </div>
-                      <div className="text-xs text-muted-foreground">out of 100</div>
                     </div>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         ) : (
           <div className="p-3">
