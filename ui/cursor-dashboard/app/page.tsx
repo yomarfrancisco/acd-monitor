@@ -481,19 +481,38 @@ export default function CursorDashboard() {
     setMetricsError(null)
     
     try {
+      console.log(`🔍 [UI Frontend] Starting Binance overview fetch...`)
       const result = await fetchTyped(`/exchanges/binance/overview?symbol=BTCUSDT&tf=5m`, MetricsOverviewSchema)
+      
+      console.log(`✅ [UI Frontend] Received result from fetchTyped`)
+      console.log(`📊 [UI Frontend] Result type: ${typeof result}`)
+      console.log(`📊 [UI Frontend] Result keys:`, Object.keys(result))
       
       // Convert Binance data to metrics overview format
       const binanceData = result as any
       
+      console.log(`📊 [UI Frontend] Binance data venue: ${binanceData.venue}`)
+      console.log(`📊 [UI Frontend] Binance data symbol: ${binanceData.symbol}`)
+      console.log(`📊 [UI Frontend] Binance data error: ${binanceData.error}`)
+      console.log(`📊 [UI Frontend] Binance data OHLCV length: ${binanceData.ohlcv ? binanceData.ohlcv.length : 'undefined'}`)
+      console.log(`📊 [UI Frontend] Binance data OHLCV type: ${typeof binanceData.ohlcv}`)
+      console.log(`📊 [UI Frontend] Binance data OHLCV is array: ${Array.isArray(binanceData.ohlcv)}`)
+      
+      if (binanceData.ohlcv && binanceData.ohlcv.length > 0) {
+        console.log(`📊 [UI Frontend] First OHLCV bar:`, binanceData.ohlcv[0])
+        console.log(`📊 [UI Frontend] Last OHLCV bar:`, binanceData.ohlcv[binanceData.ohlcv.length - 1])
+      }
+      
       // Check for specific Binance errors
       if (binanceData.error === 'binance_no_ohlcv') {
+        console.log(`⚠️ [UI Frontend] Detected binance_no_ohlcv error, setting error message`)
         setMetricsError('No recent candles from Binance (5m). Try 15m.')
         setIsDegradedMode(true)
         return
       }
       
       if (binanceData.ohlcv && binanceData.ohlcv.length > 0) {
+        console.log(`✅ [UI Frontend] OHLCV data is valid, creating mock overview with ${binanceData.ohlcv.length} bars`)
         // Create mock metrics overview from Binance data
         const mockOverview: MetricsOverview = {
           timeframe: selectedTimeframe as any,
@@ -522,16 +541,19 @@ export default function CursorDashboard() {
             }
           ]
         }
+        console.log(`🎯 [UI Frontend] Setting metrics overview with ${mockOverview.items.length} items`)
         setMetricsOverview(mockOverview)
       } else {
+        console.log(`❌ [UI Frontend] No OHLCV data from Binance, throwing error`)
         throw new Error('No OHLCV data from Binance')
       }
       
+      console.log(`✅ [UI Frontend] Successfully processed Binance data`)
       setMetricsError(null)
       setIsDegradedMode(false)
       
     } catch (error) {
-      console.error('Binance overview fetch failed:', error)
+      console.error('❌ [UI Frontend] Binance overview fetch failed:', error)
       setMetricsError('Binance data temporarily unavailable')
       setIsDegradedMode(true)
     }
