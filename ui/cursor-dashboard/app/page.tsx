@@ -163,7 +163,7 @@ export default function CursorDashboard() {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   
   // Helper function to truncate text to specified length
-  const truncateText = (text: string, maxLength: number = 45) => {
+  const truncateText = (text: string, maxLength: number = 40) => {
     return text.length > maxLength ? text.slice(0, maxLength - 1).trimEnd() + "…" : text;
   };
   
@@ -3722,11 +3722,11 @@ It would also be helpful if you described:
                 {/* Compliance Reports Page */}
                 {activeSidebarItem === "compliance" && (
                   <div className="space-y-3 max-w-2xl">
-                    {/* First shell tile with left and right containers */}
+                    {/* Simplified header with mobile-responsive layout */}
                     <div className="bg-transparent">
                       <div className="flex items-center justify-between mb-4">
-                        {/* Left Container - Date Range and Time Tabs */}
-                        <div className="flex items-center gap-4">
+                        {/* Date Range and Time Tabs - Hidden on mobile */}
+                        <div className="hidden md:flex items-center gap-4 report-filters">
                           {/* Date Range Button */}
                           <Button
                             variant="outline"
@@ -3770,8 +3770,8 @@ It would also be helpful if you described:
                           </div>
                         </div>
 
-                        {/* Right Container - Export ZIP Button */}
-                        <div className="flex justify-end">
+                        {/* Export ZIP Button - Always visible, right-aligned */}
+                        <div className="flex justify-end ml-auto min-w-max">
                           <Button
                             variant="outline"
                             size="sm"
@@ -3800,7 +3800,11 @@ It would also be helpful if you described:
                               <ShieldCheck className="w-4 h-4 text-[#a1a1aa]" />
                               <div>
                                 <div className="text-[#f9fafb] font-medium text-xs">Monthly Compliance Report</div>
-                                <div className="text-[10px] text-[#a1a1aa]">
+                                <div 
+                                  className="text-[10px] text-[#a1a1aa]"
+                                  title="Healthy: 3 instances of competitive adaptation to regime breaks"
+                                  aria-label="Healthy: 3 instances of competitive adaptation to regime breaks"
+                                >
                                   {truncateText("Healthy: 3 instances of competitive adaptation to regime breaks")}
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">2m ago • 45s</div>
@@ -3831,7 +3835,11 @@ It would also be helpful if you described:
                               <Moon className="w-4 h-4 text-[#a1a1aa]" />
                               <div>
                                 <div className="text-[#f9fafb] font-medium text-xs">Nightly Competitive Assessment</div>
-                                <div className="text-[10px] text-[#a1a1aa]">
+                                <div 
+                                  className="text-[10px] text-[#a1a1aa]"
+                                  title="Spread Dispersion of 17 bps, ↑ +15% in 24 hrs"
+                                  aria-label="Spread Dispersion of 17 bps, ↑ +15% in 24 hrs"
+                                >
                                   {truncateText("Spread Dispersion of 17 bps, ↑ +15% in 24 hrs")}
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">1m ago • 32s</div>
@@ -3862,7 +3870,11 @@ It would also be helpful if you described:
                               <Scale className="w-4 h-4 text-[#a1a1aa]" />
                               <div>
                                 <div className="text-[#f9fafb] font-medium text-xs">Quarterly Evidence Bundle</div>
-                                <div className="text-[10px] text-[#a1a1aa]">
+                                <div 
+                                  className="text-[10px] text-[#a1a1aa]"
+                                  title="96.8% statistical confidence over 18-month view"
+                                  aria-label="96.8% statistical confidence over 18-month view"
+                                >
                                   {truncateText("96.8% statistical confidence over 18-month view")}
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">30s ago • 18s</div>
