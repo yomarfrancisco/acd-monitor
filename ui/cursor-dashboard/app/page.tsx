@@ -40,7 +40,7 @@ import { Button } from "@/components/ui/button"
 import { AssistantBubble } from "@/components/AssistantBubble"
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, ReferenceLine, Label } from "recharts"
 import { CalendarIcon, Copy, RefreshCw, ImageUp, Camera, FolderClosed, Github, AlertTriangle, Factory } from "lucide-react"
-import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema } from "@/types/api.schemas"
+import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema, BinanceOverviewSchema } from "@/types/api.schemas"
 import { fetchTyped } from "@/lib/backendAdapter"
 import { safe } from "@/lib/safe"
 import { resilientFetch } from "@/lib/resilient-api"
@@ -482,7 +482,7 @@ export default function CursorDashboard() {
     
     try {
       console.log(`🔍 [UI Frontend] Starting Binance overview fetch...`)
-      const result = await fetchTyped(`/exchanges/binance/overview?symbol=BTCUSDT&tf=5m`, MetricsOverviewSchema)
+      const result = await fetchTyped(`/exchanges/binance/overview?symbol=BTCUSDT&tf=5m`, BinanceOverviewSchema)
       
       console.log(`✅ [UI Frontend] Received result from fetchTyped`)
       console.log(`📊 [UI Frontend] Result type: ${typeof result}`)
@@ -493,6 +493,7 @@ export default function CursorDashboard() {
       // Convert Binance data to metrics overview format
       const binanceData = result as any
       
+      console.log(`📊 [UI Frontend] Full Binance data:`, JSON.stringify(binanceData, null, 2))
       console.log(`📊 [UI Frontend] Binance data venue: ${binanceData.venue}`)
       console.log(`📊 [UI Frontend] Binance data symbol: ${binanceData.symbol}`)
       console.log(`📊 [UI Frontend] Binance data error: ${binanceData.error}`)
@@ -505,16 +506,10 @@ export default function CursorDashboard() {
         console.log(`📊 [UI Frontend] Last OHLCV bar:`, binanceData.ohlcv[binanceData.ohlcv.length - 1])
       }
       
-      // Check for specific Binance errors
-      if (binanceData.error === 'binance_no_ohlcv') {
-        console.log(`⚠️ [UI Frontend] Detected binance_no_ohlcv error, setting error message`)
-        setMetricsError('No recent candles from Binance (5m). Try 15m.')
-        setIsDegradedMode(true)
-        return
-      }
-      
+      // PRIORITIZE OHLCV DATA OVER ERROR FIELD
+      // Only show error if OHLCV is truly missing or empty
       if (binanceData.ohlcv && binanceData.ohlcv.length > 0) {
-        console.log(`✅ [UI Frontend] OHLCV data is valid, creating mock overview with ${binanceData.ohlcv.length} bars`)
+        console.log(`✅ [UI Frontend] OHLCV data is valid (${binanceData.ohlcv.length} bars), creating mock overview`)
         // Create mock metrics overview from Binance data
         const mockOverview: MetricsOverview = {
           timeframe: selectedTimeframe as any,
@@ -545,14 +540,18 @@ export default function CursorDashboard() {
         }
         console.log(`🎯 [UI Frontend] Setting metrics overview with ${mockOverview.items.length} items`)
         setMetricsOverview(mockOverview)
+        setMetricsError(null)
+        setIsDegradedMode(false)
+      } else if (binanceData.error === 'binance_no_ohlcv') {
+        console.log(`⚠️ [UI Frontend] No OHLCV data and binance_no_ohlcv error, showing error message`)
+        setMetricsError('No recent candles from Binance (5m). Try 15m.')
+        setIsDegradedMode(true)
       } else {
         console.log(`❌ [UI Frontend] No OHLCV data from Binance, throwing error`)
         throw new Error('No OHLCV data from Binance')
       }
       
       console.log(`✅ [UI Frontend] Successfully processed Binance data`)
-      setMetricsError(null)
-      setIsDegradedMode(false)
       
     } catch (error) {
       console.error('❌ [UI Frontend] Binance overview fetch failed:', error)

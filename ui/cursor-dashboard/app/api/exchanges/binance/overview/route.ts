@@ -63,11 +63,13 @@ export async function GET(request: NextRequest) {
 
     const data = await response.json();
     console.log(`✅ [UI API] Successfully received data from backend`);
+    console.log(`📊 [UI API] Full JSON response:`, JSON.stringify(data, null, 2));
     console.log(`📊 [UI API] Raw JSON response keys:`, Object.keys(data));
     console.log(`📊 [UI API] Venue: ${data.venue}`);
     console.log(`📊 [UI API] Symbol: ${data.symbol}`);
     console.log(`📊 [UI API] AsOf: ${data.asOf}`);
     console.log(`📊 [UI API] Ticker:`, data.ticker);
+    console.log(`📊 [UI API] Error field: ${data.error}`);
     console.log(`📊 [UI API] OHLCV length: ${data.ohlcv ? data.ohlcv.length : 'undefined'}`);
     console.log(`📊 [UI API] OHLCV type: ${typeof data.ohlcv}`);
     console.log(`📊 [UI API] OHLCV is array: ${Array.isArray(data.ohlcv)}`);
