@@ -38,9 +38,11 @@ class ExchangeService:
             }
         """
         try:
+            logger.info(f"🔍 fetch_overview called: symbol={symbol}, tf={tf}")
             api = await get_binance_api()
 
             # Fetch ticker and OHLCV data concurrently
+            logger.info(f"📡 Starting concurrent fetch for {symbol}")
             ticker_task = api.get_book_ticker(symbol)
 
             # Get last 24 hours of 5m bars
@@ -49,18 +51,34 @@ class ExchangeService:
             start_ms = int(start_time.timestamp() * 1000)
             end_ms = int(end_time.timestamp() * 1000)
 
+            logger.info(f"⏰ Time range: {start_time.isoformat()} to {end_time.isoformat()}")
+            logger.info(f"⏰ MS range: {start_ms} to {end_ms}")
+
             ohlcv_task = api.get_ohlcv(symbol, tf, start_ms, end_ms)
 
             # Wait for both requests
+            logger.info("⏳ Waiting for ticker and OHLCV data...")
             ticker_data, ohlcv_data = await asyncio.gather(ticker_task, ohlcv_task)
 
-            return {
+            logger.info(f"✅ Ticker data received: {ticker_data}")
+            logger.info(f"✅ OHLCV data received: {len(ohlcv_data)} bars")
+
+            if ohlcv_data:
+                logger.info(f"📊 First OHLCV bar: {ohlcv_data[0]}")
+                logger.info(f"📊 Last OHLCV bar: {ohlcv_data[-1]}")
+            else:
+                logger.warning("⚠️ OHLCV data is empty!")
+
+            result = {
                 "venue": "binance",
                 "symbol": symbol,
                 "asOf": datetime.now(timezone.utc).isoformat(),
                 "ticker": ticker_data,
                 "ohlcv": ohlcv_data,
             }
+
+            logger.info(f"🎯 Returning overview with {len(ohlcv_data)} OHLCV bars")
+            return result
 
         except ValueError as ve:
             # Handle specific Binance errors
