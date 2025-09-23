@@ -3196,17 +3196,18 @@ It would also be helpful if you described:
                                 </div>
                               </div>
                             </div>
-                            <button
-                              type="button"
+                            <button 
                               onClick={() => setActiveAgent(activeAgent === "general" ? null : "general")}
-                              aria-pressed={activeAgent === "general"}
-                              className={`rounded-full px-4 py-1 text-sm font-normal transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6FA0FF] ${
-                                activeAgent === "general" 
-                                  ? "bg-[#AFC8FF] text-black" 
-                                  : "bg-[#2a2a2a] text-[#a1a1aa] hover:bg-[#3a3a3a]"
+                              className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
+                                activeAgent === "general" ? "bg-[#86a789]" : "bg-[#374151]"
                               }`}
+                              aria-pressed={activeAgent === "general"}
                             >
-                              {activeAgent === "general" ? "Selected" : "Select"}
+                              <div
+                                className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-200 ${
+                                  activeAgent === "general" ? "right-0.5" : "left-0.5"
+                                }`}
+                              ></div>
                             </button>
                           </div>
                         </div>
@@ -3226,17 +3227,18 @@ It would also be helpful if you described:
                                 </div>
                               </div>
                             </div>
-                            <button
-                              type="button"
+                            <button 
                               onClick={() => setActiveAgent(activeAgent === "compliance" ? null : "compliance")}
-                              aria-pressed={activeAgent === "compliance"}
-                              className={`rounded-full px-4 py-1 text-sm font-normal transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6FA0FF] ${
-                                activeAgent === "compliance" 
-                                  ? "bg-[#AFC8FF] text-black" 
-                                  : "bg-[#2a2a2a] text-[#a1a1aa] hover:bg-[#3a3a3a]"
+                              className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
+                                activeAgent === "compliance" ? "bg-[#86a789]" : "bg-[#374151]"
                               }`}
+                              aria-pressed={activeAgent === "compliance"}
                             >
-                              {activeAgent === "compliance" ? "Selected" : "Select"}
+                              <div
+                                className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-200 ${
+                                  activeAgent === "compliance" ? "right-0.5" : "left-0.5"
+                                }`}
+                              ></div>
                             </button>
                           </div>
                         </div>
@@ -3256,17 +3258,18 @@ It would also be helpful if you described:
                                 </div>
                               </div>
                             </div>
-                            <button
-                              type="button"
+                            <button 
                               onClick={() => setActiveAgent(activeAgent === "pricing" ? null : "pricing")}
-                              aria-pressed={activeAgent === "pricing"}
-                              className={`rounded-full px-4 py-1 text-sm font-normal transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6FA0FF] ${
-                                activeAgent === "pricing" 
-                                  ? "bg-[#AFC8FF] text-black" 
-                                  : "bg-[#2a2a2a] text-[#a1a1aa] hover:bg-[#3a3a3a]"
+                              className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
+                                activeAgent === "pricing" ? "bg-[#86a789]" : "bg-[#374151]"
                               }`}
+                              aria-pressed={activeAgent === "pricing"}
                             >
-                              {activeAgent === "pricing" ? "Selected" : "Select"}
+                              <div
+                                className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-200 ${
+                                  activeAgent === "pricing" ? "right-0.5" : "left-0.5"
+                                }`}
+                              ></div>
                             </button>
                           </div>
                         </div>
@@ -3286,17 +3289,18 @@ It would also be helpful if you described:
                                 </div>
                               </div>
                             </div>
-                            <button
-                              type="button"
+                            <button 
                               onClick={() => setActiveAgent(activeAgent === "data" ? null : "data")}
-                              aria-pressed={activeAgent === "data"}
-                              className={`rounded-full px-4 py-1 text-sm font-normal transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6FA0FF] ${
-                                activeAgent === "data" 
-                                  ? "bg-[#AFC8FF] text-black" 
-                                  : "bg-[#2a2a2a] text-[#a1a1aa] hover:bg-[#3a3a3a]"
+                              className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
+                                activeAgent === "data" ? "bg-[#86a789]" : "bg-[#374151]"
                               }`}
+                              aria-pressed={activeAgent === "data"}
                             >
-                              {activeAgent === "data" ? "Selected" : "Select"}
+                              <div
+                                className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-200 ${
+                                  activeAgent === "data" ? "right-0.5" : "left-0.5"
+                                }`}
+                              ></div>
                             </button>
                           </div>
                         </div>
