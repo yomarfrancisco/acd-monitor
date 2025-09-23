@@ -566,6 +566,65 @@ async def get_binance_raw_klines(
         }
 
 
+# Multi-Exchange Endpoints
+@app.get("/exchanges/kraken/overview")
+async def get_kraken_overview(
+    symbol: str = Query("BTCUSDT", description="Trading symbol"),
+    tf: str = Query("5m", description="Timeframe"),
+):
+    """Get Kraken overview data (ticker + OHLCV)"""
+    try:
+        from src.exchanges.service import get_exchange_service
+
+        service = get_exchange_service()
+        data = await service.fetch_overview_multi("kraken", symbol, tf)
+        return data
+
+    except Exception as e:
+        logger.error(f"Kraken overview failed: {e}")
+        raise HTTPException(
+            status_code=502, detail={"error": "kraken_unavailable", "message": str(e)}
+        )
+
+
+@app.get("/exchanges/okx/overview")
+async def get_okx_overview(
+    symbol: str = Query("BTCUSDT", description="Trading symbol"),
+    tf: str = Query("5m", description="Timeframe"),
+):
+    """Get OKX overview data (ticker + OHLCV)"""
+    try:
+        from src.exchanges.service import get_exchange_service
+
+        service = get_exchange_service()
+        data = await service.fetch_overview_multi("okx", symbol, tf)
+        return data
+
+    except Exception as e:
+        logger.error(f"OKX overview failed: {e}")
+        raise HTTPException(status_code=502, detail={"error": "okx_unavailable", "message": str(e)})
+
+
+@app.get("/exchanges/bybit/overview")
+async def get_bybit_overview(
+    symbol: str = Query("BTCUSDT", description="Trading symbol"),
+    tf: str = Query("5m", description="Timeframe"),
+):
+    """Get Bybit overview data (ticker + OHLCV)"""
+    try:
+        from src.exchanges.service import get_exchange_service
+
+        service = get_exchange_service()
+        data = await service.fetch_overview_multi("bybit", symbol, tf)
+        return data
+
+    except Exception as e:
+        logger.error(f"Bybit overview failed: {e}")
+        raise HTTPException(
+            status_code=502, detail={"error": "bybit_unavailable", "message": str(e)}
+        )
+
+
 if __name__ == "__main__":
     import uvicorn
 

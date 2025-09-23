@@ -5,11 +5,14 @@ Thin service layer for aggregating exchange data.
 """
 
 import asyncio
+import aiohttp
 from datetime import datetime, timezone, timedelta
 from typing import Dict
 import logging
+import os
 
 from .binance import get_binance_api
+from . import kraken, okx, bybit
 
 logger = logging.getLogger(__name__)
 
@@ -125,6 +128,69 @@ class ExchangeService:
 
         except Exception as e:
             logger.error(f"Failed to fetch depth for {symbol}: {e}")
+            raise
+
+    async def fetch_overview_multi(
+        self, venue: str, symbol: str = "BTCUSDT", tf: str = "5m"
+    ) -> Dict:
+        """
+        Fetch overview data for a symbol from any supported exchange.
+
+        Args:
+            venue: Exchange name ("kraken", "okx", "bybit")
+            symbol: Trading symbol (e.g., "BTCUSDT")
+            tf: Timeframe (e.g., "5m")
+
+        Returns:
+            Unified exchange overview format
+        """
+        try:
+            proxy_base = os.getenv("CRYPTO_PROXY_BASE")
+            logger.info(
+                f"🔍 fetch_overview_multi: venue={venue}, symbol={symbol}, "
+                f"tf={tf}, proxy={proxy_base}"
+            )
+
+            async with aiohttp.ClientSession() as session:
+                if venue == "kraken":
+                    # Map BTCUSDT -> XBTUSDT for Kraken
+                    pair = symbol.replace("BTC", "XBT") if symbol.startswith("BTC") else symbol
+                    ticker_data, ohlcv_data = await asyncio.gather(
+                        kraken.fetch_ticker(session, pair, proxy_base),
+                        kraken.fetch_ohlcv(session, pair, tf, proxy_base),
+                    )
+                elif venue == "okx":
+                    # Map BTCUSDT -> BTC-USDT for OKX
+                    inst_id = symbol.replace("USDT", "-USDT").replace("USD", "-USD")
+                    ticker_data, ohlcv_data = await asyncio.gather(
+                        okx.fetch_ticker(session, inst_id, proxy_base),
+                        okx.fetch_ohlcv(session, inst_id, tf, proxy_base),
+                    )
+                elif venue == "bybit":
+                    # Bybit uses same symbol format
+                    ticker_data, ohlcv_data = await asyncio.gather(
+                        bybit.fetch_ticker(session, symbol, proxy_base),
+                        bybit.fetch_ohlcv(session, symbol, tf, proxy_base),
+                    )
+                else:
+                    raise ValueError(f"Unsupported venue: {venue}")
+
+                result = {
+                    "venue": venue,
+                    "symbol": symbol,
+                    "asOf": datetime.now(timezone.utc).isoformat(),
+                    "ticker": ticker_data,
+                    "ohlcv": ohlcv_data,
+                }
+
+                logger.info(
+                    f"✅ {venue} overview: {len(ohlcv_data)} bars, "
+                    f"mid=${ticker_data.get('mid', 0):.2f}"
+                )
+                return result
+
+        except Exception as e:
+            logger.error(f"Failed to fetch {venue} overview for {symbol}: {e}")
             raise
 
     async def ping_binance(self) -> bool:

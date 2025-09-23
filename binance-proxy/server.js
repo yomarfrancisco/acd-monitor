@@ -1,58 +1,67 @@
 // server.js
 import express from "express";
 import fetch from "node-fetch";
-import cors from "cors";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+// Map :exchange -> base URL and path prefix builder
+const UPSTREAMS = {
+  binance: (endpoint, q) =>
+    `https://api.binance.com/api/v3/${endpoint}${q ? "?" + q : ""}`,
 
-// Catch-all for any nested v3 path, e.g. /binance/ticker/bookTicker
-app.get("/binance/*", async (req, res) => {
+  okx: (endpoint, q) =>
+    // OKX public market data
+    `https://www.okx.com/api/v5/market/${endpoint}${q ? "?" + q : ""}`,
+
+  kraken: (endpoint, q) =>
+    // Kraken public API (note: endpoints differ)
+    // We'll pass endpoint like "OHLC" and add query as-is.
+    `https://api.kraken.com/0/public/${endpoint}${q ? "?" + q : ""}`,
+
+  bybit: (endpoint, q) =>
+    // Bybit v5 public market data
+    `https://api.bybit.com/v5/market/${endpoint}${q ? "?" + q : ""}`,
+};
+
+// Simple health
+app.get("/healthz", (_, res) => res.status(200).json({ ok: true }));
+
+// Generic proxy: /:exchange/:endpoint?query
+app.get("/:exchange/:endpoint", async (req, res) => {
   try {
-    // subpath after /binance/
-    const subpath = req.originalUrl.replace(/^\/binance\//, ""); // e.g. "ticker/bookTicker?symbol=BTCUSDT"
-    // Ensure it targets Binance v3
-    const target = `https://api.binance.com/api/v3/${subpath}`;
+    const { exchange, endpoint } = req.params;
+    const query = req.url.split("?")[1] || "";
+    const builder = UPSTREAMS[exchange];
+    if (!builder) return res.status(400).json({ error: "unknown_exchange" });
 
-    console.log(`[Proxy] GET → ${target}`);
-    const response = await fetch(target, {
-      // forward minimal headers; Binance ignores most, but keep UA
-      headers: { "User-Agent": "acd-monitor-proxy/1.0" },
-    });
+    const target = builder(endpoint, query);
+    console.log(`[Proxy] ${exchange} → ${target}`);
 
-    const ctype = response.headers.get("content-type") || "";
-    const text = await response.text();
+    const upstream = await fetch(target, { headers: { Accept: "application/json" } });
+    const text = await upstream.text();
 
-    if (!response.ok) {
-      console.error(`[Proxy] Upstream ${response.status} ${ctype} :: ${text.slice(0, 200)}`);
-      return res.status(response.status).json({
-        error: "binance_fetch_failed",
-        status: response.status,
-        details: text,
+    // 451/geo or non-OK: bubble status with details
+    if (!upstream.ok) {
+      return res.status(upstream.status).json({
+        error: `${exchange}_fetch_failed`,
+        details: text.slice(0, 2_000),
       });
     }
 
-    // Binance returns application/json; pass it through. If not JSON, still return as JSON when possible.
-    if (ctype.includes("application/json")) {
-      res.setHeader("content-type", "application/json; charset=utf-8");
-      return res.status(200).send(text); // already JSON string
-    }
-
-    // Fallback: try parse as JSON; otherwise wrap as string
+    // Try return raw JSON; if not JSON, forward text
     try {
-      const maybe = JSON.parse(text);
-      return res.status(200).json(maybe);
+      const json = JSON.parse(text);
+      return res.json(json);
     } catch {
-      return res.status(200).json({ raw: text });
+      return res
+        .status(502)
+        .json({ error: "upstream_non_json", details: text.slice(0, 2_000) });
     }
   } catch (err) {
     console.error("[Proxy] Error:", err);
-    return res.status(500).json({ error: "proxy_error", details: String(err?.message || err) });
+    res.status(500).json({ error: "proxy_error", details: String(err?.message || err) });
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Binance proxy running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`🚀 multi-exchange proxy on :${PORT}`));
