@@ -162,6 +162,11 @@ export default function CursorDashboard() {
   const [activeAgent, setActiveAgent] = useState<string | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   
+  // Helper function to truncate text to specified length
+  const truncateText = (text: string, maxLength: number = 45) => {
+    return text.length > maxLength ? text.slice(0, maxLength - 1).trimEnd() + "…" : text;
+  };
+  
   // Risk summary state
   const [riskSummary, setRiskSummary] = useState<RiskSummary | null>(null)
   const [riskSummaryLoading, setRiskSummaryLoading] = useState(false)
@@ -3796,7 +3801,7 @@ It would also be helpful if you described:
                               <div>
                                 <div className="text-[#f9fafb] font-medium text-xs">Monthly Compliance Report</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
-                                  Healthy: 3 instances of competitive adaptation to regime breaks
+                                  {truncateText("Healthy: 3 instances of competitive adaptation to regime breaks")}
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">2m ago • 45s</div>
                               </div>
@@ -3827,7 +3832,7 @@ It would also be helpful if you described:
                               <div>
                                 <div className="text-[#f9fafb] font-medium text-xs">Nightly Competitive Assessment</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
-                                  Spread Dispersion of 17 bps, ↑ +15% in 24 hrs
+                                  {truncateText("Spread Dispersion of 17 bps, ↑ +15% in 24 hrs")}
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">1m ago • 32s</div>
                               </div>
@@ -3858,7 +3863,7 @@ It would also be helpful if you described:
                               <div>
                                 <div className="text-[#f9fafb] font-medium text-xs">Quarterly Evidence Bundle</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
-                                  96.8% statistical confidence over 18-month view
+                                  {truncateText("96.8% statistical confidence over 18-month view")}
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">30s ago • 18s</div>
                               </div>
