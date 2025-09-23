@@ -5,63 +5,56 @@ import fetch from "node-fetch";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Map :exchange -> base URL and path prefix builder
-const UPSTREAMS = {
-  binance: (endpoint, q) =>
-    `https://api.binance.com/api/v3/${endpoint}${q ? "?" + q : ""}`,
+async function forward(res, target) {
+  console.log(`[Proxy] → ${target}`);
+  const r = await fetch(target, {
+    headers: {
+      "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36",
+      "Accept": "application/json,text/plain,*/*",
+    },
+  });
 
-  okx: (endpoint, q) =>
-    // OKX public market data
-    `https://www.okx.com/api/v5/market/${endpoint}${q ? "?" + q : ""}`,
-
-  kraken: (endpoint, q) =>
-    // Kraken public API (note: endpoints differ)
-    // We'll pass endpoint like "OHLC" and add query as-is.
-    `https://api.kraken.com/0/public/${endpoint}${q ? "?" + q : ""}`,
-
-  bybit: (endpoint, q) =>
-    // Bybit v5 public market data
-    `https://api.bybit.com/v5/market/${endpoint}${q ? "?" + q : ""}`,
-};
-
-// Simple health
-app.get("/healthz", (_, res) => res.status(200).json({ ok: true }));
-
-// Generic proxy: /:exchange/:endpoint?query
-app.get("/:exchange/:endpoint", async (req, res) => {
+  const text = await r.text();
   try {
-    const { exchange, endpoint } = req.params;
-    const query = req.url.split("?")[1] || "";
-    const builder = UPSTREAMS[exchange];
-    if (!builder) return res.status(400).json({ error: "unknown_exchange" });
+    const json = JSON.parse(text);
+    res.status(r.status).json(json);
+  } catch {
+    res.status(r.status).type(r.headers.get("content-type") || "text/plain").send(text);
+  }
+}
 
-    const target = builder(endpoint, query);
-    console.log(`[Proxy] ${exchange} → ${target}`);
-
-    const upstream = await fetch(target, { headers: { Accept: "application/json" } });
-    const text = await upstream.text();
-
-    // 451/geo or non-OK: bubble status with details
-    if (!upstream.ok) {
-      return res.status(upstream.status).json({
-        error: `${exchange}_fetch_failed`,
-        details: text.slice(0, 2_000),
-      });
-    }
-
-    // Try return raw JSON; if not JSON, forward text
-    try {
-      const json = JSON.parse(text);
-      return res.json(json);
-    } catch {
-      return res
-        .status(502)
-        .json({ error: "upstream_non_json", details: text.slice(0, 2_000) });
-    }
-  } catch (err) {
-    console.error("[Proxy] Error:", err);
-    res.status(500).json({ error: "proxy_error", details: String(err?.message || err) });
+// Kraken
+app.get("/kraken/*", async (req, res) => {
+  const path = req.params[0];
+  const qs = req.url.includes("?") ? req.url.slice(req.url.indexOf("?")) : "";
+  const target = `https://api.kraken.com/0/public/${path}${qs}`;
+  try { await forward(res, target); } catch (e) {
+    console.error("[Proxy][kraken] error", e);
+    res.status(502).json({ error: "kraken_proxy_error" });
   }
 });
 
-app.listen(PORT, () => console.log(`🚀 multi-exchange proxy on :${PORT}`));
+// OKX
+app.get("/okx/*", async (req, res) => {
+  const path = req.params[0];
+  const qs = req.url.includes("?") ? req.url.slice(req.url.indexOf("?")) : "";
+  const target = `https://www.okx.com/api/v5/${path}${qs}`;
+  try { await forward(res, target); } catch (e) {
+    console.error("[Proxy][okx] error", e);
+    res.status(502).json({ error: "okx_proxy_error" });
+  }
+});
+
+// Bybit
+app.get("/bybit/*", async (req, res) => {
+  const path = req.params[0];
+  const qs = req.url.includes("?") ? req.url.slice(req.url.indexOf("?")) : "";
+  const target = `https://api.bybit.com/v5/${path}${qs}`;
+  try { await forward(res, target); } catch (e) {
+    console.error("[Proxy][bybit] error", e);
+    res.status(502).json({ error: "bybit_proxy_error" });
+  }
+});
+
+app.get("/", (_req, res) => res.send("ok"));
+app.listen(PORT, () => console.log(`🚀 proxy up on :${PORT}`));
