@@ -1,0 +1,303 @@
+{
+  "test_summary": {
+    "total_tests": 12,
+    "successful_tests": 11,
+    "failed_tests": 1,
+    "success_rate": 91.66666666666666,
+    "total_execution_time": 0.01694798469543457,
+    "avg_execution_time": 0.001405954360961914
+  },
+  "category_stats": {
+    "surveillance": {
+      "total": 1,
+      "successful": 1
+    },
+    "lead_lag": {
+      "total": 1,
+      "successful": 1
+    },
+    "mirroring": {
+      "total": 1,
+      "successful": 1
+    },
+    "analysis": {
+      "total": 1,
+      "successful": 1
+    },
+    "case_management": {
+      "total": 1,
+      "successful": 1
+    },
+    "comparison": {
+      "total": 1,
+      "successful": 1
+    },
+    "simulation": {
+      "total": 1,
+      "successful": 1
+    },
+    "risk_summary": {
+      "total": 1,
+      "successful": 1
+    },
+    "reporting": {
+      "total": 1,
+      "successful": 1
+    },
+    "visualization": {
+      "total": 1,
+      "successful": 0
+    },
+    "market_maker": {
+      "total": 1,
+      "successful": 1
+    },
+    "regulatory": {
+      "total": 1,
+      "successful": 1
+    }
+  },
+  "test_results": [
+    {
+      "query_id": "exch_001",
+      "category": "surveillance",
+      "query": "Flag periods where our spread floor persisted despite high volatility last 7d; attach evidence pack.",
+      "success": true,
+      "execution_time": 0.004998207092285156,
+      "component_coverage": 1.0,
+      "components_found": [
+        "spread_floor",
+        "volatility",
+        "evidence_pack"
+      ],
+      "expected_components": [
+        "spread_floor",
+        "volatility",
+        "evidence_pack"
+      ],
+      "response_length": 791,
+      "timestamp": "2025-09-21T23:00:25.915290"
+    },
+    {
+      "query_id": "exch_002",
+      "category": "lead_lag",
+      "query": "Who led BTC/USDT on our venue vs Coinbase and Binance between 10:00\u201314:00 UTC yesterday? Show persistence & switching entropy.",
+      "success": true,
+      "execution_time": 0.0009050369262695312,
+      "component_coverage": 1.0,
+      "components_found": [
+        "lead_lag",
+        "persistence",
+        "switching_entropy"
+      ],
+      "expected_components": [
+        "lead_lag",
+        "persistence",
+        "switching_entropy"
+      ],
+      "response_length": 716,
+      "timestamp": "2025-09-21T23:00:25.916207"
+    },
+    {
+      "query_id": "exch_003",
+      "category": "mirroring",
+      "query": "List mirroring episodes on top-10 depth vs external venues; annotate arbitrage windows.",
+      "success": true,
+      "execution_time": 0.0008828639984130859,
+      "component_coverage": 1.0,
+      "components_found": [
+        "mirroring",
+        "depth_analysis",
+        "arbitrage_windows"
+      ],
+      "expected_components": [
+        "mirroring",
+        "depth_analysis",
+        "arbitrage_windows"
+      ],
+      "response_length": 857,
+      "timestamp": "2025-09-21T23:00:25.917095"
+    },
+    {
+      "query_id": "exch_004",
+      "category": "analysis",
+      "query": "Explain whether our VIP fee ladder or inventory shocks could explain the signal on 2025-09-15.",
+      "success": true,
+      "execution_time": 0.000904083251953125,
+      "component_coverage": 1.0,
+      "components_found": [
+        "fee_ladder",
+        "inventory_shocks",
+        "signal_explanation"
+      ],
+      "expected_components": [
+        "fee_ladder",
+        "inventory_shocks",
+        "signal_explanation"
+      ],
+      "response_length": 1076,
+      "timestamp": "2025-09-21T23:00:25.918005"
+    },
+    {
+      "query_id": "exch_005",
+      "category": "case_management",
+      "query": "Generate a case file for alert #23198 with ICP/VMM excerpts and provenance hashes.",
+      "success": true,
+      "execution_time": 0.0027909278869628906,
+      "component_coverage": 1.0,
+      "components_found": [
+        "case_file",
+        "icp_vmm",
+        "provenance_hashes"
+      ],
+      "expected_components": [
+        "case_file",
+        "icp_vmm",
+        "provenance_hashes"
+      ],
+      "response_length": 1008,
+      "timestamp": "2025-09-21T23:00:25.920800"
+    },
+    {
+      "query_id": "exch_006",
+      "category": "comparison",
+      "query": "Compare today's AMBER period to last week's baseline; what changed in moments/validation layers?",
+      "success": true,
+      "execution_time": 0.0009367465972900391,
+      "component_coverage": 1.0,
+      "components_found": [
+        "baseline_comparison",
+        "moment_changes",
+        "validation_layers"
+      ],
+      "expected_components": [
+        "baseline_comparison",
+        "moment_changes",
+        "validation_layers"
+      ],
+      "response_length": 1142,
+      "timestamp": "2025-09-21T23:00:25.921742"
+    },
+    {
+      "query_id": "exch_007",
+      "category": "simulation",
+      "query": "Simulate stricter latency-arb constraints; does the red flag persist?",
+      "success": true,
+      "execution_time": 0.0009059906005859375,
+      "component_coverage": 1.0,
+      "components_found": [
+        "latency_arb",
+        "constraints",
+        "red_flag_persistence"
+      ],
+      "expected_components": [
+        "latency_arb",
+        "constraints",
+        "red_flag_persistence"
+      ],
+      "response_length": 950,
+      "timestamp": "2025-09-21T23:00:25.922654"
+    },
+    {
+      "query_id": "exch_008",
+      "category": "risk_summary",
+      "query": "Summarize risk bands for BTC/ETH spot; include ops actions taken and open tickets.",
+      "success": true,
+      "execution_time": 0.0009081363677978516,
+      "component_coverage": 1.0,
+      "components_found": [
+        "risk_bands",
+        "ops_actions",
+        "open_tickets"
+      ],
+      "expected_components": [
+        "risk_bands",
+        "ops_actions",
+        "open_tickets"
+      ],
+      "response_length": 1183,
+      "timestamp": "2025-09-21T23:00:25.923566"
+    },
+    {
+      "query_id": "exch_009",
+      "category": "reporting",
+      "query": "Export an internal memo for CCO: findings, caveats, alternative explanations, next steps.",
+      "success": true,
+      "execution_time": 0.0009181499481201172,
+      "component_coverage": 1.0,
+      "components_found": [
+        "internal_memo",
+        "findings",
+        "caveats",
+        "alternative_explanations"
+      ],
+      "expected_components": [
+        "internal_memo",
+        "findings",
+        "caveats",
+        "alternative_explanations"
+      ],
+      "response_length": 1804,
+      "timestamp": "2025-09-21T23:00:25.924490"
+    },
+    {
+      "query_id": "exch_010",
+      "category": "visualization",
+      "query": "Show order-book mirroring heatmap by depth tier for yesterday's U.S. trading hours.",
+      "success": false,
+      "execution_time": 0.0009081363677978516,
+      "component_coverage": 0.3333333333333333,
+      "components_found": [
+        "depth_tier"
+      ],
+      "expected_components": [
+        "heatmap",
+        "depth_tier",
+        "trading_hours"
+      ],
+      "response_length": 857,
+      "timestamp": "2025-09-21T23:00:25.925403"
+    },
+    {
+      "query_id": "exch_011",
+      "category": "market_maker",
+      "query": "Identify undercut initiation episodes by market maker; escalate if repeated.",
+      "success": true,
+      "execution_time": 0.0009000301361083984,
+      "component_coverage": 1.0,
+      "components_found": [
+        "undercut_initiation",
+        "market_maker",
+        "escalation"
+      ],
+      "expected_components": [
+        "undercut_initiation",
+        "market_maker",
+        "escalation"
+      ],
+      "response_length": 1130,
+      "timestamp": "2025-09-21T23:00:25.926307"
+    },
+    {
+      "query_id": "exch_012",
+      "category": "regulatory",
+      "query": "Produce a pre-submission pack we can send to our regulator on request.",
+      "success": true,
+      "execution_time": 0.0009131431579589844,
+      "component_coverage": 1.0,
+      "components_found": [
+        "pre_submission",
+        "regulatory_pack",
+        "compliance"
+      ],
+      "expected_components": [
+        "pre_submission",
+        "regulatory_pack",
+        "compliance"
+      ],
+      "response_length": 1756,
+      "timestamp": "2025-09-21T23:00:25.927225"
+    }
+  ],
+  "timestamp": "2025-09-21T23:00:25.927236"
+}

@@ -1,0 +1,22 @@
+{
+  "composite_score": 8.1,
+  "market_impact": 0.15,
+  "risk_level": "Critical",
+  "required_actions": [
+    "Immediate investigation initiation",
+    "Regulatory consultation within 24 hours",
+    "Enhanced monitoring deployment",
+    "Legal review and evidence preservation",
+    "Executive notification to C-Suite"
+  ],
+  "timeline": "24 hours",
+  "approval_required": "C-Suite",
+  "escalation_timestamp": "2025-09-22T09:47:19.375288",
+  "audit_log": {
+    "trigger_time": "2025-09-22T09:47:19.375297",
+    "escalation_level": "Critical",
+    "approval_authority": "C-Suite",
+    "actions_initiated": 5,
+    "estimated_completion": "2025-09-23T09:47:19.375298"
+  }
+}

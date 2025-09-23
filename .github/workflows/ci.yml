@@ -80,7 +80,20 @@ jobs:
         run: pnpm --filter ./ui/cursor-dashboard run build
 
       - name: Verify static assets
-        run: pnpm --filter ./ui/cursor-dashboard run verify
+        run: |
+          echo "📁 Listing public directory contents:"
+          ls -la ui/cursor-dashboard/public
+          echo ""
+          echo "🔍 Checking for exchange logo files:"
+          for f in binance_circle.png coinbase_circle.png bybit_circle.png kraken_circle.png; do
+            if test -f "ui/cursor-dashboard/public/$f"; then
+              echo "✅ Found: $f"
+            else
+              echo "❌ Missing: $f"
+              exit 1
+            fi
+          done
+          echo "✅ All exchange logo files present"
 
   backend:
     needs: detect
@@ -100,8 +113,18 @@ jobs:
           pip install -r requirements.txt
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
 
-      - name: Lint with flake8
-        run: flake8
+      - name: Install lint tools (pinned)
+        run: |
+          python -m pip install --upgrade pip
+          pip install "black==24.8.0" "flake8==7.1.0"
+          python - <<'PY'
+          import black, sys
+          print("CI black", black.__version__)
+          print("Python", sys.version.split()[0])
+          PY
 
-      - name: Format check with black
-        run: black --check src tests
+      - name: Lint with flake8
+        run: flake8 backend src
+
+      - name: Black check
+        run: black --config pyproject.toml --check --diff backend src

@@ -54,6 +54,8 @@ export async function GET(request: Request) {
       status: result.status,
       headers: {
         'Cache-Control': 'no-store',
+        'x-acd-bundle-version': 'v1.9+',
+        'x-case-library-version': 'v1.9',
         ...(result.headers || {})
       }
     });

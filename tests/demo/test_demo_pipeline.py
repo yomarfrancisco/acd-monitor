@@ -1,10 +1,6 @@
 """Unit tests for demo pipeline main module."""
 
-import pytest
-import json
-from pathlib import Path
-from unittest.mock import patch, MagicMock
-import pandas as pd
+# from unittest.mock import patch, MagicMock  # noqa: F401
 
 from acd.demo.pipeline import DemoPipeline
 
@@ -30,7 +26,6 @@ class TestDemoPipeline:
 
         # Clean up if exists
         if Path(test_dir).exists():
-            import shutil
 
             shutil.rmtree(test_dir)
 
@@ -40,7 +35,6 @@ class TestDemoPipeline:
         assert Path(test_dir).is_dir()
 
         # Clean up
-        import shutil
 
         shutil.rmtree(test_dir)
 

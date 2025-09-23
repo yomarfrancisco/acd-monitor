@@ -1,0 +1,65 @@
+{
+  "data_collection": {
+    "enabled": false,
+    "sources": [
+      {
+        "name": "binance_websocket",
+        "type": "websocket",
+        "endpoint": "wss://stream.binance.com:9443/ws",
+        "pairs": [
+          "btcusdt",
+          "ethusdt"
+        ],
+        "data_types": [
+          "orderbook",
+          "trades"
+        ]
+      },
+      {
+        "name": "coinbase_websocket",
+        "type": "websocket",
+        "endpoint": "wss://ws-feed.pro.coinbase.com",
+        "pairs": [
+          "BTC-USD",
+          "ETH-USD"
+        ],
+        "data_types": [
+          "orderbook",
+          "trades"
+        ]
+      }
+    ],
+    "storage": {
+      "type": "csv",
+      "directory": "artifacts/crypto_data",
+      "retention_days": 30,
+      "compression": "gzip"
+    },
+    "processing": {
+      "batch_size": 1000,
+      "processing_interval": 60,
+      "real_time_analysis": true
+    }
+  },
+  "monitoring": {
+    "enabled": true,
+    "metrics": [
+      "data_quality_score",
+      "collection_latency",
+      "error_rate",
+      "throughput"
+    ],
+    "alerts": [
+      {
+        "metric": "error_rate",
+        "threshold": 0.05,
+        "action": "email_alert"
+      },
+      {
+        "metric": "collection_latency",
+        "threshold": 5.0,
+        "action": "log_warning"
+      }
+    ]
+  }
+}

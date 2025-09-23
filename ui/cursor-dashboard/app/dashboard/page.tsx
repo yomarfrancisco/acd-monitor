@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { CalendarIcon, Clock } from "lucide-react";
+import { TimeseriesChart } from "@/components/TimeseriesChart";
 
 // PageWrapper removed - was causing layout conflicts
 
@@ -150,7 +151,7 @@ export default function Page() {
           </div>
 
           <div className="mb-4">
-            <h3 className="text-xs font-medium text-[#f9fafb] mb-3">Algorithmic Coordination Diagnostic</h3>
+            <h3 className="text-xs font-medium text-[#f9fafb] mb-3">Collusion Risk Score</h3>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 mb-10">
               <div className="rounded-lg bg-bg-surface shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 relative">
                 <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-bg-tile border border-[#2a2a2a] rounded-full px-2 py-1">
@@ -178,29 +179,29 @@ export default function Page() {
                   <div className="flex items-center -space-x-2">
                     <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white">
                       <img 
-                        src="/fnb-logo.png" 
-                        alt="FNB" 
+                        src="/binance_circle.png" 
+                        alt="Binance" 
                         className="w-full h-full object-contain p-0.5"
                       />
                     </div>
                     <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-80">
                       <img 
-                        src="/absa-logo.png" 
-                        alt="ABSA" 
+                        src="/coinbase_circle.png" 
+                        alt="Coinbase" 
                         className="w-full h-full object-contain p-0.5"
                       />
                     </div>
                     <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-60">
                       <img 
-                        src="/nedbank-logo.png" 
-                        alt="Nedbank" 
+                        src="/bybit_circle.png" 
+                        alt="Bybit" 
                         className="w-full h-full object-contain p-0.5"
                       />
                     </div>
                     <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-40">
                       <img 
-                        src="/standard-logo.png" 
-                        alt="Standard Bank" 
+                        src="/kraken_circle.png" 
+                        alt="Kraken" 
                         className="w-full h-full object-contain p-0.5"
                       />
                     </div>
@@ -209,12 +210,12 @@ export default function Page() {
               </div>
             </div>
 
-            <div className="h-80 relative focus:outline-none bg-bg-surface rounded-lg flex items-center justify-center">
-              <div className="text-center">
-                <div className="text-sm text-[#a1a1aa] mb-2">Chart Placeholder</div>
-                <div className="text-xs text-[#71717a]">Interactive chart will be rendered here</div>
-              </div>
-            </div>
+            <TimeseriesChart 
+              timeframe={selectedTimeframe}
+              region="US"
+              industry="CRYPTO"
+              height={320}
+            />
           </div>
         </CardContent>
       </Card>

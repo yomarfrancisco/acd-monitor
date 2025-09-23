@@ -1,0 +1,116 @@
+{
+  "analysis_info": {
+    "case_study": "CMA Poster Frames",
+    "analysis_date": "2025-09-21T17:44:30.540195",
+    "seed": 42,
+    "n_records": 1460,
+    "date_range": {
+      "start": "2023-01-01T00:00:00",
+      "end": "2023-12-31T00:00:00"
+    }
+  },
+  "icp_results": {
+    "invariance_rejected": "True",
+    "p_value": 0.012916939430614338,
+    "environments_tested": 4,
+    "power": -0.23777167091182672
+  },
+  "vmm_results": {
+    "j_statistic": null,
+    "p_value": null,
+    "stability": null,
+    "convergence_achieved": false
+  },
+  "validation_results": {
+    "lead_lag": {
+      "persistence_score": null,
+      "switching_entropy": 0.0
+    },
+    "mirroring": {
+      "mirroring_ratio": 1.0,
+      "coordination_score": 0.612715934328665
+    },
+    "hmm": {
+      "n_states": null,
+      "dwell_times": {
+        "0": 1.1388888888888888,
+        "1": 16.25,
+        "2": 4.948717948717949
+      }
+    },
+    "infoflow": {
+      "transfer_entropy": null,
+      "network_concentration": null
+    }
+  },
+  "integrated_results": {
+    "composite_score": null,
+    "risk_band": null,
+    "coordination_detected": null,
+    "confidence_level": 0.26489133163526934
+  },
+  "coordination_analysis": {
+    "coordination_detected": true,
+    "n_periods": 3,
+    "total_coordination_days": 548,
+    "periods": [
+      {
+        "period": "Post-holiday coordination",
+        "start_date": "2023-01-15T00:00:00",
+        "end_date": "2023-02-28T00:00:00",
+        "strength": 0.7999999999999998,
+        "avg_price": 200.75799999999998,
+        "price_volatility": 19.44422964194558
+      },
+      {
+        "period": "Summer peak coordination",
+        "start_date": "2023-06-01T00:00:00",
+        "end_date": "2023-07-15T00:00:00",
+        "strength": 0.9000000000000004,
+        "avg_price": 199.8960555555555,
+        "price_volatility": 19.567373525867158
+      },
+      {
+        "period": "Autumn business travel coordination",
+        "start_date": "2023-09-15T00:00:00",
+        "end_date": "2023-10-31T00:00:00",
+        "strength": 0.7000000000000001,
+        "avg_price": 201.23058510638293,
+        "price_volatility": 20.366912854628023
+      }
+    ]
+  },
+  "market_event_analysis": {
+    "events_detected": true,
+    "n_events": 2,
+    "events": [
+      {
+        "event": "fuel_shock",
+        "start_date": "2023-03-01T00:00:00",
+        "end_date": "2023-03-15T00:00:00",
+        "impact": 0.30000000000000004,
+        "avg_price": 245.3126,
+        "price_change": 30.35300935672518
+      },
+      {
+        "event": "regulatory_announcement",
+        "start_date": "2023-05-15T00:00:00",
+        "end_date": "2023-05-22T00:00:00",
+        "impact": 0.2,
+        "avg_price": 226.32074999999998,
+        "price_change": 11.361159356725153
+      }
+    ]
+  },
+  "key_findings": [
+    "ICP analysis rejected invariance hypothesis, indicating coordination patterns",
+    "VMM analysis found structural stability, consistent with competitive behavior",
+    "Mirroring analysis detected high price similarity between airlines"
+  ],
+  "recommendations": [
+    "Low coordination risk - continue routine monitoring",
+    "Validate findings with additional data sources and time periods",
+    "Consider alternative explanations for observed patterns",
+    "Implement ongoing monitoring system for early detection"
+  ]
+}

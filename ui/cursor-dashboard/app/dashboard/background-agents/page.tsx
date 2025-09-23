@@ -10,6 +10,7 @@ const dashboardCtaBtnClass = "bg-[#AFC8FF] text-black hover:bg-[#9FBCFF] active:
 
 export default function Page() {
   const [evidenceLoading, setEvidenceLoading] = useState(false);
+  const [activeAgent, setActiveAgent] = useState<string | null>(null);
 
   const handleEvidenceExport = () => {
     setEvidenceLoading(true);
@@ -26,27 +27,27 @@ export default function Page() {
           <div className="space-y-2">
             <button className="w-full text-left p-3 bg-bg-surface hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
               <div>
-                <div className="font-medium">Analyze pricing patterns</div>
+                <div className="font-medium">Analyze Pricing</div>
                 <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                  Identify trends and anomalies in market data
+                  Identify trends and anomalies
                 </div>
               </div>
               <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
             </button>
             <button className="w-full text-left p-3 bg-bg-surface hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
               <div>
-                <div className="font-medium">Check compliance status</div>
+                <div className="font-medium">Check Compliance</div>
                 <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                  Review regulatory requirements and violations
+                  Review regulatory gaps
                 </div>
               </div>
               <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
             </button>
             <button className="w-full text-left p-3 bg-bg-surface hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
               <div>
-                <div className="font-medium">Generate report</div>
+                <div className="font-medium">Generate Report</div>
                 <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                  Create comprehensive analysis document
+                  Comprehensive analysis doc
                 </div>
               </div>
               <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
@@ -58,19 +59,10 @@ export default function Page() {
             >
               <div>
                 <div className="font-medium">
-                  {evidenceLoading ? 'Generating...' : 'Generate Evidence Package'}
+                  {evidenceLoading ? 'Generating...' : 'Evidence Bundle'}
                 </div>
                 <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                  Court-ready evidence bundle with cryptographic timestamps
-                </div>
-              </div>
-              <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
-            </button>
-            <button className="w-full text-left p-3 bg-bg-surface hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
-              <div>
-                <div className="font-medium">Assess Statistical Confidence</div>
-                <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                  P-values, confidence intervals, and methodological validation
+                  Cryptographic timestamps
                 </div>
               </div>
               <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
@@ -84,7 +76,7 @@ export default function Page() {
         <CardContent className="p-0">
           {/* Section Header */}
           <div className="px-4 py-3 border-b border-[#2a2a2a]">
-            <h2 className="text-sm font-medium text-[#f9fafb]">Available Agents</h2>
+            <h2 className="text-sm font-medium text-[#f9fafb]">Agent Type</h2>
           </div>
           {/* Configuration Items */}
           <div className="p-4">
@@ -93,19 +85,26 @@ export default function Page() {
                 <div className="flex items-start gap-2">
                   <Brain className="w-4 h-4 text-[#a1a1aa] self-center" />
                   <div>
-                    <div className="text-xs font-medium text-[#f9fafb]">General Analysis</div>
+                    <div className="text-xs font-medium text-[#f9fafb]">General Analyst</div>
                     <div className="text-[10px] text-[#a1a1aa] mt-0.5">
                       Accuracy: 94.2% • Response time: 1.2s
                     </div>
                   </div>
                 </div>
               </div>
-              <Button
-                size="sm"
-                className={dashboardCtaBtnClass}
+              <button 
+                onClick={() => setActiveAgent(activeAgent === "general" ? null : "general")}
+                className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
+                  activeAgent === "general" ? "bg-[#86a789]" : "bg-[#374151]"
+                }`}
+                aria-pressed={activeAgent === "general"}
               >
-                Deploy
-              </Button>
+                <div
+                  className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-200 ${
+                    activeAgent === "general" ? "right-0.5" : "left-0.5"
+                  }`}
+                ></div>
+              </button>
             </div>
           </div>
           <div
@@ -124,12 +123,19 @@ export default function Page() {
                   </div>
                 </div>
               </div>
-              <Button
-                size="sm"
-                className={dashboardCtaBtnClass}
+              <button 
+                onClick={() => setActiveAgent(activeAgent === "compliance" ? null : "compliance")}
+                className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
+                  activeAgent === "compliance" ? "bg-[#86a789]" : "bg-[#374151]"
+                }`}
+                aria-pressed={activeAgent === "compliance"}
               >
-                Deploy
-              </Button>
+                <div
+                  className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-200 ${
+                    activeAgent === "compliance" ? "right-0.5" : "left-0.5"
+                  }`}
+                ></div>
+              </button>
             </div>
           </div>
           <div
@@ -148,12 +154,19 @@ export default function Page() {
                   </div>
                 </div>
               </div>
-              <Button
-                size="sm"
-                className={dashboardCtaBtnClass}
+              <button 
+                onClick={() => setActiveAgent(activeAgent === "risk" ? null : "risk")}
+                className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
+                  activeAgent === "risk" ? "bg-[#86a789]" : "bg-[#374151]"
+                }`}
+                aria-pressed={activeAgent === "risk"}
               >
-                Deploy
-              </Button>
+                <div
+                  className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-200 ${
+                    activeAgent === "risk" ? "right-0.5" : "left-0.5"
+                  }`}
+                ></div>
+              </button>
             </div>
           </div>
           <div
@@ -172,12 +185,19 @@ export default function Page() {
                   </div>
                 </div>
               </div>
-              <Button
-                size="sm"
-                className={dashboardCtaBtnClass}
+              <button 
+                onClick={() => setActiveAgent(activeAgent === "security" ? null : "security")}
+                className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
+                  activeAgent === "security" ? "bg-[#86a789]" : "bg-[#374151]"
+                }`}
+                aria-pressed={activeAgent === "security"}
               >
-                Deploy
-              </Button>
+                <div
+                  className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-200 ${
+                    activeAgent === "security" ? "right-0.5" : "left-0.5"
+                  }`}
+                ></div>
+              </button>
             </div>
           </div>
         </CardContent>

@@ -40,12 +40,15 @@ import { Button } from "@/components/ui/button"
 import { AssistantBubble } from "@/components/AssistantBubble"
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, ReferenceLine, Label } from "recharts"
 import { CalendarIcon, Copy, RefreshCw, ImageUp, Camera, FolderClosed, Github, AlertTriangle, Factory } from "lucide-react"
-import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema } from "@/types/api.schemas"
+import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema, BinanceOverviewSchema } from "@/types/api.schemas"
 import { fetchTyped } from "@/lib/backendAdapter"
 import { safe } from "@/lib/safe"
 import { resilientFetch } from "@/lib/resilient-api"
 import { DegradedModeBanner } from "@/components/DegradedModeBanner"
-import type { RiskSummary, MetricsOverview, HealthRun, EventsResponse, DataSources, EvidenceExport } from "@/types/api"
+import { EventsTable } from "@/components/EventsTable"
+import { SelftestIndicator } from "@/components/SelftestIndicator"
+import type { RiskSummary, HealthRun, EventsResponse, DataSources, EvidenceExport } from "@/types/api"
+import type { MetricsOverview } from "@/types/api.schemas"
 import {
   MessageSquare,
   GitBranch,
@@ -157,7 +160,13 @@ export default function CursorDashboard() {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
   const [isDesktop, setIsDesktop] = useState(false)
   const [isInputFocused, setIsInputFocused] = useState(false)
+  const [activeAgent, setActiveAgent] = useState<string | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  
+  // Helper function to truncate text to specified length
+  const truncateText = (text: string, maxLength: number = 40) => {
+    return text.length > maxLength ? text.slice(0, maxLength - 1).trimEnd() + "…" : text;
+  };
   
   // Risk summary state
   const [riskSummary, setRiskSummary] = useState<RiskSummary | null>(null)
@@ -261,7 +270,7 @@ export default function CursorDashboard() {
 
   // Add state for selected agent type
   const [selectedAgent, setSelectedAgent] = useState("Europe")
-  const [selectedIndustry, setSelectedIndustry] = useState("All")
+  const [selectedIndustry, setSelectedIndustry] = useState("Crypto")
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([])
 
   // Helper function to map region names to acronyms
@@ -287,7 +296,7 @@ export default function CursorDashboard() {
       "Telecommunications": "Telecom",
       "Financial services": "Finance"
     }
-    return mapping[industryName] || "All"
+    return mapping[industryName] || "Crypto"
   }
 
   // Configuration input field states
@@ -464,10 +473,105 @@ export default function CursorDashboard() {
   }, [selectedTimeframe, isClient])
 
   // Fetch metrics overview data when timeframe changes
+  // Fetch Binance overview data (preview only)
+  const fetchBinanceOverview = async () => {
+    if (!isClient) return
+    
+    setMetricsLoading(true)
+    setMetricsError(null)
+    
+    try {
+      console.log(`🔍 [UI Frontend] Starting Binance overview fetch...`)
+      const result = await fetchTyped(`/exchanges/binance/overview?symbol=BTCUSDT&tf=5m`, BinanceOverviewSchema)
+      
+      console.log(`✅ [UI Frontend] Received result from fetchTyped`)
+      console.log(`📊 [UI Frontend] Result type: ${typeof result}`)
+      if (result && typeof result === "object") {
+        console.log(`📊 [UI Frontend] Result keys:`, Object.keys(result as Record<string, unknown>))
+      }
+      
+      // Convert Binance data to metrics overview format
+      const binanceData = result as any
+      
+      console.log(`📊 [UI Frontend] Full Binance data:`, JSON.stringify(binanceData, null, 2))
+      console.log(`📊 [UI Frontend] Binance data venue: ${binanceData.venue}`)
+      console.log(`📊 [UI Frontend] Binance data symbol: ${binanceData.symbol}`)
+      console.log(`📊 [UI Frontend] Binance data error: ${binanceData.error}`)
+      console.log(`📊 [UI Frontend] Binance data OHLCV length: ${binanceData.ohlcv ? binanceData.ohlcv.length : 'undefined'}`)
+      console.log(`📊 [UI Frontend] Binance data OHLCV type: ${typeof binanceData.ohlcv}`)
+      console.log(`📊 [UI Frontend] Binance data OHLCV is array: ${Array.isArray(binanceData.ohlcv)}`)
+      
+      if (binanceData.ohlcv && binanceData.ohlcv.length > 0) {
+        console.log(`📊 [UI Frontend] First OHLCV bar:`, binanceData.ohlcv[0])
+        console.log(`📊 [UI Frontend] Last OHLCV bar:`, binanceData.ohlcv[binanceData.ohlcv.length - 1])
+      }
+      
+      // PRIORITIZE OHLCV DATA OVER ERROR FIELD
+      // Only show error if OHLCV is truly missing or empty
+      if (binanceData.ohlcv && binanceData.ohlcv.length > 0) {
+        console.log(`✅ [UI Frontend] OHLCV data is valid (${binanceData.ohlcv.length} bars), creating mock overview`)
+        // Create mock metrics overview from Binance data
+        const mockOverview: MetricsOverview = {
+          timeframe: selectedTimeframe as any,
+          updatedAt: binanceData.asOf,
+          items: [
+            {
+              key: "stability",
+              label: "Market Stability", 
+              score: 85,
+              direction: "UP",
+              note: `Binance ${binanceData.symbol} - Mid: $${binanceData.ticker.mid.toFixed(2)}`
+            },
+            {
+              key: "synchronization",
+              label: "Price Synchronization",
+              score: 23,
+              direction: "FLAT", 
+              note: "Single venue - no cross-venue sync"
+            },
+            {
+              key: "environmentalSensitivity",
+              label: "Environmental Sensitivity",
+              score: 67,
+              direction: "DOWN",
+              note: `Last 24h: ${binanceData.ohlcv.length} bars`
+            }
+          ]
+        }
+        console.log(`🎯 [UI Frontend] Setting metrics overview with ${mockOverview.items.length} items`)
+        setMetricsOverview(mockOverview)
+        setMetricsError(null)
+        setIsDegradedMode(false)
+      } else if (binanceData.error === 'binance_no_ohlcv') {
+        console.log(`⚠️ [UI Frontend] No OHLCV data and binance_no_ohlcv error, showing error message`)
+        setMetricsError('No recent candles from Binance (5m). Try 15m.')
+        setIsDegradedMode(true)
+      } else {
+        console.log(`❌ [UI Frontend] No OHLCV data from Binance, throwing error`)
+        throw new Error('No OHLCV data from Binance')
+      }
+      
+      console.log(`✅ [UI Frontend] Successfully processed Binance data`)
+      
+    } catch (error) {
+      console.error('❌ [UI Frontend] Binance overview fetch failed:', error)
+      setMetricsError('Binance data temporarily unavailable')
+      setIsDegradedMode(true)
+    }
+    
+    setMetricsLoading(false)
+  }
+
   useEffect(() => {
     const fetchMetricsOverview = async () => {
       if (!isClient) return
       
+      // Check if Binance preview is enabled
+      const isBinancePreview = process.env.NEXT_PUBLIC_PREVIEW_BINANCE === 'true'
+      
+      if (isBinancePreview) {
+        await fetchBinanceOverview()
+      } else {
       setMetricsLoading(true)
       setMetricsError(null)
       
@@ -478,6 +582,7 @@ export default function CursorDashboard() {
       setIsDegradedMode(false)
       
       setMetricsLoading(false)
+      }
     }
 
     fetchMetricsOverview()
@@ -1295,7 +1400,7 @@ It would also be helpful if you described:
                       onClick={() => setActiveSidebarItem("configuration")}
                     >
                       <Settings className="w-3.5 h-3.5" />
-                      Configuration
+                      Settings
                     </div>
                   </div>
                 </div>
@@ -1309,21 +1414,21 @@ It would also be helpful if you described:
                     onClick={() => setActiveSidebarItem("data-sources")}
                   >
                     <Database className="w-3.5 h-3.5" />
-                    Data Sources
+                    Data
                   </div>
                   <div
                     className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "ai-economists" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
                     onClick={() => setActiveSidebarItem("ai-economists")}
                   >
                     <Bot className="w-3.5 h-3.5" />
-                    AI Agents
+                    Analysts
                   </div>
                   <div
                     className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "health-checks" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
                     onClick={() => setActiveSidebarItem("health-checks")}
                   >
                     <Zap className="w-3.5 h-3.5" />
-                    Health Checks
+                    Health
                   </div>
                 </nav>
 
@@ -1335,14 +1440,14 @@ It would also be helpful if you described:
                     onClick={() => setActiveSidebarItem("events-log")}
                   >
                     <ClipboardList className="w-3.5 h-3.5" />
-                    Events Log
+                    Events
                   </div>
                   <div
                     className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "billing" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
                     onClick={() => setActiveSidebarItem("billing")}
                   >
                     <CreditCard className="w-3.5 h-3.5" />
-                    Billing & Invoices
+                    Billing
                   </div>
                 </nav>
 
@@ -1354,14 +1459,14 @@ It would also be helpful if you described:
                     onClick={() => setActiveSidebarItem("compliance")}
                   >
                     <FileText className="w-3.5 h-3.5" />
-                    Compliance Reports
+                    Reports
                   </div>
                   <div
                     className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "contact" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
                     onClick={() => setActiveSidebarItem("contact")}
                   >
                     <MessageSquare className="w-3.5 h-3.5" />
-                    Contact Us
+                    Contact
                   </div>
                 </nav>
               </div>
@@ -1376,7 +1481,7 @@ It would also be helpful if you described:
                 {messages.length === 0 && (
                   <div className="text-center mb-12 mt-8">
                     <h1 className="font-headline text-6xl md:text-6xl lg:text-7xl text-blue-50 font-light leading-tight max-w-4xl mx-auto">
-                      Algorithmic Collusion? Defensible.
+                      Algorithmic Collusion? Detectable.
                     </h1>
                   </div>
                 )}
@@ -1471,7 +1576,7 @@ It would also be helpful if you described:
                       <div className="relative">
                       <textarea
                           ref={textareaRef}
-                          placeholder="How can I help defend your algorithms today?"
+                          placeholder="How can I help test your algorithm today?"
                           value={inputValue}
                           onChange={(e) => setInputValue(e.target.value.slice(0, 25000))}
                           autoFocus={isDesktop}
@@ -1598,7 +1703,7 @@ It would also be helpful if you described:
                             aria-orientation="vertical"
                           >
                             <div className="py-1">
-                              {["All", "Travel & Hospitality", "E-commerce", "Shipping & Logistics", "Media & Advertising", "Real-Estate", "Telecommunications", "Financial services"].map((industry, index) => (
+                              {["Crypto", "Travel & Hospitality", "E-commerce", "Shipping & Logistics", "Media & Advertising", "Real-Estate", "Telecommunications", "Financial services"].map((industry, index) => (
                                 <button
                                   key={industry}
                                   className={`flex items-center gap-2 px-3 py-2 text-sm text-gray-200 hover:text-white hover:bg-white/5 w-full text-left ${
@@ -1735,14 +1840,14 @@ It would also be helpful if you described:
                               className="agents-quick-btn"
                             >
                               <Scale className="w-2 h-2 md:w-2.5 md:h-2.5" />
-                              Compliance check
+                              Compliance risks
                             </button>
                             <button 
                               type="button"
                               className="agents-quick-btn"
                             >
                               <ClipboardList className="w-2 h-2 md:w-2.5 md:h-2.5" />
-                              Court-ready report
+                              Evidence bundle
                             </button>
                       </div>
                     </div>
@@ -1761,7 +1866,7 @@ It would also be helpful if you described:
                         <div className="relative">
                           <textarea
                             ref={textareaRef}
-                            placeholder="How can I help defend your algorithms today?"
+                            placeholder="How can I help test your algorithm today?"
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value.slice(0, 25000))}
                             autoFocus={isDesktop}
@@ -1878,7 +1983,7 @@ It would also be helpful if you described:
                                 aria-label="Select industry"
                                 className="absolute bottom-full mb-2 left-0 min-w-[200px] bg-zinc-800 border border-zinc-700 rounded-lg shadow-lg py-1 z-50"
                               >
-                                {["All", "Travel & Hospitality", "E-commerce", "Shipping & Logistics", "Media & Advertising", "Real-Estate", "Telecommunications", "Financial services"].map((industry, index) => (
+                                {["Crypto", "Travel & Hospitality", "E-commerce", "Shipping & Logistics", "Media & Advertising", "Real-Estate", "Telecommunications", "Financial services"].map((industry, index) => (
                                   <div
                                     key={industry}
                                     role="option"
@@ -2062,7 +2167,9 @@ It would also be helpful if you described:
                     </div>
 
                     <div className="mb-4">
-                          <h3 className="text-xs font-medium text-[#f9fafb] mb-3">Algorithmic Coordination Diagnostic</h3>
+                          <div className="flex items-center justify-between mb-3">
+                            <h3 className="text-xs font-medium text-[#f9fafb]">Collusion Risk Score</h3>
+                          </div>
                           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 mb-10">
                             <div className="rounded-lg bg-bg-surface shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 relative">
                               {/* Live indicator - pulsing green dot with frame */}
@@ -2104,47 +2211,61 @@ It would also be helpful if you described:
                               <div className="flex items-center justify-between">
                         <div>
                                   <div className="text-xl font-bold text-[#f9fafb]">
-                                    {selectedTimeframe === "30d" ? "78" : 
+                                    {process.env.NEXT_PUBLIC_PREVIEW_BINANCE === 'true' ? (
+                                      "N/A"
+                                    ) : (
+                                      selectedTimeframe === "30d" ? "78" : 
                                      selectedTimeframe === "6m" ? "82" : 
-                                     selectedTimeframe === "1y" ? "79" : "84"}%
+                                       selectedTimeframe === "1y" ? "79" : "84"
+                                    )}%
                         </div>
                                   <div className="text-xs text-[#a1a1aa]">
+                                    {process.env.NEXT_PUBLIC_PREVIEW_BINANCE === 'true' ? (
+                                      "Requires multiple venues"
+                                    ) : (
+                                      <>
                                     {selectedTimeframe === "30d" ? "30d" : 
                                      selectedTimeframe === "6m" ? "6m" : 
                                      selectedTimeframe === "1y" ? "1y" : 
                                      selectedTimeframe === "ytd" ? "YTD" : "Cal"} Price Leader
+                                      </>
+                                    )}
                                   </div>
                                 </div>
                                 {/* FANS Avatar Flow */}
                                 <div className="flex items-center -space-x-2">
                                   <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white">
                                     <img 
-                                      src="/fnb-logo.png" 
-                                      alt="FNB" 
+                                      src="/binance_circle.png" 
+                                      alt="Binance" 
                                       className="w-full h-full object-contain p-0.5"
                                     />
                                   </div>
-                                  <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-80">
-                                    <img 
-                                      src="/absa-logo.png" 
-                                      alt="ABSA" 
-                                      className="w-full h-full object-contain p-0.5"
-                                    />
-                                  </div>
-                                  <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-60">
-                                    <img 
-                                      src="/nedbank-logo.png" 
-                                      alt="Nedbank" 
-                                      className="w-full h-full object-contain p-0.5"
-                                    />
-                                  </div>
-                                  <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-40">
-                                    <img 
-                                      src="/standard-logo.png" 
-                                      alt="Standard Bank" 
-                                      className="w-full h-full object-contain p-0.5"
-                                    />
-                                  </div>
+                                  {process.env.NEXT_PUBLIC_PREVIEW_BINANCE !== 'true' && (
+                                    <>
+                                      <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-80">
+                                        <img 
+                                          src="/coinbase_circle.png" 
+                                          alt="Coinbase" 
+                                          className="w-full h-full object-contain p-0.5"
+                                        />
+                                      </div>
+                                      <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-60">
+                                        <img 
+                                          src="/bybit_circle.png" 
+                                          alt="Bybit" 
+                                          className="w-full h-full object-contain p-0.5"
+                                        />
+                                      </div>
+                                      <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-40">
+                                        <img 
+                                          src="/kraken_circle.png" 
+                                          alt="Kraken" 
+                                          className="w-full h-full object-contain p-0.5"
+                                        />
+                                      </div>
+                                    </>
+                                  )}
                                 </div>
                         </div>
                       </div>
@@ -2178,13 +2299,18 @@ It would also be helpful if you described:
                               axisLine={false}
                               tickLine={false}
                               tick={{ fill: "#a1a1aa", fontSize: 10 }}
+                              label={{
+                                value: "Time",
+                                position: "insideBottom",
+                                style: { textAnchor: "middle", fill: "#a1a1aa", fontSize: 10 },
+                              }}
                             />
                             <YAxis
                               axisLine={false}
                               tickLine={false}
                               tick={{ fill: "#a1a1aa", fontSize: 10 }}
                               label={{
-                                    value: "SA Bank CDS Spread %",
+                                    value: "Market Spread %",
                                 angle: -90,
                                 position: "insideLeft",
                                 style: { textAnchor: "middle", fill: "#a1a1aa", fontSize: 10 },
@@ -2286,8 +2412,8 @@ It would also be helpful if you described:
                                       // Event data for significant dates
                                       const eventData = {
                                         "Feb '25": {
-                                          type: "SARB Rate Cut",
-                                          impact: "Price Adaptation",
+                                          type: "Fed/Crypto Liquidity Shift",
+                                          impact: "Spread/Depth Adaptation",
                                           color: "#ef4444",
                                         },
                                         "Jun '25": {
@@ -2296,7 +2422,7 @@ It would also be helpful if you described:
                                           color: "#f59e0b",
                                         },
                                         "Jul '25": {
-                                          type: "Price Adaptation",
+                                          type: "Spread/Depth Adaptation",
                                           impact: "Competitive Response",
                                           color: "#10b981",
                                         },
@@ -2363,7 +2489,7 @@ It would also be helpful if you described:
                               strokeWidth={2}
                               dot={{ fill: "#60a5fa", strokeWidth: 2, r: 3 }}
                               activeDot={{ r: 4, fill: "#60a5fa" }}
-                              name="FNB"
+                              name="Binance"
                             />
                             <Line
                               type="monotone"
@@ -2372,7 +2498,7 @@ It would also be helpful if you described:
                               strokeWidth={1.5}
                               dot={{ fill: "#a1a1aa", strokeWidth: 1.5, r: 2 }}
                               activeDot={{ r: 3, fill: "#a1a1aa" }}
-                              name="ABSA"
+                              name="Coinbase"
                             />
                             <Line
                               type="monotone"
@@ -2381,7 +2507,7 @@ It would also be helpful if you described:
                               strokeWidth={1.5}
                               dot={{ fill: "#71717a", strokeWidth: 1.5, r: 2 }}
                               activeDot={{ r: 3, fill: "#71717a" }}
-                              name="Standard Bank"
+                              name="Kraken"
                             />
                             <Line
                               type="monotone"
@@ -2390,14 +2516,16 @@ It would also be helpful if you described:
                               strokeWidth={1.5}
                               dot={{ fill: "#52525b", strokeWidth: 1.5, r: 2 }}
                               activeDot={{ r: 3, fill: "#52525b" }}
-                              name="Nedbank"
+                              name="Bybit"
                             />
                           </LineChart>
                         </ResponsiveContainer>
                       </div>
                           {/* Data source indicator */}
                           <div className="text-[9px] text-[#71717a] mt-2 text-center">
-                            {dataSourcesLoading ? (
+                            {process.env.NEXT_PUBLIC_PREVIEW_BINANCE === 'true' ? (
+                              'Data source: Binance • 15s • Quality 98%'
+                            ) : dataSourcesLoading ? (
                               <div className="animate-pulse">
                                 <div className="h-3 bg-[#2a2a2a] rounded w-32 mx-auto"></div>
                               </div>
@@ -2405,7 +2533,7 @@ It would also be helpful if you described:
                               <div className="text-[#fca5a5]">Data source: Error</div>
                             ) : dataSources ? (
                               <>
-                                Data source: {dataSources.items[0]?.name || 'Bloomberg Terminal'} • 
+                                Data source: {dataSources.items[0]?.name || 'Exchange feeds'} • 
                                 {dataSources.items[0]?.freshnessSec < 60 
                                   ? `${dataSources.items[0]?.freshnessSec}s` 
                                   : `${Math.round((dataSources.items[0]?.freshnessSec || 0) / 60)}m`
@@ -2413,7 +2541,7 @@ It would also be helpful if you described:
                                 Quality {Math.round((dataSources.items[0]?.quality || 0.96) * 100)}%
                               </>
                             ) : (
-                              'Data source: Bloomberg Terminal'
+                              'Data source: Exchange feeds'
                             )}
                       </div>
                     </div>
@@ -2430,7 +2558,7 @@ It would also be helpful if you described:
                           <div>
                             <div className="text-[#f9fafb] font-medium text-xs">Price Stability</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
-                                  How steady your prices are compared to competitors
+                                  How steady your prices are vs competitors
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">2m ago • 45s</div>
                           </div>
@@ -2488,9 +2616,9 @@ It would also be helpful if you described:
                         <div className="flex items-center gap-2.5">
                           <GitBranch className="w-4 h-4 text-[#a1a1aa]" />
                           <div>
-                            <div className="text-[#f9fafb] font-medium text-xs">Price Synchronization</div>
+                            <div className="text-[#f9fafb] font-medium text-xs">Price Sync</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
-                                  How much your prices move together with other banks
+                                  How closely prices move with others
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">1m ago • 32s</div>
                           </div>
@@ -2550,7 +2678,7 @@ It would also be helpful if you described:
                           <div>
                             <div className="text-[#f9fafb] font-medium text-xs">Environmental Sensitivity</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
-                                  How well you respond to market changes and economic events
+                                  How well you react to shifts
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">30s ago • 18s</div>
                           </div>
@@ -2607,10 +2735,10 @@ It would also be helpful if you described:
                         <div className="flex items-center gap-2.5">
                               <Database className="w-4 h-4 text-[#a1a1aa]" />
                           <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">Enable Bloomberg Data Feed</div>
-                                <div className="text-[10px] text-[#a1a1aa]">Real-time market data and analytics</div>
+                                <div className="text-[#f9fafb] font-medium text-xs">Enable Exchange Data Feed</div>
+                                <div className="text-[10px] text-[#a1a1aa]">Real-time trading data and analytics</div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">
-                                  Live pricing • Market depth • News feed
+                                  Live pricing • Depth • Order flow
                             </div>
                           </div>
                         </div>
@@ -2645,7 +2773,7 @@ It would also be helpful if you described:
                           <div>
                             <div className="text-[#f9fafb] font-medium text-xs">Regulatory Notices</div>
                             <div className="text-[10px] text-[#a1a1aa]">
-                              Important updates and compliance notifications
+                              Key compliance updates
                             </div>
                           </div>
                         </div>
@@ -2665,7 +2793,7 @@ It would also be helpful if you described:
                   <CardContent className="p-4 text-center">
                     <h3 className="text-[#f9fafb] font-medium mb-1.5 text-xs">Assign Reviewers</h3>
                     <p className="text-[10px] text-[#a1a1aa] mb-2.5">
-                      Ensure independent oversight of monitoring outputs.
+                      Invite oversight to review monitoring outputs.
                     </p>
                     <Button
                       className={dashboardCtaBtnClass}
@@ -2697,7 +2825,7 @@ It would also be helpful if you described:
                                     Automatically Detect Market Changes
                           </div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    Enable automatic detection of significant market changes
+                                    Auto-detect significant market shifts
                                   </div>
                                 </div>
                               </div>
@@ -2734,7 +2862,7 @@ It would also be helpful if you described:
                                 <div>
                                   <div className="text-xs font-medium text-[#f9fafb]">Price Change Threshold</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    Minimum change required to trigger analysis
+                                    Trigger level for analysis
                           </div>
                         </div>
                               </div>
@@ -2771,7 +2899,7 @@ It would also be helpful if you described:
                                 <div>
                             <div className="text-xs font-medium text-[#f9fafb]">Confidence Level</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    Statistical confidence required for alerts
+                                    Confidence required for alerts
                           </div>
                         </div>
                               </div>
@@ -2812,7 +2940,7 @@ It would also be helpful if you described:
                                 <div>
                             <div className="text-xs font-medium text-[#f9fafb]">Enable Live Monitoring</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    Real-time analysis and risk assessment
+                                    Real-time risk analysis
                           </div>
                                 </div>
                               </div>
@@ -2848,7 +2976,7 @@ It would also be helpful if you described:
                                 <Clock className="w-4 h-4 text-[#a1a1aa] self-center" />
                                 <div>
                             <div className="text-xs font-medium text-[#f9fafb]">Update Frequency</div>
-                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">How often to run analysis</div>
+                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">Analysis interval</div>
                           </div>
                         </div>
                             </div>
@@ -2885,7 +3013,7 @@ It would also be helpful if you described:
                                 <div>
                             <div className="text-xs font-medium text-[#f9fafb]">Sensitivity Level</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    How sensitive the detection should be
+                                    Detection sensitivity
                           </div>
                         </div>
                               </div>
@@ -2923,7 +3051,7 @@ It would also be helpful if you described:
                                 <div>
                             <div className="text-xs font-medium text-[#f9fafb]">Check Data Quality</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    Validate data accuracy and consistency
+                                    Validate accuracy and consistency
                           </div>
                                 </div>
                               </div>
@@ -2960,7 +3088,7 @@ It would also be helpful if you described:
                                 <div>
                             <div className="text-xs font-medium text-[#f9fafb]">Max Data Age</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    Maximum age before switching to backup
+                                    Max age before backup
                           </div>
                         </div>
                               </div>
@@ -3121,27 +3249,27 @@ It would also be helpful if you described:
                         <div className="space-y-2">
                           <button className="w-full text-left p-3 bg-bg-surface hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
                             <div>
-                              <div className="font-medium">Analyze pricing patterns</div>
+                              <div className="font-medium">Analyze Pricing</div>
                               <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                Identify trends and anomalies in market data
+                                Identify trends and anomalies
                               </div>
                             </div>
                             <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
                           </button>
                           <button className="w-full text-left p-3 bg-bg-surface hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
                             <div>
-                              <div className="font-medium">Check compliance status</div>
+                              <div className="font-medium">Check Compliance</div>
                               <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                Review regulatory requirements and violations
+                                Review regulatory gaps
                               </div>
                             </div>
                             <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
                           </button>
                           <button className="w-full text-left p-3 bg-bg-surface hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
                             <div>
-                              <div className="font-medium">Generate report</div>
+                              <div className="font-medium">Generate Report</div>
                               <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                Create comprehensive analysis document
+                                Comprehensive analysis doc
                               </div>
                             </div>
                             <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
@@ -3153,19 +3281,10 @@ It would also be helpful if you described:
                           >
                             <div>
                               <div className="font-medium">
-                                {evidenceLoading ? 'Generating...' : 'Generate Evidence Package'}
+                                {evidenceLoading ? 'Generating...' : 'Evidence Bundle'}
                               </div>
                               <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                Court-ready evidence bundle with cryptographic timestamps
-                              </div>
-                            </div>
-                            <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
-                          </button>
-                          <button className="w-full text-left p-3 bg-bg-surface hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
-                            <div>
-                              <div className="font-medium">Assess Statistical Confidence</div>
-                              <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                P-values, confidence intervals, and methodological validation
+                                Cryptographic timestamps
                               </div>
                             </div>
                             <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
@@ -3179,7 +3298,7 @@ It would also be helpful if you described:
                       <CardContent className="p-0">
                         {/* Section Header */}
                         <div className="px-4 py-3 border-b border-[#2a2a2a]">
-                          <h2 className="text-sm font-medium text-[#f9fafb]">Available Agents</h2>
+                          <h2 className="text-sm font-medium text-[#f9fafb]">Agent Type</h2>
                         </div>
                         {/* Configuration Items */}
                         <div className="p-4">
@@ -3188,19 +3307,26 @@ It would also be helpful if you described:
                               <div className="flex items-start gap-2">
                                 <Brain className="w-4 h-4 text-[#a1a1aa] self-center" />
                                 <div>
-                                  <div className="text-xs font-medium text-[#f9fafb]">General Analysis</div>
+                                  <div className="text-xs font-medium text-[#f9fafb]">General Analyst</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
                                     Accuracy: 94.2% • Response time: 1.2s
                                   </div>
                                 </div>
                               </div>
                             </div>
-                            <Button
-                              size="sm"
-                              className={dashboardCtaBtnClass}
+                            <button 
+                              onClick={() => setActiveAgent(activeAgent === "general" ? null : "general")}
+                              className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
+                                activeAgent === "general" ? "bg-[#86a789]" : "bg-[#374151]"
+                              }`}
+                              aria-pressed={activeAgent === "general"}
                             >
-                              Deploy
-                            </Button>
+                              <div
+                                className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-200 ${
+                                  activeAgent === "general" ? "right-0.5" : "left-0.5"
+                                }`}
+                              ></div>
+                            </button>
                           </div>
                         </div>
                         <div
@@ -3219,12 +3345,19 @@ It would also be helpful if you described:
                                 </div>
                               </div>
                             </div>
-                            <Button
-                              size="sm"
-                              className={dashboardCtaBtnClass}
+                            <button 
+                              onClick={() => setActiveAgent(activeAgent === "compliance" ? null : "compliance")}
+                              className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
+                                activeAgent === "compliance" ? "bg-[#86a789]" : "bg-[#374151]"
+                              }`}
+                              aria-pressed={activeAgent === "compliance"}
                             >
-                              Deploy
-                            </Button>
+                              <div
+                                className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-200 ${
+                                  activeAgent === "compliance" ? "right-0.5" : "left-0.5"
+                                }`}
+                              ></div>
+                            </button>
                           </div>
                         </div>
                         <div
@@ -3243,12 +3376,19 @@ It would also be helpful if you described:
                                 </div>
                               </div>
                             </div>
-                            <Button
-                              size="sm"
-                              className={dashboardCtaBtnClass}
+                            <button 
+                              onClick={() => setActiveAgent(activeAgent === "pricing" ? null : "pricing")}
+                              className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
+                                activeAgent === "pricing" ? "bg-[#86a789]" : "bg-[#374151]"
+                              }`}
+                              aria-pressed={activeAgent === "pricing"}
                             >
-                              Deploy
-                            </Button>
+                              <div
+                                className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-200 ${
+                                  activeAgent === "pricing" ? "right-0.5" : "left-0.5"
+                                }`}
+                              ></div>
+                            </button>
                           </div>
                         </div>
                         <div
@@ -3267,12 +3407,19 @@ It would also be helpful if you described:
                                 </div>
                               </div>
                             </div>
-                            <Button
-                              size="sm"
-                              className={dashboardCtaBtnClass}
+                            <button 
+                              onClick={() => setActiveAgent(activeAgent === "data" ? null : "data")}
+                              className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
+                                activeAgent === "data" ? "bg-[#86a789]" : "bg-[#374151]"
+                              }`}
+                              aria-pressed={activeAgent === "data"}
                             >
-                              Deploy
-                            </Button>
+                              <div
+                                className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-200 ${
+                                  activeAgent === "data" ? "right-0.5" : "left-0.5"
+                                }`}
+                              ></div>
+                            </button>
                           </div>
                         </div>
                       </CardContent>
@@ -3485,7 +3632,7 @@ It would also be helpful if you described:
                               <div>
                                 <div className="text-[#f9fafb] font-medium text-xs">Convergence Rate</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
-                                  Shows how often the risk model finishes its job without errors
+                                  How often the model runs without errors
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">2m ago • 45s</div>
                               </div>
@@ -3514,7 +3661,7 @@ It would also be helpful if you described:
                               <div>
                                 <div className="text-[#f9fafb] font-medium text-xs">Data Integrity</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
-                                  Checks if incoming market data is in the right format and free from errors
+                                  Checks if market data is valid and clean
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">5m ago • 1m 12s</div>
                               </div>
@@ -3543,7 +3690,7 @@ It would also be helpful if you described:
                               <div>
                                 <div className="text-[#f9fafb] font-medium text-xs">Evidence Chain</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
-                                  Confirms all results are time-stamped and stored for audit and legal use
+                                  Ensures results are timestamped for audit
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">30s ago • 18s</div>
                               </div>
@@ -3572,7 +3719,7 @@ It would also be helpful if you described:
                               <div>
                                 <div className="text-[#f9fafb] font-medium text-xs">Runtime Stability</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
-                                  Tracks how fast the system runs compared to targets (slow runs may signal problems)
+                                  Tracks run speed vs targets
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">Updated just now</div>
                               </div>
@@ -3593,55 +3740,10 @@ It would also be helpful if you described:
                 {/* Events Log Page */}
                 {activeSidebarItem === "events-log" && (
                   <div className="space-y-3 max-w-2xl">
-                    {/* First shell tile with left and right containers */}
-                    <div className="bg-transparent">
-                      <div className="flex items-center justify-between mb-4">
-                        {/* Left Container - Date Range and Time Tabs */}
-                        <div className="flex items-center gap-4">
-                          {/* Date Range Button */}
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="text-xs bg-transparent border-[#2a2a2a] text-[#f9fafb] hover:bg-bg-tile"
-                          >
-                            Jan 01 - Sep 05
-                            <ChevronDown className="w-3 h-3 ml-1" />
-                          </Button>
-
-                          {/* Time Tabs */}
-                          <div className="flex gap-1">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-bg-tile hover:text-[#f9fafb]"
-                            >
-                              30d
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-bg-tile hover:text-[#f9fafb]"
-                            >
-                              6m
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-bg-tile hover:text-[#f9fafb]"
-                            >
-                              1y
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="text-xs bg-bg-tile border-[#2a2a2a] text-[#f9fafb]"
-                            >
-                              YTD
-                            </Button>
-                          </div>
-                        </div>
-
-                        {/* Right Container - Post Button */}
+                    {/* Simplified header with responsive layout */}
+                    <div className="bg-transparent overflow-x-hidden px-4">
+                      <div className="flex flex-wrap items-center gap-2 justify-between mb-4">
+                        {/* Right Container - Log Event Button */}
                         <div className="flex justify-end">
                           <Button
                             variant="outline"
@@ -3663,164 +3765,19 @@ It would also be helpful if you described:
                       </div>
                     </div>
 
-                    {/* Option 3: Text Labels Metrics Tile */}
-                    <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                      <CardContent className="p-0">
-                        {/* Title Section */}
-                        <div className="px-4 py-3 border-b border-[#2a2a2a]">
-                          <h2 className="text-sm font-medium text-[#f9fafb]">All Events</h2>
-                        </div>
-
-                        {/* Event Status 1 */}
-                        <div className="p-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2.5">
-                              <CalendarCheck2 className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">ZAR depreciates 1.9%</div>
-                                <div className="text-[10px] text-[#a1a1aa]">
-                                  Broad CDS widening; sensitivity ↑ to 84
-                                </div>
-                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">2m ago • 45s</div>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <div className="flex items-center gap-1.5">
-                                <div className="text-[#f9fafb] font-bold text-sm">66</div>
-                                <div className="text-[#fca5a5] text-xs">✗</div>
-                              </div>
-                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Separator line */}
-                        <div
-                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        ></div>
-
-                        {/* Event Status 2 */}
-                        <div className="p-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2.5">
-                              <CalendarCheck2 className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">SARB guidance unchanged</div>
-                                <div className="text-[10px] text-[#a1a1aa]">No regime break detected</div>
-                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">1m ago • 32s</div>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <div className="flex items-center gap-1.5">
-                                <div className="text-[#f9fafb] font-bold text-sm">43</div>
-                                <div className="text-[#a7f3d0] text-xs">✓</div>
-                              </div>
-                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Separator line */}
-                        <div
-                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        ></div>
-
-                        {/* Event Status 3 */}
-                        <div className="p-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2.5">
-                              <CalendarCheck2 className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">Sovereign outlook stable</div>
-                                <div className="text-[10px] text-[#a1a1aa]">Idiosyncratic responses across banks</div>
-                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">30s ago • 18s</div>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <div className="flex items-center gap-1.5">
-                                <div className="text-[#f9fafb] font-bold text-sm">18</div>
-                                <div className="text-[#fca5a5] text-xs">✗</div>
-                              </div>
-                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Pagination Footer */}
-                        <div className="px-4 py-3 border-t border-[#2a2a2a]">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-4 text-[10px] text-[#a1a1aa]">
-                              <span>Showing 1 - 3 of 3 events</span>
-                              <div className="flex items-center gap-2">
-                                <span>Rows per page:</span>
-                                <select className="bg-transparent border border-[#2a2a2a] rounded px-2 py-1 text-[#f9fafb] text-[10px]">
-                                  <option value="100">100</option>
-                                </select>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-2 text-[10px] text-[#a1a1aa]">
-                              <span>Page 1 of 1</span>
-                              <div className="flex gap-1">
-                                <button
-                                  className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50"
-                                  disabled
-                                >
-                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
-                                    />
-                                  </svg>
-                                </button>
-                                <button
-                                  className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50"
-                                  disabled
-                                >
-                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M15 19l-7-7 7-7"
-                                    />
-                                  </svg>
-                                </button>
-                                <button
-                                  className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50"
-                                  disabled
-                                >
-                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M9 5l7 7-7 7"
-                                    />
-                                  </svg>
-                                </button>
-                                <button
-                                  className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50"
-                                  disabled
-                                >
-                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M13 5l7 7-7 7M5 5l7 7-7 7"
-                                    />
-                                  </svg>
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
+                    <EventsTable 
+                      timeframe={selectedTimeframe}
+                      region="US"
+                      industry="CRYPTO"
+                      onLogEvent={() => {
+                        setActiveTab("agents")
+                        setInitialAgentMessage("")
+                        // Trigger the event logging flow
+                        setTimeout(() => {
+                          handleSendMessage("Help me log a market event")
+                        }, 100)
+                      }}
+                    />
                   </div>
                 )}
 
@@ -3878,11 +3835,11 @@ It would also be helpful if you described:
                 {/* Compliance Reports Page */}
                 {activeSidebarItem === "compliance" && (
                   <div className="space-y-3 max-w-2xl">
-                    {/* First shell tile with left and right containers */}
+                    {/* Simplified header with mobile-responsive layout */}
                     <div className="bg-transparent">
                       <div className="flex items-center justify-between mb-4">
-                        {/* Left Container - Date Range and Time Tabs */}
-                        <div className="flex items-center gap-4">
+                        {/* Date Range and Time Tabs - Hidden on mobile */}
+                        <div className="hidden md:flex items-center gap-4 report-filters">
                           {/* Date Range Button */}
                           <Button
                             variant="outline"
@@ -3926,15 +3883,17 @@ It would also be helpful if you described:
                           </div>
                         </div>
 
-                        {/* Right Container - Export ZIP Button */}
-                        <div className="flex justify-end">
+                        {/* Export ZIP Button - Always visible, right-aligned */}
+                        <div className="flex justify-end ml-auto min-w-max">
                           <Button
                             variant="outline"
                             size="sm"
                             className="text-xs bg-transparent border-[#2a2a2a] text-[#f9fafb] hover:bg-bg-tile"
+                            onClick={handleEvidenceExport}
+                            disabled={evidenceLoading}
                           >
                             <Download className="w-3 h-3 mr-1" />
-                            Export ZIP
+                            {evidenceLoading ? 'Generating...' : 'Export ZIP'}
                           </Button>
                         </div>
                       </div>
@@ -3954,8 +3913,12 @@ It would also be helpful if you described:
                               <ShieldCheck className="w-4 h-4 text-[#a1a1aa]" />
                               <div>
                                 <div className="text-[#f9fafb] font-medium text-xs">Monthly Compliance Report</div>
-                                <div className="text-[10px] text-[#a1a1aa]">
-                                  Healthy: 3 instances of competitive adaptation to regime breaks
+                                <div 
+                                  className="text-[10px] text-[#a1a1aa]"
+                                  title="Healthy: 3 instances of competitive adaptation to regime breaks"
+                                  aria-label="Healthy: 3 instances of competitive adaptation to regime breaks"
+                                >
+                                  {truncateText("Healthy: 3 instances of competitive adaptation to regime breaks")}
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">2m ago • 45s</div>
                               </div>
@@ -3985,8 +3948,12 @@ It would also be helpful if you described:
                               <Moon className="w-4 h-4 text-[#a1a1aa]" />
                               <div>
                                 <div className="text-[#f9fafb] font-medium text-xs">Nightly Competitive Assessment</div>
-                                <div className="text-[10px] text-[#a1a1aa]">
-                                  Spread Dispersion of 17 bps, ↑ +15% in 24 hrs
+                                <div 
+                                  className="text-[10px] text-[#a1a1aa]"
+                                  title="Spread Dispersion of 17 bps, ↑ +15% in 24 hrs"
+                                  aria-label="Spread Dispersion of 17 bps, ↑ +15% in 24 hrs"
+                                >
+                                  {truncateText("Spread Dispersion of 17 bps, ↑ +15% in 24 hrs")}
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">1m ago • 32s</div>
                               </div>
@@ -4016,8 +3983,12 @@ It would also be helpful if you described:
                               <Scale className="w-4 h-4 text-[#a1a1aa]" />
                               <div>
                                 <div className="text-[#f9fafb] font-medium text-xs">Quarterly Evidence Bundle</div>
-                                <div className="text-[10px] text-[#a1a1aa]">
-                                  96.8% statistical confidence over 18-month view
+                                <div 
+                                  className="text-[10px] text-[#a1a1aa]"
+                                  title="96.8% statistical confidence over 18-month view"
+                                  aria-label="96.8% statistical confidence over 18-month view"
+                                >
+                                  {truncateText("96.8% statistical confidence over 18-month view")}
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">30s ago • 18s</div>
                               </div>
@@ -4034,73 +4005,20 @@ It would also be helpful if you described:
                           </div>
                         </div>
 
-                        {/* Pagination Footer */}
+                        {/* Pagination Info */}
                         <div className="px-4 py-3 border-t border-[#2a2a2a]">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-4 text-[10px] text-[#a1a1aa]">
-                              <span>Showing 1 - 3 of 3 events</span>
+                              <span>Showing 1 – 3 of 3 reports</span>
                               <div className="flex items-center gap-2">
                                 <span>Rows per page:</span>
-                                <select className="bg-transparent border border-[#2a2a2a] rounded px-2 py-1 text-[#f9fafb] text-[10px]">
+                                <select 
+                                  className="bg-transparent border border-[#2a2a2a] rounded px-2 py-1 text-[#f9fafb] text-[10px]"
+                                  aria-label="Rows per page"
+                                >
+                                  <option value="50">50</option>
                                   <option value="100">100</option>
                                 </select>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-2 text-[10px] text-[#a1a1aa]">
-                              <span>Page 1 of 1</span>
-                              <div className="flex gap-1">
-                                <button
-                                  className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50"
-                                  disabled
-                                >
-                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
-                                    />
-                                  </svg>
-                                </button>
-                                <button
-                                  className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50"
-                                  disabled
-                                >
-                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M15 19l-7-7 7-7"
-                                    />
-                                  </svg>
-                                </button>
-                                <button
-                                  className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50"
-                                  disabled
-                                >
-                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M9 5l7 7-7 7"
-                                    />
-                                  </svg>
-                                </button>
-                                <button
-                                  className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50"
-                                  disabled
-                                >
-                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M13 5l7 7-7 7M5 5l7 7-7 7"
-                                    />
-                                  </svg>
-                                </button>
                               </div>
                             </div>
                           </div>
@@ -4184,3 +4102,4 @@ It would also be helpful if you described:
     </div>
   )
 }
+

@@ -1,0 +1,20 @@
+{
+  "total_risk_score": 75.5,
+  "risk_band": "AMBER",
+  "confidence_level": 0.85,
+  "icp_contribution": 68.5,
+  "vmm_contribution": 57.5,
+  "crypto_moments_contribution": 25.5,
+  "validation_contribution": 13.5625,
+  "lead_lag_driver": 28.0,
+  "mirroring_driver": 66.5,
+  "regime_driver": 72.5,
+  "infoflow_driver": 63.0,
+  "icp_p_value": 0.013,
+  "vmm_p_value": 0.045,
+  "lead_lag_significance": 0.75,
+  "mirroring_significance": 0.7,
+  "data_completeness": 0.95,
+  "data_consistency": 0.9,
+  "sample_size_adequacy": 0.85
+}

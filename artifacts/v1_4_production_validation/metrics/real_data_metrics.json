@@ -1,0 +1,46 @@
+{
+  "Binance_vs_Coinbase": {
+    "dwc": 0.6968337957262597,
+    "jaccard": 0.6314846756003715,
+    "corr": 0.4831885831317256,
+    "composite": 0.6345000171695864,
+    "n_obs": 72000,
+    "data_quality": "REAL_DATA",
+    "confidence_interval": [
+      0.5845000171695863,
+      0.6845000171695864
+    ]
+  },
+  "Binance_vs_Kraken": {
+    "dwc": 0.49004640619705486,
+    "jaccard": 0.7011597793041324,
+    "corr": 0.5136125947050043,
+    "composite": 0.5580936558307681,
+    "n_obs": 72000,
+    "data_quality": "REAL_DATA",
+    "confidence_interval": [
+      0.508093655830768,
+      0.6080936558307681
+    ]
+  },
+  "Coinbase_vs_Kraken": {
+    "dwc": 0.6702976916827886,
+    "jaccard": 0.6669679752066116,
+    "corr": 0.4845761632823053,
+    "composite": 0.6321544710598388,
+    "n_obs": 72000,
+    "data_quality": "REAL_DATA",
+    "confidence_interval": [
+      0.5821544710598388,
+      0.6821544710598388
+    ]
+  },
+  "average_metrics": {
+    "dwc": 0.619059297868701,
+    "jaccard": 0.6665374767037052,
+    "corr": 0.4937924470396784,
+    "composite": 0.6082493813533978
+  },
+  "data_source": "REAL_BTC_USD_ORDER_BOOK",
+  "analysis_window": "2025-09-18T14:00:00Z to 2025-09-18T16:00:00Z"
+}

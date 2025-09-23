@@ -5,13 +5,13 @@ import { User, Settings, Database, Bot, Zap, ClipboardList, CreditCard, FileText
 
 const items = [
   { href: "/dashboard",                  label: "Overview",           icon: User },
-  { href: "/dashboard/settings",         label: "Configuration",      icon: Settings },
-  { href: "/dashboard/integrations",     label: "Data Sources",       icon: Database },
-  { href: "/dashboard/background-agents",label: "AI Agents",          icon: Bot },
-  { href: "/dashboard/usage",            label: "Health Checks",      icon: Zap },
-  { href: "/dashboard/billing",          label: "Events Log",         icon: ClipboardList },
-  { href: "/dashboard/docs",             label: "Billing & Invoices", icon: CreditCard },
-  { href: "/dashboard/contact",          label: "Compliance Reports", icon: FileText }
+  { href: "/dashboard/settings",         label: "Settings",      icon: Settings },
+  { href: "/dashboard/integrations",     label: "Data",       icon: Database },
+  { href: "/dashboard/background-agents",label: "Analysts",          icon: Bot },
+  { href: "/dashboard/usage",            label: "Health",      icon: Zap },
+  { href: "/dashboard/billing",          label: "Events",         icon: ClipboardList },
+  { href: "/dashboard/docs",             label: "Billing", icon: CreditCard },
+  { href: "/dashboard/contact",          label: "Reports", icon: FileText }
 ];
 
 export default function SideNav() {
@@ -30,7 +30,7 @@ export default function SideNav() {
         })}
         <Link href="/dashboard/contact" className={`w-full text-left px-3 py-2 rounded hover:bg-muted/50 flex items-center gap-2 text-xs ${pathname === "/dashboard/contact" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}>
           <MessageSquare className="w-3.5 h-3.5" />
-          <span>Contact Us</span>
+          <span>Contact</span>
         </Link>
     </nav>
   );

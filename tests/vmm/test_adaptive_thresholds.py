@@ -5,11 +5,7 @@ Tests dataset-size-aware thresholds for spurious regime detection
 with configurable parameters and validation logic.
 """
 
-import pytest
-import numpy as np
-from unittest.mock import Mock
-
-from acd.vmm.adaptive_thresholds import (
+from acd.vmm.adaptive_thresholds import (  # noqa: F401
     AdaptiveThresholdConfig,
     AdaptiveThresholdManager,
     get_profile,

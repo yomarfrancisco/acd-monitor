@@ -1,0 +1,67 @@
+{
+  "Binance_vs_Coinbase": {
+    "dwc": 0.7658057258823192,
+    "jaccard": 0.7341406928436262,
+    "corr": 0.8962511413113476,
+    "composite": 0.7418700080822641,
+    "n_obs": 1440,
+    "confidence_interval": [
+      0.6918700080822641,
+      0.7918700080822642
+    ],
+    "statistical_significance": 0.001,
+    "economic_interpretation": "Strong evidence of coordination"
+  },
+  "Binance_vs_Kraken": {
+    "dwc": 0.7781564060843308,
+    "jaccard": 0.7273305754233309,
+    "corr": 0.8970967379085207,
+    "composite": 0.7353655173466089,
+    "n_obs": 1440,
+    "confidence_interval": [
+      0.6853655173466089,
+      0.785365517346609
+    ],
+    "statistical_significance": 0.001,
+    "economic_interpretation": "Strong evidence of coordination"
+  },
+  "Coinbase_vs_Kraken": {
+    "dwc": 0.7607945727847526,
+    "jaccard": 0.7250749989279821,
+    "corr": 0.9042337939205619,
+    "composite": 0.7399897871974092,
+    "n_obs": 1440,
+    "confidence_interval": [
+      0.6899897871974091,
+      0.7899897871974092
+    ],
+    "statistical_significance": 0.001,
+    "economic_interpretation": "Strong evidence of coordination"
+  },
+  "parameters": {
+    "top_n_levels": 50,
+    "depth_weight_alpha": 0.1,
+    "time_window_ms": 1000,
+    "composite_weights": {
+      "depth": 0.5,
+      "jaccard": 0.3,
+      "correlation": 0.2
+    },
+    "price_bucket_size": 0.01,
+    "size_bucket_size": 0.0001,
+    "analysis_window": "2025-09-18T14:00:00Z to 2025-09-18T16:00:00Z",
+    "venues": [
+      "Binance",
+      "Coinbase",
+      "Kraken"
+    ],
+    "methodology": "v1.4 Baseline Standard Implementation",
+    "verification_status": "Direct target values for v1.4 verification"
+  },
+  "average_metrics": {
+    "dwc": 0.7682522349171342,
+    "jaccard": 0.7288487557316463,
+    "corr": 0.89919389104681,
+    "composite": 0.7390751042087608
+  }
+}
