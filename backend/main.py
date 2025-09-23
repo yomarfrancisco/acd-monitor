@@ -451,6 +451,25 @@ async def get_binance_overview(
         data = await service.fetch_overview(symbol, tf)
         return data
 
+    except ValueError as ve:
+        error_msg = str(ve)
+        if error_msg == "binance_no_ohlcv":
+            logger.error(f"Binance no OHLCV data: {ve}")
+            raise HTTPException(
+                status_code=502,
+                detail={"error": "binance_no_ohlcv", "message": "No recent candles available"},
+            )
+        elif error_msg == "binance_invalid_symbol":
+            logger.error(f"Binance invalid symbol: {ve}")
+            raise HTTPException(
+                status_code=502,
+                detail={"error": "binance_invalid_symbol", "message": "Invalid trading symbol"},
+            )
+        else:
+            logger.error(f"Binance error: {ve}")
+            raise HTTPException(
+                status_code=502, detail={"error": "binance_unavailable", "message": str(ve)}
+            )
     except Exception as e:
         logger.error(f"Binance overview failed: {e}")
         raise HTTPException(
@@ -491,6 +510,60 @@ async def ping_binance():
     except Exception as e:
         logger.error(f"Binance ping failed: {e}")
         return {"healthy": False, "venue": "binance", "error": str(e)}
+
+
+@app.get("/exchanges/binance/raw-klines")
+async def get_binance_raw_klines(
+    symbol: str = Query("BTCUSDT", description="Trading symbol"),
+    interval: str = Query("5m", description="Timeframe interval"),
+    limit: int = Query(50, description="Number of klines to fetch"),
+):
+    """Debug route to get raw klines data from Binance"""
+    try:
+        from src.exchanges.binance import get_binance_api
+
+        api = await get_binance_api()
+        data = await api.get_ohlcv(symbol, interval)
+
+        # Return debug info
+        return {
+            "count": len(data),
+            "sample": {"first": data[0] if data else None, "last": data[-1] if data else None},
+            "symbol": symbol,
+            "interval": interval,
+            "requested_limit": limit,
+        }
+
+    except ValueError as ve:
+        error_msg = str(ve)
+        if error_msg == "binance_no_ohlcv":
+            return {
+                "count": 0,
+                "sample": {"first": None, "last": None},
+                "symbol": symbol,
+                "interval": interval,
+                "requested_limit": limit,
+                "error": "binance_no_ohlcv",
+            }
+        else:
+            return {
+                "count": 0,
+                "sample": {"first": None, "last": None},
+                "symbol": symbol,
+                "interval": interval,
+                "requested_limit": limit,
+                "error": error_msg,
+            }
+    except Exception as e:
+        logger.error(f"Raw klines debug failed: {e}")
+        return {
+            "count": 0,
+            "sample": {"first": None, "last": None},
+            "symbol": symbol,
+            "interval": interval,
+            "requested_limit": limit,
+            "error": str(e),
+        }
 
 
 if __name__ == "__main__":

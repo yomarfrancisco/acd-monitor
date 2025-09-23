@@ -62,6 +62,18 @@ class ExchangeService:
                 "ohlcv": ohlcv_data,
             }
 
+        except ValueError as ve:
+            # Handle specific Binance errors
+            error_msg = str(ve)
+            if error_msg == "binance_no_ohlcv":
+                logger.error(f"No OHLCV data available for {symbol}")
+                raise ValueError("binance_no_ohlcv")
+            elif error_msg == "binance_invalid_symbol":
+                logger.error(f"Invalid symbol {symbol}")
+                raise ValueError("binance_invalid_symbol")
+            else:
+                logger.error(f"Binance error for {symbol}: {error_msg}")
+                raise ve
         except Exception as e:
             logger.error(f"Failed to fetch overview for {symbol}: {e}")
             raise

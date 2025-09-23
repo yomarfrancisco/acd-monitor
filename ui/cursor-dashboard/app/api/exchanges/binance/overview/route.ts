@@ -16,8 +16,10 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  let response: Response | null = null;
+  
   try {
-    const response = await fetch(`${BACKEND_URL}/exchanges/binance/overview?symbol=${symbol}&tf=${tf}`, {
+    response = await fetch(`${BACKEND_URL}/exchanges/binance/overview?symbol=${symbol}&tf=${tf}`, {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -25,6 +27,27 @@ export async function GET(request: NextRequest) {
     });
 
     if (!response.ok) {
+      // Check if it's a specific Binance error
+      try {
+        const errorData = await response.json();
+        if (errorData.error === 'binance_no_ohlcv') {
+          return NextResponse.json({
+            venue: 'binance',
+            symbol,
+            asOf: new Date().toISOString(),
+            ticker: {
+              bid: 0,
+              ask: 0,
+              mid: 0,
+              ts: new Date().toISOString()
+            },
+            ohlcv: [],
+            error: 'binance_no_ohlcv'
+          });
+        }
+      } catch (e) {
+        // Fall through to generic error
+      }
       throw new Error(`Backend responded with ${response.status}`);
     }
 

@@ -485,6 +485,14 @@ export default function CursorDashboard() {
       
       // Convert Binance data to metrics overview format
       const binanceData = result as any
+      
+      // Check for specific Binance errors
+      if (binanceData.error === 'binance_no_ohlcv') {
+        setMetricsError('No recent candles from Binance (5m). Try 15m.')
+        setIsDegradedMode(true)
+        return
+      }
+      
       if (binanceData.ohlcv && binanceData.ohlcv.length > 0) {
         // Create mock metrics overview from Binance data
         const mockOverview: MetricsOverview = {

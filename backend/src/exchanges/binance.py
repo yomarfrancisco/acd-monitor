@@ -133,13 +133,53 @@ class BinanceAPI:
             List of [iso_timestamp, open, high, low, close, volume]
         """
         try:
-            params = {"symbol": symbol, "interval": interval}
+            # Map timeframe to Binance interval and calculate limit
+            interval_map = {
+                "1m": "1m",
+                "5m": "5m",
+                "15m": "15m",
+                "30m": "30m",
+                "1h": "1h",
+                "4h": "4h",
+                "1d": "1d",
+            }
+            binance_interval = interval_map.get(interval, "5m")
+
+            # Calculate limit for ~24h of data
+            limit_map = {
+                "1m": 1440,  # 24h * 60min
+                "5m": 288,  # 24h * 12 (5min intervals)
+                "15m": 96,  # 24h * 4 (15min intervals)
+                "30m": 48,  # 24h * 2 (30min intervals)
+                "1h": 24,  # 24h
+                "4h": 6,  # 24h / 4
+                "1d": 1,  # 1 day
+            }
+            limit = limit_map.get(binance_interval, 288)
+
+            params = {
+                "symbol": symbol,
+                "interval": binance_interval,
+                "limit": min(limit, 1000),  # Binance max limit
+            }
             if start_ms:
                 params["startTime"] = start_ms
             if end_ms:
                 params["endTime"] = end_ms
 
+            logger.info(
+                f"Fetching OHLCV: symbol={symbol}, "
+                f"interval={binance_interval}, limit={params['limit']}"
+            )
             data = await self._make_request("/api/v3/klines", params)
+
+            # Validate response
+            if not data or len(data) == 0:
+                logger.error(
+                    f"Empty OHLCV response: symbol={symbol}, "
+                    f"interval={binance_interval}, limit={params['limit']}"
+                )
+                raise ValueError("binance_no_ohlcv")
 
             # Convert Binance kline format to our format
             ohlcv = []
@@ -161,7 +201,32 @@ class BinanceAPI:
                     ]
                 )
 
+            logger.info(f"Successfully fetched {len(ohlcv)} OHLCV bars for {symbol}")
             return ohlcv
+
+        except httpx.HTTPStatusError as e:
+            # Handle specific Binance API error codes
+            if e.response.status_code == 400:
+                try:
+                    error_data = e.response.json()
+                    error_code = error_data.get("code", "UNKNOWN")
+                    error_msg = error_data.get("msg", str(e))
+
+                    if error_code == -1121:
+                        logger.error(f"Invalid symbol {symbol}: {error_msg}")
+                        raise ValueError("binance_invalid_symbol")
+                    else:
+                        logger.error(f"Binance API error {error_code}: {error_msg}")
+                        raise ValueError(f"binance_api_error_{error_code}")
+                except Exception:
+                    logger.error(f"Binance API error (400): {e}")
+                    raise ValueError("binance_api_error")
+            else:
+                logger.error(f"HTTP error {e.response.status_code} for OHLCV {symbol}: {e}")
+                raise
+        except ValueError as ve:
+            # Re-raise our custom errors
+            raise ve
         except Exception as e:
             logger.error(f"Failed to get OHLCV for {symbol}: {e}")
             raise
