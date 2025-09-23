@@ -80,7 +80,12 @@ jobs:
         run: pnpm --filter ./ui/cursor-dashboard run build
 
       - name: Verify static assets
-        run: pnpm --filter ./ui/cursor-dashboard run verify
+        run: |
+          test -f ui/cursor-dashboard/public/binance_circle.png \
+          && test -f ui/cursor-dashboard/public/coinbase_circle.png \
+          && test -f ui/cursor-dashboard/public/bybit_circle.png \
+          && test -f ui/cursor-dashboard/public/kraken_circle.png \
+          && echo "✅ All exchange logo files present"
 
   backend:
     needs: detect

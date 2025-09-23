@@ -179,28 +179,28 @@ export default function Page() {
                   <div className="flex items-center -space-x-2">
                     <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white">
                       <img 
-                        src="/fnb-logo.png" 
+                        src="/binance_circle.png" 
                         alt="Binance" 
                         className="w-full h-full object-contain p-0.5"
                       />
                     </div>
                     <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-80">
                       <img 
-                        src="/absa-logo.png" 
+                        src="/coinbase_circle.png" 
                         alt="Coinbase" 
                         className="w-full h-full object-contain p-0.5"
                       />
                     </div>
                     <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-60">
                       <img 
-                        src="/nedbank-logo.png" 
+                        src="/bybit_circle.png" 
                         alt="Bybit" 
                         className="w-full h-full object-contain p-0.5"
                       />
                     </div>
                     <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-40">
                       <img 
-                        src="/standard-logo.png" 
+                        src="/kraken_circle.png" 
                         alt="Kraken" 
                         className="w-full h-full object-contain p-0.5"
                       />
