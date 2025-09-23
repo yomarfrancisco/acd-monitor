@@ -3,6 +3,8 @@ Binance Exchange API Client
 
 Public REST API client for Binance with caching and error handling.
 No authentication required for public endpoints.
+
+Fresh commit - Binance MVP implementation complete.
 """
 
 import httpx
