@@ -1,20 +1,9 @@
-app = "binance-proxy"
-primary_region = "sin" # Hardcoded Singapore region to avoid Binance geo-blocking
+# fly.toml
+app = "binance-proxy-broken-night-96"
+primary_region = "sin"
 
-[build]
-  builder = "heroku/buildpacks:20"
-
-[env]
-  PORT = "3000"
-
-[[services]]
+[http_service]
   internal_port = 3000
-  protocol = "tcp"
-
-  [[services.ports]]
-    port = 80
-    handlers = ["http"]
-
-  [[services.ports]]
-    port = 443
-    handlers = ["tls", "http"]
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 1

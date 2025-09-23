@@ -1,25 +1,40 @@
+// server.js
 import express from "express";
 import fetch from "node-fetch";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.get("/binance/:endpoint", async (req, res) => {
+// Catch any nested path under /binance/*
+app.get("/binance/*", async (req, res) => {
   try {
-    const { endpoint } = req.params;
-    const query = req.url.split("?")[1] || "";
-    const target = `https://api.binance.com/api/v3/${endpoint}${query ? "?" + query : ""}`;
+    // Everything after /binance/
+    const path = req.path.replace(/^\/binance\//, ""); // e.g. 'ticker/bookTicker' or 'klines'
+    const query = req.url.includes("?") ? req.url.split("?")[1] : "";
+    const target = `https://api.binance.com/api/v3/${path}${query ? "?" + query : ""}`;
 
-    console.log(`[Proxy] Fetching: ${target}`);
-    const response = await fetch(target, { headers: { "User-Agent": "binance-proxy" } });
+    console.log(`[Proxy] GET → ${target}`);
+
+    const response = await fetch(target, {
+      headers: { "User-Agent": "acd-monitor-proxy/1.0 (+https://example.com)" }
+    });
+
+    const text = await response.text();
 
     if (!response.ok) {
-      const text = await response.text();
-      return res.status(response.status).json({ error: "binance_fetch_failed", details: text });
+      return res.status(response.status).json({
+        error: "binance_fetch_failed",
+        details: text
+      });
     }
 
-    const data = await response.json();
-    res.json(data);
+    // Try parse JSON, otherwise forward raw text as JSON content-type
+    try {
+      const json = JSON.parse(text);
+      return res.json(json);
+    } catch {
+      res.type("application/json").send(text);
+    }
   } catch (err) {
     console.error("[Proxy] Error:", err);
     res.status(500).json({ error: "proxy_error", details: err.message });
