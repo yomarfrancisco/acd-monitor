@@ -176,10 +176,10 @@ export function EventsTable({
           <div className="divide-y divide-[#2a2a2a]">
             {events.items.map((event, index) => (
               <div key={event.id || index} className="p-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <CalendarCheck2 className="w-4 h-4 text-[#a1a1aa] opacity-70" />
-                    <div>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                    <CalendarCheck2 className="w-4 h-4 text-[#a1a1aa] opacity-70 flex-shrink-0" />
+                    <div className="min-w-0">
                       <div className="text-[#f9fafb] font-medium text-xs">{event.title}</div>
                       <div className="text-[10px] text-[#a1a1aa] line-clamp-2">
                         {truncate(event.description)}
@@ -189,7 +189,7 @@ export function EventsTable({
                       </div>
                     </div>
                   </div>
-                  <div className="text-right">
+                  <div className="flex-shrink-0">
                     <div className={`px-2 py-1 rounded-full text-[10px] font-medium ${getSeverityBg(event.severity)} ${getSeverityColor(event.severity)}`}>
                       {formatSeverity(event.severity)}
                     </div>
