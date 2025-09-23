@@ -3892,73 +3892,20 @@ It would also be helpful if you described:
                           </div>
                         </div>
 
-                        {/* Pagination Footer */}
+                        {/* Pagination Info */}
                         <div className="px-4 py-3 border-t border-[#2a2a2a]">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-4 text-[10px] text-[#a1a1aa]">
-                              <span>Showing 1 - 3 of 3 events</span>
+                              <span>Showing 1 – 3 of 3 reports</span>
                               <div className="flex items-center gap-2">
                                 <span>Rows per page:</span>
-                                <select className="bg-transparent border border-[#2a2a2a] rounded px-2 py-1 text-[#f9fafb] text-[10px]">
+                                <select 
+                                  className="bg-transparent border border-[#2a2a2a] rounded px-2 py-1 text-[#f9fafb] text-[10px]"
+                                  aria-label="Rows per page"
+                                >
+                                  <option value="50">50</option>
                                   <option value="100">100</option>
                                 </select>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-2 text-[10px] text-[#a1a1aa]">
-                              <span>Page 1 of 1</span>
-                              <div className="flex gap-1">
-                                <button
-                                  className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50"
-                                  disabled
-                                >
-                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
-                                    />
-                                  </svg>
-                                </button>
-                                <button
-                                  className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50"
-                                  disabled
-                                >
-                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M15 19l-7-7 7-7"
-                                    />
-                                  </svg>
-                                </button>
-                                <button
-                                  className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50"
-                                  disabled
-                                >
-                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M9 5l7 7-7 7"
-                                    />
-                                  </svg>
-                                </button>
-                                <button
-                                  className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50"
-                                  disabled
-                                >
-                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M13 5l7 7-7 7M5 5l7 7-7 7"
-                                    />
-                                  </svg>
-                                </button>
                               </div>
                             </div>
                           </div>
