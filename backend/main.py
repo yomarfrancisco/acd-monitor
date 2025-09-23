@@ -7,6 +7,9 @@ import random
 import uuid
 import io
 import zipfile
+import logging
+
+logger = logging.getLogger(__name__)
 
 app = FastAPI(title="ACD Monitor API", version="1.0.0")
 
@@ -432,6 +435,62 @@ async def get_status():
 @app.get("/_status")
 async def heartbeat():
     return {"ok": True, "ts": datetime.utcnow().isoformat() + "Z", "freshnessSec": 3}
+
+
+# Binance Exchange Endpoints
+@app.get("/exchanges/binance/overview")
+async def get_binance_overview(
+    symbol: str = Query("BTCUSDT", description="Trading symbol"),
+    tf: str = Query("5m", description="Timeframe"),
+):
+    """Get Binance overview data (ticker + OHLCV)"""
+    try:
+        from src.exchanges.service import get_exchange_service
+
+        service = get_exchange_service()
+        data = await service.fetch_overview(symbol, tf)
+        return data
+
+    except Exception as e:
+        logger.error(f"Binance overview failed: {e}")
+        raise HTTPException(
+            status_code=502, detail={"error": "binance_unavailable", "message": str(e)}
+        )
+
+
+@app.get("/exchanges/binance/depth")
+async def get_binance_depth(
+    symbol: str = Query("BTCUSDT", description="Trading symbol"),
+    limit: int = Query(10, description="Number of price levels"),
+):
+    """Get Binance order book depth"""
+    try:
+        from src.exchanges.service import get_exchange_service
+
+        service = get_exchange_service()
+        data = await service.fetch_depth(symbol, limit)
+        return data
+
+    except Exception as e:
+        logger.error(f"Binance depth failed: {e}")
+        raise HTTPException(
+            status_code=502, detail={"error": "binance_unavailable", "message": str(e)}
+        )
+
+
+@app.get("/exchanges/binance/ping")
+async def ping_binance():
+    """Health check for Binance API"""
+    try:
+        from src.exchanges.service import get_exchange_service
+
+        service = get_exchange_service()
+        is_healthy = await service.ping_binance()
+        return {"healthy": is_healthy, "venue": "binance"}
+
+    except Exception as e:
+        logger.error(f"Binance ping failed: {e}")
+        return {"healthy": False, "venue": "binance", "error": str(e)}
 
 
 if __name__ == "__main__":

@@ -47,7 +47,8 @@ import { resilientFetch } from "@/lib/resilient-api"
 import { DegradedModeBanner } from "@/components/DegradedModeBanner"
 import { EventsTable } from "@/components/EventsTable"
 import { SelftestIndicator } from "@/components/SelftestIndicator"
-import type { RiskSummary, MetricsOverview, HealthRun, EventsResponse, DataSources, EvidenceExport } from "@/types/api"
+import type { RiskSummary, HealthRun, EventsResponse, DataSources, EvidenceExport } from "@/types/api"
+import type { MetricsOverview } from "@/types/api.schemas"
 import {
   MessageSquare,
   GitBranch,
@@ -472,10 +473,74 @@ export default function CursorDashboard() {
   }, [selectedTimeframe, isClient])
 
   // Fetch metrics overview data when timeframe changes
+  // Fetch Binance overview data (preview only)
+  const fetchBinanceOverview = async () => {
+    if (!isClient) return
+    
+    setMetricsLoading(true)
+    setMetricsError(null)
+    
+    try {
+      const result = await fetchTyped(`/exchanges/binance/overview?symbol=BTCUSDT&tf=5m`, MetricsOverviewSchema)
+      
+      // Convert Binance data to metrics overview format
+      const binanceData = result as any
+      if (binanceData.ohlcv && binanceData.ohlcv.length > 0) {
+        // Create mock metrics overview from Binance data
+        const mockOverview: MetricsOverview = {
+          timeframe: selectedTimeframe as any,
+          updatedAt: binanceData.asOf,
+          items: [
+            {
+              key: "stability",
+              label: "Market Stability", 
+              score: 85,
+              direction: "UP",
+              note: `Binance ${binanceData.symbol} - Mid: $${binanceData.ticker.mid.toFixed(2)}`
+            },
+            {
+              key: "synchronization",
+              label: "Price Synchronization",
+              score: 23,
+              direction: "FLAT", 
+              note: "Single venue - no cross-venue sync"
+            },
+            {
+              key: "environmentalSensitivity",
+              label: "Environmental Sensitivity",
+              score: 67,
+              direction: "DOWN",
+              note: `Last 24h: ${binanceData.ohlcv.length} bars`
+            }
+          ]
+        }
+        setMetricsOverview(mockOverview)
+      } else {
+        throw new Error('No OHLCV data from Binance')
+      }
+      
+      setMetricsError(null)
+      setIsDegradedMode(false)
+      
+    } catch (error) {
+      console.error('Binance overview fetch failed:', error)
+      setMetricsError('Binance data temporarily unavailable')
+      setIsDegradedMode(true)
+    }
+    
+    setMetricsLoading(false)
+  }
+
   useEffect(() => {
     const fetchMetricsOverview = async () => {
       if (!isClient) return
       
+      // Check if Binance preview is enabled
+      const isBinancePreview = process.env.NEXT_PUBLIC_PREVIEW_BINANCE === 'true'
+      
+      if (isBinancePreview) {
+        await fetchBinanceOverview()
+      } else {
       setMetricsLoading(true)
       setMetricsError(null)
       
@@ -486,6 +551,7 @@ export default function CursorDashboard() {
       setIsDegradedMode(false)
       
       setMetricsLoading(false)
+      }
     }
 
     fetchMetricsOverview()
@@ -2114,15 +2180,25 @@ It would also be helpful if you described:
                               <div className="flex items-center justify-between">
                         <div>
                                   <div className="text-xl font-bold text-[#f9fafb]">
-                                    {selectedTimeframe === "30d" ? "78" : 
+                                    {process.env.NEXT_PUBLIC_PREVIEW_BINANCE === 'true' ? (
+                                      "N/A"
+                                    ) : (
+                                      selectedTimeframe === "30d" ? "78" : 
                                      selectedTimeframe === "6m" ? "82" : 
-                                     selectedTimeframe === "1y" ? "79" : "84"}%
+                                       selectedTimeframe === "1y" ? "79" : "84"
+                                    )}%
                         </div>
                                   <div className="text-xs text-[#a1a1aa]">
+                                    {process.env.NEXT_PUBLIC_PREVIEW_BINANCE === 'true' ? (
+                                      "Requires multiple venues"
+                                    ) : (
+                                      <>
                                     {selectedTimeframe === "30d" ? "30d" : 
                                      selectedTimeframe === "6m" ? "6m" : 
                                      selectedTimeframe === "1y" ? "1y" : 
                                      selectedTimeframe === "ytd" ? "YTD" : "Cal"} Price Leader
+                                      </>
+                                    )}
                                   </div>
                                 </div>
                                 {/* FANS Avatar Flow */}
@@ -2134,27 +2210,31 @@ It would also be helpful if you described:
                                       className="w-full h-full object-contain p-0.5"
                                     />
                                   </div>
-                                  <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-80">
-                                    <img 
-                                      src="/coinbase_circle.png" 
-                                      alt="Coinbase" 
-                                      className="w-full h-full object-contain p-0.5"
-                                    />
-                                  </div>
-                                  <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-60">
-                                    <img 
-                                      src="/bybit_circle.png" 
-                                      alt="Bybit" 
-                                      className="w-full h-full object-contain p-0.5"
-                                    />
-                                  </div>
-                                  <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-40">
-                                    <img 
-                                      src="/kraken_circle.png" 
-                                      alt="Kraken" 
-                                      className="w-full h-full object-contain p-0.5"
-                                    />
-                                  </div>
+                                  {process.env.NEXT_PUBLIC_PREVIEW_BINANCE !== 'true' && (
+                                    <>
+                                      <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-80">
+                                        <img 
+                                          src="/coinbase_circle.png" 
+                                          alt="Coinbase" 
+                                          className="w-full h-full object-contain p-0.5"
+                                        />
+                                      </div>
+                                      <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-60">
+                                        <img 
+                                          src="/bybit_circle.png" 
+                                          alt="Bybit" 
+                                          className="w-full h-full object-contain p-0.5"
+                                        />
+                                      </div>
+                                      <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-40">
+                                        <img 
+                                          src="/kraken_circle.png" 
+                                          alt="Kraken" 
+                                          className="w-full h-full object-contain p-0.5"
+                                        />
+                                      </div>
+                                    </>
+                                  )}
                                 </div>
                         </div>
                       </div>
@@ -2412,7 +2492,9 @@ It would also be helpful if you described:
                       </div>
                           {/* Data source indicator */}
                           <div className="text-[9px] text-[#71717a] mt-2 text-center">
-                            {dataSourcesLoading ? (
+                            {process.env.NEXT_PUBLIC_PREVIEW_BINANCE === 'true' ? (
+                              'Data source: Binance • 15s • Quality 98%'
+                            ) : dataSourcesLoading ? (
                               <div className="animate-pulse">
                                 <div className="h-3 bg-[#2a2a2a] rounded w-32 mx-auto"></div>
                               </div>
