@@ -3625,8 +3625,8 @@ It would also be helpful if you described:
                     {/* Simplified header with responsive layout */}
                     <div className="bg-transparent overflow-x-hidden px-4">
                       <div className="flex flex-wrap items-center gap-2 justify-between mb-4">
-                        {/* Left Container - Log Event Button */}
-                        <div className="flex justify-start">
+                        {/* Right Container - Log Event Button */}
+                        <div className="flex justify-end">
                           <Button
                             variant="outline"
                             size="sm"

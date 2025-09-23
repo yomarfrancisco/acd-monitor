@@ -190,11 +190,8 @@ export function EventsTable({
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="flex items-center gap-1.5">
-                      <div className="text-[#f9fafb] font-bold text-sm">{event.riskScore}</div>
-                      <div className={`px-2 py-1 rounded-full text-[10px] font-medium ${getSeverityBg(event.severity)} ${getSeverityColor(event.severity)}`}>
-                        {formatSeverity(event.severity)}
-                      </div>
+                    <div className={`px-2 py-1 rounded-full text-[10px] font-medium ${getSeverityBg(event.severity)} ${getSeverityColor(event.severity)}`}>
+                      {formatSeverity(event.severity)}
                     </div>
                   </div>
                 </div>
