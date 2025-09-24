@@ -3,14 +3,22 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8001";
 const PROXY_BASE = process.env.NEXT_PUBLIC_CRYPTO_PROXY_BASE;
 export const runtime = "nodejs";
 
-function bybitInterval(tf: string) {
-  return ({ "1m":"1", "5m":"5", "15m":"15", "30m":"30", "1h":"60", "4h":"240", "1d":"D" } as any)[tf] || "5";
+// Timeframe to interval mapping for Bybit v5
+function timeframeToInterval(timeframe: string): string {
+  const mapping: Record<string, string> = {
+    "30d": "120",  // 2h in minutes
+    "6m": "720",   // 12h in minutes
+    "1y": "D",     // 1d
+    "ytd": "D"     // 1d
+  };
+  return mapping[timeframe] || "120";
 }
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const symbol = searchParams.get("symbol") ?? "BTCUSDT";
-  const tf = searchParams.get("tf") ?? "5m";
+  const tf = searchParams.get("tf") ?? "30d";
+  const interval = timeframeToInterval(tf);
   try {
     const url = `${BACKEND_URL}/exchanges/bybit/overview?symbol=${symbol}&tf=${tf}`;
     const r = await fetch(url, { cache: "no-store" });
@@ -22,10 +30,9 @@ export async function GET(req: Request) {
     }
   } catch {}
   try {
-    const iv = bybitInterval(tf);
     const [barsRes, tkRes] = await Promise.all([
-      fetch(`${PROXY_BASE}/bybit/v5/market/kline?category=spot&symbol=${symbol}&interval=${iv}&limit=288`, { cache: "no-store" }),
-      fetch(`${PROXY_BASE}/bybit/v5/market/tickers?category=spot&symbol=${symbol}`, { cache: "no-store" }),
+      fetch(`${PROXY_BASE}/bybit/v5/market/kline?category=linear&symbol=${symbol}&interval=${interval}&limit=300`, { cache: "no-store" }),
+      fetch(`${PROXY_BASE}/bybit/v5/market/tickers?category=linear&symbol=${symbol}`, { cache: "no-store" }),
     ]);
     const barsJson = await barsRes.json();
     const tkJson = await tkRes.json();

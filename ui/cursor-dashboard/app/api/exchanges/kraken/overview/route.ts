@@ -54,10 +54,22 @@ function toKrakenPair(symbol: string): string {
   return symbol.toUpperCase();
 }
 
+// Timeframe to interval mapping for Kraken
+function timeframeToInterval(timeframe: string): number {
+  const mapping: Record<string, number> = {
+    "30d": 120,   // 2h in minutes
+    "6m": 720,    // 12h in minutes
+    "1y": 1440,   // 1d in minutes
+    "ytd": 1440   // 1d in minutes
+  };
+  return mapping[timeframe] || 120;
+}
+
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const symbol = searchParams.get("symbol") ?? "BTCUSDT";
-  const tf = searchParams.get("tf") ?? "5m";
+  const tf = searchParams.get("tf") ?? "30d";
+  const interval = timeframeToInterval(tf);
 
   // --- 1) Try backend first ---
   try {
@@ -90,18 +102,6 @@ export async function GET(req: Request) {
   // --- 2) Direct proxy fallback via Fly multi-exchange proxy ---
   try {
     const krPair = toKrakenPair(symbol);
-    // Map timeframe → minutes per Kraken:
-    // supports: 1, 5, 15, 30, 60, 240, 1440, 10080, 21600
-    const intervalMap: Record<string, number> = {
-      "1m": 1,
-      "5m": 5,
-      "15m": 15,
-      "30m": 30,
-      "1h": 60,
-      "4h": 240,
-      "1d": 1440,
-    };
-    const interval = intervalMap[tf] ?? 5;
 
     // Use our proxy's kraken endpoints
     const [ohlcRes, tickRes] = await Promise.all([
@@ -132,14 +132,16 @@ export async function GET(req: Request) {
       throw new Error("proxy parse: OHLC payload missing array");
     }
 
-    const bars = pairBars.map(([ts, o, h, l, c, v]) => [
-      new Date(Number(ts) * 1000).toISOString(),
-      +o,
-      +h,
-      +l,
-      +c,
-      +v,
-    ]);
+    const bars = pairBars
+      .map(([ts, o, h, l, c, v]) => [
+        new Date(Number(ts) * 1000).toISOString(),
+        +o,
+        +h,
+        +l,
+        +c,
+        +v,
+      ])
+      .slice(-300); // Limit to last 300 bars
 
     const t = firstValue(tickJson.result);
     const bid = t ? Number(t.b[0]) : 0;

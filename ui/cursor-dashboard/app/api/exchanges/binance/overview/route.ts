@@ -6,10 +6,22 @@ export const revalidate = 0;
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8001";
 
+// Timeframe to interval mapping for Binance
+function timeframeToInterval(timeframe: string): string {
+  const mapping: Record<string, string> = {
+    "30d": "2h",
+    "6m": "12h", 
+    "1y": "1d",
+    "ytd": "1d"
+  };
+  return mapping[timeframe] || "2h";
+}
+
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const symbol = searchParams.get("symbol") ?? "BTCUSDT";
-  const tf = searchParams.get("tf") ?? "5m";
+  const tf = searchParams.get("tf") ?? "30d";
+  const interval = timeframeToInterval(tf);
 
   // Log environment and region
   console.log('[UI API] runtime=node, region=', process.env.VERCEL_REGION, 'env=', process.env.NODE_ENV);
@@ -48,7 +60,7 @@ export async function GET(req: Request) {
   const PROXY_HOST = process.env.PROXY_HOST ?? process.env.EXCHANGE_PROXY_ORIGIN ?? "https://binance-proxy-broken-night-96.fly.dev";
   const PROXY_BASE = `${PROXY_HOST}/binance`;
   
-  const klinesUrl = `${PROXY_BASE}/api/v3/klines?symbol=${symbol}&interval=${tf}&limit=300`;
+  const klinesUrl = `${PROXY_BASE}/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=300`;
   const tickerUrl = `${PROXY_BASE}/api/v3/ticker/bookTicker?symbol=${symbol}`;
   
   const opt = { 

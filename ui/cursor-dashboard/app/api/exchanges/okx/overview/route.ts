@@ -8,10 +8,22 @@ function okxInst(symbol: string) {
   return symbol.replace("USDT", "-USDT").replace("USD", "-USD");
 }
 
+// Timeframe to interval mapping for OKX
+function timeframeToInterval(timeframe: string): string {
+  const mapping: Record<string, string> = {
+    "30d": "2H",
+    "6m": "12H", 
+    "1y": "1D",
+    "ytd": "1D"
+  };
+  return mapping[timeframe] || "2H";
+}
+
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const symbol = searchParams.get("symbol") ?? "BTCUSDT";
-  const tf = searchParams.get("tf") ?? "5m";
+  const tf = searchParams.get("tf") ?? "30d";
+  const interval = timeframeToInterval(tf);
   try {
     const url = `${BACKEND_URL}/exchanges/okx/overview?symbol=${symbol}&tf=${tf}`;
     const r = await fetch(url, { cache: "no-store" });
@@ -25,8 +37,8 @@ export async function GET(req: Request) {
   try {
     const inst = okxInst(symbol);
     const [barsRes, tkRes] = await Promise.all([
-      fetch(`${PROXY_BASE}/okx/candles?instId=${inst}&bar=${tf}&limit=288`, { cache: "no-store" }),
-      fetch(`${PROXY_BASE}/okx/ticker?instId=${inst}`, { cache: "no-store" }),
+      fetch(`${PROXY_BASE}/okx/market/candles?instId=${inst}&bar=${interval}&limit=300`, { cache: "no-store" }),
+      fetch(`${PROXY_BASE}/okx/market/ticker?instId=${inst}`, { cache: "no-store" }),
     ]);
     const barsJson = await barsRes.json();
     const tkJson = await tkRes.json();

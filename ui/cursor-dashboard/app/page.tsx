@@ -473,16 +473,32 @@ export default function CursorDashboard() {
   }, [selectedTimeframe, isClient])
 
   // Fetch metrics overview data when timeframe changes
-  // Fetch Binance overview data (preview only)
-  const fetchBinanceOverview = async () => {
+  // Fetch all exchange overview data (preview only)
+  const fetchExchangeOverview = async () => {
     if (!isClient) return
     
     setMetricsLoading(true)
     setMetricsError(null)
     
     try {
-      console.log(`🔍 [UI Frontend] Starting Binance overview fetch...`)
-      const result = await fetchTyped(`/exchanges/binance/overview?symbol=BTCUSDT&tf=5m`, BinanceOverviewSchema)
+      console.log(`🔍 [UI Frontend] Starting multi-exchange overview fetch for timeframe: ${selectedTimeframe}...`)
+      
+      // Fetch all four exchanges in parallel
+      const [binanceResult, okxResult, bybitResult, krakenResult] = await Promise.all([
+        fetchTyped(`/exchanges/binance/overview?symbol=BTCUSDT&tf=${selectedTimeframe}`, BinanceOverviewSchema),
+        fetchTyped(`/exchanges/okx/overview?symbol=BTCUSDT&tf=${selectedTimeframe}`, BinanceOverviewSchema), // Reuse schema for now
+        fetchTyped(`/exchanges/bybit/overview?symbol=BTCUSDT&tf=${selectedTimeframe}`, BinanceOverviewSchema), // Reuse schema for now
+        fetchTyped(`/exchanges/kraken/overview?symbol=BTCUSDT&tf=${selectedTimeframe}`, BinanceOverviewSchema) // Reuse schema for now
+      ])
+      
+      console.log(`✅ [UI Frontend] Received results from all exchanges`)
+      console.log(`📊 [UI Frontend] Binance OHLCV length: ${(binanceResult as any)?.ohlcv?.length ?? 'undefined'}`)
+      console.log(`📊 [UI Frontend] OKX OHLCV length: ${(okxResult as any)?.ohlcv?.length ?? 'undefined'}`)
+      console.log(`📊 [UI Frontend] Bybit OHLCV length: ${(bybitResult as any)?.ohlcv?.length ?? 'undefined'}`)
+      console.log(`📊 [UI Frontend] Kraken OHLCV length: ${(krakenResult as any)?.ohlcv?.length ?? 'undefined'}`)
+      
+      // Use Binance as primary for now (maintain existing logic)
+      const result = binanceResult
       
       console.log(`✅ [UI Frontend] Received result from fetchTyped`)
       console.log(`📊 [UI Frontend] Result type: ${typeof result}`)
@@ -570,7 +586,7 @@ export default function CursorDashboard() {
       const isBinancePreview = process.env.NEXT_PUBLIC_PREVIEW_BINANCE === 'true'
       
       if (isBinancePreview) {
-        await fetchBinanceOverview()
+        await fetchExchangeOverview()
       } else {
       setMetricsLoading(true)
       setMetricsError(null)
