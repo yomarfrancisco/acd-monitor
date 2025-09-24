@@ -600,6 +600,11 @@ export default function CursorDashboard() {
         setAvailableUiVenues(availableUiVenues)
         setExchangeDataError(null)
         console.log(`✅ [UI Frontend] Created chart data with ${chartData.length} points for ${successfulVenues.length} venues`)
+        
+        // Debug parity
+        if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+          console.log('SERIES_VENUES=', availableUiVenues);
+        }
       } else {
         // Fallback to demo data if no exchanges available and demo mode is enabled
         if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') {
@@ -640,12 +645,13 @@ export default function CursorDashboard() {
     const fetchMetricsOverview = async () => {
       if (!isClient) return
       
-      // Check if Binance preview is enabled
-      const isBinancePreview = process.env.NEXT_PUBLIC_PREVIEW_BINANCE === 'true'
+      // Always fetch live exchange overviews to populate context + chart
+      await fetchExchangeOverview()
       
-      if (isBinancePreview) {
-        await fetchExchangeOverview()
-      } else {
+      // (Optional) If you still need legacy metrics for other widgets,
+      // compute them AFTER fetchExchangeOverview() so leadership can use live data.
+      // Do NOT return early; let the rest of the effect proceed.
+      
       setMetricsLoading(true)
       setMetricsError(null)
       
@@ -656,7 +662,6 @@ export default function CursorDashboard() {
       setIsDegradedMode(false)
       
       setMetricsLoading(false)
-      }
     }
 
     fetchMetricsOverview()
@@ -1396,6 +1401,12 @@ It would also be helpful if you described:
   const leadershipCaption = leadership.pct == null
     ? 'Requires multiple venues'
     : `Leader: ${leadership.leader}`;
+
+  // Debug logging for leadership calculation
+  if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+    console.log('LEADERSHIP_INPUT_KEYS=', activeKeys);
+    console.log('LEADERSHIP_RESULT=', leadership);
+  }
 
   return (
     <div className="min-h-screen bg-[#0f0f10] text-[#f9fafb] font-sans p-4">
