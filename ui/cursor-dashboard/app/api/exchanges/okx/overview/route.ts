@@ -4,8 +4,8 @@ const PROXY_BASE = process.env.NEXT_PUBLIC_CRYPTO_PROXY_BASE;
 export const runtime = "nodejs";
 
 function okxInst(symbol: string) {
-  // BTCUSDT -> BTC-USDT
-  return symbol.replace("USDT", "-USDT").replace("USD", "-USD");
+  // BTCUSDT -> BTC-USDT (fix double dash issue)
+  return symbol.replace("USDT", "-USDT").replace("USD", "-USD").replace("--", "-");
 }
 
 // Timeframe to interval mapping for OKX

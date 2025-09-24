@@ -6,6 +6,7 @@ export const runtime = "nodejs";
 const BACKEND_URL =
   process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8001";
 const PROXY_BASE =
+  process.env.PROXY_HOST ??
   process.env.NEXT_PUBLIC_BINANCE_PROXY_BASE ??
   "https://binance-proxy-broken-night-96.fly.dev";
 
@@ -72,6 +73,7 @@ export async function GET(req: Request) {
   const interval = timeframeToInterval(tf);
   
   // Server-side diagnostics
+  console.log(`🛰️ [route] kraken env: PROXY_HOST=${process.env.PROXY_HOST}`);
   console.log(`🛰️ [route] kraken env: NEXT_PUBLIC_BINANCE_PROXY_BASE=${process.env.NEXT_PUBLIC_BINANCE_PROXY_BASE}`);
   console.log(`🛰️ [route] kraken timeframe: ${tf} → interval: ${interval}`);
 
