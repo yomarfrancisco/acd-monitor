@@ -5,54 +5,47 @@ import fetch from "node-fetch";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-async function forward(res, target) {
-  console.log(`[Proxy] → ${target}`);
-  const r = await fetch(target, {
-    headers: {
-      "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36",
-      "Accept": "application/json,text/plain,*/*",
-    },
-  });
+app.use('/:venue/*', async (req, res) => {
+  const { venue } = req.params;            // e.g. "kraken"
+  const rest = req.params[0] || '';        // preserves full path, e.g. "0/public/OHLC"
+  const qs = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
 
-  const text = await r.text();
+  const upstream = {
+    kraken: 'https://api.kraken.com/',     // trailing slash important
+    okx:    'https://www.okx.com/api/v5/',
+    bybit:  'https://api.bybit.com/',
+    binance:'https://api.binance.com/'     // add if we want Binance proxied too
+  }[venue];
+
+  if (!upstream) {
+    return res.status(400).json({ error: "unknown_venue", venue });
+  }
+
+  const url = upstream + rest + qs;
+  console.log(`[Proxy] ${venue} → ${url}`);
+
   try {
-    const json = JSON.parse(text);
-    res.status(r.status).json(json);
-  } catch {
-    res.status(r.status).type(r.headers.get("content-type") || "text/plain").send(text);
-  }
-}
+    const r = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0',
+        'Accept': 'application/json,text/plain,*/*'
+      }
+    });
 
-// Kraken
-app.get("/kraken/*", async (req, res) => {
-  const path = req.params[0];
-  const qs = req.url.includes("?") ? req.url.slice(req.url.indexOf("?")) : "";
-  const target = `https://api.kraken.com/0/public/${path}${qs}`;
-  try { await forward(res, target); } catch (e) {
-    console.error("[Proxy][kraken] error", e);
-    res.status(502).json({ error: "kraken_proxy_error" });
-  }
-});
-
-// OKX
-app.get("/okx/*", async (req, res) => {
-  const path = req.params[0];
-  const qs = req.url.includes("?") ? req.url.slice(req.url.indexOf("?")) : "";
-  const target = `https://www.okx.com/api/v5/${path}${qs}`;
-  try { await forward(res, target); } catch (e) {
-    console.error("[Proxy][okx] error", e);
-    res.status(502).json({ error: "okx_proxy_error" });
-  }
-});
-
-// Bybit
-app.get("/bybit/*", async (req, res) => {
-  const path = req.params[0];
-  const qs = req.url.includes("?") ? req.url.slice(req.url.indexOf("?")) : "";
-  const target = `https://api.bybit.com/v5/${path}${qs}`;
-  try { await forward(res, target); } catch (e) {
-    console.error("[Proxy][bybit] error", e);
-    res.status(502).json({ error: "bybit_proxy_error" });
+    const ct = r.headers.get('content-type') || '';
+    res.status(r.status);
+    if (ct.includes('json')) {
+      const body = await r.json();
+      res.setHeader('content-type', ct);
+      return res.send(body);
+    } else {
+      const body = await r.text();
+      res.setHeader('content-type', ct || 'text/plain');
+      return res.send(body);
+    }
+  } catch (e) {
+    console.error(`[Proxy][${venue}] error`, e);
+    res.status(502).json({ error: `${venue}_proxy_error`, details: String(e) });
   }
 });
 
