@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { CalendarIcon, Clock } from "lucide-react";
 import { TimeseriesChart } from "@/components/TimeseriesChart";
 import { useExchangeData } from "@/contexts/ExchangeDataContext";
-import type { UiVenue } from "@/lib/venueMapping";
+import type { UiVenue } from "../../lib/venueMapping";
 
 // PageWrapper removed - was causing layout conflicts
 

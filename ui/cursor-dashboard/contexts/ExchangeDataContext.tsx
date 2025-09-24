@@ -1,7 +1,7 @@
 "use client"
 
 import React, { createContext, useContext, useState, ReactNode } from 'react'
-import type { UiVenue } from '@/lib/venueMapping'
+import type { UiVenue } from '../lib/venueMapping'
 
 interface ExchangeDataContextType {
   exchangeData: any[]

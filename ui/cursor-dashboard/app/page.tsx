@@ -48,7 +48,7 @@ import { DegradedModeBanner } from "@/components/DegradedModeBanner"
 import { EventsTable } from "@/components/EventsTable"
 import { SelftestIndicator } from "@/components/SelftestIndicator"
 import { useExchangeData } from "@/contexts/ExchangeDataContext"
-import { getAvailableUiVenues, uiKeyToDataKey, type UiVenue } from "@/lib/venueMapping"
+import { getAvailableUiVenues, uiKeyToDataKey, type UiVenue } from "../lib/venueMapping"
 import type { RiskSummary, HealthRun, EventsResponse, DataSources, EvidenceExport } from "@/types/api"
 import type { MetricsOverview } from "@/types/api.schemas"
 import {
