@@ -1,6 +1,7 @@
 "use client"
 
 import React, { createContext, useContext, useState, ReactNode } from 'react'
+import type { UiVenue } from '@/lib/venueMapping'
 
 interface ExchangeDataContextType {
   exchangeData: any[]
@@ -9,6 +10,8 @@ interface ExchangeDataContextType {
   setExchangeDataLoading: (loading: boolean) => void
   exchangeDataError: string | null
   setExchangeDataError: (error: string | null) => void
+  availableUiVenues: UiVenue[]
+  setAvailableUiVenues: (venues: UiVenue[]) => void
 }
 
 const ExchangeDataContext = createContext<ExchangeDataContextType | undefined>(undefined)
@@ -17,6 +20,7 @@ export function ExchangeDataProvider({ children }: { children: ReactNode }) {
   const [exchangeData, setExchangeData] = useState<any[]>([])
   const [exchangeDataLoading, setExchangeDataLoading] = useState(false)
   const [exchangeDataError, setExchangeDataError] = useState<string | null>(null)
+  const [availableUiVenues, setAvailableUiVenues] = useState<UiVenue[]>([])
 
   return (
     <ExchangeDataContext.Provider value={{
@@ -25,7 +29,9 @@ export function ExchangeDataProvider({ children }: { children: ReactNode }) {
       exchangeDataLoading,
       setExchangeDataLoading,
       exchangeDataError,
-      setExchangeDataError
+      setExchangeDataError,
+      availableUiVenues,
+      setAvailableUiVenues
     }}>
       {children}
     </ExchangeDataContext.Provider>

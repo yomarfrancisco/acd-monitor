@@ -48,6 +48,7 @@ import { DegradedModeBanner } from "@/components/DegradedModeBanner"
 import { EventsTable } from "@/components/EventsTable"
 import { SelftestIndicator } from "@/components/SelftestIndicator"
 import { useExchangeData } from "@/contexts/ExchangeDataContext"
+import { getAvailableUiVenues, uiKeyToDataKey, type UiVenue } from "@/lib/venueMapping"
 import type { RiskSummary, HealthRun, EventsResponse, DataSources, EvidenceExport } from "@/types/api"
 import type { MetricsOverview } from "@/types/api.schemas"
 import {
@@ -171,14 +172,12 @@ export default function CursorDashboard() {
 
   // Series adapter: convert exchange data to chart format
   const createChartSeries = (successfulExchanges: any[]) => {
-    const series: any[] = []
+    // Build authoritative "what's available" list from live results
+    const availableUiVenues: UiVenue[] = getAvailableUiVenues(successfulExchanges)
     
-    // Map venue to chart dataKey and display name
-    const venueMapping = {
-      'binance': { dataKey: 'fnb', name: 'Binance', color: '#60a5fa' },
-      'okx': { dataKey: 'absa', name: 'Coinbase', color: '#a1a1aa' },
-      'kraken': { dataKey: 'standard', name: 'Kraken', color: '#71717a' },
-      'bybit': { dataKey: 'nedbank', name: 'Bybit', color: '#52525b' }
+    // Debug logging
+    if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+      console.log('SERIES_VENUES=', availableUiVenues);
     }
     
     // Create a map of all timestamps to ensure alignment
@@ -193,23 +192,34 @@ export default function CursorDashboard() {
     
     const sortedTimestamps = Array.from(allTimestamps).sort()
     
-    // Create chart data points
+    // Create chart data points - keep the old shape, fill only present series
     const chartData = sortedTimestamps.map(timestamp => {
       const point: any = { date: new Date(timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) }
       
-      // Add data for each successful exchange
-      successfulExchanges.forEach(exchange => {
-        const venue = exchange.venue
-        const mapping = venueMapping[venue as keyof typeof venueMapping]
-        if (mapping && exchange.data?.ohlcv) {
+      // Only populate keys that exist in availableUiVenues
+      for (const uiVenue of availableUiVenues) {
+        const dataKey = uiKeyToDataKey[uiVenue]
+        
+        // Find the corresponding exchange for this UI venue
+        const exchange = successfulExchanges.find(e => {
+          const venueMapping: Record<string, string> = {
+            'binance': 'binance',
+            'okx': 'coinbase',
+            'bybit': 'bybit', 
+            'kraken': 'kraken'
+          }
+          return venueMapping[e.venue] === uiVenue
+        })
+        
+        if (exchange?.data?.ohlcv) {
           // Find the bar for this timestamp
           const bar = exchange.data.ohlcv.find((b: any[]) => b[0] === timestamp)
           if (bar) {
             // Use close price (index 4) as the value
-            point[mapping.dataKey] = Number(bar[4]) || 0
+            point[dataKey] = Number(bar[4]) || 0
           }
         }
-      })
+      }
       
       return point
     })
@@ -228,7 +238,7 @@ export default function CursorDashboard() {
   const [metricsError, setMetricsError] = useState<string | null>(null)
   
   // Exchange data state for live chart (using context)
-  const { exchangeData, setExchangeData, exchangeDataLoading, setExchangeDataLoading, exchangeDataError, setExchangeDataError } = useExchangeData()
+  const { exchangeData, setExchangeData, exchangeDataLoading, setExchangeDataLoading, exchangeDataError, setExchangeDataError, availableUiVenues, setAvailableUiVenues } = useExchangeData()
   
   // Health run state
   const [healthRun, setHealthRun] = useState<HealthRun | null>(null)
@@ -583,8 +593,10 @@ export default function CursorDashboard() {
       
       // Create chart series from successful exchanges
       if (successfulExchanges.length > 0) {
+        const availableUiVenues: UiVenue[] = getAvailableUiVenues(successfulExchanges)
         const chartData = createChartSeries(successfulExchanges)
         setExchangeData(chartData)
+        setAvailableUiVenues(availableUiVenues)
         setExchangeDataError(null)
         console.log(`✅ [UI Frontend] Created chart data with ${chartData.length} points for ${successfulVenues.length} venues`)
       } else {
@@ -593,12 +605,13 @@ export default function CursorDashboard() {
           console.log(`🔄 [UI Frontend] No live data available, falling back to demo data`)
           const demoData = getAnalyticsData()
           setExchangeData(demoData)
+          setAvailableUiVenues(['binance', 'coinbase', 'bybit', 'kraken'] as UiVenue[])
           setExchangeDataError(null)
           
           if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
             console.log(`🔍 [UI Frontend] SERIES_SOURCE=demo`)
-            console.log(`🔍 [UI Frontend] SERIES_VENUES=[fnb,absa,standard,nedbank]`)
-            console.log(`🔍 [UI Frontend] AVATAR_VENUES=[fnb,absa,standard,nedbank]`)
+            console.log(`🔍 [UI Frontend] SERIES_VENUES=[binance,coinbase,bybit,kraken]`)
+            console.log(`🔍 [UI Frontend] AVATAR_VENUES=[binance,coinbase,bybit,kraken]`)
           }
         } else {
           throw new Error('No exchanges available')
@@ -614,6 +627,7 @@ export default function CursorDashboard() {
         console.log(`🔄 [UI Frontend] Error occurred, falling back to demo data`)
         const demoData = getAnalyticsData()
         setExchangeData(demoData)
+        setAvailableUiVenues(['binance', 'coinbase', 'bybit', 'kraken'] as UiVenue[])
         setExchangeDataError(null)
       }
     }
@@ -2526,63 +2540,92 @@ It would also be helpful if you described:
                                             </div>
                                           )}
 
-                                          {/* Exchange/Bank Data */}
-                                      {payload.map((entry: any, index: number) => (
-                                            <div key={index} className="flex items-center gap-2 text-[9px]">
-                                          <div 
-                                            className="w-2 h-2 rounded-full" 
-                                            style={{ backgroundColor: entry.color }}
-                                          />
-                                              <span className="text-[#f9fafb] font-semibold">
-                                                {entry.name}: <span className="font-bold">${entry.value.toFixed(2)}</span> |{" "}
-                                                <span className="text-[#a1a1aa]">
-                                                  {marketShare[entry.name as keyof typeof marketShare]}% share
-                                                </span>
+                                          {/* Exchange/Bank Data - show only plotted series */}
+                                      {(() => {
+                                        // Map UI venues to their data and values
+                                        const rows = availableUiVenues.map(v => {
+                                          const k = uiKeyToDataKey[v];
+                                          const val = payload?.[0]?.payload?.[k];
+                                          return { ui: v, k, val };
+                                        }).filter(row => row.val !== undefined);
+                                        
+                                        return rows.map((row, index) => (
+                                          <div key={index} className="flex items-center gap-2 text-[9px]">
+                                            <div 
+                                              className="w-2 h-2 rounded-full" 
+                                              style={{ 
+                                                backgroundColor: row.ui === 'binance' ? '#60a5fa' :
+                                                               row.ui === 'coinbase' ? '#a1a1aa' :
+                                                               row.ui === 'kraken' ? '#71717a' : '#52525b'
+                                              }}
+                                            />
+                                            <span className="text-[#f9fafb] font-semibold">
+                                              {row.ui === 'coinbase' ? 'Coinbase' : row.ui.charAt(0).toUpperCase() + row.ui.slice(1)}: <span className="font-bold">${row.val.toFixed(2)}</span> |{" "}
+                                              <span className="text-[#a1a1aa]">
+                                                {marketShare[row.ui === 'coinbase' ? 'Coinbase' : row.ui.charAt(0).toUpperCase() + row.ui.slice(1) as keyof typeof marketShare]}% share
                                               </span>
-                                        </div>
-                                      ))}
+                                            </span>
+                                          </div>
+                                        ));
+                                      })()}
                                     </div>
                                       )
                                 }
                                     return null
                               }}
                             />
-                            <Line
-                              type="monotone"
-                              dataKey="fnb"
-                              stroke="#60a5fa"
-                              strokeWidth={2}
-                              dot={{ fill: "#60a5fa", strokeWidth: 2, r: 3 }}
-                              activeDot={{ r: 4, fill: "#60a5fa" }}
-                              name="Binance"
-                            />
-                            <Line
-                              type="monotone"
-                              dataKey="absa"
-                              stroke="#a1a1aa"
-                              strokeWidth={1.5}
-                              dot={{ fill: "#a1a1aa", strokeWidth: 1.5, r: 2 }}
-                              activeDot={{ r: 3, fill: "#a1a1aa" }}
-                              name="Coinbase"
-                            />
-                            <Line
-                              type="monotone"
-                              dataKey="standard"
-                              stroke="#71717a"
-                              strokeWidth={1.5}
-                              dot={{ fill: "#71717a", strokeWidth: 1.5, r: 2 }}
-                              activeDot={{ r: 3, fill: "#71717a" }}
-                              name="Kraken"
-                            />
-                            <Line
-                              type="monotone"
-                              dataKey="nedbank"
-                              stroke="#52525b"
-                              strokeWidth={1.5}
-                              dot={{ fill: "#52525b", strokeWidth: 1.5, r: 2 }}
-                              activeDot={{ r: 3, fill: "#52525b" }}
-                              name="Bybit"
-                            />
+                            {/* Conditional Line components - only mount when data exists */}
+                            {(() => {
+                              const hasKey = (k: string) => exchangeData.some(p => p[k] !== undefined);
+                              return (
+                                <>
+                                  {hasKey('fnb') && (
+                                    <Line
+                                      type="monotone"
+                                      dataKey="fnb"
+                                      stroke="#60a5fa"
+                                      strokeWidth={2}
+                                      dot={{ fill: "#60a5fa", strokeWidth: 2, r: 3 }}
+                                      activeDot={{ r: 4, fill: "#60a5fa" }}
+                                      name="Binance"
+                                    />
+                                  )}
+                                  {hasKey('absa') && (
+                                    <Line
+                                      type="monotone"
+                                      dataKey="absa"
+                                      stroke="#a1a1aa"
+                                      strokeWidth={1.5}
+                                      dot={{ fill: "#a1a1aa", strokeWidth: 1.5, r: 2 }}
+                                      activeDot={{ r: 3, fill: "#a1a1aa" }}
+                                      name="Coinbase"
+                                    />
+                                  )}
+                                  {hasKey('standard') && (
+                                    <Line
+                                      type="monotone"
+                                      dataKey="standard"
+                                      stroke="#71717a"
+                                      strokeWidth={1.5}
+                                      dot={{ fill: "#71717a", strokeWidth: 1.5, r: 2 }}
+                                      activeDot={{ r: 3, fill: "#71717a" }}
+                                      name="Kraken"
+                                    />
+                                  )}
+                                  {hasKey('nedbank') && (
+                                    <Line
+                                      type="monotone"
+                                      dataKey="nedbank"
+                                      stroke="#52525b"
+                                      strokeWidth={1.5}
+                                      dot={{ fill: "#52525b", strokeWidth: 1.5, r: 2 }}
+                                      activeDot={{ r: 3, fill: "#52525b" }}
+                                      name="Bybit"
+                                    />
+                                  )}
+                                </>
+                              );
+                            })()}
                           </LineChart>
                         </ResponsiveContainer>
                       </div>
