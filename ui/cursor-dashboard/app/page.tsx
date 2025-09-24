@@ -472,6 +472,20 @@ export default function CursorDashboard() {
     fetchRiskSummary()
   }, [selectedTimeframe, isClient])
 
+  // Helper function to fetch exchange data with proper error handling
+  const fetchExchangeData = async (venue: string, url: string) => {
+    try {
+      const data = await fetchTyped(url, BinanceOverviewSchema)
+      const ohlcvLength = (data as any)?.ohlcv?.length ?? 0
+      console.log(`✅ [UI Frontend] ${venue} OHLCV length: ${ohlcvLength}`)
+      return { venue, ok: true, data }
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error)
+      console.log(`❌ [UI Frontend] ${venue} fetch failed: ${errorMsg}`)
+      return { venue, ok: false, error: errorMsg }
+    }
+  }
+
   // Fetch metrics overview data when timeframe changes
   // Fetch all exchange overview data (preview only)
   const fetchExchangeOverview = async () => {
@@ -483,22 +497,38 @@ export default function CursorDashboard() {
     try {
       console.log(`🔍 [UI Frontend] Starting multi-exchange overview fetch for timeframe: ${selectedTimeframe}...`)
       
-      // Fetch all four exchanges in parallel
-      const [binanceResult, okxResult, bybitResult, krakenResult] = await Promise.all([
-        fetchTyped(`/exchanges/binance/overview?symbol=BTCUSDT&tf=${selectedTimeframe}`, BinanceOverviewSchema),
-        fetchTyped(`/exchanges/okx/overview?symbol=BTCUSDT&tf=${selectedTimeframe}`, BinanceOverviewSchema), // Reuse schema for now
-        fetchTyped(`/exchanges/bybit/overview?symbol=BTCUSDT&tf=${selectedTimeframe}`, BinanceOverviewSchema), // Reuse schema for now
-        fetchTyped(`/exchanges/kraken/overview?symbol=BTCUSDT&tf=${selectedTimeframe}`, BinanceOverviewSchema) // Reuse schema for now
+      // Fetch all four exchanges in parallel with robust error handling
+      const results = await Promise.allSettled([
+        fetchExchangeData('binance', `/exchanges/binance/overview?symbol=BTCUSDT&tf=${selectedTimeframe}`),
+        fetchExchangeData('okx', `/exchanges/okx/overview?symbol=BTCUSDT&tf=${selectedTimeframe}`),
+        fetchExchangeData('bybit', `/exchanges/bybit/overview?symbol=BTCUSDT&tf=${selectedTimeframe}`),
+        fetchExchangeData('kraken', `/exchanges/kraken/overview?symbol=BTCUSDT&tf=${selectedTimeframe}`)
       ])
       
-      console.log(`✅ [UI Frontend] Received results from all exchanges`)
-      console.log(`📊 [UI Frontend] Binance OHLCV length: ${(binanceResult as any)?.ohlcv?.length ?? 'undefined'}`)
-      console.log(`📊 [UI Frontend] OKX OHLCV length: ${(okxResult as any)?.ohlcv?.length ?? 'undefined'}`)
-      console.log(`📊 [UI Frontend] Bybit OHLCV length: ${(bybitResult as any)?.ohlcv?.length ?? 'undefined'}`)
-      console.log(`📊 [UI Frontend] Kraken OHLCV length: ${(krakenResult as any)?.ohlcv?.length ?? 'undefined'}`)
+      // Extract successful results
+      const successfulExchanges = results
+        .map(result => result.status === 'fulfilled' ? result.value : null)
+        .filter((result): result is { venue: string; ok: true; data: any } => 
+          result !== null && result.ok === true
+        )
       
-      // Use Binance as primary for now (maintain existing logic)
-      const result = binanceResult
+      // Log summary
+      const successfulVenues = successfulExchanges.map(r => r.venue)
+      const barsPerSeries: Record<string, number> = {}
+      successfulExchanges.forEach(r => {
+        barsPerSeries[r.venue] = (r.data as any)?.ohlcv?.length ?? 0
+      })
+      
+      console.log(`📊 [UI Frontend] Loaded series: [${successfulVenues.join(', ')}]`)
+      console.log(`📊 [UI Frontend] Bars per series:`, barsPerSeries)
+      
+      // Use first successful exchange as primary (fallback to Binance if available)
+      const primaryExchange = successfulExchanges.find(r => r.venue === 'binance') || successfulExchanges[0]
+      if (!primaryExchange) {
+        throw new Error('No exchanges available')
+      }
+      
+      const result = primaryExchange.data
       
       console.log(`✅ [UI Frontend] Received result from fetchTyped`)
       console.log(`📊 [UI Frontend] Result type: ${typeof result}`)
