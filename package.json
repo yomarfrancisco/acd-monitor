@@ -6,7 +6,8 @@
     "ui:install": "cd ui/cursor-dashboard && npm install",
     "ui:dev": "cd ui/cursor-dashboard && npm run dev",
     "ui:build": "cd ui/cursor-dashboard && npm run build",
-    "ui:start": "cd ui/cursor-dashboard && npm start"
+    "ui:start": "cd ui/cursor-dashboard && npm start",
+    "health:proxy": "scripts/health-check.sh"
   },
   "private": true,
   "packageManager": "pnpm@10.16.0",

@@ -5,6 +5,15 @@ import fetch from "node-fetch";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// BEFORE generic passthrough - deprecate legacy Bybit paths
+app.all('/bybit/market/*', (req, res) => {
+  res.status(410).json({
+    venue: 'bybit',
+    error: 'deprecated_path',
+    message: 'Use /bybit/v5/market/*'
+  });
+});
+
 app.use('/:venue/*', async (req, res) => {
   const { venue } = req.params;            // e.g. "kraken"
   const rest = req.params[0] || '';        // preserves full path, e.g. "0/public/OHLC"
