@@ -70,6 +70,10 @@ export async function GET(req: Request) {
   const symbol = searchParams.get("symbol") ?? "BTCUSDT";
   const tf = searchParams.get("tf") ?? "30d";
   const interval = timeframeToInterval(tf);
+  
+  // Server-side diagnostics
+  console.log(`🛰️ [route] kraken env: NEXT_PUBLIC_BINANCE_PROXY_BASE=${process.env.NEXT_PUBLIC_BINANCE_PROXY_BASE}`);
+  console.log(`🛰️ [route] kraken timeframe: ${tf} → interval: ${interval}`);
 
   // --- 1) Try backend first ---
   try {
@@ -102,24 +106,23 @@ export async function GET(req: Request) {
   // --- 2) Direct proxy fallback via Fly multi-exchange proxy ---
   try {
     const krPair = toKrakenPair(symbol);
+    const ohlcUrl = `${PROXY_BASE}/kraken/0/public/OHLC?pair=${encodeURIComponent(krPair)}&interval=${interval}`;
+    const tickerUrl = `${PROXY_BASE}/kraken/0/public/Ticker?pair=${encodeURIComponent(krPair)}`;
+    
+    console.log(`🛰️ [route] kraken pair mapping: ${symbol} → ${krPair}`);
+    console.log(`🛰️ [route] kraken request: ${ohlcUrl}`);
+    console.log(`🛰️ [route] kraken request: ${tickerUrl}`);
 
     // Use our proxy's kraken endpoints
     const [ohlcRes, tickRes] = await Promise.all([
-      fetch(
-        `${PROXY_BASE}/kraken/0/public/OHLC?pair=${encodeURIComponent(
-          krPair
-        )}&interval=${interval}`,
-        { cache: "no-store" }
-      ),
-      fetch(
-        `${PROXY_BASE}/kraken/0/public/Ticker?pair=${encodeURIComponent(krPair)}`,
-        { cache: "no-store" }
-      ),
+      fetch(ohlcUrl, { cache: "no-store" }),
+      fetch(tickerUrl, { cache: "no-store" }),
     ]);
 
     if (!ohlcRes.ok || !tickRes.ok) {
       const t1 = await ohlcRes.text().catch(() => "");
       const t2 = await tickRes.text().catch(() => "");
+      console.log(`❌ [route] kraken failed: ohlc_status=${ohlcRes.status} ohlc_body=${t1.slice(0, 300)} ticker_status=${tickRes.status} ticker_body=${t2.slice(0, 300)}`);
       throw new Error(`proxy bad: ohlc=${ohlcRes.status}(${t1.slice(0, 120)}) ticker=${tickRes.status}(${t2.slice(0, 120)})`);
     }
 
@@ -147,6 +150,8 @@ export async function GET(req: Request) {
     const bid = t ? Number(t.b[0]) : 0;
     const ask = t ? Number(t.a[0]) : 0;
     const mid = bid && ask ? (bid + ask) / 2 : 0;
+    
+    console.log(`✅ [route] kraken ok: bars=${bars.length}`);
 
     console.log(`[UI API KRK] using proxy fallback (bars=${bars.length})`);
 

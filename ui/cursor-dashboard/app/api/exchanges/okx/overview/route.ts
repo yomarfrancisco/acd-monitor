@@ -24,6 +24,11 @@ export async function GET(req: Request) {
   const symbol = searchParams.get("symbol") ?? "BTCUSDT";
   const tf = searchParams.get("tf") ?? "30d";
   const interval = timeframeToInterval(tf);
+  
+  // Server-side diagnostics
+  console.log(`🛰️ [route] okx env: NEXT_PUBLIC_CRYPTO_PROXY_BASE=${PROXY_BASE}`);
+  console.log(`🛰️ [route] okx timeframe: ${tf} → interval: ${interval}`);
+  
   try {
     const url = `${BACKEND_URL}/exchanges/okx/overview?symbol=${symbol}&tf=${tf}`;
     const r = await fetch(url, { cache: "no-store" });
@@ -36,10 +41,24 @@ export async function GET(req: Request) {
   } catch {}
   try {
     const inst = okxInst(symbol);
+    const candlesUrl = `${PROXY_BASE}/okx/market/candles?instId=${inst}&bar=${interval}&limit=300`;
+    const tickerUrl = `${PROXY_BASE}/okx/market/ticker?instId=${inst}`;
+    
+    console.log(`🛰️ [route] okx request: ${candlesUrl}`);
+    console.log(`🛰️ [route] okx request: ${tickerUrl}`);
+    
     const [barsRes, tkRes] = await Promise.all([
-      fetch(`${PROXY_BASE}/okx/market/candles?instId=${inst}&bar=${interval}&limit=300`, { cache: "no-store" }),
-      fetch(`${PROXY_BASE}/okx/market/ticker?instId=${inst}`, { cache: "no-store" }),
+      fetch(candlesUrl, { cache: "no-store" }),
+      fetch(tickerUrl, { cache: "no-store" }),
     ]);
+    // Check response status and log diagnostics
+    if (!barsRes.ok || !tkRes.ok) {
+      const barsText = await barsRes.text().catch(() => "");
+      const tickerText = await tkRes.text().catch(() => "");
+      console.log(`❌ [route] okx failed: bars_status=${barsRes.status} bars_body=${barsText.slice(0, 300)} ticker_status=${tkRes.status} ticker_body=${tickerText.slice(0, 300)}`);
+      throw new Error(`OKX proxy failed: bars=${barsRes.status}, ticker=${tkRes.status}`);
+    }
+    
     const barsJson = await barsRes.json();
     const tkJson = await tkRes.json();
     const data = (barsJson.data || []).reverse();
@@ -48,6 +67,9 @@ export async function GET(req: Request) {
     ]);
     const d = (tkJson.data || [])[0] || {};
     const bid = +(d.bidPx || 0), ask = +(d.askPx || 0);
+    
+    console.log(`✅ [route] okx ok: bars=${ohlcv.length}`);
+    
     const payload = {
       venue: "okx",
       symbol,
@@ -57,7 +79,8 @@ export async function GET(req: Request) {
     };
     if (ohlcv.length > 0) return NextResponse.json(payload, { status: 200 });
   } catch (e) {
-    console.error("[UI API okx] fallback failed:", e);
+    const errorMsg = e instanceof Error ? e.message : String(e);
+    console.log(`❌ [route] okx failed: err=${errorMsg}`);
   }
   return NextResponse.json({ venue: "okx", symbol, asOf: new Date().toISOString(), ticker: { bid:0, ask:0, mid:0, ts:new Date().toISOString() }, ohlcv: [], error: "okx_unavailable" }, { status: 502 });
 }
