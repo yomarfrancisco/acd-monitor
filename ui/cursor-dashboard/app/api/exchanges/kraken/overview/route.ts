@@ -10,37 +10,15 @@ const PROXY_BASE =
   process.env.NEXT_PUBLIC_BINANCE_PROXY_BASE ??
   "https://binance-proxy-broken-night-96.fly.dev";
 
-// ---- Kraken response shapes ----
+// ---- Kraken response shapes (permissive) ----
 const KrakenOHLC = z.object({
   error: z.array(z.any()).optional(),
-  result: z
-    .object({
-      last: z.number().optional(),
-    })
-    .catchall(
-      z.array(
-        z.tuple([
-          z.number(), // ts (seconds)
-          z.string(), // o
-          z.string(), // h
-          z.string(), // l
-          z.string(), // c
-          z.string(), // v
-          z.number().optional(), // trade count (ignored)
-        ])
-      )
-    ),
+  result: z.record(z.array(z.any())), // Accept any array length, we'll normalize
 });
 
 const KrakenTicker = z.object({
   error: z.array(z.any()).optional(),
-  result: z.record(
-    z.object({
-      a: z.tuple([z.string(), z.string().optional(), z.string().optional()]), // ask, ...
-      b: z.tuple([z.string(), z.string().optional(), z.string().optional()]), // bid, ...
-      // other fields ignored
-    })
-  ),
+  result: z.record(z.any()), // Accept any structure, we'll extract bid/ask
 });
 
 // Utility: first value from object map
@@ -49,10 +27,16 @@ function firstValue<T>(obj: Record<string, T>): T | undefined {
   return undefined;
 }
 
-// Map Kraken pair for BTCUSDT -> XBTUSDT
+// Map Kraken pair for BTCUSDT -> XBTUSDT (with fallback)
 function toKrakenPair(symbol: string): string {
   if (symbol.toUpperCase() === "BTCUSDT") return "XBTUSDT";
   return symbol.toUpperCase();
+}
+
+// Get fallback pair for unknown asset errors
+function getKrakenFallbackPair(pair: string): string | null {
+  if (pair === "XBTUSDT") return "XBTUSD";
+  return null;
 }
 
 // Timeframe to interval mapping for Kraken
@@ -106,14 +90,15 @@ export async function GET(req: Request) {
   }
 
   // --- 2) Direct proxy fallback via Fly multi-exchange proxy ---
-  try {
-    const krPair = toKrakenPair(symbol);
-    const ohlcUrl = `${PROXY_BASE}/kraken/0/public/OHLC?pair=${encodeURIComponent(krPair)}&interval=${interval}`;
-    const tickerUrl = `${PROXY_BASE}/kraken/0/public/Ticker?pair=${encodeURIComponent(krPair)}`;
-    
-    console.log(`🛰️ [route] kraken pair mapping: ${symbol} → ${krPair}`);
-    console.log(`🛰️ [route] kraken request: ${ohlcUrl}`);
-    console.log(`🛰️ [route] kraken request: ${tickerUrl}`);
+  let krPair = toKrakenPair(symbol);
+  let fallbackAttempted = false;
+  
+  while (true) {
+    try {
+      const ohlcUrl = `${PROXY_BASE}/kraken/0/public/OHLC?pair=${encodeURIComponent(krPair)}&interval=${interval}`;
+      const tickerUrl = `${PROXY_BASE}/kraken/0/public/Ticker?pair=${encodeURIComponent(krPair)}`;
+      
+      console.log(`🛰️ [route] kraken request: ${ohlcUrl} pair=${krPair}`);
 
     // Use our proxy's kraken endpoints
     const [ohlcRes, tickRes] = await Promise.all([
@@ -121,72 +106,138 @@ export async function GET(req: Request) {
       fetch(tickerUrl, { cache: "no-store" }),
     ]);
 
-    if (!ohlcRes.ok || !tickRes.ok) {
-      const t1 = await ohlcRes.text().catch(() => "");
-      const t2 = await tickRes.text().catch(() => "");
-      console.log(`❌ [route] kraken failed: ohlc_status=${ohlcRes.status} ohlc_body=${t1.slice(0, 300)} ticker_status=${tickRes.status} ticker_body=${t2.slice(0, 300)}`);
-      throw new Error(`proxy bad: ohlc=${ohlcRes.status}(${t1.slice(0, 120)}) ticker=${tickRes.status}(${t2.slice(0, 120)})`);
-    }
+      if (!ohlcRes.ok || !tickRes.ok) {
+        const t1 = await ohlcRes.text().catch(() => "");
+        const t2 = await tickRes.text().catch(() => "");
+        console.log(`❌ [route] kraken failed: ohlc_status=${ohlcRes.status} ohlc_body=${t1.slice(0, 300)} ticker_status=${tickRes.status} ticker_body=${t2.slice(0, 300)}`);
+        
+        // Check for unknown asset pair error and try fallback
+        if (!fallbackAttempted && (t1.includes("EQuery:Unknown asset pair") || t2.includes("EQuery:Unknown asset pair"))) {
+          const fallbackPair = getKrakenFallbackPair(krPair);
+          if (fallbackPair) {
+            console.log(`↩️ [route] kraken fallback: ${krPair} → ${fallbackPair} (unknown pair)`);
+            krPair = fallbackPair;
+            fallbackAttempted = true;
+            continue; // Retry with fallback pair
+          }
+        }
+        throw new Error(`proxy bad: ohlc=${ohlcRes.status}(${t1.slice(0, 120)}) ticker=${tickRes.status}(${t2.slice(0, 120)})`);
+      }
 
-    const ohlcJson = KrakenOHLC.parse(await ohlcRes.json());
-    const tickJson = KrakenTicker.parse(await tickRes.json());
+      const ohlcJson = KrakenOHLC.parse(await ohlcRes.json());
+      const tickJson = KrakenTicker.parse(await tickRes.json());
 
-    // Extract first pair arrays from result
-    const pairBars = firstValue(ohlcJson.result);
-    if (!Array.isArray(pairBars)) {
-      throw new Error("proxy parse: OHLC payload missing array");
-    }
+      // Check for Kraken API errors
+      if (ohlcJson.error && ohlcJson.error.length > 0) {
+        const errorMsg = ohlcJson.error.join(", ");
+        if (!fallbackAttempted && errorMsg.includes("EQuery:Unknown asset pair")) {
+          const fallbackPair = getKrakenFallbackPair(krPair);
+          if (fallbackPair) {
+            console.log(`↩️ [route] kraken fallback: ${krPair} → ${fallbackPair} (unknown pair)`);
+            krPair = fallbackPair;
+            fallbackAttempted = true;
+            continue; // Retry with fallback pair
+          }
+        }
+        throw new Error(`Kraken API error: ${errorMsg}`);
+      }
 
-    const bars = pairBars
-      .map(([ts, o, h, l, c, v]) => [
-        new Date(Number(ts) * 1000).toISOString(),
-        +o,
-        +h,
-        +l,
-        +c,
-        +v,
-      ])
-      .slice(-300); // Limit to last 300 bars
+      // Extract first pair arrays from result
+      const pairBars = firstValue(ohlcJson.result);
+      if (!Array.isArray(pairBars)) {
+        throw new Error("proxy parse: OHLC payload missing array");
+      }
 
-    const t = firstValue(tickJson.result);
-    const bid = t ? Number(t.b[0]) : 0;
-    const ask = t ? Number(t.a[0]) : 0;
-    const mid = bid && ask ? (bid + ask) / 2 : 0;
-    
-    console.log(`✅ [route] kraken ok: bars=${bars.length}`);
+      // Normalize Kraken OHLC (8-field format: [time, open, high, low, close, vwap, volume, count])
+      const bars = pairBars
+        .map((bar: any[]) => {
+          if (!Array.isArray(bar) || bar.length < 5) {
+            return null; // Skip invalid bars
+          }
+          const [ts, o, h, l, c, vwap, volume, count] = bar;
+          return [
+            new Date(Number(ts) * 1000).toISOString(), // Convert seconds to ISO string
+            Number(o) || 0, // Open
+            Number(h) || 0, // High
+            Number(l) || 0, // Low
+            Number(c) || 0, // Close
+            Number(volume) || 0, // Volume (use volume field, not vwap)
+          ];
+        })
+        .filter(bar => bar !== null) // Remove invalid bars
+        .slice(-300); // Limit to last 300 bars
 
-    console.log(`[UI API KRK] using proxy fallback (bars=${bars.length})`);
+      // Extract ticker data
+      const tickerData = firstValue(tickJson.result);
+      let bid = 0, ask = 0;
+      
+      if (tickerData && typeof tickerData === 'object') {
+        // Handle both array and object formats for bid/ask
+        if (Array.isArray(tickerData.b)) {
+          bid = Number(tickerData.b[0]) || 0;
+        } else if (typeof tickerData.b === 'string') {
+          bid = Number(tickerData.b) || 0;
+        }
+        
+        if (Array.isArray(tickerData.a)) {
+          ask = Number(tickerData.a[0]) || 0;
+        } else if (typeof tickerData.a === 'string') {
+          ask = Number(tickerData.a) || 0;
+        }
+      }
+      
+      const mid = bid && ask ? (bid + ask) / 2 : 0;
+      
+      console.log(`✅ [route] kraken ok: bars=${bars.length} pair=${krPair}`);
 
-    if (bars.length === 0) {
-      throw new Error("proxy returned 0 bars");
-    }
+      if (bars.length === 0) {
+        throw new Error("proxy returned 0 bars");
+      }
 
-    const payload = {
-      venue: "kraken" as const,
-      symbol: symbol.toUpperCase(),
-      asOf: new Date().toISOString(),
-      ticker: {
-        bid,
-        ask,
-        mid,
-        ts: new Date().toISOString(),
-      },
-      ohlcv: bars,
-    };
-
-    return NextResponse.json(payload, { status: 200 });
-  } catch (err) {
-    console.error("[UI API KRK] proxy fallback failed:", err);
-    return NextResponse.json(
-      {
-        venue: "kraken",
+      const payload = {
+        venue: "kraken" as const,
         symbol: symbol.toUpperCase(),
         asOf: new Date().toISOString(),
-        ticker: { bid: 0, ask: 0, mid: 0, ts: new Date().toISOString() },
-        ohlcv: [],
-        error: "kraken_unavailable",
-      },
-      { status: 502 }
-    );
+        ticker: {
+          bid,
+          ask,
+          mid,
+          ts: new Date().toISOString(),
+        },
+        ohlcv: bars,
+      };
+
+      return NextResponse.json(payload, { status: 200 });
+    } catch (e) {
+      const errorMsg = e instanceof Error ? e.message : String(e);
+      console.log(`❌ [route] kraken failed: err=${errorMsg}`);
+      
+      // If we haven't tried fallback yet and this is an unknown pair error, try fallback
+      if (!fallbackAttempted && errorMsg.includes("EQuery:Unknown asset pair")) {
+        const fallbackPair = getKrakenFallbackPair(krPair);
+        if (fallbackPair) {
+          console.log(`↩️ [route] kraken fallback: ${krPair} → ${fallbackPair} (unknown pair)`);
+          krPair = fallbackPair;
+          fallbackAttempted = true;
+          continue; // Retry with fallback pair
+        }
+      }
+      
+      // If we've tried fallback or no fallback available, break out of retry loop
+      break;
+    }
   }
+  
+  // If we get here, all attempts failed
+  return NextResponse.json(
+    {
+      venue: "kraken",
+      symbol: symbol.toUpperCase(),
+      asOf: new Date().toISOString(),
+      ticker: { bid: 0, ask: 0, mid: 0, ts: new Date().toISOString() },
+      ohlcv: [],
+      error: "kraken_unavailable",
+    },
+    { status: 502 }
+  );
 }

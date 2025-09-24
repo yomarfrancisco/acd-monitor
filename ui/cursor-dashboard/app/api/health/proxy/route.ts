@@ -25,7 +25,8 @@ export async function GET(req: Request) {
           status: response.status,
           bars: data.ohlcv?.length ?? 0,
           venue: data.venue,
-          symbol: data.symbol
+          symbol: data.symbol,
+          pair: venue === 'kraken' ? (data.symbol === 'BTCUSDT' ? 'XBTUSDT' : data.symbol) : undefined
         };
       } else {
         const errorText = await response.text().catch(() => "");
