@@ -369,3 +369,4 @@ Cross-venue mirroring exceeded thresholds with composite coordination score of 0
 *This report is generated from the v1.6 Baseline Standard and adapted for BaFin/EU regulatory requirements. All technical analysis derives from the surveillance report foundation. v1.6 enhancements include case-backed threshold validation, BaFin/EU-specific regulatory mapping, and integrated legal disclaimers.*
 
 
+

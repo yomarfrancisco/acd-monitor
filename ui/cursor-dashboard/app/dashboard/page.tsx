@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { CalendarIcon, Clock } from "lucide-react";
 import { TimeseriesChart } from "@/components/TimeseriesChart";
+import { useExchangeData } from "@/contexts/ExchangeDataContext";
 
 // PageWrapper removed - was causing layout conflicts
 
@@ -59,6 +60,7 @@ export default function Page() {
   const [selectedTimeframe, setSelectedTimeframe] = useState<"30d" | "6m" | "1y" | "ytd">("ytd");
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const { exchangeData } = useExchangeData();
 
   useEffect(() => {
     setIsClient(true);
@@ -67,6 +69,23 @@ export default function Page() {
   const currentData = selectedTimeframe === "30d" ? analyticsData30d :
                      selectedTimeframe === "6m" ? analyticsData6m :
                      selectedTimeframe === "1y" ? analyticsData1y : analyticsDataYTD;
+
+  // Determine which avatars to show based on available exchange data
+  const getAvailableVenues = () => {
+    if (exchangeData.length > 0) {
+      // Extract venues from exchange data
+      const venues = []
+      if (exchangeData.some(point => point.fnb !== undefined)) venues.push('binance')
+      if (exchangeData.some(point => point.absa !== undefined)) venues.push('okx')
+      if (exchangeData.some(point => point.standard !== undefined)) venues.push('kraken')
+      if (exchangeData.some(point => point.nedbank !== undefined)) venues.push('bybit')
+      return venues
+    }
+    // Fallback to all venues for demo data
+    return ['binance', 'okx', 'kraken', 'bybit']
+  }
+
+  const availableVenues = getAvailableVenues()
 
   return (
     <div className="space-y-6">
@@ -177,34 +196,24 @@ export default function Page() {
                     </div>
                   </div>
                   <div className="flex items-center -space-x-2">
-                    <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white">
-                      <img 
-                        src="/binance_circle.png" 
-                        alt="Binance" 
-                        className="w-full h-full object-contain p-0.5"
-                      />
-                    </div>
-                    <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-80">
-                      <img 
-                        src="/coinbase_circle.png" 
-                        alt="Coinbase" 
-                        className="w-full h-full object-contain p-0.5"
-                      />
-                    </div>
-                    <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-60">
-                      <img 
-                        src="/bybit_circle.png" 
-                        alt="Bybit" 
-                        className="w-full h-full object-contain p-0.5"
-                      />
-                    </div>
-                    <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-40">
-                      <img 
-                        src="/kraken_circle.png" 
-                        alt="Kraken" 
-                        className="w-full h-full object-contain p-0.5"
-                      />
-                    </div>
+                    {availableVenues.map((venue, index) => {
+                      const venueConfig = {
+                        binance: { src: "/binance_circle.png", alt: "Binance", opacity: "opacity-100" },
+                        okx: { src: "/coinbase_circle.png", alt: "Coinbase", opacity: "opacity-80" },
+                        bybit: { src: "/bybit_circle.png", alt: "Bybit", opacity: "opacity-60" },
+                        kraken: { src: "/kraken_circle.png", alt: "Kraken", opacity: "opacity-40" }
+                      }
+                      const config = venueConfig[venue as keyof typeof venueConfig]
+                      return (
+                        <div key={venue} className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white">
+                          <img 
+                            src={config.src}
+                            alt={config.alt}
+                            className={`w-full h-full object-contain p-0.5 ${config.opacity}`}
+                          />
+                        </div>
+                      )
+                    })}
                   </div>
                 </div>
               </div>

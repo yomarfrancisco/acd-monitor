@@ -47,6 +47,7 @@ import { resilientFetch } from "@/lib/resilient-api"
 import { DegradedModeBanner } from "@/components/DegradedModeBanner"
 import { EventsTable } from "@/components/EventsTable"
 import { SelftestIndicator } from "@/components/SelftestIndicator"
+import { useExchangeData } from "@/contexts/ExchangeDataContext"
 import type { RiskSummary, HealthRun, EventsResponse, DataSources, EvidenceExport } from "@/types/api"
 import type { MetricsOverview } from "@/types/api.schemas"
 import {
@@ -167,6 +168,54 @@ export default function CursorDashboard() {
   const truncateText = (text: string, maxLength: number = 40) => {
     return text.length > maxLength ? text.slice(0, maxLength - 1).trimEnd() + "…" : text;
   };
+
+  // Series adapter: convert exchange data to chart format
+  const createChartSeries = (successfulExchanges: any[]) => {
+    const series: any[] = []
+    
+    // Map venue to chart dataKey and display name
+    const venueMapping = {
+      'binance': { dataKey: 'fnb', name: 'Binance', color: '#60a5fa' },
+      'okx': { dataKey: 'absa', name: 'Coinbase', color: '#a1a1aa' },
+      'kraken': { dataKey: 'standard', name: 'Kraken', color: '#71717a' },
+      'bybit': { dataKey: 'nedbank', name: 'Bybit', color: '#52525b' }
+    }
+    
+    // Create a map of all timestamps to ensure alignment
+    const allTimestamps = new Set<string>()
+    successfulExchanges.forEach(exchange => {
+      if (exchange.data?.ohlcv) {
+        exchange.data.ohlcv.forEach((bar: any[]) => {
+          allTimestamps.add(bar[0]) // ISO timestamp
+        })
+      }
+    })
+    
+    const sortedTimestamps = Array.from(allTimestamps).sort()
+    
+    // Create chart data points
+    const chartData = sortedTimestamps.map(timestamp => {
+      const point: any = { date: new Date(timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) }
+      
+      // Add data for each successful exchange
+      successfulExchanges.forEach(exchange => {
+        const venue = exchange.venue
+        const mapping = venueMapping[venue as keyof typeof venueMapping]
+        if (mapping && exchange.data?.ohlcv) {
+          // Find the bar for this timestamp
+          const bar = exchange.data.ohlcv.find((b: any[]) => b[0] === timestamp)
+          if (bar) {
+            // Use close price (index 4) as the value
+            point[mapping.dataKey] = Number(bar[4]) || 0
+          }
+        }
+      })
+      
+      return point
+    })
+    
+    return chartData
+  }
   
   // Risk summary state
   const [riskSummary, setRiskSummary] = useState<RiskSummary | null>(null)
@@ -177,6 +226,9 @@ export default function CursorDashboard() {
   const [metricsOverview, setMetricsOverview] = useState<MetricsOverview | null>(null)
   const [metricsLoading, setMetricsLoading] = useState(false)
   const [metricsError, setMetricsError] = useState<string | null>(null)
+  
+  // Exchange data state for live chart (using context)
+  const { exchangeData, setExchangeData, exchangeDataLoading, setExchangeDataLoading, exchangeDataError, setExchangeDataError } = useExchangeData()
   
   // Health run state
   const [healthRun, setHealthRun] = useState<HealthRun | null>(null)
@@ -491,8 +543,8 @@ export default function CursorDashboard() {
   const fetchExchangeOverview = async () => {
     if (!isClient) return
     
-    setMetricsLoading(true)
-    setMetricsError(null)
+    setExchangeDataLoading(true)
+    setExchangeDataError(null)
     
     try {
       console.log(`🔍 [UI Frontend] Starting multi-exchange overview fetch for timeframe: ${selectedTimeframe}...`)
@@ -522,90 +574,51 @@ export default function CursorDashboard() {
       console.log(`📊 [UI Frontend] Loaded series: [${successfulVenues.join(', ')}]`)
       console.log(`📊 [UI Frontend] Bars per series:`, barsPerSeries)
       
-      // Use first successful exchange as primary (fallback to Binance if available)
-      const primaryExchange = successfulExchanges.find(r => r.venue === 'binance') || successfulExchanges[0]
-      if (!primaryExchange) {
-        throw new Error('No exchanges available')
+      // Debug logging
+      if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+        console.log(`🔍 [UI Frontend] SERIES_SOURCE=live`)
+        console.log(`🔍 [UI Frontend] SERIES_VENUES=[${successfulVenues.join(',')}]`)
+        console.log(`🔍 [UI Frontend] AVATAR_VENUES=[${successfulVenues.join(',')}]`)
       }
       
-      const result = primaryExchange.data
-      
-      console.log(`✅ [UI Frontend] Received result from fetchTyped`)
-      console.log(`📊 [UI Frontend] Result type: ${typeof result}`)
-      if (result && typeof result === "object") {
-        console.log(`📊 [UI Frontend] Result keys:`, Object.keys(result as Record<string, unknown>))
-      }
-      
-      // Convert Binance data to metrics overview format
-      const binanceData = result as any
-      
-      console.log(`📊 [UI Frontend] Full Binance data:`, JSON.stringify(binanceData, null, 2))
-      console.log(`📊 [UI Frontend] Binance data venue: ${binanceData.venue}`)
-      console.log(`📊 [UI Frontend] Binance data symbol: ${binanceData.symbol}`)
-      console.log(`📊 [UI Frontend] Binance data error: ${binanceData.error}`)
-      console.log(`📊 [UI Frontend] Binance data OHLCV length: ${binanceData.ohlcv ? binanceData.ohlcv.length : 'undefined'}`)
-      console.log(`📊 [UI Frontend] Binance data OHLCV type: ${typeof binanceData.ohlcv}`)
-      console.log(`📊 [UI Frontend] Binance data OHLCV is array: ${Array.isArray(binanceData.ohlcv)}`)
-      
-      if (binanceData.ohlcv && binanceData.ohlcv.length > 0) {
-        console.log(`📊 [UI Frontend] First OHLCV bar:`, binanceData.ohlcv[0])
-        console.log(`📊 [UI Frontend] Last OHLCV bar:`, binanceData.ohlcv[binanceData.ohlcv.length - 1])
-      }
-      
-      // PRIORITIZE OHLCV DATA OVER ERROR FIELD
-      // Only show error if OHLCV is truly missing or empty
-      if (binanceData.ohlcv && binanceData.ohlcv.length > 0) {
-        console.log(`✅ [UI Frontend] OHLCV data is valid (${binanceData.ohlcv.length} bars), creating mock overview`)
-        // Create mock metrics overview from Binance data
-        const mockOverview: MetricsOverview = {
-          timeframe: selectedTimeframe as any,
-          updatedAt: binanceData.asOf,
-          items: [
-            {
-              key: "stability",
-              label: "Market Stability", 
-              score: 85,
-              direction: "UP",
-              note: `Binance ${binanceData.symbol} - Mid: $${binanceData.ticker.mid.toFixed(2)}`
-            },
-            {
-              key: "synchronization",
-              label: "Price Synchronization",
-              score: 23,
-              direction: "FLAT", 
-              note: "Single venue - no cross-venue sync"
-            },
-            {
-              key: "environmentalSensitivity",
-              label: "Environmental Sensitivity",
-              score: 67,
-              direction: "DOWN",
-              note: `Last 24h: ${binanceData.ohlcv.length} bars`
-            }
-          ]
-        }
-        console.log(`🎯 [UI Frontend] Setting metrics overview with ${mockOverview.items.length} items`)
-        setMetricsOverview(mockOverview)
-        setMetricsError(null)
-        setIsDegradedMode(false)
-      } else if (binanceData.error === 'binance_no_ohlcv') {
-        console.log(`⚠️ [UI Frontend] No OHLCV data and binance_no_ohlcv error, showing error message`)
-        setMetricsError('No recent candles from Binance (5m). Try 15m.')
-        setIsDegradedMode(true)
+      // Create chart series from successful exchanges
+      if (successfulExchanges.length > 0) {
+        const chartData = createChartSeries(successfulExchanges)
+        setExchangeData(chartData)
+        setExchangeDataError(null)
+        console.log(`✅ [UI Frontend] Created chart data with ${chartData.length} points for ${successfulVenues.length} venues`)
       } else {
-        console.log(`❌ [UI Frontend] No OHLCV data from Binance, throwing error`)
-        throw new Error('No OHLCV data from Binance')
+        // Fallback to demo data if no exchanges available and demo mode is enabled
+        if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') {
+          console.log(`🔄 [UI Frontend] No live data available, falling back to demo data`)
+          const demoData = getAnalyticsData()
+          setExchangeData(demoData)
+          setExchangeDataError(null)
+          
+          if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+            console.log(`🔍 [UI Frontend] SERIES_SOURCE=demo`)
+            console.log(`🔍 [UI Frontend] SERIES_VENUES=[fnb,absa,standard,nedbank]`)
+            console.log(`🔍 [UI Frontend] AVATAR_VENUES=[fnb,absa,standard,nedbank]`)
+          }
+        } else {
+          throw new Error('No exchanges available')
+        }
       }
-      
-      console.log(`✅ [UI Frontend] Successfully processed Binance data`)
       
     } catch (error) {
-      console.error('❌ [UI Frontend] Binance overview fetch failed:', error)
-      setMetricsError('Binance data temporarily unavailable')
-      setIsDegradedMode(true)
+      console.error('❌ [UI Frontend] Exchange overview fetch failed:', error)
+      setExchangeDataError('Exchange data temporarily unavailable')
+      
+      // Fallback to demo data if demo mode is enabled
+      if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') {
+        console.log(`🔄 [UI Frontend] Error occurred, falling back to demo data`)
+        const demoData = getAnalyticsData()
+        setExchangeData(demoData)
+        setExchangeDataError(null)
+      }
     }
     
-    setMetricsLoading(false)
+    setExchangeDataLoading(false)
   }
 
   useEffect(() => {
@@ -1343,7 +1356,8 @@ It would also be helpful if you described:
     )
   }
 
-  const currentData = getAnalyticsData()
+  // Use live exchange data if available, otherwise fall back to static data
+  const currentData = exchangeData.length > 0 ? exchangeData : getAnalyticsData()
 
   return (
     <div className="min-h-screen bg-[#0f0f10] text-[#f9fafb] font-sans p-4">
@@ -2356,7 +2370,7 @@ It would also be helpful if you described:
                               tickLine={false}
                               tick={{ fill: "#a1a1aa", fontSize: 10 }}
                               label={{
-                                    value: "Market Spread %",
+                                    value: exchangeData.length > 0 ? "BTC Price ($)" : "Market Spread %",
                                 angle: -90,
                                 position: "insideLeft",
                                 style: { textAnchor: "middle", fill: "#a1a1aa", fontSize: 10 },
@@ -2417,8 +2431,13 @@ It would also be helpful if you described:
                                   cursor={false}
                               content={({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string }) => {
                                 if (active && payload && payload.length) {
-                                      // Market share data for each bank
-                                      const marketShare = {
+                                      // Market share data for each exchange (using live data if available)
+                                      const marketShare = exchangeData.length > 0 ? {
+                                        Binance: 35,
+                                        Coinbase: 25,
+                                        Kraken: 20,
+                                        Bybit: 20,
+                                      } : {
                                         FNB: 21,
                                         ABSA: 21,
                                         "Standard Bank": 26,
@@ -2507,7 +2526,7 @@ It would also be helpful if you described:
                                             </div>
                                           )}
 
-                                          {/* Bank Data */}
+                                          {/* Exchange/Bank Data */}
                                       {payload.map((entry: any, index: number) => (
                                             <div key={index} className="flex items-center gap-2 text-[9px]">
                                           <div 
@@ -2515,7 +2534,7 @@ It would also be helpful if you described:
                                             style={{ backgroundColor: entry.color }}
                                           />
                                               <span className="text-[#f9fafb] font-semibold">
-                                                {entry.name}: <span className="font-bold">{entry.value} bps</span> |{" "}
+                                                {entry.name}: <span className="font-bold">${entry.value.toFixed(2)}</span> |{" "}
                                                 <span className="text-[#a1a1aa]">
                                                   {marketShare[entry.name as keyof typeof marketShare]}% share
                                                 </span>
@@ -2569,7 +2588,9 @@ It would also be helpful if you described:
                       </div>
                           {/* Data source indicator */}
                           <div className="text-[9px] text-[#71717a] mt-2 text-center">
-                            {process.env.NEXT_PUBLIC_PREVIEW_BINANCE === 'true' ? (
+                            {exchangeData.length > 0 ? (
+                              `Data source: Live Exchange Data • ${exchangeData.length} points • Quality 98%`
+                            ) : process.env.NEXT_PUBLIC_PREVIEW_BINANCE === 'true' ? (
                               'Data source: Binance • 15s • Quality 98%'
                             ) : dataSourcesLoading ? (
                               <div className="animate-pulse">

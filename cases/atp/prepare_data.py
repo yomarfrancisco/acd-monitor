@@ -228,3 +228,4 @@ if __name__ == "__main__":
     print(f"Date range: {atp_data['date'].min()} to {atp_data['date'].max()}")
     print(f"Coordination periods: {atp_data['coordination_period'].sum()} days")
     print(f"Airline columns: {[col for col in atp_data.columns if col.startswith('Airline_')]}")
+

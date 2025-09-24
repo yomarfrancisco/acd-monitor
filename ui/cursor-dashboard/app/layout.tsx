@@ -4,6 +4,7 @@ import { Inter } from "next/font/google"
 import { Suspense } from "react"
 import "./globals.css"
 import 'katex/dist/katex.min.css'
+import { ExchangeDataProvider } from "@/contexts/ExchangeDataContext"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -39,7 +40,9 @@ export default function RootLayout({
           BEACON v3 — root app/layout.tsx — {process.env.VERCEL_GIT_COMMIT_SHA?.slice(0,7) ?? 'no-sha'}
         </div> */}
         
-        <Suspense fallback={null}>{children}</Suspense>
+        <ExchangeDataProvider>
+          <Suspense fallback={null}>{children}</Suspense>
+        </ExchangeDataProvider>
       </body>
     </html>
   )
