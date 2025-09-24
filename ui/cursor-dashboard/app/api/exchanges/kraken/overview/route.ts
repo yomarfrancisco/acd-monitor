@@ -13,7 +13,7 @@ const PROXY_BASE =
 // ---- Kraken response shapes (permissive) ----
 const KrakenOHLC = z.object({
   error: z.array(z.any()).optional(),
-  result: z.record(z.array(z.any())), // Accept any array length, we'll normalize
+  result: z.record(z.union([z.array(z.any()), z.number()])), // Accept arrays or numbers (like 'last')
 });
 
 const KrakenTicker = z.object({
