@@ -49,6 +49,7 @@ import { EventsTable } from "@/components/EventsTable"
 import { SelftestIndicator } from "@/components/SelftestIndicator"
 import { useExchangeData } from "../contexts/ExchangeDataContext"
 import { getAvailableUiVenues, uiKeyToDataKey, type UiVenue } from "../lib/venueMapping"
+import { computePriceLeadership, type DataKey } from "../lib/leadership"
 import type { RiskSummary, HealthRun, EventsResponse, DataSources, EvidenceExport } from "@/types/api"
 import type { MetricsOverview } from "@/types/api.schemas"
 import {
@@ -1373,6 +1374,29 @@ It would also be helpful if you described:
   // Use live exchange data if available, otherwise fall back to static data
   const currentData = exchangeData.length > 0 ? exchangeData : getAnalyticsData()
 
+  // Price leadership calculation
+  const keyByVenue: Record<string, DataKey> = {
+    binance: 'fnb',
+    coinbase: 'absa',
+    bybit: 'nedbank',
+    kraken: 'standard',
+  };
+
+  const activeKeys = (availableUiVenues ?? [])
+    .map(v => keyByVenue[v])
+    .filter(Boolean) as DataKey[];
+
+  const leadership = computePriceLeadership(currentData, activeKeys);
+
+  // Render the metric (fallback when <2 venues or no signal)
+  const leadershipPctText = leadership.pct == null
+    ? 'N/A'
+    : Math.round(leadership.pct).toString();
+
+  const leadershipCaption = leadership.pct == null
+    ? 'Requires multiple venues'
+    : `Leader: ${leadership.leader}`;
+
   return (
     <div className="min-h-screen bg-[#0f0f10] text-[#f9fafb] font-sans p-4">
       {/* Hidden file inputs for upload menu */}
@@ -2285,25 +2309,10 @@ It would also be helpful if you described:
                               <div className="flex items-center justify-between">
                         <div>
                                   <div className="text-xl font-bold text-[#f9fafb]">
-                                    {process.env.NEXT_PUBLIC_PREVIEW_BINANCE === 'true' ? (
-                                      "N/A"
-                                    ) : (
-                                      selectedTimeframe === "30d" ? "78" : 
-                                     selectedTimeframe === "6m" ? "82" : 
-                                       selectedTimeframe === "1y" ? "79" : "84"
-                                    )}%
+                                    {leadershipPctText}%
                         </div>
                                   <div className="text-xs text-[#a1a1aa]">
-                                    {process.env.NEXT_PUBLIC_PREVIEW_BINANCE === 'true' ? (
-                                      "Requires multiple venues"
-                                    ) : (
-                                      <>
-                                    {selectedTimeframe === "30d" ? "30d" : 
-                                     selectedTimeframe === "6m" ? "6m" : 
-                                     selectedTimeframe === "1y" ? "1y" : 
-                                     selectedTimeframe === "ytd" ? "YTD" : "Cal"} Price Leader
-                                      </>
-                                    )}
+                                    {leadershipCaption}
                                   </div>
                                 </div>
                                 {/* Venue Avatars (dynamic, in lockstep with series) */}
