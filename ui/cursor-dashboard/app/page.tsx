@@ -47,7 +47,7 @@ import { resilientFetch } from "@/lib/resilient-api"
 import { DegradedModeBanner } from "@/components/DegradedModeBanner"
 import { EventsTable } from "@/components/EventsTable"
 import { SelftestIndicator } from "@/components/SelftestIndicator"
-import { useExchangeData } from "@/contexts/ExchangeDataContext"
+import { useExchangeData } from "../contexts/ExchangeDataContext"
 import { getAvailableUiVenues, uiKeyToDataKey, type UiVenue } from "../lib/venueMapping"
 import type { RiskSummary, HealthRun, EventsResponse, DataSources, EvidenceExport } from "@/types/api"
 import type { MetricsOverview } from "@/types/api.schemas"
@@ -2306,41 +2306,50 @@ It would also be helpful if you described:
                                     )}
                                   </div>
                                 </div>
-                                {/* FANS Avatar Flow */}
-                                <div className="flex items-center -space-x-2">
-                                  <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white">
-                                    <img 
-                                      src="/binance_circle.png" 
-                                      alt="Binance" 
-                                      className="w-full h-full object-contain p-0.5"
-                                    />
-                                  </div>
-                                  {process.env.NEXT_PUBLIC_PREVIEW_BINANCE !== 'true' && (
-                                    <>
-                                      <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-80">
-                                        <img 
-                                          src="/coinbase_circle.png" 
-                                          alt="Coinbase" 
-                                          className="w-full h-full object-contain p-0.5"
-                                        />
+                                {/* Venue Avatars (dynamic, in lockstep with series) */}
+                                {(() => {
+                                  const { availableUiVenues } = useExchangeData();
+
+                                  // optional: gradient opacity for visual hierarchy
+                                  const opacities = [1, 0.8, 0.6, 0.4];
+
+                                  // fallback if nothing is available (should be rare)
+                                  if (!availableUiVenues || availableUiVenues.length === 0) {
+                                    return (
+                                      <div className="flex items-center -space-x-2">
+                                        <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white">
+                                          <img src="/binance_circle.png" alt="binance" className="w-full h-full object-contain p-0.5" />
+                                        </div>
                                       </div>
-                                      <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-60">
-                                        <img 
-                                          src="/bybit_circle.png" 
-                                          alt="Bybit" 
-                                          className="w-full h-full object-contain p-0.5"
-                                        />
-                                      </div>
-                                      <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-40">
-                                        <img 
-                                          src="/kraken_circle.png" 
-                                          alt="Kraken" 
-                                          className="w-full h-full object-contain p-0.5"
-                                        />
-                                      </div>
-                                    </>
-                                  )}
-                                </div>
+                                    );
+                                  }
+
+                                  if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+                                    // one parity log here is enough to diagnose avatar/series mismatches
+                                    // eslint-disable-next-line no-console
+                                    console.debug('[AVATAR] availableUiVenues', availableUiVenues);
+                                  }
+
+                                  return (
+                                    <div className="flex items-center -space-x-2">
+                                      {availableUiVenues.map((v, i) => (
+                                        <div
+                                          key={v}
+                                          className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white"
+                                          style={{ opacity: opacities[i] ?? 0.4 }}
+                                          title={v}
+                                        >
+                                          <img
+                                            src={`/${v}_circle.png`}
+                                            alt={v}
+                                            className="w-full h-full object-contain p-0.5"
+                                            loading="eager"
+                                          />
+                                        </div>
+                                      ))}
+                                    </div>
+                                  );
+                                })()}
                         </div>
                       </div>
 
