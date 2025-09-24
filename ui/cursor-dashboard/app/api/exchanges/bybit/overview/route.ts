@@ -24,8 +24,8 @@ export async function GET(req: Request) {
   try {
     const iv = bybitInterval(tf);
     const [barsRes, tkRes] = await Promise.all([
-      fetch(`${PROXY_BASE}/bybit/kline?category=spot&symbol=${symbol}&interval=${iv}&limit=288`, { cache: "no-store" }),
-      fetch(`${PROXY_BASE}/bybit/tickers?category=spot&symbol=${symbol}`, { cache: "no-store" }),
+      fetch(`${PROXY_BASE}/bybit/v5/market/kline?category=spot&symbol=${symbol}&interval=${iv}&limit=288`, { cache: "no-store" }),
+      fetch(`${PROXY_BASE}/bybit/v5/market/tickers?category=spot&symbol=${symbol}`, { cache: "no-store" }),
     ]);
     const barsJson = await barsRes.json();
     const tkJson = await tkRes.json();

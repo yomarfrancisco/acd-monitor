@@ -106,13 +106,13 @@ export async function GET(req: Request) {
     // Use our proxy's kraken endpoints
     const [ohlcRes, tickRes] = await Promise.all([
       fetch(
-        `${PROXY_BASE}/kraken/ohlc?pair=${encodeURIComponent(
+        `${PROXY_BASE}/kraken/0/public/OHLC?pair=${encodeURIComponent(
           krPair
         )}&interval=${interval}`,
         { cache: "no-store" }
       ),
       fetch(
-        `${PROXY_BASE}/kraken/ticker?pair=${encodeURIComponent(krPair)}`,
+        `${PROXY_BASE}/kraken/0/public/Ticker?pair=${encodeURIComponent(krPair)}`,
         { cache: "no-store" }
       ),
     ]);
