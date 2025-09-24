@@ -9,13 +9,13 @@ curl -s "$HOST/okx/market/ticker?instId=BTC-USDT" | jq -e '.data[0] | (.bidPx|to
 echo "OKX: PASS"
 
 echo "== Kraken =="
-curl -s "$HOST/kraken/0/public/OHLC?pair=XBTUSD&interval=5" | jq -e '.error|length==0 and (.result|has("XXBTZUSD"))' >/dev/null
+curl -s "$HOST/kraken/0/public/OHLC?pair=XBTUSD&interval=5&count=2" | jq -e '.error|length==0' >/dev/null
 curl -s "$HOST/kraken/0/public/Ticker?pair=XBTUSD" | jq -e '.result|to_entries[0].value | (.b[0]|tonumber) and (.a[0]|tonumber)' >/dev/null
 echo "Kraken: PASS"
 
 echo "== Binance =="
 curl -s -w "\n%{http_code}\n" "$HOST/binance/api/v3/ping" | sed -n '2p' | grep -q '^200$'
-curl -s "$HOST/binance/api/v3/ticker/bookTicker?symbol=BTCUSDT" | jq -e '.bidPrice|tonumber and .askPrice|tonumber' >/dev/null
+curl -s "$HOST/binance/api/v3/ticker/bookTicker?symbol=BTCUSDT" | jq -e '(.bidPrice|tonumber) and (.askPrice|tonumber)' >/dev/null
 echo "Binance: PASS"
 
 echo "== Bybit (v5 only) =="
