@@ -41,6 +41,11 @@ export async function GET(request: NextRequest) {
     // Use server env var (not NEXT_PUBLIC)
     const PROXY = process.env.PROXY_HOST; // e.g., https://<LIVE_FLY_APP_HOST>
     
+    // Log environment for debugging
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[env] PROXY_HOST=', process.env.PROXY_HOST);
+    }
+    
     // Build URL with fallback to direct Coinbase
     const base = PROXY ?? 'https://api.exchange.coinbase.com';
     const url = new URL(`/coinbase/products/${symbol}/candles`, PROXY ? PROXY : 'https://api.exchange.coinbase.com');
