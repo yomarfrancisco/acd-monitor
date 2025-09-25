@@ -1,21 +1,20 @@
-import { VENUES, VenueKey } from './venues';
+const isNum = (x: unknown): x is number => Number.isFinite(x as number);
 
 export const latestCommonIndex = (
-  aligned: Record<VenueKey, Array<[number, number | null]>>,
-): { ts: number | null; values: Record<VenueKey, number> | null } => {
-  // assume all arrays share the same axis (same length / same ts order)
-  const anyVenue = VENUES[0];
-  const rows = aligned[anyVenue] ?? [];
-  for (let i = rows.length - 1; i >= 0; i--) {
-    const ts = rows[i]?.[0];
+  aligned: Record<string, Array<[number, number | null]>>,
+  venues: string[],
+) => {
+  if (!venues.length) return { ts: null, values: null as null };
+  const n = aligned[venues[0]]?.length ?? 0;
+  for (let i = n - 1; i >= 0; i--) {
+    const ts = aligned[venues[0]][i]?.[0];
     if (ts == null) continue;
-
-    const vals: Record<VenueKey, number> = {} as any;
+    const vals: Record<string, number> = {};
     let ok = true;
-    for (const v of VENUES) {
+    for (const v of venues) {
       const val = aligned[v]?.[i]?.[1];
-      if (!Number.isFinite(val)) { ok = false; break; }
-      vals[v] = val as number;
+      if (!isNum(val)) { ok = false; break; }
+      vals[v] = val;
     }
     if (ok) return { ts, values: vals };
   }

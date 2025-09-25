@@ -42,7 +42,7 @@ import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianG
 import { CalendarIcon, Copy, RefreshCw, ImageUp, Camera, FolderClosed, Github, AlertTriangle, Factory } from "lucide-react"
 import { VENUES, VenueKey, VENUE_LABEL, VENUE_COLOR } from "../src/shared/venues";
 import { normalizeOverview, NormalizedOverview } from "../src/shared/series";
-import { buildAxis, alignSeries, AlignedSeries } from "../src/shared/align";
+import { buildAxis, alignOnAxis } from "../src/shared/align";
 import { latestCommonIndex } from "../src/shared/leader";
 import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema, BinanceOverviewSchema } from "@/types/api.schemas"
 import { fetchTyped } from "@/lib/backendAdapter"
@@ -235,8 +235,8 @@ async function fetchOverviewLoose(venue: string, url: string): Promise<Normalize
 
 // VenueKey now imported from shared/venues
 
-function computeLeadershipFromOverviews(aligned: AlignedSeries) {
-  const lc = latestCommonIndex(aligned);
+function computeLeadershipFromOverviews(aligned: Record<string, Array<[number, number | null]>>) {
+  const lc = latestCommonIndex(aligned, VENUES);
   
   if (!lc.values) {
     return { leader: null as VenueKey | null, pct: null as number | null, total: 0 };
@@ -807,7 +807,7 @@ export default function CursorDashboard() {
         coinbase: (normalizedOverviews.coinbase?.ohlcv ?? []) as Array<[number, number | null]>,
       };
       
-      const aligned = alignSeries(seriesData, axis);
+      const aligned = alignOnAxis(seriesData, axis);
       
       // Debug logging
       if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
@@ -816,8 +816,19 @@ export default function CursorDashboard() {
           const nonNull = aligned[v].reduce((a, [,x]) => a + (Number.isFinite(x as number) ? 1 : 0), 0);
           console.log(`[${v}]`, { nonNull });
         }
-        const lc = latestCommonIndex(aligned);
+        const lc = latestCommonIndex(aligned, VENUES);
         console.log('[latestCommonIndex]', lc.ts ? new Date(lc.ts).toISOString() : null, lc.values);
+        
+        // Sample logging for Jan 20, 2025
+        const jan20Ts = Date.UTC(2025, 0, 20);
+        const jan20Idx = axis.findIndex(ts => ts === jan20Ts);
+        if (jan20Idx >= 0) {
+          const sample: Record<string, number | null> = {};
+          for (const v of VENUES) {
+            sample[v] = aligned[v][jan20Idx]?.[1] ?? null;
+          }
+          console.log('[sample]', `ts=${new Date(jan20Ts).toISOString()}`, sample);
+        }
       }
       
       // Convert aligned series to chart format
@@ -996,7 +1007,7 @@ export default function CursorDashboard() {
         coinbase: (normalizedOverviews.coinbase?.ohlcv ?? []) as Array<[number, number | null]>,
       };
       
-      const aligned = alignSeries(seriesData, axis);
+      const aligned = alignOnAxis(seriesData, axis);
       const result = computeLeadershipFromOverviews(aligned);
       if (!cancelled) setLeadership(result);
     })();

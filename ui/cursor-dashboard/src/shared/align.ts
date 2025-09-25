@@ -1,24 +1,22 @@
-import { VENUES, VenueKey } from './venues';
-
 export const buildAxis = (startMs: number, endExclusiveMs: number): number[] => {
-  const out: number[] = [];
-  for (let ts = startMs; ts < endExclusiveMs; ts += 86400000) out.push(ts);
-  return out;
+  const days = [];
+  for (let ts = startMs; ts < endExclusiveMs; ts += 86400000) days.push(ts);
+  return days;
 };
 
-export type AlignedSeries = Record<VenueKey, Array<[number, number | null]>>;
-
-export const alignSeries = (
-  series: Record<VenueKey, Array<[number, number | null]>>,
+export const alignOnAxis = (
+  perVenue: Record<string, Array<[number, number | null]>>,
   axis: number[],
-): AlignedSeries => {
-  const maps: Record<VenueKey, Map<number, number | null>> = Object.fromEntries(
-    VENUES.map(v => [v, new Map(series[v] ?? [])]),
-  ) as any;
-
-  const result = {} as AlignedSeries;
-  for (const v of VENUES) {
-    result[v] = axis.map(ts => [ts, maps[v].get(ts) ?? null]);
+) => {
+  // Map lookup per venue
+  const maps: Record<string, Map<number, number | null>> = {};
+  for (const [v, arr] of Object.entries(perVenue)) {
+    maps[v] = new Map(arr ?? []);
   }
-  return result;
+  // aligned arrays
+  const out: Record<string, Array<[number, number | null]>> = {};
+  for (const v of Object.keys(perVenue)) {
+    out[v] = axis.map(ts => [ts, maps[v].get(ts) ?? null]);
+  }
+  return out;
 };
