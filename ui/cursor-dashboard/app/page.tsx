@@ -2784,12 +2784,12 @@ It would also be helpful if you described:
                               );
                             })()}
 
-                            {/* Environment Events - 3 vertical bars with faint colors */}
+                            {/* Environment Events - 3 thick solid bars with opacity */}
                             <ReferenceLine
                               x={Date.parse("2025-02-01T00:00:00Z")}
                               stroke="#ef4444"
-                              strokeDasharray="3 3"
-                              strokeWidth={2}
+                              strokeWidth={30}
+                              strokeOpacity={0.3}
                               isFront={true}
                             >
                               <Label value="Regime A → B" position="top" />
@@ -2797,8 +2797,8 @@ It would also be helpful if you described:
                             <ReferenceLine
                               x={Date.parse("2025-06-01T00:00:00Z")}
                               stroke="#f59e0b"
-                              strokeDasharray="3 3"
-                              strokeWidth={2}
+                              strokeWidth={30}
+                              strokeOpacity={0.3}
                               isFront={true}
                             >
                               <Label value="Policy Shift" position="top" />
@@ -2806,8 +2806,8 @@ It would also be helpful if you described:
                             <ReferenceLine
                               x={Date.parse("2025-07-01T00:00:00Z")}
                               stroke="#10b981"
-                              strokeDasharray="3 3"
-                              strokeWidth={2}
+                              strokeWidth={30}
+                              strokeOpacity={0.3}
                               isFront={true}
                             >
                               <Label value="Liquidity ↑" position="top" />
