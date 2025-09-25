@@ -1590,7 +1590,7 @@ It would also be helpful if you described:
   };
 
   // --- Event band sizing (days -> ms) ---
-  const bandDaysByTf: Record<string, number> = { '30d': 1, '6m': 3, 'ytd': 4, '1y': 5 };
+  const bandDaysByTf: Record<string, number> = { '30d': 1, '6m': 3, 'ytd': 28, '1y': 5 };
   const dayMs = 24 * 60 * 60 * 1000;
   const bandHalfMs = ((bandDaysByTf[selectedTimeframe] ?? 4) * dayMs) / 2;
   const mkBand = (centerTs: number) => ({ x1: centerTs - bandHalfMs, x2: centerTs + bandHalfMs });
