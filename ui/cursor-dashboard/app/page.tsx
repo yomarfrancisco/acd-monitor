@@ -40,6 +40,10 @@ import { Button } from "@/components/ui/button"
 import { AssistantBubble } from "@/components/AssistantBubble"
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, ReferenceLine, ReferenceArea, Label } from "recharts"
 import { CalendarIcon, Copy, RefreshCw, ImageUp, Camera, FolderClosed, Github, AlertTriangle, Factory } from "lucide-react"
+import { VENUES, VenueKey, VENUE_LABEL, VENUE_COLOR } from "../src/shared/venues";
+import { normalizeOverview, NormalizedOverview } from "../src/shared/series";
+import { buildAxis, alignSeries, AlignedSeries } from "../src/shared/align";
+import { latestCommonIndex } from "../src/shared/leader";
 import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema, BinanceOverviewSchema } from "@/types/api.schemas"
 import { fetchTyped } from "@/lib/backendAdapter"
 import { safe } from "@/lib/safe"
@@ -213,30 +217,7 @@ function toNum(x: unknown): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
-type NormalizedOverview = {
-  venue: string;
-  ohlcv: readonly [string, number, number, number, number, number][];
-};
-
-function normalizeOverview(raw: z.infer<typeof OverviewLoose>, v: string): NormalizedOverview {
-  const venue = raw.venue ?? v;
-  const ohlcv = (raw.ohlcv ?? []).map(row => {
-    // expected: [time, open, high, low, close, vol?]
-    // kraken variant: [time, open, high, low, close, vwap, volume, count]
-    const t = row[0];
-    const utcMs = toMsUtcMidnight(t);
-    const iso = new Date(utcMs).toISOString();
-    const open  = toNum(row[1]);
-    const high  = toNum(row[2]);
-    const low   = toNum(row[3]);
-    const close = toNum(row[4]);
-    const vol   = row[6] != null ? toNum(row[6]) : toNum(row[5]);
-    
-    // Return with proper numeric values (null becomes 0 for chart compatibility)
-    return [iso, open ?? 0, high ?? 0, low ?? 0, close ?? 0, vol ?? 0] as [string, number, number, number, number, number];
-  });
-  return { venue, ohlcv };
-}
+// NormalizedOverview and normalizeOverview now imported from shared/series
 
 async function fetchOverviewLoose(venue: string, url: string): Promise<NormalizedOverview | null> {
   try {
@@ -244,73 +225,44 @@ async function fetchOverviewLoose(venue: string, url: string): Promise<Normalize
     if (!res.ok) return null;
     const json = await res.json();
     const parsed = OverviewLoose.safeParse(json);
-    const norm = parsed.success ? normalizeOverview(parsed.data, venue) : normalizeOverview(json as any, venue);
+    const data = parsed.success ? parsed.data : json as any;
+    const norm = normalizeOverview({ venue: data.venue || venue, ohlcv: data.ohlcv || [] });
     return norm.ohlcv.length > 0 ? norm : null;
   } catch {
     return null;
   }
 }
 
-type VenueKey = "binance" | "okx" | "bybit" | "kraken" | "coinbase";
+// VenueKey now imported from shared/venues
 
-function computeLeadershipFromOverviews(data: Record<VenueKey, NormalizedOverview | null>) {
-  // Build aligned rows by timestamp using the intersection where at least 2 venues have data for that ts.
-  const byTs: Record<string, Partial<Record<VenueKey, number>>> = {};
-  (["binance","okx","bybit","kraken","coinbase"] as VenueKey[]).forEach(v => {
-    const ov = data[v];
-    if (!ov) return;
-    ov.ohlcv.forEach(([ts, _o,_h,_l,c]) => {
-      (byTs[ts] ||= {});
-      byTs[ts][v] = c;
-    });
-  });
-
-  // Find latest common index where ≥3 venues have non-null values
-  const sortedTimestamps = Object.keys(byTs).sort();
-  let lastCommonIdx = -1;
-  let lastCommonTs = '';
-  let maxNonNullCount = 0;
+function computeLeadershipFromOverviews(aligned: AlignedSeries) {
+  const lc = latestCommonIndex(aligned);
   
-  for (let i = sortedTimestamps.length - 1; i >= 0; i--) {
-    const ts = sortedTimestamps[i];
-    const row = byTs[ts];
-    const nonNullCount = Object.values(row).filter(v => v !== undefined).length;
-    
-    if (nonNullCount >= 3 && nonNullCount > maxNonNullCount) {
-      lastCommonIdx = i;
-      lastCommonTs = ts;
-      maxNonNullCount = nonNullCount;
-    }
-  }
-  
-  if (lastCommonIdx === -1 || maxNonNullCount < 2) {
+  if (!lc.values) {
     return { leader: null as VenueKey | null, pct: null as number | null, total: 0 };
   }
-
-  let wins: Record<VenueKey, number> = { binance:0, okx:0, bybit:0, kraken:0, coinbase:0 };
-  let races = 0;
-
-  Object.values(byTs).forEach(row => {
-    const entries = Object.entries(row) as [VenueKey, number][];
-    if (entries.length < 2) return; // need at least 2 venues
-    races++;
-    // price leader = highest close (you can flip to lowest if "best price" means cheapest)
-    entries.sort((a,b) => b[1] - a[1]);
-    const [winner] = entries[0];
-    wins[winner]++;
-  });
-
-  if (races < 1) return { leader: null as VenueKey | null, pct: null as number | null, total: 0 };
-
-  const [leader, count] = Object.entries(wins).sort((a,b) => (b[1] as number) - (a[1] as number))[0] as [VenueKey, number];
-  const pct = (count / races) * 100;
+  
+  // Find highest price (leader)
+  const entries = Object.entries(lc.values) as [VenueKey, number][];
+  const [leader, highestPrice] = entries.reduce((max, [venue, price]) => 
+    price > max[1] ? [venue, price] : max, ['binance' as VenueKey, 0]);
+  
+  // Calculate spread percentage
+  const prices = Object.values(lc.values);
+  const minPrice = Math.min(...prices);
+  const maxPrice = Math.max(...prices);
+  const spread = ((maxPrice - minPrice) / minPrice) * 100;
   
   // Debug logging
   if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
-    console.log(`[leader] lastCommonIdx=${lastCommonIdx} date=${lastCommonTs} nonNull=${maxNonNullCount} leader=${leader} spread=${pct.toFixed(1)}%`);
+    console.log(`[leader] date=${lc.ts ? new Date(lc.ts).toISOString() : null} leader=${leader} spread=${spread.toFixed(1)}%`);
   }
   
-  return { leader, pct, total: races };
+  return { 
+    leader, 
+    pct: Number(spread.toFixed(1)), 
+    total: entries.length 
+  };
 }
 
 export default function CursorDashboard() {
@@ -821,66 +773,75 @@ export default function CursorDashboard() {
         )
       
       
-      // Log summary
-      const successfulVenues = successfulExchanges.map(r => r.venue)
-      const barsPerSeries: Record<string, number> = {}
-      successfulExchanges.forEach(r => {
-        barsPerSeries[r.venue] = (r.data as any)?.ohlcv?.length ?? 0
-      })
+      console.log('[UI Frontend] venues fetched:', VENUES)
       
-      // Filter to only venues with real data (bars > 0)
-      const activeVenues = successfulVenues.filter(venue => barsPerSeries[venue] > 0)
+      // Normalize all overviews
+      const normalizedOverviews: Record<VenueKey, NormalizedOverview | null> = {
+        binance: null,
+        okx: null,
+        bybit: null,
+        kraken: null,
+        coinbase: null,
+      };
       
-      console.log('[UI Frontend] venues fetched:', successfulVenues)
-      console.log('[UI Frontend] active venues (with data):', activeVenues)
-      console.log('[UI Frontend] bars per series:', barsPerSeries)
-      
-      console.log(`📊 [UI Frontend] Loaded series: [${successfulVenues.join(', ')}]`)
-      console.log(`📊 [UI Frontend] Bars per series:`, barsPerSeries)
-      
-      // Coinbase-specific debugging
-      console.log('[UI Frontend] coinbase bars after normalize:', barsPerSeries.coinbase ?? 0);
-      console.log('[UI Frontend] active venues (with data):', activeVenues);
-      
-      // Create chart series from successful exchanges
-      if (activeVenues.length > 0) {
-        const availableUiVenues: UiVenue[] = getAvailableUiVenues(successfulExchanges.filter(e => activeVenues.includes(e.venue)))
-        const chartData = createChartSeries(successfulExchanges.filter(e => activeVenues.includes(e.venue)))
-        
-        // Debug logging
-        if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
-          console.log(`🔍 [UI Frontend] SERIES_SOURCE=live`)
-          console.log(`🔍 [UI Frontend] SERIES_VENUES=[${successfulVenues.join(',')}]`)
-          console.log(`🔍 [UI Frontend] AVATAR_VENUES=[${successfulVenues.join(',')}]`)
-          console.log("[ENV] events", validEvents.map((e: any) => ({ id: e.id, ts: e.ts })));
-          console.log("[ENV] firstRow", chartData[0]?.ts, "lastRow", chartData.at(-1)?.ts);
+      successfulExchanges.forEach(exchange => {
+        const venue = exchange.venue as VenueKey;
+        if (VENUES.includes(venue)) {
+          normalizedOverviews[venue] = normalizeOverview({ venue: exchange.venue, ohlcv: exchange.data.ohlcv });
         }
-        setExchangeData(chartData)
-        setAvailableUiVenues(availableUiVenues)
+      });
+      
+      // Build YTD axis (Jan 1 to yesterday UTC midnight)
+      const now = new Date();
+      const startDate = new Date('2025-01-01T00:00:00Z');
+      const endDate = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0);
+      
+      const axis = buildAxis(startDate.getTime(), endDate.getTime());
+      
+      // Align all series to the common axis
+      const seriesData: Record<VenueKey, Array<[number, number | null]>> = {
+        binance: (normalizedOverviews.binance?.ohlcv ?? []) as Array<[number, number | null]>,
+        okx: (normalizedOverviews.okx?.ohlcv ?? []) as Array<[number, number | null]>,
+        bybit: (normalizedOverviews.bybit?.ohlcv ?? []) as Array<[number, number | null]>,
+        kraken: (normalizedOverviews.kraken?.ohlcv ?? []) as Array<[number, number | null]>,
+        coinbase: (normalizedOverviews.coinbase?.ohlcv ?? []) as Array<[number, number | null]>,
+      };
+      
+      const aligned = alignSeries(seriesData, axis);
+      
+      // Debug logging
+      if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+        console.log('[axis]', { days: axis.length, first: new Date(axis[0]).toISOString(), last: new Date(axis.at(-1)!).toISOString() });
+        for (const v of VENUES) {
+          const nonNull = aligned[v].reduce((a, [,x]) => a + (Number.isFinite(x as number) ? 1 : 0), 0);
+          console.log(`[${v}]`, { nonNull });
+        }
+        const lc = latestCommonIndex(aligned);
+        console.log('[latestCommonIndex]', lc.ts ? new Date(lc.ts).toISOString() : null, lc.values);
+      }
+      
+      // Convert aligned series to chart format
+      const chartData = axis.map((ts, index) => {
+        const point: any = {
+          date: new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+          ts: ts
+        };
+        
+        for (const venue of VENUES) {
+          const value = aligned[venue][index]?.[1];
+          point[venue] = value;
+        }
+        
+        return point;
+      });
+      
+      // Update context with all venues
+      setAvailableUiVenues(VENUES)
+      setExchangeData(chartData)
+      
+      // Clear any previous errors
+      if (exchangeDataError) {
         setExchangeDataError(null)
-        console.log(`✅ [UI Frontend] Created chart data with ${chartData.length} points for ${successfulVenues.length} venues`)
-        
-        // Debug parity
-        if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
-          console.log('SERIES_VENUES=', availableUiVenues);
-        }
-      } else {
-        // Fallback to demo data if no exchanges available and demo mode is enabled
-        if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') {
-          console.log(`🔄 [UI Frontend] No live data available, falling back to demo data`)
-          const demoData = getAnalyticsData()
-          setExchangeData(demoData)
-          setAvailableUiVenues(['binance', 'coinbase', 'bybit', 'kraken'] as UiVenue[])
-          setExchangeDataError(null)
-          
-          if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
-            console.log(`🔍 [UI Frontend] SERIES_SOURCE=demo`)
-            console.log(`🔍 [UI Frontend] SERIES_VENUES=[binance,coinbase,bybit,kraken]`)
-            console.log(`🔍 [UI Frontend] AVATAR_VENUES=[binance,coinbase,bybit,kraken]`)
-          }
-      } else {
-          throw new Error('No exchanges available')
-        }
       }
       
     } catch (error) {
@@ -997,16 +958,46 @@ export default function CursorDashboard() {
         okx:     `${base}/okx/overview?symbol=BTCUSDT&tf=${tf}`,
         bybit:   `${base}/bybit/overview?symbol=BTCUSDT&tf=${tf}`,
         kraken:  `${base}/kraken/overview?symbol=BTCUSDT&tf=${tf}`,
+        coinbase: `${base}/coinbase/overview?symbol=BTC-USD&tf=${tf}`,
       };
 
-      const [b,o,by,k] = await Promise.all([
+      const [b,o,by,k,c] = await Promise.all([
         fetchOverviewLoose("binance", urls.binance),
         fetchOverviewLoose("okx",     urls.okx),
         fetchOverviewLoose("bybit",   urls.bybit),
         fetchOverviewLoose("kraken",  urls.kraken),
+        process.env.NEXT_PUBLIC_ENABLE_COINBASE === 'true' ? 
+          fetchOverviewLoose("coinbase", `${base}/coinbase/overview?symbol=BTC-USD&tf=${tf}`) : 
+          Promise.resolve(null)
       ]);
 
-      const result = computeLeadershipFromOverviews({ binance: b, okx: o, bybit: by, kraken: k });
+      // Normalize all overviews
+      const normalizedOverviews: Record<VenueKey, NormalizedOverview | null> = {
+        binance: b ? normalizeOverview({ venue: 'binance', ohlcv: b.ohlcv }) : null,
+        okx: o ? normalizeOverview({ venue: 'okx', ohlcv: o.ohlcv }) : null,
+        bybit: by ? normalizeOverview({ venue: 'bybit', ohlcv: by.ohlcv }) : null,
+        kraken: k ? normalizeOverview({ venue: 'kraken', ohlcv: k.ohlcv }) : null,
+        coinbase: c ? normalizeOverview({ venue: 'coinbase', ohlcv: c.ohlcv }) : null,
+      };
+      
+      // Build YTD axis (Jan 1 to yesterday UTC midnight)
+      const now = new Date();
+      const startDate = new Date('2025-01-01T00:00:00Z');
+      const endDate = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0);
+      
+      const axis = buildAxis(startDate.getTime(), endDate.getTime());
+      
+      // Align all series to the common axis
+      const seriesData: Record<VenueKey, Array<[number, number | null]>> = {
+        binance: (normalizedOverviews.binance?.ohlcv ?? []) as Array<[number, number | null]>,
+        okx: (normalizedOverviews.okx?.ohlcv ?? []) as Array<[number, number | null]>,
+        bybit: (normalizedOverviews.bybit?.ohlcv ?? []) as Array<[number, number | null]>,
+        kraken: (normalizedOverviews.kraken?.ohlcv ?? []) as Array<[number, number | null]>,
+        coinbase: (normalizedOverviews.coinbase?.ohlcv ?? []) as Array<[number, number | null]>,
+      };
+      
+      const aligned = alignSeries(seriesData, axis);
+      const result = computeLeadershipFromOverviews(aligned);
       if (!cancelled) setLeadership(result);
     })();
     return () => { cancelled = true; };
@@ -2841,20 +2832,19 @@ It would also be helpful if you described:
 
                                       {/* Exchange Data - show all venues with null handling */}
                                       {(() => {
-                                        const rows = availableUiVenues
-                                          .map(v => ({ ui: v, k: uiKeyToDataKey[v], val: payload?.[0]?.payload?.[uiKeyToDataKey[v]] }));
+                                        const fmt = (n: number | null | undefined) =>
+                                          Number.isFinite(n as number) ? `$${(n as number).toFixed(2)}` : '—';
                                         
-                                        return rows.map((row, index) => {
-                                          const metadata = venueMetadata[row.ui];
-                                          const displayValue = Number.isFinite(row.val) ? `$${row.val.toFixed(2)}` : "—";
+                                        return VENUES.map((venue, index) => {
+                                          const value = payload?.[0]?.payload?.[venue];
                                           return (
                                             <div key={index} className="flex items-center gap-2 text-[9px]">
                                               <div 
                                                 className="w-2 h-2 rounded-full" 
-                                                style={{ backgroundColor: metadata.color }}
+                                                style={{ backgroundColor: VENUE_COLOR[venue] }}
                                               />
                                               <span className="text-[#f9fafb] font-semibold">
-                                                {metadata.label}: <span className="font-bold">{displayValue}</span>
+                                                {VENUE_LABEL[venue]}: <span className="font-bold">{fmt(value)}</span>
                                               </span>
                                             </div>
                                           );
