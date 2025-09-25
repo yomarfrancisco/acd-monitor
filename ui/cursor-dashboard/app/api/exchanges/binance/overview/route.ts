@@ -23,6 +23,14 @@ export async function GET(req: Request) {
   const tf = searchParams.get("tf") ?? "30d";
   const interval = timeframeToInterval(tf);
 
+  // Add YTD debug logging
+  if (tf === 'ytd' && process.env.NODE_ENV !== 'production') {
+    const now = new Date();
+    const startDate = new Date('2025-01-01T00:00:00Z');
+    const endDate = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0);
+    console.log('[binance] start=', startDate.toISOString(), 'end=', endDate.toISOString(), 'interval=', interval);
+  }
+
   // Log environment and region
   console.log('[UI API] runtime=node, region=', process.env.VERCEL_REGION, 'env=', process.env.NODE_ENV);
 
@@ -85,6 +93,11 @@ export async function GET(req: Request) {
 
     const bars = (rawBars || []).map(([t, o, h, l, c, v]) => [new Date(+t).toISOString(), +o, +h, +l, +c, +v]);
     console.log(`[UI API] using direct binance fallback (bars=${bars.length})`);
+    
+    // Add final count logging for YTD
+    if (tf === 'ytd' && process.env.NODE_ENV !== 'production') {
+      console.log('[binance] finalCount=', bars.length);
+    }
 
     if (bars.length > 0) {
       const bid = Number(ticker?.bidPrice ?? 0);

@@ -24,19 +24,23 @@ export async function GET(request: NextRequest) {
     const cfg = TIMEFRAMES[tf];
     const granularity = cfg.granularity;
     
-    // Calculate start and end times
+    // Calculate consistent YTD window (2025-01-01 to today 00:00:00Z exclusive)
     const now = new Date();
-    const endISO = now.toISOString();
-    
-    // For YTD, clamp to start of year
     let startDate: Date;
+    let endDate: Date;
+    
     if (tf === 'ytd') {
-      startDate = new Date(new Date().getUTCFullYear(), 0, 1);
+      // Start: 2025-01-01T00:00:00Z
+      startDate = new Date('2025-01-01T00:00:00Z');
+      // End: today in UTC at 00:00:00Z (exclusive - drop today's partial)
+      endDate = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0);
     } else {
       startDate = new Date(now.getTime() - cfg.days * 24 * 60 * 60 * 1000);
+      endDate = now;
     }
     
     const startISO = startDate.toISOString();
+    const endISO = endDate.toISOString();
 
     // Use server env var (not NEXT_PUBLIC)
     const PROXY = process.env.PROXY_HOST; // e.g., https://<LIVE_FLY_APP_HOST>
@@ -59,11 +63,11 @@ export async function GET(request: NextRequest) {
     url.searchParams.set('start', startISO);
     url.searchParams.set('end', endISO);
 
-    // Add logs (only when not production)
+    // Add explicit debug logs (non-prod only)
     if (process.env.NODE_ENV !== 'production') {
+      console.log('[coinbase] start=', startISO, 'end=', endISO, 'granularity=', granularity);
       console.log('[coinbase] usingProxy=', !!PROXY);
       console.log('[coinbase] url=', url.toString());
-      console.log('[coinbase] params=', { granularity, start: startISO, end: endISO });
     }
 
     const resp = await fetch(url, { headers: { Accept: 'application/json' }});
@@ -88,9 +92,23 @@ export async function GET(request: NextRequest) {
     const raw: Row[] = await resp.json();
     raw.sort((a,b)=>a[0]-b[0]);
 
-    const ohlcv = raw.map(([t, low, high, open, close, volume]) => ({
+    // Log raw data info
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[coinbase] rawCount=', raw.length, 'first=', new Date(raw[0]?.[0]*1000).toISOString(), 'last=', new Date(raw[raw.length-1]?.[0]*1000).toISOString());
+    }
+
+    // Drop partial candles (timestamp >= end)
+    const endTs = endDate.getTime() / 1000; // Convert to seconds
+    const filteredRaw = raw.filter(([t]) => t < endTs);
+
+    const ohlcv = filteredRaw.map(([t, low, high, open, close, volume]) => ({
       ts: t*1000, o: open, h: high, l: low, c: close, v: volume
     }));
+
+    // Log final count
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[coinbase] finalCount=', ohlcv.length);
+    }
 
     return NextResponse.json({
       venue: 'coinbase',
