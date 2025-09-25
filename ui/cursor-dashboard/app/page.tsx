@@ -2599,9 +2599,31 @@ It would also be helpful if you described:
 
                             <Tooltip
                                   cursor={false}
-                                  labelFormatter={(ts) =>
-                                    new Date(Number(ts)).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })
-                                  }
+                                  labelFormatter={(ts) => {
+                                    // Debug: log the ts parameter
+                                    console.log('Tooltip ts parameter:', ts, 'type:', typeof ts);
+                                    
+                                    try {
+                                      const numTs = Number(ts);
+                                      console.log('Converted to number:', numTs);
+                                      
+                                      if (!Number.isFinite(numTs)) {
+                                        console.log('Invalid timestamp, returning fallback');
+                                        return 'Invalid Date';
+                                      }
+                                      
+                                      const date = new Date(numTs);
+                                      console.log('Created date:', date);
+                                      
+                                      const formatted = date.toLocaleDateString('en-US', { month: 'short', day: '2-digit' });
+                                      console.log('Formatted result:', formatted);
+                                      
+                                      return formatted;
+                                    } catch (error) {
+                                      console.log('Error formatting date:', error);
+                                      return 'Date Error';
+                                    }
+                                  }}
                               content={({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string }) => {
                                 if (active && payload && payload.length) {
                                       // Market share data for each exchange (using live data if available)
