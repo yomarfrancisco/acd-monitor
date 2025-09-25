@@ -67,10 +67,18 @@ import {
 
 // Helper function to synthesize timestamp from date label
 function synthTsFromLabel(lbl: string): number | null {
-  // handles "Feb '25", "Jun '25", "Jul '25"
+  // handles "Feb '25", "Jun '25", "Jul '25" (with apostrophe)
   const m = lbl?.match(/^([A-Za-z]{3})\s+'(\d{2})$/);
   if (m) {
     const [ , monStr, yy ] = m;
+    const year = 2000 + Number(yy);
+    const mon = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].indexOf(monStr);
+    return Date.UTC(year, Math.max(0, mon), 1);
+  }
+  // handles "Jan 25", "Feb 25", "Mar 25" (without apostrophe)
+  const m2 = lbl?.match(/^([A-Za-z]{3})\s+(\d{2})$/);
+  if (m2) {
+    const [ , monStr, yy ] = m2;
     const year = 2000 + Number(yy);
     const mon = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].indexOf(monStr);
     return Date.UTC(year, Math.max(0, mon), 1);
