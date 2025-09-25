@@ -52,6 +52,20 @@ import { getAvailableUiVenues, uiKeyToDataKey, type UiVenue } from "../lib/venue
 import { computePriceLeadership, type DataKey } from "../lib/leadership"
 import { defaultEnvEvents, type EnvEvent } from "../lib/environments"
 import { toMsTs, finiteMsOrNull } from "../lib/time"
+
+// Utility to convert various timestamp formats to milliseconds
+const toMs = (v: unknown): number | null => {
+  if (typeof v === "number") {
+    if (!Number.isFinite(v) || v <= 0) return null;
+    return v < 1e12 ? Math.round(v * 1000) : v; // seconds → ms
+  }
+  if (typeof v === "string" && v) {
+    const n = Date.parse(v);
+    return Number.isFinite(n) ? n : null;
+  }
+  if (v instanceof Date) return v.getTime();
+  return null;
+};
 import type { RiskSummary, HealthRun, EventsResponse, DataSources, EvidenceExport } from "@/types/api"
 import type { MetricsOverview } from "@/types/api.schemas"
 import { z } from "zod"
@@ -887,7 +901,7 @@ export default function CursorDashboard() {
       try {
         // Try to fetch from API first
         const result = await fetchTyped(`/events?timeframe=${selectedTimeframe}`, EventsResponseSchema);
-        const raw = (result && Array.isArray((result as any).items) && (result as any).items.length > 0) 
+        const envEventsRaw = (result && Array.isArray((result as any).items) && (result as any).items.length > 0) 
           ? (result as any).items.map((item: any) => ({
               id: item.id || `event-${Date.now()}`,
               ts: item.ts || Date.parse(item.date || new Date().toISOString()),
@@ -896,23 +910,22 @@ export default function CursorDashboard() {
             }))
           : defaultEnvEvents();
 
-        // Sanitize and filter events
-        const events = raw
+        // Normalize events to ms and filter invalid
+        const events = envEventsRaw
           .map((e: any) => {
-            const ts = finiteMsOrNull(e.ts) ?? (typeof e.ts === "string" ? Date.parse(e.ts) : NaN);
-            const ms = Number.isFinite(ts) ? (ts < 1e12 ? Math.round(Number(ts) * 1000) : Number(ts)) : NaN;
-            return Number.isFinite(ms) ? { ...e, ts: ms } : null;
+            const ts = toMs(e.ts);
+            return ts ? { ...e, ts } : null;
           })
           .filter(Boolean) as EnvEvent[];
 
         setEnvEvents(events);
       } catch (error) {
         // Fallback to default events on error
-        const events = defaultEnvEvents()
+        const envEventsRaw = defaultEnvEvents();
+        const events = envEventsRaw
           .map((e: any) => {
-            const ts = finiteMsOrNull(e.ts) ?? (typeof e.ts === "string" ? Date.parse(e.ts) : NaN);
-            const ms = Number.isFinite(ts) ? (ts < 1e12 ? Math.round(Number(ts) * 1000) : Number(ts)) : NaN;
-            return Number.isFinite(ms) ? { ...e, ts: ms } : null;
+            const ts = toMs(e.ts);
+            return ts ? { ...e, ts } : null;
           })
           .filter(Boolean) as EnvEvent[];
         setEnvEvents(events);
@@ -1581,10 +1594,10 @@ It would also be helpful if you described:
   const xMax = hasDomain ? Math.max(...tsValues) : undefined;
 
   if (process.env.NEXT_PUBLIC_UI_DEBUG === "true") {
-    const badRows = currentData.filter(r => !Number.isFinite(r.ts)).length;
-    const badEvents = envEvents.filter(e => !Number.isFinite(e.ts)).length;
-    console.log("[ENV] rows", currentData.length, "domain", xMin, xMax, "badRows", badRows);
-    console.log("[ENV] events", envEvents.map(e => e.ts), "badEvents", badEvents);
+    console.log("[ENV] rows=", currentData.length, "xMin=", xMin, "xMax=", xMax);
+    console.log("[ENV] sample rows=", currentData.slice(0, 3).map(r => ({ ts: r.ts, date: r.date })));
+    console.log("[ENV] events(raw)=", defaultEnvEvents());
+    console.log("[ENV] events(ms)=", envEvents.map(e => e.ts));
   }
 
   // Leadership display (using independent state)
@@ -2598,11 +2611,13 @@ It would also be helpful if you described:
                               dataKey="ts"
                               type="number"
                               scale="time"
-                              {...(hasDomain ? { domain: [xMin!, xMax!] } : {})}
+                              domain={hasDomain ? [xMin!, xMax!] : ["auto", "auto"]}
                               axisLine={false}
                               tickLine={false}
                               tick={{ fill: "#a1a1aa", fontSize: 10 }}
-                              tickFormatter={(ts) => new Date(Number(ts)).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}
+                              tickFormatter={(v) =>
+                                new Date(Number(v)).toLocaleDateString("en-US", { month: "short", day: "2-digit" })
+                              }
                               label={{
                                 value: "Time",
                                 position: "insideBottom",
@@ -2628,8 +2643,10 @@ It would also be helpful if you described:
                                     key={e.id}
                                     x={e.ts}
                                     stroke={e.color || '#94a3b8'}
-                                    strokeDasharray="3 3"
+                                    strokeDasharray="4 3"
+                                    strokeWidth={1.5}
                                     ifOverflow="extendDomain"
+                                    isFront
                                     label={{
                                       value: e.label,
                                       position: 'top',
