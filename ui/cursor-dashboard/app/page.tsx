@@ -50,7 +50,7 @@ import { SelftestIndicator } from "@/components/SelftestIndicator"
 import { useExchangeData } from "../contexts/ExchangeDataContext"
 import { getAvailableUiVenues, uiKeyToDataKey, type UiVenue } from "../lib/venueMapping"
 import { computePriceLeadership, type DataKey } from "../lib/leadership"
-import { fetchEnvEvents, type EnvEvent } from "../utils/events"
+import { normalizeEvents, pickEventsInDomain, SEED_EVENTS_YTD } from "../utils/events"
 import { toMsTs } from "../lib/time"
 import type { RiskSummary, HealthRun, EventsResponse, DataSources, EvidenceExport } from "@/types/api"
 import type { MetricsOverview } from "@/types/api.schemas"
@@ -283,8 +283,6 @@ export default function CursorDashboard() {
   // Leadership state (independent from chart)
   const [leadership, setLeadership] = React.useState<{leader: VenueKey|null; pct: number|null; total: number}>({ leader: null, pct: null, total: 0 });
   
-  // Environment events state
-  const [envEvents, setEnvEvents] = React.useState<EnvEvent[]>([]);
   
   // Helper function to truncate text to specified length
   const truncateText = (text: string, maxLength: number = 40) => {
@@ -721,7 +719,7 @@ export default function CursorDashboard() {
           console.log(`🔍 [UI Frontend] SERIES_SOURCE=live`)
           console.log(`🔍 [UI Frontend] SERIES_VENUES=[${successfulVenues.join(',')}]`)
           console.log(`🔍 [UI Frontend] AVATAR_VENUES=[${successfulVenues.join(',')}]`)
-          console.log("[ENV] events", envEvents.map(e => ({ id: e.id, ts: e.ts })));
+          console.log("[ENV] events", validEvents.map((e: any) => ({ id: e.id, ts: e.ts })));
           console.log("[ENV] firstRow", chartData[0]?.ts, "lastRow", chartData.at(-1)?.ts);
         }
         setExchangeData(chartData)
@@ -881,16 +879,18 @@ export default function CursorDashboard() {
     return () => { cancelled = true; };
   }, [selectedTimeframe]);
 
+  // API events response state
+  const [apiEventsResponse, setApiEventsResponse] = React.useState<unknown>(null);
+
   // Fetch environment events
   useEffect(() => {
     const loadEnvEvents = async () => {
       try {
-        const events = await fetchEnvEvents(selectedTimeframe);
-        setEnvEvents(events);
+        const res = await fetch(`/api/events?timeframe=${selectedTimeframe}`, { cache: "no-store" });
+        const json = await res.json().catch(() => ({}));
+        setApiEventsResponse(json);
       } catch (error) {
-        // Fallback to default events on error
-        const { defaultSeeds } = await import("../utils/events");
-        setEnvEvents(defaultSeeds);
+        setApiEventsResponse(null);
       }
     };
 
@@ -1555,18 +1555,18 @@ It would also be helpful if you described:
   const xMin = hasDomain ? Math.min(...tsValues) : undefined;
   const xMax = hasDomain ? Math.max(...tsValues) : undefined;
 
-  // Filter events to only include those within the chart domain
-  const validEvents = envEvents.filter(e => 
-    Number.isFinite(e.ts) && 
-    (xMin ?? 0) <= e.ts && 
-    e.ts <= (xMax ?? Number.MAX_SAFE_INTEGER)
-  );
+  // Fetch API events (already fetched JSON in `apiEventsResponse`)
+  const apiEvents = normalizeEvents(apiEventsResponse);
+  const sourceEvents = apiEvents.length > 0 ? apiEvents : SEED_EVENTS_YTD;
 
+  // Filter to domain (prevents NaN / off-chart artifacts)
+  const validEvents = Number.isFinite(xMin) && Number.isFinite(xMax)
+    ? pickEventsInDomain(sourceEvents, xMin!, xMax!)
+    : [];
+
+  // Debug
   if (process.env.NEXT_PUBLIC_UI_DEBUG === "true") {
-    console.log("[ENV] rows=", currentData.length, "xMin=", xMin, "xMax=", xMax);
-    console.log("[ENV] sample rows=", currentData.slice(0, 3).map(r => ({ ts: r.ts, date: r.date })));
-    console.log("[ENV] events(ms)=", envEvents.map(e => e.ts));
-    console.log("[ENV] domain", xMin, xMax, "validEvents", validEvents.length);
+    console.log("[ENV] domain", xMin, xMax, "api", apiEvents.length, "seed?", apiEvents.length === 0, "render", validEvents.length);
   }
 
   // Leadership display (using independent state)
@@ -2579,19 +2579,8 @@ It would also be helpful if you described:
                             <XAxis
                               dataKey="ts"
                               type="number"
-                              scale="time"
-                              domain={hasDomain ? [xMin!, xMax!] : ["auto", "auto"]}
-                              axisLine={false}
-                              tickLine={false}
-                              tick={{ fill: "#a1a1aa", fontSize: 10 }}
-                              tickFormatter={(v) =>
-                                new Date(Number(v)).toLocaleDateString("en-US", { month: "short", day: "2-digit" })
-                              }
-                              label={{
-                                value: "Time",
-                                position: "insideBottom",
-                                style: { textAnchor: "middle", fill: "#a1a1aa", fontSize: 10 },
-                              }}
+                              domain={['dataMin', 'dataMax']}
+                              tickFormatter={(v) => new Date(v).toLocaleDateString('en-US', { month:'short', day:'2-digit' })}
                             />
                             <YAxis
                               axisLine={false}
@@ -2607,22 +2596,16 @@ It would also be helpful if you described:
                                 <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" opacity={0.75} />
 
                                 {/* Environment Events - Dynamic ReferenceLines */}
-                                {hasDomain && validEvents.map(e => (
+                                {validEvents.map((evt: any) => (
                                 <ReferenceLine
-                                    key={e.id}
-                                    x={e.ts}
-                                    stroke={e.color || '#94a3b8'}
-                                    strokeDasharray="4 3"
-                                    strokeWidth={1.5}
+                                    key={evt.id + evt.ts}
+                                    x={evt.ts}
+                                    stroke={evt.color ?? "#94a3b8"}
+                                    strokeDasharray="3 3"
                                     ifOverflow="extendDomain"
-                                    isFront
-                                    label={{
-                                      value: e.label,
-                                      position: 'top',
-                                      fontSize: 11,
-                                      fill: e.color || '#94a3b8'
-                                    }}
-                                  />
+                                >
+                                    <Label value={evt.label ?? ""} position="top" />
+                                </ReferenceLine>
                                 ))}
 
                             <Tooltip

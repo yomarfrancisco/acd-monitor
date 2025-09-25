@@ -69,3 +69,5 @@ build/
 # Allow UI library code
 !ui/cursor-dashboard/lib/
 !ui/cursor-dashboard/lib/**
+!ui/cursor-dashboard/utils/
+!ui/cursor-dashboard/utils/**
