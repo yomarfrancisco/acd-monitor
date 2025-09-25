@@ -2579,15 +2579,8 @@ It would also be helpful if you described:
                             <XAxis
                               dataKey="ts"
                               type="number"
-                              domain={["dataMin","dataMax"]}
-                              allowDuplicatedCategory={false}
-                              tickFormatter={(v:number) => {
-                                const d = new Date(v);
-                                const m = d.toLocaleString("en-US",{month:"short"});
-                                const day = d.getDate().toString().padStart(2,"0");
-                                const y = d.getFullYear().toString().slice(-2);
-                                return (d.getMonth()===0) ? `${m} ${day} '${y}` : `${m} ${day}`;
-                              }}
+                              domain={['dataMin', 'dataMax']}
+                              tickFormatter={(v) => new Date(v).toLocaleDateString('en-US', { month:'short', day:'2-digit' })}
                             />
                             <YAxis
                               axisLine={false}
