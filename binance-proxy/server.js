@@ -22,7 +22,7 @@ app.use('/:venue/*', async (req, res) => {
     okx:     'https://www.okx.com/api/v5/',
     bybit:   'https://api.bybit.com/',
     binance: 'https://api.binance.com/',
-    coinbase:'https://api.exchange.coinbase.com/',   // ⬅️ REQUIRED
+    coinbase: 'https://api.exchange.coinbase.com/', // Exchange v2
   }[venue];
 
   if (!upstream) return res.status(400).json({ error: 'Unknown venue' });
@@ -31,7 +31,7 @@ app.use('/:venue/*', async (req, res) => {
   const pathAfterVenue = req.originalUrl.replace(`/${venue}`, '');
   const url = upstream.replace(/\/+$/,'') + pathAfterVenue;
 
-  console.log(`[proxy] venue=`, venue, `→`, upstream, ` path=`, req.url);
+  console.log('[proxy] venue=%s path=%s qs=%s', venue, req.path, req.originalUrl.split('?')[1]||'');
 
   try {
     const r = await fetch(url, { headers: { 'Accept': 'application/json' }});

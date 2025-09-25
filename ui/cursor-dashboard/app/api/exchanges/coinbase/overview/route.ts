@@ -18,39 +18,51 @@ type Tf = keyof typeof TIMEFRAMES; // '30d' | '6m' | '1y' | 'ytd'
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const symbol = searchParams.get('symbol') || 'BTC-USD';
-  const tf = TF.parse(searchParams.get('tf') ?? 'ytd') as Tf; // after zod validation
+  const tf = TF.parse(searchParams.get('tf') ?? 'ytd') as Tf;
 
   try {
-    const cfg = TIMEFRAMES[tf]; // typed
-    const gran = cfg.granularity;
+    const cfg = TIMEFRAMES[tf];
+    const granularity = cfg.granularity;
     
-    // YTD example - snap times and cap to ≤300 buckets
+    // Calculate start and end times
     const now = new Date();
-    const end = new Date(Math.floor(now.getTime()/1000/gran)*gran*1000);  // snap down
-    const maxBuckets = 300;
-    const start = new Date(end.getTime() - (maxBuckets-1)*gran*1000);
+    const endISO = now.toISOString();
     
-    const qs = new URLSearchParams({
-      start: start.toISOString(),
-      end: end.toISOString(),
-      granularity: String(gran),
-    });
+    // For YTD, clamp to start of year
+    let startDate: Date;
+    if (tf === 'ytd') {
+      const yearStart = new Date(now.getFullYear(), 0, 1);
+      startDate = yearStart;
+    } else {
+      startDate = new Date(now.getTime() - cfg.days * 24 * 60 * 60 * 1000);
+    }
     
-    const url = `${process.env.NEXT_PUBLIC_CRYPTO_PROXY_BASE}/coinbase/products/${symbol}/candles?${qs}`;
+    const startISO = startDate.toISOString();
 
-    // Add temporary logging (server-side)
-    console.log('[coinbase] url', url);
-    const r = await fetch(url, { headers: { 'User-Agent': 'acd-monitor' }});
-    const text = await r.text();
-    console.log('[coinbase] status', r.status, 'body', text.slice(0, 500));
+    // Build URL using server environment variable
+    const base = process.env.PROXY_HOST!; // e.g. https://binance-proxy-...fly.dev/
+    const url = new URL('/coinbase/products/BTC-USD/candles', base);
+    url.searchParams.set('granularity', String(granularity));
+    url.searchParams.set('start', startISO);
+    url.searchParams.set('end', endISO);
 
-    if (!r.ok) {
-      return NextResponse.json({ error: 'Candles fetch failed' }, { status: r.status });
+    // Debug logging
+    console.log('[coinbase] url', url.toString());
+    const res = await fetch(url, { headers: { Accept: 'application/json' }});
+    console.log('[coinbase] status', res.status);
+    
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.log('[coinbase] text', errorText.slice(0, 120));
+      return NextResponse.json({ 
+        error: 'Candles fetch failed', 
+        detail: errorText 
+      }, { status: res.status });
     }
 
     // Response: [ time, low, high, open, close, volume ] newest-first
     type Row = [number, number, number, number, number, number];
-    const raw: Row[] = JSON.parse(text);
+    const raw: Row[] = await res.json();
     raw.sort((a,b)=>a[0]-b[0]);
 
     const ohlcv = raw.map(([t, low, high, open, close, volume]) => ({
@@ -60,7 +72,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       venue: 'coinbase',
       symbol,
-      asOf: end.toISOString(),
+      asOf: endISO,
       ticker: { last: ohlcv.at(-1)?.c ?? null },
       ohlcv,
     });
