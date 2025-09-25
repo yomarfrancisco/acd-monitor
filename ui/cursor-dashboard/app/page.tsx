@@ -211,15 +211,35 @@ const readBar = (bar: any): { ts: number | string | null; close: number | null }
     const venues = Object.keys(aligned[0] || {}).filter(v => v !== 'ts');
     const eps = 1e-9;
 
+    // Diagnostic logging for day filtering
+    const drop = { missing: 0, notEnoughOthers: 0, tooTight: 0, outlier: 0, nan: 0, other: 0 };
+    let kept = 0;
+
+    const MIN_OTHERS = 3;          // current requirement for leave-one-out
+    const MIN_SPREAD_BPS = 1;      // minimum spread in basis points
+
     // per-venue distances
     const dist: Record<string, number[]> = Object.fromEntries(venues.map(v => [v, []]));
 
     for (const row of aligned) {
+      // Diagnostic checks - mirror the actual filtering logic
+      if (!row) { drop.other++; continue; }
+
       const vals = venues
         .map(v => ({ v, x: Number(row[v]) }))
         .filter(({x}) => Number.isFinite(x) && x > 0);
 
-      if (vals.length < 2) continue;
+      if (vals.length < 2) { drop.nan++; continue; }
+
+      // "not enough others" for leave-one-out median
+      if (vals.length - 1 < MIN_OTHERS) { drop.notEnoughOthers++; continue; }
+
+      // optional "spread too tight" filter
+      const prices = vals.map(({x}) => x);
+      const min = Math.min(...prices), max = Math.max(...prices);
+      const mid = (min + max) / 2;
+      const bps = mid ? ((max - min) / mid) * 1e4 : 0;
+      if (bps < MIN_SPREAD_BPS) { drop.tooTight++; continue; }
 
       // Pre-sort once for median; cheaper than recomputing from scratch each time
       const sorted = [...vals].sort((a,b) => a.x - b.x);
@@ -237,6 +257,8 @@ const readBar = (bar: any): { ts: number | string | null; close: number | null }
 
         dist[v].push(Math.abs(x - med) / med);
       }
+      
+      kept++;
     }
 
     const avg = (xs:number[]) => xs.length ? xs.reduce((a,b)=>a+b,0) / xs.length : Infinity;
@@ -255,7 +277,9 @@ const readBar = (bar: any): { ts: number | string | null; close: number | null }
     // pct expresses separation from #2; 0 when tied/equal, ~1 when huge separation
     const pct = (!second || isTie) ? 0 : Math.max(0, 1 - (best.s / (second.s + eps)));
 
+    // At the end, log a concise summary
     if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+      console.log('[LEADER:consensus:keep-vs-drop]', { kept, dropped: aligned.length - kept, drop });
       console.log('[LEADER:consensus]', { topTwo: scored.slice(0,2), isTie, pct });
     }
 
