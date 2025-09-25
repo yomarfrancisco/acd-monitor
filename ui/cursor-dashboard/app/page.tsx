@@ -206,25 +206,62 @@ const readBar = (bar: any): { ts: number | string | null; close: number | null }
     return { venue: ranked[0][0], score: ranked[0][1], totalPairs: pairCount };
   }
 
-  function computeConsensusLeader(aligned: any[], minBars=60){
-    const venues = Object.keys(aligned[0]||{}).filter(v=>v!=='ts');
-    const basis: Record<string, number[]> = Object.fromEntries(venues.map(v=>[v,[]]));
-    for (const row of aligned){
-      const vals = venues.map(v => Number(row[v])).filter(Number.isFinite);
+  // Consensus fallback: smallest average relative distance to the (leave-one-out) median.
+  function computeConsensusLeader(aligned: Array<{ts:number; [v:string]: number|null}>, minBars=60) {
+    const venues = Object.keys(aligned[0] || {}).filter(v => v !== 'ts');
+    const eps = 1e-9;
+
+    // per-venue distances
+    const dist: Record<string, number[]> = Object.fromEntries(venues.map(v => [v, []]));
+
+    for (const row of aligned) {
+      const vals = venues
+        .map(v => ({ v, x: Number(row[v]) }))
+        .filter(({x}) => Number.isFinite(x) && x > 0);
+
       if (vals.length < 2) continue;
-      const med = vals.sort((a,b)=>a-b)[Math.floor(vals.length/2)];
-      for (const v of venues){
-        const x = Number(row[v]);
-        if (Number.isFinite(x) && med>0) basis[v].push(Math.abs(x-med)/med);
+
+      // Pre-sort once for median; cheaper than recomputing from scratch each time
+      const sorted = [...vals].sort((a,b) => a.x - b.x);
+      const getMedian = (arr: {v:string; x:number}[]) => {
+        const n = arr.length, m = Math.floor(n / 2);
+        return n % 2 ? arr[m].x : (arr[m-1].x + arr[m].x) / 2;
+      };
+
+      for (const { v, x } of vals) {
+        // Leave-one-out median
+        const others = sorted.filter(o => o.v !== v);
+        if (others.length === 0) continue;
+        const med = getMedian(others);
+        if (!Number.isFinite(med) || med <= 0) continue;
+
+        dist[v].push(Math.abs(x - med) / med);
       }
     }
-    const avg = (xs:number[]) => xs.length ? xs.reduce((a,b)=>a+b,0)/xs.length : Infinity;
+
+    const avg = (xs:number[]) => xs.length ? xs.reduce((a,b)=>a+b,0) / xs.length : Infinity;
     const scored = venues
-      .map(v => ({ v, n: basis[v].length, s: avg(basis[v]) }))
+      .map(v => ({ v, n: dist[v].length, s: avg(dist[v]) }))
       .filter(x => x.n >= minBars)
-      .sort((a,b)=> a.s - b.s);
+      .sort((a,b) => a.s - b.s);
+
     if (!scored.length) return null;
-    return { venue: scored[0].v, score: 1/(1+scored[0].s) };
+
+    // Tie handling + percent as advantage over #2
+    const best = scored[0];
+    const second = scored[1];
+    const isTie = second && Math.abs(best.s - second.s) < 1e-6;
+
+    // pct expresses separation from #2; 0 when tied/equal, ~1 when huge separation
+    const pct = (!second || isTie) ? 0 : Math.max(0, 1 - (best.s / (second.s + eps)));
+
+    if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+      console.log('[LEADER:consensus]', { topTwo: scored.slice(0,2), isTie, pct });
+    }
+
+    return isTie
+      ? { venue: null, score: pct, tie: [best.v, second.v] }   // optional: signal tie
+      : { venue: best.v, score: pct };
   }
 
   function computeDataQualityLeader(aligned:any[]){
