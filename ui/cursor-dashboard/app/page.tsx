@@ -50,6 +50,7 @@ import { SelftestIndicator } from "@/components/SelftestIndicator"
 import { useExchangeData } from "../contexts/ExchangeDataContext"
 import { getAvailableUiVenues, uiKeyToDataKey, type UiVenue } from "../lib/venueMapping"
 import { computePriceLeadership, type DataKey } from "../lib/leadership"
+import { defaultEnvEvents, type EnvEvent } from "../lib/environments"
 import type { RiskSummary, HealthRun, EventsResponse, DataSources, EvidenceExport } from "@/types/api"
 import type { MetricsOverview } from "@/types/api.schemas"
 import { z } from "zod"
@@ -63,52 +64,67 @@ import {
   SquarePen,
 } from "lucide-react"
 
+// Helper function to synthesize timestamp from date label
+function synthTsFromLabel(lbl: string): number {
+  // handles "Feb '25", "Jun '25", "Jul '25"
+  const m = lbl.match(/^([A-Za-z]{3})\s+'(\d{2})$/);
+  if (m) {
+    const [ , monStr, yy ] = m;
+    const year = 2000 + Number(yy);
+    const mon = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].indexOf(monStr);
+    return Date.UTC(year, Math.max(0, mon), 1);
+  }
+  // fallback: parse "Feb 3" etc.
+  const parsed = Date.parse(lbl);
+  return isNaN(parsed) ? Date.now() : parsed;
+}
+
 // Different data sets for different time periods
 const analyticsData30d = [
-  { date: "Aug 6", fnb: 100, absa: 95, standard: 105, nedbank: 98 },
-  { date: "Aug 13", fnb: 150, absa: 145, standard: 155, nedbank: 148 },
-  { date: "Aug 20", fnb: 200, absa: 190, standard: 210, nedbank: 195 },
-  { date: "Aug 27", fnb: 250, absa: 240, standard: 260, nedbank: 245 },
-  { date: "Sep 3", fnb: 300, absa: 290, standard: 310, nedbank: 295 },
-  { date: "Sep 10", fnb: 350, absa: 330, standard: 370, nedbank: 340 },
+  { date: "Aug 6", ts: synthTsFromLabel("Aug 6"), fnb: 100, absa: 95, standard: 105, nedbank: 98 },
+  { date: "Aug 13", ts: synthTsFromLabel("Aug 13"), fnb: 150, absa: 145, standard: 155, nedbank: 148 },
+  { date: "Aug 20", ts: synthTsFromLabel("Aug 20"), fnb: 200, absa: 190, standard: 210, nedbank: 195 },
+  { date: "Aug 27", ts: synthTsFromLabel("Aug 27"), fnb: 250, absa: 240, standard: 260, nedbank: 245 },
+  { date: "Sep 3", ts: synthTsFromLabel("Sep 3"), fnb: 300, absa: 290, standard: 310, nedbank: 295 },
+  { date: "Sep 10", ts: synthTsFromLabel("Sep 10"), fnb: 350, absa: 330, standard: 370, nedbank: 340 },
 ]
 
 const analyticsData6m = [
-  { date: "Mar '25", fnb: 80, absa: 75, standard: 85, nedbank: 78 },
-  { date: "Apr '25", fnb: 120, absa: 115, standard: 125, nedbank: 118 },
-  { date: "May '25", fnb: 180, absa: 175, standard: 185, nedbank: 178 },
-  { date: "Jun '25", fnb: 220, absa: 210, standard: 230, nedbank: 215 },
-  { date: "Jul '25", fnb: 280, absa: 270, standard: 290, nedbank: 275 },
-  { date: "Aug '25", fnb: 320, absa: 310, standard: 330, nedbank: 315 },
-  { date: "Sep '25", fnb: 350, absa: 330, standard: 370, nedbank: 340 },
+  { date: "Mar '25", ts: synthTsFromLabel("Mar '25"), fnb: 80, absa: 75, standard: 85, nedbank: 78 },
+  { date: "Apr '25", ts: synthTsFromLabel("Apr '25"), fnb: 120, absa: 115, standard: 125, nedbank: 118 },
+  { date: "May '25", ts: synthTsFromLabel("May '25"), fnb: 180, absa: 175, standard: 185, nedbank: 178 },
+  { date: "Jun '25", ts: synthTsFromLabel("Jun '25"), fnb: 220, absa: 210, standard: 230, nedbank: 215 },
+  { date: "Jul '25", ts: synthTsFromLabel("Jul '25"), fnb: 280, absa: 270, standard: 290, nedbank: 275 },
+  { date: "Aug '25", ts: synthTsFromLabel("Aug '25"), fnb: 320, absa: 310, standard: 330, nedbank: 315 },
+  { date: "Sep '25", ts: synthTsFromLabel("Sep '25"), fnb: 350, absa: 330, standard: 370, nedbank: 340 },
 ]
 
 const analyticsData1y = [
-  { date: "Sep '24", fnb: 60, absa: 55, standard: 65, nedbank: 58 },
-  { date: "Oct '24", fnb: 80, absa: 75, standard: 85, nedbank: 78 },
-  { date: "Nov '24", fnb: 100, absa: 95, standard: 105, nedbank: 98 },
-  { date: "Dec '24", fnb: 120, absa: 115, standard: 125, nedbank: 118 },
-  { date: "Jan '25", fnb: 140, absa: 135, standard: 145, nedbank: 138 },
-  { date: "Feb '25", fnb: 180, absa: 175, standard: 185, nedbank: 178 },
-  { date: "Mar '25", fnb: 220, absa: 210, standard: 230, nedbank: 215 },
-  { date: "Apr '25", fnb: 260, absa: 250, standard: 270, nedbank: 255 },
-  { date: "May '25", fnb: 300, absa: 290, standard: 310, nedbank: 295 },
-  { date: "Jun '25", fnb: 320, absa: 310, standard: 330, nedbank: 315 },
-  { date: "Jul '25", fnb: 340, absa: 330, standard: 350, nedbank: 335 },
-  { date: "Aug '25", fnb: 360, absa: 350, standard: 370, nedbank: 355 },
-  { date: "Sep '25", fnb: 350, absa: 330, standard: 370, nedbank: 340 },
+  { date: "Sep '24", ts: synthTsFromLabel("Sep '24"), fnb: 60, absa: 55, standard: 65, nedbank: 58 },
+  { date: "Oct '24", ts: synthTsFromLabel("Oct '24"), fnb: 80, absa: 75, standard: 85, nedbank: 78 },
+  { date: "Nov '24", ts: synthTsFromLabel("Nov '24"), fnb: 100, absa: 95, standard: 105, nedbank: 98 },
+  { date: "Dec '24", ts: synthTsFromLabel("Dec '24"), fnb: 120, absa: 115, standard: 125, nedbank: 118 },
+  { date: "Jan '25", ts: synthTsFromLabel("Jan '25"), fnb: 140, absa: 135, standard: 145, nedbank: 138 },
+  { date: "Feb '25", ts: synthTsFromLabel("Feb '25"), fnb: 180, absa: 175, standard: 185, nedbank: 178 },
+  { date: "Mar '25", ts: synthTsFromLabel("Mar '25"), fnb: 220, absa: 210, standard: 230, nedbank: 215 },
+  { date: "Apr '25", ts: synthTsFromLabel("Apr '25"), fnb: 260, absa: 250, standard: 270, nedbank: 255 },
+  { date: "May '25", ts: synthTsFromLabel("May '25"), fnb: 300, absa: 290, standard: 310, nedbank: 295 },
+  { date: "Jun '25", ts: synthTsFromLabel("Jun '25"), fnb: 320, absa: 310, standard: 330, nedbank: 315 },
+  { date: "Jul '25", ts: synthTsFromLabel("Jul '25"), fnb: 340, absa: 330, standard: 350, nedbank: 335 },
+  { date: "Aug '25", ts: synthTsFromLabel("Aug '25"), fnb: 360, absa: 350, standard: 370, nedbank: 355 },
+  { date: "Sep '25", ts: synthTsFromLabel("Sep '25"), fnb: 350, absa: 330, standard: 370, nedbank: 340 },
 ]
 
 const analyticsDataYTD = [
-  { date: "Jan '25", fnb: 100, absa: 95, standard: 105, nedbank: 98 },
-  { date: "Feb '25", fnb: 150, absa: 145, standard: 155, nedbank: 148 },
-  { date: "Mar '25", fnb: 200, absa: 190, standard: 210, nedbank: 195 },
-  { date: "Apr '25", fnb: 180, absa: 175, standard: 185, nedbank: 178 },
-  { date: "May '25", fnb: 250, absa: 240, standard: 260, nedbank: 245 },
-  { date: "Jun '25", fnb: 300, absa: 290, standard: 310, nedbank: 295 },
-  { date: "Jul '25", fnb: 280, absa: 270, standard: 290, nedbank: 275 },
-  { date: "Aug '25", fnb: 400, absa: 380, standard: 420, nedbank: 390 },
-  { date: "Sep '25", fnb: 350, absa: 330, standard: 370, nedbank: 340 },
+  { date: "Jan '25", ts: synthTsFromLabel("Jan '25"), fnb: 100, absa: 95, standard: 105, nedbank: 98 },
+  { date: "Feb '25", ts: synthTsFromLabel("Feb '25"), fnb: 150, absa: 145, standard: 155, nedbank: 148 },
+  { date: "Mar '25", ts: synthTsFromLabel("Mar '25"), fnb: 200, absa: 190, standard: 210, nedbank: 195 },
+  { date: "Apr '25", ts: synthTsFromLabel("Apr '25"), fnb: 180, absa: 175, standard: 185, nedbank: 178 },
+  { date: "May '25", ts: synthTsFromLabel("May '25"), fnb: 250, absa: 240, standard: 260, nedbank: 245 },
+  { date: "Jun '25", ts: synthTsFromLabel("Jun '25"), fnb: 300, absa: 290, standard: 310, nedbank: 295 },
+  { date: "Jul '25", ts: synthTsFromLabel("Jul '25"), fnb: 280, absa: 270, standard: 290, nedbank: 275 },
+  { date: "Aug '25", ts: synthTsFromLabel("Aug '25"), fnb: 400, absa: 380, standard: 420, nedbank: 390 },
+  { date: "Sep '25", ts: synthTsFromLabel("Sep '25"), fnb: 350, absa: 330, standard: 370, nedbank: 340 },
 ]
 
 // Financial Compliance Dashboard - Main Component (CI Test)
@@ -259,6 +275,9 @@ export default function CursorDashboard() {
   // Leadership state (independent from chart)
   const [leadership, setLeadership] = React.useState<{leader: VenueKey|null; pct: number|null; total: number}>({ leader: null, pct: null, total: 0 });
   
+  // Environment events state
+  const [envEvents, setEnvEvents] = React.useState<EnvEvent[]>([]);
+  
   // Helper function to truncate text to specified length
   const truncateText = (text: string, maxLength: number = 40) => {
     return text.length > maxLength ? text.slice(0, maxLength - 1).trimEnd() + "…" : text;
@@ -288,7 +307,10 @@ export default function CursorDashboard() {
     
     // Create chart data points - keep the old shape, fill only present series
     const chartData = sortedTimestamps.map(timestamp => {
-      const point: any = { date: new Date(timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) }
+      const point: any = { 
+        date: new Date(timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        ts: Date.parse(timestamp) // Add numeric timestamp for time-based x-axis
+      }
       
       // Only populate keys that exist in availableUiVenues
       for (const uiVenue of availableUiVenues) {
@@ -678,17 +700,19 @@ export default function CursorDashboard() {
       console.log(`📊 [UI Frontend] Loaded series: [${successfulVenues.join(', ')}]`)
       console.log(`📊 [UI Frontend] Bars per series:`, barsPerSeries)
       
-      // Debug logging
-      if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
-        console.log(`🔍 [UI Frontend] SERIES_SOURCE=live`)
-        console.log(`🔍 [UI Frontend] SERIES_VENUES=[${successfulVenues.join(',')}]`)
-        console.log(`🔍 [UI Frontend] AVATAR_VENUES=[${successfulVenues.join(',')}]`)
-      }
-      
       // Create chart series from successful exchanges
       if (successfulExchanges.length > 0) {
         const availableUiVenues: UiVenue[] = getAvailableUiVenues(successfulExchanges)
         const chartData = createChartSeries(successfulExchanges)
+        
+        // Debug logging
+        if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+          console.log(`🔍 [UI Frontend] SERIES_SOURCE=live`)
+          console.log(`🔍 [UI Frontend] SERIES_VENUES=[${successfulVenues.join(',')}]`)
+          console.log(`🔍 [UI Frontend] AVATAR_VENUES=[${successfulVenues.join(',')}]`)
+          console.log("[ENV] events", envEvents.map(e => ({ id: e.id, ts: e.ts })));
+          console.log("[ENV] firstRow", chartData[0]?.ts, "lastRow", chartData.at(-1)?.ts);
+        }
         setExchangeData(chartData)
         setAvailableUiVenues(availableUiVenues)
         setExchangeDataError(null)
@@ -844,6 +868,34 @@ export default function CursorDashboard() {
       if (!cancelled) setLeadership(result);
     })();
     return () => { cancelled = true; };
+  }, [selectedTimeframe]);
+
+  // Fetch environment events
+  useEffect(() => {
+    const fetchEnvEvents = async () => {
+      try {
+        // Try to fetch from API first
+        const result = await fetchTyped(`/events?timeframe=${selectedTimeframe}`, EventsResponseSchema);
+        if (result && Array.isArray((result as any).items) && (result as any).items.length > 0) {
+          // Convert API events to EnvEvent format
+          const events: EnvEvent[] = (result as any).items.map((item: any) => ({
+            id: item.id || `event-${Date.now()}`,
+            ts: item.ts || Date.parse(item.date || new Date().toISOString()),
+            label: item.label || item.name || 'Event',
+            color: item.color || '#94a3b8'
+          }));
+          setEnvEvents(events);
+        } else {
+          // Fallback to default events
+          setEnvEvents(defaultEnvEvents());
+        }
+      } catch (error) {
+        // Fallback to default events on error
+        setEnvEvents(defaultEnvEvents());
+      }
+    };
+
+    fetchEnvEvents();
   }, [selectedTimeframe]);
 
   // Close calendar when switching to agents tab and reset sidebar when switching to dashboard
@@ -2506,10 +2558,14 @@ It would also be helpful if you described:
                             <ResponsiveContainer width="100%" height="100%" style={{ outline: "none" }}>
                           <LineChart data={currentData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                             <XAxis
-                              dataKey="date"
+                              dataKey="ts"
+                              type="number"
+                              scale="time"
+                              domain={['dataMin', 'dataMax']}
                               axisLine={false}
                               tickLine={false}
                               tick={{ fill: "#a1a1aa", fontSize: 10 }}
+                              tickFormatter={(ts) => new Date(ts).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}
                               label={{
                                 value: "Time",
                                 position: "insideBottom",
@@ -2529,57 +2585,28 @@ It would also be helpful if you described:
                             />
                                 <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" opacity={0.75} />
 
-                                {/* Option 2: Event Dots - Small colored indicators */}
-                                <ReferenceLine
-                                  x="Feb '25"
-                                  stroke="#ef4444"
-                                  strokeOpacity={0}
-                                  strokeWidth={0}
-                                >
-                                  <Label value="●" position="top" />
-                                </ReferenceLine>
-                                <ReferenceLine
-                                  x="Jun '25"
-                                  stroke="#f59e0b"
-                                  strokeOpacity={0}
-                                  strokeWidth={0}
-                                >
-                                  <Label value="●" position="top" />
-                                </ReferenceLine>
-                                <ReferenceLine
-                                  x="Jul '25"
-                                  stroke="#10b981"
-                                  strokeOpacity={0}
-                                  strokeWidth={0}
-                                >
-                                  <Label value="●" position="top" />
-                                </ReferenceLine>
-
-                                {/* Option 3: Subtle Background Shading - Colored bands for event periods */}
-                                <ReferenceLine
-                                  x="Feb '25"
-                                  stroke="rgba(255, 200, 200, 0.15)"
-                                  strokeOpacity={1}
-                                  strokeWidth={40}
-                                  strokeDasharray="0"
-                                />
-                                <ReferenceLine
-                                  x="Jun '25"
-                                  stroke="rgba(255, 220, 180, 0.15)"
-                                  strokeOpacity={1}
-                                  strokeWidth={40}
-                                  strokeDasharray="0"
-                                />
-                                <ReferenceLine
-                                  x="Jul '25"
-                                  stroke="rgba(200, 255, 220, 0.15)"
-                                  strokeOpacity={1}
-                                  strokeWidth={40}
-                                  strokeDasharray="0"
-                                />
+                                {/* Environment Events - Dynamic ReferenceLines */}
+                                {envEvents.map(e => (
+                                  <ReferenceLine
+                                    key={e.id}
+                                    x={e.ts}
+                                    stroke={e.color || '#94a3b8'}
+                                    strokeDasharray="3 3"
+                                    ifOverflow="extendDomain"
+                                    label={{
+                                      value: e.label,
+                                      position: 'top',
+                                      fontSize: 11,
+                                      fill: e.color || '#94a3b8'
+                                    }}
+                                  />
+                                ))}
 
                             <Tooltip
                                   cursor={false}
+                                  labelFormatter={(ts) =>
+                                    new Date(Number(ts)).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })
+                                  }
                               content={({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string }) => {
                                 if (active && payload && payload.length) {
                                       // Market share data for each exchange (using live data if available)
