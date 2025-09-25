@@ -1554,26 +1554,29 @@ It would also be helpful if you described:
     color: string;       // used for pill + bar color mapping
   };
 
-  const ENV_EVENTS: EnvEvent[] = [
+  const ENV_EVENTS = [
     {
-      ts: Date.UTC(2025, 0, 20), // Jan 20, 2025
-      label: "Trump Inauguration Surge",
-      desc: "Market jump around inauguration",
-      color: "#ef4444" // red family
+      ts: Date.parse('2025-01-20T00:00:00Z'),
+      title: 'Inauguration Surge',
+      subtitle: 'U.S. admin change; risk-on bid',
+      color: '#fecaca',
     },
     {
-      ts: Date.UTC(2025, 2, 6), // Mar 6, 2025
-      label: "Strategic BTC Reserve Order",
-      desc: "Executive order: federal BTC reserves",
-      color: "#f59e0b" // amber family
+      ts: Date.parse('2025-03-06T00:00:00Z'),
+      title: 'Strategic BTC Reserve EO',
+      subtitle: 'Treasury acquisition directive',
+      color: '#fed7aa',
     },
     {
-      ts: Date.UTC(2025, 6, 18), // Jul 18, 2025
-      label: "GENIUS Act Implementation",
-      desc: "New compliance rules take effect",
-      color: "#10b981" // green family
-    }
-  ];
+      ts: Date.parse('2025-07-18T00:00:00Z'),
+      title: 'GENIUS Act Rollout',
+      subtitle: 'Regulatory framework in effect',
+      color: '#bbf7d0',
+    },
+  ] as const;
+
+  const byTs: Record<number, typeof ENV_EVENTS[number]> =
+    Object.fromEntries(ENV_EVENTS.map(e => [e.ts, e]));
 
   // Helper function to format date with year
   const fmtDayYear = (ms: number) =>
@@ -2685,25 +2688,20 @@ It would also be helpful if you described:
                                   const timestamp = snapTs ?? Number(label);
                                   
                                   // Find matching event for this day
-                                  const evt = ENV_EVENTS.find(ev => sameUtcDay(ev.ts, timestamp));
+                                  const ev = snapTs ? byTs[snapTs] : undefined;
                                   
                                   return (
                                     <div className="bg-black border border-[#1a1a1a] rounded-lg p-3 shadow-2xl shadow-black/50">
                                       <p className="text-[#a1a1aa] text-[10px] mb-1.5">{fmtDayYear(timestamp)}</p>
                                       
                                       {/* Event Information - only show if there's a matching event */}
-                                      {evt && (
-                                        <div
-                                          className="mb-2 p-2 bg-bg-tile rounded border-l-2"
-                                          style={{ borderLeftColor: evt.color }}
-                                        >
+                                      {ev && (
+                                        <div className="mb-2 p-2 bg-bg-tile rounded border-l-2" style={{ borderLeftColor: ev.color }}>
                                           <div className="flex items-center gap-2 mb-1">
-                                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: evt.color }} />
-                                            <span className="text-[#f9fafb] font-semibold text-[10px]">
-                                              {evt.label}
-                                            </span>
+                                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: ev.color }} />
+                                            <span className="text-[#f9fafb] font-semibold text-[10px]">{ev.title}</span>
                                           </div>
-                                          {evt.desc && <p className="text-[#a1a1aa] text-[9px]">{evt.desc}</p>}
+                                          <p className="text-[#a1a1aa] text-[9px]">{ev.subtitle}</p>
                                         </div>
                                       )}
 
@@ -2850,16 +2848,12 @@ It would also be helpful if you described:
                               <ReferenceLine
                                 key={e.ts}
                                 x={e.ts}
-                                stroke={
-                                  e.color === "#ef4444" ? "#fecaca" : // red → soft rose
-                                  e.color === "#f59e0b" ? "#fed7aa" : // amber → soft peach
-                                                   "#bbf7d0"   // green → soft mint
-                                }
+                                stroke={e.color}
                                 strokeWidth={2}
                                 strokeOpacity={0.60}
                                 isFront
                               >
-                                <Label value={e.label} position="top" />
+                                <Label value={e.title} position="top" />
                               </ReferenceLine>
                             ))}
                           </LineChart>
