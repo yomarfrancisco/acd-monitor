@@ -52,6 +52,7 @@ import { getAvailableUiVenues, uiKeyToDataKey, type UiVenue } from "../lib/venue
 import { computePriceLeadership, type DataKey } from "../lib/leadership"
 import type { RiskSummary, HealthRun, EventsResponse, DataSources, EvidenceExport } from "@/types/api"
 import type { MetricsOverview } from "@/types/api.schemas"
+import { z } from "zod"
 import {
   MessageSquare,
   GitBranch,
@@ -157,6 +158,95 @@ function useAutosizeTextarea(
   }, [ref]);
 }
 
+// Permissive overview parser for leadership calculation (independent from chart)
+const OverviewLoose = z.object({
+  venue: z.string().optional(),
+  symbol: z.string().optional(),
+  asOf: z.string().optional(),
+  ticker: z.object({
+    bid: z.union([z.number(), z.string()]).optional(),
+    ask: z.union([z.number(), z.string()]).optional(),
+    mid: z.union([z.number(), z.string()]).optional(),
+    ts:  z.string().optional(),
+  }).optional(),
+  ohlcv: z.array(z.array(z.any())).default([]),
+  error: z.string().optional(),
+});
+
+function toNum(x: unknown): number {
+  const v = typeof x === "string" ? Number(x) : (x as number);
+  return Number.isFinite(v) ? v : 0;
+}
+
+type NormalizedOverview = {
+  venue: string;
+  ohlcv: readonly [string, number, number, number, number, number][];
+};
+
+function normalizeOverview(raw: z.infer<typeof OverviewLoose>, v: string): NormalizedOverview {
+  const venue = raw.venue ?? v;
+  const ohlcv = (raw.ohlcv ?? []).map(row => {
+    // expected: [time, open, high, low, close, vol?]
+    // kraken variant: [time, open, high, low, close, vwap, volume, count]
+    const t = row[0];
+    const iso = typeof t === "string" ? t : new Date((t as number) * 1000).toISOString();
+    const open  = toNum(row[1]);
+    const high  = toNum(row[2]);
+    const low   = toNum(row[3]);
+    const close = toNum(row[4]);
+    const vol   = row[6] != null ? toNum(row[6]) : toNum(row[5]);
+    return [iso, open, high, low, close, vol] as [string, number, number, number, number, number];
+  });
+  return { venue, ohlcv };
+}
+
+async function fetchOverviewLoose(venue: string, url: string): Promise<NormalizedOverview | null> {
+  try {
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) return null;
+    const json = await res.json();
+    const parsed = OverviewLoose.safeParse(json);
+    const norm = parsed.success ? normalizeOverview(parsed.data, venue) : normalizeOverview(json as any, venue);
+    return norm.ohlcv.length > 0 ? norm : null;
+  } catch {
+    return null;
+  }
+}
+
+type VenueKey = "binance" | "okx" | "bybit" | "kraken";
+
+function computeLeadershipFromOverviews(data: Record<VenueKey, NormalizedOverview | null>) {
+  // Build aligned rows by timestamp using the intersection where at least 2 venues have data for that ts.
+  const byTs: Record<string, Partial<Record<VenueKey, number>>> = {};
+  (["binance","okx","bybit","kraken"] as VenueKey[]).forEach(v => {
+    const ov = data[v];
+    if (!ov) return;
+    ov.ohlcv.forEach(([ts, _o,_h,_l,c]) => {
+      (byTs[ts] ||= {});
+      byTs[ts][v] = c;
+    });
+  });
+
+  let wins: Record<VenueKey, number> = { binance:0, okx:0, bybit:0, kraken:0 };
+  let races = 0;
+
+  Object.values(byTs).forEach(row => {
+    const entries = Object.entries(row) as [VenueKey, number][];
+    if (entries.length < 2) return; // need at least 2 venues
+    races++;
+    // price leader = highest close (you can flip to lowest if "best price" means cheapest)
+    entries.sort((a,b) => b[1] - a[1]);
+    const [winner] = entries[0];
+    wins[winner]++;
+  });
+
+  if (races < 1) return { leader: null as VenueKey | null, pct: null as number | null, total: 0 };
+
+  const [leader, count] = Object.entries(wins).sort((a,b) => (b[1] as number) - (a[1] as number))[0] as [VenueKey, number];
+  const pct = (count / races) * 100;
+  return { leader, pct, total: races };
+}
+
 export default function CursorDashboard() {
   const [activeTab, setActiveTab] = useState<"agents" | "dashboard">("agents")
   const [selectedTimeframe, setSelectedTimeframe] = useState<"30d" | "6m" | "1y" | "ytd">("ytd")
@@ -165,6 +255,9 @@ export default function CursorDashboard() {
   const [isInputFocused, setIsInputFocused] = useState(false)
   const [activeAgent, setActiveAgent] = useState<string | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  
+  // Leadership state (independent from chart)
+  const [leadership, setLeadership] = React.useState<{leader: VenueKey|null; pct: number|null; total: number}>({ leader: null, pct: null, total: 0 });
   
   // Helper function to truncate text to specified length
   const truncateText = (text: string, maxLength: number = 40) => {
@@ -726,6 +819,32 @@ export default function CursorDashboard() {
 
     fetchDataSources()
   }, [isClient])
+
+  // Leadership calculation (independent from chart)
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const tf = selectedTimeframe; // already in scope
+      const base = "/api/exchanges";
+      const urls: Record<VenueKey, string> = {
+        binance: `${base}/binance/overview?symbol=BTCUSDT&tf=${tf}`,
+        okx:     `${base}/okx/overview?symbol=BTCUSDT&tf=${tf}`,
+        bybit:   `${base}/bybit/overview?symbol=BTCUSDT&tf=${tf}`,
+        kraken:  `${base}/kraken/overview?symbol=BTCUSDT&tf=${tf}`,
+      };
+
+      const [b,o,by,k] = await Promise.all([
+        fetchOverviewLoose("binance", urls.binance),
+        fetchOverviewLoose("okx",     urls.okx),
+        fetchOverviewLoose("bybit",   urls.bybit),
+        fetchOverviewLoose("kraken",  urls.kraken),
+      ]);
+
+      const result = computeLeadershipFromOverviews({ binance: b, okx: o, bybit: by, kraken: k });
+      if (!cancelled) setLeadership(result);
+    })();
+    return () => { cancelled = true; };
+  }, [selectedTimeframe]);
 
   // Close calendar when switching to agents tab and reset sidebar when switching to dashboard
   const handleTabChange = (tab: "agents" | "dashboard") => {
@@ -1379,33 +1498,22 @@ It would also be helpful if you described:
   // Use live exchange data if available, otherwise fall back to static data
   const currentData = exchangeData.length > 0 ? exchangeData : getAnalyticsData()
 
-  // Price leadership calculation
-  const keyByVenue: Record<string, DataKey> = {
-    binance: 'fnb',
-    coinbase: 'absa',
-    bybit: 'nedbank',
-    kraken: 'standard',
-  };
+  // Leadership display (using independent state)
+  const leaderLabel = leadership.leader
+    ? (leadership.leader === "okx" ? "coinbase" : leadership.leader) // if UI uses Coinbase icon for OKX
+    : null;
 
-  const activeKeys = (availableUiVenues ?? [])
-    .map(v => keyByVenue[v])
-    .filter(Boolean) as DataKey[];
+  const leadershipPctText =
+    leadership.pct != null ? `${Math.round(leadership.pct)}` : "N/A";
 
-  const leadership = computePriceLeadership(currentData, activeKeys);
-
-  // Render the metric (fallback when <2 venues or no signal)
-  const leadershipPctText = leadership.pct == null
-    ? 'N/A'
-    : Math.round(leadership.pct).toString();
-
-  const leadershipCaption = leadership.pct == null
-    ? 'Requires multiple venues'
-    : `Leader: ${leadership.leader}`;
+  const leadershipCaption =
+    leadership.leader && leadership.total >= 2
+      ? `Leader: ${leaderLabel}`
+      : "Requires multiple venues";
 
   // Debug logging for leadership calculation
   if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
-    console.log('LEADERSHIP_INPUT_KEYS=', activeKeys);
-    console.log('LEADERSHIP_RESULT=', leadership);
+    console.log("LEADERSHIP_RESULT", leadership);
   }
 
   return (
