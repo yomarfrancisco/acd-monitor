@@ -277,9 +277,33 @@ const readBar = (bar: any): { ts: number | string | null; close: number | null }
     // pct expresses separation from #2; 0 when tied/equal, ~1 when huge separation
     const pct = (!second || isTie) ? 0 : Math.max(0, 1 - (best.s / (second.s + eps)));
 
+    // Build venue ranking table
+    const keptDays = kept;
+    const ranking = scored
+      .map(r => ({
+        venue: r.v,
+        wins: r.n,
+        pct: keptDays ? r.n / keptDays : 0,
+      }))
+      .sort((a, b) => b.wins - a.wins || b.pct - a.pct);
+
+    // top-1 stays our leader
+    const leader = ranking[0]?.venue ?? null;
+    const leaderPct = ranking[0]?.pct ?? null;
+    const venueCount = ranking.length;
+
     // At the end, log a concise summary
     if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
       console.log('[LEADER:consensus:keep-vs-drop]', { kept, dropped: aligned.length - kept, drop });
+      console.log('[LEADER:consensus:ranking]', {
+        keptDays,
+        venues: venueCount,
+        table: ranking.map(r => ({
+          venue: r.venue,
+          wins: r.wins,
+          pct: Number((r.pct * 100).toFixed(2)),
+        })),
+      });
       console.log('[LEADER:consensus]', { topTwo: scored.slice(0,2), isTie, pct });
     }
 
@@ -301,15 +325,15 @@ const readBar = (bar: any): { ts: number | string | null; close: number | null }
 
   function computePriceLeader(aligned:any[]){
     const lag = computeLeadLagLeader(aligned, { minPairs: 60, eps: 0.0 });
-    if (lag) return { venue: lag.venue, pct: lag.score, total: lag.totalPairs, method:'lead-lag' as const };
+    if (lag) return { venue: lag.venue, pct: lag.score, venues: lag.totalPairs, method:'lead-lag' as const };
 
     const cons = computeConsensusLeader(aligned, 60);
-    if (cons) return { venue: cons.venue, pct: cons.score, total: 0, method:'consensus-proximity' as const };
+    if (cons) return { venue: cons.venue, pct: cons.score, venues: 0, method:'consensus-proximity' as const };
 
     const qual = computeDataQualityLeader(aligned);
-    if (qual) return { venue: qual.venue, pct: qual.score, total: 0, method:'data-quality' as const };
+    if (qual) return { venue: qual.venue, pct: qual.score, venues: 0, method:'data-quality' as const };
 
-    return { leader: null, pct: null, total: 0, method:'none' as const };
+    return { leader: null, pct: null, venues: 0, method:'none' as const };
   }
 
   // Temporal Price Leadership calculation with robust fallbacks
@@ -518,7 +542,7 @@ function computeLeadershipFromOverviews(aligned: Record<string, Array<[number, n
   const lc = latestCommonIndex(aligned, VENUES);
   
   if (!lc.values) {
-    return { leader: null as VenueKey | null, pct: null as number | null, total: 0 };
+    return { leader: null as VenueKey | null, pct: null as number | null, venues: 0 };
   }
   
   // Find highest price (leader)
@@ -540,7 +564,7 @@ function computeLeadershipFromOverviews(aligned: Record<string, Array<[number, n
   return { 
     leader, 
     pct: Number(spread.toFixed(1)), 
-    total: entries.length 
+    venues: entries.length 
   };
 }
 
@@ -564,7 +588,7 @@ export default function CursorDashboard() {
   }, []);
   
   // Leadership state (independent from chart)
-  const [leadership, setLeadership] = React.useState<{leader: VenueKey|null; pct: number|null; total: number}>({ leader: null, pct: null, total: 0 });
+  const [leadership, setLeadership] = React.useState<{leader: VenueKey|null; pct: number|null; venues: number}>({ leader: null, pct: null, venues: 0 });
   
   
   // Helper function to truncate text to specified length
@@ -1096,7 +1120,7 @@ export default function CursorDashboard() {
       setLeadership({ 
         leader: leader.venue as VenueKey | null, 
         pct: leader.score ? (leader.score * 100) : null, 
-        total: successfulExchanges.length 
+        venues: successfulExchanges.length 
       })
       
       // Clear any previous errors
@@ -2001,7 +2025,7 @@ It would also be helpful if you described:
     leadership.pct != null ? `${Math.round(leadership.pct)}` : "N/A";
 
   const leadershipCaption =
-    leadership.leader && leadership.total >= 2
+    leadership.leader && leadership.venues >= 2
       ? `Leader: ${leaderLabel}`
       : "Requires multiple venues";
 
