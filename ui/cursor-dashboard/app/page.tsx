@@ -2663,6 +2663,7 @@ It would also be helpful if you described:
                               type="number"
                               domain={['dataMin', 'dataMax']}
                               tickFormatter={(v) => new Date(v).toLocaleDateString('en-US', { month:'short', day:'2-digit' })}
+                              tick={{ fontSize: 10 }}
                             />
                             <YAxis
                               axisLine={false}
