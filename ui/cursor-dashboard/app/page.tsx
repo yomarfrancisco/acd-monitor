@@ -50,22 +50,8 @@ import { SelftestIndicator } from "@/components/SelftestIndicator"
 import { useExchangeData } from "../contexts/ExchangeDataContext"
 import { getAvailableUiVenues, uiKeyToDataKey, type UiVenue } from "../lib/venueMapping"
 import { computePriceLeadership, type DataKey } from "../lib/leadership"
-import { defaultEnvEvents, type EnvEvent } from "../lib/environments"
-import { toMsTs, finiteMsOrNull } from "../lib/time"
-
-// Utility to convert various timestamp formats to milliseconds
-const toMs = (v: unknown): number | null => {
-  if (typeof v === "number") {
-    if (!Number.isFinite(v) || v <= 0) return null;
-    return v < 1e12 ? Math.round(v * 1000) : v; // seconds → ms
-  }
-  if (typeof v === "string" && v) {
-    const n = Date.parse(v);
-    return Number.isFinite(n) ? n : null;
-  }
-  if (v instanceof Date) return v.getTime();
-  return null;
-};
+import { fetchEnvEvents, type EnvEvent } from "../utils/events"
+import { toMsTs } from "../lib/time"
 import type { RiskSummary, HealthRun, EventsResponse, DataSources, EvidenceExport } from "@/types/api"
 import type { MetricsOverview } from "@/types/api.schemas"
 import { z } from "zod"
@@ -897,42 +883,18 @@ export default function CursorDashboard() {
 
   // Fetch environment events
   useEffect(() => {
-    const fetchEnvEvents = async () => {
+    const loadEnvEvents = async () => {
       try {
-        // Try to fetch from API first
-        const result = await fetchTyped(`/events?timeframe=${selectedTimeframe}`, EventsResponseSchema);
-        const envEventsRaw = (result && Array.isArray((result as any).items) && (result as any).items.length > 0) 
-          ? (result as any).items.map((item: any) => ({
-              id: item.id || `event-${Date.now()}`,
-              ts: item.ts || Date.parse(item.date || new Date().toISOString()),
-              label: item.label || item.name || 'Event',
-              color: item.color || '#94a3b8'
-            }))
-          : defaultEnvEvents();
-
-        // Normalize events to ms and filter invalid
-        const events = envEventsRaw
-          .map((e: any) => {
-            const ts = toMs(e.ts);
-            return ts ? { ...e, ts } : null;
-          })
-          .filter(Boolean) as EnvEvent[];
-
+        const events = await fetchEnvEvents(selectedTimeframe);
         setEnvEvents(events);
       } catch (error) {
         // Fallback to default events on error
-        const envEventsRaw = defaultEnvEvents();
-        const events = envEventsRaw
-          .map((e: any) => {
-            const ts = toMs(e.ts);
-            return ts ? { ...e, ts } : null;
-          })
-          .filter(Boolean) as EnvEvent[];
-        setEnvEvents(events);
+        const { defaultSeeds } = await import("../utils/events");
+        setEnvEvents(defaultSeeds);
       }
     };
 
-    fetchEnvEvents();
+    loadEnvEvents();
   }, [selectedTimeframe]);
 
   // Close calendar when switching to agents tab and reset sidebar when switching to dashboard
@@ -1593,11 +1555,18 @@ It would also be helpful if you described:
   const xMin = hasDomain ? Math.min(...tsValues) : undefined;
   const xMax = hasDomain ? Math.max(...tsValues) : undefined;
 
+  // Filter events to only include those within the chart domain
+  const validEvents = envEvents.filter(e => 
+    Number.isFinite(e.ts) && 
+    (xMin ?? 0) <= e.ts && 
+    e.ts <= (xMax ?? Number.MAX_SAFE_INTEGER)
+  );
+
   if (process.env.NEXT_PUBLIC_UI_DEBUG === "true") {
     console.log("[ENV] rows=", currentData.length, "xMin=", xMin, "xMax=", xMax);
     console.log("[ENV] sample rows=", currentData.slice(0, 3).map(r => ({ ts: r.ts, date: r.date })));
-    console.log("[ENV] events(raw)=", defaultEnvEvents());
     console.log("[ENV] events(ms)=", envEvents.map(e => e.ts));
+    console.log("[ENV] domain", xMin, xMax, "validEvents", validEvents.length);
   }
 
   // Leadership display (using independent state)
@@ -2638,7 +2607,7 @@ It would also be helpful if you described:
                                 <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" opacity={0.75} />
 
                                 {/* Environment Events - Dynamic ReferenceLines */}
-                                {hasDomain && envEvents.map(e => (
+                                {hasDomain && validEvents.map(e => (
                                 <ReferenceLine
                                     key={e.id}
                                     x={e.ts}
