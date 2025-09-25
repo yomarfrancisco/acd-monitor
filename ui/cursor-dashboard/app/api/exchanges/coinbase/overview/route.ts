@@ -25,53 +25,67 @@ export async function GET(request: NextRequest) {
   const symbol = searchParams.get('symbol') || 'BTC-USD';
   const tf = TF.parse(searchParams.get('tf') ?? 'ytd'); // <- narrows to Timeframe
 
-  try {
-    // Build the request URL using proxy
-    const base = process.env.NEXT_PUBLIC_CRYPTO_PROXY_BASE || PROXY_HOST;
-    const path = `${base}/coinbase/products/${symbol}/candles`;
+  // Debug logging helper (Preview only)
+  const dbg = process.env.NEXT_PUBLIC_DATA_MODE !== "production";
+  function log(...args: any[]) { if (dbg) console.log("[coinbase]", ...args); }
 
-    // Compute window and query
-    const now = new Date();
-    const { days, granularity } = TIMEFRAME_CFG[tf]; // <- type-safe now
+  try {
+    const { granularity } = TIMEFRAME_CFG[tf]; // <- type-safe now
     
-    // For YTD, clamp to start of year
-    let start: Date;
-    if (tf === 'ytd') {
-      const y0 = new Date(now.getFullYear(), 0, 1);
-      start = y0;
-    } else {
-      start = new Date(now.getTime() - days * DAY);
+    // granularity is seconds; convert to ms
+    const gMs = granularity * 1000;
+    const now = Date.now();
+
+    // snap end to the last full bucket boundary (avoid partial future candle)
+    const endTs = Math.floor(now / gMs) * gMs;
+
+    // desired range by timeframe
+    const desiredDays = TIMEFRAME_CFG[tf].days;
+
+    // compute a naïve start by days, then cap to 300 buckets
+    const naiveStartTs = endTs - desiredDays * 24 * 60 * 60 * 1000;
+    const maxStartBy300 = endTs - 300 * gMs;
+    let startTs = Math.max(naiveStartTs, maxStartBy300);
+
+    // ensure start ≤ end - 1 bucket
+    if (startTs > endTs - gMs) startTs = endTs - gMs;
+
+    // YTD: clamp start to Jan 1 UTC if later than current start
+    if (tf === "ytd") {
+      const jan1UTC = Date.UTC(new Date(endTs).getUTCFullYear(), 0, 1, 0, 0, 0, 0);
+      startTs = Math.max(startTs, jan1UTC);
+      // snap start to bucket boundary
+      startTs = Math.floor(startTs / gMs) * gMs;
     }
 
-    const startISO = start.toISOString();
-    const endISO = now.toISOString();
-    const url = `${path}?granularity=${granularity}&start=${startISO}&end=${endISO}`;
+    // final bucket count
+    const bucketCount = Math.floor((endTs - startTs) / gMs);
+    log({ tf, symbol, granularity, gMs, startTs, endTs, bucketCount, startISO: new Date(startTs).toISOString(), endISO: new Date(endTs).toISOString() });
 
-    // Add compact logging (only in Preview)
-    const dbg = process.env.NEXT_PUBLIC_DATA_MODE !== "production";
-    if (dbg) console.log("[coinbase] GET candles", { symbol, tf, startISO, endISO, granularity, url });
+    const startISO = new Date(startTs).toISOString();
+    const endISO = new Date(endTs).toISOString();
 
-    // Fetch via our proxy
-    const res = await fetch(url, { headers: { Accept: 'application/json' } });
+    const url = `${process.env.NEXT_PUBLIC_CRYPTO_PROXY_BASE}/coinbase/products/${symbol}/candles?granularity=${granularity}&start=${encodeURIComponent(startISO)}&end=${encodeURIComponent(endISO)}`;
+
+    log("GET", url);
+
+    const res = await fetch(url, { headers: { "Accept": "application/json" } });
     if (!res.ok) {
-      const text = await res.text().catch(() => "");
-      console.error("[coinbase] HTTP", res.status, text);
+      const txt = await res.text().catch(() => "");
+      log("HTTP", res.status, "error body:", txt);
       return NextResponse.json({ error: "Candles fetch failed" }, { status: res.status });
     }
 
     type RawRow = [number, number, number, number, number, number]; // [time, low, high, open, close, volume]
     const raw: RawRow[] = await res.json();
 
-    const ohlcv = raw
-      .map(([time, low, high, open, close, volume]) => ({
-        ts: time * 1000,
-        o: open,
-        h: high,
-        l: low,
-        c: close,
-        v: volume,
-      }))
-      .sort((a, b) => a.ts - b.ts);
+    // Coinbase returns newest-first; convert to ascending
+    raw.sort((a, b) => a[0] - b[0]);
+
+    const ohlcv = raw.map(([t, low, high, open, close, volume]) => ({
+      ts: t * 1000,
+      o: open, h: high, l: low, c: close, v: volume
+    }));
 
     // Convert to our expected format: [isoTime, open, high, low, close, volume]
     const normalizedOhlcv = ohlcv.map(candle => [
@@ -83,7 +97,7 @@ export async function GET(request: NextRequest) {
       candle.v
     ]);
 
-    console.log(`[coinbase] final result: bars=${normalizedOhlcv.length}`);
+    log("final result: bars=", normalizedOhlcv.length);
 
     return NextResponse.json({
       venue: 'coinbase',
@@ -101,7 +115,7 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.log(`[coinbase] failed:`, error);
+    log("failed:", error);
 
     // Return 502 so UI can drop the venue
     return NextResponse.json({
