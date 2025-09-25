@@ -48,16 +48,37 @@ import { latestCommonIndex } from "../src/shared/leader";
 // Timestamp normalization helpers
 const DAY_MS = 86_400_000;
 
-const toNumHelper = (x: unknown): number | null => {
+const toNum = (x: any) => {
   const n = typeof x === 'string' ? parseFloat(x) : (typeof x === 'number' ? x : NaN);
   return Number.isFinite(n) ? n : null;
 };
 
-const toMidnightMs = (t: number | string): number => {
-  const ms = typeof t === 'string' ? Date.parse(t) : (t < 10_000_000_000 ? t * 1000 : t);
+const toMidnightMs = (t: any) => {
+  const ms =
+    t == null ? NaN :
+    typeof t === 'string' ? Date.parse(t) :
+    typeof t === 'number' ? (t < 10_000_000_000 ? t * 1000 : t) :
+    NaN;
+  if (!Number.isFinite(ms)) return null;
   const d = new Date(ms);
   return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
 };
+
+function getBarTs(bar: any) {
+  // array: [ts, o, h, l, c, v], objects: { time|t|timestamp, ... }
+  const raw =
+    Array.isArray(bar) ? bar[0] :
+    bar?.time ?? bar?.t ?? bar?.timestamp ?? bar?.date ?? null;
+  return toMidnightMs(raw);
+}
+
+function getBarClose(bar: any) {
+  // array close at [4], objects: close|c|price
+  const raw =
+    Array.isArray(bar) ? bar[4] :
+    bar?.close ?? bar?.c ?? bar?.price ?? null;
+  return toNum(raw);
+}
 
   const buildYtdAxis = (): number[] => {
     const startMs = Date.UTC(2025, 0, 1); // 2025-01-01T00:00:00Z
@@ -75,7 +96,7 @@ const toMidnightMs = (t: number | string): number => {
     const last  = rows[rows.length - 1];
 
     const perf = venues.map(v => {
-      const a = toNumHelper(first[v]); const b = toNumHelper(last[v]);
+      const a = toNum(first[v]); const b = toNum(last[v]);
       const ret = (a && b) ? (b / a - 1) : null;
       return { venue: v, ret };
     }).filter(x => x.ret != null) as {venue: string; ret: number}[];
@@ -344,14 +365,14 @@ export default function CursorDashboard() {
 
     for (const ex of successfulExchanges) {
       const venue = ex.venue;
-      const bars: OhlcvBar[] = ex.data?.ohlcv ?? [];
+      const ohlcvData = ex.data?.ohlcv ?? [];
       const m = new Map<number, number>();
 
-      for (const bar of bars) {
-        const close = toNumHelper(bar[4]);
-        if (close == null) continue;
-        const day = toMidnightMs(bar[0]);
-        if (day >= startMs && day < endMs) m.set(day, close);
+      for (const bar of ohlcvData) {
+        const ts = getBarTs(bar);
+        const close = getBarClose(bar);
+        if (ts == null || close == null) continue;
+        if (ts >= startMs && ts < endMs) m.set(ts, close);
       }
       venueMap[venue] = m;
     }
@@ -359,6 +380,12 @@ export default function CursorDashboard() {
     if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
       const jan20 = Date.UTC(2025, 0, 20);
       console.log('[axis]', new Date(startMs).toISOString(), '→', new Date(endMs).toISOString(), 'days=', ytdAxis.length);
+      
+      // Coinbase sample probe
+      const cb = successfulExchanges.find(e => e.venue === 'coinbase');
+      const sample = cb?.data?.ohlcv?.[0];
+      console.log('[coinbase sample]', sample, 'isArray=', Array.isArray(sample));
+      
       for (const v of ['binance','okx','bybit','kraken','coinbase']) {
         const m = venueMap[v];
         const size = m?.size ?? 0;
@@ -1619,7 +1646,7 @@ It would also be helpful if you described:
     },
   ] as const;
 
-  const byTs: Record<number, typeof ENV_EVENTS[number]> =
+  const envByTs: Record<number, typeof ENV_EVENTS[number]> =
     Object.fromEntries(ENV_EVENTS.map(e => [e.ts, e]));
 
   // Helper function to format date with year
@@ -1655,9 +1682,30 @@ It would also be helpful if you described:
   const xMin = hasDomain ? Math.min(...tsValues) : undefined;
   const xMax = hasDomain ? Math.max(...tsValues) : undefined;
 
+  // Build events for domain with proper UTC midnight ms keying
+  const toDayKey = toMidnightMs;
+  
+  function buildEventsForDomain(startMs: number, endMs: number, apiEvents: any[], seeded: any[], enableSeed: boolean) {
+    const all = [...apiEvents, ...(enableSeed ? seeded : [])]
+      .map(e => ({ ...e, day: toDayKey(e.date ?? e.ts ?? e.time) }))
+      .filter(e => e.day != null && e.day >= startMs && e.day < endMs);
+
+    const byTs: Record<number, any[]> = {};
+    for (const e of all) {
+      (byTs[e.day] ??= []).push(e);
+    }
+    return byTs;
+  }
+
   // Fetch API events (already fetched JSON in `apiEventsResponse`)
   const apiEvents = normalizeEvents(apiEventsResponse);
+  const enableSeed = process.env.NEXT_PUBLIC_SEED_EVENTS === 'true';
   const sourceEvents = apiEvents.length > 0 ? apiEvents : SEED_EVENTS_YTD;
+
+  // Build events with proper keying
+  const byTs = Number.isFinite(xMin) && Number.isFinite(xMax)
+    ? buildEventsForDomain(xMin!, xMax!, apiEvents, SEED_EVENTS_YTD, enableSeed)
+    : {};
 
   // Filter to domain (prevents NaN / off-chart artifacts)
   const validEvents = Number.isFinite(xMin) && Number.isFinite(xMax)
@@ -1666,7 +1714,9 @@ It would also be helpful if you described:
 
   // Debug
   if (process.env.NEXT_PUBLIC_UI_DEBUG === "true") {
-    console.log("[ENV] domain", xMin, xMax, "api", apiEvents.length, "seed?", apiEvents.length === 0, "render", validEvents.length);
+    const jan20 = Date.UTC(2025,0,20);
+    console.log("[ENV] domain", xMin, xMax, "api", apiEvents.length, "seed?", enableSeed, "render", validEvents.length);
+    console.log('[events] counts', Object.keys(byTs).length, 'hasJan20=', !!byTs[jan20]);
   }
 
   // Leadership display (using independent state)
@@ -2728,12 +2778,27 @@ It would also be helpful if you described:
                               content={({ active, payload, label }) => {
                                 if (!active || !payload?.length) return null;
                                 const timestamp = Number(label);
+                                
+                                // Find matching event for this day
+                                const ev = byTs[timestamp]?.[0] as any;
 
-                                  return (
-                                        <div className="bg-black border border-[#1a1a1a] rounded-lg p-3 shadow-2xl shadow-black/50">
+                                return (
+                                  <div className="bg-black border border-[#1a1a1a] rounded-lg p-3 shadow-2xl shadow-black/50">
                                     <p className="text-[#a1a1aa] text-[10px] mb-1.5">
                                       {new Date(timestamp).toLocaleDateString('en-US', { month:'short', day:'2-digit', year:'numeric' })}
                                     </p>
+                                    
+                                    {/* Event Information - only show if there's a matching event */}
+                                    {ev && (
+                                      <div className="mb-2 p-2 bg-bg-tile rounded border-l-2" style={{ borderLeftColor: ev.color }}>
+                                        <div className="flex items-center gap-2 mb-1">
+                                          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: ev.color }} />
+                                          <span className="text-[#f9fafb] font-semibold text-[10px]">{ev.title}</span>
+                                        </div>
+                                        <p className="text-[#a1a1aa] text-[9px]">{ev.subtitle}</p>
+                                      </div>
+                                    )}
+                                    
                                     {payload.map((entry, i) => {
                                       const value = entry.value as number | null | undefined;
                                       const venue = String(entry.dataKey);
@@ -2741,13 +2806,13 @@ It would also be helpful if you described:
                                       return (
                                         <div key={i} className="flex items-center gap-2 text-[9px]">
                                           <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
-                                              <span className="text-[#f9fafb] font-semibold">
+                                          <span className="text-[#f9fafb] font-semibold">
                                             {venue.charAt(0).toUpperCase() + venue.slice(1)}: <span className="font-bold">{fmt(value)}</span>
-                                              </span>
+                                          </span>
                                         </div>
                                       );
                                     })}
-                                    </div>
+                                  </div>
                                 );
                               }}
                             />
