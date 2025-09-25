@@ -1,229 +1,139 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 
 // Environment variables
 const PROXY_HOST = process.env.PROXY_HOST ?? process.env.EXCHANGE_PROXY_ORIGIN ?? 'https://binance-proxy-broken-night-96.fly.dev';
 
-// Timeframe to granularity mapping for Coinbase Advanced Trade API
-const timeframeToGranularity: Record<string, string> = {
-  '30d': 'ONE_HOUR',
-  '6m': 'ONE_DAY', 
-  'ytd': 'ONE_DAY',
-  '1y': 'ONE_DAY'
-};
+// helpers
+const DAY = 24 * 60 * 60 * 1000;
 
-// Zod schemas for Coinbase API responses
-const CoinbaseTickerSchema = z.object({
-  price: z.string(),
-  time: z.string()
-});
+const TF_TO_RANGE = {
+  '30d': { days: 30,  granularity: 21600 }, // 6h
+  '6m' : { days: 180, granularity: 86400 }, // 1d
+  '1y' : { days: 365, granularity: 86400 }, // 1d
+  'ytd': { days: (() => {
+              const now = new Date();
+              const y0 = new Date(now.getFullYear(), 0, 1);
+              return Math.max(1, Math.ceil((+now - +y0)/DAY));
+            })(), granularity: 86400 },        // 1d
+} as const;
 
-const CoinbaseCandleSchema = z.array(z.union([z.string(), z.number()])).length(6);
-
-const CoinbaseResponseSchema = z.object({
-  ticker: CoinbaseTickerSchema,
-  candles: z.array(CoinbaseCandleSchema)
-});
+type RawCandle = [number, number, number, number, number, number]; // [time, low, high, open, close, volume]
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const symbol = searchParams.get('symbol') || 'BTC-USD';
-  const timeframe = searchParams.get('tf') || 'ytd';
-  
+  const tf = searchParams.get('tf') || 'ytd';
+
   try {
-    
-    const granularity = timeframeToGranularity[timeframe] || 'ONE_DAY';
-    
-    // Calculate start and end times
-    const end = new Date();
-    const start = new Date();
-    if (timeframe === '30d') {
-      start.setDate(start.getDate() - 30);
-    } else if (timeframe === '6m') {
-      start.setMonth(start.getMonth() - 6);
-    } else if (timeframe === 'ytd') {
-      start.setMonth(0, 1); // January 1st
-    } else if (timeframe === '1y') {
-      start.setFullYear(start.getFullYear() - 1);
-    }
-    
-    const startISO = start.toISOString();
-    const endISO = end.toISOString();
-    
-    const candlesUrl = `${PROXY_HOST}/coinbase/api/v3/brokerage/products/${symbol}/candles?granularity=${granularity}&start=${startISO}&end=${endISO}`;
-    console.log(`🛰️ [route] coinbase request: symbol=${symbol}, tf=${timeframe}, granularity=${granularity}, start=${startISO}, end=${endISO}`);
-    console.log(`🛰️ [route] coinbase candles URL: ${candlesUrl}`);
-    
-    // Fetch candles first (required), ticker is optional
-    const candlesResponse = await fetch(candlesUrl, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36',
-        'Accept': 'application/json,text/plain,*/*'
-      }
+    // Build the request URL. Prefer proxy if available, else hit Coinbase directly
+    const base =
+      process.env.PROXY_HOST?.replace(/\/+$/,'') ||
+      process.env.CRYPTO_PROXY_BASE?.replace(/\/+$/,'') ||
+      'https://api.exchange.coinbase.com';
+
+    const path = base.includes('coinbase') || base.includes('http')
+      ? `${base.includes('exchange.coinbase') ? '' : base}/coinbase/products/${symbol}/candles`
+      : `${base}/coinbase/products/${symbol}/candles`;
+
+    // Compute window and query
+    const now = new Date();
+    const { days, granularity } = TF_TO_RANGE[tf] ?? TF_TO_RANGE['ytd'];
+    const start = new Date(now.getTime() - days * DAY);
+
+    const qs = new URLSearchParams({
+      start: start.toISOString(),
+      end: now.toISOString(),
+      granularity: String(granularity),
     });
-    
-    if (!candlesResponse.ok) {
-      console.log(`❌ [route] coinbase candles failed: status=${candlesResponse.status}`);
-      // Return fallback data instead of error
-      return NextResponse.json({
-        venue: 'coinbase',
-        symbol: symbol,
-        asOf: new Date().toISOString(),
-        ticker: null,
-        ohlcv: [],
-        source: 'fallback'
-      }, { status: 200 });
-    }
-    
-    // Try to fetch ticker (optional)
-    let tickerData = null;
-    try {
-      const tickerResponse = await fetch(`${PROXY_HOST}/coinbase/products/${symbol}/ticker`, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36',
-          'Accept': 'application/json,text/plain,*/*'
-        }
+    const url = `${path}?${qs.toString()}`;
+
+    console.log(`[coinbase] url`, url, `tf=${tf}`, `days=${days}`, `granularity=${granularity}`);
+
+    // Fetch + normalize
+    const res = await fetch(url, { headers: { Accept: 'application/json' } });
+    const raw = res.ok ? await res.json() : (() => { throw new Error(`HTTP ${res.status}`); })();
+
+    console.log(`[coinbase] url`, url, `status`, res.status, `ok`, res.ok, `len`, Array.isArray(raw) ? raw.length : -1);
+
+    let ohlcv = (Array.isArray(raw) ? raw : [])
+      .map(([t, low, high, open, close, volume]: RawCandle) =>
+        ({ ts: t * 1000, o: open, h: high, l: low, c: close, v: volume }))
+      .sort((a, b) => a.ts - b.ts);
+
+    // Fallback if empty (coarser window)
+    if (!ohlcv.length) {
+      const fb = new URLSearchParams({
+        start: new Date(now.getTime() - 180 * DAY).toISOString(),
+        end: now.toISOString(),
+        granularity: '86400',
       });
-      
-      if (tickerResponse.ok) {
-        tickerData = await tickerResponse.json();
-        console.log(`✅ [route] coinbase ticker ok`);
-      } else {
-        console.log(`⚠️ [route] coinbase ticker failed: status=${tickerResponse.status} (continuing without ticker)`);
-      }
-    } catch (tickerError) {
-      console.log(`⚠️ [route] coinbase ticker error: ${tickerError} (continuing without ticker)`);
+      const fbUrl = `${path}?${fb.toString()}`;
+      const fbRes = await fetch(fbUrl);
+      const fbRaw = fbRes.ok ? await fbRes.json() : [];
+      console.log(`[coinbase] fallback url`, fbUrl, `status`, fbRes.status, `len`, Array.isArray(fbRaw) ? fbRaw.length : -1);
+      ohlcv = (Array.isArray(fbRaw) ? fbRaw : [])
+        .map(([t, low, high, open, close, volume]: RawCandle) =>
+          ({ ts: t * 1000, o: open, h: high, l: low, c: close, v: volume }))
+        .sort((a, b) => a.ts - b.ts);
     }
-    
-    const candlesData = await candlesResponse.json();
-    
-    // Parse and validate candles
-    const candles = z.array(CoinbaseCandleSchema).parse(candlesData);
-    
-    // Normalize ticker data (if available)
+
+    // Convert to our expected format: [isoTime, open, high, low, close, volume]
+    const normalizedOhlcv = ohlcv.map(candle => [
+      new Date(candle.ts).toISOString(),
+      candle.o,
+      candle.h,
+      candle.l,
+      candle.c,
+      candle.v
+    ]);
+
+    // Try to fetch ticker (non-fatal)
     let tickerNormalized = null;
-    if (tickerData) {
-      try {
-        const ticker = CoinbaseTickerSchema.parse(tickerData);
-        const price = Number(ticker.price);
+    try {
+      const tickerUrl = `${base}/coinbase/products/${symbol}/ticker`;
+      const tickerRes = await fetch(tickerUrl, { headers: { Accept: 'application/json' } });
+      if (tickerRes.ok) {
+        const tickerData = await tickerRes.json();
+        const price = Number(tickerData.price);
         tickerNormalized = {
           bid: price * 0.999, // Approximate bid (slightly below price)
           ask: price * 1.001, // Approximate ask (slightly above price)
           mid: price,
-          ts: new Date(ticker.time).toISOString()
+          ts: new Date(tickerData.time).toISOString()
         };
-      } catch (parseError) {
-        console.log(`⚠️ [route] coinbase ticker parse error: ${parseError} (continuing without ticker)`);
+        console.log(`[coinbase] ticker ok: price=${price}`);
+      } else {
+        console.log(`[coinbase] ticker failed: status=${tickerRes.status} (continuing without ticker)`);
       }
+    } catch (tickerError) {
+      console.log(`[coinbase] ticker error: ${tickerError} (continuing without ticker)`);
     }
-    
-    // Normalize candles data (Coinbase format: [timestamp, low, high, open, close, volume])
-    const ohlcv = candles.map(candle => {
-      const [timestamp, low, high, open, close, volume] = candle;
-      const isoTime = new Date(Number(timestamp) * 1000).toISOString();
-      return [isoTime, Number(open), Number(high), Number(low), Number(close), Number(volume)];
-    });
-    
-    console.log(`📊 [route] coinbase candles: received ${candles.length} bars, normalized ${ohlcv.length} bars`);
-    
-    // Guard: if no candles, return empty response
-    if (ohlcv.length === 0) {
-      console.log(`⚠️ [route] coinbase: no candles returned, returning empty response`);
-      return NextResponse.json({
-        venue: 'coinbase',
-        symbol: symbol,
-        asOf: new Date().toISOString(),
-        ticker: null,
-        ohlcv: [],
-        source: 'empty'
-      }, { status: 200 });
-    }
-    
-    // Limit to 300 bars
-    const limitedOhlcv = ohlcv.slice(-300);
-    
-    const response = {
+
+    console.log(`[coinbase] final result: bars=${normalizedOhlcv.length}, ticker=${tickerNormalized ? 'ok' : 'none'}`);
+
+    return NextResponse.json({
       venue: 'coinbase',
       symbol: symbol,
       asOf: new Date().toISOString(),
       ticker: tickerNormalized,
-      ohlcv: limitedOhlcv,
+      ohlcv: normalizedOhlcv,
       source: 'live'
-    };
-    
-    console.log(`✅ [route] coinbase ok: bars=${limitedOhlcv.length}, symbol=${symbol}, ticker=${tickerNormalized ? 'ok' : 'none'}`);
-    
-    return NextResponse.json(response, {
+    }, {
       headers: {
-        'x-debug-coinbase-branch': 'proxy',
+        'x-debug-coinbase-branch': 'proxy-fixed',
         'x-debug-proxy-host': PROXY_HOST,
-        'x-upstream-candles-status': candlesResponse.status.toString(),
-        'x-upstream-ticker-status': tickerData ? '200' : 'none'
+        'x-debug-candles-count': normalizedOhlcv.length.toString(),
+        'x-debug-ticker-status': tickerNormalized ? 'ok' : 'none'
       }
     });
-    
+
   } catch (error) {
-    console.log(`❌ [route] coinbase failed:`, error);
-    
+    console.log(`[coinbase] failed:`, error);
+
     // Return 502 so UI can drop the venue
     return NextResponse.json({
       error: 'Coinbase API failed',
       details: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 502 });
   }
-}
-
-// Generate fallback data based on timeframe
-function generateFallbackData(timeframe: string): any[] {
-  const now = new Date();
-  const bars: any[] = [];
-  
-  let intervalMs: number;
-  let barCount: number;
-  
-  switch (timeframe) {
-    case '30d':
-      intervalMs = 24 * 60 * 60 * 1000; // 1 day
-      barCount = 30;
-      break;
-    case '6m':
-      intervalMs = 7 * 24 * 60 * 60 * 1000; // 1 week
-      barCount = 26;
-      break;
-    case 'ytd':
-      intervalMs = 7 * 24 * 60 * 60 * 1000; // 1 week
-      barCount = 52;
-      break;
-    case '1y':
-      intervalMs = 7 * 24 * 60 * 60 * 1000; // 1 week
-      barCount = 52;
-      break;
-    default:
-      intervalMs = 7 * 24 * 60 * 60 * 1000;
-      barCount = 52;
-  }
-  
-  // Generate synthetic data with some variation
-  let basePrice = 50000;
-  for (let i = 0; i < barCount; i++) {
-    const timestamp = new Date(now.getTime() - (barCount - i - 1) * intervalMs);
-    const variation = (Math.random() - 0.5) * 0.1; // ±5% variation
-    const price = basePrice * (1 + variation);
-    const high = price * (1 + Math.random() * 0.02);
-    const low = price * (1 - Math.random() * 0.02);
-    const volume = Math.random() * 1000;
-    
-    bars.push([
-      timestamp.toISOString(),
-      price,
-      high,
-      low,
-      price,
-      volume
-    ]);
-    
-    basePrice = price; // Next bar starts from current price
-  }
-  
-  return bars;
 }

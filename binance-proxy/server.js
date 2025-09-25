@@ -23,7 +23,8 @@ app.use('/:venue/*', async (req, res) => {
     kraken: 'https://api.kraken.com/',     // trailing slash important
     okx:    'https://www.okx.com/api/v5/',
     bybit:  'https://api.bybit.com/',
-    binance:'https://api.binance.com/'     // add if we want Binance proxied too
+    binance:'https://api.binance.com/',    // add if we want Binance proxied too
+    coinbase:'https://api.exchange.coinbase.com/'
   }[venue];
 
   if (!upstream) {
@@ -31,7 +32,7 @@ app.use('/:venue/*', async (req, res) => {
   }
 
   const url = upstream + rest + qs;
-  console.log(`[Proxy] ${venue} → ${url}`);
+  console.log(`[proxy] venue=`, venue, `→`, upstream, ` path=`, req.url);
 
   try {
     const r = await fetch(url, {

@@ -725,6 +725,10 @@ export default function CursorDashboard() {
       console.log(`📊 [UI Frontend] Loaded series: [${successfulVenues.join(', ')}]`)
       console.log(`📊 [UI Frontend] Bars per series:`, barsPerSeries)
       
+      // Coinbase-specific debugging
+      console.log('[UI Frontend] coinbase bars after normalize:', barsPerSeries.coinbase ?? 0);
+      console.log('[UI Frontend] active venues (with data):', activeVenues);
+      
       // Create chart series from successful exchanges
       if (activeVenues.length > 0) {
         const availableUiVenues: UiVenue[] = getAvailableUiVenues(successfulExchanges.filter(e => activeVenues.includes(e.venue)))
