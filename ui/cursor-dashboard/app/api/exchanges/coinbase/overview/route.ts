@@ -5,62 +5,52 @@ import { z } from "zod";
 const TF = z.enum(["30d", "6m", "1y", "ytd"]);
 type Timeframe = z.infer<typeof TF>;
 
-// Allowed Coinbase granularities (seconds)
-const GRAN = { '30d': 86400, '6m': 86400, '1y': 86400, 'ytd': 86400 } as const;
-const daysByTf = { '30d': 30, '6m': 180, '1y': 365, 'ytd': 365 } as const;
+// Public Exchange API granularities (seconds)
+const TIMEFRAMES = {
+  '30d': { days: 30,  granularity: 21600 }, // 6h
+  '6m' : { days: 180, granularity: 86400 }, // 1d
+  '1y' : { days: 365, granularity: 86400 }, // 1d
+  'ytd': { days: 365, granularity: 86400 }, // 1d (bounded by start-of-year at runtime)
+} as const;
+
+type Tf = keyof typeof TIMEFRAMES; // '30d' | '6m' | '1y' | 'ytd'
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const symbol = searchParams.get('symbol') || 'BTC-USD';
-  const tf = TF.parse(searchParams.get('tf') ?? 'ytd');
+  const tf = TF.parse(searchParams.get('tf') ?? 'ytd') as Tf; // after zod validation
 
   try {
-    const g = GRAN[tf];
-    const gMs = g * 1000;
-    const now = Date.now();
+    const cfg = TIMEFRAMES[tf]; // typed
+    const gran = cfg.granularity;
+    
+    // YTD example - snap times and cap to ≤300 buckets
+    const now = new Date();
+    const end = new Date(Math.floor(now.getTime()/1000/gran)*gran*1000);  // snap down
+    const maxBuckets = 300;
+    const start = new Date(end.getTime() - (maxBuckets-1)*gran*1000);
+    
+    const qs = new URLSearchParams({
+      start: start.toISOString(),
+      end: end.toISOString(),
+      granularity: String(gran),
+    });
+    
+    const url = `${process.env.NEXT_PUBLIC_CRYPTO_PROXY_BASE}/coinbase/products/${symbol}/candles?${qs}`;
 
-    // snap end to bucket boundary (avoid partial candle)
-    const endTs = Math.floor(now / gMs) * gMs;
+    // Add temporary logging (server-side)
+    console.log('[coinbase] url', url);
+    const r = await fetch(url, { headers: { 'User-Agent': 'acd-monitor' }});
+    const text = await r.text();
+    console.log('[coinbase] status', r.status, 'body', text.slice(0, 500));
 
-    // naïve range by timeframe
-    const naiveStartTs = endTs - daysByTf[tf] * 24 * 60 * 60 * 1000;
-
-    // cap to 300 buckets (Coinbase hard limit)
-    let startTs = Math.max(naiveStartTs, endTs - 300 * gMs);
-
-    // special-case YTD: clamp to 00:00:00 **UTC** on Jan 1
-    if (tf === 'ytd') {
-      const jan1UTC = Date.UTC(new Date(endTs).getUTCFullYear(), 0, 1, 0, 0, 0, 0);
-      startTs = Math.max(startTs, jan1UTC);
-    }
-
-    // snap start to boundary too
-    startTs = Math.floor(startTs / gMs) * gMs;
-
-    // build URL against the proxy; Coinbase path is `/products/{pair}/candles`
-    const startISO = new Date(startTs).toISOString();
-    const endISO   = new Date(endTs).toISOString();
-
-    const url = `${process.env.NEXT_PUBLIC_CRYPTO_PROXY_BASE}/coinbase/products/${symbol}/candles?granularity=${g}&start=${encodeURIComponent(startISO)}&end=${encodeURIComponent(endISO)}`;
-
-    // DEBUG (preview only)
-    if (process.env.NEXT_PUBLIC_DATA_MODE !== 'production') {
-      const bucketCount = Math.floor((endTs - startTs) / gMs);
-      console.log('[coinbase]', { tf, symbol, g, startISO, endISO, bucketCount, url });
-    }
-
-    const r = await fetch(url, { headers: { Accept: 'application/json' } });
     if (!r.ok) {
-      const errText = await r.text().catch(()=>'');
-      if (process.env.NEXT_PUBLIC_DATA_MODE !== 'production') {
-        console.log('[coinbase] HTTP', r.status, errText);
-      }
       return NextResponse.json({ error: 'Candles fetch failed' }, { status: r.status });
     }
 
     // Response: [ time, low, high, open, close, volume ] newest-first
     type Row = [number, number, number, number, number, number];
-    const raw: Row[] = await r.json();
+    const raw: Row[] = JSON.parse(text);
     raw.sort((a,b)=>a[0]-b[0]);
 
     const ohlcv = raw.map(([t, low, high, open, close, volume]) => ({
@@ -70,15 +60,13 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       venue: 'coinbase',
       symbol,
-      asOf: endISO,
+      asOf: end.toISOString(),
       ticker: { last: ohlcv.at(-1)?.c ?? null },
       ohlcv,
     });
 
   } catch (error) {
-    if (process.env.NEXT_PUBLIC_DATA_MODE !== 'production') {
-      console.log('[coinbase] failed:', error);
-    }
+    console.log('[coinbase] failed:', error);
 
     // Return 502 so UI can drop the venue
     return NextResponse.json({
