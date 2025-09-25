@@ -1,20 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from "zod";
 
 // Environment variables
 const PROXY_HOST = process.env.PROXY_HOST ?? process.env.EXCHANGE_PROXY_ORIGIN ?? 'https://binance-proxy-broken-night-96.fly.dev';
 
+// Zod validation for timeframe
+const TF = z.enum(["30d", "6m", "1y", "ytd"]);
+type Timeframe = z.infer<typeof TF>;
+
 // helpers
 const DAY = 24 * 60 * 60 * 1000;
 
-const TF_TO_RANGE = {
-  '30d': { days: 30,  granularity: 21600 }, // 6h
-  '6m' : { days: 180, granularity: 86400 }, // 1d
-  '1y' : { days: 365, granularity: 86400 }, // 1d
-  'ytd': { days: (() => {
-              const now = new Date();
-              const y0 = new Date(now.getFullYear(), 0, 1);
-              return Math.max(1, Math.ceil((+now - +y0)/DAY));
-            })(), granularity: 86400 },        // 1d
+const TIMEFRAME_CFG = {
+  "30d": { days: 30,  granularity: 21600 }, // 6h
+  "6m":  { days: 180, granularity: 86400 }, // 1d
+  "1y":  { days: 365, granularity: 86400 }, // 1d
+  "ytd": { days: 365, granularity: 86400 }, // 1d (bounded by start-of-year at runtime)
 } as const;
 
 type RawCandle = [number, number, number, number, number, number]; // [time, low, high, open, close, volume]
@@ -22,60 +23,55 @@ type RawCandle = [number, number, number, number, number, number]; // [time, low
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const symbol = searchParams.get('symbol') || 'BTC-USD';
-  const tf = searchParams.get('tf') || 'ytd';
+  const tf = TF.parse(searchParams.get('tf') ?? 'ytd'); // <- narrows to Timeframe
 
   try {
-    // Build the request URL. Prefer proxy if available, else hit Coinbase directly
-    const base =
-      process.env.PROXY_HOST?.replace(/\/+$/,'') ||
-      process.env.CRYPTO_PROXY_BASE?.replace(/\/+$/,'') ||
-      'https://api.exchange.coinbase.com';
-
-    const path = base.includes('coinbase') || base.includes('http')
-      ? `${base.includes('exchange.coinbase') ? '' : base}/coinbase/products/${symbol}/candles`
-      : `${base}/coinbase/products/${symbol}/candles`;
+    // Build the request URL using proxy
+    const base = process.env.NEXT_PUBLIC_CRYPTO_PROXY_BASE || PROXY_HOST;
+    const path = `${base}/coinbase/products/${symbol}/candles`;
 
     // Compute window and query
     const now = new Date();
-    const { days, granularity } = TF_TO_RANGE[tf] ?? TF_TO_RANGE['ytd'];
-    const start = new Date(now.getTime() - days * DAY);
-
-    const qs = new URLSearchParams({
-      start: start.toISOString(),
-      end: now.toISOString(),
-      granularity: String(granularity),
-    });
-    const url = `${path}?${qs.toString()}`;
-
-    console.log(`[coinbase] url`, url, `tf=${tf}`, `days=${days}`, `granularity=${granularity}`);
-
-    // Fetch + normalize
-    const res = await fetch(url, { headers: { Accept: 'application/json' } });
-    const raw = res.ok ? await res.json() : (() => { throw new Error(`HTTP ${res.status}`); })();
-
-    console.log(`[coinbase] url`, url, `status`, res.status, `ok`, res.ok, `len`, Array.isArray(raw) ? raw.length : -1);
-
-    let ohlcv = (Array.isArray(raw) ? raw : [])
-      .map(([t, low, high, open, close, volume]: RawCandle) =>
-        ({ ts: t * 1000, o: open, h: high, l: low, c: close, v: volume }))
-      .sort((a, b) => a.ts - b.ts);
-
-    // Fallback if empty (coarser window)
-    if (!ohlcv.length) {
-      const fb = new URLSearchParams({
-        start: new Date(now.getTime() - 180 * DAY).toISOString(),
-        end: now.toISOString(),
-        granularity: '86400',
-      });
-      const fbUrl = `${path}?${fb.toString()}`;
-      const fbRes = await fetch(fbUrl);
-      const fbRaw = fbRes.ok ? await fbRes.json() : [];
-      console.log(`[coinbase] fallback url`, fbUrl, `status`, fbRes.status, `len`, Array.isArray(fbRaw) ? fbRaw.length : -1);
-      ohlcv = (Array.isArray(fbRaw) ? fbRaw : [])
-        .map(([t, low, high, open, close, volume]: RawCandle) =>
-          ({ ts: t * 1000, o: open, h: high, l: low, c: close, v: volume }))
-        .sort((a, b) => a.ts - b.ts);
+    const { days, granularity } = TIMEFRAME_CFG[tf]; // <- type-safe now
+    
+    // For YTD, clamp to start of year
+    let start: Date;
+    if (tf === 'ytd') {
+      const y0 = new Date(now.getFullYear(), 0, 1);
+      start = y0;
+    } else {
+      start = new Date(now.getTime() - days * DAY);
     }
+
+    const startISO = start.toISOString();
+    const endISO = now.toISOString();
+    const url = `${path}?granularity=${granularity}&start=${startISO}&end=${endISO}`;
+
+    // Add compact logging (only in Preview)
+    const dbg = process.env.NEXT_PUBLIC_DATA_MODE !== "production";
+    if (dbg) console.log("[coinbase] GET candles", { symbol, tf, startISO, endISO, granularity, url });
+
+    // Fetch via our proxy
+    const res = await fetch(url, { headers: { Accept: 'application/json' } });
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      console.error("[coinbase] HTTP", res.status, text);
+      return NextResponse.json({ error: "Candles fetch failed" }, { status: res.status });
+    }
+
+    type RawRow = [number, number, number, number, number, number]; // [time, low, high, open, close, volume]
+    const raw: RawRow[] = await res.json();
+
+    const ohlcv = raw
+      .map(([time, low, high, open, close, volume]) => ({
+        ts: time * 1000,
+        o: open,
+        h: high,
+        l: low,
+        c: close,
+        v: volume,
+      }))
+      .sort((a, b) => a.ts - b.ts);
 
     // Convert to our expected format: [isoTime, open, high, low, close, volume]
     const normalizedOhlcv = ohlcv.map(candle => [
@@ -87,43 +83,20 @@ export async function GET(request: NextRequest) {
       candle.v
     ]);
 
-    // Try to fetch ticker (non-fatal)
-    let tickerNormalized = null;
-    try {
-      const tickerUrl = `${base}/coinbase/products/${symbol}/ticker`;
-      const tickerRes = await fetch(tickerUrl, { headers: { Accept: 'application/json' } });
-      if (tickerRes.ok) {
-        const tickerData = await tickerRes.json();
-        const price = Number(tickerData.price);
-        tickerNormalized = {
-          bid: price * 0.999, // Approximate bid (slightly below price)
-          ask: price * 1.001, // Approximate ask (slightly above price)
-          mid: price,
-          ts: new Date(tickerData.time).toISOString()
-        };
-        console.log(`[coinbase] ticker ok: price=${price}`);
-      } else {
-        console.log(`[coinbase] ticker failed: status=${tickerRes.status} (continuing without ticker)`);
-      }
-    } catch (tickerError) {
-      console.log(`[coinbase] ticker error: ${tickerError} (continuing without ticker)`);
-    }
-
-    console.log(`[coinbase] final result: bars=${normalizedOhlcv.length}, ticker=${tickerNormalized ? 'ok' : 'none'}`);
+    console.log(`[coinbase] final result: bars=${normalizedOhlcv.length}`);
 
     return NextResponse.json({
       venue: 'coinbase',
-      symbol: symbol,
+      symbol,
       asOf: new Date().toISOString(),
-      ticker: tickerNormalized,
+      ticker: { price: ohlcv.length ? ohlcv[ohlcv.length - 1].c : null },
       ohlcv: normalizedOhlcv,
       source: 'live'
     }, {
       headers: {
         'x-debug-coinbase-branch': 'proxy-fixed',
         'x-debug-proxy-host': PROXY_HOST,
-        'x-debug-candles-count': normalizedOhlcv.length.toString(),
-        'x-debug-ticker-status': tickerNormalized ? 'ok' : 'none'
+        'x-debug-candles-count': normalizedOhlcv.length.toString()
       }
     });
 
