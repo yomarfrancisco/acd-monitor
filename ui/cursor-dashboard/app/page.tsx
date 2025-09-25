@@ -1547,8 +1547,7 @@ It would also be helpful if you described:
   }
 
   // Use live exchange data if available, otherwise fall back to static data
-  // For YTD, prefer static data to ensure proper Jan '25 to Sep '25 range
-  const currentData = (exchangeData.length > 0 && selectedTimeframe !== "ytd") ? exchangeData : getAnalyticsData()
+  const currentData = exchangeData.length > 0 ? exchangeData : getAnalyticsData()
 
   // Compute safe x-domain and guard rendering
   const tsValues = currentData.map(r => r.ts).filter((n) => Number.isFinite(n));
@@ -2421,7 +2420,9 @@ It would also be helpful if you described:
                                       ? "Mar '25 - Sep '25"
                                       : selectedTimeframe === "1y"
                                         ? "Sep '24 - Sep '25"
-                                        : "Jan '25 - Sep '25"}
+                                        : exchangeData.length > 0 
+                                          ? "Live Data"
+                                          : "Jan '25 - Sep '25"}
                           </button>
 
                         <div className="flex gap-1">
