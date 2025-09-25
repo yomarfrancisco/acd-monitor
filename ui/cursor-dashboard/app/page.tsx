@@ -2906,16 +2906,12 @@ It would also be helpful if you described:
                             />
                             {/* Conditional Line components - only mount when data exists */}
             {availableUiVenues.map((venue) => {
-              const venueColors: Record<string, string> = {
+              const color: Record<string, string> = {
                 binance: '#f59e0b',
                 okx: '#60a5fa',
                 bybit: '#a1a1aa',
                 kraken: '#71717a',
-                coinbase: '#ff0000', // TEMP: bright red to see overlap
-              };
-
-              const venueStyles: Record<string, any> = {
-                coinbase: { strokeDasharray: '3 3', strokeWidth: 3 }, // TEMP: dashed + thicker
+                coinbase: '#52525b'
               };
 
               const hasData = currentData.some(p => p[venue] != null);
@@ -2923,13 +2919,13 @@ It would also be helpful if you described:
               return (
                 <Line
                   key={venue}
-                  dataKey={venue}
-                  stroke={venueColors[venue]}
-                  {...(venueStyles[venue] || {})}
                   type="monotone"
+                  dataKey={venue}
+                  stroke={color[venue]}
+                  strokeWidth={venue === 'binance' ? 2 : 1.5}
+                  dot={{ fill: color[venue], strokeWidth: venue === 'binance' ? 2 : 1.5, r: venue === 'binance' ? 3 : 2 }}
+                  activeDot={{ r: venue === 'binance' ? 4 : 3, fill: color[venue] }}
                   connectNulls={false}
-                  dot={false}
-                  activeDot={{ r: 3 }}
                   name={venue.charAt(0).toUpperCase() + venue.slice(1)}
                 />
               );
