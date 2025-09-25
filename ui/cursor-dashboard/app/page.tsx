@@ -38,7 +38,7 @@ import * as React from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { AssistantBubble } from "@/components/AssistantBubble"
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, ReferenceLine, Label } from "recharts"
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, ReferenceLine, ReferenceArea, Label } from "recharts"
 import { CalendarIcon, Copy, RefreshCw, ImageUp, Camera, FolderClosed, Github, AlertTriangle, Factory } from "lucide-react"
 import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema, BinanceOverviewSchema } from "@/types/api.schemas"
 import { fetchTyped } from "@/lib/backendAdapter"
@@ -1589,6 +1589,12 @@ It would also be helpful if you described:
     );
   };
 
+  // --- Event band sizing (days -> ms) ---
+  const bandDaysByTf: Record<string, number> = { '30d': 1, '6m': 3, 'ytd': 4, '1y': 5 };
+  const dayMs = 24 * 60 * 60 * 1000;
+  const bandHalfMs = ((bandDaysByTf[selectedTimeframe] ?? 4) * dayMs) / 2;
+  const mkBand = (centerTs: number) => ({ x1: centerTs - bandHalfMs, x2: centerTs + bandHalfMs });
+
   // Use live exchange data if available, otherwise fall back to static data
   const currentData = exchangeData.length > 0 ? exchangeData : getAnalyticsData()
 
@@ -2759,7 +2765,22 @@ It would also be helpful if you described:
                               );
                             })()}
 
-                            {/* Environment Events – wide, soft bars */}
+                            {/* Regime A → B */}
+                            {(() => { const {x1,x2} = mkBand(Date.parse('2025-01-20T00:00:00Z')); return (
+                              <ReferenceArea x1={x1} x2={x2} fill="#fecaca" fillOpacity={0.40} isFront />
+                            );})()}
+
+                            {/* Strategic Reserve EO */}
+                            {(() => { const {x1,x2} = mkBand(Date.parse('2025-03-06T00:00:00Z')); return (
+                              <ReferenceArea x1={x1} x2={x2} fill="#fed7aa" fillOpacity={0.40} isFront />
+                            );})()}
+
+                            {/* GENIUS Act Impl. */}
+                            {(() => { const {x1,x2} = mkBand(Date.parse('2025-07-18T00:00:00Z')); return (
+                              <ReferenceArea x1={x1} x2={x2} fill="#bbf7d0" fillOpacity={0.40} isFront />
+                            );})()}
+
+                            {/* Keep thin ReferenceLines for precision */}
                             {ENV_EVENTS.map((e) => (
                               <ReferenceLine
                                 key={e.ts}
@@ -2769,8 +2790,8 @@ It would also be helpful if you described:
                                   e.color === "#f59e0b" ? "#fed7aa" : // amber → soft peach
                                                    "#bbf7d0"   // green → soft mint
                                 }
-                                strokeWidth={30}
-                                strokeOpacity={0.40}
+                                strokeWidth={2}
+                                strokeOpacity={0.60}
                                 isFront
                               >
                                 <Label value={e.label} position="top" />
