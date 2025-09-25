@@ -80,6 +80,22 @@ function getBarClose(bar: any) {
   return toNum(raw);
 }
 
+// Robust OHLCV picker (tolerant to different nesting used by Coinbase)
+const pickOhlcv = (ex: any): any[] => {
+  const cand = [
+    ex?.data?.ohlcv,            // standard (binance/okx/…)
+    ex?.ohlcv,                  // simple fallback
+    ex?.data?.ohlcv?.data,      // object wrapping an array
+    ex?.data?.data,             // sometimes providers nest like this
+    ex?.overview?.ohlcv,        // if wrapped in overview
+    ex?.payload?.ohlcv,         // alt wrapper
+    ex?.data?.candles,          // possible alt key (coinbase-style)
+    ex?.data?.bars,             // possible alt key
+  ];
+  for (const c of cand) if (Array.isArray(c)) return c;
+  return [];
+};
+
   const buildYtdAxis = (): number[] => {
     const startMs = Date.UTC(2025, 0, 1); // 2025-01-01T00:00:00Z
     const now = new Date();
@@ -365,7 +381,18 @@ export default function CursorDashboard() {
 
     for (const ex of successfulExchanges) {
       const venue = ex.venue;
-      const ohlcvData = ex.data?.ohlcv ?? [];
+      const ohlcvData = pickOhlcv(ex);
+
+      if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+        const isArr = Array.isArray(ohlcvData);
+        console.log(`[${venue}] picked OHLCV isArray=${isArr} len=${isArr ? ohlcvData.length : 0}`);
+        // dump minimal shape so we don't blow logs
+        if (!isArr) {
+          const skim = JSON.stringify(ex?.data ?? ex, null, 2);
+          console.log(`[${venue}] non-array OHLCV shape (first 800 chars):`, skim.slice(0, 800));
+        }
+      }
+
       const m = new Map<number, number>();
 
       for (const bar of ohlcvData) {
@@ -411,6 +438,12 @@ export default function CursorDashboard() {
       }
       return row;
     });
+
+    // Coinbase sanity check after chartData is built
+    if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+      const firstWithCb = rows.find(p => p.coinbase != null);
+      console.log('[coinbase sanity]', !!firstWithCb, firstWithCb?.ts, firstWithCb?.coinbase);
+    }
 
     return { rows, venueMap, axis: ytdAxis };
   };
@@ -2837,26 +2870,35 @@ It would also be helpful if you described:
                               }}
                             />
                             {/* Conditional Line components - only mount when data exists */}
-                            {availableUiVenues.map((venue) => {
-                              const color: Record<Venue,string> = {
-                                binance:'#f59e0b', okx:'#60a5fa', bybit:'#a1a1aa', kraken:'#71717a', coinbase:'#52525b'
-                              };
-                              const hasData = currentData.some(p => p[venue] != null);
-                              if (!hasData) return null;
-                              return (
-                            <Line
-                                  key={venue}
-                              type="monotone"
-                                  dataKey={venue}
-                                  stroke={color[venue]}
-                                  strokeWidth={venue === 'binance' ? 2 : 1.5}
-                                  dot={{ fill: color[venue], strokeWidth: venue === 'binance' ? 2 : 1.5, r: venue === 'binance' ? 3 : 2 }}
-                                  activeDot={{ r: venue === 'binance' ? 4 : 3, fill: color[venue] }}
-                                  connectNulls={false}
-                                  name={venue.charAt(0).toUpperCase() + venue.slice(1)}
-                                />
-                              );
-                            })}
+            {availableUiVenues.map((venue) => {
+              const venueColors: Record<string, string> = {
+                binance: '#f59e0b',
+                okx: '#60a5fa',
+                bybit: '#a1a1aa',
+                kraken: '#71717a',
+                coinbase: '#ff0000', // TEMP: bright red to see overlap
+              };
+
+              const venueStyles: Record<string, any> = {
+                coinbase: { strokeDasharray: '3 3', strokeWidth: 3 }, // TEMP: dashed + thicker
+              };
+
+              const hasData = currentData.some(p => p[venue] != null);
+              if (!hasData) return null;
+              return (
+                <Line
+                  key={venue}
+                  dataKey={venue}
+                  stroke={venueColors[venue]}
+                  {...(venueStyles[venue] || {})}
+                  type="monotone"
+                  connectNulls={false}
+                  dot={false}
+                  activeDot={{ r: 3 }}
+                  name={venue.charAt(0).toUpperCase() + venue.slice(1)}
+                />
+              );
+            })}
 
                             {/* Regime A → B */}
                             {(() => { const {x1,x2} = mkBand(Date.parse('2025-01-20T00:00:00Z')); return (
