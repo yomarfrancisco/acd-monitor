@@ -2791,20 +2791,15 @@ It would also be helpful if you described:
                               );
                             })()}
 
-                            {/* Environment Events - Dynamic ReferenceLines (rendered after lines to appear on top) */}
-                            {validEvents.map(e => (
-                              <ReferenceLine
-                                key={`${e.id}-${e.ts}`}
-                                x={e.ts}
-                                stroke={e.color ?? "#94a3b8"}
-                                strokeDasharray="3 3"
-                                strokeWidth={2}
-                                isFront={true}
-                                ifOverflow="extendDomain"
-                              >
-                                <Label value={e.label ?? ""} position="top" />
-                              </ReferenceLine>
-                            ))}
+                            {/* Simple test vertical line - hardcoded for Feb 1, 2025 */}
+                            <ReferenceLine
+                              x={Date.parse("2025-02-01T00:00:00Z")}
+                              stroke="#ff0000"
+                              strokeWidth={3}
+                              isFront={true}
+                            >
+                              <Label value="TEST" position="top" />
+                            </ReferenceLine>
                           </LineChart>
                         </ResponsiveContainer>
                       </div>
