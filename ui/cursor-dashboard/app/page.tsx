@@ -2784,30 +2784,30 @@ It would also be helpful if you described:
                               );
                             })()}
 
-                            {/* Environment Events - 3 thick solid bars with opacity */}
+                            {/* Environment Events - 3 thick solid bars with soft colors */}
                             <ReferenceLine
                               x={Date.parse("2025-02-01T00:00:00Z")}
-                              stroke="#ef4444"
+                              stroke="#fecaca"
                               strokeWidth={30}
-                              strokeOpacity={0.3}
+                              strokeOpacity={0.4}
                               isFront={true}
                             >
                               <Label value="Regime A → B" position="top" />
                             </ReferenceLine>
                             <ReferenceLine
                               x={Date.parse("2025-06-01T00:00:00Z")}
-                              stroke="#f59e0b"
+                              stroke="#fed7aa"
                               strokeWidth={30}
-                              strokeOpacity={0.3}
+                              strokeOpacity={0.4}
                               isFront={true}
                             >
                               <Label value="Policy Shift" position="top" />
                             </ReferenceLine>
                             <ReferenceLine
                               x={Date.parse("2025-07-01T00:00:00Z")}
-                              stroke="#10b981"
+                              stroke="#bbf7d0"
                               strokeWidth={30}
-                              strokeOpacity={0.3}
+                              strokeOpacity={0.4}
                               isFront={true}
                             >
                               <Label value="Liquidity ↑" position="top" />
