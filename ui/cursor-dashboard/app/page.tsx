@@ -2595,19 +2595,6 @@ It would also be helpful if you described:
                             />
                                 <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" opacity={0.75} />
 
-                                {/* Environment Events - Dynamic ReferenceLines */}
-                                {validEvents.map((evt: any) => (
-                                <ReferenceLine
-                                    key={evt.id + evt.ts}
-                                    x={evt.ts}
-                                    stroke={evt.color ?? "#94a3b8"}
-                                    strokeDasharray="3 3"
-                                    ifOverflow="extendDomain"
-                                >
-                                    <Label value={evt.label ?? ""} position="top" />
-                                </ReferenceLine>
-                                ))}
-
                             <Tooltip
                                   cursor={false}
                                   labelFormatter={(ts) =>
@@ -2796,6 +2783,21 @@ It would also be helpful if you described:
                                 </>
                               );
                             })()}
+
+                            {/* Environment Events - Dynamic ReferenceLines (rendered after lines to appear on top) */}
+                            {validEvents.map((evt: any) => (
+                              <ReferenceLine
+                                key={evt.id + evt.ts}
+                                x={evt.ts}
+                                stroke={evt.color ?? "#94a3b8"}
+                                strokeDasharray="3 3"
+                                strokeWidth={2}
+                                isFront={true}
+                                ifOverflow="extendDomain"
+                              >
+                                <Label value={evt.label ?? ""} position="top" />
+                              </ReferenceLine>
+                            ))}
                           </LineChart>
                         </ResponsiveContainer>
                       </div>
