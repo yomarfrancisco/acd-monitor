@@ -31,38 +31,56 @@ export async function GET(request: NextRequest) {
     // For YTD, clamp to start of year
     let startDate: Date;
     if (tf === 'ytd') {
-      const yearStart = new Date(now.getFullYear(), 0, 1);
-      startDate = yearStart;
+      startDate = new Date(new Date().getUTCFullYear(), 0, 1);
     } else {
       startDate = new Date(now.getTime() - cfg.days * 24 * 60 * 60 * 1000);
     }
     
     const startISO = startDate.toISOString();
 
-    // Build URL using server environment variable
-    const base = process.env.PROXY_HOST!; // e.g. https://binance-proxy-...fly.dev/
-    const url = new URL('/coinbase/products/BTC-USD/candles', base);
+    // Use server env var (not NEXT_PUBLIC)
+    const PROXY = process.env.PROXY_HOST; // e.g., https://<LIVE_FLY_APP_HOST>
+    
+    // Build URL with fallback to direct Coinbase
+    const base = PROXY ?? 'https://api.exchange.coinbase.com';
+    const url = new URL(`/coinbase/products/${symbol}/candles`, PROXY ? PROXY : 'https://api.exchange.coinbase.com');
+    
+    // If using direct Coinbase, omit '/coinbase' prefix
+    if (!PROXY) {
+      url.pathname = `/products/${symbol}/candles`;
+    }
+    
     url.searchParams.set('granularity', String(granularity));
     url.searchParams.set('start', startISO);
     url.searchParams.set('end', endISO);
 
-    // Debug logging
-    console.log('[coinbase] url', url.toString());
-    const res = await fetch(url, { headers: { Accept: 'application/json' }});
-    console.log('[coinbase] status', res.status);
+    // Add logs (only when not production)
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[coinbase] usingProxy=', !!PROXY);
+      console.log('[coinbase] url=', url.toString());
+      console.log('[coinbase] params=', { granularity, start: startISO, end: endISO });
+    }
+
+    const resp = await fetch(url, { headers: { Accept: 'application/json' }});
     
-    if (!res.ok) {
-      const errorText = await res.text();
-      console.log('[coinbase] text', errorText.slice(0, 120));
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[coinbase] status', resp.status);
+    }
+    
+    if (!resp.ok) {
+      const text = await resp.text();
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('[coinbase] error body:', text.slice(0, 500));
+      }
       return NextResponse.json({ 
         error: 'Candles fetch failed', 
-        detail: errorText 
-      }, { status: res.status });
+        detail: text.slice(0, 500) 
+      }, { status: resp.status });
     }
 
     // Response: [ time, low, high, open, close, volume ] newest-first
     type Row = [number, number, number, number, number, number];
-    const raw: Row[] = await res.json();
+    const raw: Row[] = await resp.json();
     raw.sort((a,b)=>a[0]-b[0]);
 
     const ohlcv = raw.map(([t, low, high, open, close, volume]) => ({
@@ -78,7 +96,9 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.log('[coinbase] failed:', error);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[coinbase] failed:', error);
+    }
 
     // Return 502 so UI can drop the venue
     return NextResponse.json({
