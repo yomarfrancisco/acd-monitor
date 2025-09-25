@@ -127,75 +127,145 @@ const readBar = (bar: any): { ts: number | string | null; close: number | null }
     return axis;
   };
 
-  // Temporal Price Leadership calculation
+  // Robust lead-lag leadership with fallbacks
+  function computeLeadLagLeader(
+    aligned: Array<{ts:number; [venue:string]: number|null}>,
+    opts = { minPairs: 60, eps: 0.0 }
+  ) {
+    const venues = Object.keys(aligned[0] || {}).filter(v => v !== 'ts');
+    // build per-venue return arrays
+    const series: Record<string, number[]> = {};
+    const mask: number[] = [];
+    for (let i = 1; i < aligned.length; i++) {
+      const prev = aligned[i-1], cur = aligned[i];
+      const row: Record<string, number> = {};
+      let any = false;
+      for (const v of venues) {
+        const a = Number(prev[v]), b = Number(cur[v]);
+        if (Number.isFinite(a) && Number.isFinite(b) && a > 0 && b > 0) {
+          row[v] = Math.log(b/a);
+          any = true;
+        }
+      }
+      if (!any) continue;
+      mask.push(i);
+      for (const v of venues) {
+        (series[v] ||= []).push(row[v]);
+      }
+    }
+    // winsorize
+    const wins = (xs:number[]) => {
+      const x = xs.filter(Number.isFinite);
+      if (x.length < opts.minPairs) return null;
+      const m = x.reduce((a,b)=>a+b,0)/x.length;
+      const s = Math.sqrt(x.reduce((a,b)=>a+(b-m)*(b-m),0)/x.length) || 1;
+      const hi = m + 3*s, lo = m - 3*s;
+      return xs.map(v => Number.isFinite(v) ? Math.max(lo, Math.min(hi, v)) : NaN);
+    };
+    for (const v of venues) {
+      const w = wins(series[v] || []);
+      if (!w) return null;         // not enough data for at least one venue
+      series[v] = w;
+    }
+    // pairwise lag-1 net lead score
+    const corr = (x:number[], y:number[]) => {
+      const n = Math.min(x.length-1, y.length-1);
+      if (n < opts.minPairs) return null;
+      // ρ(x_t, y_{t+1})
+      const X = x.slice(0, n), Yf = y.slice(1, n+1);
+      const Yb = y.slice(0, n), Xf = x.slice(1, n+1);
+      const c = (a:number[], b:number[]) => {
+        const n = a.length;
+        const ma = a.reduce((s,v)=>s+v,0)/n, mb = b.reduce((s,v)=>s+v,0)/n;
+        let num=0, da=0, db=0;
+        for (let i=0;i<n;i++){ const pa=a[i]-ma, pb=b[i]-mb; num+=pa*pb; da+=pa*pa; db+=pb*pb; }
+        const den = Math.sqrt(da*db);
+        return den ? (num/den) : 0;
+      };
+      return { fwd: c(X, Yf), rev: c(Yb, Xf), n };
+    };
+
+    const leadScore: Record<string, number> = Object.fromEntries(venues.map(v=>[v,0]));
+    let pairCount = 0;
+    for (let i=0;i<venues.length;i++){
+      for (let j=i+1;j<venues.length;j++){
+        const vi = venues[i], vj = venues[j];
+        const cc = corr(series[vi], series[vj]);
+        if (!cc) continue;
+        pairCount++;
+        const net = (cc.fwd - cc.rev); // >0 means vi leads vj
+        if (Math.abs(net) >= (opts.eps || 0)) {
+          leadScore[vi] += net;
+          leadScore[vj] -= net;
+        }
+      }
+    }
+    if (pairCount === 0) return null;
+
+    const ranked = Object.entries(leadScore).sort((a,b)=> b[1]-a[1]);
+    return { venue: ranked[0][0], score: ranked[0][1], totalPairs: pairCount };
+  }
+
+  function computeConsensusLeader(aligned: any[], minBars=60){
+    const venues = Object.keys(aligned[0]||{}).filter(v=>v!=='ts');
+    const basis: Record<string, number[]> = Object.fromEntries(venues.map(v=>[v,[]]));
+    for (const row of aligned){
+      const vals = venues.map(v => Number(row[v])).filter(Number.isFinite);
+      if (vals.length < 2) continue;
+      const med = vals.sort((a,b)=>a-b)[Math.floor(vals.length/2)];
+      for (const v of venues){
+        const x = Number(row[v]);
+        if (Number.isFinite(x) && med>0) basis[v].push(Math.abs(x-med)/med);
+      }
+    }
+    const avg = (xs:number[]) => xs.length ? xs.reduce((a,b)=>a+b,0)/xs.length : Infinity;
+    const scored = venues
+      .map(v => ({ v, n: basis[v].length, s: avg(basis[v]) }))
+      .filter(x => x.n >= minBars)
+      .sort((a,b)=> a.s - b.s);
+    if (!scored.length) return null;
+    return { venue: scored[0].v, score: 1/(1+scored[0].s) };
+  }
+
+  function computeDataQualityLeader(aligned:any[]){
+    const venues = Object.keys(aligned[0]||{}).filter(v=>v!=='ts');
+    const counts = venues.map(v=>{
+      let ok=0;
+      for (const r of aligned){ const x = Number(r[v]); if (Number.isFinite(x)) ok++; }
+      return { v, ok };
+    }).sort((a,b)=> b.ok - a.ok);
+    if (!counts.length || counts[0].ok===0) return null;
+    return { venue: counts[0].v, score: counts[0].ok/Math.max(1, aligned.length) };
+  }
+
+  function computePriceLeader(aligned:any[]){
+    const lag = computeLeadLagLeader(aligned, { minPairs: 60, eps: 0.0 });
+    if (lag) return { venue: lag.venue, pct: lag.score, total: lag.totalPairs, method:'lead-lag' as const };
+
+    const cons = computeConsensusLeader(aligned, 60);
+    if (cons) return { venue: cons.venue, pct: cons.score, total: 0, method:'consensus-proximity' as const };
+
+    const qual = computeDataQualityLeader(aligned);
+    if (qual) return { venue: qual.venue, pct: qual.score, total: 0, method:'data-quality' as const };
+
+    return { leader: null, pct: null, total: 0, method:'none' as const };
+  }
+
+  // Temporal Price Leadership calculation with robust fallbacks
   const computeLeadershipFromAligned = (rows: any[], venues: string[]) => {
     if (!rows.length || venues.length < 2) return { venue: null, score: null };
     
-    // Compute returns for each venue over short intervals (Δt = 1 day)
-    const returns: Record<string, number[]> = {};
-    for (const venue of venues) {
-      returns[venue] = [];
-      for (let i = 1; i < rows.length; i++) {
-        const prev = toNum(rows[i-1][venue]);
-        const curr = toNum(rows[i][venue]);
-        if (prev != null && curr != null && prev > 0) {
-          returns[venue].push((curr - prev) / prev);
-        }
-      }
+    const result = computePriceLeader(rows);
+    
+    if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+      console.log('[LEADER] lead-lag =>', result.method === 'lead-lag' ? result : 'null');
+      console.log('[LEADER] consensus =>', result.method === 'consensus-proximity' ? result : 'null');
+      console.log('[LEADER] data-quality =>', result.method === 'data-quality' ? result : 'null');
+      console.log('[LEADER] final result =>', result);
     }
     
-    // Calculate leadership scores based on temporal precedence
-    const leadershipScores: Record<string, number> = {};
-    for (const venue of venues) {
-      leadershipScores[venue] = 0;
-    }
-    
-    // For each pair of venues, compute correlation of ret[i, t] with ret[j, t+1]
-    for (let i = 0; i < venues.length; i++) {
-      for (let j = 0; j < venues.length; j++) {
-        if (i === j) continue;
-        
-        const venueI = venues[i];
-        const venueJ = venues[j];
-        const retI = returns[venueI];
-        const retJ = returns[venueJ];
-        
-        if (retI.length < 2 || retJ.length < 2) continue;
-        
-        // Compute correlation between ret[i, t] and ret[j, t+1]
-        let correlation = 0;
-        let validPairs = 0;
-        
-        for (let t = 0; t < Math.min(retI.length - 1, retJ.length - 1); t++) {
-          const retI_t = retI[t];
-          const retJ_t1 = retJ[t + 1];
-          
-          if (retI_t != null && retJ_t1 != null) {
-            correlation += retI_t * retJ_t1;
-            validPairs++;
-          }
-        }
-        
-        if (validPairs > 0) {
-          correlation /= validPairs;
-          // If venueI consistently predicts venueJ, increment venueI's leadership score
-          if (correlation > 0.1) { // Threshold for significant correlation
-            leadershipScores[venueI] += correlation;
-          }
-        }
-      }
-    }
-    
-    // Find venue with highest leadership score
-    const sortedVenues = venues
-      .map(v => ({ venue: v, score: leadershipScores[v] }))
-      .filter(x => x.score > 0)
-      .sort((a, b) => b.score - a.score);
-    
-    if (sortedVenues.length === 0) return { venue: null, score: null };
-    
-    const leader = sortedVenues[0];
-    return { venue: leader.venue, score: leader.score };
+    if (result.leader === null) return { venue: null, score: null };
+    return { venue: result.venue, score: result.pct };
   };
 import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema, BinanceOverviewSchema } from "@/types/api.schemas"
 import { fetchTyped } from "@/lib/backendAdapter"
