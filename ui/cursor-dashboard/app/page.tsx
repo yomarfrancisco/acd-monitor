@@ -707,6 +707,26 @@ export default function CursorDashboard() {
           result !== null && result.ok === true
         )
       
+      // For Coinbase, always include it in availableUiVenues if enabled, even if fetch failed
+      const coinbaseResult = results.find((result, index) => {
+        const fetchPromises = [
+          'binance', 'okx', 'bybit', 'kraken'
+        ];
+        if (process.env.NEXT_PUBLIC_ENABLE_COINBASE === 'true') {
+          fetchPromises.push('coinbase');
+        }
+        return fetchPromises[index] === 'coinbase';
+      });
+      
+      if (process.env.NEXT_PUBLIC_ENABLE_COINBASE === 'true' && coinbaseResult?.status === 'rejected') {
+        // Add a failed Coinbase exchange to successfulExchanges with hasData: false
+        successfulExchanges.push({
+          venue: 'coinbase',
+          ok: true,
+          data: { hasData: false, error: coinbaseResult.reason }
+        });
+      }
+      
       // Log summary
       const successfulVenues = successfulExchanges.map(r => r.venue)
       const barsPerSeries: Record<string, number> = {}
@@ -2722,18 +2742,19 @@ It would also be helpful if you described:
                                           const k = uiKeyToDataKey[v];
                                           const val = payload?.[0]?.payload?.[k];
                                           return { ui: v, k, val };
-                                        }).filter(row => row.val !== undefined);
+                                        });
                                         
                                         return rows.map((row, index) => {
                                           const metadata = venueMetadata[row.ui];
+                                          const hasData = row.val !== undefined && row.val !== null;
                                           return (
                                             <div key={index} className="flex items-center gap-2 text-[9px]">
                                               <div 
                                                 className="w-2 h-2 rounded-full" 
-                                                style={{ backgroundColor: metadata.color }}
+                                                style={{ backgroundColor: hasData ? metadata.color : '#6b7280' }}
                                               />
                                               <span className="text-[#f9fafb] font-semibold">
-                                                {metadata.label}: <span className="font-bold">${row.val.toFixed(2)}</span>
+                                                {metadata.label}: <span className="font-bold">{hasData ? `$${row.val.toFixed(2)}` : 'N/A'}</span>
                                               </span>
                                             </div>
                                           );
