@@ -2702,24 +2702,44 @@ It would also be helpful if you described:
                                             </div>
                                           )}
 
-                                          {/* Events 1, 2, 3 */}
-                                          <div className="mb-2">
-                                            <div className="text-[#f9fafb] text-[10px] font-semibold mb-1">Events:</div>
-                                            <div className="space-y-1">
-                                              <div className="flex items-center gap-2 text-[9px]">
-                                                <div className="w-2 h-2 rounded-full bg-[#fecaca]"></div>
-                                                <span className="text-[#a1a1aa]">Event 1</span>
-                                              </div>
-                                              <div className="flex items-center gap-2 text-[9px]">
-                                                <div className="w-2 h-2 rounded-full bg-[#fed7aa]"></div>
-                                                <span className="text-[#a1a1aa]">Event 2</span>
-                                              </div>
-                                              <div className="flex items-center gap-2 text-[9px]">
-                                                <div className="w-2 h-2 rounded-full bg-[#bbf7d0]"></div>
-                                                <span className="text-[#a1a1aa]">Event 3</span>
-                                              </div>
-                                            </div>
-                                          </div>
+                                          {/* Conditional Events - only show for relevant months */}
+                                          {(() => {
+                                            const currentMonth = new Date(Number(payload?.[0]?.payload?.ts || 0)).toLocaleString('en-US', { month: 'short' });
+                                            const currentYear = new Date(Number(payload?.[0]?.payload?.ts || 0)).getFullYear().toString().slice(-2);
+                                            const monthKey = `${currentMonth} '${currentYear}`;
+                                            
+                                            // Define which events are relevant for which months
+                                            const monthEvents = {
+                                              "Feb '25": [
+                                                { color: "#fecaca", label: "Event 1 - Regime A → B" }
+                                              ],
+                                              "Jun '25": [
+                                                { color: "#fed7aa", label: "Event 2 - Policy Shift" }
+                                              ],
+                                              "Jul '25": [
+                                                { color: "#bbf7d0", label: "Event 3 - Liquidity ↑" }
+                                              ]
+                                            };
+                                            
+                                            const relevantEvents = monthEvents[monthKey as keyof typeof monthEvents];
+                                            
+                                            if (relevantEvents && relevantEvents.length > 0) {
+                                              return (
+                                                <div className="mb-2">
+                                                  <div className="text-[#f9fafb] text-[10px] font-semibold mb-1">Events:</div>
+                                                  <div className="space-y-1">
+                                                    {relevantEvents.map((event, index) => (
+                                                      <div key={index} className="flex items-center gap-2 text-[9px]">
+                                                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: event.color }}></div>
+                                                        <span className="text-[#a1a1aa]">{event.label}</span>
+                                                      </div>
+                                                    ))}
+                                                  </div>
+                                                </div>
+                                              );
+                                            }
+                                            return null;
+                                          })()}
 
                                           {/* Exchange/Bank Data - show only plotted series */}
                                       {(() => {
