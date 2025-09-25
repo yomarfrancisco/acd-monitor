@@ -1590,7 +1590,7 @@ It would also be helpful if you described:
   };
 
   // --- Event band sizing (days -> ms) ---
-  const bandDaysByTf: Record<string, number> = { '30d': 1, '6m': 3, 'ytd': 28, '1y': 5 };
+  const bandDaysByTf: Record<string, number> = { '30d': 7, '6m': 21, 'ytd': 28, '1y': 35 };
   const dayMs = 24 * 60 * 60 * 1000;
   const bandHalfMs = ((bandDaysByTf[selectedTimeframe] ?? 4) * dayMs) / 2;
   const mkBand = (centerTs: number) => ({ x1: centerTs - bandHalfMs, x2: centerTs + bandHalfMs });
@@ -2803,6 +2803,46 @@ It would also be helpful if you described:
                             {/* GENIUS Act Impl. */}
                             {(() => { const {x1,x2} = mkBand(Date.parse('2025-07-18T00:00:00Z')); return (
                               <ReferenceArea x1={x1} x2={x2} fill="#bbf7d0" fillOpacity={0.40} isFront />
+                            );})()}
+
+                            {/* Invisible hit targets for mobile interaction */}
+                            {(() => { const {x1,x2} = mkBand(Date.parse('2025-01-20T00:00:00Z')); return (
+                              <ReferenceArea
+                                x1={x1} x2={x2}
+                                isFront
+                                fillOpacity={0}
+                                // @ts-ignore recharts passes through to underlying <rect>
+                                pointerEvents="all"
+                                onMouseEnter={() => setSnapTs(Date.parse('2025-01-20T00:00:00Z'))}
+                                onMouseLeave={() => setSnapTs(null)}
+                                onClick={() => setSnapTs(Date.parse('2025-01-20T00:00:00Z'))}
+                              />
+                            );})()}
+
+                            {(() => { const {x1,x2} = mkBand(Date.parse('2025-03-06T00:00:00Z')); return (
+                              <ReferenceArea
+                                x1={x1} x2={x2}
+                                isFront
+                                fillOpacity={0}
+                                // @ts-ignore recharts passes through to underlying <rect>
+                                pointerEvents="all"
+                                onMouseEnter={() => setSnapTs(Date.parse('2025-03-06T00:00:00Z'))}
+                                onMouseLeave={() => setSnapTs(null)}
+                                onClick={() => setSnapTs(Date.parse('2025-03-06T00:00:00Z'))}
+                              />
+                            );})()}
+
+                            {(() => { const {x1,x2} = mkBand(Date.parse('2025-07-18T00:00:00Z')); return (
+                              <ReferenceArea
+                                x1={x1} x2={x2}
+                                isFront
+                                fillOpacity={0}
+                                // @ts-ignore recharts passes through to underlying <rect>
+                                pointerEvents="all"
+                                onMouseEnter={() => setSnapTs(Date.parse('2025-07-18T00:00:00Z'))}
+                                onMouseLeave={() => setSnapTs(null)}
+                                onClick={() => setSnapTs(Date.parse('2025-07-18T00:00:00Z'))}
+                              />
                             );})()}
 
                             {/* Keep thin ReferenceLines for precision */}
