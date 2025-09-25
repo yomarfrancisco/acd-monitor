@@ -1,23 +1,20 @@
 export const toMsUtcMidnight = (input: number | string): number => {
-  let ms: number;
+  let d: Date;
 
   if (typeof input === 'number') {
     // seconds vs ms
-    ms = input < 2e10 ? input * 1000 : input;
+    const ms = input < 1e12 ? input * 1000 : input;
+    d = new Date(ms);
   } else {
-    // string: try numeric first, then Date
-    const num = Number(input);
-    if (Number.isFinite(num)) {
-      ms = num < 2e10 ? num * 1000 : num;
-    } else {
-      const d = new Date(input); // supports ISO like "2025-01-01T00:00:00Z"
-      ms = d.valueOf();
-    }
+    // If ISO lacks Z or explicit offset, treat as UTC (append Z)
+    const hasTZ = /Z|[+-]\d{2}:\d{2}$/.test(input);
+    d = new Date(hasTZ ? input : (input + 'Z'));
   }
 
-  // Guard: if still NaN, skip to epoch to avoid undefined Map keys
-  if (!Number.isFinite(ms)) ms = 0;
+  // Guard: if still NaN, use epoch to avoid undefined Map keys
+  if (!Number.isFinite(d.valueOf())) {
+    d = new Date(0);
+  }
 
-  const d = new Date(ms);
   return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
 };

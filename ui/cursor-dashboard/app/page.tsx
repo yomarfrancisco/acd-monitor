@@ -775,49 +775,45 @@ export default function CursorDashboard() {
       
       console.log('[UI Frontend] venues fetched:', VENUES)
       
-      // Normalize all overviews
-      const normalizedOverviews: Record<VenueKey, NormalizedOverview | null> = {
-        binance: null,
-        okx: null,
-        bybit: null,
-        kraken: null,
-        coinbase: null,
-      };
-      
-      successfulExchanges.forEach(exchange => {
-        const venue = exchange.venue as VenueKey;
-        if (VENUES.includes(venue)) {
-          normalizedOverviews[venue] = normalizeOverview({ venue: exchange.venue, ohlcv: exchange.data.ohlcv });
+      // Map fulfilled results to raw data
+      const raw: Partial<Record<VenueKey, any>> = {};
+      for (const r of results) {
+        if (r.status === 'fulfilled' && r.value.ok) {
+          raw[r.value.venue as VenueKey] = r.value.data;
         }
-      });
+      }
+      
+      // Ensure all keys present (null if missing) and normalize
+      const normalized: Record<VenueKey, NormalizedOverview | null> = {
+        binance: raw.binance ? normalizeOverview({ venue: 'binance', ohlcv: raw.binance.ohlcv }) : null,
+        okx: raw.okx ? normalizeOverview({ venue: 'okx', ohlcv: raw.okx.ohlcv }) : null,
+        bybit: raw.bybit ? normalizeOverview({ venue: 'bybit', ohlcv: raw.bybit.ohlcv }) : null,
+        kraken: raw.kraken ? normalizeOverview({ venue: 'kraken', ohlcv: raw.kraken.ohlcv }) : null,
+        coinbase: raw.coinbase ? normalizeOverview({ venue: 'coinbase', ohlcv: raw.coinbase.ohlcv }) : null,
+      };
       
       // Build YTD axis (Jan 1 to yesterday UTC midnight)
       const now = new Date();
-      const startDate = new Date('2025-01-01T00:00:00Z');
-      const endDate = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0);
+      const ytdStart = new Date('2025-01-01T00:00:00Z').getTime();
+      const ytdEnd = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0).getTime();
       
-      const axis = buildAxis(startDate.getTime(), endDate.getTime());
+      const axis = buildAxis(ytdStart, ytdEnd);
       
       // Align all series to the common axis
-      const seriesData: Record<VenueKey, Array<[number, number | null]>> = {
-        binance: (normalizedOverviews.binance?.ohlcv ?? []) as Array<[number, number | null]>,
-        okx: (normalizedOverviews.okx?.ohlcv ?? []) as Array<[number, number | null]>,
-        bybit: (normalizedOverviews.bybit?.ohlcv ?? []) as Array<[number, number | null]>,
-        kraken: (normalizedOverviews.kraken?.ohlcv ?? []) as Array<[number, number | null]>,
-        coinbase: (normalizedOverviews.coinbase?.ohlcv ?? []) as Array<[number, number | null]>,
-      };
+      const seriesData: Record<string, Array<[number, number | null]>> = {};
+      for (const venue of VENUES) {
+        seriesData[venue] = normalized[venue]?.ohlcv ?? [];
+      }
       
       const aligned = alignOnAxis(seriesData, axis);
       
       // Debug logging
-      if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+      if (process.env.NEXT_PUBLIC_DEBUG_MODE === 'true' || process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
         console.log('[axis]', { days: axis.length, first: new Date(axis[0]).toISOString(), last: new Date(axis.at(-1)!).toISOString() });
         for (const v of VENUES) {
           const nonNull = aligned[v].reduce((a, [,x]) => a + (Number.isFinite(x as number) ? 1 : 0), 0);
           console.log(`[${v}]`, { nonNull });
         }
-        const lc = latestCommonIndex(aligned, VENUES);
-        console.log('[latestCommonIndex]', lc.ts ? new Date(lc.ts).toISOString() : null, lc.values);
         
         // Sample logging for Jan 20, 2025
         const jan20Ts = Date.UTC(2025, 0, 20);
@@ -829,6 +825,13 @@ export default function CursorDashboard() {
           }
           console.log('[sample]', `ts=${new Date(jan20Ts).toISOString()}`, sample);
         }
+        
+        // Chart counts
+        const counts: Record<string, number> = {};
+        for (const v of VENUES) {
+          counts[v] = aligned[v].filter(([,x]) => Number.isFinite(x as number)).length;
+        }
+        console.log('[chart] counts:', counts);
       }
       
       // Convert aligned series to chart format
@@ -849,6 +852,10 @@ export default function CursorDashboard() {
       // Update context with all venues
       setAvailableUiVenues(VENUES)
       setExchangeData(chartData)
+      
+      // Calculate leader from same aligned data
+      const leader = computeLeadershipFromOverviews(aligned);
+      setLeadership(leader)
       
       // Clear any previous errors
       if (exchangeDataError) {
@@ -958,61 +965,6 @@ export default function CursorDashboard() {
     fetchDataSources()
   }, [isClient])
 
-  // Leadership calculation (independent from chart)
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      const tf = selectedTimeframe; // already in scope
-      const base = "/api/exchanges";
-      const urls: Record<VenueKey, string> = {
-        binance: `${base}/binance/overview?symbol=BTCUSDT&tf=${tf}`,
-        okx:     `${base}/okx/overview?symbol=BTCUSDT&tf=${tf}`,
-        bybit:   `${base}/bybit/overview?symbol=BTCUSDT&tf=${tf}`,
-        kraken:  `${base}/kraken/overview?symbol=BTCUSDT&tf=${tf}`,
-        coinbase: `${base}/coinbase/overview?symbol=BTC-USD&tf=${tf}`,
-      };
-
-      const [b,o,by,k,c] = await Promise.all([
-        fetchOverviewLoose("binance", urls.binance),
-        fetchOverviewLoose("okx",     urls.okx),
-        fetchOverviewLoose("bybit",   urls.bybit),
-        fetchOverviewLoose("kraken",  urls.kraken),
-        process.env.NEXT_PUBLIC_ENABLE_COINBASE === 'true' ? 
-          fetchOverviewLoose("coinbase", `${base}/coinbase/overview?symbol=BTC-USD&tf=${tf}`) : 
-          Promise.resolve(null)
-      ]);
-
-      // Normalize all overviews
-      const normalizedOverviews: Record<VenueKey, NormalizedOverview | null> = {
-        binance: b ? normalizeOverview({ venue: 'binance', ohlcv: b.ohlcv }) : null,
-        okx: o ? normalizeOverview({ venue: 'okx', ohlcv: o.ohlcv }) : null,
-        bybit: by ? normalizeOverview({ venue: 'bybit', ohlcv: by.ohlcv }) : null,
-        kraken: k ? normalizeOverview({ venue: 'kraken', ohlcv: k.ohlcv }) : null,
-        coinbase: c ? normalizeOverview({ venue: 'coinbase', ohlcv: c.ohlcv }) : null,
-      };
-      
-      // Build YTD axis (Jan 1 to yesterday UTC midnight)
-      const now = new Date();
-      const startDate = new Date('2025-01-01T00:00:00Z');
-      const endDate = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0);
-      
-      const axis = buildAxis(startDate.getTime(), endDate.getTime());
-      
-      // Align all series to the common axis
-      const seriesData: Record<VenueKey, Array<[number, number | null]>> = {
-        binance: (normalizedOverviews.binance?.ohlcv ?? []) as Array<[number, number | null]>,
-        okx: (normalizedOverviews.okx?.ohlcv ?? []) as Array<[number, number | null]>,
-        bybit: (normalizedOverviews.bybit?.ohlcv ?? []) as Array<[number, number | null]>,
-        kraken: (normalizedOverviews.kraken?.ohlcv ?? []) as Array<[number, number | null]>,
-        coinbase: (normalizedOverviews.coinbase?.ohlcv ?? []) as Array<[number, number | null]>,
-      };
-      
-      const aligned = alignOnAxis(seriesData, axis);
-      const result = computeLeadershipFromOverviews(aligned);
-      if (!cancelled) setLeadership(result);
-    })();
-    return () => { cancelled = true; };
-  }, [selectedTimeframe]);
 
   // API events response state
   const [apiEventsResponse, setApiEventsResponse] = React.useState<unknown>(null);
