@@ -2600,27 +2600,27 @@ It would also be helpful if you described:
                             <Tooltip
                                   cursor={false}
                                   labelFormatter={(ts) => {
-                                    // Debug: log the ts parameter
-                                    console.log('Tooltip ts parameter:', ts, 'type:', typeof ts);
+                                    // More visible debugging
+                                    console.warn('🔍 TOOLTIP DEBUG - ts parameter:', ts, 'type:', typeof ts);
                                     
                                     try {
                                       const numTs = Number(ts);
-                                      console.log('Converted to number:', numTs);
+                                      console.warn('🔍 TOOLTIP DEBUG - converted to number:', numTs);
                                       
                                       if (!Number.isFinite(numTs)) {
-                                        console.log('Invalid timestamp, returning fallback');
+                                        console.warn('🔍 TOOLTIP DEBUG - invalid timestamp, returning fallback');
                                         return 'Invalid Date';
                                       }
                                       
                                       const date = new Date(numTs);
-                                      console.log('Created date:', date);
+                                      console.warn('🔍 TOOLTIP DEBUG - created date:', date);
                                       
                                       const formatted = date.toLocaleDateString('en-US', { month: 'short', day: '2-digit' });
-                                      console.log('Formatted result:', formatted);
+                                      console.warn('🔍 TOOLTIP DEBUG - formatted result:', formatted);
                                       
                                       return formatted;
                                     } catch (error) {
-                                      console.log('Error formatting date:', error);
+                                      console.warn('🔍 TOOLTIP DEBUG - error formatting date:', error);
                                       return 'Date Error';
                                     }
                                   }}
