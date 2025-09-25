@@ -369,10 +369,15 @@ export default function CursorDashboard() {
       const m = new Map<number, number>();
 
       for (const bar of ohlcvData) {
-        const ts = getBarTs(bar);
-        const close = getBarClose(bar);
-        if (ts == null || close == null) continue;
-        if (ts >= startMs && ts < endMs) m.set(ts, close);
+        // Handle both array and object shapes
+        const timestamp = Array.isArray(bar) ? bar[0] : (bar?.time ?? bar?.t ?? bar?.timestamp ?? bar?.date);
+        const close = Array.isArray(bar) ? bar[4] : (bar?.close ?? bar?.c ?? bar?.price);
+        
+        const ts = toMidnightMs(timestamp);
+        const closeNum = toNum(close);
+        
+        if (ts == null || closeNum == null) continue;
+        if (ts >= startMs && ts < endMs) m.set(ts, closeNum);
       }
       venueMap[venue] = m;
     }
@@ -1707,6 +1712,17 @@ It would also be helpful if you described:
     ? buildEventsForDomain(xMin!, xMax!, apiEvents, SEED_EVENTS_YTD, enableSeed)
     : {};
 
+  // Also build eventsByTs for tooltip lookup using ENV_EVENTS
+  const eventsByTs: Record<number, any[]> = {};
+  if (enableSeed) {
+    for (const event of ENV_EVENTS) {
+      const dayKey = toMidnightMs(event.ts);
+      if (dayKey != null) {
+        (eventsByTs[dayKey] ??= []).push(event);
+      }
+    }
+  }
+
   // Filter to domain (prevents NaN / off-chart artifacts)
   const validEvents = Number.isFinite(xMin) && Number.isFinite(xMax)
     ? pickEventsInDomain(sourceEvents, xMin!, xMax!)
@@ -1717,6 +1733,10 @@ It would also be helpful if you described:
     const jan20 = Date.UTC(2025,0,20);
     console.log("[ENV] domain", xMin, xMax, "api", apiEvents.length, "seed?", enableSeed, "render", validEvents.length);
     console.log('[events] counts', Object.keys(byTs).length, 'hasJan20=', !!byTs[jan20]);
+    
+    // ENV_EVENTS debug
+    console.log('[ENV_EVENTS]', ENV_EVENTS.map(e => ({title: e.title, ts: e.ts, date: new Date(e.ts).toISOString()})));
+    console.log('[eventsByTs sample]', Object.keys(eventsByTs).slice(0,5));
   }
 
   // Leadership display (using independent state)
@@ -2780,7 +2800,7 @@ It would also be helpful if you described:
                                 const timestamp = Number(label);
                                 
                                 // Find matching event for this day
-                                const ev = byTs[timestamp]?.[0] as any;
+                                const ev = eventsByTs[timestamp]?.[0] as any;
 
                                 return (
                                   <div className="bg-black border border-[#1a1a1a] rounded-lg p-3 shadow-2xl shadow-black/50">
