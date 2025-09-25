@@ -2,7 +2,7 @@ export type EnvEvent = {
   id: string;
   ts: number;         // ms since epoch
   label: string;      // short tag to display
-  color: string;      // hex
+  color?: string;     // hex (optional)
 };
 
 export function defaultEnvEvents(): EnvEvent[] {

@@ -51,6 +51,7 @@ import { useExchangeData } from "../contexts/ExchangeDataContext"
 import { getAvailableUiVenues, uiKeyToDataKey, type UiVenue } from "../lib/venueMapping"
 import { computePriceLeadership, type DataKey } from "../lib/leadership"
 import { defaultEnvEvents, type EnvEvent } from "../lib/environments"
+import { toMsTs, finiteMsOrNull } from "../lib/time"
 import type { RiskSummary, HealthRun, EventsResponse, DataSources, EvidenceExport } from "@/types/api"
 import type { MetricsOverview } from "@/types/api.schemas"
 import { z } from "zod"
@@ -65,18 +66,17 @@ import {
 } from "lucide-react"
 
 // Helper function to synthesize timestamp from date label
-function synthTsFromLabel(lbl: string): number {
+function synthTsFromLabel(lbl: string): number | null {
   // handles "Feb '25", "Jun '25", "Jul '25"
-  const m = lbl.match(/^([A-Za-z]{3})\s+'(\d{2})$/);
+  const m = lbl?.match(/^([A-Za-z]{3})\s+'(\d{2})$/);
   if (m) {
     const [ , monStr, yy ] = m;
     const year = 2000 + Number(yy);
     const mon = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].indexOf(monStr);
     return Date.UTC(year, Math.max(0, mon), 1);
   }
-  // fallback: parse "Feb 3" etc.
-  const parsed = Date.parse(lbl);
-  return isNaN(parsed) ? Date.now() : parsed;
+  // Also accept ISO or "Feb 03, 2025" etc.
+  return toMsTs(lbl);
 }
 
 // Different data sets for different time periods
@@ -87,7 +87,7 @@ const analyticsData30d = [
   { date: "Aug 27", ts: synthTsFromLabel("Aug 27"), fnb: 250, absa: 240, standard: 260, nedbank: 245 },
   { date: "Sep 3", ts: synthTsFromLabel("Sep 3"), fnb: 300, absa: 290, standard: 310, nedbank: 295 },
   { date: "Sep 10", ts: synthTsFromLabel("Sep 10"), fnb: 350, absa: 330, standard: 370, nedbank: 340 },
-]
+].filter(row => row.ts !== null) as Array<{ date: string; ts: number; fnb: number; absa: number; standard: number; nedbank: number }>
 
 const analyticsData6m = [
   { date: "Mar '25", ts: synthTsFromLabel("Mar '25"), fnb: 80, absa: 75, standard: 85, nedbank: 78 },
@@ -97,7 +97,7 @@ const analyticsData6m = [
   { date: "Jul '25", ts: synthTsFromLabel("Jul '25"), fnb: 280, absa: 270, standard: 290, nedbank: 275 },
   { date: "Aug '25", ts: synthTsFromLabel("Aug '25"), fnb: 320, absa: 310, standard: 330, nedbank: 315 },
   { date: "Sep '25", ts: synthTsFromLabel("Sep '25"), fnb: 350, absa: 330, standard: 370, nedbank: 340 },
-]
+].filter(row => row.ts !== null) as Array<{ date: string; ts: number; fnb: number; absa: number; standard: number; nedbank: number }>
 
 const analyticsData1y = [
   { date: "Sep '24", ts: synthTsFromLabel("Sep '24"), fnb: 60, absa: 55, standard: 65, nedbank: 58 },
@@ -113,7 +113,7 @@ const analyticsData1y = [
   { date: "Jul '25", ts: synthTsFromLabel("Jul '25"), fnb: 340, absa: 330, standard: 350, nedbank: 335 },
   { date: "Aug '25", ts: synthTsFromLabel("Aug '25"), fnb: 360, absa: 350, standard: 370, nedbank: 355 },
   { date: "Sep '25", ts: synthTsFromLabel("Sep '25"), fnb: 350, absa: 330, standard: 370, nedbank: 340 },
-]
+].filter(row => row.ts !== null) as Array<{ date: string; ts: number; fnb: number; absa: number; standard: number; nedbank: number }>
 
 const analyticsDataYTD = [
   { date: "Jan '25", ts: synthTsFromLabel("Jan '25"), fnb: 100, absa: 95, standard: 105, nedbank: 98 },
@@ -125,7 +125,7 @@ const analyticsDataYTD = [
   { date: "Jul '25", ts: synthTsFromLabel("Jul '25"), fnb: 280, absa: 270, standard: 290, nedbank: 275 },
   { date: "Aug '25", ts: synthTsFromLabel("Aug '25"), fnb: 400, absa: 380, standard: 420, nedbank: 390 },
   { date: "Sep '25", ts: synthTsFromLabel("Sep '25"), fnb: 350, absa: 330, standard: 370, nedbank: 340 },
-]
+].filter(row => row.ts !== null) as Array<{ date: string; ts: number; fnb: number; absa: number; standard: number; nedbank: number }>
 
 // Financial Compliance Dashboard - Main Component (CI Test)
 // Dashboard button styling - keep original sizing, only change colors
@@ -307,9 +307,12 @@ export default function CursorDashboard() {
     
     // Create chart data points - keep the old shape, fill only present series
     const chartData = sortedTimestamps.map(timestamp => {
+      const ts = toMsTs(timestamp); // Use sanitized timestamp conversion
+      if (ts === null) return null; // Drop bad rows
+      
       const point: any = { 
-        date: new Date(timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-        ts: Date.parse(timestamp) // Add numeric timestamp for time-based x-axis
+        date: new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        ts: ts // Use sanitized numeric timestamp
       }
       
       // Only populate keys that exist in availableUiVenues
@@ -338,7 +341,7 @@ export default function CursorDashboard() {
       }
       
       return point
-    })
+    }).filter(Boolean) // Remove null values (invalid timestamps)
     
     return chartData
   }
@@ -736,7 +739,7 @@ export default function CursorDashboard() {
             console.log(`🔍 [UI Frontend] SERIES_VENUES=[binance,coinbase,bybit,kraken]`)
             console.log(`🔍 [UI Frontend] AVATAR_VENUES=[binance,coinbase,bybit,kraken]`)
           }
-        } else {
+      } else {
           throw new Error('No exchanges available')
         }
       }
@@ -876,22 +879,35 @@ export default function CursorDashboard() {
       try {
         // Try to fetch from API first
         const result = await fetchTyped(`/events?timeframe=${selectedTimeframe}`, EventsResponseSchema);
-        if (result && Array.isArray((result as any).items) && (result as any).items.length > 0) {
-          // Convert API events to EnvEvent format
-          const events: EnvEvent[] = (result as any).items.map((item: any) => ({
-            id: item.id || `event-${Date.now()}`,
-            ts: item.ts || Date.parse(item.date || new Date().toISOString()),
-            label: item.label || item.name || 'Event',
-            color: item.color || '#94a3b8'
-          }));
-          setEnvEvents(events);
-        } else {
-          // Fallback to default events
-          setEnvEvents(defaultEnvEvents());
-        }
+        const raw = (result && Array.isArray((result as any).items) && (result as any).items.length > 0) 
+          ? (result as any).items.map((item: any) => ({
+              id: item.id || `event-${Date.now()}`,
+              ts: item.ts || Date.parse(item.date || new Date().toISOString()),
+              label: item.label || item.name || 'Event',
+              color: item.color || '#94a3b8'
+            }))
+          : defaultEnvEvents();
+
+        // Sanitize and filter events
+        const events = raw
+          .map((e: any) => {
+            const ts = finiteMsOrNull(e.ts) ?? (typeof e.ts === "string" ? Date.parse(e.ts) : NaN);
+            const ms = Number.isFinite(ts) ? (ts < 1e12 ? Math.round(Number(ts) * 1000) : Number(ts)) : NaN;
+            return Number.isFinite(ms) ? { ...e, ts: ms } : null;
+          })
+          .filter(Boolean) as EnvEvent[];
+
+        setEnvEvents(events);
       } catch (error) {
         // Fallback to default events on error
-        setEnvEvents(defaultEnvEvents());
+        const events = defaultEnvEvents()
+          .map((e: any) => {
+            const ts = finiteMsOrNull(e.ts) ?? (typeof e.ts === "string" ? Date.parse(e.ts) : NaN);
+            const ms = Number.isFinite(ts) ? (ts < 1e12 ? Math.round(Number(ts) * 1000) : Number(ts)) : NaN;
+            return Number.isFinite(ms) ? { ...e, ts: ms } : null;
+          })
+          .filter(Boolean) as EnvEvent[];
+        setEnvEvents(events);
       }
     };
 
@@ -1549,6 +1565,19 @@ It would also be helpful if you described:
 
   // Use live exchange data if available, otherwise fall back to static data
   const currentData = exchangeData.length > 0 ? exchangeData : getAnalyticsData()
+
+  // Compute safe x-domain and guard rendering
+  const tsValues = currentData.map(r => r.ts).filter((n) => Number.isFinite(n));
+  const hasDomain = tsValues.length > 0;
+  const xMin = hasDomain ? Math.min(...tsValues) : undefined;
+  const xMax = hasDomain ? Math.max(...tsValues) : undefined;
+
+  if (process.env.NEXT_PUBLIC_UI_DEBUG === "true") {
+    const badRows = currentData.filter(r => !Number.isFinite(r.ts)).length;
+    const badEvents = envEvents.filter(e => !Number.isFinite(e.ts)).length;
+    console.log("[ENV] rows", currentData.length, "domain", xMin, xMax, "badRows", badRows);
+    console.log("[ENV] events", envEvents.map(e => e.ts), "badEvents", badEvents);
+  }
 
   // Leadership display (using independent state)
   const leaderLabel = leadership.leader
@@ -2496,10 +2525,10 @@ It would also be helpful if you described:
                                   // fallback if nothing is available (should be rare)
                                   if (!availableUiVenues || availableUiVenues.length === 0) {
                                     return (
-                                      <div className="flex items-center -space-x-2">
-                                        <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white">
+                                <div className="flex items-center -space-x-2">
+                                  <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white">
                                           <img src="/binance_circle.png" alt="binance" className="w-full h-full object-contain p-0.5" />
-                                        </div>
+                                  </div>
                                       </div>
                                     );
                                   }
@@ -2522,12 +2551,12 @@ It would also be helpful if you described:
                                           <img
                                             src={`/${v}_circle.png`}
                                             alt={v}
-                                            className="w-full h-full object-contain p-0.5"
+                                          className="w-full h-full object-contain p-0.5"
                                             loading="eager"
-                                          />
-                                        </div>
+                                        />
+                                      </div>
                                       ))}
-                                    </div>
+                                      </div>
                                   );
                                 })()}
                         </div>
@@ -2561,11 +2590,11 @@ It would also be helpful if you described:
                               dataKey="ts"
                               type="number"
                               scale="time"
-                              domain={['dataMin', 'dataMax']}
+                              {...(hasDomain ? { domain: [xMin!, xMax!] } : {})}
                               axisLine={false}
                               tickLine={false}
                               tick={{ fill: "#a1a1aa", fontSize: 10 }}
-                              tickFormatter={(ts) => new Date(ts).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}
+                              tickFormatter={(ts) => new Date(Number(ts)).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}
                               label={{
                                 value: "Time",
                                 position: "insideBottom",
@@ -2586,8 +2615,8 @@ It would also be helpful if you described:
                                 <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" opacity={0.75} />
 
                                 {/* Environment Events - Dynamic ReferenceLines */}
-                                {envEvents.map(e => (
-                                  <ReferenceLine
+                                {hasDomain && envEvents.map(e => (
+                                <ReferenceLine
                                     key={e.id}
                                     x={e.ts}
                                     stroke={e.color || '#94a3b8'}
@@ -2714,22 +2743,22 @@ It would also be helpful if you described:
                                         }).filter(row => row.val !== undefined);
                                         
                                         return rows.map((row, index) => (
-                                          <div key={index} className="flex items-center gap-2 text-[9px]">
-                                            <div 
-                                              className="w-2 h-2 rounded-full" 
+                                            <div key={index} className="flex items-center gap-2 text-[9px]">
+                                          <div 
+                                            className="w-2 h-2 rounded-full" 
                                               style={{ 
                                                 backgroundColor: row.ui === 'binance' ? '#60a5fa' :
                                                                row.ui === 'coinbase' ? '#a1a1aa' :
                                                                row.ui === 'kraken' ? '#71717a' : '#52525b'
                                               }}
-                                            />
-                                            <span className="text-[#f9fafb] font-semibold">
+                                          />
+                                              <span className="text-[#f9fafb] font-semibold">
                                               {row.ui === 'coinbase' ? 'Coinbase' : row.ui.charAt(0).toUpperCase() + row.ui.slice(1)}: <span className="font-bold">${row.val.toFixed(2)}</span> |{" "}
-                                              <span className="text-[#a1a1aa]">
+                                                <span className="text-[#a1a1aa]">
                                                 {marketShare[row.ui === 'coinbase' ? 'Coinbase' : row.ui.charAt(0).toUpperCase() + row.ui.slice(1) as keyof typeof marketShare]}% share
+                                                </span>
                                               </span>
-                                            </span>
-                                          </div>
+                                        </div>
                                         ));
                                       })()}
                                     </div>
@@ -2744,48 +2773,48 @@ It would also be helpful if you described:
                               return (
                                 <>
                                   {hasKey('fnb') && (
-                                    <Line
-                                      type="monotone"
-                                      dataKey="fnb"
-                                      stroke="#60a5fa"
-                                      strokeWidth={2}
-                                      dot={{ fill: "#60a5fa", strokeWidth: 2, r: 3 }}
-                                      activeDot={{ r: 4, fill: "#60a5fa" }}
-                                      name="Binance"
-                                    />
+                            <Line
+                              type="monotone"
+                              dataKey="fnb"
+                              stroke="#60a5fa"
+                              strokeWidth={2}
+                              dot={{ fill: "#60a5fa", strokeWidth: 2, r: 3 }}
+                              activeDot={{ r: 4, fill: "#60a5fa" }}
+                              name="Binance"
+                            />
                                   )}
                                   {hasKey('absa') && (
-                                    <Line
-                                      type="monotone"
-                                      dataKey="absa"
-                                      stroke="#a1a1aa"
-                                      strokeWidth={1.5}
-                                      dot={{ fill: "#a1a1aa", strokeWidth: 1.5, r: 2 }}
-                                      activeDot={{ r: 3, fill: "#a1a1aa" }}
-                                      name="Coinbase"
-                                    />
+                            <Line
+                              type="monotone"
+                              dataKey="absa"
+                              stroke="#a1a1aa"
+                              strokeWidth={1.5}
+                              dot={{ fill: "#a1a1aa", strokeWidth: 1.5, r: 2 }}
+                              activeDot={{ r: 3, fill: "#a1a1aa" }}
+                              name="Coinbase"
+                            />
                                   )}
                                   {hasKey('standard') && (
-                                    <Line
-                                      type="monotone"
-                                      dataKey="standard"
-                                      stroke="#71717a"
-                                      strokeWidth={1.5}
-                                      dot={{ fill: "#71717a", strokeWidth: 1.5, r: 2 }}
-                                      activeDot={{ r: 3, fill: "#71717a" }}
-                                      name="Kraken"
-                                    />
+                            <Line
+                              type="monotone"
+                              dataKey="standard"
+                              stroke="#71717a"
+                              strokeWidth={1.5}
+                              dot={{ fill: "#71717a", strokeWidth: 1.5, r: 2 }}
+                              activeDot={{ r: 3, fill: "#71717a" }}
+                              name="Kraken"
+                            />
                                   )}
                                   {hasKey('nedbank') && (
-                                    <Line
-                                      type="monotone"
-                                      dataKey="nedbank"
-                                      stroke="#52525b"
-                                      strokeWidth={1.5}
-                                      dot={{ fill: "#52525b", strokeWidth: 1.5, r: 2 }}
-                                      activeDot={{ r: 3, fill: "#52525b" }}
-                                      name="Bybit"
-                                    />
+                            <Line
+                              type="monotone"
+                              dataKey="nedbank"
+                              stroke="#52525b"
+                              strokeWidth={1.5}
+                              dot={{ fill: "#52525b", strokeWidth: 1.5, r: 2 }}
+                              activeDot={{ r: 3, fill: "#52525b" }}
+                              name="Bybit"
+                            />
                                   )}
                                 </>
                               );
