@@ -87,13 +87,35 @@ const pickOhlcv = (ex: any): any[] => {
     ex?.ohlcv,                  // simple fallback
     ex?.data?.ohlcv?.data,      // object wrapping an array
     ex?.data?.data,             // sometimes providers nest like this
-    ex?.overview?.ohlcv,        // if wrapped in overview
+    ex?.overview?.ohlcv,      // if wrapped in overview
     ex?.payload?.ohlcv,         // alt wrapper
     ex?.data?.candles,          // possible alt key (coinbase-style)
     ex?.data?.bars,             // possible alt key
   ];
   for (const c of cand) if (Array.isArray(c)) return c;
   return [];
+};
+
+// Converts either an array bar or an object bar into { ts, close }
+const readBar = (bar: any): { ts: number | string | null; close: number | null } => {
+  if (!bar) return { ts: null, close: null };
+
+  // Array-shaped: [ts, open, high, low, close, ...]
+  if (Array.isArray(bar)) {
+    const ts = bar[0];
+    const close = toNum(bar[4]);
+    return { ts, close };
+  }
+
+  // Object-shaped: try common key variants
+  // Coinbase often uses { t: <sec>, c: <close> }
+  const tsObj =
+    (bar.ts ?? bar.t ?? bar.time ?? bar.timestamp ?? bar.date ?? bar[0]) ?? null;
+
+  const closeObj =
+    toNum(bar.c ?? bar.close ?? bar.closing ?? bar.price ?? bar.last ?? bar.vwap);
+
+  return { ts: tsObj, close: closeObj };
 };
 
   const buildYtdAxis = (): number[] => {
@@ -391,20 +413,33 @@ export default function CursorDashboard() {
           const skim = JSON.stringify(ex?.data ?? ex, null, 2);
           console.log(`[${venue}] non-array OHLCV shape (first 800 chars):`, skim.slice(0, 800));
         }
+
+        // Add targeted debug for Coinbase bar shapes
+        if (venue === 'coinbase' && ohlcvData.length > 0) {
+          const first = ohlcvData[0];
+          const second = ohlcvData[1];
+          console.log('[coinbase first two bars]', {
+            type0: first && (Array.isArray(first) ? 'array' : typeof first),
+            keys0: first && !Array.isArray(first) ? Object.keys(first).slice(0, 8) : undefined,
+            sample0: first,
+            type1: second && (Array.isArray(second) ? 'array' : typeof second),
+            keys1: second && !Array.isArray(second) ? Object.keys(second).slice(0, 8) : undefined,
+          });
+        }
       }
 
       const m = new Map<number, number>();
 
       for (const bar of ohlcvData) {
-        // Handle both array and object shapes
-        const timestamp = Array.isArray(bar) ? bar[0] : (bar?.time ?? bar?.t ?? bar?.timestamp ?? bar?.date);
-        const close = Array.isArray(bar) ? bar[4] : (bar?.close ?? bar?.c ?? bar?.price);
-        
-        const ts = toMidnightMs(timestamp);
-        const closeNum = toNum(close);
-        
-        if (ts == null || closeNum == null) continue;
-        if (ts >= startMs && ts < endMs) m.set(ts, closeNum);
+        const { ts, close } = readBar(bar);
+        if (ts == null || close == null) continue;
+
+        const dayKey = toMidnightMs(ts); // your existing normalizer (sec|ms|ISO → UTC midnight ms)
+        if (dayKey == null) continue;
+
+        if (dayKey >= startMs && dayKey < endMs) {
+          m.set(dayKey, close);
+        }
       }
       venueMap[venue] = m;
     }
