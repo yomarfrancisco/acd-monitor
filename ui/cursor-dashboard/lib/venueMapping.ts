@@ -20,7 +20,7 @@ export const uiKeyToDataKey: Record<UiVenue, DataKey> = {
 // Venue metadata for display
 export const venueMetadata: Record<UiVenue, { label: string; icon: string; color: string }> = {
   binance: { label: 'Binance', icon: 'binance_circle.png', color: '#60a5fa' },
-  okx: { label: 'OKX', icon: 'OKX_circle.png', color: '#a1a1aa' },
+  okx: { label: 'OKX', icon: '/OKX_circle.png', color: '#a1a1aa' },
   coinbase: { label: 'Coinbase', icon: 'coinbase_circle.png', color: '#f59e0b' },
   bybit: { label: 'Bybit', icon: 'bybit_circle.png', color: '#52525b' },
   kraken: { label: 'Kraken', icon: 'kraken_circle.png', color: '#71717a' },

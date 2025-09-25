@@ -50,10 +50,12 @@ export async function GET(request: NextRequest) {
     const startISO = start.toISOString();
     const endISO = end.toISOString();
     
+    const candlesUrl = `${PROXY_HOST}/coinbase/api/v3/brokerage/products/${symbol}/candles?granularity=${granularity}&start=${startISO}&end=${endISO}`;
     console.log(`🛰️ [route] coinbase request: symbol=${symbol}, tf=${timeframe}, granularity=${granularity}, start=${startISO}, end=${endISO}`);
+    console.log(`🛰️ [route] coinbase candles URL: ${candlesUrl}`);
     
     // Fetch candles first (required), ticker is optional
-    const candlesResponse = await fetch(`${PROXY_HOST}/coinbase/api/v3/brokerage/products/${symbol}/candles?granularity=${granularity}&start=${startISO}&end=${endISO}`, {
+    const candlesResponse = await fetch(candlesUrl, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36',
         'Accept': 'application/json,text/plain,*/*'
@@ -122,6 +124,21 @@ export async function GET(request: NextRequest) {
       return [isoTime, Number(open), Number(high), Number(low), Number(close), Number(volume)];
     });
     
+    console.log(`📊 [route] coinbase candles: received ${candles.length} bars, normalized ${ohlcv.length} bars`);
+    
+    // Guard: if no candles, return empty response
+    if (ohlcv.length === 0) {
+      console.log(`⚠️ [route] coinbase: no candles returned, returning empty response`);
+      return NextResponse.json({
+        venue: 'coinbase',
+        symbol: symbol,
+        asOf: new Date().toISOString(),
+        ticker: null,
+        ohlcv: [],
+        source: 'empty'
+      }, { status: 200 });
+    }
+    
     // Limit to 300 bars
     const limitedOhlcv = ohlcv.slice(-300);
     
@@ -148,17 +165,11 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.log(`❌ [route] coinbase failed:`, error);
     
-    // Generate fallback data to keep UI working
-    const fallbackOhlcv = generateFallbackData(timeframe);
-    
+    // Return 502 so UI can drop the venue
     return NextResponse.json({
-      venue: 'coinbase',
-      symbol: symbol,
-      asOf: new Date().toISOString(),
-      ticker: null,
-      ohlcv: fallbackOhlcv,
-      source: 'fallback'
-    }, { status: 200 });
+      error: 'Coinbase API failed',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 502 });
   }
 }
 

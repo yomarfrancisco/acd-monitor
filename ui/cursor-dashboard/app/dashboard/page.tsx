@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { CalendarIcon, Clock } from "lucide-react";
 import { TimeseriesChart } from "@/components/TimeseriesChart";
 import { useExchangeData } from "@/contexts/ExchangeDataContext";
-import type { UiVenue } from "../../lib/venueMapping";
+import { venueMetadata, type UiVenue } from "../../lib/venueMapping";
 
 // PageWrapper removed - was causing layout conflicts
 
@@ -188,8 +188,8 @@ export default function Page() {
                     {availableUiVenues.map((venue: UiVenue) => (
                       <div key={venue} className={`${availableUiVenues.length <= 4 ? 'w-8 h-8' : 'w-7 h-7'} rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white`}>
                         <img 
-                          src={`/${venue === 'okx' ? 'OKX' : venue}_circle.png`}
-                          alt={venue === 'coinbase' ? 'Coinbase' : venue === 'okx' ? 'OKX' : venue.charAt(0).toUpperCase() + venue.slice(1)}
+                          src={venueMetadata[venue].icon}
+                          alt={venueMetadata[venue].label}
                           className="w-full h-full object-contain p-0.5"
                         />
                       </div>

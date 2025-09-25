@@ -707,25 +707,6 @@ export default function CursorDashboard() {
           result !== null && result.ok === true
         )
       
-      // For Coinbase, always include it in availableUiVenues if enabled, even if fetch failed
-      const coinbaseResult = results.find((result, index) => {
-        const fetchPromises = [
-          'binance', 'okx', 'bybit', 'kraken'
-        ];
-        if (process.env.NEXT_PUBLIC_ENABLE_COINBASE === 'true') {
-          fetchPromises.push('coinbase');
-        }
-        return fetchPromises[index] === 'coinbase';
-      });
-      
-      if (process.env.NEXT_PUBLIC_ENABLE_COINBASE === 'true' && coinbaseResult?.status === 'rejected') {
-        // Add a failed Coinbase exchange to successfulExchanges with hasData: false
-        successfulExchanges.push({
-          venue: 'coinbase',
-          ok: true,
-          data: { hasData: false, error: coinbaseResult.reason }
-        });
-      }
       
       // Log summary
       const successfulVenues = successfulExchanges.map(r => r.venue)
@@ -734,15 +715,20 @@ export default function CursorDashboard() {
         barsPerSeries[r.venue] = (r.data as any)?.ohlcv?.length ?? 0
       })
       
+      // Filter to only venues with real data (bars > 0)
+      const activeVenues = successfulVenues.filter(venue => barsPerSeries[venue] > 0)
+      
       console.log('[UI Frontend] venues fetched:', successfulVenues)
+      console.log('[UI Frontend] active venues (with data):', activeVenues)
+      console.log('[UI Frontend] bars per series:', barsPerSeries)
       
       console.log(`📊 [UI Frontend] Loaded series: [${successfulVenues.join(', ')}]`)
       console.log(`📊 [UI Frontend] Bars per series:`, barsPerSeries)
       
       // Create chart series from successful exchanges
-      if (successfulExchanges.length > 0) {
-        const availableUiVenues: UiVenue[] = getAvailableUiVenues(successfulExchanges)
-        const chartData = createChartSeries(successfulExchanges)
+      if (activeVenues.length > 0) {
+        const availableUiVenues: UiVenue[] = getAvailableUiVenues(successfulExchanges.filter(e => activeVenues.includes(e.venue)))
+        const chartData = createChartSeries(successfulExchanges.filter(e => activeVenues.includes(e.venue)))
         
         // Debug logging
         if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
@@ -2709,7 +2695,7 @@ It would also be helpful if you described:
                                 <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" opacity={0.75} />
 
                             <Tooltip
-                              cursor={false}
+                                  cursor={false}
                               labelFormatter={(ts) => {
                                 const useTs = snapTs ?? Number(ts);
                                 return new Date(useTs).toLocaleDateString('en-US', { month:'short', day:'2-digit' });
@@ -2720,41 +2706,38 @@ It would also be helpful if you described:
                                   
                                   // Find matching event for this day
                                   const ev = snapTs ? byTs[snapTs] : undefined;
-                                  
+
                                   return (
-                                    <div className="bg-black border border-[#1a1a1a] rounded-lg p-3 shadow-2xl shadow-black/50">
+                                        <div className="bg-black border border-[#1a1a1a] rounded-lg p-3 shadow-2xl shadow-black/50">
                                       <p className="text-[#a1a1aa] text-[10px] mb-1.5">{fmtDayYear(timestamp)}</p>
                                       
                                       {/* Event Information - only show if there's a matching event */}
                                       {ev && (
                                         <div className="mb-2 p-2 bg-bg-tile rounded border-l-2" style={{ borderLeftColor: ev.color }}>
-                                          <div className="flex items-center gap-2 mb-1">
+                                              <div className="flex items-center gap-2 mb-1">
                                             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: ev.color }} />
                                             <span className="text-[#f9fafb] font-semibold text-[10px]">{ev.title}</span>
-                                          </div>
+                                              </div>
                                           <p className="text-[#a1a1aa] text-[9px]">{ev.subtitle}</p>
-                                        </div>
-                                      )}
+                                            </div>
+                                          )}
 
                                       {/* Exchange Data - show only plotted series */}
                                       {(() => {
-                                        const rows = availableUiVenues.map(v => {
-                                          const k = uiKeyToDataKey[v];
-                                          const val = payload?.[0]?.payload?.[k];
-                                          return { ui: v, k, val };
-                                        });
+                                        const rows = availableUiVenues
+                                          .map(v => ({ ui: v, k: uiKeyToDataKey[v], val: payload?.[0]?.payload?.[uiKeyToDataKey[v]] }))
+                                          .filter(row => Number.isFinite(row.val));
                                         
                                         return rows.map((row, index) => {
                                           const metadata = venueMetadata[row.ui];
-                                          const hasData = row.val !== undefined && row.val !== null;
                                           return (
                                             <div key={index} className="flex items-center gap-2 text-[9px]">
                                               <div 
                                                 className="w-2 h-2 rounded-full" 
-                                                style={{ backgroundColor: hasData ? metadata.color : '#6b7280' }}
+                                                style={{ backgroundColor: metadata.color }}
                                               />
                                               <span className="text-[#f9fafb] font-semibold">
-                                                {metadata.label}: <span className="font-bold">{hasData ? `$${row.val.toFixed(2)}` : 'N/A'}</span>
+                                                {metadata.label}: <span className="font-bold">${row.val.toFixed(2)}</span>
                                               </span>
                                             </div>
                                           );
