@@ -1546,6 +1546,26 @@ It would also be helpful if you described:
     )
   }
 
+  // Single source of truth for environment events
+  const ENV_EVENTS = [
+    { ts: Date.parse("2025-02-01T00:00:00Z"), label: "Regime A → B", color: "#ef4444" },
+    { ts: Date.parse("2025-06-01T00:00:00Z"), label: "Policy Shift",   color: "#f59e0b" },
+    { ts: Date.parse("2025-07-01T00:00:00Z"), label: "Liquidity ↑",    color: "#10b981" },
+  ];
+
+  // Helper function to format date with year
+  const fmtDayYear = (ms: number) =>
+    new Date(ms).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
+
+  // Helper function to check if two timestamps are on the same calendar day (UTC)
+  const sameDay = (a: number, b: number) => {
+    const dateA = new Date(a);
+    const dateB = new Date(b);
+    return dateA.getUTCFullYear() === dateB.getUTCFullYear() &&
+           dateA.getUTCMonth() === dateB.getUTCMonth() &&
+           dateA.getUTCDate() === dateB.getUTCDate();
+  };
+
   // Use live exchange data if available, otherwise fall back to static data
   const currentData = exchangeData.length > 0 ? exchangeData : getAnalyticsData()
 
@@ -2598,133 +2618,45 @@ It would also be helpful if you described:
                                 <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" opacity={0.75} />
 
                             <Tooltip
-                                  cursor={false}
-                                  labelFormatter={(ts) => {
-                                    // More visible debugging
-                                    console.warn('🔍 TOOLTIP DEBUG - ts parameter:', ts, 'type:', typeof ts);
-                                    
-                                    try {
-                                      const numTs = Number(ts);
-                                      console.warn('🔍 TOOLTIP DEBUG - converted to number:', numTs);
-                                      
-                                      if (!Number.isFinite(numTs)) {
-                                        console.warn('🔍 TOOLTIP DEBUG - invalid timestamp, returning fallback');
-                                        return 'Invalid Date';
-                                      }
-                                      
-                                      const date = new Date(numTs);
-                                      console.warn('🔍 TOOLTIP DEBUG - created date:', date);
-                                      
-                                      const formatted = date.toLocaleDateString('en-US', { month: 'short', day: '2-digit' });
-                                      console.warn('🔍 TOOLTIP DEBUG - formatted result:', formatted);
-                                      
-                                      return formatted;
-                                    } catch (error) {
-                                      console.warn('🔍 TOOLTIP DEBUG - error formatting date:', error);
-                                      return 'Date Error';
-                                    }
-                                  }}
+                              cursor={false}
+                              labelFormatter={(ts) => {
+                                const numTs = Number(ts);
+                                if (!Number.isFinite(numTs)) {
+                                  return 'Invalid Date';
+                                }
+                                return fmtDayYear(numTs);
+                              }}
                               content={({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string }) => {
                                 if (active && payload && payload.length) {
-                                      // Market share data for each exchange (using live data if available)
-                                      const marketShare = exchangeData.length > 0 ? {
-                                        Binance: 35,
-                                        Coinbase: 25,
-                                        Kraken: 20,
-                                        Bybit: 20,
-                                      } : {
-                                        FNB: 21,
-                                        ABSA: 21,
-                                        "Standard Bank": 26,
-                                        Nedbank: 16,
-                                      }
-
-                                      // Compute HHI and CR4 from market shares with guardrails
-                                      function computeHHIandCR4(sharesPct: (number | null | undefined)[]) {
-                                        // Filter out null/undefined/NaN values
-                                        const validShares = sharesPct.filter(s => 
-                                          s !== null && s !== undefined && !isNaN(s)
-                                        );
-                                        
-                                        // Need at least 2 valid shares to compute meaningful metrics
-                                        if (validShares.length < 2) {
-                                          return null;
-                                        }
-                                        
-                                        // Round to integers (HHI rule: integer, no commas)
-                                        const pctPts = validShares.map(s => Math.round(s as number));
-                                        
-                                        // HHI: sum of squared percentage points
-                                        const hhi = pctPts.reduce((acc, p) => acc + p*p, 0);
-                                        
-                                        // CR4: sum of top 4 firms, rounded to nearest whole percent
-                                        const cr4 = Math.round(
-                                          [...pctPts].sort((a,b)=>b-a).slice(0,4).reduce((a,b)=>a+b,0)
-                                        );
-                                        
-                                        return { hhi, cr4 };
-                                      }
-
-                                      // Extract shares from marketShare object
-                                      const shares = Object.values(marketShare);
-                                      const concentrationData = computeHHIandCR4(shares);
-
-                                      // Event data for significant dates
-                                      const eventData = {
-                                        "Feb '25": {
-                                          type: "Fed/Crypto Liquidity Shift",
-                                          impact: "Spread/Depth Adaptation",
-                                          color: "#ef4444",
-                                        },
-                                        "Jun '25": {
-                                          type: "Market Shock",
-                                          impact: "Price Invariance",
-                                          color: "#f59e0b",
-                                        },
-                                        "Jul '25": {
-                                          type: "Spread/Depth Adaptation",
-                                          impact: "Competitive Response",
-                                          color: "#10b981",
-                                        },
-                                      }
-
-                                      const currentEvent = eventData[label as keyof typeof eventData]
-
+                                  const timestamp = Number(label);
+                                  
+                                  // Find matching event for this day
+                                  const matchingEvent = ENV_EVENTS.find(event => sameDay(event.ts, timestamp));
+                                  
                                   return (
-                                        <div className="bg-black border border-[#1a1a1a] rounded-lg p-3 shadow-2xl shadow-black/50">
-                                          <p className="text-[#a1a1aa] text-[10px] mb-1.5">{label}</p>
-                                          
-                                          {/* Concentration Information - only show if valid data */}
-                                          {/* Date → Concentration (HHI | CR4) → Optional Event → Bank rows */}
-                                          {concentrationData && (
-                                            <p className="text-gray-300 text-[10px] font-medium mb-1.5">
-                                              Concentration  HHI {concentrationData.hhi} | {concentrationData.cr4}%
-                                            </p>
-                                          )}
-
-                                          {/* Event Information */}
-                                          {currentEvent && (
+                                    <div className="bg-black border border-[#1a1a1a] rounded-lg p-3 shadow-2xl shadow-black/50">
+                                      <p className="text-[#a1a1aa] text-[10px] mb-1.5">{fmtDayYear(timestamp)}</p>
+                                      
+                                      {/* Event Information - only show if there's a matching event */}
+                                      {matchingEvent && (
+                                        <div
+                                          className="mb-2 p-2 bg-bg-tile rounded border-l-2"
+                                          style={{ borderLeftColor: matchingEvent.color }}
+                                        >
+                                          <div className="flex items-center gap-2 mb-1">
                                             <div
-                                              className="mb-2 p-2 bg-bg-tile rounded border-l-2"
-                                              style={{ borderLeftColor: currentEvent.color }}
-                                            >
-                                              <div className="flex items-center gap-2 mb-1">
-                                                <div
-                                                  className="w-2 h-2 rounded-full"
-                                                  style={{ backgroundColor: currentEvent.color }}
-                                                ></div>
-                                                <span className="text-[#f9fafb] font-semibold text-[10px]">
-                                                  {currentEvent.type}
-                                                </span>
-                                              </div>
-                                              <p className="text-[#a1a1aa] text-[9px]">{currentEvent.impact}</p>
-                                            </div>
-                                          )}
+                                              className="w-2 h-2 rounded-full"
+                                              style={{ backgroundColor: matchingEvent.color }}
+                                            ></div>
+                                            <span className="text-[#f9fafb] font-semibold text-[10px]">
+                                              {matchingEvent.label}
+                                            </span>
+                                          </div>
+                                        </div>
+                                      )}
 
-
-                                          {/* Exchange/Bank Data - show only plotted series */}
+                                      {/* Exchange Data - show only plotted series */}
                                       {(() => {
-                                        // Map UI venues to their data and values
                                         const rows = availableUiVenues.map(v => {
                                           const k = uiKeyToDataKey[v];
                                           const val = payload?.[0]?.payload?.[k];
@@ -2732,28 +2664,25 @@ It would also be helpful if you described:
                                         }).filter(row => row.val !== undefined);
                                         
                                         return rows.map((row, index) => (
-                                            <div key={index} className="flex items-center gap-2 text-[9px]">
-                                          <div 
-                                            className="w-2 h-2 rounded-full" 
+                                          <div key={index} className="flex items-center gap-2 text-[9px]">
+                                            <div 
+                                              className="w-2 h-2 rounded-full" 
                                               style={{ 
                                                 backgroundColor: row.ui === 'binance' ? '#60a5fa' :
                                                                row.ui === 'coinbase' ? '#a1a1aa' :
                                                                row.ui === 'kraken' ? '#71717a' : '#52525b'
                                               }}
-                                          />
-                                              <span className="text-[#f9fafb] font-semibold">
-                                              {row.ui === 'coinbase' ? 'Coinbase' : row.ui.charAt(0).toUpperCase() + row.ui.slice(1)}: <span className="font-bold">${row.val.toFixed(2)}</span> |{" "}
-                                                <span className="text-[#a1a1aa]">
-                                                {marketShare[row.ui === 'coinbase' ? 'Coinbase' : row.ui.charAt(0).toUpperCase() + row.ui.slice(1) as keyof typeof marketShare]}% share
-                                                </span>
-                                              </span>
-                                        </div>
+                                            />
+                                            <span className="text-[#f9fafb] font-semibold">
+                                              {row.ui === 'coinbase' ? 'Coinbase' : row.ui.charAt(0).toUpperCase() + row.ui.slice(1)}: <span className="font-bold">${row.val.toFixed(2)}</span>
+                                            </span>
+                                          </div>
                                         ));
                                       })()}
                                     </div>
-                                      )
+                                  );
                                 }
-                                    return null
+                                return null;
                               }}
                             />
                             {/* Conditional Line components - only mount when data exists */}
