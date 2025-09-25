@@ -197,9 +197,20 @@ const OverviewLoose = z.object({
   error: z.string().optional(),
 });
 
-function toNum(x: unknown): number {
-  const v = typeof x === "string" ? Number(x) : (x as number);
-  return Number.isFinite(v) ? v : 0;
+// Hard-en timestamp normalization to UTC midnight
+function toMsUtcMidnight(ts: number | string): number {
+  const n = typeof ts === 'string' ? Number(ts) : ts;
+  const ms = n < 1e12 ? n * 1000 : n;        // s → ms
+  const d = new Date(ms);
+  // clamp to 00:00:00Z
+  const utc = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+  return utc;
+}
+
+// Hard-en value normalization
+function toNum(x: unknown): number | null {
+  const n = typeof x === 'string' ? parseFloat(x) : (typeof x === 'number' ? x : NaN);
+  return Number.isFinite(n) ? n : null;
 }
 
 type NormalizedOverview = {
@@ -213,13 +224,16 @@ function normalizeOverview(raw: z.infer<typeof OverviewLoose>, v: string): Norma
     // expected: [time, open, high, low, close, vol?]
     // kraken variant: [time, open, high, low, close, vwap, volume, count]
     const t = row[0];
-    const iso = typeof t === "string" ? t : new Date((t as number) * 1000).toISOString();
+    const utcMs = toMsUtcMidnight(t);
+    const iso = new Date(utcMs).toISOString();
     const open  = toNum(row[1]);
     const high  = toNum(row[2]);
     const low   = toNum(row[3]);
     const close = toNum(row[4]);
     const vol   = row[6] != null ? toNum(row[6]) : toNum(row[5]);
-    return [iso, open, high, low, close, vol] as [string, number, number, number, number, number];
+    
+    // Return with proper numeric values (null becomes 0 for chart compatibility)
+    return [iso, open ?? 0, high ?? 0, low ?? 0, close ?? 0, vol ?? 0] as [string, number, number, number, number, number];
   });
   return { venue, ohlcv };
 }
@@ -280,6 +294,14 @@ export default function CursorDashboard() {
   const [activeAgent, setActiveAgent] = useState<string | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   
+  // Console banner for debugging
+  React.useEffect(() => {
+    console.log('🚀 ACD Monitor Dashboard Loaded');
+    console.log(`[env] PROXY_HOST=${process.env.NEXT_PUBLIC_CRYPTO_PROXY_BASE || 'undefined'}`);
+    console.log(`[env] PREVIEW_URL=${window.location.origin}`);
+    console.log(`[env] DEBUG_MODE=${process.env.NEXT_PUBLIC_UI_DEBUG || 'false'}`);
+  }, []);
+  
   // Leadership state (independent from chart)
   const [leadership, setLeadership] = React.useState<{leader: VenueKey|null; pct: number|null; total: number}>({ leader: null, pct: null, total: 0 });
   
@@ -315,6 +337,10 @@ export default function CursorDashboard() {
     const venueDataMaps: Record<string, Map<string, number>> = {};
     const venueCounts: Record<string, number> = {};
     
+    // Probe date for testing (Jan 20, 2025)
+    const probeDate = new Date('2025-01-20T00:00:00Z').toISOString();
+    const probeDateMs = Date.UTC(2025, 0, 20);
+    
     successfulExchanges.forEach(exchange => {
       if (exchange.data?.ohlcv) {
         const venue = exchange.venue;
@@ -323,8 +349,8 @@ export default function CursorDashboard() {
         
         exchange.data.ohlcv.forEach((bar: any[]) => {
           const timestamp = bar[0]; // ISO timestamp
-          const closePrice = Number(bar[4]);
-          if (Number.isFinite(closePrice)) {
+          const closePrice = toNum(bar[4]);
+          if (closePrice !== null) {
             dataMap.set(timestamp, closePrice);
             nonNullCount++;
           }
@@ -333,11 +359,12 @@ export default function CursorDashboard() {
         venueDataMaps[venue] = dataMap;
         venueCounts[venue] = nonNullCount;
         
-        // Debug logging for Coinbase
-        if (venue === 'coinbase' && process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+        // Detailed debug logging for OKX and Coinbase
+        if ((venue === 'okx' || venue === 'coinbase') && process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
           const firstBar = exchange.data.ohlcv[0];
           const lastBar = exchange.data.ohlcv[exchange.data.ohlcv.length - 1];
-          console.log(`[coinbase] first=${firstBar?.[0]} last=${lastBar?.[0]} nonNull=${nonNullCount}`);
+          const sampleValue = dataMap.get(probeDate);
+          console.log(`[${venue}] first=${firstBar?.[0]} last=${lastBar?.[0]} nonNull=${nonNullCount} sample@Jan20=${sampleValue ?? 'null'} ts@Jan20=${probeDateMs}`);
         }
       }
     });
@@ -387,6 +414,8 @@ export default function CursorDashboard() {
         const nonNullCount = chartData.filter(point => point[dataKey] !== null).length;
         counts[venue] = nonNullCount;
       });
+      
+      console.log(`[axis] first=${masterDays[0]} last=${masterDays[masterDays.length-1]} days=${axisDays}`);
       console.log(`[chart] axisDays=${axisDays} counts:`, counts);
     }
     
