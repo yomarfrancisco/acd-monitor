@@ -1546,24 +1546,47 @@ It would also be helpful if you described:
     )
   }
 
-  // Single source of truth for environment events
-  const ENV_EVENTS = [
-    { ts: Date.parse("2025-02-01T00:00:00Z"), label: "Regime A → B", color: "#ef4444" },
-    { ts: Date.parse("2025-06-01T00:00:00Z"), label: "Policy Shift",   color: "#f59e0b" },
-    { ts: Date.parse("2025-07-01T00:00:00Z"), label: "Liquidity ↑",    color: "#10b981" },
+  // --- Environment events (single source of truth) ---
+  type EnvEvent = {
+    ts: number;          // ms UTC
+    label: string;       // short title for the bar + tooltip
+    desc?: string;       // 1-line impact note for tooltip
+    color: string;       // used for pill + bar color mapping
+  };
+
+  const ENV_EVENTS: EnvEvent[] = [
+    {
+      ts: Date.UTC(2025, 0, 20), // Jan 20, 2025
+      label: "Trump Inauguration Surge",
+      desc: "Market jump around inauguration",
+      color: "#ef4444" // red family
+    },
+    {
+      ts: Date.UTC(2025, 2, 6), // Mar 6, 2025
+      label: "Strategic BTC Reserve Order",
+      desc: "Executive order: federal BTC reserves",
+      color: "#f59e0b" // amber family
+    },
+    {
+      ts: Date.UTC(2025, 6, 18), // Jul 18, 2025
+      label: "GENIUS Act Implementation",
+      desc: "New compliance rules take effect",
+      color: "#10b981" // green family
+    }
   ];
 
   // Helper function to format date with year
   const fmtDayYear = (ms: number) =>
     new Date(ms).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
 
-  // Helper function to check if two timestamps are on the same calendar day (UTC)
-  const sameDay = (a: number, b: number) => {
-    const dateA = new Date(a);
-    const dateB = new Date(b);
-    return dateA.getUTCFullYear() === dateB.getUTCFullYear() &&
-           dateA.getUTCMonth() === dateB.getUTCMonth() &&
-           dateA.getUTCDate() === dateB.getUTCDate();
+  // helper: same calendar day in UTC
+  const sameUtcDay = (a: number, b: number) => {
+    const da = new Date(a), db = new Date(b);
+    return (
+      da.getUTCFullYear() === db.getUTCFullYear() &&
+      da.getUTCMonth() === db.getUTCMonth() &&
+      da.getUTCDate() === db.getUTCDate()
+    );
   };
 
   // Use live exchange data if available, otherwise fall back to static data
@@ -2631,27 +2654,25 @@ It would also be helpful if you described:
                                   const timestamp = Number(label);
                                   
                                   // Find matching event for this day
-                                  const matchingEvent = ENV_EVENTS.find(event => sameDay(event.ts, timestamp));
+                                  const evt = ENV_EVENTS.find(ev => sameUtcDay(ev.ts, timestamp));
                                   
                                   return (
                                     <div className="bg-black border border-[#1a1a1a] rounded-lg p-3 shadow-2xl shadow-black/50">
                                       <p className="text-[#a1a1aa] text-[10px] mb-1.5">{fmtDayYear(timestamp)}</p>
                                       
                                       {/* Event Information - only show if there's a matching event */}
-                                      {matchingEvent && (
+                                      {evt && (
                                         <div
                                           className="mb-2 p-2 bg-bg-tile rounded border-l-2"
-                                          style={{ borderLeftColor: matchingEvent.color }}
+                                          style={{ borderLeftColor: evt.color }}
                                         >
                                           <div className="flex items-center gap-2 mb-1">
-                                            <div
-                                              className="w-2 h-2 rounded-full"
-                                              style={{ backgroundColor: matchingEvent.color }}
-                                            ></div>
+                                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: evt.color }} />
                                             <span className="text-[#f9fafb] font-semibold text-[10px]">
-                                              {matchingEvent.label}
+                                              {evt.label}
                                             </span>
                                           </div>
+                                          {evt.desc && <p className="text-[#a1a1aa] text-[9px]">{evt.desc}</p>}
                                         </div>
                                       )}
 
@@ -2738,34 +2759,23 @@ It would also be helpful if you described:
                               );
                             })()}
 
-                            {/* Environment Events - 3 thick solid bars with soft colors */}
-                            <ReferenceLine
-                              x={Date.parse("2025-02-01T00:00:00Z")}
-                              stroke="#fecaca"
-                              strokeWidth={30}
-                              strokeOpacity={0.4}
-                              isFront={true}
-                            >
-                              <Label value="Regime A → B" position="top" />
-                            </ReferenceLine>
-                            <ReferenceLine
-                              x={Date.parse("2025-06-01T00:00:00Z")}
-                              stroke="#fed7aa"
-                              strokeWidth={30}
-                              strokeOpacity={0.4}
-                              isFront={true}
-                            >
-                              <Label value="Policy Shift" position="top" />
-                            </ReferenceLine>
-                            <ReferenceLine
-                              x={Date.parse("2025-07-01T00:00:00Z")}
-                              stroke="#bbf7d0"
-                              strokeWidth={30}
-                              strokeOpacity={0.4}
-                              isFront={true}
-                            >
-                              <Label value="Liquidity ↑" position="top" />
-                            </ReferenceLine>
+                            {/* Environment Events – wide, soft bars */}
+                            {ENV_EVENTS.map((e) => (
+                              <ReferenceLine
+                                key={e.ts}
+                                x={e.ts}
+                                stroke={
+                                  e.color === "#ef4444" ? "#fecaca" : // red → soft rose
+                                  e.color === "#f59e0b" ? "#fed7aa" : // amber → soft peach
+                                                   "#bbf7d0"   // green → soft mint
+                                }
+                                strokeWidth={30}
+                                strokeOpacity={0.40}
+                                isFront
+                              >
+                                <Label value={e.label} position="top" />
+                              </ReferenceLine>
+                            ))}
                           </LineChart>
                         </ResponsiveContainer>
                       </div>
