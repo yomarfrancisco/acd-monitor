@@ -1,16 +1,17 @@
 // ui/cursor-dashboard/lib/leadership.ts
-export type UiVenue = 'binance' | 'coinbase' | 'bybit' | 'kraken';
+export type UiVenue = 'binance' | 'okx' | 'coinbase' | 'bybit' | 'kraken';
 
 export type ChartPoint = {
   // existing shape you already use for the line chart
   date: string | number;       // timestamp or label
   fnb?: number;                // binance
-  absa?: number;               // coinbase (OKX in UI)
+  absa?: number;               // okx
   nedbank?: number;            // bybit
   standard?: number;           // kraken
+  coinbase?: number;           // coinbase
 };
 
-export type DataKey = 'fnb' | 'absa' | 'nedbank' | 'standard';
+export type DataKey = 'fnb' | 'absa' | 'nedbank' | 'standard' | 'coinbase';
 
 export function computePriceLeadership(points: ChartPoint[], keys: DataKey[]) {
   // keep only keys that actually exist in the data
@@ -28,12 +29,13 @@ export function computePriceLeadership(points: ChartPoint[], keys: DataKey[]) {
   // map DataKey -> UiVenue
   const key2venue: Record<DataKey, UiVenue> = {
     fnb: 'binance',
-    absa: 'coinbase',
+    absa: 'okx',
     nedbank: 'bybit',
     standard: 'kraken',
+    coinbase: 'coinbase',
   };
 
-  const counts: Record<UiVenue, number> = { binance:0, coinbase:0, bybit:0, kraken:0 };
+  const counts: Record<UiVenue, number> = { binance:0, okx:0, coinbase:0, bybit:0, kraken:0 };
   let totalLeadEvents = 0;
 
   // iterate bars t=1..n-2 (we look ahead one bar)

@@ -184,12 +184,12 @@ export default function Page() {
                        selectedTimeframe === "ytd" ? "YTD" : "Cal"} Price Leader
                     </div>
                   </div>
-                  <div className="flex items-center -space-x-2">
+                  <div className={`flex items-center ${availableUiVenues.length <= 4 ? '-space-x-2' : '-space-x-2.5'}`}>
                     {availableUiVenues.map((venue: UiVenue) => (
-                      <div key={venue} className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white">
+                      <div key={venue} className={`${availableUiVenues.length <= 4 ? 'w-8 h-8' : 'w-7 h-7'} rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white`}>
                         <img 
-                          src={`/${venue}_circle.png`}
-                          alt={venue === 'coinbase' ? 'Coinbase' : venue.charAt(0).toUpperCase() + venue.slice(1)}
+                          src={`/${venue === 'okx' ? 'OKX' : venue}_circle.png`}
+                          alt={venue === 'coinbase' ? 'Coinbase' : venue === 'okx' ? 'OKX' : venue.charAt(0).toUpperCase() + venue.slice(1)}
                           className="w-full h-full object-contain p-0.5"
                         />
                       </div>

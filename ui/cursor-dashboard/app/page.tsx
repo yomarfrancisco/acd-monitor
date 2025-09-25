@@ -48,7 +48,7 @@ import { DegradedModeBanner } from "@/components/DegradedModeBanner"
 import { EventsTable } from "@/components/EventsTable"
 import { SelftestIndicator } from "@/components/SelftestIndicator"
 import { useExchangeData } from "../contexts/ExchangeDataContext"
-import { getAvailableUiVenues, uiKeyToDataKey, type UiVenue } from "../lib/venueMapping"
+import { getAvailableUiVenues, uiKeyToDataKey, venueMetadata, type UiVenue } from "../lib/venueMapping"
 import { computePriceLeadership, type DataKey } from "../lib/leadership"
 import { normalizeEvents, pickEventsInDomain, SEED_EVENTS_YTD } from "../utils/events"
 import { toMsTs } from "../lib/time"
@@ -89,51 +89,51 @@ function synthTsFromLabel(lbl: string): number | null {
 
 // Different data sets for different time periods
 const analyticsData30d = [
-  { date: "Aug 6", ts: synthTsFromLabel("Aug 6"), fnb: 100, absa: 95, standard: 105, nedbank: 98 },
-  { date: "Aug 13", ts: synthTsFromLabel("Aug 13"), fnb: 150, absa: 145, standard: 155, nedbank: 148 },
-  { date: "Aug 20", ts: synthTsFromLabel("Aug 20"), fnb: 200, absa: 190, standard: 210, nedbank: 195 },
-  { date: "Aug 27", ts: synthTsFromLabel("Aug 27"), fnb: 250, absa: 240, standard: 260, nedbank: 245 },
-  { date: "Sep 3", ts: synthTsFromLabel("Sep 3"), fnb: 300, absa: 290, standard: 310, nedbank: 295 },
-  { date: "Sep 10", ts: synthTsFromLabel("Sep 10"), fnb: 350, absa: 330, standard: 370, nedbank: 340 },
-].filter(row => row.ts !== null) as Array<{ date: string; ts: number; fnb: number; absa: number; standard: number; nedbank: number }>
+  { date: "Aug 6", ts: synthTsFromLabel("Aug 6"), fnb: 100, absa: 95, standard: 105, nedbank: 98, coinbase: 102 },
+  { date: "Aug 13", ts: synthTsFromLabel("Aug 13"), fnb: 150, absa: 145, standard: 155, nedbank: 148, coinbase: 152 },
+  { date: "Aug 20", ts: synthTsFromLabel("Aug 20"), fnb: 200, absa: 190, standard: 210, nedbank: 195, coinbase: 205 },
+  { date: "Aug 27", ts: synthTsFromLabel("Aug 27"), fnb: 250, absa: 240, standard: 260, nedbank: 245, coinbase: 255 },
+  { date: "Sep 3", ts: synthTsFromLabel("Sep 3"), fnb: 300, absa: 290, standard: 310, nedbank: 295, coinbase: 305 },
+  { date: "Sep 10", ts: synthTsFromLabel("Sep 10"), fnb: 350, absa: 330, standard: 370, nedbank: 340, coinbase: 360 },
+].filter(row => row.ts !== null) as Array<{ date: string; ts: number; fnb: number; absa: number; standard: number; nedbank: number; coinbase: number }>
 
 const analyticsData6m = [
-  { date: "Mar '25", ts: synthTsFromLabel("Mar '25"), fnb: 80, absa: 75, standard: 85, nedbank: 78 },
-  { date: "Apr '25", ts: synthTsFromLabel("Apr '25"), fnb: 120, absa: 115, standard: 125, nedbank: 118 },
-  { date: "May '25", ts: synthTsFromLabel("May '25"), fnb: 180, absa: 175, standard: 185, nedbank: 178 },
-  { date: "Jun '25", ts: synthTsFromLabel("Jun '25"), fnb: 220, absa: 210, standard: 230, nedbank: 215 },
-  { date: "Jul '25", ts: synthTsFromLabel("Jul '25"), fnb: 280, absa: 270, standard: 290, nedbank: 275 },
-  { date: "Aug '25", ts: synthTsFromLabel("Aug '25"), fnb: 320, absa: 310, standard: 330, nedbank: 315 },
-  { date: "Sep '25", ts: synthTsFromLabel("Sep '25"), fnb: 350, absa: 330, standard: 370, nedbank: 340 },
-].filter(row => row.ts !== null) as Array<{ date: string; ts: number; fnb: number; absa: number; standard: number; nedbank: number }>
+  { date: "Mar '25", ts: synthTsFromLabel("Mar '25"), fnb: 80, absa: 75, standard: 85, nedbank: 78, coinbase: 82 },
+  { date: "Apr '25", ts: synthTsFromLabel("Apr '25"), fnb: 120, absa: 115, standard: 125, nedbank: 118, coinbase: 122 },
+  { date: "May '25", ts: synthTsFromLabel("May '25"), fnb: 180, absa: 175, standard: 185, nedbank: 178, coinbase: 182 },
+  { date: "Jun '25", ts: synthTsFromLabel("Jun '25"), fnb: 220, absa: 210, standard: 230, nedbank: 215, coinbase: 225 },
+  { date: "Jul '25", ts: synthTsFromLabel("Jul '25"), fnb: 280, absa: 270, standard: 290, nedbank: 275, coinbase: 285 },
+  { date: "Aug '25", ts: synthTsFromLabel("Aug '25"), fnb: 320, absa: 310, standard: 330, nedbank: 315, coinbase: 325 },
+  { date: "Sep '25", ts: synthTsFromLabel("Sep '25"), fnb: 350, absa: 330, standard: 370, nedbank: 340, coinbase: 360 },
+].filter(row => row.ts !== null) as Array<{ date: string; ts: number; fnb: number; absa: number; standard: number; nedbank: number; coinbase: number }>
 
 const analyticsData1y = [
-  { date: "Sep '24", ts: synthTsFromLabel("Sep '24"), fnb: 60, absa: 55, standard: 65, nedbank: 58 },
-  { date: "Oct '24", ts: synthTsFromLabel("Oct '24"), fnb: 80, absa: 75, standard: 85, nedbank: 78 },
-  { date: "Nov '24", ts: synthTsFromLabel("Nov '24"), fnb: 100, absa: 95, standard: 105, nedbank: 98 },
-  { date: "Dec '24", ts: synthTsFromLabel("Dec '24"), fnb: 120, absa: 115, standard: 125, nedbank: 118 },
-  { date: "Jan '25", ts: synthTsFromLabel("Jan '25"), fnb: 140, absa: 135, standard: 145, nedbank: 138 },
-  { date: "Feb '25", ts: synthTsFromLabel("Feb '25"), fnb: 180, absa: 175, standard: 185, nedbank: 178 },
-  { date: "Mar '25", ts: synthTsFromLabel("Mar '25"), fnb: 220, absa: 210, standard: 230, nedbank: 215 },
-  { date: "Apr '25", ts: synthTsFromLabel("Apr '25"), fnb: 260, absa: 250, standard: 270, nedbank: 255 },
-  { date: "May '25", ts: synthTsFromLabel("May '25"), fnb: 300, absa: 290, standard: 310, nedbank: 295 },
-  { date: "Jun '25", ts: synthTsFromLabel("Jun '25"), fnb: 320, absa: 310, standard: 330, nedbank: 315 },
-  { date: "Jul '25", ts: synthTsFromLabel("Jul '25"), fnb: 340, absa: 330, standard: 350, nedbank: 335 },
-  { date: "Aug '25", ts: synthTsFromLabel("Aug '25"), fnb: 360, absa: 350, standard: 370, nedbank: 355 },
-  { date: "Sep '25", ts: synthTsFromLabel("Sep '25"), fnb: 350, absa: 330, standard: 370, nedbank: 340 },
-].filter(row => row.ts !== null) as Array<{ date: string; ts: number; fnb: number; absa: number; standard: number; nedbank: number }>
+  { date: "Sep '24", ts: synthTsFromLabel("Sep '24"), fnb: 60, absa: 55, standard: 65, nedbank: 58, coinbase: 62 },
+  { date: "Oct '24", ts: synthTsFromLabel("Oct '24"), fnb: 80, absa: 75, standard: 85, nedbank: 78, coinbase: 82 },
+  { date: "Nov '24", ts: synthTsFromLabel("Nov '24"), fnb: 100, absa: 95, standard: 105, nedbank: 98, coinbase: 102 },
+  { date: "Dec '24", ts: synthTsFromLabel("Dec '24"), fnb: 120, absa: 115, standard: 125, nedbank: 118, coinbase: 122 },
+  { date: "Jan '25", ts: synthTsFromLabel("Jan '25"), fnb: 140, absa: 135, standard: 145, nedbank: 138, coinbase: 142 },
+  { date: "Feb '25", ts: synthTsFromLabel("Feb '25"), fnb: 180, absa: 175, standard: 185, nedbank: 178, coinbase: 182 },
+  { date: "Mar '25", ts: synthTsFromLabel("Mar '25"), fnb: 220, absa: 210, standard: 230, nedbank: 215, coinbase: 225 },
+  { date: "Apr '25", ts: synthTsFromLabel("Apr '25"), fnb: 260, absa: 250, standard: 270, nedbank: 255, coinbase: 265 },
+  { date: "May '25", ts: synthTsFromLabel("May '25"), fnb: 300, absa: 290, standard: 310, nedbank: 295, coinbase: 305 },
+  { date: "Jun '25", ts: synthTsFromLabel("Jun '25"), fnb: 320, absa: 310, standard: 330, nedbank: 315, coinbase: 325 },
+  { date: "Jul '25", ts: synthTsFromLabel("Jul '25"), fnb: 340, absa: 330, standard: 350, nedbank: 335, coinbase: 345 },
+  { date: "Aug '25", ts: synthTsFromLabel("Aug '25"), fnb: 360, absa: 350, standard: 370, nedbank: 355, coinbase: 365 },
+  { date: "Sep '25", ts: synthTsFromLabel("Sep '25"), fnb: 350, absa: 330, standard: 370, nedbank: 340, coinbase: 360 },
+].filter(row => row.ts !== null) as Array<{ date: string; ts: number; fnb: number; absa: number; standard: number; nedbank: number; coinbase: number }>
 
 const analyticsDataYTD = [
-  { date: "Jan '25", ts: synthTsFromLabel("Jan '25"), fnb: 100, absa: 95, standard: 105, nedbank: 98 },
-  { date: "Feb '25", ts: synthTsFromLabel("Feb '25"), fnb: 150, absa: 145, standard: 155, nedbank: 148 },
-  { date: "Mar '25", ts: synthTsFromLabel("Mar '25"), fnb: 200, absa: 190, standard: 210, nedbank: 195 },
-  { date: "Apr '25", ts: synthTsFromLabel("Apr '25"), fnb: 180, absa: 175, standard: 185, nedbank: 178 },
-  { date: "May '25", ts: synthTsFromLabel("May '25"), fnb: 250, absa: 240, standard: 260, nedbank: 245 },
-  { date: "Jun '25", ts: synthTsFromLabel("Jun '25"), fnb: 300, absa: 290, standard: 310, nedbank: 295 },
-  { date: "Jul '25", ts: synthTsFromLabel("Jul '25"), fnb: 280, absa: 270, standard: 290, nedbank: 275 },
-  { date: "Aug '25", ts: synthTsFromLabel("Aug '25"), fnb: 400, absa: 380, standard: 420, nedbank: 390 },
-  { date: "Sep '25", ts: synthTsFromLabel("Sep '25"), fnb: 350, absa: 330, standard: 370, nedbank: 340 },
-].filter(row => row.ts !== null) as Array<{ date: string; ts: number; fnb: number; absa: number; standard: number; nedbank: number }>
+  { date: "Jan '25", ts: synthTsFromLabel("Jan '25"), fnb: 100, absa: 95, standard: 105, nedbank: 98, coinbase: 102 },
+  { date: "Feb '25", ts: synthTsFromLabel("Feb '25"), fnb: 150, absa: 145, standard: 155, nedbank: 148, coinbase: 152 },
+  { date: "Mar '25", ts: synthTsFromLabel("Mar '25"), fnb: 200, absa: 190, standard: 210, nedbank: 195, coinbase: 205 },
+  { date: "Apr '25", ts: synthTsFromLabel("Apr '25"), fnb: 180, absa: 175, standard: 185, nedbank: 178, coinbase: 182 },
+  { date: "May '25", ts: synthTsFromLabel("May '25"), fnb: 250, absa: 240, standard: 260, nedbank: 245, coinbase: 255 },
+  { date: "Jun '25", ts: synthTsFromLabel("Jun '25"), fnb: 300, absa: 290, standard: 310, nedbank: 295, coinbase: 305 },
+  { date: "Jul '25", ts: synthTsFromLabel("Jul '25"), fnb: 280, absa: 270, standard: 290, nedbank: 275, coinbase: 285 },
+  { date: "Aug '25", ts: synthTsFromLabel("Aug '25"), fnb: 400, absa: 380, standard: 420, nedbank: 390, coinbase: 410 },
+  { date: "Sep '25", ts: synthTsFromLabel("Sep '25"), fnb: 350, absa: 330, standard: 370, nedbank: 340, coinbase: 360 },
+].filter(row => row.ts !== null) as Array<{ date: string; ts: number; fnb: number; absa: number; standard: number; nedbank: number; coinbase: number }>
 
 // Financial Compliance Dashboard - Main Component (CI Test)
 // Dashboard button styling - keep original sizing, only change colors
@@ -329,9 +329,10 @@ export default function CursorDashboard() {
         const exchange = successfulExchanges.find(e => {
           const venueMapping: Record<string, string> = {
             'binance': 'binance',
-            'okx': 'coinbase',
+            'okx': 'okx',
             'bybit': 'bybit', 
-            'kraken': 'kraken'
+            'kraken': 'kraken',
+            'coinbase': 'coinbase'
           }
           return venueMapping[e.venue] === uiVenue
         })
@@ -684,13 +685,20 @@ export default function CursorDashboard() {
     try {
       console.log(`🔍 [UI Frontend] Starting multi-exchange overview fetch for timeframe: ${selectedTimeframe}...`)
       
-      // Fetch all four exchanges in parallel with robust error handling
-      const results = await Promise.allSettled([
+      // Fetch exchanges in parallel with robust error handling
+      const fetchPromises = [
         fetchExchangeData('binance', `/exchanges/binance/overview?symbol=BTCUSDT&tf=${selectedTimeframe}`),
         fetchExchangeData('okx', `/exchanges/okx/overview?symbol=BTCUSDT&tf=${selectedTimeframe}`),
         fetchExchangeData('bybit', `/exchanges/bybit/overview?symbol=BTCUSDT&tf=${selectedTimeframe}`),
         fetchExchangeData('kraken', `/exchanges/kraken/overview?symbol=BTCUSDT&tf=${selectedTimeframe}`)
-      ])
+      ];
+      
+      // Add Coinbase only if enabled in Preview
+      if (process.env.NEXT_PUBLIC_ENABLE_COINBASE === 'true') {
+        fetchPromises.push(fetchExchangeData('coinbase', `/exchanges/coinbase/overview?symbol=BTC-USD&tf=${selectedTimeframe}`));
+      }
+      
+      const results = await Promise.allSettled(fetchPromises)
       
       // Extract successful results
       const successfulExchanges = results
@@ -705,6 +713,8 @@ export default function CursorDashboard() {
       successfulExchanges.forEach(r => {
         barsPerSeries[r.venue] = (r.data as any)?.ohlcv?.length ?? 0
       })
+      
+      console.log('[UI Frontend] venues fetched:', successfulVenues)
       
       console.log(`📊 [UI Frontend] Loaded series: [${successfulVenues.join(', ')}]`)
       console.log(`📊 [UI Frontend] Bars per series:`, barsPerSeries)
@@ -2714,21 +2724,20 @@ It would also be helpful if you described:
                                           return { ui: v, k, val };
                                         }).filter(row => row.val !== undefined);
                                         
-                                        return rows.map((row, index) => (
-                                          <div key={index} className="flex items-center gap-2 text-[9px]">
-                                            <div 
-                                              className="w-2 h-2 rounded-full" 
-                                              style={{ 
-                                                backgroundColor: row.ui === 'binance' ? '#60a5fa' :
-                                                               row.ui === 'coinbase' ? '#a1a1aa' :
-                                                               row.ui === 'kraken' ? '#71717a' : '#52525b'
-                                              }}
-                                            />
-                                            <span className="text-[#f9fafb] font-semibold">
-                                              {row.ui === 'coinbase' ? 'Coinbase' : row.ui.charAt(0).toUpperCase() + row.ui.slice(1)}: <span className="font-bold">${row.val.toFixed(2)}</span>
-                                            </span>
-                                          </div>
-                                        ));
+                                        return rows.map((row, index) => {
+                                          const metadata = venueMetadata[row.ui];
+                                          return (
+                                            <div key={index} className="flex items-center gap-2 text-[9px]">
+                                              <div 
+                                                className="w-2 h-2 rounded-full" 
+                                                style={{ backgroundColor: metadata.color }}
+                                              />
+                                              <span className="text-[#f9fafb] font-semibold">
+                                                {metadata.label}: <span className="font-bold">${row.val.toFixed(2)}</span>
+                                              </span>
+                                            </div>
+                                          );
+                                        });
                                       })()}
                                     </div>
                                   );
@@ -2783,6 +2792,17 @@ It would also be helpful if you described:
                               dot={{ fill: "#52525b", strokeWidth: 1.5, r: 2 }}
                               activeDot={{ r: 3, fill: "#52525b" }}
                               name="Bybit"
+                            />
+                                  )}
+                                  {hasKey('coinbase') && (
+                            <Line
+                              type="monotone"
+                              dataKey="coinbase"
+                              stroke="#f59e0b"
+                              strokeWidth={1.5}
+                              dot={{ fill: "#f59e0b", strokeWidth: 1.5, r: 2 }}
+                              activeDot={{ r: 3, fill: "#f59e0b" }}
+                              name="Coinbase"
                             />
                                   )}
                                 </>
