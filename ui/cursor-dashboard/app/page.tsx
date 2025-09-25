@@ -127,21 +127,75 @@ const readBar = (bar: any): { ts: number | string | null; close: number | null }
     return axis;
   };
 
-  // Leader calculation from aligned data
+  // Temporal Price Leadership calculation
   const computeLeadershipFromAligned = (rows: any[], venues: string[]) => {
-    if (!rows.length) return { venue: null, score: null };
-    const first = rows[0];
-    const last  = rows[rows.length - 1];
-
-    const perf = venues.map(v => {
-      const a = toNum(first[v]); const b = toNum(last[v]);
-      const ret = (a && b) ? (b / a - 1) : null;
-      return { venue: v, ret };
-    }).filter(x => x.ret != null) as {venue: string; ret: number}[];
-
-    if (!perf.length) return { venue: null, score: null };
-    perf.sort((a,b)=> b.ret - a.ret);
-    return { venue: perf[0].venue, score: perf[0].ret };
+    if (!rows.length || venues.length < 2) return { venue: null, score: null };
+    
+    // Compute returns for each venue over short intervals (Δt = 1 day)
+    const returns: Record<string, number[]> = {};
+    for (const venue of venues) {
+      returns[venue] = [];
+      for (let i = 1; i < rows.length; i++) {
+        const prev = toNum(rows[i-1][venue]);
+        const curr = toNum(rows[i][venue]);
+        if (prev != null && curr != null && prev > 0) {
+          returns[venue].push((curr - prev) / prev);
+        }
+      }
+    }
+    
+    // Calculate leadership scores based on temporal precedence
+    const leadershipScores: Record<string, number> = {};
+    for (const venue of venues) {
+      leadershipScores[venue] = 0;
+    }
+    
+    // For each pair of venues, compute correlation of ret[i, t] with ret[j, t+1]
+    for (let i = 0; i < venues.length; i++) {
+      for (let j = 0; j < venues.length; j++) {
+        if (i === j) continue;
+        
+        const venueI = venues[i];
+        const venueJ = venues[j];
+        const retI = returns[venueI];
+        const retJ = returns[venueJ];
+        
+        if (retI.length < 2 || retJ.length < 2) continue;
+        
+        // Compute correlation between ret[i, t] and ret[j, t+1]
+        let correlation = 0;
+        let validPairs = 0;
+        
+        for (let t = 0; t < Math.min(retI.length - 1, retJ.length - 1); t++) {
+          const retI_t = retI[t];
+          const retJ_t1 = retJ[t + 1];
+          
+          if (retI_t != null && retJ_t1 != null) {
+            correlation += retI_t * retJ_t1;
+            validPairs++;
+          }
+        }
+        
+        if (validPairs > 0) {
+          correlation /= validPairs;
+          // If venueI consistently predicts venueJ, increment venueI's leadership score
+          if (correlation > 0.1) { // Threshold for significant correlation
+            leadershipScores[venueI] += correlation;
+          }
+        }
+      }
+    }
+    
+    // Find venue with highest leadership score
+    const sortedVenues = venues
+      .map(v => ({ venue: v, score: leadershipScores[v] }))
+      .filter(x => x.score > 0)
+      .sort((a, b) => b.score - a.score);
+    
+    if (sortedVenues.length === 0) return { venue: null, score: null };
+    
+    const leader = sortedVenues[0];
+    return { venue: leader.venue, score: leader.score };
   };
 import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema, BinanceOverviewSchema } from "@/types/api.schemas"
 import { fetchTyped } from "@/lib/backendAdapter"
@@ -2923,8 +2977,8 @@ It would also be helpful if you described:
                   dataKey={venue}
                   stroke={color[venue]}
                   strokeWidth={venue === 'binance' ? 2 : 1.5}
-                  dot={{ fill: color[venue], strokeWidth: venue === 'binance' ? 2 : 1.5, r: venue === 'binance' ? 3 : 2.5 }}
-                  activeDot={{ r: venue === 'binance' ? 4 : 3.5, fill: color[venue] }}
+                  dot={{ fill: color[venue], strokeWidth: venue === 'binance' ? 2 : 1.5, r: venue === 'binance' ? 3 : 2 }}
+                  activeDot={{ r: venue === 'binance' ? 4 : 3, fill: color[venue] }}
                   connectNulls={false}
                   name={venue.charAt(0).toUpperCase() + venue.slice(1)}
                 />
