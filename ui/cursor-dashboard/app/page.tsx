@@ -2923,8 +2923,8 @@ It would also be helpful if you described:
                   dataKey={venue}
                   stroke={color[venue]}
                   strokeWidth={venue === 'binance' ? 2 : 1.5}
-                  dot={{ fill: color[venue], strokeWidth: venue === 'binance' ? 2 : 1.5, r: venue === 'binance' ? 3 : 2 }}
-                  activeDot={{ r: venue === 'binance' ? 4 : 3, fill: color[venue] }}
+                  dot={{ fill: color[venue], strokeWidth: venue === 'binance' ? 2 : 1.5, r: venue === 'binance' ? 3 : 2.5 }}
+                  activeDot={{ r: venue === 'binance' ? 4 : 3.5, fill: color[venue] }}
                   connectNulls={false}
                   name={venue.charAt(0).toUpperCase() + venue.slice(1)}
                 />
