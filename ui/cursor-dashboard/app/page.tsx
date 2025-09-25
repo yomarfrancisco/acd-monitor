@@ -2784,14 +2784,33 @@ It would also be helpful if you described:
                               );
                             })()}
 
-                            {/* Simple test vertical line - hardcoded for Feb 1, 2025 */}
+                            {/* Environment Events - 3 vertical bars with faint colors */}
                             <ReferenceLine
                               x={Date.parse("2025-02-01T00:00:00Z")}
-                              stroke="#ff0000"
-                              strokeWidth={3}
+                              stroke="#ef4444"
+                              strokeDasharray="3 3"
+                              strokeWidth={2}
                               isFront={true}
                             >
-                              <Label value="TEST" position="top" />
+                              <Label value="Regime A → B" position="top" />
+                            </ReferenceLine>
+                            <ReferenceLine
+                              x={Date.parse("2025-06-01T00:00:00Z")}
+                              stroke="#f59e0b"
+                              strokeDasharray="3 3"
+                              strokeWidth={2}
+                              isFront={true}
+                            >
+                              <Label value="Policy Shift" position="top" />
+                            </ReferenceLine>
+                            <ReferenceLine
+                              x={Date.parse("2025-07-01T00:00:00Z")}
+                              stroke="#10b981"
+                              strokeDasharray="3 3"
+                              strokeWidth={2}
+                              isFront={true}
+                            >
+                              <Label value="Liquidity ↑" position="top" />
                             </ReferenceLine>
                           </LineChart>
                         </ResponsiveContainer>
