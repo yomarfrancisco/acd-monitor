@@ -251,12 +251,12 @@ async function fetchOverviewLoose(venue: string, url: string): Promise<Normalize
   }
 }
 
-type VenueKey = "binance" | "okx" | "bybit" | "kraken";
+type VenueKey = "binance" | "okx" | "bybit" | "kraken" | "coinbase";
 
 function computeLeadershipFromOverviews(data: Record<VenueKey, NormalizedOverview | null>) {
   // Build aligned rows by timestamp using the intersection where at least 2 venues have data for that ts.
   const byTs: Record<string, Partial<Record<VenueKey, number>>> = {};
-  (["binance","okx","bybit","kraken"] as VenueKey[]).forEach(v => {
+  (["binance","okx","bybit","kraken","coinbase"] as VenueKey[]).forEach(v => {
     const ov = data[v];
     if (!ov) return;
     ov.ohlcv.forEach(([ts, _o,_h,_l,c]) => {
@@ -265,7 +265,29 @@ function computeLeadershipFromOverviews(data: Record<VenueKey, NormalizedOvervie
     });
   });
 
-  let wins: Record<VenueKey, number> = { binance:0, okx:0, bybit:0, kraken:0 };
+  // Find latest common index where ≥3 venues have non-null values
+  const sortedTimestamps = Object.keys(byTs).sort();
+  let lastCommonIdx = -1;
+  let lastCommonTs = '';
+  let maxNonNullCount = 0;
+  
+  for (let i = sortedTimestamps.length - 1; i >= 0; i--) {
+    const ts = sortedTimestamps[i];
+    const row = byTs[ts];
+    const nonNullCount = Object.values(row).filter(v => v !== undefined).length;
+    
+    if (nonNullCount >= 3 && nonNullCount > maxNonNullCount) {
+      lastCommonIdx = i;
+      lastCommonTs = ts;
+      maxNonNullCount = nonNullCount;
+    }
+  }
+  
+  if (lastCommonIdx === -1 || maxNonNullCount < 2) {
+    return { leader: null as VenueKey | null, pct: null as number | null, total: 0 };
+  }
+
+  let wins: Record<VenueKey, number> = { binance:0, okx:0, bybit:0, kraken:0, coinbase:0 };
   let races = 0;
 
   Object.values(byTs).forEach(row => {
@@ -282,6 +304,12 @@ function computeLeadershipFromOverviews(data: Record<VenueKey, NormalizedOvervie
 
   const [leader, count] = Object.entries(wins).sort((a,b) => (b[1] as number) - (a[1] as number))[0] as [VenueKey, number];
   const pct = (count / races) * 100;
+  
+  // Debug logging
+  if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+    console.log(`[leader] lastCommonIdx=${lastCommonIdx} date=${lastCommonTs} nonNull=${maxNonNullCount} leader=${leader} spread=${pct.toFixed(1)}%`);
+  }
+  
   return { leader, pct, total: races };
 }
 
@@ -300,6 +328,8 @@ export default function CursorDashboard() {
     console.log(`[env] PROXY_HOST=${process.env.NEXT_PUBLIC_CRYPTO_PROXY_BASE || 'undefined'}`);
     console.log(`[env] PREVIEW_URL=${window.location.origin}`);
     console.log(`[env] DEBUG_MODE=${process.env.NEXT_PUBLIC_UI_DEBUG || 'false'}`);
+    console.log(`[env] DATA_MODE=${process.env.NEXT_PUBLIC_DATA_MODE || 'undefined'}`);
+    console.log(`[env] ENABLE_COINBASE=${process.env.NEXT_PUBLIC_ENABLE_COINBASE || 'false'}`);
   }, []);
   
   // Leadership state (independent from chart)
@@ -359,12 +389,12 @@ export default function CursorDashboard() {
         venueDataMaps[venue] = dataMap;
         venueCounts[venue] = nonNullCount;
         
-        // Detailed debug logging for OKX and Coinbase
-        if ((venue === 'okx' || venue === 'coinbase') && process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+        // Detailed debug logging for all venues
+        if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
           const firstBar = exchange.data.ohlcv[0];
           const lastBar = exchange.data.ohlcv[exchange.data.ohlcv.length - 1];
           const sampleValue = dataMap.get(probeDate);
-          console.log(`[${venue}] first=${firstBar?.[0]} last=${lastBar?.[0]} nonNull=${nonNullCount} sample@Jan20=${sampleValue ?? 'null'} ts@Jan20=${probeDateMs}`);
+          console.log(`[${venue}] first=${firstBar?.[0]} last=${lastBar?.[0]} nonNull=${nonNullCount} sample@2025-01-20=${sampleValue ?? 'null'} ts=1737417600000`);
         }
       }
     });
@@ -417,6 +447,20 @@ export default function CursorDashboard() {
       
       console.log(`[axis] first=${masterDays[0]} last=${masterDays[masterDays.length-1]} days=${axisDays}`);
       console.log(`[chart] axisDays=${axisDays} counts:`, counts);
+      
+      // Probe specific dates for debugging
+      const jan20Idx = masterDays.findIndex(day => day === '2025-01-20T00:00:00.000Z');
+      const may17Idx = masterDays.findIndex(day => day === '2025-05-17T00:00:00.000Z');
+      
+      if (jan20Idx >= 0) {
+        const jan20Point = chartData[jan20Idx];
+        console.log(`[probe] Jan20 axisIdx=${jan20Idx} okx=${jan20Point?.okx ?? 'null'} coinbase=${jan20Point?.coinbase ?? 'null'}`);
+      }
+      
+      if (may17Idx >= 0) {
+        const may17Point = chartData[may17Idx];
+        console.log(`[probe] May17 axisIdx=${may17Idx} okx=${may17Point?.okx ?? 'null'} coinbase=${may17Point?.coinbase ?? 'null'}`);
+      }
     }
     
     return chartData
