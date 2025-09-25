@@ -218,8 +218,9 @@ const readBar = (bar: any): { ts: number | string | null; close: number | null }
     const MIN_OTHERS = 3;          // current requirement for leave-one-out
     const MIN_SPREAD_BPS = 1;      // minimum spread in basis points
 
-    // per-venue distances
+    // per-venue distances and daily winners tracking
     const dist: Record<string, number[]> = Object.fromEntries(venues.map(v => [v, []]));
+    const dayWinners: string[][] = [];
 
     for (const row of aligned) {
       // Diagnostic checks - mirror the actual filtering logic
@@ -248,6 +249,10 @@ const readBar = (bar: any): { ts: number | string | null; close: number | null }
         return n % 2 ? arr[m].x : (arr[m-1].x + arr[m].x) / 2;
       };
 
+      // Compute distances and find daily winners
+      const dayDistances: Record<string, number> = {};
+      let minDistance = Infinity;
+      
       for (const { v, x } of vals) {
         // Leave-one-out median
         const others = sorted.filter(o => o.v !== v);
@@ -255,9 +260,26 @@ const readBar = (bar: any): { ts: number | string | null; close: number | null }
         const med = getMedian(others);
         if (!Number.isFinite(med) || med <= 0) continue;
 
-        dist[v].push(Math.abs(x - med) / med);
+        const distance = Math.abs(x - med) / med;
+        dayDistances[v] = distance;
+        dist[v].push(distance);
+        
+        if (distance < minDistance) {
+          minDistance = distance;
+        }
       }
       
+      // Find winners for this day (all venues within tolerance of minimum)
+      const relEps = 1e-6; // relative tolerance for near-ties
+      const absEps = 1e-9; // absolute tolerance for near-ties
+      const winners = Object.entries(dayDistances)
+        .filter(([_, distance]) => 
+          distance <= minDistance * (1 + relEps) || 
+          distance <= absEps
+        )
+        .map(([venue, _]) => venue);
+      
+      dayWinners.push(winners);
       kept++;
     }
 
@@ -277,13 +299,20 @@ const readBar = (bar: any): { ts: number | string | null; close: number | null }
     // pct expresses separation from #2; 0 when tied/equal, ~1 when huge separation
     const pct = (!second || isTie) ? 0 : Math.max(0, 1 - (best.s / (second.s + eps)));
 
-    // Build venue ranking table
-    const keptDays = kept;
-    const ranking = scored
-      .map(r => ({
-        venue: r.v,
-        wins: r.n,
-        pct: keptDays ? r.n / keptDays : 0,
+    // Count wins only for daily winners
+    const wins = new Map<string, number>();
+    for (const winners of dayWinners) {
+      for (const v of winners) {
+        wins.set(v, (wins.get(v) ?? 0) + 1);
+      }
+    }
+
+    const keptDays = dayWinners.length;
+    const ranking = Array.from(wins.entries())
+      .map(([venue, winCount]) => ({
+        venue,
+        wins: winCount,
+        pct: keptDays ? winCount / keptDays : 0,
       }))
       .sort((a, b) => b.wins - a.wins || b.pct - a.pct);
 
