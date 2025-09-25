@@ -1595,6 +1595,10 @@ It would also be helpful if you described:
   const bandHalfMs = ((bandDaysByTf[selectedTimeframe] ?? 4) * dayMs) / 2;
   const mkBand = (centerTs: number) => ({ x1: centerTs - bandHalfMs, x2: centerTs + bandHalfMs });
 
+  // --- Snap-to-event state ---
+  const [snapTs, setSnapTs] = useState<number | null>(null);
+  const SNAP_PX = 24; // tolerance in pixels
+
   // Use live exchange data if available, otherwise fall back to static data
   const currentData = exchangeData.length > 0 ? exchangeData : getAnalyticsData()
 
@@ -2626,7 +2630,31 @@ It would also be helpful if you described:
 
                           <div className="h-80 relative focus:outline-none" style={{ outline: "none" }}>
                             <ResponsiveContainer width="100%" height="100%" style={{ outline: "none" }}>
-                          <LineChart data={currentData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                          <LineChart 
+                            data={currentData} 
+                            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                            onMouseMove={(e:any) => {
+                              if (!e || !e.activeCoordinate || !e.chartX || !e.chartWidth) { setSnapTs(null); return; }
+                              const { chartX, chartWidth } = e;
+                              // Build linear scale from domain to pixels
+                              const [dMin, dMax] = [currentData[0]?.ts, currentData[currentData.length-1]?.ts];
+                              if (!Number.isFinite(dMin) || !Number.isFinite(dMax) || dMin >= dMax) { setSnapTs(null); return; }
+                              const scale = (ts:number) => ((ts - dMin) / (dMax - dMin)) * chartWidth;
+                              // Find nearest event center by pixel distance
+                              const centers = [
+                                Date.parse('2025-01-20T00:00:00Z'),
+                                Date.parse('2025-03-06T00:00:00Z'),
+                                Date.parse('2025-07-18T00:00:00Z'),
+                              ];
+                              let best: {ts:number, dx:number} | null = null;
+                              for (const ts of centers) {
+                                const dx = Math.abs(scale(ts) - chartX);
+                                if (!best || dx < best.dx) best = { ts, dx };
+                              }
+                              setSnapTs(best && best.dx < SNAP_PX ? best.ts : null);
+                            }}
+                            onMouseLeave={() => setSnapTs(null)}
+                          >
                             <XAxis
                               dataKey="ts"
                               type="number"
@@ -2649,15 +2677,12 @@ It would also be helpful if you described:
                             <Tooltip
                               cursor={false}
                               labelFormatter={(ts) => {
-                                const numTs = Number(ts);
-                                if (!Number.isFinite(numTs)) {
-                                  return 'Invalid Date';
-                                }
-                                return fmtDayYear(numTs);
+                                const useTs = snapTs ?? Number(ts);
+                                return new Date(useTs).toLocaleDateString('en-US', { month:'short', day:'2-digit' });
                               }}
                               content={({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string }) => {
                                 if (active && payload && payload.length) {
-                                  const timestamp = Number(label);
+                                  const timestamp = snapTs ?? Number(label);
                                   
                                   // Find matching event for this day
                                   const evt = ENV_EVENTS.find(ev => sameUtcDay(ev.ts, timestamp));
