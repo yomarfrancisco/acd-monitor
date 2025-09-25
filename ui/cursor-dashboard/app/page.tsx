@@ -2598,9 +2598,12 @@ It would also be helpful if you described:
 
                             <Tooltip
                                   cursor={false}
-                                  labelFormatter={(ts) =>
-                                    new Date(Number(ts)).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })
-                                  }
+                                  labelFormatter={(ts) => {
+                                    const d = new Date(Number(ts));
+                                    const month = d.toLocaleString('en-US', { month: 'short' });
+                                    const year = d.getFullYear().toString().slice(-2);
+                                    return `${month} '${year}`;
+                                  }}
                               content={({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string }) => {
                                 if (active && payload && payload.length) {
                                       // Market share data for each exchange (using live data if available)
@@ -2697,6 +2700,25 @@ It would also be helpful if you described:
                                               <p className="text-[#a1a1aa] text-[9px]">{currentEvent.impact}</p>
                                             </div>
                                           )}
+
+                                          {/* Events 1, 2, 3 */}
+                                          <div className="mb-2">
+                                            <div className="text-[#f9fafb] text-[10px] font-semibold mb-1">Events:</div>
+                                            <div className="space-y-1">
+                                              <div className="flex items-center gap-2 text-[9px]">
+                                                <div className="w-2 h-2 rounded-full bg-[#fecaca]"></div>
+                                                <span className="text-[#a1a1aa]">Event 1</span>
+                                              </div>
+                                              <div className="flex items-center gap-2 text-[9px]">
+                                                <div className="w-2 h-2 rounded-full bg-[#fed7aa]"></div>
+                                                <span className="text-[#a1a1aa]">Event 2</span>
+                                              </div>
+                                              <div className="flex items-center gap-2 text-[9px]">
+                                                <div className="w-2 h-2 rounded-full bg-[#bbf7d0]"></div>
+                                                <span className="text-[#a1a1aa]">Event 3</span>
+                                              </div>
+                                            </div>
+                                          </div>
 
                                           {/* Exchange/Bank Data - show only plotted series */}
                                       {(() => {
