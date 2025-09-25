@@ -44,6 +44,46 @@ import { VENUES, VenueKey, VENUE_LABEL, VENUE_COLOR } from "../src/shared/venues
 import { normalizeOverview, NormalizedOverview } from "../src/shared/series";
 import { buildAxis, alignOnAxis } from "../src/shared/align";
 import { latestCommonIndex } from "../src/shared/leader";
+
+// Timestamp normalization helpers
+const DAY_MS = 86_400_000;
+
+const toNumHelper = (x: unknown): number | null => {
+  const n = typeof x === 'string' ? parseFloat(x) : (typeof x === 'number' ? x : NaN);
+  return Number.isFinite(n) ? n : null;
+};
+
+const toMidnightMs = (t: number | string): number => {
+  const ms = typeof t === 'string' ? Date.parse(t) : (t < 10_000_000_000 ? t * 1000 : t);
+  const d = new Date(ms);
+  return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+};
+
+  const buildYtdAxis = (): number[] => {
+    const startMs = Date.UTC(2025, 0, 1); // 2025-01-01T00:00:00Z
+    const now = new Date();
+    const endMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()); // today 00:00Z
+    const axis: number[] = [];
+    for (let t = startMs; t < endMs; t += DAY_MS) axis.push(t);
+    return axis;
+  };
+
+  // Leader calculation from aligned data
+  const computeLeadershipFromAligned = (rows: any[], venues: string[]) => {
+    if (!rows.length) return { venue: null, score: null };
+    const first = rows[0];
+    const last  = rows[rows.length - 1];
+
+    const perf = venues.map(v => {
+      const a = toNumHelper(first[v]); const b = toNumHelper(last[v]);
+      const ret = (a && b) ? (b / a - 1) : null;
+      return { venue: v, ret };
+    }).filter(x => x.ret != null) as {venue: string; ret: number}[];
+
+    if (!perf.length) return { venue: null, score: null };
+    perf.sort((a,b)=> b.ret - a.ret);
+    return { venue: perf[0].venue, score: perf[0].ret };
+  };
 import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema, BinanceOverviewSchema } from "@/types/api.schemas"
 import { fetchTyped } from "@/lib/backendAdapter"
 import { safe } from "@/lib/safe"
@@ -211,11 +251,6 @@ function toMsUtcMidnight(ts: number | string): number {
   return utc;
 }
 
-// Hard-en value normalization
-function toNum(x: unknown): number | null {
-  const n = typeof x === 'string' ? parseFloat(x) : (typeof x === 'number' ? x : NaN);
-  return Number.isFinite(n) ? n : null;
-}
 
 // NormalizedOverview and normalizeOverview now imported from shared/series
 
@@ -294,129 +329,59 @@ export default function CursorDashboard() {
   };
 
   // Series adapter: convert exchange data to chart format
-  const createChartSeries = (successfulExchanges: any[]) => {
-    // Build authoritative "what's available" list from live results
-    const availableUiVenues: UiVenue[] = getAvailableUiVenues(successfulExchanges)
-    
-    // Debug logging
-    if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
-      console.log('SERIES_VENUES=', availableUiVenues);
-    }
-    
-    // Build master UTC day axis from 2025-01-01 to yesterday (exclusive)
-    const now = new Date();
-    const startDate = new Date('2025-01-01T00:00:00Z');
-    const endDate = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0);
-    
-    const masterDays: string[] = [];
-    const current = new Date(startDate);
-    while (current < endDate) {
-      masterDays.push(current.toISOString());
-      current.setUTCDate(current.getUTCDate() + 1);
-    }
-    
-    // Create venue data maps for fast lookup
-    const venueDataMaps: Record<string, Map<string, number>> = {};
-    const venueCounts: Record<string, number> = {};
-    
-    // Probe date for testing (Jan 20, 2025)
-    const probeDate = new Date('2025-01-20T00:00:00Z').toISOString();
-    const probeDateMs = Date.UTC(2025, 0, 20);
-    
-    successfulExchanges.forEach(exchange => {
-      if (exchange.data?.ohlcv) {
-        const venue = exchange.venue;
-        const dataMap = new Map<string, number>();
-        let nonNullCount = 0;
-        
-        exchange.data.ohlcv.forEach((bar: any[]) => {
-          const timestamp = bar[0]; // ISO timestamp
-          const closePrice = toNum(bar[4]);
-          if (closePrice !== null) {
-            dataMap.set(timestamp, closePrice);
-            nonNullCount++;
-          }
-        });
-        
-        venueDataMaps[venue] = dataMap;
-        venueCounts[venue] = nonNullCount;
-        
-        // Detailed debug logging for all venues
-        if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
-          const firstBar = exchange.data.ohlcv[0];
-          const lastBar = exchange.data.ohlcv[exchange.data.ohlcv.length - 1];
-          const sampleValue = dataMap.get(probeDate);
-          console.log(`[${venue}] first=${firstBar?.[0]} last=${lastBar?.[0]} nonNull=${nonNullCount} sample@2025-01-20=${sampleValue ?? 'null'} ts=1737417600000`);
-        }
+  // Types for the new chart series function
+  type Venue = 'binance'|'okx'|'bybit'|'kraken'|'coinbase';
+  type OhlcvBar = [number|string, number, number, number, number, number?];
+
+  // Series adapter: convert exchange data to chart format with proper timestamp alignment
+  const createChartSeries = (successfulExchanges: Array<{ venue: string; data: any }>) => {
+    const ytdAxis = buildYtdAxis();
+    const startMs = ytdAxis[0];
+    const endMs = ytdAxis[ytdAxis.length - 1] + DAY_MS;
+
+    // Map<venue, Map<dayMs, close>>
+    const venueMap: Record<string, Map<number, number>> = {};
+
+    for (const ex of successfulExchanges) {
+      const venue = ex.venue;
+      const bars: OhlcvBar[] = ex.data?.ohlcv ?? [];
+      const m = new Map<number, number>();
+
+      for (const bar of bars) {
+        const close = toNumHelper(bar[4]);
+        if (close == null) continue;
+        const day = toMidnightMs(bar[0]);
+        if (day >= startMs && day < endMs) m.set(day, close);
       }
-    });
-    
-    // Create chart data points aligned to master day axis
-    const chartData = masterDays.map(timestamp => {
-      const ts = toMsTs(timestamp);
-      if (ts === null) return null;
-      
-      const point: any = { 
+      venueMap[venue] = m;
+    }
+
+    if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+      const jan20 = Date.UTC(2025, 0, 20);
+      console.log('[axis]', new Date(startMs).toISOString(), '→', new Date(endMs).toISOString(), 'days=', ytdAxis.length);
+      for (const v of ['binance','okx','bybit','kraken','coinbase']) {
+        const m = venueMap[v];
+        const size = m?.size ?? 0;
+        const keys = m ? Array.from(m.keys()).sort((a,b)=>a-b) : [];
+        console.log(`[${v}] size=${size} hasJan20=${m?.has(jan20) ?? false}`,
+          size ? `first=${new Date(keys[0]).toISOString()} last=${new Date(keys.at(-1)!).toISOString()}` : '');
+      }
+    }
+
+    // Build chart rows with numeric ts + venue keys
+    const rows = ytdAxis.map((ts) => {
+      const row: any = {
+        ts,
         date: new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-        ts: ts
+      };
+      for (const v of Object.keys(venueMap)) {
+        row[v] = venueMap[v].get(ts) ?? null;
       }
-      
-      // Only populate keys that exist in availableUiVenues
-      for (const uiVenue of availableUiVenues) {
-        const dataKey = uiKeyToDataKey[uiVenue]
-        
-        // Find the corresponding exchange for this UI venue
-        const exchange = successfulExchanges.find(e => {
-          const venueMapping: Record<string, string> = {
-            'binance': 'binance',
-            'okx': 'okx',
-            'bybit': 'bybit', 
-            'kraken': 'kraken',
-            'coinbase': 'coinbase'
-          }
-          return venueMapping[e.venue] === uiVenue
-        })
-        
-        if (exchange?.venue && venueDataMaps[exchange.venue]) {
-          // Look up value for this timestamp (null if missing)
-          const value = venueDataMaps[exchange.venue].get(timestamp);
-          point[dataKey] = value !== undefined ? value : null;
-        }
-      }
-      
-      return point
-    }).filter(Boolean)
-    
-    // Safety check: log alignment info
-    if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
-      const axisDays = masterDays.length;
-      const counts: Record<string, number> = {};
-      availableUiVenues.forEach(venue => {
-        const dataKey = uiKeyToDataKey[venue];
-        const nonNullCount = chartData.filter(point => point[dataKey] !== null).length;
-        counts[venue] = nonNullCount;
-      });
-      
-      console.log(`[axis] first=${masterDays[0]} last=${masterDays[masterDays.length-1]} days=${axisDays}`);
-      console.log(`[chart] axisDays=${axisDays} counts:`, counts);
-      
-      // Probe specific dates for debugging
-      const jan20Idx = masterDays.findIndex(day => day === '2025-01-20T00:00:00.000Z');
-      const may17Idx = masterDays.findIndex(day => day === '2025-05-17T00:00:00.000Z');
-      
-      if (jan20Idx >= 0) {
-        const jan20Point = chartData[jan20Idx];
-        console.log(`[probe] Jan20 axisIdx=${jan20Idx} okx=${jan20Point?.okx ?? 'null'} coinbase=${jan20Point?.coinbase ?? 'null'}`);
-      }
-      
-      if (may17Idx >= 0) {
-        const may17Point = chartData[may17Idx];
-        console.log(`[probe] May17 axisIdx=${may17Idx} okx=${may17Point?.okx ?? 'null'} coinbase=${may17Point?.coinbase ?? 'null'}`);
-      }
-    }
-    
-    return chartData
-  }
+      return row;
+    });
+
+    return { rows, venueMap, axis: ytdAxis };
+  };
   
   // Risk summary state
   const [riskSummary, setRiskSummary] = useState<RiskSummary | null>(null)
@@ -797,7 +762,7 @@ export default function CursorDashboard() {
       const ytdStart = new Date('2025-01-01T00:00:00Z').getTime();
       const ytdEnd = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0).getTime();
       
-      const axis = buildAxis(ytdStart, ytdEnd);
+      const ytdAxis = buildAxis(ytdStart, ytdEnd);
       
       // Align all series to the common axis
       const seriesData: Record<string, Array<[number, number | null]>> = {};
@@ -805,11 +770,11 @@ export default function CursorDashboard() {
         seriesData[venue] = normalized[venue]?.ohlcv ?? [];
       }
       
-      const aligned = alignOnAxis(seriesData, axis);
+      const aligned = alignOnAxis(seriesData, ytdAxis);
       
       // Debug logging
       if (process.env.NEXT_PUBLIC_DEBUG_MODE === 'true' || process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
-        console.log('[axis]', { days: axis.length, first: new Date(axis[0]).toISOString(), last: new Date(axis.at(-1)!).toISOString() });
+        console.log('[axis]', { days: ytdAxis.length, first: new Date(ytdAxis[0]).toISOString(), last: new Date(ytdAxis.at(-1)!).toISOString() });
         for (const v of VENUES) {
           const nonNull = aligned[v].reduce((a, [,x]) => a + (Number.isFinite(x as number) ? 1 : 0), 0);
           console.log(`[${v}]`, { nonNull });
@@ -817,7 +782,7 @@ export default function CursorDashboard() {
         
         // Sample logging for Jan 20, 2025
         const jan20Ts = Date.UTC(2025, 0, 20);
-        const jan20Idx = axis.findIndex(ts => ts === jan20Ts);
+        const jan20Idx = ytdAxis.findIndex(ts => ts === jan20Ts);
         if (jan20Idx >= 0) {
           const sample: Record<string, number | null> = {};
           for (const v of VENUES) {
@@ -834,28 +799,20 @@ export default function CursorDashboard() {
         console.log('[chart] counts:', counts);
       }
       
-      // Convert aligned series to chart format
-      const chartData = axis.map((ts, index) => {
-        const point: any = {
-          date: new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-          ts: ts
-        };
-        
-        for (const venue of VENUES) {
-          const value = aligned[venue][index]?.[1];
-          point[venue] = value;
-        }
-        
-        return point;
-      });
+      // Use new createChartSeries with proper timestamp alignment
+      const { rows: chartData, venueMap, axis } = createChartSeries(successfulExchanges);
       
       // Update context with all venues
-      setAvailableUiVenues(VENUES)
+      setAvailableUiVenues(successfulExchanges.map(x => x.venue) as any[])
       setExchangeData(chartData)
       
-      // Calculate leader from same aligned data
-      const leader = computeLeadershipFromOverviews(aligned);
-      setLeadership(leader)
+      // Calculate leader from aligned data
+      const leader = computeLeadershipFromAligned(chartData, successfulExchanges.map(x => x.venue));
+      setLeadership({ 
+        leader: leader.venue as VenueKey | null, 
+        pct: leader.score ? (leader.score * 100) : null, 
+        total: successfulExchanges.length 
+      })
       
       // Clear any previous errors
       if (exchangeDataError) {
@@ -2767,121 +2724,54 @@ It would also be helpful if you described:
 
                             <Tooltip
                                   cursor={false}
-                              labelFormatter={(ts) => {
-                                const useTs = snapTs ?? Number(ts);
-                                return new Date(useTs).toLocaleDateString('en-US', { month:'short', day:'2-digit' });
-                              }}
-                              content={({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string }) => {
-                                if (active && payload && payload.length) {
-                                  const timestamp = snapTs ?? Number(label);
-                                  
-                                  // Find matching event for this day
-                                  const ev = snapTs ? byTs[snapTs] : undefined;
+                              labelFormatter={(ms) => new Date(Number(ms)).toLocaleDateString('en-US', { month:'short', day:'2-digit', year:'numeric' })}
+                              content={({ active, payload, label }) => {
+                                if (!active || !payload?.length) return null;
+                                const timestamp = Number(label);
 
                                   return (
                                         <div className="bg-black border border-[#1a1a1a] rounded-lg p-3 shadow-2xl shadow-black/50">
-                                      <p className="text-[#a1a1aa] text-[10px] mb-1.5">{fmtDayYear(timestamp)}</p>
-                                      
-                                      {/* Event Information - only show if there's a matching event */}
-                                      {ev && (
-                                        <div className="mb-2 p-2 bg-bg-tile rounded border-l-2" style={{ borderLeftColor: ev.color }}>
-                                              <div className="flex items-center gap-2 mb-1">
-                                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: ev.color }} />
-                                            <span className="text-[#f9fafb] font-semibold text-[10px]">{ev.title}</span>
-                                              </div>
-                                          <p className="text-[#a1a1aa] text-[9px]">{ev.subtitle}</p>
-                                            </div>
-                                          )}
-
-                                      {/* Exchange Data - show all venues with null handling */}
-                                      {(() => {
-                                        const fmt = (n: number | null | undefined) =>
-                                          Number.isFinite(n as number) ? `$${(n as number).toFixed(2)}` : '—';
-                                        
-                                        return VENUES.map((venue, index) => {
-                                          const value = payload?.[0]?.payload?.[venue];
-                                          return (
-                                            <div key={index} className="flex items-center gap-2 text-[9px]">
-                                              <div 
-                                                className="w-2 h-2 rounded-full" 
-                                                style={{ backgroundColor: VENUE_COLOR[venue] }}
-                                              />
+                                    <p className="text-[#a1a1aa] text-[10px] mb-1.5">
+                                      {new Date(timestamp).toLocaleDateString('en-US', { month:'short', day:'2-digit', year:'numeric' })}
+                                    </p>
+                                    {payload.map((entry, i) => {
+                                      const value = entry.value as number | null | undefined;
+                                      const venue = String(entry.dataKey);
+                                      const fmt = (n: number | null | undefined) => Number.isFinite(Number(n)) ? `$${Number(n).toFixed(2)}` : '—';
+                                      return (
+                                        <div key={i} className="flex items-center gap-2 text-[9px]">
+                                          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
                                               <span className="text-[#f9fafb] font-semibold">
-                                                {VENUE_LABEL[venue]}: <span className="font-bold">{fmt(value)}</span>
+                                            {venue.charAt(0).toUpperCase() + venue.slice(1)}: <span className="font-bold">{fmt(value)}</span>
                                               </span>
-                                            </div>
-                                          );
-                                        });
-                                      })()}
+                                        </div>
+                                      );
+                                    })}
                                     </div>
-                                  );
-                                }
-                                return null;
+                                );
                               }}
                             />
                             {/* Conditional Line components - only mount when data exists */}
-                            {(() => {
-                              const hasKey = (k: string) => exchangeData.some(p => p[k] !== undefined);
+                            {availableUiVenues.map((venue) => {
+                              const color: Record<Venue,string> = {
+                                binance:'#f59e0b', okx:'#60a5fa', bybit:'#a1a1aa', kraken:'#71717a', coinbase:'#52525b'
+                              };
+                              const hasData = currentData.some(p => p[venue] != null);
+                              if (!hasData) return null;
                               return (
-                                <>
-                                  {hasKey('fnb') && (
                             <Line
+                                  key={venue}
                               type="monotone"
-                              dataKey="fnb"
-                              stroke="#60a5fa"
-                              strokeWidth={2}
-                              dot={{ fill: "#60a5fa", strokeWidth: 2, r: 3 }}
-                              activeDot={{ r: 4, fill: "#60a5fa" }}
-                              name="Binance"
-                            />
-                                  )}
-                                  {hasKey('absa') && (
-                            <Line
-                              type="monotone"
-                              dataKey="absa"
-                              stroke="#a1a1aa"
-                              strokeWidth={1.5}
-                              dot={{ fill: "#a1a1aa", strokeWidth: 1.5, r: 2 }}
-                              activeDot={{ r: 3, fill: "#a1a1aa" }}
-                              name="Coinbase"
-                            />
-                                  )}
-                                  {hasKey('standard') && (
-                            <Line
-                              type="monotone"
-                              dataKey="standard"
-                              stroke="#71717a"
-                              strokeWidth={1.5}
-                              dot={{ fill: "#71717a", strokeWidth: 1.5, r: 2 }}
-                              activeDot={{ r: 3, fill: "#71717a" }}
-                              name="Kraken"
-                            />
-                                  )}
-                                  {hasKey('nedbank') && (
-                            <Line
-                              type="monotone"
-                              dataKey="nedbank"
-                              stroke="#52525b"
-                              strokeWidth={1.5}
-                              dot={{ fill: "#52525b", strokeWidth: 1.5, r: 2 }}
-                              activeDot={{ r: 3, fill: "#52525b" }}
-                              name="Bybit"
-                            />
-                                  )}
-                                  {hasKey('coinbase') && (
-                            <Line
-                              type="monotone"
-                              dataKey="coinbase"
-                              stroke="#f59e0b"
-                              strokeWidth={1.5}
-                              dot={{ fill: "#f59e0b", strokeWidth: 1.5, r: 2 }}
-                              activeDot={{ r: 3, fill: "#f59e0b" }}
-                              name="Coinbase"
-                            />
-                                  )}
-                                </>
+                                  dataKey={venue}
+                                  stroke={color[venue]}
+                                  strokeWidth={venue === 'binance' ? 2 : 1.5}
+                                  dot={{ fill: color[venue], strokeWidth: venue === 'binance' ? 2 : 1.5, r: venue === 'binance' ? 3 : 2 }}
+                                  activeDot={{ r: venue === 'binance' ? 4 : 3, fill: color[venue] }}
+                                  connectNulls={false}
+                                  name={venue.charAt(0).toUpperCase() + venue.slice(1)}
+                                />
                               );
-                            })()}
+                            })}
 
                             {/* Regime A → B */}
                             {(() => { const {x1,x2} = mkBand(Date.parse('2025-01-20T00:00:00Z')); return (
