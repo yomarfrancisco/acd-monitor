@@ -2591,7 +2591,7 @@ It would also be helpful if you described:
                                     return (
                                 <div className="flex items-center -space-x-2">
                                   <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white">
-                                          <img src="/binance_circle.png" alt="binance" className="w-full h-full object-contain p-0.5" />
+                                          <img src={venueMetadata.binance.icon} alt={venueMetadata.binance.label} className="w-full h-full object-contain p-0.5" />
                                   </div>
                                       </div>
                                     );
@@ -2613,8 +2613,8 @@ It would also be helpful if you described:
                                           title={v}
                                         >
                                           <img
-                                            src={`/${v}_circle.png`}
-                                            alt={v}
+                                            src={venueMetadata[v].icon}
+                                            alt={venueMetadata[v].label}
                                           className="w-full h-full object-contain p-0.5"
                                             loading="eager"
                                         />
