@@ -299,26 +299,57 @@ export default function CursorDashboard() {
       console.log('SERIES_VENUES=', availableUiVenues);
     }
     
-    // Create a map of all timestamps to ensure alignment
-    const allTimestamps = new Set<string>()
+    // Build master UTC day axis from 2025-01-01 to yesterday (exclusive)
+    const now = new Date();
+    const startDate = new Date('2025-01-01T00:00:00Z');
+    const endDate = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0);
+    
+    const masterDays: string[] = [];
+    const current = new Date(startDate);
+    while (current < endDate) {
+      masterDays.push(current.toISOString());
+      current.setUTCDate(current.getUTCDate() + 1);
+    }
+    
+    // Create venue data maps for fast lookup
+    const venueDataMaps: Record<string, Map<string, number>> = {};
+    const venueCounts: Record<string, number> = {};
+    
     successfulExchanges.forEach(exchange => {
       if (exchange.data?.ohlcv) {
+        const venue = exchange.venue;
+        const dataMap = new Map<string, number>();
+        let nonNullCount = 0;
+        
         exchange.data.ohlcv.forEach((bar: any[]) => {
-          allTimestamps.add(bar[0]) // ISO timestamp
-        })
+          const timestamp = bar[0]; // ISO timestamp
+          const closePrice = Number(bar[4]);
+          if (Number.isFinite(closePrice)) {
+            dataMap.set(timestamp, closePrice);
+            nonNullCount++;
+          }
+        });
+        
+        venueDataMaps[venue] = dataMap;
+        venueCounts[venue] = nonNullCount;
+        
+        // Debug logging for Coinbase
+        if (venue === 'coinbase' && process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+          const firstBar = exchange.data.ohlcv[0];
+          const lastBar = exchange.data.ohlcv[exchange.data.ohlcv.length - 1];
+          console.log(`[coinbase] first=${firstBar?.[0]} last=${lastBar?.[0]} nonNull=${nonNullCount}`);
+        }
       }
-    })
+    });
     
-    const sortedTimestamps = Array.from(allTimestamps).sort()
-    
-    // Create chart data points - keep the old shape, fill only present series
-    const chartData = sortedTimestamps.map(timestamp => {
-      const ts = toMsTs(timestamp); // Use sanitized timestamp conversion
-      if (ts === null) return null; // Drop bad rows
+    // Create chart data points aligned to master day axis
+    const chartData = masterDays.map(timestamp => {
+      const ts = toMsTs(timestamp);
+      if (ts === null) return null;
       
       const point: any = { 
         date: new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-        ts: ts // Use sanitized numeric timestamp
+        ts: ts
       }
       
       // Only populate keys that exist in availableUiVenues
@@ -337,18 +368,27 @@ export default function CursorDashboard() {
           return venueMapping[e.venue] === uiVenue
         })
         
-        if (exchange?.data?.ohlcv) {
-          // Find the bar for this timestamp
-          const bar = exchange.data.ohlcv.find((b: any[]) => b[0] === timestamp)
-          if (bar) {
-            // Use close price (index 4) as the value
-            point[dataKey] = Number(bar[4]) || 0
-          }
+        if (exchange?.venue && venueDataMaps[exchange.venue]) {
+          // Look up value for this timestamp (null if missing)
+          const value = venueDataMaps[exchange.venue].get(timestamp);
+          point[dataKey] = value !== undefined ? value : null;
         }
       }
       
       return point
-    }).filter(Boolean) // Remove null values (invalid timestamps)
+    }).filter(Boolean)
+    
+    // Safety check: log alignment info
+    if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+      const axisDays = masterDays.length;
+      const counts: Record<string, number> = {};
+      availableUiVenues.forEach(venue => {
+        const dataKey = uiKeyToDataKey[venue];
+        const nonNullCount = chartData.filter(point => point[dataKey] !== null).length;
+        counts[venue] = nonNullCount;
+      });
+      console.log(`[chart] axisDays=${axisDays} counts:`, counts);
+    }
     
     return chartData
   }
@@ -2726,14 +2766,14 @@ It would also be helpful if you described:
                                             </div>
                                           )}
 
-                                      {/* Exchange Data - show only plotted series */}
+                                      {/* Exchange Data - show all venues with null handling */}
                                       {(() => {
                                         const rows = availableUiVenues
-                                          .map(v => ({ ui: v, k: uiKeyToDataKey[v], val: payload?.[0]?.payload?.[uiKeyToDataKey[v]] }))
-                                          .filter(row => Number.isFinite(row.val));
+                                          .map(v => ({ ui: v, k: uiKeyToDataKey[v], val: payload?.[0]?.payload?.[uiKeyToDataKey[v]] }));
                                         
                                         return rows.map((row, index) => {
                                           const metadata = venueMetadata[row.ui];
+                                          const displayValue = Number.isFinite(row.val) ? `$${row.val.toFixed(2)}` : "—";
                                           return (
                                             <div key={index} className="flex items-center gap-2 text-[9px]">
                                               <div 
@@ -2741,7 +2781,7 @@ It would also be helpful if you described:
                                                 style={{ backgroundColor: metadata.color }}
                                               />
                                               <span className="text-[#f9fafb] font-semibold">
-                                                {metadata.label}: <span className="font-bold">${row.val.toFixed(2)}</span>
+                                                {metadata.label}: <span className="font-bold">{displayValue}</span>
                                               </span>
                                             </div>
                                           );
