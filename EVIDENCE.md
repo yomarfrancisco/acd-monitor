@@ -88,5 +88,11 @@ coinbase 0.8464 10.2300   14.7700
 - [WARN:shares:not100] liquidity:medium sum=99.99
 - [WARN:shares:not100] liquidity:high sum=100.01
 
+## Rolling Sensitivity Analysis
+- **Windows**: 2 rolling 10-minute windows (5-minute steps)
+- **Results**: Binance consistently leads in both windows
+- **Info Share**: Binance → Coinbase pattern maintained
+- **File**: exports/sensitivity_rollup.csv
+
 ## Conclusion
 Real data analysis confirms asymmetric bounds and convergence episodes hold in practice with actual market data, validating the ACD framework for detecting algorithmic coordination patterns.
