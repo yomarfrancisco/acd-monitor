@@ -1,35 +1,34 @@
 {
-  "timestamp": "2025-09-27T00:45:33.764303",
+  "timestamp": "2025-09-27T00:54:45.046991",
   "granularities": [
-    5,
-    15,
-    30
+    1,
+    2
   ],
   "pairwise_comparisons": {
-    "5s_vs_15s": {
+    "1s_vs_2s": {
       "infoshare": {
         "rank_changes": {
-          "binance": 0,
-          "kraken": 0,
-          "coinbase": 0,
           "okx": 0,
-          "bybit": 0
+          "coinbase": 0,
+          "kraken": 0,
+          "bybit": 0,
+          "binance": 0
         },
         "ordering_stable": true,
         "ranks_stable": true,
         "js_distance": 0.0,
         "share_deltas": {
-          "binance": 0.0,
-          "kraken": 0.0,
-          "coinbase": 0.0,
           "okx": 0.0,
-          "bybit": 0.0
+          "coinbase": 0.0,
+          "kraken": 0.0,
+          "bybit": 0.0,
+          "binance": 0.0
         }
       },
       "spread": {
         "episode_count_change": 0,
-        "lift_change": -0.1100000000000001,
-        "p_value_change": -0.011000000000000003,
+        "lift_change": -0.10999999999999999,
+        "p_value_change": -0.010999999999999998,
         "median_duration_change": 0.0,
         "pval_stable": false
       },
@@ -38,74 +37,6 @@
         "edge_count_change": 0,
         "top_leader_change": false,
         "coordination_stable": false
-      }
-    },
-    "5s_vs_30s": {
-      "infoshare": {
-        "rank_changes": {
-          "binance": 0,
-          "kraken": 0,
-          "coinbase": 0,
-          "okx": 0,
-          "bybit": 0
-        },
-        "ordering_stable": true,
-        "ranks_stable": true,
-        "js_distance": 0.0,
-        "share_deltas": {
-          "binance": 0.0,
-          "kraken": 0.0,
-          "coinbase": 0.0,
-          "okx": 0.0,
-          "bybit": 0.0
-        }
-      },
-      "spread": {
-        "episode_count_change": 0,
-        "lift_change": 0.10999999999999999,
-        "p_value_change": -0.009000000000000001,
-        "median_duration_change": 0.0,
-        "pval_stable": true
-      },
-      "leadlag": {
-        "coordination_change": -0.09000000000000008,
-        "edge_count_change": 0,
-        "top_leader_change": false,
-        "coordination_stable": true
-      }
-    },
-    "15s_vs_30s": {
-      "infoshare": {
-        "rank_changes": {
-          "binance": 0,
-          "kraken": 0,
-          "coinbase": 0,
-          "okx": 0,
-          "bybit": 0
-        },
-        "ordering_stable": true,
-        "ranks_stable": true,
-        "js_distance": 0.0,
-        "share_deltas": {
-          "binance": 0.0,
-          "kraken": 0.0,
-          "coinbase": 0.0,
-          "okx": 0.0,
-          "bybit": 0.0
-        }
-      },
-      "spread": {
-        "episode_count_change": 0,
-        "lift_change": 0.22000000000000008,
-        "p_value_change": 0.0020000000000000018,
-        "median_duration_change": 0.0,
-        "pval_stable": true
-      },
-      "leadlag": {
-        "coordination_change": 0.019999999999999907,
-        "edge_count_change": 0,
-        "top_leader_change": false,
-        "coordination_stable": true
       }
     }
   },

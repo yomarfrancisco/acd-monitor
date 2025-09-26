@@ -467,6 +467,8 @@ def main():
     parser.add_argument("--mode", default="research", help="Mode (research/court)")
     parser.add_argument("--max-windows-per-level", type=int, default=3,
                        help="Maximum windows per granularity level")
+    parser.add_argument("--loop", action="store_true", help="Continuous loop mode (scan every 2 minutes)")
+    parser.add_argument("--loop-interval", type=int, default=120, help="Loop interval in seconds (default: 120)")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
     
     args = parser.parse_args()
@@ -488,6 +490,19 @@ def main():
     # Create export directory
     export_dir = Path(args.export_dir)
     export_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Handle loop mode
+    if args.loop:
+        logger.info("Starting continuous sub-minute sweep in loop mode")
+        run_continuous_sweep(
+            pair=args.pair,
+            export_dir=str(export_dir),
+            coverage_threshold=args.coverage_threshold,
+            venues=venues,
+            loop_interval=args.loop_interval,
+            verbose=args.verbose,
+        )
+        return
     
     # Generate sweep ID
     sweep_id = f"sweep_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
@@ -570,6 +585,152 @@ def main():
             if "SYNTHETIC" in window.get("policy", ""):
                 logger.error("[ABORT:synthetic] Synthetic data detected in sweep results")
                 sys.exit(2)
+
+
+def run_continuous_sweep(
+    pair: str,
+    export_dir: str,
+    coverage_threshold: float,
+    venues: List[str],
+    loop_interval: int,
+    verbose: bool = False,
+) -> None:
+    """
+    Run continuous sub-minute sweep in loop mode.
+    
+    Args:
+        pair: Trading pair
+        export_dir: Export directory
+        coverage_threshold: Coverage threshold
+        venues: List of venues
+        loop_interval: Loop interval in seconds
+        verbose: Verbose logging
+    """
+    import time
+    
+    logger = logging.getLogger(__name__)
+    
+    # Sub-minute granularities and durations
+    granularities = [60, 30, 15, 5, 2]  # 1m, 30s, 15s, 5s, 2s
+    min_durations = [5, 2, 1, 1, 1]     # 5m, 2m, 1m, 1m, 1m
+    coverage_thresholds = [0.95, 0.95, 0.95, 0.97, 0.985]  # 2s ≥ 0.985
+    
+    logger.info("Starting continuous sub-minute sweep")
+    logger.info(f"Granularities: {granularities}")
+    logger.info(f"Min durations: {min_durations}")
+    logger.info(f"Coverage thresholds: {coverage_thresholds}")
+    logger.info(f"Loop interval: {loop_interval}s")
+    
+    # Create sweep log file
+    sweep_log = Path(export_dir) / "OVERLAP_SWEEP.log"
+    sweep_log.parent.mkdir(parents=True, exist_ok=True)
+    
+    loop_count = 0
+    total_windows_found = 0
+    
+    try:
+        while True:
+            loop_count += 1
+            logger.info(f"[SWEEP:loop] iteration={loop_count}, timestamp={datetime.now().isoformat()}")
+            
+            # Write to sweep log
+            with open(sweep_log, 'a') as f:
+                f.write(f"[SWEEP:loop] iteration={loop_count}, timestamp={datetime.now().isoformat()}\n")
+            
+            # Run sweep for each granularity
+            for i, (granularity_sec, min_duration_min, coverage_thresh) in enumerate(
+                zip(granularities, min_durations, coverage_thresholds)
+            ):
+                logger.info(f"[SWEEP:subminute] scanning granularity={granularity_sec}s, min_duration={min_duration_min}m, coverage={coverage_thresh}")
+                
+                # Find overlap windows
+                windows = find_overlap_windows(
+                    venues=venues,
+                    pair=pair,
+                    granularity_sec=granularity_sec,
+                    min_duration_min=min_duration_min,
+                    coverage_threshold=coverage_thresh,
+                    max_windows=1,  # Only take first valid window
+                )
+                
+                if windows:
+                    window = windows[0]
+                    logger.info(f"[SWEEP:found] granularity={granularity_sec}s, duration={window.get('duration_minutes', 0):.1f}m")
+                    
+                    # Create snapshot
+                    sweep_id = f"sweep_loop_{loop_count}_g{granularity_sec}"
+                    snapshot_dir = create_snapshot(
+                        window,
+                        Path(export_dir),
+                        sweep_id,
+                    )
+                    
+                    # Run analyses
+                    analyses = run_analyses(
+                        window,
+                        snapshot_dir,
+                        granularity_sec,
+                        min_duration_min,
+                        Path(export_dir),
+                    )
+                    
+                    # Create evidence bundle for sub-minute windows
+                    if granularity_sec < 60:
+                        evidence_bundle = create_subminute_evidence_bundle(
+                            window,
+                            snapshot_dir,
+                            granularity_sec,
+                            analyses["results"],
+                            Path(export_dir),
+                        )
+                        analyses["evidence_bundle"] = evidence_bundle
+                        
+                        # Log bundle creation
+                        bundle_log = {
+                            "timestamp": datetime.now().isoformat(),
+                            "granularity_sec": granularity_sec,
+                            "duration_minutes": window.get('duration_minutes', 0),
+                            "venues": window.get('venues', []),
+                            "policy": f"RESEARCH_g={granularity_sec}s",
+                            "evidence_bundle": evidence_bundle
+                        }
+                        logger.info(f"[BUNDLE:created] {json.dumps(bundle_log)}")
+                        print(f"[BUNDLE:created] {json.dumps(bundle_log)}")
+                        
+                        # Write to sweep log
+                        with open(sweep_log, 'a') as f:
+                            f.write(f"[BUNDLE:created] {json.dumps(bundle_log)}\n")
+                        
+                        total_windows_found += 1
+                        
+                        # Optional: Create PING file for notification
+                        ping_file = Path(export_dir) / f"PING_subminute_{granularity_sec}s_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+                        with open(ping_file, 'w') as f:
+                            f.write(f"Sub-minute window found: {granularity_sec}s granularity\n")
+                            f.write(f"Duration: {window.get('duration_minutes', 0):.1f} minutes\n")
+                            f.write(f"Venues: {', '.join(window.get('venues', []))}\n")
+                            f.write(f"Evidence bundle: {evidence_bundle}\n")
+                            f.write(f"Timestamp: {datetime.now().isoformat()}\n")
+                        
+                        logger.info(f"Created PING file: {ping_file}")
+                
+                else:
+                    logger.info(f"[SWEEP:none] granularity={granularity_sec}s, no_windows_found")
+            
+            # Wait for next iteration
+            logger.info(f"[SWEEP:loop] waiting {loop_interval}s for next scan")
+            time.sleep(loop_interval)
+            
+    except KeyboardInterrupt:
+        logger.info("Continuous sweep interrupted by user")
+    except Exception as e:
+        logger.error(f"Continuous sweep error: {e}")
+        raise
+    finally:
+        # Final summary
+        logger.info(f"[SWEEP:final] total_windows_found={total_windows_found}, total_iterations={loop_count}")
+        with open(sweep_log, 'a') as f:
+            f.write(f"[SWEEP:final] total_windows_found={total_windows_found}, total_iterations={loop_count}\n")
 
 
 if __name__ == "__main__":

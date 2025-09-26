@@ -26,5 +26,12 @@
     "windows": [],
     "analyses": [],
     "windows_found": 0
+  },
+  {
+    "granularity_sec": 2,
+    "min_duration_min": 1,
+    "windows": [],
+    "analyses": [],
+    "windows_found": 0
   }
 ]

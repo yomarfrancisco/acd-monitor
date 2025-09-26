@@ -242,8 +242,8 @@ def main():
     parser.add_argument("--snapshots-dir", default="exports/sweep_continuous/snapshots", 
                        help="Snapshots directory")
     parser.add_argument("--export-dir", default="exports/sweep", help="Export directory")
-    parser.add_argument("--granularity", type=int, choices=[15, 5], required=True,
-                       help="Target granularity (15 or 5)")
+    parser.add_argument("--granularity", type=int, choices=[15, 5, 2, 1], required=True,
+                       help="Target granularity (15, 5, 2, or 1)")
     parser.add_argument("--min-duration", type=float, default=90.0,
                        help="Minimum duration in seconds (default: 90s for 15s, 60s for 5s)")
     parser.add_argument("--min-coverage", type=float, default=0.96,
@@ -265,12 +265,20 @@ def main():
         args.min_duration = 90.0  # 1.5 minutes
     elif args.granularity == 5 and args.min_duration == 90.0:
         args.min_duration = 60.0  # 1 minute
+    elif args.granularity == 2 and args.min_duration == 90.0:
+        args.min_duration = 90.0  # 1.5 minutes
+    elif args.granularity == 1 and args.min_duration == 90.0:
+        args.min_duration = 60.0  # 1 minute
     
     # Set default coverage based on granularity
     if args.granularity == 15 and args.min_coverage == 0.96:
         args.min_coverage = 0.96
     elif args.granularity == 5 and args.min_coverage == 0.96:
         args.min_coverage = 0.97
+    elif args.granularity == 2 and args.min_coverage == 0.96:
+        args.min_coverage = 0.985
+    elif args.granularity == 1 and args.min_coverage == 0.96:
+        args.min_coverage = 0.99
     
     # Create export directory
     export_dir = Path(args.export_dir)

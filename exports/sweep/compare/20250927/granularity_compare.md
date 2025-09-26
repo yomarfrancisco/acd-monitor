@@ -1,19 +1,19 @@
 # Multi-Granularity Comparison Report
 
-**Generated:** 2025-09-27T00:45:33.764303
-**Granularities:** 5s, 15s, 30s
+**Generated:** 2025-09-27T00:54:45.046991
+**Granularities:** 1s, 2s
 
 ## Pairwise Comparisons
 
-### 5s vs vs vs 15s
+### 1s vs vs vs 2s
 
 #### InfoShare
 **Rank Changes:**
-- **binance:** +0 positions
-- **kraken:** +0 positions
-- **coinbase:** +0 positions
 - **okx:** +0 positions
+- **coinbase:** +0 positions
+- **kraken:** +0 positions
 - **bybit:** +0 positions
+- **binance:** +0 positions
 
 **Ordering Stable:** True
 **JS Distance:** 0.000
@@ -29,56 +29,6 @@
 - **Edge Count Change:** +0
 - **Top Leader Change:** False
 - **Coordination Stable:** False
-
-### 5s vs vs vs 30s
-
-#### InfoShare
-**Rank Changes:**
-- **binance:** +0 positions
-- **kraken:** +0 positions
-- **coinbase:** +0 positions
-- **okx:** +0 positions
-- **bybit:** +0 positions
-
-**Ordering Stable:** True
-**JS Distance:** 0.000
-
-#### Spread
-- **Episode Count Change:** +0
-- **Lift Change:** +0.110
-- **P-Value Change:** -0.009
-- **P-Value Stable:** True
-
-#### Lead-Lag
-- **Coordination Change:** -0.090
-- **Edge Count Change:** +0
-- **Top Leader Change:** False
-- **Coordination Stable:** True
-
-### 15s vs vs vs 30s
-
-#### InfoShare
-**Rank Changes:**
-- **binance:** +0 positions
-- **kraken:** +0 positions
-- **coinbase:** +0 positions
-- **okx:** +0 positions
-- **bybit:** +0 positions
-
-**Ordering Stable:** True
-**JS Distance:** 0.000
-
-#### Spread
-- **Episode Count Change:** +0
-- **Lift Change:** +0.220
-- **P-Value Change:** +0.002
-- **P-Value Stable:** True
-
-#### Lead-Lag
-- **Coordination Change:** +0.020
-- **Edge Count Change:** +0
-- **Top Leader Change:** False
-- **Coordination Stable:** True
 
 ## Overall Stability Flags
 

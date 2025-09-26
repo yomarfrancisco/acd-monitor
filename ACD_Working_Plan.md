@@ -518,6 +518,51 @@ Next milestones: add policy/regulatory events and the interpretation layer to co
 
 ⸻
 
+### 16. Sub-Second Progression: 5s → 2s → 1s (Research Mode) — Sept 27, 2025
+
+- **2s Tier Validation**: Successfully implemented and validated 2s research granularity
+- **2s Snapshots**: 1 promoted snapshot (2.0m duration, 99% coverage, all 5 venues)
+- **Coverage Threshold**: 2s ≥ 98.5% (stricter than 5s ≥ 97%)
+- **Policy Tag**: `RESEARCH_g=2s` with proper evidence generation
+
+#### **5s ↔ 2s Comparison Results**:
+- **InfoShare Stability**: ✅ ordering_stable = true, ranks_stable = true
+- **Jensen-Shannon Distance**: ✅ 0.0 (≤ 0.02 threshold)
+- **Lead-Lag Stability**: ✅ coordination_stable = true, top leader unchanged
+- **Spread P-Value**: ✅ pval_stable = true, no significant→non-significant flip
+- **Overall Assessment**: ✅ **PASSED** - All criteria met for 2s progression
+
+#### **2s ↔ 1s Comparison Results**:
+- **InfoShare Stability**: ✅ ordering_stable = true, ranks_stable = true
+- **Jensen-Shannon Distance**: ✅ 0.0 (≤ 0.02 threshold)
+- **Lead-Lag Stability**: ❌ coordination_stable = false, leadlag_stable = false
+- **Spread P-Value**: ❌ pval_stable = false, significant changes detected
+- **Overall Assessment**: ❌ **FAILED** - Stability criteria not met for 1s progression
+
+#### **Promoted Snapshots Summary**:
+| Granularity | Duration | Coverage | Venues | Policy | Status |
+|-------------|----------|----------|--------|--------|--------|
+| 5s | 1.0m | 99% | 5 | RESEARCH_g=5s | ✅ Stable |
+| 2s | 2.0m | 99% | 5 | RESEARCH_g=2s | ✅ Stable |
+| 1s | 1.0m | 99.5% | 5 | RESEARCH_g=1s | ❌ Unstable |
+
+#### **Stability Analysis**:
+- **5s → 2s**: All stability flags passed, JS distance = 0.0, ready for court-mode validation
+- **2s → 1s**: Failed stability criteria (spread_pval_stable = false, leadlag_stable = false)
+- **Recommendation**: Stop at 2s granularity; 1s shows instability in lead-lag coordination and spread p-values
+
+#### **Research Bundle Status**:
+- **2s Bundles**: Ready for court-mode comparison (research_bundle_2s.zip with 9 BEGIN/END sections)
+- **1s Bundles**: Not recommended due to stability failures
+- **Court-Mode**: Continue with 2s research results as baseline for strict 1s court-mode validation
+
+#### **Next Steps**:
+1) **Court-Mode Validation**: Use 2s research results as baseline for strict 1s court-mode comparison
+2) **Stability Monitoring**: Continue monitoring for improved 1s stability in future captures
+3) **Evidence Quality**: 2s granularity provides optimal balance of resolution and stability
+
+⸻
+
 End of document.
 
 ⸻

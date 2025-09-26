@@ -6,3 +6,4 @@
 | 30s | 2m | 0 | None | N/A | None |
 | 15s | 1m | 0 | None | N/A | None |
 | 5s | 1m | 0 | None | N/A | None |
+| 2s | 1m | 0 | None | N/A | None |
