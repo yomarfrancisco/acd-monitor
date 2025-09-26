@@ -1,0 +1,31 @@
+{
+  "timestamp": "2025-09-26T15:45:26.887794",
+  "parameters": {
+    "start_date": "2025-01-01",
+    "end_date": "2025-09-24",
+    "venues": [
+      "binance",
+      "okx",
+      "coinbase",
+      "kraken",
+      "bybit"
+    ],
+    "spec_version": "1.0.0"
+  },
+  "results": {
+    "total_days": 267,
+    "regime_counts": {
+      "high": 91,
+      "low": 88,
+      "medium": 88
+    },
+    "leadership_regimes": 3
+  },
+  "export_files": [
+    "liquidity_terciles_summary.json",
+    "leadership_by_liquidity.json",
+    "leadership_by_day_liquidity.csv",
+    "liquidity_assignments.json",
+    "MANIFEST.json"
+  ]
+}

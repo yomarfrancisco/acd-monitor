@@ -1,6 +1,6 @@
 {
-  "commit": "02cdc48",
-  "codeVersion": "02cdc48",
+  "commit": "9567051",
+  "codeVersion": "9567051",
   "tz": "UTC",
   "sampleWindow": {
     "start": "2025-01-01",
@@ -19,6 +19,16 @@
       }
     },
     "funding": {
+      "keptDays": 267,
+      "droppedDays": 0,
+      "dropReasons": {
+        "missing": 0,
+        "nan": 0,
+        "tooFewBars": 0,
+        "notEnoughOthers": 0
+      }
+    },
+    "liquidity": {
       "keptDays": 267,
       "droppedDays": 0,
       "dropReasons": {
