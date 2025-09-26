@@ -18,51 +18,51 @@
       "start_idx": 0,
       "end_idx": 10,
       "duration": 10,
-      "lift": 0.5700000000000001,
-      "p_value": 0.024,
+      "lift": 0.845,
+      "p_value": 0.028999999999999998,
       "leader": "bybit"
     },
     {
       "start_idx": 100,
       "end_idx": 110,
       "duration": 10,
-      "lift": 0.6950000000000001,
-      "p_value": 0.049,
-      "leader": "bybit"
+      "lift": 0.635,
+      "p_value": 0.037,
+      "leader": "kraken"
     },
     {
       "start_idx": 200,
       "end_idx": 210,
       "duration": 10,
-      "lift": 0.665,
-      "p_value": 0.043000000000000003,
-      "leader": "okx"
+      "lift": 0.6,
+      "p_value": 0.03,
+      "leader": "binance"
     },
     {
       "start_idx": 300,
       "end_idx": 310,
       "duration": 10,
-      "lift": 0.715,
-      "p_value": 0.053,
-      "leader": "okx"
+      "lift": 0.705,
+      "p_value": 0.051000000000000004,
+      "leader": "coinbase"
     },
     {
       "start_idx": 400,
       "end_idx": 410,
       "duration": 10,
-      "lift": 0.76,
-      "p_value": 0.012,
-      "leader": "kraken"
+      "lift": 0.975,
+      "p_value": 0.055,
+      "leader": "binance"
     },
     {
       "start_idx": 500,
       "end_idx": 510,
       "duration": 10,
-      "lift": 0.98,
-      "p_value": 0.056,
+      "lift": 0.8049999999999999,
+      "p_value": 0.020999999999999998,
       "leader": "coinbase"
     }
   ],
   "permutes": 1000,
-  "analysis_timestamp": "2025-09-26T23:12:46.591080"
+  "analysis_timestamp": "2025-09-26T23:19:01.244444"
 }

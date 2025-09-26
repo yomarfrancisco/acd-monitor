@@ -8,6 +8,7 @@ ensuring all analyses use the exact same window and venues from OVERLAP.json.
 
 import json
 import logging
+import sys
 import pandas as pd
 from pathlib import Path
 from typing import Dict, Optional
@@ -95,6 +96,20 @@ def load_ticks_snapshot(overlap: Dict, asof: Optional[str] = None) -> Dict[str, 
         if not parquet_files:
             logger.warning(f"No parquet files found for venue: {venue}")
             continue
+
+        # Safety check: refuse mock/demo files
+        for parquet_file in parquet_files:
+            file_name = parquet_file.name.lower()
+            file_path = str(parquet_file).lower()
+
+            if "mock" in file_name or "mock" in file_path:
+                logger.error(f"[ABORT:snapshot:mock_detected] {parquet_file} - contains 'mock'")
+                print(f"[ABORT:snapshot:mock_detected] {parquet_file} - contains 'mock'")
+                sys.exit(1)
+            elif "_demo" in file_name or "_demo" in file_path:
+                logger.error(f"[ABORT:snapshot:mock_detected] {parquet_file} - contains '_demo'")
+                print(f"[ABORT:snapshot:mock_detected] {parquet_file} - contains '_demo'")
+                sys.exit(1)
 
         # Load and concatenate parquet files
         venue_ticks = []

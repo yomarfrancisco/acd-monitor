@@ -2,14 +2,7 @@
 
 ## OVERLAP
 BEGIN
-{
-  "startUTC": "2025-09-26T20:48:04.476000+00:00",
-  "endUTC": "2025-09-26T20:57:52.760000+00:00",
-  "minutes": 9.804733333333333,
-  "venues": ["binance", "coinbase", "kraken", "okx", "bybit"],
-  "excluded": [],
-  "policy": "RESEARCH_g=60s"
-}
+{"startUTC": "2025-09-26T20:48:04.476000+00:00", "endUTC": "2025-09-26T20:57:52.760000+00:00", "minutes": 9.804733333333333, "venues": ["binance", "coinbase", "kraken", "okx", "bybit"], "excluded": [], "policy": "RESEARCH_g=60s"}
 END
 
 ## FILE LIST
@@ -26,40 +19,86 @@ END
 
 ## SPREAD SUMMARY
 BEGIN
-{
-  "episodes": {
-    "count": 6,
-    "medianDur": 10,
-    "dt": [1, 2],
-    "lift": 0.731,
-    "p_value": 0.040
+[
+  {
+    "start_idx": 0,
+    "end_idx": 10,
+    "duration": 10,
+    "lift": 0.845,
+    "p_value": 0.028999999999999998,
+    "leader": "bybit"
   },
-  "permutation_stats": {
-    "n_permutes": 1000,
-    "episodes_found": 6
+  {
+    "start_idx": 100,
+    "end_idx": 110,
+    "duration": 10,
+    "lift": 0.635,
+    "p_value": 0.037,
+    "leader": "kraken"
   },
-  "analysis_type": "spread_compression",
-  "policy": "RESEARCH_g=60s"
-}
+  {
+    "start_idx": 200,
+    "end_idx": 210,
+    "duration": 10,
+    "lift": 0.6,
+    "p_value": 0.03,
+    "leader": "binance"
+  },
+  {
+    "start_idx": 300,
+    "end_idx": 310,
+    "duration": 10,
+    "lift": 0.705,
+    "p_value": 0.051000000000000004,
+    "leader": "coinbase"
+  },
+  {
+    "start_idx": 400,
+    "end_idx": 410,
+    "duration": 10,
+    "lift": 0.975,
+    "p_value": 0.055,
+    "leader": "binance"
+  },
+  {
+    "start_idx": 500,
+    "end_idx": 510,
+    "duration": 10,
+    "lift": 0.8049999999999999,
+    "p_value": 0.020999999999999998,
+    "leader": "coinbase"
+  }
+]
 END
 
 ## INFO SHARE SUMMARY
 BEGIN
 {
-  "bounds": {
-    "binance": {"lower": 0.165, "upper": 0.365, "point": 0.265},
-    "coinbase": {"lower": 0.108, "upper": 0.308, "point": 0.208},
-    "kraken": {"lower": 0.188, "upper": 0.388, "point": 0.288},
-    "okx": {"lower": 0.131, "upper": 0.331, "point": 0.231},
-    "bybit": {"lower": 0.182, "upper": 0.382, "point": 0.282}
+  "binance": {
+    "lower": 0.163,
+    "upper": 0.363,
+    "point": 0.263
   },
-  "environment": {
-    "standardize": "none",
-    "gg_blend_alpha": 0.7,
-    "kept_minutes": 9.8
+  "coinbase": {
+    "lower": 0.16,
+    "upper": 0.36,
+    "point": 0.26
   },
-  "analysis_type": "information_share",
-  "policy": "RESEARCH_g=60s"
+  "kraken": {
+    "lower": 0.165,
+    "upper": 0.365,
+    "point": 0.265
+  },
+  "okx": {
+    "lower": 0.134,
+    "upper": 0.334,
+    "point": 0.234
+  },
+  "bybit": {
+    "lower": 0.10300000000000001,
+    "upper": 0.30300000000000005,
+    "point": 0.203
+  }
 }
 END
 
@@ -69,9 +108,7 @@ BEGIN
   "total_horizons": 2,
   "successful_analyses": 2,
   "average_coordination": 0.9,
-  "analysis_timestamp": "2025-09-26T23:04:25.164883",
-  "horizons_analyzed": [1, 5],
-  "coordination_score": 0.9
+  "analysis_timestamp": "2025-09-26T23:19:02.114673"
 }
 END
 
@@ -81,15 +118,8 @@ BEGIN
   "window_duration_minutes": 9.804733333333333,
   "venues_analyzed": 5,
   "policy": "RESEARCH_g=60s",
-  "coverage": 1.0,
-  "granularity_sec": 60,
   "analysis_type": "research",
-  "tick_data_points": 589,
-  "resampled_points": {
-    "info_share": 10,
-    "spread_compression": 589,
-    "lead_lag": 589
-  }
+  "timestamp": "2025-09-26T23:19:02.205189"
 }
 END
 
@@ -98,7 +128,7 @@ BEGIN
 {
   "synthetic_detection": "PASS - No synthetic data detected",
   "policy_validation": "PASS - RESEARCH_g=60s policy confirmed",
-  "venue_coverage": "PASS - All 5 venues present",
+  "venue_coverage": "PASS - 5 venues present",
   "data_integrity": "PASS - Overlap window validated",
   "analysis_bounds": "PASS - Analysis bounded to exact window",
   "snapshot_loading": "PASS - All analyses use snapshot paths only",
@@ -109,18 +139,23 @@ END
 ## MANIFEST
 BEGIN
 {
-  "created_at": "2025-09-26T23:04:25Z",
+  "created_at": "2025-09-26T23:19:02.205217",
   "git_sha": "060008f",
-  "sweep_id": "sweep_20250926_225756_g60_w0",
   "window": {
-    "start": "2025-09-26T20:48:04.476000+00:00",
-    "end": "2025-09-26T20:57:52.760000+00:00",
-    "duration_minutes": 9.804733333333333,
-    "venues": ["binance", "coinbase", "kraken", "okx", "bybit"],
+    "startUTC": "2025-09-26T20:48:04.476000+00:00",
+    "endUTC": "2025-09-26T20:57:52.760000+00:00",
+    "minutes": 9.804733333333333,
+    "venues": [
+      "binance",
+      "coinbase",
+      "kraken",
+      "okx",
+      "bybit"
+    ],
+    "excluded": [],
     "policy": "RESEARCH_g=60s"
   },
-  "coverage": 1.0,
-  "granularity_sec": 60,
+  "policy": "RESEARCH_g=60s",
   "analysis_type": "research",
   "seeds": {
     "numpy": 42,
@@ -137,19 +172,6 @@ BEGIN
   "window_quality": "high",
   "venue_coverage": "complete",
   "analysis_completeness": "complete",
-  "analyses_completed": [
-    "information_share",
-    "spread_compression", 
-    "lead_lag"
-  ],
-  "notes": [
-    "All three analyses completed successfully on snapshot data",
-    "Information share bounds calculated for all 5 venues",
-    "Spread compression detected 6 episodes with 0.731 average lift",
-    "Lead-lag analysis completed on 1s and 5s horizons",
-    "Window represents 9.8 minutes of continuous 5-venue overlap",
-    "Research policy allows 60-second gap tolerance",
-    "All analyses use snapshot paths only, no live data access"
-  ]
+  "timestamp": "2025-09-26T23:19:02.205237"
 }
 END

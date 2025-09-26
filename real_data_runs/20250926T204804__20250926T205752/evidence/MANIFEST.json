@@ -1,0 +1,45 @@
+{
+  "created_at": "2025-09-26T23:19:02.222599",
+  "git_sha": "0d56dd5",
+  "sweep_id": "sweep_20250926_225756_g60_w0",
+  "window": {
+    "startUTC": "2025-09-26T20:48:04.476000+00:00",
+    "endUTC": "2025-09-26T20:57:52.760000+00:00",
+    "minutes": 9.804733333333333,
+    "venues": [
+      "binance",
+      "coinbase",
+      "kraken",
+      "okx",
+      "bybit"
+    ],
+    "excluded": [],
+    "policy": "RESEARCH_g=60s"
+  },
+  "coverage": 1.0,
+  "granularity_sec": 60,
+  "analysis_type": "research",
+  "policy": "RESEARCH_g=60s",
+  "seeds": {
+    "numpy": 42,
+    "random": 42
+  },
+  "analyses": {
+    "info_share": {
+      "status": "completed",
+      "standardize": "none",
+      "gg_blend_alpha": 0.7
+    },
+    "spread_compression": {
+      "status": "completed",
+      "permutes": 1000
+    },
+    "lead_lag": {
+      "status": "completed",
+      "horizons": [
+        1,
+        5
+      ]
+    }
+  }
+}
