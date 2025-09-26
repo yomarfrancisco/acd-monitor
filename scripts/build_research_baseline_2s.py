@@ -122,7 +122,7 @@ def pin_baseline_snapshot(best_snapshot: Dict[str, Any], baseline_dir: Path) -> 
         "venues": best_snapshot['venues'],
         "timestamp": best_snapshot['timestamp'],
         "end_timestamp": best_snapshot['end_timestamp'],
-        "snapshot_path": best_snapshot['snapshot'],
+        "snapshot_path": str(best_snapshot['snapshot']),
         "baseline_pinned": datetime.now().isoformat(),
         "research_baseline": "2s"
     }
@@ -362,10 +362,12 @@ def main():
     parser = argparse.ArgumentParser(description="Build research baseline 2s")
     parser.add_argument("--promoted-file", default="exports/sweep/REAL_2s_PROMOTED.json",
                        help="Path to REAL_2s_PROMOTED.json")
+    parser.add_argument("--from-overlap-json", help="Path to specific OVERLAP.json file")
     parser.add_argument("--baseline-dir", default="baselines/2s",
                        help="Baseline directory")
     parser.add_argument("--export-dir", default="baselines/2s/evidence",
                        help="Export directory for evidence")
+    parser.add_argument("--rebuild-only", action="store_true", help="Only rebuild evidence bundle")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
     
     args = parser.parse_args()
@@ -376,15 +378,45 @@ def main():
     
     logger.info("Building research baseline 2s")
     
-    # Load best 2s snapshot
-    best_snapshot = load_best_2s_snapshot(args.promoted_file)
-    
-    # Pin baseline snapshot
     baseline_dir = Path(args.baseline_dir)
-    pin_baseline_snapshot(best_snapshot, baseline_dir)
     
-    # Build research bundle
-    build_research_bundle(baseline_dir, args.export_dir, args.verbose)
+    if args.rebuild_only:
+        # Only rebuild evidence bundle
+        logger.info("Rebuilding evidence bundle only")
+        build_research_bundle(baseline_dir, args.export_dir, args.verbose)
+    elif args.from_overlap_json:
+        # Use specific OVERLAP.json file
+        logger.info(f"Using specific OVERLAP.json: {args.from_overlap_json}")
+        overlap_file = Path(args.from_overlap_json)
+        
+        # Load overlap data
+        with open(overlap_file, 'r') as f:
+            overlap_data = json.load(f)
+        
+        # Create snapshot metadata
+        best_snapshot = {
+            'timestamp': overlap_data.get('startUTC', overlap_data.get('start', '')),
+            'end_timestamp': overlap_data.get('endUTC', overlap_data.get('end', '')),
+            'minutes': overlap_data.get('minutes', 0),
+            'venues': overlap_data.get('venues', []),
+            'coverage': overlap_data.get('coverage', 0),
+            'snapshot': overlap_file.parent
+        }
+        
+        # Pin baseline snapshot
+        pin_baseline_snapshot(best_snapshot, baseline_dir)
+        
+        # Build research bundle
+        build_research_bundle(baseline_dir, args.export_dir, args.verbose)
+    else:
+        # Load best 2s snapshot from promoted file
+        best_snapshot = load_best_2s_snapshot(args.promoted_file)
+        
+        # Pin baseline snapshot
+        pin_baseline_snapshot(best_snapshot, baseline_dir)
+        
+        # Build research bundle
+        build_research_bundle(baseline_dir, args.export_dir, args.verbose)
     
     logger.info("Research baseline 2s completed successfully")
 

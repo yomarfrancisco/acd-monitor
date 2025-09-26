@@ -1,6 +1,6 @@
 {
   "baseline_type": "2s_research",
-  "git_sha": "2b7ea65",
+  "git_sha": "7727eef",
   "policy": "RESEARCH_g=2s",
   "coverage": 0.99,
   "duration_minutes": 2.0,
@@ -11,9 +11,9 @@
     "okx",
     "bybit"
   ],
-  "timestamp": "2025-09-26T21:30:00.000000+00:00",
-  "end_timestamp": "2025-09-26T21:32:00.000000+00:00",
-  "snapshot_path": "exports/sweep_continuous/snapshots/sweep_test_g2_20250926T213000.000000+0000__20250926T213200.000000+0000",
-  "baseline_pinned": "2025-09-27T01:09:06.695628",
+  "timestamp": "2025-09-27T01:00:00.000000+00:00",
+  "end_timestamp": "2025-09-27T01:02:00.000000+00:00",
+  "snapshot_path": "real_data_runs/20250927T010000__20250927T010200",
+  "baseline_pinned": "2025-09-27T01:16:15.487781",
   "research_baseline": "2s"
 }

@@ -12,6 +12,5 @@
   "policy": "RESEARCH_g=2s",
   "coverage": 0.99,
   "granularity_sec": 2,
-  "min_duration_min": 1,
-  "baseline": true
+  "min_duration_min": 1
 }

@@ -1,7 +1,7 @@
 {
   "overlap_window": {
-    "startUTC": "2025-09-26T21:30:00.000000+00:00",
-    "endUTC": "2025-09-26T21:32:00.000000+00:00",
+    "startUTC": "2025-09-27T01:00:00.000000+00:00",
+    "endUTC": "2025-09-27T01:02:00.000000+00:00",
     "minutes": 2.0,
     "venues": [
       "binance",
@@ -131,11 +131,11 @@
       "venue_rankings": [
         "okx",
         "binance",
-        "bybit",
         "coinbase",
+        "bybit",
         "kraken"
       ],
-      "timestamp": "2025-09-27T01:09:09.786160"
+      "timestamp": "2025-09-27T01:16:48.030378"
     },
     "horizon_2s": {
       "horizon_sec": 2,
@@ -246,11 +246,11 @@
       "venue_rankings": [
         "okx",
         "binance",
-        "bybit",
         "coinbase",
+        "bybit",
         "kraken"
       ],
-      "timestamp": "2025-09-27T01:09:09.786201"
+      "timestamp": "2025-09-27T01:16:48.030416"
     },
     "horizon_5s": {
       "horizon_sec": 5,
@@ -361,17 +361,17 @@
       "venue_rankings": [
         "okx",
         "binance",
-        "bybit",
         "coinbase",
+        "bybit",
         "kraken"
       ],
-      "timestamp": "2025-09-27T01:09:09.786235"
+      "timestamp": "2025-09-27T01:16:48.030450"
     }
   },
   "summary": {
     "total_horizons": 3,
     "successful_analyses": 3,
     "average_coordination": 0.8833333333333333,
-    "analysis_timestamp": "2025-09-27T01:09:09.786260"
+    "analysis_timestamp": "2025-09-27T01:16:48.030474"
   }
 }

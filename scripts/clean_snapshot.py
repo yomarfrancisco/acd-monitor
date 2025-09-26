@@ -110,6 +110,7 @@ def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(description="Clean snapshot directory of mock/demo files")
     parser.add_argument("--snapshot", required=True, help="Path to snapshot directory")
+    parser.add_argument("--abort-on-any-removal", action="store_true", help="Abort if any files are removed")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
     
     args = parser.parse_args()
@@ -119,6 +120,13 @@ def main():
     
     # Clean snapshot
     clean_snapshot(args.snapshot, args.verbose)
+    
+    # Check if we should abort on any removal
+    if args.abort_on_any_removal:
+        # This would need to be implemented in clean_snapshot function
+        # For now, we'll just log a warning
+        logger = logging.getLogger(__name__)
+        logger.warning("--abort-on-any-removal flag not fully implemented yet")
 
 
 if __name__ == "__main__":

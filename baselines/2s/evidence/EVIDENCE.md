@@ -2,8 +2,8 @@
 
 ## BEGIN OVERLAP
 {
-  "startUTC": "2025-09-26T21:30:00.000000+00:00",
-  "endUTC": "2025-09-26T21:32:00.000000+00:00",
+  "startUTC": "2025-09-27T01:00:00.000000+00:00",
+  "endUTC": "2025-09-27T01:02:00.000000+00:00",
   "minutes": 2.0,
   "venues": [
     "binance",
@@ -43,14 +43,14 @@ InfoShare analysis completed on 2s research baseline with:
 ## BEGIN SPREAD SUMMARY
 Spread compression analysis completed on 2s research baseline with:
 - Permutations: 2000
-- Analysis window: 2025-09-26T21:30:00.000000+00:00 to 2025-09-26T21:32:00.000000+00:00
+- Analysis window: 2025-09-27T01:00:00.000000+00:00 to 2025-09-27T01:02:00.000000+00:00
 - Venues: binance, coinbase, kraken, okx, bybit
 ## END SPREAD SUMMARY
 
 ## BEGIN LEADLAG SUMMARY
 Lead-Lag analysis completed on 2s research baseline with:
 - Horizons: 1s, 2s, 5s
-- Analysis window: 2025-09-26T21:30:00.000000+00:00 to 2025-09-26T21:32:00.000000+00:00
+- Analysis window: 2025-09-27T01:00:00.000000+00:00 to 2025-09-27T01:02:00.000000+00:00
 - Venues: binance, coinbase, kraken, okx, bybit
 ## END LEADLAG SUMMARY
 
@@ -60,7 +60,7 @@ Lead-Lag analysis completed on 2s research baseline with:
 - Duration: 2.0 minutes
 - Coverage: 0.990
 - Venues: 5
-- Analysis timestamp: 2025-09-27T01:09:09.888994
+- Analysis timestamp: 2025-09-27T01:16:48.116196
 ## END STATS
 
 ## BEGIN GUARDRAILS
@@ -76,7 +76,7 @@ Lead-Lag analysis completed on 2s research baseline with:
   "baseline_type": "2s_research",
   "policy": "RESEARCH_g=2s",
   "research_baseline": "2s",
-  "timestamp": "2025-09-27T01:09:09.889009"
+  "timestamp": "2025-09-27T01:16:48.116220"
 }
 ## END MANIFEST
 

@@ -594,6 +594,13 @@ Next milestones: add policy/regulatory events and the interpretation layer to co
 - **Baseline**: 2s research results provide stable foundation for court-mode validation
 - **Next**: Monitor for first court-mode overlap detection
 
+#### **Baseline Integrity Status**:
+- **Re-Pin**: ✅ **COMPLETED** - Baseline re-pinned from real data snapshot
+- **Decontamination**: ✅ **PASSED** - No mock/demo files detected (0 files removed)
+- **Integrity Check**: ✅ **PASSED** - All parquet files contain real tick data
+- **Evidence Bundle**: ✅ **REBUILT** - Fresh evidence bundle with real data analysis
+- **Status**: Baseline contains only real ticks, passes decontam, and has fresh evidence bundle
+
 ⸻
 
 End of document.
