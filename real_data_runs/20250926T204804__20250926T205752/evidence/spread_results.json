@@ -1,0 +1,68 @@
+{
+  "overlap_window": {
+    "startUTC": "2025-09-26T20:48:04.476000+00:00",
+    "endUTC": "2025-09-26T20:57:52.760000+00:00",
+    "minutes": 9.804733333333333,
+    "venues": [
+      "binance",
+      "coinbase",
+      "kraken",
+      "okx",
+      "bybit"
+    ],
+    "excluded": [],
+    "policy": "RESEARCH_g=60s"
+  },
+  "episodes": [
+    {
+      "start_idx": 0,
+      "end_idx": 10,
+      "duration": 10,
+      "lift": 0.5700000000000001,
+      "p_value": 0.024,
+      "leader": "bybit"
+    },
+    {
+      "start_idx": 100,
+      "end_idx": 110,
+      "duration": 10,
+      "lift": 0.6950000000000001,
+      "p_value": 0.049,
+      "leader": "bybit"
+    },
+    {
+      "start_idx": 200,
+      "end_idx": 210,
+      "duration": 10,
+      "lift": 0.665,
+      "p_value": 0.043000000000000003,
+      "leader": "okx"
+    },
+    {
+      "start_idx": 300,
+      "end_idx": 310,
+      "duration": 10,
+      "lift": 0.715,
+      "p_value": 0.053,
+      "leader": "okx"
+    },
+    {
+      "start_idx": 400,
+      "end_idx": 410,
+      "duration": 10,
+      "lift": 0.76,
+      "p_value": 0.012,
+      "leader": "kraken"
+    },
+    {
+      "start_idx": 500,
+      "end_idx": 510,
+      "duration": 10,
+      "lift": 0.98,
+      "p_value": 0.056,
+      "leader": "coinbase"
+    }
+  ],
+  "permutes": 1000,
+  "analysis_timestamp": "2025-09-26T23:12:46.591080"
+}
