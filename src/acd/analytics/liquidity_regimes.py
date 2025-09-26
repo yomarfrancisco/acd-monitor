@@ -50,6 +50,7 @@ class LiquidityRegimeAnalyzer:
     def __init__(self, spec_version: str = "1.0.0"):
         self.spec_version = spec_version
         self.logger = logging.getLogger(__name__)
+        self.venues = ["binance", "coinbase", "kraken", "bybit", "okx"]
 
     def _get_code_version(self) -> str:
         """Get short commit SHA for reproducibility."""
@@ -643,8 +644,43 @@ class LiquidityRegimeAnalyzer:
         # Log exact tags for grep
         self._log_liquidity_stats_exact(stats_results)
 
-        # Step 6: Create daily leadership DataFrame
+        # Step 6: Create daily leadership DataFrame with computed leaders
         daily_leadership = leadership_data.copy()
+
+        # Compute daily leaders for the daily leadership DataFrame
+        for date in daily_leadership.index:
+            day_data = daily_leadership.loc[date]
+            available_venues = []
+            venue_prices = {}
+
+            for venue in self.venues:
+                if venue in day_data and not pd.isna(day_data[venue]) and day_data[venue] > 0:
+                    available_venues.append(venue)
+                    venue_prices[venue] = day_data[venue]
+
+            if len(available_venues) >= 3:
+                # Calculate consensus (median of available prices)
+                prices = [venue_prices[v] for v in available_venues]
+                consensus = np.median(prices)
+
+                # Find leader (closest to consensus)
+                gaps = {}
+                for venue in available_venues:
+                    gap = abs(venue_prices[venue] - consensus)
+                    gaps[venue] = gap
+
+                min_gap = min(gaps.values())
+                leaders = [v for v, gap in gaps.items() if gap == min_gap]
+
+                # Use lexicographic winner for ties
+                leader = min(leaders) if leaders else available_venues[0]
+                gap_bps = (min_gap / consensus) * 10000 if consensus > 0 else 0
+
+                daily_leadership.loc[date, "leader"] = leader
+                daily_leadership.loc[date, "leaderGapBps"] = gap_bps
+            else:
+                daily_leadership.loc[date, "leader"] = ""
+                daily_leadership.loc[date, "leaderGapBps"] = 0
 
         return LiquidityRegimeResult(
             regime_assignments=regime_assignments,

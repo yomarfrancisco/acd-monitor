@@ -1,0 +1,253 @@
+{
+  "specVersion": "1.0.0",
+  "codeVersion": "85b94a2",
+  "tz": "UTC",
+  "window": {
+    "start": "2025-01-01",
+    "end": "2025-09-24"
+  },
+  "regimeCounts": {
+    "volatility": {
+      "low": 5,
+      "medium": 5,
+      "high": 5
+    },
+    "funding": {
+      "low": 5,
+      "medium": 5,
+      "high": 5
+    },
+    "liquidity": {
+      "low": 5,
+      "medium": 5,
+      "high": 5
+    }
+  },
+  "guardrails": [],
+  "perRegimeHHI": [
+    {
+      "env": "volatility",
+      "regime": "low",
+      "HHI": 0.204
+    },
+    {
+      "env": "volatility",
+      "regime": "medium",
+      "HHI": 0.209
+    },
+    {
+      "env": "volatility",
+      "regime": "high",
+      "HHI": 0.204
+    },
+    {
+      "env": "funding",
+      "regime": "low",
+      "HHI": 0.213
+    },
+    {
+      "env": "funding",
+      "regime": "medium",
+      "HHI": 0.204
+    },
+    {
+      "env": "funding",
+      "regime": "high",
+      "HHI": 0.207
+    },
+    {
+      "env": "liquidity",
+      "regime": "low",
+      "HHI": 0.205
+    },
+    {
+      "env": "liquidity",
+      "regime": "medium",
+      "HHI": 0.202
+    },
+    {
+      "env": "liquidity",
+      "regime": "high",
+      "HHI": 0.204
+    }
+  ],
+  "venues": [
+    {
+      "venue": "binance",
+      "sharesPct": {
+        "volatility": {
+          "low": 15.29,
+          "medium": 25.29,
+          "high": 21.18
+        },
+        "funding": {
+          "low": 14.77,
+          "medium": 22.73,
+          "high": 21.98
+        },
+        "liquidity": {
+          "low": 20.45,
+          "medium": 20.45,
+          "high": 14.29
+        }
+      },
+      "SI": 0.8123,
+      "Range": 11.0,
+      "MinShare": 14.29,
+      "bootstrap": {
+        "SI_mean": 0.729,
+        "CI95": [
+          0.61,
+          0.8359
+        ],
+        "n": 1000
+      }
+    },
+    {
+      "venue": "coinbase",
+      "sharesPct": {
+        "volatility": {
+          "low": 18.82,
+          "medium": 21.84,
+          "high": 20.0
+        },
+        "funding": {
+          "low": 25.0,
+          "medium": 14.77,
+          "high": 17.58
+        },
+        "liquidity": {
+          "low": 25.0,
+          "medium": 22.73,
+          "high": 20.88
+        }
+      },
+      "SI": 0.8464,
+      "Range": 10.23,
+      "MinShare": 14.77,
+      "bootstrap": {
+        "SI_mean": 0.7589,
+        "CI95": [
+          0.6401,
+          0.8626
+        ],
+        "n": 1000
+      }
+    },
+    {
+      "venue": "kraken",
+      "sharesPct": {
+        "volatility": {
+          "low": 21.18,
+          "medium": 19.54,
+          "high": 16.47
+        },
+        "funding": {
+          "low": 20.45,
+          "medium": 22.73,
+          "high": 14.29
+        },
+        "liquidity": {
+          "low": 17.05,
+          "medium": 20.45,
+          "high": 20.88
+        }
+      },
+      "SI": 0.8673,
+      "Range": 8.44,
+      "MinShare": 14.29,
+      "bootstrap": {
+        "SI_mean": 0.7632,
+        "CI95": [
+          0.6527,
+          0.8684
+        ],
+        "n": 1000
+      }
+    },
+    {
+      "venue": "bybit",
+      "sharesPct": {
+        "volatility": {
+          "low": 21.18,
+          "medium": 12.64,
+          "high": 17.65
+        },
+        "funding": {
+          "low": 26.14,
+          "medium": 20.45,
+          "high": 25.27
+        },
+        "liquidity": {
+          "low": 21.59,
+          "medium": 20.45,
+          "high": 21.98
+        }
+      },
+      "SI": 0.8193,
+      "Range": 13.5,
+      "MinShare": 12.64,
+      "bootstrap": {
+        "SI_mean": 0.739,
+        "CI95": [
+          0.6165,
+          0.8502
+        ],
+        "n": 1000
+      }
+    },
+    {
+      "venue": "okx",
+      "sharesPct": {
+        "volatility": {
+          "low": 23.53,
+          "medium": 20.69,
+          "high": 24.71
+        },
+        "funding": {
+          "low": 13.64,
+          "medium": 19.32,
+          "high": 20.88
+        },
+        "liquidity": {
+          "low": 15.91,
+          "medium": 15.91,
+          "high": 21.98
+        }
+      },
+      "SI": 0.8195,
+      "Range": 11.07,
+      "MinShare": 13.64,
+      "bootstrap": {
+        "SI_mean": 0.7364,
+        "CI95": [
+          0.6161,
+          0.8422
+        ],
+        "n": 1000
+      }
+    }
+  ],
+  "stats": {
+    "volatility": {
+      "chi2": 4.9758,
+      "dof": 8,
+      "p": 0.760155
+    },
+    "funding": {
+      "chi2": 8.2157,
+      "dof": 8,
+      "p": 0.412687
+    },
+    "liquidity": {
+      "chi2": 3.2606,
+      "dof": 8,
+      "p": 0.916956
+    },
+    "global": {
+      "chi2": 7.8979,
+      "dof": 8,
+      "p": 0.443502
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "timestamp": "2025-09-26T16:17:43.375432",
+  "parameters": {
+    "volatility_file": "exports/leadership_by_day.csv",
+    "funding_file": "exports/leadership_by_day_funding.csv",
+    "liquidity_file": "exports/leadership_by_day_liquidity.csv",
+    "start_date": "2025-01-01",
+    "end_date": "2025-09-24",
+    "export_dir": "exports"
+  },
+  "results": {
+    "venues_analyzed": 5,
+    "environments": 3,
+    "regimes_per_env": 3,
+    "total_bins": 9,
+    "guardrails": 0,
+    "matrix_shape": [
+      5,
+      13
+    ]
+  },
+  "export_files": [
+    "invariance_matrix.csv",
+    "invariance_report.json",
+    "invariance_summary.md",
+    "MANIFEST.json"
+  ]
+}
