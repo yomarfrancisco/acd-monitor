@@ -1,0 +1,9 @@
+{
+  "keptDays": 0,
+  "droppedDays": 0,
+  "dropReasons": {
+    "notEnoughData": 0,
+    "notCointegrated": 0,
+    "modelFail": 0
+  }
+}
