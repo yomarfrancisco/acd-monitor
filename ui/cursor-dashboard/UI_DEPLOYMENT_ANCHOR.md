@@ -19,6 +19,7 @@ When I ask for changes, assume:
 **Deployment**: Auto-deploys to Vercel on push  
 **Latest Stable Deploy**: 2024-12-19 (cursor fix implementation)
 **Fresh Preview Deploy**: 2024-12-19 (deploying clean working state)
+**Production Deploy**: 2025-09-26 (volatility regime analysis with structured logging)
 
 ## **Environment Requirements**
 - **Node.js**: v18.x (required for Next.js 14.2.16)
@@ -286,6 +287,61 @@ git push
 - **Mobile Issues**: Test with 16px font sizes
 - **Cursor Problems**: Verify `caretColor: "transparent"` and positioning
 - **Preview Deployments**: Check Vercel dashboard for feature branch URLs
+
+## **🚀 Production Deployment - 2025-09-26**
+
+### **Deployment Details**
+- **Commit SHA**: `8c93252` - "Update: Add Data Sufficiency Note to ACD Working Plan"
+- **Production URL**: https://cursor-dashboard-qbmwsxcpl-ygorfrancisco-gmailcoms-projects.vercel.app
+- **Vercel Inspect URL**: https://vercel.com/ygorfrancisco-gmailcoms-projects/cursor-dashboard/GtPU1NA58NMpS6RFkjwJQWkPLYdX
+- **Deployment Time**: 2025-09-26 11:45 UTC
+- **Build Status**: ✅ Successful
+
+### **Environment Variables (Production)**
+```bash
+# Production Environment Matrix (as specified)
+NEXT_PUBLIC_BUILD_MODE=live
+NEXT_PUBLIC_UI_DEBUG=false
+NEXT_PUBLIC_PREVIEW_BINANCE=false
+NEXT_PUBLIC_SEED_EVENTS=false
+NEXT_PUBLIC_DATA_MODE=live
+NEXT_PUBLIC_ENABLE_COINBASE=true
+# NEXT_PUBLIC_PROXY_HOST=<prod proxy base, if required>
+```
+
+### **Build Metrics**
+- **Bundle Size**: 420 kB (main page)
+- **First Load JS**: 87.4 kB shared
+- **Build Time**: ~6 seconds
+- **Node Version**: 22.x (Vercel default)
+
+### **Smoke Test Results**
+- ✅ Production URL loads successfully
+- ✅ No debug badges visible (NEXT_PUBLIC_UI_DEBUG=false)
+- ✅ Coinbase integration enabled (NEXT_PUBLIC_ENABLE_COINBASE=true)
+- ✅ Live data mode active (NEXT_PUBLIC_DATA_MODE=live)
+- ✅ No preview flags in production
+
+### **Features Deployed**
+- ✅ Volatility regime analysis with structured logging
+- ✅ Court-ready logging schema implementation
+- ✅ Export functionality for economists/regulators
+- ✅ All 5 venue integrations (Binance, Coinbase, Kraken, Bybit, OKX)
+- ✅ Consensus proximity leadership metrics
+- ✅ Real-time OHLCV data processing
+
+### **Export Files Available**
+- `vol_terciles_summary.json` - Tercile boundaries and counts
+- `leadership_by_regime.json` - Complete leadership analysis
+- `leadership_by_day.csv` - Daily leadership data
+
+### **Deployment Checklist**
+- ✅ Branch verification: `fix/restore-agents-from-preview`
+- ✅ TypeScript compilation: No errors
+- ✅ Build test: Successful (420 kB bundle)
+- ✅ Vercel CLI deployment: Successful
+- ✅ Environment variables: Production matrix applied
+- ✅ Production URL: Live and accessible
 
 ---
 
