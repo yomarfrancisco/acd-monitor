@@ -181,8 +181,9 @@ class CointegratedSyntheticGenerator:
         Returns:
             Array of venue-specific prices
         """
-        params = self.venue_params[venue]
-        n_minutes = len(efficient_prices)
+        # Get venue parameters and calculate duration
+        _ = self.venue_params[venue]  # params not used in this context
+        _ = len(efficient_prices)  # n_minutes not used in this context
 
         if self.mode == "vecm_cointegrated_v2":
             return self._generate_vecm_cointegrated_prices(efficient_prices, venue, shock_events)

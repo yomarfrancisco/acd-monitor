@@ -7,13 +7,13 @@ import asyncio
 import websockets
 import aiohttp
 import pandas as pd
-import numpy as np
 from datetime import datetime, timedelta
 import json
 import logging
 import os
 import time
-from typing import Dict, List, Optional, Tuple
+import subprocess
+from typing import List
 import sys
 from pathlib import Path
 
@@ -23,9 +23,28 @@ logger = logging.getLogger(__name__)
 class OverlapOrchestrator:
     """Real-time capture orchestrator with strict overlap monitoring."""
 
-    def __init__(self, pair: str = "BTC-USD", export_dir: str = "exports"):
+    def __init__(
+        self,
+        pair: str = "BTC-USD",
+        export_dir: str = "exports",
+        freq: str = "1s",
+        quorum: int = 4,
+        min_minutes: List[int] = [30, 20, 10],
+        policy_order: List[str] = ["BEST4_30m", "BEST4_20m", "BEST4_10m", "ALL5_10m"],
+        max_gap_s: float = 1.0,
+        heartbeat_interval: int = 5,
+        check_interval: int = 30,
+    ):
         self.pair = pair
         self.export_dir = export_dir
+        self.freq = freq
+        self.quorum = quorum
+        self.min_minutes = min_minutes
+        self.policy_order = policy_order
+        self.max_gap_s = max_gap_s
+        self.heartbeat_interval = heartbeat_interval
+        self.check_interval = check_interval
+
         self.venues = ["binance", "coinbase", "kraken", "okx", "bybit"]
         self.capture_start = datetime.now()
         self.capture_duration = timedelta(hours=3)
@@ -386,9 +405,9 @@ class OverlapOrchestrator:
             logger.error(f"Error persisting tick for {exchange}: {e}")
 
     async def _heartbeat_monitor(self):
-        """Emit heartbeats every 5 seconds."""
+        """Emit heartbeats at configured interval."""
         while datetime.now() < self.capture_end:
-            await asyncio.sleep(5)
+            await asyncio.sleep(self.heartbeat_interval)
 
             for venue, stats in self.venue_stats.items():
                 lag_ms = int(time.time() * 1000) - stats.get(
@@ -406,7 +425,7 @@ class OverlapOrchestrator:
     async def _overlap_monitor(self):
         """Monitor for strict overlap windows."""
         while datetime.now() < self.capture_end:
-            await asyncio.sleep(30)  # Check every 30 seconds
+            await asyncio.sleep(self.check_interval)
 
             try:
                 # Import overlap finder
@@ -417,10 +436,10 @@ class OverlapOrchestrator:
                 result = find_real_overlap_rolling(
                     self.venues,
                     self.pair,
-                    freq="1s",
-                    max_gap_s=1,
-                    min_minutes=[30, 20, 10],
-                    quorum=4,
+                    freq=self.freq,
+                    max_gap_s=self.max_gap_s,
+                    min_minutes=self.min_minutes,
+                    quorum=self.quorum,
                 )
 
                 if result:
@@ -440,6 +459,9 @@ class OverlapOrchestrator:
                         json.dump(overlap_data, f, indent=2)
 
                     logger.info(f"Overlap found: {policy} with {len(venues_used)} venues")
+
+                    # Trigger auto-analysis
+                    await self._run_auto_analysis(overlap_data)
                     return True  # Signal to stop capture and run analysis
 
             except Exception as e:
@@ -460,6 +482,33 @@ class OverlapOrchestrator:
         print(f"[OVERLAP:INSUFFICIENT] {json.dumps(overlap_status)}")
         logger.error("No overlap found after 3 hours")
         return False
+
+    async def _run_auto_analysis(self, overlap_data: dict):
+        """Run auto-analysis on the found overlap window."""
+        logger.info("Starting auto-analysis on overlap window")
+
+        try:
+            # Run the auto-analysis script
+            cmd = [
+                "python",
+                "scripts/run_auto_microstructure.py",
+                "--pair",
+                self.pair,
+                "--export-dir",
+                self.export_dir,
+                "--verbose",
+            ]
+
+            subprocess.run(cmd, capture_output=True, text=True, check=True)
+
+            logger.info("Auto-analysis completed successfully")
+            print("Auto-analysis completed - check exports/ for results")
+
+        except subprocess.CalledProcessError as e:
+            logger.error(f"Auto-analysis failed: {e}")
+            logger.error(f"stdout: {e.stdout}")
+            logger.error(f"stderr: {e.stderr}")
+            raise
 
     async def run(self):
         """Run the capture orchestrator."""
@@ -496,7 +545,20 @@ async def main():
 
     parser = argparse.ArgumentParser(description="ACD Overlap Orchestrator")
     parser.add_argument("--pair", default="BTC-USD", help="Trading pair")
+    parser.add_argument("--freq", default="1s", help="Data frequency")
+    parser.add_argument("--quorum", type=int, default=4, help="Minimum venues required")
+    parser.add_argument(
+        "--min-minutes", default="30,20,10", help="Minimum minutes (comma-separated)"
+    )
+    parser.add_argument(
+        "--policy-order", default="BEST4_30m,BEST4_20m,BEST4_10m,ALL5_10m", help="Policy order"
+    )
+    parser.add_argument("--max-gap-s", type=float, default=1.0, help="Maximum gap in seconds")
     parser.add_argument("--export-dir", default="exports", help="Export directory")
+    parser.add_argument("--heartbeat-s", type=int, default=5, help="Heartbeat interval in seconds")
+    parser.add_argument(
+        "--check-interval-s", type=int, default=30, help="Overlap check interval in seconds"
+    )
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
 
     args = parser.parse_args()
@@ -507,7 +569,21 @@ async def main():
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
 
-    orchestrator = OverlapOrchestrator(args.pair, args.export_dir)
+    # Parse min-minutes and policy-order
+    min_minutes = [int(x) for x in args.min_minutes.split(",")]
+    policy_order = args.policy_order.split(",")
+
+    orchestrator = OverlapOrchestrator(
+        pair=args.pair,
+        export_dir=args.export_dir,
+        freq=args.freq,
+        quorum=args.quorum,
+        min_minutes=min_minutes,
+        policy_order=policy_order,
+        max_gap_s=args.max_gap_s,
+        heartbeat_interval=args.heartbeat_s,
+        check_interval=args.check_interval_s,
+    )
     overlap_found = await orchestrator.run()
 
     if overlap_found:

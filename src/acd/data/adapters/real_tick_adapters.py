@@ -3,7 +3,7 @@ Real tick data adapters for cryptocurrency exchanges.
 
 This module provides adapters for fetching real tick/trade data from:
 - Binance
-- Coinbase 
+- Coinbase
 - Kraken
 - OKX
 - Bybit

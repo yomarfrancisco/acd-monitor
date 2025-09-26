@@ -4,7 +4,7 @@ ACD I/O utilities for strict window management.
 
 import pandas as pd
 from datetime import datetime
-from typing import List, Dict, Tuple
+from typing import List, Dict
 import logging
 import sys
 

@@ -4,8 +4,8 @@ Finds genuine simultaneous data across all venues with no synthetic fallbacks.
 """
 
 import pandas as pd
-from datetime import datetime, timedelta
-from typing import List, Dict, Tuple, Optional
+from datetime import datetime
+from typing import List, Tuple, Optional
 import logging
 import sys
 import json
@@ -80,8 +80,10 @@ def find_real_overlap(
 
     if len(venue_data) < 4:
         logger.error(f"[OVERLAP:INSUFFICIENT] Only {len(venue_data)} venues with data, need >=4")
+        venues_list = list(venue_data.keys())
         print(
-            f'[OVERLAP:INSUFFICIENT] {{"venues":{list(venue_data.keys())},"minutes":0,"reason":"insufficient venues with data"}}'
+            f'[OVERLAP:INSUFFICIENT] {{"venues":{venues_list},'
+            f'"minutes":0,"reason":"insufficient venues with data"}}'
         )
         sys.exit(2)
 
@@ -94,8 +96,10 @@ def find_real_overlap(
 
     if overlap_start >= overlap_end:
         logger.error("[OVERLAP:INSUFFICIENT] No temporal overlap between venues")
+        venues_list = list(venue_data.keys())
         print(
-            f'[OVERLAP:INSUFFICIENT] {{"venues":{list(venue_data.keys())},"minutes":0,"reason":"no temporal overlap between venues"}}'
+            f'[OVERLAP:INSUFFICIENT] {{"venues":{venues_list},'
+            f'"minutes":0,"reason":"no temporal overlap between venues"}}'
         )
         sys.exit(2)
 
@@ -122,8 +126,10 @@ def find_real_overlap(
                 logger.info(f"{venue}: CONTINUOUS in overlap ({len(venue_overlap)} ticks)")
                 continuous_venues.append(venue)
             else:
+                max_gap_val = gaps.max() if len(gaps) > 0 else 0
                 logger.warning(
-                    f"{venue}: {len(gaps)} gaps > {max_gap}s in overlap (largest: {gaps.max():.1f}s)"
+                    f"{venue}: {len(gaps)} gaps > {max_gap}s in overlap "
+                    f"(largest: {max_gap_val:.1f}s)"
                 )
                 excluded_venues.append(venue)
         else:
@@ -133,7 +139,8 @@ def find_real_overlap(
     logger.info(f"Continuous venues: {len(continuous_venues)}/{len(venue_data)}")
     logger.info(f"Excluded: {excluded_venues}")
 
-    # Apply strict policy: ALL5>=30m else ALL5>=20m else ALL5>=10m else BEST4>=30m else BEST4>=20m else BEST4>=10m
+    # Apply strict policy: ALL5>=30m else ALL5>=20m else ALL5>=10m
+    # else BEST4>=30m else BEST4>=20m else BEST4>=10m
     if len(continuous_venues) >= 5 and overlap_duration >= 30:
         policy = "ALL5>=30m"
         venues_used = continuous_venues
@@ -154,18 +161,26 @@ def find_real_overlap(
         venues_used = continuous_venues
     else:
         logger.error(
-            f"[OVERLAP:INSUFFICIENT] Insufficient overlap: {len(continuous_venues)} venues, {overlap_duration:.1f} minutes"
+            f"[OVERLAP:INSUFFICIENT] Insufficient overlap: "
+            f"{len(continuous_venues)} venues, {overlap_duration:.1f} minutes"
         )
         print(
-            f'[OVERLAP:INSUFFICIENT] {{"venues":{continuous_venues},"minutes":{overlap_duration:.1f},"reason":"not enough simultaneous data"}}'
+            f'[OVERLAP:INSUFFICIENT] {{"venues":{continuous_venues},'
+            f'"minutes":{overlap_duration:.1f},'
+            f'"reason":"not enough simultaneous data"}}'
         )
         sys.exit(2)
 
     # Print the exact overlap JSON
-    overlap_json = f'[OVERLAP] {{"startUTC":"{overlap_start}","endUTC":"{overlap_end}","minutes":{overlap_duration:.1f},"venues":{venues_used},"excluded":{excluded_venues},"policy":"{policy}"}}'
+    overlap_json = (
+        f'[OVERLAP] {{"startUTC":"{overlap_start}","endUTC":"{overlap_end}",'
+        f'"minutes":{overlap_duration:.1f},"venues":{venues_used},'
+        f'"excluded":{excluded_venues},"policy":"{policy}"}}'
+    )
     print(overlap_json)
     logger.info(
-        f"Found real overlap: {policy} with {len(venues_used)} venues for {overlap_duration:.1f} minutes"
+        f"Found real overlap: {policy} with {len(venues_used)} venues "
+        f"for {overlap_duration:.1f} minutes"
     )
 
     return overlap_start, overlap_end, venues_used, policy
@@ -340,10 +355,15 @@ def find_real_overlap_rolling(
                 policy = f"BEST4_{min_min}m"
 
             # Print the exact overlap JSON
-            overlap_json = f'[OVERLAP] {{"startUTC":"{overlap_start}","endUTC":"{overlap_end}","minutes":{overlap_duration:.1f},"venues":{continuous_venues},"excluded":{excluded_venues},"policy":"{policy}"}}'
+            overlap_json = (
+                f'[OVERLAP] {{"startUTC":"{overlap_start}","endUTC":"{overlap_end}",'
+                f'"minutes":{overlap_duration:.1f},"venues":{continuous_venues},'
+                f'"excluded":{excluded_venues},"policy":"{policy}"}}'
+            )
             print(overlap_json)
             logger.info(
-                f"Found real overlap: {policy} with {len(continuous_venues)} venues for {overlap_duration:.1f} minutes"
+                f"Found real overlap: {policy} with {len(continuous_venues)} venues "
+                f"for {overlap_duration:.1f} minutes"
             )
 
             return overlap_start, overlap_end, continuous_venues, policy
@@ -371,6 +391,7 @@ def abort_on_synthetic(policy: str) -> None:
     if policy.startswith("SYNTHETIC"):
         logger.error(f"[ABORT:synthetic] Synthetic policy detected: {policy}")
         print(
-            f'[ABORT:synthetic] {{"policy":"{policy}","reason":"synthetic data not allowed in court-ready evidence"}}'
+            f'[ABORT:synthetic] {{"policy":"{policy}",'
+            f'"reason":"synthetic data not allowed in court-ready evidence"}}'
         )
         sys.exit(2)
