@@ -419,6 +419,20 @@ Next milestones: add policy/regulatory events and the interpretation layer to co
 
 ⸻
 
+### 12. Real Data Overlap Status (Live Ops) — Sept 26, 2025
+
+- Result: **No temporal overlap found** across Binance, Coinbase, Kraken, OKX, Bybit under strict ≤1s gap policy.
+- Capture attempts: 1 live orchestrator session (3h target), 260 parquet files produced.
+- Gap profile (sample): binance=219, coinbase=127, kraken=124, okx=5, bybit=118 gaps >1s.
+- Court stance: **Abort** analytics when strict policy unmet; no synthetic fallbacks.
+- Evidence: `real_data_runs/<timestamp>/NO_OVERLAP_REPORT.md`, `OVERLAP_STATUS.json`, `OVERLAP_STATUS.log`, `HEARTBEAT.csv`, tag `run/no-overlap-<UTC>`.
+- Next steps:
+  1) Extend capture to 6–12h with the same strict policy.
+  2) Attempt synchronized-timeboxed capture (best 4 venues) during high-liquidity hours.
+  3) Optional (non-court): explore ≤2s tolerance to pre-screen windows before strict rerun.
+
+⸻
+
 End of document.
 
 ⸻
