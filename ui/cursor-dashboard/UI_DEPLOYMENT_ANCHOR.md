@@ -154,24 +154,28 @@ pnpm build
 
 If both pass, proceed to Direct Push. If either fails, stop and ask for guidance (paste logs).
 
-## **🚀 Direct Push Policy (No PRs)**
+## **🚀 Preview-Only Deployment Policy**
 1. **Stage & commit (UI scope only)**
    ```bash
    git add -A
    git commit -m "ui: <clear summary>"
    ```
 
-2. **Push directly**
+2. **Deploy to Preview (Vercel CLI)**
    ```bash
-   git push origin fix/restore-agents-from-preview
+   cd ui/cursor-dashboard/
+   pnpm build
+   vercel --prebuilt
    ```
 
-3. **Verify CI/CD**
-   - GitHub Actions: New run appears for the branch.
-   - Vercel: New Preview deployment created.
-   - Share: Post the Preview URL + 1–2 screenshots.
+3. **Verify Preview Deployment**
+   - Vercel: New Preview deployment created with ephemeral URL
+   - URL Pattern: `cursor-dashboard-xxxxx.vercel.app`
+   - Environment: Preview-scope variables applied
+   - Debug tools: Visible (NEXT_PUBLIC_UI_DEBUG=true)
+   - Share: Post the Preview URL + screenshots
 
-Only pause for approval if typecheck/build fails or the Vercel deploy is red.
+**Note**: Production alias remains unset. All deployments go to Preview only.
 
 ## **🔍 Deployment Verification Checklist (After push)**
 1. GitHub Actions shows a green run for this commit.
@@ -226,7 +230,7 @@ git push origin fix/restore-agents-from-preview --force
 - Using npm instead of pnpm (breaks lockfile).
 - Assuming Vercel CLI deploys; we rely on GitHub → Vercel integration.
 
-## **🔁 Updated Standard Workflow**
+## **🔁 Updated Standard Workflow (Preview-Only)**
 1. `cd ui/cursor-dashboard/`
 2. `git branch --show-current` → confirm `fix/restore-agents-from-preview`
 3. `pnpm install` (if needed)
@@ -234,8 +238,9 @@ git push origin fix/restore-agents-from-preview --force
 5. `pnpm build` (note bundle size sanity)
 6. Optional: `ls ui/cursor-dashboard/components/`
 7. `git add -A && git commit -m "ui: <summary>"`
-8. `git push origin fix/restore-agents-from-preview`
-9. Check GitHub Actions + Vercel Preview → share URL + screenshots
+8. `vercel --prebuilt` (deploy to Preview)
+9. Verify Preview URL + debug tools + Coinbase integration
+10. Share Preview URL + screenshots
 
 ## **File Structure**
 ```
@@ -288,60 +293,55 @@ git push
 - **Cursor Problems**: Verify `caretColor: "transparent"` and positioning
 - **Preview Deployments**: Check Vercel dashboard for feature branch URLs
 
-## **🚀 Production Deployment - 2025-09-26**
+## **🚀 Deployment Strategy Update - 2025-09-26**
 
-### **Deployment Details**
-- **Commit SHA**: `8c93252` - "Update: Add Data Sufficiency Note to ACD Working Plan"
-- **Production URL**: https://cursor-dashboard-qbmwsxcpl-ygorfrancisco-gmailcoms-projects.vercel.app
-- **Vercel Inspect URL**: https://vercel.com/ygorfrancisco-gmailcoms-projects/cursor-dashboard/GtPU1NA58NMpS6RFkjwJQWkPLYdX
-- **Deployment Time**: 2025-09-26 11:45 UTC
-- **Build Status**: ✅ Successful
+### **New Deployment Mode: Preview-Only**
+- **Strategy**: Deploy builds to Preview only, not Production
+- **Command**: `vercel --prebuilt` (without --prod flag)
+- **URL Pattern**: `cursor-dashboard-xxxxx.vercel.app` (ephemeral Preview URLs)
+- **Environment**: Preview-scope environment variables only
 
-### **Environment Variables (Production)**
+### **Preview Environment Variables**
 ```bash
-# Production Environment Matrix (as specified)
+# Preview Environment Matrix (as specified)
+NEXT_PUBLIC_UI_DEBUG=true
+NEXT_PUBLIC_PREVIEW_BINANCE=true
 NEXT_PUBLIC_BUILD_MODE=live
-NEXT_PUBLIC_UI_DEBUG=false
-NEXT_PUBLIC_PREVIEW_BINANCE=false
-NEXT_PUBLIC_SEED_EVENTS=false
 NEXT_PUBLIC_DATA_MODE=live
 NEXT_PUBLIC_ENABLE_COINBASE=true
-# NEXT_PUBLIC_PROXY_HOST=<prod proxy base, if required>
+# NEXT_PUBLIC_SEED_EVENTS=false (not set in preview)
+# NEXT_PUBLIC_PROXY_HOST=<preview proxy, if needed>
 ```
 
-### **Build Metrics**
-- **Bundle Size**: 420 kB (main page)
-- **First Load JS**: 87.4 kB shared
-- **Build Time**: ~6 seconds
-- **Node Version**: 22.x (Vercel default)
+### **Previous Production Deployment (Archived)**
+- **Commit SHA**: `8c93252` - "Update: Add Data Sufficiency Note to ACD Working Plan"
+- **Production URL**: https://cursor-dashboard-qbmwsxcpl-ygorfrancisco-gmailcoms-projects.vercel.app
+- **Status**: Archived - Production alias remains unset
+- **Build Metrics**: 420 kB bundle, 87.4 kB shared JS
+- **Features**: Volatility regime analysis with structured logging
 
-### **Smoke Test Results**
-- ✅ Production URL loads successfully
-- ✅ No debug badges visible (NEXT_PUBLIC_UI_DEBUG=false)
-- ✅ Coinbase integration enabled (NEXT_PUBLIC_ENABLE_COINBASE=true)
-- ✅ Live data mode active (NEXT_PUBLIC_DATA_MODE=live)
-- ✅ No preview flags in production
-
-### **Features Deployed**
-- ✅ Volatility regime analysis with structured logging
-- ✅ Court-ready logging schema implementation
-- ✅ Export functionality for economists/regulators
-- ✅ All 5 venue integrations (Binance, Coinbase, Kraken, Bybit, OKX)
-- ✅ Consensus proximity leadership metrics
-- ✅ Real-time OHLCV data processing
-
-### **Export Files Available**
-- `vol_terciles_summary.json` - Tercile boundaries and counts
-- `leadership_by_regime.json` - Complete leadership analysis
-- `leadership_by_day.csv` - Daily leadership data
-
-### **Deployment Checklist**
+### **Preview Deployment Checklist**
 - ✅ Branch verification: `fix/restore-agents-from-preview`
 - ✅ TypeScript compilation: No errors
-- ✅ Build test: Successful (420 kB bundle)
-- ✅ Vercel CLI deployment: Successful
-- ✅ Environment variables: Production matrix applied
-- ✅ Production URL: Live and accessible
+- ✅ Build test: Successful
+- ✅ Vercel CLI deployment: `vercel --prebuilt`
+- ✅ Environment variables: Preview matrix applied
+- ✅ Preview URL: Live and accessible
+- ✅ Debug tools visible (NEXT_PUBLIC_UI_DEBUG=true)
+- ✅ Coinbase integration works
+
+## **📋 Preview Deployment History**
+
+### **Latest Preview Deployment**
+- **Status**: Ready for deployment
+- **Command**: `vercel --prebuilt`
+- **Environment**: Preview-scope variables
+- **Debug Mode**: Enabled (NEXT_PUBLIC_UI_DEBUG=true)
+- **Coinbase**: Enabled (NEXT_PUBLIC_ENABLE_COINBASE=true)
+
+### **Previous Preview Deployments**
+- **Archived Production**: `8c93252` - https://cursor-dashboard-qbmwsxcpl-ygorfrancisco-gmailcoms-projects.vercel.app
+- **Status**: Production alias remains unset
 
 ---
 
