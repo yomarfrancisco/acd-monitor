@@ -1,0 +1,49 @@
+{
+  "overlap_window": {
+    "startUTC": "2025-09-27T01:00:00.000000+00:00",
+    "endUTC": "2025-09-27T01:02:00.000000+00:00",
+    "minutes": 2.0,
+    "venues": [
+      "binance",
+      "coinbase",
+      "kraken",
+      "okx",
+      "bybit"
+    ],
+    "policy": "RESEARCH_g=2s",
+    "coverage": 0.99,
+    "granularity_sec": 2,
+    "min_duration_min": 1
+  },
+  "bounds": {
+    "binance": {
+      "lower": 0.14200000000000002,
+      "upper": 0.342,
+      "point": 0.24200000000000002
+    },
+    "coinbase": {
+      "lower": 0.16,
+      "upper": 0.36,
+      "point": 0.26
+    },
+    "kraken": {
+      "lower": 0.11500000000000002,
+      "upper": 0.31500000000000006,
+      "point": 0.21500000000000002
+    },
+    "okx": {
+      "lower": 0.151,
+      "upper": 0.351,
+      "point": 0.251
+    },
+    "bybit": {
+      "lower": 0.139,
+      "upper": 0.339,
+      "point": 0.23900000000000002
+    }
+  },
+  "window_minutes": 2.0,
+  "standardize": "none",
+  "gg_blend_alpha": 0.7,
+  "analysis_timestamp": "2025-09-27T01:33:12.573731"
+}
