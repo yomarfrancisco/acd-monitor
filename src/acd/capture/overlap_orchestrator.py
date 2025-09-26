@@ -137,7 +137,8 @@ class OverlapOrchestrator:
                         f"[ABORT:already_running] Orchestrator already running with PID {pid}"
                     )
                     print(
-                        f'[ABORT:already_running] {{"pid":{pid},"reason":"orchestrator already running"}}'
+                        f'[ABORT:already_running] {{"pid":{pid},'
+                        f'"reason":"orchestrator already running"}}'
                     )
                     sys.exit(1)
                 except OSError:
@@ -414,7 +415,8 @@ class OverlapOrchestrator:
 
             start_dt = datetime.fromisoformat(overlap_data["startUTC"])
             end_dt = datetime.fromisoformat(overlap_data["endUTC"])
-            # window_seconds = (end_dt - start_dt).total_seconds()  # Not used in current implementation
+            # window_seconds = (end_dt - start_dt).total_seconds()
+            # Not used in current implementation
 
             for venue in overlap_data["venues"]:
                 venue_dir = snapshot_dir / venue

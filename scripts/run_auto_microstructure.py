@@ -37,6 +37,10 @@ def load_overlap_data(export_dir: str, use_overlap_json: Optional[str] = None) -
         sys.exit(2)
 
     try:
+        # Log overlap JSON check
+        logger.info(f"[CHECK:overlap_json] Checking overlap file: {overlap_file}")
+        print(f"[CHECK:overlap_json] {{\"file\":\"{overlap_file}\",\"status\":\"checking\"}}")
+
         with open(overlap_file, "r") as f:
             overlap_data = json.load(f)
 
@@ -46,7 +50,8 @@ def load_overlap_data(export_dir: str, use_overlap_json: Optional[str] = None) -
             if field not in overlap_data:
                 logger.error(f"[ABORT:overlap_missing] Missing field '{field}' in overlap.json")
                 print(
-                    f'[ABORT:overlap_missing] {{"field":"{field}","reason":"required field missing"}}'
+                    f'[ABORT:overlap_missing] {{"field":"{field}",'
+                    f'"reason":"required field missing"}}'
                 )
                 sys.exit(2)
 
@@ -58,6 +63,10 @@ def load_overlap_data(export_dir: str, use_overlap_json: Optional[str] = None) -
                 f'[ABORT:synthetic] {{"policy":"{policy}","reason":"synthetic data not allowed"}}'
             )
             sys.exit(2)
+
+        # Log successful validation
+        logger.info("[CHECK:overlap_json] Overlap file validated successfully")
+        print(f"[CHECK:overlap_json] {{\"file\":\"{overlap_file}\",\"status\":\"valid\"}}")
 
         return overlap_data
 
