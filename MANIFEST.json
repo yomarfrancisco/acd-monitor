@@ -1,5 +1,5 @@
 {
-  "commit": "00995f3bafaed6e2351e766952daf11b0292bd4f",
+  "commit": "a11434275722f3566f864c88f8412c11f83fb2b3",
   "tz": "UTC",
   "sampleWindow": {
     "start": "2025-07-31",
@@ -21,6 +21,16 @@
     "bybit": "data/cache/bybit/btc_usd/1s.parquet",
     "okx": "no_data"
   },
+  "overlap_policy": "PRACTICAL_2VENUE_10MIN",
+  "venues_used": [
+    "coinbase",
+    "bybit"
+  ],
+  "excluded": [
+    "binance",
+    "kraken",
+    "okx"
+  ],
   "dropReasons": {
     "notEnoughData": 0,
     "notCointegrated": 1,
@@ -28,12 +38,17 @@
   },
   "overlapWindow": {
     "startUTC": "2025-09-26 17:22:00+00:00",
-    "endUTC": "2025-09-26 17:27:00+00:00",
-    "minutes": 5.0,
+    "endUTC": "2025-09-26 17:32:00+00:00",
+    "minutes": 10.0,
     "venues": [
       "coinbase",
       "bybit"
     ],
-    "note": "synthetic_fill_for_missing_venues"
+    "excluded": [
+      "binance",
+      "kraken",
+      "okx"
+    ],
+    "policy": "PRACTICAL_2VENUE_10MIN"
   }
 }
