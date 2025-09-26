@@ -4,12 +4,13 @@ Synthetic Crypto Data Generator for ACD Validation
 Generates competitive vs. coordinated crypto trading scenarios for ICP/VMM validation.
 """
 
+import logging
+from dataclasses import dataclass
+from datetime import datetime, timedelta
+from typing import List, Tuple
+
 import numpy as np
 import pandas as pd
-from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple
-from datetime import datetime, timedelta
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -117,7 +118,8 @@ class SyntheticCryptoGenerator:
             for i in range(1, self.config.n_exchanges):
                 if t >= self.config.lead_lag_delay:
                     # Environment-dependent coordination strength
-                    # First half: strong positive coordination, second half: moderate negative coordination
+                    # First half: strong positive coordination, second half: moderate negative
+                    # coordination
                     if t < self.config.n_timepoints // 2:
                         env_coordination = 0.8  # Strong positive coordination
                         # In first environment: strong positive mirroring
@@ -244,7 +246,8 @@ class SyntheticCryptoGenerator:
         data["scenario_type"] = scenario_type
         data["timestamp"] = timestamps
 
-        # Add environment labels (for ICP testing) - create 2 environments to satisfy ICP requirements
+        # Add environment labels (for ICP testing) - create 2 environments to
+        # satisfy ICP requirements
         n_points = len(prices)
         # Create 2 environments by splitting data in half
         volatility_regimes = ["low"] * (n_points // 2) + ["high"] * (n_points - n_points // 2)

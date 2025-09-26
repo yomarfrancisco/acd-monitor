@@ -5,9 +5,10 @@ Implements global scalers that can be fit once and reused across datasets
 to prevent normalization from collapsing differences between competitive and coordinated scenarios.
 """
 
-import numpy as np
-from typing import Dict, Optional, Tuple
 import logging
+from typing import Dict, Optional
+
+import numpy as np
 
 logger = logging.getLogger(__name__)
 
@@ -212,4 +213,3 @@ class GlobalMomentScaler:
             moment_vectors.append(scaled_data[moment_name].flatten())
 
         return np.concatenate(moment_vectors)
-

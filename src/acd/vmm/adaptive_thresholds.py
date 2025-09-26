@@ -3,7 +3,7 @@ ACD Monitor Adaptive Threshold Framework
 
 Implements dataset-size-aware thresholds for spurious regime detection:
 - Small datasets (≤200 windows): ≤2% spurious rate
-- Medium datasets (201–800): ≤5% 
+- Medium datasets (201–800): ≤5%
 - Large datasets (>800): ≤8%
 
 All thresholds are configurable via profiles and applied consistently across

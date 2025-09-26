@@ -10,14 +10,14 @@ This module implements the power analysis framework required for the v1.4 baseli
 All methods follow the v1.4 professional standards with transparent formulas and economic interpretation.
 """
 
+import logging
+from dataclasses import dataclass
+from datetime import datetime
+from typing import Dict, List, Optional, Tuple
+
 import numpy as np
 import pandas as pd
-from typing import Dict, List, Tuple, Optional
-from dataclasses import dataclass
 from scipy import stats
-from scipy.optimize import minimize_scalar
-import logging
-from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -374,8 +374,8 @@ class FalsePositiveEstimator:
         """Calculate sensitivity of false positive rate to volatility changes."""
         try:
             # Calculate correlation between volatility and false positive rate
-            volatility = data["volatility"]
-            similarity = data["similarity"]
+            data["volatility"]
+            data["similarity"]
 
             # Calculate false positive rate for different volatility levels
             low_vol_data = data[data["volatility"] < data["volatility"].quantile(0.33)]
@@ -535,4 +535,3 @@ if __name__ == "__main__":
         print(f"  Detection Threshold: {sensitivity.detection_threshold:.3f}")
         print(f"  False Positive Rate: {sensitivity.false_positive_rate:.3f}")
         print(f"  Minimum Effect Size: {sensitivity.minimum_effect_size:.3f}")
-

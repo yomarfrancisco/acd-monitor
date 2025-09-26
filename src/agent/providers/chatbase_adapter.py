@@ -6,12 +6,10 @@ client without changing current behavior. It exposes a minimal interface
 for agent providers while maintaining all existing functionality.
 """
 
-import os
-import json
-import asyncio
-from typing import Dict, List, Optional, Any, Union
-from dataclasses import dataclass
 import logging
+import os
+from dataclasses import dataclass
+from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -229,4 +227,3 @@ def check_provider_health(provider_type: Optional[str] = None) -> Health:
     """
     provider = create_provider(provider_type)
     return provider.healthcheck()
-

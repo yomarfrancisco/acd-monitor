@@ -9,13 +9,14 @@ This module implements the core similarity metrics required for the v1.4 baselin
 All metrics follow the v1.4 professional standards with transparent formulas and economic interpretation.
 """
 
+import logging
+from dataclasses import dataclass
+from typing import Dict, Tuple
+
 import numpy as np
 import pandas as pd
-from typing import Dict, List, Tuple, Optional
-from dataclasses import dataclass
 from scipy.spatial.distance import cosine
 from scipy.stats import pearsonr
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -471,4 +472,3 @@ if __name__ == "__main__":
     print(f"Confidence Interval: {metrics.confidence_interval}")
     print(f"Statistical Significance: {metrics.statistical_significance:.3f}")
     print(f"Economic Interpretation: {metrics.economic_interpretation}")
-

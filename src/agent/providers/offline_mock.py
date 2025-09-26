@@ -6,13 +6,11 @@ deterministic, templated responses using ACD artifacts and fixtures.
 It's designed for testing and fallback scenarios when Chatbase is unavailable.
 """
 
-import os
 import json
-import hashlib
-from typing import Dict, List, Optional, Any
+import logging
 from dataclasses import dataclass
 from pathlib import Path
-import logging
+from typing import Any, Dict, List, Optional
 
 from .chatbase_adapter import AgentMessage, Health
 
@@ -991,7 +989,7 @@ I understand you're asking about algorithmic coordination detection. Based on th
 
 ### Available Analysis:
 - **ICP Invariance Tests:** Available
-- **VMM Moment Analysis:** Available  
+- **VMM Moment Analysis:** Available
 - **Validation Layers:** Lead-lag, Mirroring, HMM, Information Flow
 - **Risk Assessment:** Integrated scoring available
 - **Bundle Generation:** Regulatory-ready bundles available
@@ -1561,7 +1559,7 @@ Please be more specific about which aspect of the analysis you'd like to explore
 
         elif template.intent == "bundle_generation":
             integrated = artifacts.get("integrated", {})
-            attribution = artifacts.get("attribution", {})
+            artifacts.get("attribution", {})
             data.update(
                 {
                     "bundle_id": f"ACD_BUNDLE_{self.fixtures['default_seed']}_{self.fixtures['default_timestamp'].replace(':', '').replace('-', '').replace(' ', '_')}",

@@ -4,16 +4,16 @@ Sensitivity Analysis for VMM
 Implements coordination strength sensitivity testing and power analysis.
 """
 
-import numpy as np
-import pandas as pd
-from typing import List, Dict, Any, Tuple
 import logging
 from pathlib import Path
+from typing import Any, Dict, List
 
-from ..data.synthetic_crypto import SyntheticCryptoGenerator, CryptoMarketConfig
+import pandas as pd
+
+from ..data.synthetic_crypto import CryptoMarketConfig, SyntheticCryptoGenerator
 from ..vmm.crypto_moments import CryptoMomentCalculator, CryptoMomentConfig
+from ..vmm.engine import VMMConfig, VMMEngine
 from ..vmm.scalers import GlobalMomentScaler
-from ..vmm.engine import VMMEngine, VMMConfig
 
 logger = logging.getLogger(__name__)
 
@@ -286,4 +286,3 @@ class PowerAnalyzer:
             f.write(report)
 
         logger.info(f"Power analysis report saved to {output_file}")
-

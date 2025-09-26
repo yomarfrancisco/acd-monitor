@@ -8,23 +8,24 @@ This module provides enhanced reporting capabilities with:
 - Audit trails with cryptographic signatures
 """
 
-import json
 import hashlib
+import json
 import logging
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple
-import pandas as pd
+from typing import Any, Dict, List, Optional, Tuple
+
 import numpy as np
+import pandas as pd
 
 from ..icp.engine import ICPResult
-from ..vmm.engine import VMMOutput
-from ..vmm.crypto_moments import CryptoMoments
-from ..validation.lead_lag import LeadLagResult
-from ..validation.mirroring import MirroringResult
 from ..validation.hmm import HMMResult
 from ..validation.infoflow import InfoFlowResult
+from ..validation.lead_lag import LeadLagResult
+from ..validation.mirroring import MirroringResult
+from ..vmm.crypto_moments import CryptoMoments
+from ..vmm.engine import VMMOutput
 from .integrated_engine import IntegratedResult
 
 logger = logging.getLogger(__name__)

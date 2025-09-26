@@ -11,14 +11,14 @@ required for the v1.4 baseline standard:
 All methods follow the v1.4 professional standards with transparent formulas and economic interpretation.
 """
 
+import logging
+from dataclasses import dataclass
+from datetime import datetime
+from typing import Dict, List, Optional, Tuple
+
 import numpy as np
 import pandas as pd
-from typing import Dict, List, Tuple, Optional, Union
-from dataclasses import dataclass
 from scipy import stats
-from scipy.optimize import minimize
-import logging
-from datetime import datetime, timedelta
 
 logger = logging.getLogger(__name__)
 
@@ -96,7 +96,7 @@ class BaiPerronStructuralBreakDetector:
                 dates = pd.date_range(start="2023-01-01", periods=len(data), freq="D")
 
             breaks = []
-            n = len(data)
+            len(data)
 
             # Implement simplified Bai-Perron test
             # In production, this would use the full Bai-Perron algorithm
@@ -189,7 +189,7 @@ class BaiPerronStructuralBreakDetector:
             # Use F-distribution with 1 and n-2 degrees of freedom
             p_value = 1 - stats.f.cdf(f_stat, 1, n - 2)
             return p_value
-        except:
+        except BaseException:
             return 1.0
 
 
@@ -435,7 +435,7 @@ class AdaptiveBaselineCalibrator:
             drift_analysis = self.cusum.analyze_drift(similarity_data)
 
             # Detect real-time change points
-            change_point = self.page_hinkley.detect_change_point(similarity_data)
+            self.page_hinkley.detect_change_point(similarity_data)
 
             # Calculate adaptive baseline
             baseline_value = self._calculate_adaptive_baseline(
@@ -584,4 +584,3 @@ if __name__ == "__main__":
             print(f"  Post-break Mean: {break_result.post_break_mean:.3f}")
             print(f"  Break Magnitude: {break_result.break_magnitude:.3f}")
             print(f"  Statistical Significance: {break_result.statistical_significance:.3f}")
-

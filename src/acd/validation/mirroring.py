@@ -6,14 +6,14 @@ using dynamic time warping and cosine similarity to identify coordinated
 order book mirroring patterns.
 """
 
+import warnings
+from dataclasses import dataclass
+from typing import Dict, List, Tuple
+
 import numpy as np
 import pandas as pd
-from typing import Dict, List, Tuple, Optional, Any
-from dataclasses import dataclass
-from scipy.spatial.distance import cosine
 from scipy.stats import pearsonr
 from sklearn.metrics.pairwise import cosine_similarity
-import warnings
 
 warnings.filterwarnings("ignore")
 
@@ -91,7 +91,8 @@ class MirroringValidator:
         prices = data[price_columns].values
         exchanges = price_columns
 
-        # Generate synthetic order book data (in real implementation, this would be actual order book data)
+        # Generate synthetic order book data (in real implementation, this would
+        # be actual order book data)
         order_books = self._generate_synthetic_order_books(prices, exchanges)
 
         # Initialize results containers
