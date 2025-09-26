@@ -333,8 +333,11 @@ NEXT_PUBLIC_ENABLE_COINBASE=true
 ## **📋 Preview Deployment History**
 
 ### **Latest Preview Deployment**
-- **Status**: Ready for deployment
-- **Command**: `vercel --prebuilt`
+- **Commit SHA**: `13ad7e8` - "ui: update deployment strategy to preview-only mode"
+- **Preview URL**: https://cursor-dashboard-hx6pl4t28-ygorfrancisco-gmailcoms-projects.vercel.app
+- **Vercel Inspect**: https://vercel.com/ygorfrancisco-gmailcoms-projects/cursor-dashboard/3ZKLzhPjv7GCxyxHfAk47CbXZA8q
+- **Deployment Time**: 2025-09-26 12:00 UTC
+- **Status**: ✅ Live and accessible
 - **Environment**: Preview-scope variables
 - **Debug Mode**: Enabled (NEXT_PUBLIC_UI_DEBUG=true)
 - **Coinbase**: Enabled (NEXT_PUBLIC_ENABLE_COINBASE=true)
