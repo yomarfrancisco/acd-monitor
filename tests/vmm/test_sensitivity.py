@@ -292,3 +292,4 @@ class TestVMMSensitivity:
             coordinated_result.over_identification_p_value < 0.05
         ), f"Coordinated scenario should have p < 0.05, got {coordinated_result.over_identification_p_value}"  # noqa: E501
 
+

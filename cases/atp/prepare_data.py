@@ -229,3 +229,4 @@ if __name__ == "__main__":
     print(f"Coordination periods: {atp_data['coordination_period'].sum()} days")
     print(f"Airline columns: {[col for col in atp_data.columns if col.startswith('Airline_')]}")
 
+

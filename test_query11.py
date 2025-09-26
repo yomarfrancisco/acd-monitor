@@ -26,3 +26,4 @@ print(f"  'fee tier' in prompt: {'fee tier' in prompt_lower}")
 print(f"  'maker' in prompt: {'maker' in prompt_lower}")
 print(f"  'taker' in prompt: {'taker' in prompt_lower}")
 
+

@@ -848,3 +848,4 @@ if __name__ == "__main__":
     print(f"Timing Coordination: {behavioral_patterns.timing_coordination}")
     print(f"Sizing Coordination: {behavioral_patterns.sizing_coordination}")
     print(f"Cancellation Coordination: {behavioral_patterns.cancellation_coordination}")
+

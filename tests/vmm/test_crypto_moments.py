@@ -192,3 +192,4 @@ class TestCryptoMoments:
             comp_arbitrage_var >= coord_arbitrage_var
         ), "Competitive should have higher arbitrage timing variance"
 
+

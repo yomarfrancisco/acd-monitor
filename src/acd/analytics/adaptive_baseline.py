@@ -584,3 +584,4 @@ if __name__ == "__main__":
             print(f"  Post-break Mean: {break_result.post_break_mean:.3f}")
             print(f"  Break Magnitude: {break_result.break_magnitude:.3f}")
             print(f"  Statistical Significance: {break_result.statistical_significance:.3f}")
+

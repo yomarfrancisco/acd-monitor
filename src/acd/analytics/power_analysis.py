@@ -535,3 +535,4 @@ if __name__ == "__main__":
         print(f"  Detection Threshold: {sensitivity.detection_threshold:.3f}")
         print(f"  False Positive Rate: {sensitivity.false_positive_rate:.3f}")
         print(f"  Minimum Effect Size: {sensitivity.minimum_effect_size:.3f}")
+

@@ -614,6 +614,7 @@ export default function CursorDashboard() {
     console.log(`[env] DEBUG_MODE=${process.env.NEXT_PUBLIC_UI_DEBUG || 'false'}`);
     console.log(`[env] DATA_MODE=${process.env.NEXT_PUBLIC_DATA_MODE || 'undefined'}`);
     console.log(`[env] ENABLE_COINBASE=${process.env.NEXT_PUBLIC_ENABLE_COINBASE || 'false'}`);
+    console.log("[DEPLOY_PROOF] preview pipeline ok");
   }, []);
   
   // Leadership state (independent from chart)
@@ -4837,6 +4838,13 @@ It would also be helpful if you described:
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* TEMP: preview proof */}
+      {process.env.NEXT_PUBLIC_UI_DEBUG === 'true' && (
+        <div className="fixed bottom-2 right-2 text-[10px] px-2 py-1 rounded bg-black/60 border border-zinc-700">
+          preview: {process.env.NEXT_PUBLIC_BUILD_MODE} · {process.env.NEXT_PUBLIC_DATA_MODE}
         </div>
       )}
 

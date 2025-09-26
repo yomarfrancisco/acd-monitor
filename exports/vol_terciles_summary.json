@@ -1,0 +1,24 @@
+{
+  "sigma20_quantiles": {
+    "q33": 0.3803,
+    "q66": 0.6099
+  },
+  "bounds": {
+    "low": {
+      "max": 0.3803
+    },
+    "med": {
+      "min": 0.3803,
+      "max": 0.6099
+    },
+    "high": {
+      "min": 0.6099
+    }
+  },
+  "counts": {
+    "low": "27",
+    "medium": "27",
+    "high": "27"
+  },
+  "coveragePct": 89.01
+}

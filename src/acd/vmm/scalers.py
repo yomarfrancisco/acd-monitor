@@ -212,3 +212,4 @@ class GlobalMomentScaler:
             moment_vectors.append(scaled_data[moment_name].flatten())
 
         return np.concatenate(moment_vectors)
+
