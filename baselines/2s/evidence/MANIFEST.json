@@ -1,0 +1,26 @@
+{
+  "baseline_type": "2s_research",
+  "research_baseline": "2s",
+  "analysis_timestamp": "2025-09-27T01:09:09.889210",
+  "overlap_file": "baselines/2s/OVERLAP.json",
+  "evidence_dir": "baselines/2s/evidence",
+  "analyses": [
+    "infoshare",
+    "spread",
+    "leadlag"
+  ],
+  "infoshare_settings": {
+    "standardize": "none",
+    "gg_blend_alpha": 0.7
+  },
+  "spread_settings": {
+    "permutes": 2000
+  },
+  "leadlag_settings": {
+    "horizons": [
+      1,
+      2,
+      5
+    ]
+  }
+}

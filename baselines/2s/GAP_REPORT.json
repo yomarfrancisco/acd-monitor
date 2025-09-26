@@ -1,0 +1,14 @@
+{
+  "baseline_type": "2s_research",
+  "coverage": 0.99,
+  "duration_minutes": 2.0,
+  "venues": [
+    "binance",
+    "coinbase",
+    "kraken",
+    "okx",
+    "bybit"
+  ],
+  "gap_policy": "\u22642s",
+  "baseline_pinned": "2025-09-27T01:09:06.696077"
+}

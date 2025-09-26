@@ -563,6 +563,39 @@ Next milestones: add policy/regulatory events and the interpretation layer to co
 
 ⸻
 
+### 17. 2s Validated Baseline — Sept 27, 2025
+
+- **Baseline Status**: ✅ **PINNED** - 2s research baseline successfully established
+- **Baseline Location**: `baselines/2s/` with complete evidence bundle
+- **Policy**: `RESEARCH_g=2s` with proper provenance and git SHA
+- **Evidence Bundle**: `research_bundle_2s.zip` with 9 BEGIN/END sections
+
+#### **Baseline Components**:
+- **OVERLAP.json**: 2.0m duration, 99% coverage, all 5 venues
+- **MANIFEST.json**: Git SHA, policy, coverage, duration, venues, baseline pinned timestamp
+- **GAP_REPORT.json**: Gap policy ≤2s, coverage metrics, baseline metadata
+- **Evidence Directory**: Complete InfoShare, Spread, Lead-Lag analyses with 2000+ permutations
+
+#### **Research Default Settings**:
+- **Granularity**: 2s (validated stable baseline)
+- **Coverage Threshold**: ≥98.5% for 2s granularity
+- **Analysis Settings**: InfoShare (standardize=none, gg_blend_alpha=0.7), Spread (permutes≥2000), Lead-Lag (1s,2s,5s horizons)
+- **Baseline Tag**: All research logs include `"research_baseline":"2s"`
+
+#### **1s Retry Plan**:
+- **Diagnostic-Driven**: Script `scripts/run_1s_retry_plan.py` implements tolerance adjustment based on observed failures
+- **Rules**: Increase duration/permutes, enable prev-tick sync, enforce inner-join coverage, use GG variance+hint, apply microstructure remedies
+- **Fallback**: Theory-driven remedies for Epps effect & microstructure noise
+- **Outcome**: Either PASS bundle or FAIL report with clear flags
+
+#### **Court-Mode Status**:
+- **Orchestrator**: ✅ **ACTIVE** - Running with strict 1-second gap policy
+- **Target**: BEST4≥10m, BEST4≥20m, BEST4≥30m windows for court-ready evidence
+- **Baseline**: 2s research results provide stable foundation for court-mode validation
+- **Next**: Monitor for first court-mode overlap detection
+
+⸻
+
 End of document.
 
 ⸻
