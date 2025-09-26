@@ -620,30 +620,6 @@ export default function CursorDashboard() {
   // Leadership state (independent from chart)
   const [leadership, setLeadership] = React.useState<{leader: VenueKey|null; pct: number|null; venues: number; ranking?: {table: Array<{venue: VenueKey; wins: number; pct: number}>}}>({ leader: null, pct: null, venues: 0 });
   
-  // Funding regimes state
-  const [fundingRegimes, setFundingRegimes] = React.useState<any>(null);
-  const [fundingLoading, setFundingLoading] = React.useState(false);
-  
-  // Fetch funding regimes data
-  React.useEffect(() => {
-    const fetchFundingRegimes = async () => {
-      setFundingLoading(true);
-      try {
-        const response = await fetch('/api/env/funding');
-        if (response.ok) {
-          const data = await response.json();
-          setFundingRegimes(data);
-        }
-      } catch (error) {
-        console.error('Failed to fetch funding regimes:', error);
-      } finally {
-        setFundingLoading(false);
-      }
-    };
-
-    fetchFundingRegimes();
-  }, []);
-  
   
   // Helper function to truncate text to specified length
   const truncateText = (text: string, maxLength: number = 40) => {
@@ -2968,7 +2944,7 @@ It would also be helpful if you described:
                           <div className="flex items-center justify-between mb-3">
                             <h3 className="text-xs font-medium text-[#f9fafb]">Collusion Risk Score</h3>
                           </div>
-                          <div className="grid grid-cols-1 gap-6 sm:grid-cols-3 mb-10">
+                          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 mb-10">
                             <div className="rounded-lg bg-bg-surface shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 relative">
                               {/* Live indicator - pulsing green dot with frame */}
                               <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-bg-tile border border-[#2a2a2a] rounded-full px-2 py-1">
@@ -3100,69 +3076,6 @@ It would also be helpful if you described:
                                 </div>
                               </div>
                             )}
-                      </div>
-                      
-                      {/* Funding Regimes Chip */}
-                      <div className="rounded-lg bg-bg-surface/40 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <div className="text-xl font-bold text-[#f9fafb]">
-                              {fundingLoading ? "..." : fundingRegimes?.summary?.regimes?.[0]?.sharesPct?.[0]?.pct || "N/A"}%
-                            </div>
-                            <div className="text-xs text-[#a1a1aa]">
-                              Funding Regime Leader
-                            </div>
-                          </div>
-                          {/* Funding Venue Avatars (reordered by funding regime shares) */}
-                          {(() => {
-                            const { availableUiVenues } = useExchangeData();
-                            const opacities = [1, 0.8, 0.6, 0.4];
-
-                            if (!fundingRegimes || fundingLoading) {
-                              return (
-                                <div className="flex items-center -space-x-2">
-                                  {availableUiVenues.slice(0, 4).map((venue, i) => (
-                                    <div
-                                      key={venue}
-                                      className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white animate-pulse"
-                                      style={{ opacity: opacities[i] ?? 0.4 }}
-                                    >
-                                      <div className="w-full h-full bg-[#2a2a2a]"></div>
-                                    </div>
-                                  ))}
-                                </div>
-                              );
-                            }
-
-                            // Reorder venues by funding regime shares
-                            const fundingShares = fundingRegimes?.table || [];
-                            const orderedByFunding = [...availableUiVenues].sort((a, b) => {
-                              const shareA = fundingShares.find((s: any) => s.venue === a)?.pct || 0;
-                              const shareB = fundingShares.find((s: any) => s.venue === b)?.pct || 0;
-                              return shareB - shareA;
-                            });
-
-                            return (
-                              <div className="flex items-center -space-x-2">
-                                {orderedByFunding.slice(0, 4).map((venue, i) => (
-                                  <div
-                                    key={venue}
-                                    className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white"
-                                    style={{ opacity: opacities[i] ?? 0.4 }}
-                                    title={`${venue}: ${fundingShares.find((s: any) => s.venue === venue)?.pct || 0}%`}
-                                  >
-                                    <img
-                                      src={venueMetadata[venue].icon}
-                                      alt={venueMetadata[venue].label}
-                                      className="w-full h-full object-contain p-0.5"
-                                      loading="eager"
-                                    />
-                                  </div>
-                                ))}
-                              </div>
-                            );
-                          })()}
-                        </div>
                       </div>
 
                           <div className="h-80 relative focus:outline-none" style={{ outline: "none" }}>
