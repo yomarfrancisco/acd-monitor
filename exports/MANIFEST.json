@@ -65,6 +65,34 @@
         "okx"
       ],
       "notes": "Lead-lag analysis across multiple horizons"
+    },
+    "sync_moves": {
+      "generated": "2025-09-26T16:55:36.192541Z",
+      "config": {
+        "theta_pct": 90,
+        "dt": [
+          1,
+          2
+        ],
+        "venues": [
+          "binance",
+          "coinbase",
+          "kraken"
+        ]
+      },
+      "total_events": 12,
+      "dt_windows": [
+        1,
+        2
+      ],
+      "venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "bybit",
+        "okx"
+      ],
+      "notes": "Synchronous move detection across multiple time windows"
     }
   }
 }

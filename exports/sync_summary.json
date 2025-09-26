@@ -1,0 +1,14 @@
+{
+  "dt_1s": {
+    "observed": 6,
+    "expected": 0.014,
+    "lift": 428.5714,
+    "p_value": 0.0
+  },
+  "dt_2s": {
+    "observed": 6,
+    "expected": 0.017,
+    "lift": 352.9412,
+    "p_value": 0.0
+  }
+}
