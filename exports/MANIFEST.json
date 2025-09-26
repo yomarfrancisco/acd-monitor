@@ -39,7 +39,7 @@
       }
     },
     "invariance": {
-      "generated": "2025-09-26T16:17:43.374964Z",
+      "generated": "2025-09-26T19:48:08.267073Z",
       "inputs": [
         "leadership_by_day.csv",
         "leadership_by_day_funding.csv",
@@ -95,8 +95,8 @@
       "notes": "Synchronous move detection across multiple time windows"
     },
     "spread_convergence": {
-      "generated": "2025-09-26T17:04:47.624846Z",
-      "total_episodes": 0,
+      "generated": "2025-09-26T19:46:25.265137Z",
+      "total_episodes": 99,
       "min_duration": 3,
       "compression_threshold": 0.1,
       "venues": [
@@ -109,12 +109,12 @@
       "notes": "Cross-venue spread compression analysis"
     },
     "infoShare": {
-      "generated": "2025-09-26T17:40:15.491943Z",
-      "keptDays": 267,
-      "droppedDays": 0,
+      "generated": "2025-09-26T19:46:36.707839Z",
+      "keptDays": 58,
+      "droppedDays": 1,
       "dropReasons": {
         "notEnoughData": 0,
-        "notCointegrated": 0,
+        "notCointegrated": 1,
         "modelFail": 0
       },
       "max_lag": 5,

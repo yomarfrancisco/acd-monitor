@@ -1,0 +1,8 @@
+{
+  "analysis_type": "real_data_pipeline",
+  "start_date": "2025-08-01",
+  "end_date": "2025-08-31",
+  "export_directory": "exports/real_data_runs",
+  "files_generated": [],
+  "analysis_results": {}
+}
