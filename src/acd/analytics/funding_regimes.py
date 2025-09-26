@@ -93,7 +93,7 @@ class FundingRegimeAnalyzer:
             },
             "bounds": {
                 "low": {"max": round(terciles["q33"], 6)},
-                "med": {"min": round(terciles["q33"], 6), "max": round(terciles["q66"], 6)},
+                "medium": {"min": round(terciles["q33"], 6), "max": round(terciles["q66"], 6)},
                 "high": {"min": round(terciles["q66"], 6)},
             },
             "counts": counts,
@@ -198,13 +198,14 @@ class FundingRegimeAnalyzer:
     def _log_funding_stats_exact(self, stats_results: Dict[str, Any]) -> None:
         """Log exact funding stats tags for grep."""
         if "chi2" in stats_results:
-            chi2_json = json.dumps(stats_results["chi2"], indent=2, default=str)
-            print(f"[STATS:env:funding:chi2] {chi2_json}")
+            print(
+                f"[STATS:env:funding:chi2] {json.dumps(stats_results['chi2'], ensure_ascii=False)}"
+            )
         if "cramers_v" in stats_results:
-            cramers_json = json.dumps(stats_results["cramers_v"], indent=2, default=str)
+            cramers_json = json.dumps(stats_results["cramers_v"], ensure_ascii=False)
             print(f"[STATS:env:funding:cramers_v] {cramers_json}")
         if "bootstrap_ci" in stats_results:
-            bootstrap_json = json.dumps(stats_results["bootstrap_ci"], indent=2, default=str)
+            bootstrap_json = json.dumps(stats_results["bootstrap_ci"], ensure_ascii=False)
             print(f"[STATS:env:funding:bootstrap] {bootstrap_json}")
 
     def _export_results(self, results: FundingRegimeResult, output_dir: str = "exports") -> None:
@@ -216,7 +217,7 @@ class FundingRegimeAnalyzer:
             "funding_quantiles": results.funding_terciles,
             "bounds": {
                 "low": {"max": results.funding_terciles["q33"]},
-                "med": {
+                "medium": {
                     "min": results.funding_terciles["q33"],
                     "max": results.funding_terciles["q66"],
                 },
@@ -388,7 +389,7 @@ class FundingRegimeAnalyzer:
                     "regime": regime,
                     "days": int((results.regime_assignments["regime"] == regime).sum()),
                 }
-                for regime in ["low", "med", "high"]
+                for regime in ["low", "medium", "high"]
             ],
         }
 
@@ -421,7 +422,7 @@ class FundingRegimeAnalyzer:
             if funding_rate <= q33:
                 regime = "low"
             elif funding_rate <= q66:
-                regime = "med"
+                regime = "medium"
             else:
                 regime = "high"
 
@@ -454,7 +455,7 @@ class FundingRegimeAnalyzer:
 
         leadership_by_regime = []
 
-        for regime in ["low", "med", "high"]:
+        for regime in ["low", "medium", "high"]:
             regime_days = regime_assignments[regime_assignments["regime"] == regime]
             if len(regime_days) == 0:
                 continue

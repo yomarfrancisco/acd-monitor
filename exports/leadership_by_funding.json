@@ -10,50 +10,50 @@
         "sharesPct": [
           {
             "venue": "binance",
-            "pct": 20.45
-          },
-          {
-            "venue": "coinbase",
             "pct": 17.05
           },
           {
+            "venue": "coinbase",
+            "pct": 31.82
+          },
+          {
             "venue": "kraken",
-            "pct": 18.18
+            "pct": 17.05
           },
           {
             "venue": "bybit",
-            "pct": 21.59
+            "pct": 20.45
           },
           {
             "venue": "okx",
-            "pct": 22.73
+            "pct": 13.64
           }
         ],
         "isTie": false
       },
       {
-        "regime": "med",
+        "regime": "medium",
         "days": 88,
         "sharesPct": [
           {
             "venue": "binance",
-            "pct": 18.18
-          },
-          {
-            "venue": "coinbase",
             "pct": 23.86
           },
           {
-            "venue": "kraken",
+            "venue": "coinbase",
             "pct": 17.05
           },
           {
+            "venue": "kraken",
+            "pct": 22.73
+          },
+          {
             "venue": "bybit",
-            "pct": 11.36
+            "pct": 19.32
           },
           {
             "venue": "okx",
-            "pct": 29.55
+            "pct": 17.05
           }
         ],
         "isTie": false
@@ -64,23 +64,23 @@
         "sharesPct": [
           {
             "venue": "binance",
-            "pct": 20.88
+            "pct": 16.48
           },
           {
             "venue": "coinbase",
-            "pct": 19.78
+            "pct": 20.88
           },
           {
             "venue": "kraken",
-            "pct": 17.58
+            "pct": 15.38
           },
           {
             "venue": "bybit",
-            "pct": 21.98
+            "pct": 23.08
           },
           {
             "venue": "okx",
-            "pct": 19.78
+            "pct": 24.18
           }
         ],
         "isTie": false
@@ -90,28 +90,28 @@
   "table": [
     {
       "venue": "binance",
-      "wins": 53,
-      "pct": 19.85
+      "wins": 51,
+      "pct": 19.1
     },
     {
       "venue": "coinbase",
-      "wins": 54,
-      "pct": 20.22
+      "wins": 62,
+      "pct": 23.22
     },
     {
       "venue": "kraken",
-      "wins": 47,
-      "pct": 17.6
-    },
-    {
-      "venue": "bybit",
       "wins": 49,
       "pct": 18.35
     },
     {
+      "venue": "bybit",
+      "wins": 56,
+      "pct": 20.97
+    },
+    {
       "venue": "okx",
-      "wins": 64,
-      "pct": 23.97
+      "wins": 49,
+      "pct": 18.35
     }
   ],
   "ties": {
@@ -121,7 +121,7 @@
         "tieDays": 0
       },
       {
-        "regime": "med",
+        "regime": "medium",
         "tieDays": 0
       },
       {
@@ -142,40 +142,40 @@
   },
   "stats": {
     "chi2": {
-      "chi2_statistic": 13.3598,
-      "p_value": 0.100056,
+      "chi2_statistic": 6.4613,
+      "p_value": 0.595708,
       "degrees_of_freedom": 8,
       "expected_frequencies": [
         [
-          16.700374531835205,
-          21.812734082397004,
-          17.04119850187266,
-          17.04119850187266,
-          18.40449438202247
+          20.790262172284645,
+          20.790262172284645,
+          17.382022471910112,
+          18.745318352059925,
+          13.292134831460674
         ],
         [
-          16.149812734082396,
-          21.093632958801496,
-          16.47940074906367,
-          16.47940074906367,
-          17.797752808988765
+          20.10486891385768,
+          20.10486891385768,
+          16.808988764044944,
+          18.127340823970037,
+          12.853932584269662
         ],
         [
-          16.149812734082396,
-          21.093632958801496,
-          16.47940074906367,
-          16.47940074906367,
-          17.797752808988765
+          20.10486891385768,
+          20.10486891385768,
+          16.808988764044944,
+          18.127340823970037,
+          12.853932584269662
         ]
       ]
     },
     "cramers_v": {
-      "cramers_v": 0.1582,
+      "cramers_v": 0.11,
       "interpretation": "medium"
     },
     "bootstrap_ci": {
-      "ci_lower": 7.1432,
-      "ci_upper": 40.3054,
+      "ci_lower": 4.4212,
+      "ci_upper": 27.8458,
       "n_bootstrap": 1000
     }
   }

@@ -143,7 +143,7 @@ class VolatilityRegimeAnalyzer:
             "sigma20_quantiles": {"q33": round(q33, 4), "q66": round(q66, 4)},
             "bounds": {
                 "low": {"max": round(q33, 4)},
-                "med": {"min": round(q33, 4), "max": round(q66, 4)},
+                "medium": {"min": round(q33, 4), "max": round(q66, 4)},
                 "high": {"min": round(q66, 4)},
             },
             "counts": {r.regime: r.count for r in regimes},
@@ -158,7 +158,7 @@ class VolatilityRegimeAnalyzer:
         dropped_days = len(regime_labels) - kept_days
 
         by_regime = []
-        for regime in ["low", "med", "high"]:
+        for regime in ["low", "medium", "high"]:
             count = (regime_labels == regime).sum()
             by_regime.append({"regime": regime, "days": int(count)})
 
@@ -284,7 +284,7 @@ class VolatilityRegimeAnalyzer:
                 "degrees_of_freedom": int(dof),
                 "expected_frequencies": expected.tolist(),
             }
-            print(f"[STATS:env:volatility:chi2] {json.dumps(chi2_result, indent=2, default=str)}")
+            print(f"[STATS:env:volatility:chi2] {json.dumps(chi2_result, ensure_ascii=False)}")
 
             # Cramér's V
             n = contingency_table.sum().sum()
@@ -295,7 +295,7 @@ class VolatilityRegimeAnalyzer:
                     "small" if cramers_v < 0.1 else "medium" if cramers_v < 0.3 else "large"
                 ),
             }
-            cramers_json = json.dumps(cramers_v_result, indent=2, default=str)
+            cramers_json = json.dumps(cramers_v_result, ensure_ascii=False)
             print(f"[STATS:env:volatility:cramers_v] {cramers_json}")
 
             # Bootstrap confidence intervals (simplified)
@@ -319,7 +319,7 @@ class VolatilityRegimeAnalyzer:
                     "ci_upper": round(ci_upper, 4),
                     "n_bootstrap": n_bootstrap,
                 }
-                bootstrap_json = json.dumps(bootstrap_result, indent=2, default=str)
+                bootstrap_json = json.dumps(bootstrap_result, ensure_ascii=False)
                 print(f"[STATS:env:volatility:bootstrap] {bootstrap_json}")
 
     def _export_results(
@@ -336,7 +336,7 @@ class VolatilityRegimeAnalyzer:
             },
             "bounds": {
                 "low": {"max": round(results.regimes[0].upper_bound, 4)},
-                "med": {
+                "medium": {
                     "min": round(results.regimes[0].upper_bound, 4),
                     "max": round(results.regimes[1].upper_bound, 4),
                 },
