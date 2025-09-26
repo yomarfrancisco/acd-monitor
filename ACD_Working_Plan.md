@@ -606,3 +606,6 @@ Next milestones: add policy/regulatory events and the interpretation layer to co
 End of document.
 
 ⸻
+
+
+**Research Baseline:** 2s (real ticks only) — pinned 2025-09-26T23:24:19Z
