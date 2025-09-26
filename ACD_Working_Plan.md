@@ -40,7 +40,42 @@ The ACD produces outputs that can be interpreted both econometrically (lead-lag,
 
 ⸻
 
-## 5. Next Steps (High-Level Plan)
+## 5. Data Sufficiency Note
+
+### Current Position (First Pass)
+- We are pulling OHLCV data (candlesticks) across 5 major venues in real time.
+- This is sufficient for high-level invariance tests:
+  - Leadership ranking by consensus proximity.
+  - Volatility tercile regimes (20-day σ buckets).
+  - Liquidity/funding/policy event overlays.
+- This lets us answer: Does leadership persist across environments? — enough to establish a broad economic narrative for economists and regulators.
+
+### Audience-Specific Sufficiency
+- **Economists / Regulators / Courts:**
+  - Care about simplified outputs: who leads, under what environments, and whether that leadership is explainable as competition or suspect as coordination.
+  - OHLCV-based regime analysis is adequate for first-pass models, because the legal/economic framing benefits from simplification.
+- **Exchanges (Binance, Coinbase, Kraken, etc.):**
+  - Already run microstructure surveillance at the tick and order-book level.
+  - Will not find OHLCV sufficient for serious coordination detection.
+  - Expect analytics that incorporate:
+    - Tick-by-tick trade and quote data
+    - Cross-venue spread tightening and slippage analysis
+    - Lead-lag measured in seconds, not days
+    - Market impact and adverse selection patterns
+
+### Sufficiency Gaps
+- OHLCV = Good First Pass, but not enough to scale credibility with exchanges or to withstand deep industry scrutiny.
+- Court-Ready Proof requires both:
+  1. Simplified outputs for legal clarity (invariance tests).
+  2. Underlying microstructure evidence that the outputs are derived from (tick-level validation).
+
+### Next Step Implications
+- **Short-term (first pass)**: Use OHLCV for volatility, liquidity, and policy environments. Build leadership invariance metrics.
+- **Medium-term (scaling to exchanges)**: Add tick-level, order book, and spread-based data. This is the only way to build credibility with exchange surveillance teams and make the system scale.
+
+⸻
+
+## 6. Next Steps (High-Level Plan)
 1. Implement Environments (E):
    - Volatility terciles (σ 20d).
    - Funding rate regimes (positive vs negative).
@@ -59,7 +94,7 @@ The ACD produces outputs that can be interpreted both econometrically (lead-lag,
 
 ⸻
 
-## 6. Step 1: What Are Environments?
+## 7. Step 1: What Are Environments?
 - Definition: Conditions under which price competition plays out.
 - Good environments: Exogenous, economically meaningful, enough sample size.
 - Bad environments: Endogenous (caused by the variable we're measuring), too short/noisy, or non-economic.
@@ -73,7 +108,7 @@ The ACD produces outputs that can be interpreted both econometrically (lead-lag,
 
 ⸻
 
-## 7. Initial Environment Definitions for BTC-USD
+## 8. Initial Environment Definitions for BTC-USD
 - Volatility regimes (σ terciles): High / Mid / Low vol.
 - Funding rate regimes: Positive vs negative.
 - Liquidity regimes: Tight vs thin spreads.
@@ -83,7 +118,7 @@ These form the first battery of environments. Each adds robustness because collu
 
 ⸻
 
-## 8. Why These Are Good
+## 9. Why These Are Good
 - Volatility: Natural stress vs calm → exogenous to leadership.
 - Funding: Captures sentiment shifts → different order-flow incentives.
 - Liquidity: Thinner books are easier to coordinate/manipulate.
@@ -91,7 +126,7 @@ These form the first battery of environments. Each adds robustness because collu
 
 ⸻
 
-## 9. Working Plan
+## 10. Working Plan
 
 This is a living document. Each section will expand into:
 - Exact econometric tests (equations, methods).
