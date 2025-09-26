@@ -1,0 +1,25 @@
+{
+  "overall": {
+    "binance": {
+      "count": 0,
+      "share": 0
+    },
+    "coinbase": {
+      "count": 0,
+      "share": 0
+    },
+    "kraken": {
+      "count": 0,
+      "share": 0
+    },
+    "bybit": {
+      "count": 0,
+      "share": 0
+    },
+    "okx": {
+      "count": 0,
+      "share": 0
+    }
+  },
+  "by_environment": {}
+}
