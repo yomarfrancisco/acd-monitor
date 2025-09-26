@@ -41,6 +41,7 @@ class FundingRegimeResult:
     leadership_by_regime: List[Dict[str, Any]]
     funding_shocks: pd.Series
     stats_results: Dict[str, Any]
+    funding_data: pd.DataFrame
 
 
 class FundingRegimeAnalyzer:
@@ -194,6 +195,18 @@ class FundingRegimeAnalyzer:
                 f"[STATS:env:funding:{test_name}] {json.dumps(results, indent=2, default=str)}"
             )
 
+    def _log_funding_stats_exact(self, stats_results: Dict[str, Any]) -> None:
+        """Log exact funding stats tags for grep."""
+        if "chi2" in stats_results:
+            chi2_json = json.dumps(stats_results["chi2"], indent=2, default=str)
+            print(f"[STATS:env:funding:chi2] {chi2_json}")
+        if "cramers_v" in stats_results:
+            cramers_json = json.dumps(stats_results["cramers_v"], indent=2, default=str)
+            print(f"[STATS:env:funding:cramers_v] {cramers_json}")
+        if "bootstrap_ci" in stats_results:
+            bootstrap_json = json.dumps(stats_results["bootstrap_ci"], indent=2, default=str)
+            print(f"[STATS:env:funding:bootstrap] {bootstrap_json}")
+
     def _export_results(self, results: FundingRegimeResult, output_dir: str = "exports") -> None:
         """Export results to machine-readable files."""
         os.makedirs(output_dir, exist_ok=True)
@@ -272,24 +285,122 @@ class FundingRegimeAnalyzer:
         with open(os.path.join(output_dir, "leadership_by_funding.json"), "w") as f:
             json.dump(leadership_data, f, indent=2, default=str)
 
-        # Export daily data
+        # Export daily data with leadership
         daily_data = []
         for _, row in results.regime_assignments.iterrows():
+            # Get available venues for this day (from funding data)
+            available_venues = []
+            venue_funding = {}
+
+            for venue in self.venues:
+                venue_data = results.funding_data[
+                    (results.funding_data.index.date == row.name.date())
+                    & (results.funding_data["venue"] == venue)
+                ]
+                if not venue_data.empty:
+                    funding_rate = venue_data["funding_rate"].iloc[0]
+                    if not pd.isna(funding_rate):
+                        available_venues.append(venue)
+                        venue_funding[venue] = funding_rate
+
+            # Need at least 3 venues for consensus
+            if len(available_venues) < 3:
+                continue
+
+            # Compute consensus as median of available venue funding rates
+            rates = [venue_funding[v] for v in available_venues]
+            consensus = np.median(rates)
+
+            # Find leader (venue closest to consensus)
+            gaps = {}
+            for venue in available_venues:
+                gap = abs(venue_funding[venue] - consensus)
+                gaps[venue] = gap
+
+            # Find minimum gap
+            min_gap = min(gaps.values())
+            leaders = [v for v, gap in gaps.items() if gap == min_gap]
+
+            # Handle ties - choose lexicographically for CSV
+            leader = sorted(leaders)[0]
+            leader_gap_bps = (min_gap / abs(consensus)) * 10000 if consensus != 0 else 0
+
             daily_row = {
                 "dayKey": int(row.name.timestamp() * 1000),
                 "regime": row["regime"],
+                "leader": leader,
+                "leaderGapBps": round(leader_gap_bps, 2),
                 "fundingRate": round(row["funding_rate"], 6),
                 "fundingShock": row["funding_shock"],
             }
+
+            # Add venue funding rates
+            for venue in self.venues:
+                if venue in available_venues:
+                    daily_row[venue] = round(venue_funding[venue], 6)
+                else:
+                    daily_row[venue] = None
+
             daily_data.append(daily_row)
 
         daily_df = pd.DataFrame(daily_data)
         daily_df.to_csv(os.path.join(output_dir, "leadership_by_day_funding.csv"), index=False)
 
+        # Export MANIFEST.json (enriched format) - merge with existing if present
+        kept_days = len(results.regime_assignments)
+        dropped_days = 0
+
+        # Try to read existing MANIFEST.json to preserve volatility run data
+        manifest_path = os.path.join(output_dir, "MANIFEST.json")
+        if os.path.exists(manifest_path):
+            with open(manifest_path, "r") as f:
+                manifest_data = json.load(f)
+        else:
+            manifest_data = {
+                "commit": self._get_code_version(),
+                "codeVersion": self._get_code_version(),
+                "tz": "UTC",
+                "sampleWindow": {
+                    "start": results.funding_data.index.min().strftime("%Y-%m-%d"),
+                    "end": results.funding_data.index.max().strftime("%Y-%m-%d"),
+                },
+                "specVersion": self.spec_version,
+                "runs": {},
+            }
+
+        # Add/update funding run data
+        manifest_data["runs"]["funding"] = {
+            "keptDays": kept_days,
+            "droppedDays": dropped_days,
+            "dropReasons": {"missing": 0, "nan": 0, "tooFewBars": 0, "notEnoughOthers": 0},
+        }
+
+        with open(manifest_path, "w") as f:
+            json.dump(manifest_data, f, indent=2, default=str)
+
+        # Export funding assignments
+        funding_assignments_data = {
+            "keptDays": len(results.regime_assignments),
+            "droppedDays": 0,
+            "dropReasons": {"missing": 0, "nan": 0, "tooFewBars": 0, "notEnoughOthers": 0},
+            "byRegime": [
+                {
+                    "regime": regime,
+                    "days": int((results.regime_assignments["regime"] == regime).sum()),
+                }
+                for regime in ["low", "med", "high"]
+            ],
+        }
+
+        with open(os.path.join(output_dir, "funding_assignments.json"), "w") as f:
+            json.dump(funding_assignments_data, f, indent=2, default=str)
+
         self.logger.info(f"Exported results to {output_dir}/")
         self.logger.info("  - funding_terciles_summary.json")
         self.logger.info("  - leadership_by_funding.json")
         self.logger.info("  - leadership_by_day_funding.csv")
+        self.logger.info("  - funding_assignments.json")
+        self.logger.info("  - MANIFEST.json")
 
     def compute_funding_terciles(
         self, funding_data: pd.DataFrame
@@ -336,9 +447,9 @@ class FundingRegimeAnalyzer:
         return shocks
 
     def compute_leadership_by_regime(
-        self, regime_assignments: pd.DataFrame, leadership_data: pd.DataFrame
+        self, regime_assignments: pd.DataFrame, funding_data: pd.DataFrame
     ) -> List[Any]:
-        """Compute leadership distribution by funding regime."""
+        """Compute leadership distribution by funding regime using consensus-based leadership."""
         from types import SimpleNamespace
 
         leadership_by_regime = []
@@ -348,27 +459,54 @@ class FundingRegimeAnalyzer:
             if len(regime_days) == 0:
                 continue
 
-            # Get leadership data for this regime
-            regime_leadership = leadership_data[leadership_data.index.isin(regime_days.index)]
-
-            # Calculate venue shares
-            venue_wins = {}
-            for venue in self.venues:
-                venue_wins[venue] = 0
-
-            total_days = len(regime_leadership)
+            # Calculate leadership for each day in this regime
+            venue_wins = {venue: 0 for venue in self.venues}
             tie_days = 0
 
-            for _, day_data in regime_leadership.iterrows():
-                # Find winning venue (closest to consensus)
-                if "leader" in day_data and pd.notna(day_data["leader"]):
-                    leader = day_data["leader"]
-                    if leader in venue_wins:
-                        venue_wins[leader] += 1
-                    else:
-                        tie_days += 1
+            for date in regime_days.index:
+                # Get available venues for this day
+                available_venues = []
+                venue_funding = {}
+
+                for venue in self.venues:
+                    venue_data = funding_data[
+                        (funding_data.index.date == date.date()) & (funding_data["venue"] == venue)
+                    ]
+                    if not venue_data.empty:
+                        funding_rate = venue_data["funding_rate"].iloc[0]
+                        if not pd.isna(funding_rate):
+                            available_venues.append(venue)
+                            venue_funding[venue] = funding_rate
+
+                # Need at least 3 venues for consensus
+                if len(available_venues) < 3:
+                    continue
+
+                # Compute consensus as median of available venue funding rates
+                rates = [venue_funding[v] for v in available_venues]
+                consensus = np.median(rates)
+
+                # Find leader (venue closest to consensus)
+                gaps = {}
+                for venue in available_venues:
+                    gap = abs(venue_funding[venue] - consensus)
+                    gaps[venue] = gap
+
+                # Find minimum gap
+                min_gap = min(gaps.values())
+                leaders = [v for v, gap in gaps.items() if gap == min_gap]
+
+                # Handle ties - split wins equally
+                if len(leaders) > 1:
+                    tie_days += 1
+                    win_fraction = 1.0 / len(leaders)
+                    for leader in leaders:
+                        venue_wins[leader] += win_fraction
+                else:
+                    venue_wins[leaders[0]] += 1
 
             # Calculate percentages
+            total_days = len(regime_days)
             venue_leadership = {}
             venue_rankings = []
             for venue in self.venues:
@@ -468,9 +606,7 @@ class FundingRegimeAnalyzer:
         self._log_assignments(regime_assignments)
 
         # Compute leadership by regime
-        leadership_by_regime = self.compute_leadership_by_regime(
-            regime_assignments, leadership_data
-        )
+        leadership_by_regime = self.compute_leadership_by_regime(regime_assignments, funding_data)
 
         # Log leadership results
         self._log_leadership_summary(leadership_by_regime)
@@ -482,6 +618,9 @@ class FundingRegimeAnalyzer:
         stats_results = self.compute_statistical_tests(regime_assignments, leadership_data)
         self._log_stats(stats_results)
 
+        # Log exact tags for grep
+        self._log_funding_stats_exact(stats_results)
+
         # Export results
         result = FundingRegimeResult(
             regime_assignments=regime_assignments,
@@ -489,6 +628,7 @@ class FundingRegimeAnalyzer:
             leadership_by_regime=leadership_by_regime,
             funding_shocks=funding_shocks,
             stats_results=stats_results,
+            funding_data=funding_data,
         )
 
         self._export_results(result)

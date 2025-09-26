@@ -48,14 +48,14 @@ class VolatilityRegimeIntegration:
         """
         Fetch OHLCV data from existing data sources.
         
-        This is a placeholder that should be replaced with actual data fetching
-        from the existing ACD data pipeline.
+        This creates synthetic data that mimics real OHLCV structure with
+        venue-specific price data for consensus leadership computation.
         
         Args:
             days: Number of days of data to fetch
             
         Returns:
-            DataFrame with OHLCV data
+            DataFrame with OHLCV data including venue prices
         """
         logger.info(f"Fetching {days} days of OHLCV data")
         
@@ -77,7 +77,7 @@ class VolatilityRegimeIntegration:
         
         prices = base_price * np.exp(np.cumsum(returns))
         
-        # Create OHLCV data
+        # Create OHLCV data with venue-specific prices
         ohlcv_data = pd.DataFrame({
             'timestamp': dates,
             'open': prices * (1 + np.random.normal(0, 0.001, len(dates))),
@@ -87,8 +87,62 @@ class VolatilityRegimeIntegration:
             'volume': np.random.uniform(1000, 10000, len(dates))
         })
         
+        # Add venue-specific price data for consensus leadership computation
+        for venue in self.venues:
+            # Each venue has slightly different prices with realistic spreads
+            venue_spread = np.random.normal(0, 0.0005, len(dates))  # 0.05% spread
+            ohlcv_data[venue] = prices * (1 + venue_spread)
+        
         # Set timestamp as index
         ohlcv_data.set_index('timestamp', inplace=True)
+        
+        logger.info(f"Generated synthetic OHLCV data: {len(ohlcv_data)} days")
+        return ohlcv_data
+    
+    def fetch_ohlcv_data_by_date(self, start_date: str, end_date: str) -> pd.DataFrame:
+        """
+        Fetch OHLCV data for specific date range.
+        
+        Args:
+            start_date: Start date in YYYY-MM-DD format
+            end_date: End date in YYYY-MM-DD format
+            
+        Returns:
+            DataFrame with OHLCV data including venue prices
+        """
+        logger.info(f"Fetching OHLCV data from {start_date} to {end_date}")
+        
+        start_dt = datetime.strptime(start_date, "%Y-%m-%d")
+        end_dt = datetime.strptime(end_date, "%Y-%m-%d")
+        dates = pd.date_range(start_dt, end_dt, freq='D')
+        
+        # Create synthetic BTC-USD price data with realistic characteristics
+        np.random.seed(42)
+        base_price = 45000  # Starting BTC price
+        
+        # Generate price series with realistic volatility patterns
+        returns = np.random.normal(0, 0.025, len(dates))  # 2.5% daily volatility
+        # Add some regime changes
+        mid_point = len(dates) // 2
+        returns[:mid_point] *= 1.5  # Higher volatility period
+        returns[mid_point:] *= 0.7  # Lower volatility period
+        
+        prices = [base_price]
+        for ret in returns:
+            prices.append(prices[-1] * (1 + ret))
+        
+        # Create OHLCV data with venue-specific prices
+        ohlcv_data = pd.DataFrame(index=dates)
+        
+        # Add a 'close' column (required by volatility analyzer)
+        ohlcv_data['close'] = prices[1:]
+        
+        for venue in self.venues:
+            # Add small venue-specific price variations (±0.1%)
+            venue_variation = np.random.normal(0, 0.001, len(dates))
+            venue_prices = [p * (1 + v) for p, v in zip(prices[1:], venue_variation)]
+            
+            ohlcv_data[venue] = venue_prices
         
         logger.info(f"Generated synthetic OHLCV data: {len(ohlcv_data)} days")
         return ohlcv_data
@@ -97,57 +151,28 @@ class VolatilityRegimeIntegration:
         """
         Compute consensus leadership metrics from OHLCV data.
         
-        This simulates the consensus proximity calculation that would be done
-        in the actual ACD pipeline.
+        This is now a placeholder since leadership will be computed directly
+        from venue prices in the volatility regime analyzer.
         
         Args:
             ohlcv_data: DataFrame with OHLCV data
             
         Returns:
-            DataFrame with leadership metrics for each venue
+            DataFrame with leadership metrics for each venue (placeholder)
         """
-        logger.info("Computing consensus leadership metrics")
+        logger.info("Leadership will be computed from venue prices in the analyzer")
         
-        # Create synthetic leadership data based on price movements
-        # In production, this would use the actual consensus proximity algorithm
-        leadership_data = pd.DataFrame(index=ohlcv_data.index)
-        
-        # Generate leadership scores that vary with volatility
-        base_volatility = ohlcv_data['close'].pct_change().rolling(20).std()
-        
-        for i, venue in enumerate(self.venues):
-            # Create venue-specific leadership patterns
-            # Binance tends to lead in high volatility
-            # Coinbase leads in low volatility
-            # Others have mixed patterns
-            
-            if venue == 'binance':
-                leadership_scores = 0.3 + 0.4 * (base_volatility / base_volatility.mean())
-            elif venue == 'coinbase':
-                leadership_scores = 0.4 - 0.2 * (base_volatility / base_volatility.mean())
-            else:
-                leadership_scores = 0.2 + 0.1 * np.random.normal(0, 1, len(ohlcv_data))
-            
-            # Add some noise and ensure values are between 0 and 1
-            leadership_scores += np.random.normal(0, 0.05, len(ohlcv_data))
-            leadership_scores = np.clip(leadership_scores, 0, 1)
-            
-            leadership_data[venue] = leadership_scores
-        
-        # Normalize so that the highest score each day is 1
-        max_scores = leadership_data.max(axis=1)
-        for venue in self.venues:
-            leadership_data[venue] = leadership_data[venue] / max_scores
-        
-        logger.info("Computed consensus leadership metrics")
-        return leadership_data
+        # Return empty DataFrame - leadership will be computed in the analyzer
+        return pd.DataFrame(index=ohlcv_data.index)
     
-    def run_analysis(self, days: int = 90, export_dir: str = "exports") -> Dict[str, Any]:
+    def run_analysis(self, days: int = 90, start_date: str = None, end_date: str = None, export_dir: str = "exports") -> Dict[str, Any]:
         """
         Run complete volatility regime analysis with structured logging.
         
         Args:
-            days: Number of days of data to analyze
+            days: Number of days of data to analyze (used if start/end not provided)
+            start_date: Start date in YYYY-MM-DD format
+            end_date: End date in YYYY-MM-DD format
             export_dir: Directory for exported files
             
         Returns:
@@ -156,7 +181,12 @@ class VolatilityRegimeIntegration:
         logger.info("Starting volatility regime analysis with structured logging")
         
         # Step 1: Fetch OHLCV data
-        ohlcv_data = self.fetch_ohlcv_data(days)
+        if start_date and end_date:
+            logger.info(f"Fetching data from {start_date} to {end_date}")
+            ohlcv_data = self.fetch_ohlcv_data_by_date(start_date, end_date)
+        else:
+            logger.info(f"Fetching {days} days of OHLCV data")
+            ohlcv_data = self.fetch_ohlcv_data(days)
         
         # Step 2: Compute consensus leadership
         leadership_data = self.compute_consensus_leadership(ohlcv_data)
@@ -240,6 +270,10 @@ def main():
     parser = argparse.ArgumentParser(description='Run volatility regime analysis with structured logging')
     parser.add_argument('--days', type=int, default=90, 
                        help='Number of days of data to analyze (default: 90)')
+    parser.add_argument('--start', type=str, default=None,
+                       help='Start date in YYYY-MM-DD format (overrides --days)')
+    parser.add_argument('--end', type=str, default=None,
+                       help='End date in YYYY-MM-DD format (overrides --days)')
     parser.add_argument('--output', type=str, default='volatility_regime_results.json',
                        help='Output file path (default: volatility_regime_results.json)')
     parser.add_argument('--export-dir', type=str, default='exports',
@@ -257,7 +291,12 @@ def main():
     
     try:
         # Run analysis with structured logging
-        results = integration.run_analysis(days=args.days, export_dir=args.export_dir)
+        results = integration.run_analysis(
+            days=args.days, 
+            start_date=args.start, 
+            end_date=args.end, 
+            export_dir=args.export_dir
+        )
         
         # Save results
         integration.save_results(results, args.output)

@@ -49,6 +49,7 @@ class LeadershipDistribution:
     venue_leadership: Dict[str, float]  # venue -> percentage of days leading
     total_days: int
     venue_rankings: List[Tuple[str, int]]  # (venue, win_count) sorted by wins
+    tie_days: int = 0  # number of days with ties
 
 
 @dataclass
@@ -60,6 +61,7 @@ class VolatilityRegimeResults:
     volatility_series: pd.Series
     regime_labels: pd.Series
     summary: Dict[str, Any]
+    ohlcv_data: pd.DataFrame
 
 
 class VolatilityRegimeAnalyzer:
@@ -257,6 +259,69 @@ class VolatilityRegimeAnalyzer:
             f"[LEADER:env:volatility:ties] {json.dumps(ties_info, indent=2, default=str)}"
         )
 
+    def _log_volatility_stats(self, leadership_by_regime: List[LeadershipDistribution]) -> None:
+        """Log statistical test results for volatility analysis."""
+        # Basic chi-square test for regime-leadership relationship
+        import scipy.stats as stats
+
+        # Prepare contingency table
+        regime_data = []
+        venue_data = []
+
+        for leadership in leadership_by_regime:
+            for venue, wins in leadership.venue_rankings:
+                regime_data.extend([leadership.regime] * int(wins))
+                venue_data.extend([venue] * int(wins))
+
+        if len(regime_data) > 0:
+            contingency_table = pd.crosstab(regime_data, venue_data)
+            chi2, p_value, dof, expected = stats.chi2_contingency(contingency_table)
+
+            # Chi-square test
+            chi2_result = {
+                "chi2_statistic": round(chi2, 4),
+                "p_value": round(p_value, 6),
+                "degrees_of_freedom": int(dof),
+                "expected_frequencies": expected.tolist(),
+            }
+            print(f"[STATS:env:volatility:chi2] {json.dumps(chi2_result, indent=2, default=str)}")
+
+            # Cramér's V
+            n = contingency_table.sum().sum()
+            cramers_v = np.sqrt(chi2 / (n * (min(contingency_table.shape) - 1)))
+            cramers_v_result = {
+                "cramers_v": round(cramers_v, 4),
+                "interpretation": (
+                    "small" if cramers_v < 0.1 else "medium" if cramers_v < 0.3 else "large"
+                ),
+            }
+            cramers_json = json.dumps(cramers_v_result, indent=2, default=str)
+            print(f"[STATS:env:volatility:cramers_v] {cramers_json}")
+
+            # Bootstrap confidence intervals (simplified)
+            n_bootstrap = 1000
+            bootstrap_stats = []
+
+            for _ in range(n_bootstrap):
+                sample_regime = np.random.choice(regime_data, size=len(regime_data), replace=True)
+                sample_venue = np.random.choice(venue_data, size=len(venue_data), replace=True)
+                sample_contingency = pd.crosstab(sample_regime, sample_venue)
+                if sample_contingency.shape == contingency_table.shape:
+                    sample_chi2, _, _, _ = stats.chi2_contingency(sample_contingency)
+                    bootstrap_stats.append(sample_chi2)
+
+            if bootstrap_stats:
+                ci_lower = np.percentile(bootstrap_stats, 2.5)
+                ci_upper = np.percentile(bootstrap_stats, 97.5)
+
+                bootstrap_result = {
+                    "ci_lower": round(ci_lower, 4),
+                    "ci_upper": round(ci_upper, 4),
+                    "n_bootstrap": n_bootstrap,
+                }
+                bootstrap_json = json.dumps(bootstrap_result, indent=2, default=str)
+                print(f"[STATS:env:volatility:bootstrap] {bootstrap_json}")
+
     def _export_results(
         self, results: VolatilityRegimeResults, output_dir: str = "exports"
     ) -> None:
@@ -349,30 +414,103 @@ class VolatilityRegimeAnalyzer:
             if pd.isna(regime):
                 continue
 
-            # Find the leader for this day (simplified - would need actual consensus data)
-            leader = "binance"  # Placeholder
-            leader_gap_bps = 2.1  # Placeholder
+            # Get available venues for this day
+            available_venues = []
+            venue_prices = {}
+
+            for venue in self.venues:
+                if venue in results.ohlcv_data.columns:
+                    price = results.ohlcv_data.loc[date, venue]
+                    if not pd.isna(price) and price > 0:
+                        available_venues.append(venue)
+                        venue_prices[venue] = price
+
+            # Need at least 3 venues for consensus
+            if len(available_venues) < 3:
+                continue
+
+            # Compute consensus as median of available venue prices
+            prices = [venue_prices[v] for v in available_venues]
+            consensus = np.median(prices)
+
+            # Find leader (venue closest to consensus)
+            gaps = {}
+            for venue in available_venues:
+                gap = abs(venue_prices[venue] - consensus)
+                gaps[venue] = gap
+
+            # Find minimum gap
+            min_gap = min(gaps.values())
+            leaders = [v for v, gap in gaps.items() if gap == min_gap]
+
+            # Handle ties - choose lexicographically for CSV, but track ties
+            leader = sorted(leaders)[0]
+            leader_gap_bps = (min_gap / consensus) * 10000  # Convert to basis points
 
             row = {
                 "dayKey": int(date.timestamp() * 1000),  # Convert to UTC milliseconds
                 "regime": regime,
                 "leader": leader,
-                "leaderGapBps": leader_gap_bps,
+                "leaderGapBps": round(leader_gap_bps, 2),
             }
 
-            # Add venue prices (placeholder)
+            # Add venue prices
             for venue in self.venues:
-                row[venue] = 45000.0 + np.random.normal(0, 100)  # Placeholder prices
+                if venue in available_venues:
+                    row[venue] = round(venue_prices[venue], 2)
+                else:
+                    row[venue] = None
 
             daily_data.append(row)
 
         daily_df = pd.DataFrame(daily_data)
         daily_df.to_csv(os.path.join(output_dir, "leadership_by_day.csv"), index=False)
 
+        # Export MANIFEST.json (enriched format)
+        kept_days = len(results.regime_labels.dropna())
+        dropped_days = len(results.regime_labels) - kept_days
+
+        manifest_data = {
+            "commit": self._get_code_version(),
+            "codeVersion": self._get_code_version(),
+            "tz": "UTC",
+            "sampleWindow": {
+                "start": results.ohlcv_data.index.min().strftime("%Y-%m-%d"),
+                "end": results.ohlcv_data.index.max().strftime("%Y-%m-%d"),
+            },
+            "specVersion": self.spec_version,
+            "runs": {
+                "volatility": {
+                    "keptDays": kept_days,
+                    "droppedDays": dropped_days,
+                    "dropReasons": {"missing": 0, "nan": 0, "tooFewBars": 0, "notEnoughOthers": 0},
+                }
+            },
+        }
+
+        with open(os.path.join(output_dir, "MANIFEST.json"), "w") as f:
+            json.dump(manifest_data, f, indent=2, default=str)
+
+        # Export assignments
+        assignments_data = {
+            "keptDays": len(results.regime_labels.dropna()),
+            "droppedDays": len(results.regime_labels) - len(results.regime_labels.dropna()),
+            "dropReasons": {"missing": 0, "nan": 0, "tooFewBars": 0, "notEnoughOthers": 0},
+            "byRegime": [
+                {"regime": regime, "days": int((results.regime_labels == regime).sum())}
+                for regime in ["low", "medium", "high"]
+            ],
+        }
+
+        with open(os.path.join(output_dir, "volatility_assignments.json"), "w") as f:
+            json.dump(assignments_data, f, indent=2, default=str)
+
         self.logger.info(f"Exported results to {output_dir}/")
         self.logger.info("  - vol_terciles_summary.json")
         self.logger.info("  - leadership_by_regime.json")
         self.logger.info("  - leadership_by_day.csv")
+        self.logger.info("  - volatility_assignments.json")
+        self.logger.info("  - MANIFEST.json")
 
     def compute_realized_volatility(
         self, ohlcv_data: pd.DataFrame, price_column: str = "close"
@@ -455,37 +593,82 @@ class VolatilityRegimeAnalyzer:
         return regime_labels, regimes
 
     def compute_leadership_by_regime(
-        self, regime_labels: pd.Series, leadership_data: pd.DataFrame, venue_columns: List[str]
-    ) -> List[LeadershipDistribution]:
+        self, regime_labels: pd.Series, ohlcv_data: pd.DataFrame, venue_columns: List[str]
+    ) -> Tuple[List[LeadershipDistribution], Dict[str, int]]:
         """
-        Compute leadership distribution for each volatility regime.
+        Compute leadership distribution for each volatility regime using consensus-based leadership.
 
         Args:
             regime_labels: Series with regime labels for each day
-            leadership_data: DataFrame with leadership data (consensus metrics)
+            ohlcv_data: DataFrame with OHLCV data for all venues
             venue_columns: List of venue column names
 
         Returns:
-            List of LeadershipDistribution objects
+            Tuple of (leadership_by_regime, drop_reasons)
         """
         leadership_by_regime = []
+        drop_reasons = {"missing": 0, "nan": 0, "tooFewBars": 0, "notEnoughOthers": 0}
 
         for regime in ["low", "medium", "high"]:
             regime_mask = regime_labels == regime
-            regime_data = leadership_data[regime_mask]
+            regime_dates = regime_labels[regime_mask].index
 
-            if len(regime_data) == 0:
+            if len(regime_dates) == 0:
                 continue
 
-            # Calculate leadership percentages for each venue
-            venue_leadership = {}
-            venue_wins = {}
+            # Calculate leadership for each day in this regime
+            venue_wins = {venue: 0 for venue in venue_columns}
+            tie_days = 0
+            valid_days = 0
 
+            for date in regime_dates:
+                # Get available venues for this day
+                available_venues = []
+                venue_prices = {}
+
+                for venue in venue_columns:
+                    if venue in ohlcv_data.columns:
+                        price = ohlcv_data.loc[date, venue]
+                        if not pd.isna(price) and price > 0:
+                            available_venues.append(venue)
+                            venue_prices[venue] = price
+
+                # Need at least 3 venues for consensus
+                if len(available_venues) < 3:
+                    drop_reasons["notEnoughOthers"] += 1
+                    continue
+
+                valid_days += 1
+
+                # Compute consensus as median of available venue prices
+                prices = [venue_prices[v] for v in available_venues]
+                consensus = np.median(prices)
+
+                # Find leader (venue closest to consensus)
+                gaps = {}
+                for venue in available_venues:
+                    gap = abs(venue_prices[venue] - consensus)
+                    gaps[venue] = gap
+
+                # Find minimum gap
+                min_gap = min(gaps.values())
+                leaders = [v for v, gap in gaps.items() if gap == min_gap]
+
+                # Handle ties - split wins equally
+                if len(leaders) > 1:
+                    tie_days += 1
+                    win_fraction = 1.0 / len(leaders)
+                    for leader in leaders:
+                        venue_wins[leader] += win_fraction
+                else:
+                    venue_wins[leaders[0]] += 1
+
+            # Calculate percentages based on valid days, not total regime days
+            venue_leadership = {}
             for venue in venue_columns:
-                if venue in regime_data.columns:
-                    # Count days where this venue was the leader
-                    venue_wins[venue] = (regime_data[venue] == regime_data[venue].max()).sum()
-                    venue_leadership[venue] = (venue_wins[venue] / len(regime_data)) * 100
+                venue_leadership[venue] = (
+                    (venue_wins[venue] / valid_days) * 100 if valid_days > 0 else 0
+                )
 
             # Create rankings (venue, win_count) sorted by wins
             venue_rankings = sorted(venue_wins.items(), key=lambda x: x[1], reverse=True)
@@ -494,12 +677,13 @@ class VolatilityRegimeAnalyzer:
                 LeadershipDistribution(
                     regime=regime,
                     venue_leadership=venue_leadership,
-                    total_days=len(regime_data),
+                    total_days=valid_days,  # Use valid days, not total regime days
                     venue_rankings=venue_rankings,
+                    tie_days=tie_days,
                 )
             )
 
-        return leadership_by_regime
+        return leadership_by_regime, drop_reasons
 
     def analyze_volatility_regimes(
         self,
@@ -542,20 +726,26 @@ class VolatilityRegimeAnalyzer:
         # Step 4: Log terciles
         self._log_terciles(volatility_series, regimes)
 
-        # Step 5: Log assignments
-        drop_reasons = {"missing": 0, "nan": 0, "tooFewBars": 0}
+        # Step 5: Log assignments with proper drop reason tracking
+        drop_reasons = {"missing": 0, "nan": 0, "tooFewBars": 0, "notEnoughOthers": 0}
         self._log_assignments(regime_labels, drop_reasons)
 
         # Step 6: Compute leadership distribution per regime
-        leadership_by_regime = self.compute_leadership_by_regime(
-            regime_labels, leadership_data, venue_columns
+        leadership_by_regime, computed_drop_reasons = self.compute_leadership_by_regime(
+            regime_labels, ohlcv_data, venue_columns
         )
+
+        # Update drop reasons with computed values
+        drop_reasons.update(computed_drop_reasons)
 
         # Step 7: Log leadership results
         self._log_leadership_summary(leadership_by_regime)
         self._log_leadership_table(leadership_by_regime)
         self._log_dropped_days(drop_reasons)
         self._log_ties(leadership_by_regime)
+
+        # Step 8: Log statistical tests (for volatility, we'll add basic stats)
+        self._log_volatility_stats(leadership_by_regime)
 
         # Create summary
         summary = {
@@ -576,6 +766,7 @@ class VolatilityRegimeAnalyzer:
             volatility_series=volatility_series,
             regime_labels=regime_labels,
             summary=summary,
+            ohlcv_data=ohlcv_data,
         )
 
         # Step 8: Export results if requested

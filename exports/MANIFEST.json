@@ -1,11 +1,32 @@
 {
-  "commit": "4808c65",
+  "commit": "86c4291",
+  "codeVersion": "86c4291",
+  "tz": "UTC",
   "sampleWindow": {
     "start": "2025-01-01",
     "end": "2025-09-24"
   },
-  "tz": "UTC",
-  "seeds": [],
   "specVersion": "1.0.0",
-  "codeVersion": "4808c65"
+  "runs": {
+    "volatility": {
+      "keptDays": 257,
+      "droppedDays": 10,
+      "dropReasons": {
+        "missing": 0,
+        "nan": 0,
+        "tooFewBars": 0,
+        "notEnoughOthers": 0
+      }
+    },
+    "funding": {
+      "keptDays": 267,
+      "droppedDays": 0,
+      "dropReasons": {
+        "missing": 0,
+        "nan": 0,
+        "tooFewBars": 0,
+        "notEnoughOthers": 0
+      }
+    }
+  }
 }

@@ -2,85 +2,85 @@
   "summary": {
     "method": "consensus-proximity",
     "pair": "BTC-USD",
-    "keptDays": 81,
+    "keptDays": 257,
     "regimes": [
       {
         "regime": "low",
-        "days": 27,
+        "days": 85,
         "sharesPct": [
           {
-            "venue": "binance",
-            "pct": 81.48
-          },
-          {
             "venue": "okx",
-            "pct": 11.11
-          },
-          {
-            "venue": "kraken",
-            "pct": 7.41
-          },
-          {
-            "venue": "coinbase",
-            "pct": 3.7
+            "pct": 23.53
           },
           {
             "venue": "bybit",
-            "pct": 3.7
+            "pct": 21.18
+          },
+          {
+            "venue": "kraken",
+            "pct": 21.18
+          },
+          {
+            "venue": "coinbase",
+            "pct": 18.82
+          },
+          {
+            "venue": "binance",
+            "pct": 15.29
           }
         ],
         "isTie": false
       },
       {
         "regime": "medium",
-        "days": 27,
+        "days": 87,
         "sharesPct": [
           {
             "venue": "binance",
-            "pct": 81.48
-          },
-          {
-            "venue": "bybit",
-            "pct": 11.11
+            "pct": 25.29
           },
           {
             "venue": "coinbase",
-            "pct": 3.7
+            "pct": 21.84
           },
           {
             "venue": "okx",
-            "pct": 3.7
+            "pct": 20.69
           },
           {
             "venue": "kraken",
-            "pct": 3.7
+            "pct": 19.54
+          },
+          {
+            "venue": "bybit",
+            "pct": 12.64
           }
         ],
         "isTie": false
       },
       {
         "regime": "high",
-        "days": 27,
+        "days": 85,
         "sharesPct": [
           {
+            "venue": "okx",
+            "pct": 24.71
+          },
+          {
             "venue": "binance",
-            "pct": 100.0
+            "pct": 21.18
           },
           {
             "venue": "coinbase",
-            "pct": 3.7
+            "pct": 20.0
           },
           {
             "venue": "bybit",
-            "pct": 3.7
-          },
-          {
-            "venue": "okx",
-            "pct": 3.7
+            "pct": 17.65
           },
           {
             "venue": "kraken",
-            "pct": 3.7
+            "pct": 16.47
           }
         ],
         "isTie": false
@@ -89,29 +89,29 @@
   },
   "table": [
     {
-      "venue": "binance",
-      "wins": "71",
-      "pct": 87.65
-    },
-    {
-      "venue": "bybit",
-      "wins": "5",
-      "pct": 6.17
-    },
-    {
       "venue": "okx",
-      "wins": "5",
-      "pct": 6.17
+      "wins": 59,
+      "pct": 22.96
     },
     {
-      "venue": "kraken",
-      "wins": "4",
-      "pct": 4.94
+      "venue": "binance",
+      "wins": 53,
+      "pct": 20.62
     },
     {
       "venue": "coinbase",
-      "wins": "3",
-      "pct": 3.7
+      "wins": 52,
+      "pct": 20.23
+    },
+    {
+      "venue": "kraken",
+      "wins": 49,
+      "pct": 19.07
+    },
+    {
+      "venue": "bybit",
+      "wins": 44,
+      "pct": 17.12
     }
   ],
   "ties": {

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-09-26T11:39:23.725691",
+  "timestamp": "2025-09-26T15:14:48.812361",
   "analysis_type": "volatility_regime_analysis",
   "parameters": {
     "window": 20,
@@ -18,146 +18,146 @@
     {
       "regime": "low",
       "lower_bound": 0,
-      "upper_bound": 0.38029571797284484,
-      "count": "27",
-      "percentage": 29.67032967032967
+      "upper_bound": 0.3038045772508929,
+      "count": "85",
+      "percentage": 31.835205992509362
     },
     {
       "regime": "medium",
-      "lower_bound": 0.38029571797284484,
-      "upper_bound": 0.6099167146474428,
-      "count": "27",
-      "percentage": 29.67032967032967
+      "lower_bound": 0.3038045772508929,
+      "upper_bound": 0.5286908238563532,
+      "count": "87",
+      "percentage": 32.58426966292135
     },
     {
       "regime": "high",
-      "lower_bound": 0.6099167146474428,
+      "lower_bound": 0.5286908238563532,
       "upper_bound": Infinity,
-      "count": "27",
-      "percentage": 29.67032967032967
+      "count": "85",
+      "percentage": 31.835205992509362
     }
   ],
   "leadership_by_regime": [
     {
       "regime": "low",
       "venue_leadership": {
-        "binance": 81.48148148148148,
-        "okx": 11.11111111111111,
-        "coinbase": 3.7037037037037033,
-        "kraken": 7.4074074074074066,
-        "bybit": 3.7037037037037033
+        "binance": 15.294117647058824,
+        "okx": 23.52941176470588,
+        "coinbase": 18.823529411764707,
+        "kraken": 21.176470588235293,
+        "bybit": 21.176470588235293
       },
-      "total_days": 27,
+      "total_days": 85,
       "venue_rankings": [
         [
-          "binance",
-          "22"
-        ],
-        [
           "okx",
-          "3"
+          20
         ],
         [
           "kraken",
-          "2"
-        ],
-        [
-          "coinbase",
-          "1"
+          18
         ],
         [
           "bybit",
-          "1"
+          18
+        ],
+        [
+          "coinbase",
+          16
+        ],
+        [
+          "binance",
+          13
         ]
       ]
     },
     {
       "regime": "medium",
       "venue_leadership": {
-        "binance": 81.48148148148148,
-        "okx": 3.7037037037037033,
-        "coinbase": 3.7037037037037033,
-        "kraken": 3.7037037037037033,
-        "bybit": 11.11111111111111
+        "binance": 25.287356321839084,
+        "okx": 20.689655172413794,
+        "coinbase": 21.839080459770116,
+        "kraken": 19.54022988505747,
+        "bybit": 12.643678160919542
       },
-      "total_days": 27,
+      "total_days": 87,
       "venue_rankings": [
         [
           "binance",
-          "22"
-        ],
-        [
-          "bybit",
-          "3"
-        ],
-        [
-          "okx",
-          "1"
+          22
         ],
         [
           "coinbase",
-          "1"
+          19
+        ],
+        [
+          "okx",
+          18
         ],
         [
           "kraken",
-          "1"
+          17
+        ],
+        [
+          "bybit",
+          11
         ]
       ]
     },
     {
       "regime": "high",
       "venue_leadership": {
-        "binance": 100.0,
-        "okx": 3.7037037037037033,
-        "coinbase": 3.7037037037037033,
-        "kraken": 3.7037037037037033,
-        "bybit": 3.7037037037037033
+        "binance": 21.176470588235293,
+        "okx": 24.705882352941178,
+        "coinbase": 20.0,
+        "kraken": 16.470588235294116,
+        "bybit": 17.647058823529413
       },
-      "total_days": 27,
+      "total_days": 85,
       "venue_rankings": [
         [
-          "binance",
-          "27"
+          "okx",
+          21
         ],
         [
-          "okx",
-          "1"
+          "binance",
+          18
         ],
         [
           "coinbase",
-          "1"
-        ],
-        [
-          "kraken",
-          "1"
+          17
         ],
         [
           "bybit",
-          "1"
+          15
+        ],
+        [
+          "kraken",
+          14
         ]
       ]
     }
   ],
   "summary": {
-    "total_days": 91,
-    "valid_volatility_days": 81,
+    "total_days": 267,
+    "valid_volatility_days": 257,
     "regime_distribution": {
-      "low": "27",
-      "medium": "27",
-      "high": "27"
+      "low": "85",
+      "medium": "87",
+      "high": "85"
     },
     "volatility_stats": {
-      "mean": 0.484824466974721,
-      "std": 0.16790460931093043,
-      "min": 0.210018349461228,
-      "max": 0.7929689585745145
+      "mean": 0.4253052761187982,
+      "std": 0.14752710230600732,
+      "min": 0.20035262978128682,
+      "max": 0.6874056471974193
     }
   },
   "volatility_stats": {
-    "mean": 0.484824466974721,
-    "std": 0.16790460931093043,
-    "min": 0.210018349461228,
-    "max": 0.7929689585745145
+    "mean": 0.4253052761187982,
+    "std": 0.14752710230600732,
+    "min": 0.20035262978128682,
+    "max": 0.6874056471974193
   },
   "export_files": [
     "exports/vol_terciles_summary.json",
