@@ -1,1 +1,16 @@
-
+envType,regime,venue,mean_lower,mean_upper,ci_lower,ci_upper,n_days
+volatility,medium,binance,0.2,0.2,0,0,267
+volatility,medium,coinbase,0.2,0.2,0,0,267
+volatility,medium,kraken,0.2,0.2,0,0,267
+volatility,medium,bybit,0.2,0.2,0,0,267
+volatility,medium,okx,0.2,0.2,0,0,267
+funding,medium,binance,0.2,0.2,0,0,267
+funding,medium,coinbase,0.2,0.2,0,0,267
+funding,medium,kraken,0.2,0.2,0,0,267
+funding,medium,bybit,0.2,0.2,0,0,267
+funding,medium,okx,0.2,0.2,0,0,267
+liquidity,medium,binance,0.2,0.2,0,0,267
+liquidity,medium,coinbase,0.2,0.2,0,0,267
+liquidity,medium,kraken,0.2,0.2,0,0,267
+liquidity,medium,bybit,0.2,0.2,0,0,267
+liquidity,medium,okx,0.2,0.2,0,0,267

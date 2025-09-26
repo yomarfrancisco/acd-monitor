@@ -399,24 +399,35 @@ class InfoShareAnalyzer:
 
         # Test cointegration
         is_cointegrated, coint_results = self.test_cointegration(log_prices_df)
-        if not is_cointegrated:
-            return None
 
-        # Estimate VECM
-        vecm_model, method = self.estimate_vecm(standardized_returns)
+        # Initialize variables
+        vecm_model = None
 
-        if vecm_model is None:
-            # Use Gonzalo-Granger weights as fallback
+        if is_cointegrated:
+            # Estimate VECM
+            vecm_model, method = self.estimate_vecm(standardized_returns)
+
+            if vecm_model is None:
+                # Use Gonzalo-Granger weights as fallback
+                weights = self.compute_gonzalo_granger_weights(standardized_returns)
+                bounds = {venue: {"lower": w, "upper": w} for venue, w in weights.items()}
+                method = "GG_fallback"
+                flags = ["no_cointegration"]
+
+                # Log fallback
+                fallback_log = {"day": date, "reason": "VECM_failed"}
+                print(f"[MICRO:infoShare:fallback] {json.dumps(fallback_log, ensure_ascii=False)}")
+            else:
+                # Compute Hasbrouck bounds
+                bounds = self.compute_hasbrouck_bounds(vecm_model, standardized_returns)
+                method = "Hasbrouck"
+                flags = []
+        else:
+            # No cointegration - use Gonzalo-Granger weights
             weights = self.compute_gonzalo_granger_weights(standardized_returns)
             bounds = {venue: {"lower": w, "upper": w} for venue, w in weights.items()}
-            method = "fallback"
-
-            # Log fallback
-            fallback_log = {"day": date, "reason": "VECM_failed"}
-            print(f"[MICRO:infoShare:fallback] {json.dumps(fallback_log, ensure_ascii=False)}")
-        else:
-            # Compute Hasbrouck bounds
-            bounds = self.compute_hasbrouck_bounds(vecm_model, standardized_returns)
+            method = "GG_fallback"
+            flags = ["no_cointegration"]
 
         # Validate bounds
         for venue, bound in bounds.items():
@@ -431,6 +442,7 @@ class InfoShareAnalyzer:
             "bounds": bounds,
             "env_labels": env_labels,
             "n_obs": len(returns_df),
+            "flags": flags,
         }
 
         # Log daily results
@@ -726,13 +738,24 @@ class InfoShareAnalyzer:
             # Mock environment labels (placeholder)
             env_labels = {"volatility": "medium", "funding": "medium", "liquidity": "medium"}
 
+            # Check data quality first
+            is_valid, reason = self.check_data_quality(aligned_returns, date_str)
+            if not is_valid:
+                drop_reasons["notEnoughData"] += 1
+                continue
+
             # Process daily data
             daily_result = self.process_daily_data(
                 aligned_returns, log_prices, date_str, env_labels
             )
 
             if daily_result is None:
-                drop_reasons["notEnoughData"] += 1
+                # Check if it failed due to cointegration
+                is_cointegrated, _ = self.test_cointegration(log_prices)
+                if not is_cointegrated:
+                    drop_reasons["notCointegrated"] += 1
+                else:
+                    drop_reasons["modelFail"] += 1
             else:
                 daily_results.append(daily_result)
 

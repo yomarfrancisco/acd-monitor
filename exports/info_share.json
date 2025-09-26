@@ -1,4 +1,133 @@
 {
-  "overall": [],
-  "by_env": {}
+  "overall": [
+    {
+      "venue": "binance",
+      "lower": 0.2,
+      "upper": 0.2
+    },
+    {
+      "venue": "coinbase",
+      "lower": 0.2,
+      "upper": 0.2
+    },
+    {
+      "venue": "kraken",
+      "lower": 0.2,
+      "upper": 0.2
+    },
+    {
+      "venue": "bybit",
+      "lower": 0.2,
+      "upper": 0.2
+    },
+    {
+      "venue": "okx",
+      "lower": 0.2,
+      "upper": 0.2
+    }
+  ],
+  "by_env": {
+    "volatility": {
+      "medium": [
+        {
+          "venue": "binance",
+          "lower": 0.2,
+          "upper": 0.2,
+          "n_days": 267
+        },
+        {
+          "venue": "coinbase",
+          "lower": 0.2,
+          "upper": 0.2,
+          "n_days": 267
+        },
+        {
+          "venue": "kraken",
+          "lower": 0.2,
+          "upper": 0.2,
+          "n_days": 267
+        },
+        {
+          "venue": "bybit",
+          "lower": 0.2,
+          "upper": 0.2,
+          "n_days": 267
+        },
+        {
+          "venue": "okx",
+          "lower": 0.2,
+          "upper": 0.2,
+          "n_days": 267
+        }
+      ]
+    },
+    "funding": {
+      "medium": [
+        {
+          "venue": "binance",
+          "lower": 0.2,
+          "upper": 0.2,
+          "n_days": 267
+        },
+        {
+          "venue": "coinbase",
+          "lower": 0.2,
+          "upper": 0.2,
+          "n_days": 267
+        },
+        {
+          "venue": "kraken",
+          "lower": 0.2,
+          "upper": 0.2,
+          "n_days": 267
+        },
+        {
+          "venue": "bybit",
+          "lower": 0.2,
+          "upper": 0.2,
+          "n_days": 267
+        },
+        {
+          "venue": "okx",
+          "lower": 0.2,
+          "upper": 0.2,
+          "n_days": 267
+        }
+      ]
+    },
+    "liquidity": {
+      "medium": [
+        {
+          "venue": "binance",
+          "lower": 0.2,
+          "upper": 0.2,
+          "n_days": 267
+        },
+        {
+          "venue": "coinbase",
+          "lower": 0.2,
+          "upper": 0.2,
+          "n_days": 267
+        },
+        {
+          "venue": "kraken",
+          "lower": 0.2,
+          "upper": 0.2,
+          "n_days": 267
+        },
+        {
+          "venue": "bybit",
+          "lower": 0.2,
+          "upper": 0.2,
+          "n_days": 267
+        },
+        {
+          "venue": "okx",
+          "lower": 0.2,
+          "upper": 0.2,
+          "n_days": 267
+        }
+      ]
+    }
+  }
 }
