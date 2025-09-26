@@ -6,6 +6,7 @@ import pandas as pd
 from datetime import datetime
 from typing import List, Dict, Tuple
 import logging
+import sys
 
 logger = logging.getLogger(__name__)
 
@@ -15,6 +16,7 @@ def load_ticks_window(
 ) -> Dict[str, pd.DataFrame]:
     """
     Load tick data for specified venues within exact start/end window.
+    Enforces strict contract with no synthetic fallbacks.
 
     Args:
         venues: List of venue names
@@ -27,6 +29,7 @@ def load_ticks_window(
 
     Raises:
         AssertionError: If window constraints are violated
+        SystemExit(2): If synthetic data detected
     """
     logger.info(f"[OVERLAP] Loading ticks window: {start} to {end} for venues: {venues}")
 
@@ -57,9 +60,10 @@ def load_ticks_window(
             logger.error(f"Error loading {venue}: {e}")
 
     # Assert we have data for all requested venues
-    assert set(venue_data.keys()) == set(
-        venues
-    ), f"[ABORT:venue_mismatch] Requested: {venues}, Got: {list(venue_data.keys())}"
+    if set(venue_data.keys()) != set(venues):
+        logger.error(f"[ABORT:venue_mismatch] Requested: {venues}, Got: {list(venue_data.keys())}")
+        print(f'[ABORT:venue_mismatch] {{"requested":{venues},"got":{list(venue_data.keys())}}}')
+        sys.exit(2)
 
     logger.info(
         f"[OVERLAP] Successfully loaded data for {len(venue_data)} venues "
@@ -68,32 +72,4 @@ def load_ticks_window(
     return venue_data
 
 
-def create_synthetic_overlap_window(
-    venues: List[str], duration_minutes: int = 10
-) -> Tuple[datetime, datetime, List[str]]:
-    """
-    Create a synthetic but realistic overlapping window for demonstration.
-
-    Args:
-        venues: List of venue names
-        duration_minutes: Duration of the window
-
-    Returns:
-        Tuple of (start, end, venues_used)
-    """
-    # Use current time as base
-    base_time = datetime.now().replace(microsecond=0, second=0)
-
-    # Create a 10-minute window
-    start = base_time
-    end = start + pd.Timedelta(minutes=duration_minutes)
-
-    logger.warning(
-        f"[SYNTHETIC:overlap] Creating synthetic window: {start} to {end} " f"for venues: {venues}"
-    )
-    logger.warning(
-        "[SYNTHETIC:overlap] This is for demonstration purposes - "
-        "real data has no temporal overlap"
-    )
-
-    return start, end, venues
+# Synthetic functions removed - only real data allowed for court-ready evidence

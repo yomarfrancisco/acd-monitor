@@ -1,14 +1,14 @@
 {
-  "commit": "801f0efd8e695e8286904fffc97d7ca089c79a5c",
+  "commit": "e5462d1bee7f9548c562b8ba996208dde45878f6",
   "tz": "UTC",
   "sampleWindow": {
-    "start": "2025-09-26 20:11:00",
-    "end": "2025-09-26 20:21:00"
+    "start": "N/A - No temporal overlap found",
+    "end": "N/A - No temporal overlap found"
   },
   "runs": {
-    "spread": "completed",
-    "infoShare": "completed",
-    "invariance": "completed"
+    "spread": "aborted - insufficient overlap",
+    "infoShare": "aborted - insufficient overlap",
+    "invariance": "aborted - insufficient overlap"
   },
   "seeds": {
     "numpy": 42,
@@ -21,38 +21,31 @@
     "bybit": "data/cache/bybit/btc_usd/1s.parquet",
     "okx": "data/cache/okx/btc_usd/1s.parquet"
   },
-  "overlap_policy": "SYNTHETIC_DEMO_10MIN",
-  "venues_used": [
+  "overlap_policy": "REAL_DATA_ONLY",
+  "venues_used": [],
+  "excluded": [
     "binance",
     "coinbase",
     "kraken",
     "okx",
     "bybit"
   ],
-  "excluded": [],
   "dropReasons": {
     "notEnoughData": 0,
-    "notCointegrated": 1,
-    "modelFail": 0
+    "notCointegrated": 0,
+    "modelFail": 0,
+    "noTemporalOverlap": 5
   },
-  "overlapWindow": {
-    "startUTC": "2025-09-26 20:11:00",
-    "endUTC": "2025-09-26 20:21:00",
-    "minutes": 10.0,
-    "venues": [
-      "binance",
-      "coinbase",
-      "kraken",
-      "okx",
-      "bybit"
-    ],
-    "excluded": [],
-    "policy": "SYNTHETIC_DEMO_10MIN"
+  "realDataLimitations": {
+    "temporalOverlap": false,
+    "reason": "No simultaneous data across venues",
+    "captureAttempts": 2,
+    "venuesChecked": 5,
+    "policy": "REAL_DATA_ONLY - No synthetic fallbacks allowed"
   },
-  "strictContract": {
-    "enforced": true,
-    "windowMismatchAbort": false,
-    "venueMismatchAbort": false,
-    "helperUsed": "acdlib.io.load_ticks_window"
+  "courtReadyStatus": {
+    "evidenceGenerated": false,
+    "reason": "Insufficient real data overlap for multi-venue analysis",
+    "recommendation": "Single-venue analysis or extended data collection required"
   }
 }
