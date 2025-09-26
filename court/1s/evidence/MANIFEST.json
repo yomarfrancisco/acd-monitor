@@ -1,0 +1,37 @@
+{
+  "mode": "COURT",
+  "granularity": "1s",
+  "policy": "COURT_1s",
+  "overlap_window": {
+    "startUTC": "2025-09-27T01:00:00.000000+00:00",
+    "endUTC": "2025-09-27T01:02:00.000000+00:00",
+    "minutes": 2.0,
+    "venues": [
+      "binance",
+      "coinbase",
+      "kraken",
+      "okx",
+      "bybit"
+    ],
+    "policy": "COURT_1s",
+    "coverage": 0.999,
+    "granularity_sec": 1,
+    "min_duration_min": 2,
+    "all_venues": true,
+    "stitch": false,
+    "mode": "COURT",
+    "granularity": "1s"
+  },
+  "analysis_settings": {
+    "permutes": 5000,
+    "alpha": 0.05,
+    "no_stitch": true,
+    "all5": true
+  },
+  "evidence_files": [
+    "info_share_results.json",
+    "spread_results.json",
+    "leadlag_results.json",
+    "EVIDENCE.md"
+  ]
+}

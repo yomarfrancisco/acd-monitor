@@ -611,3 +611,5 @@ End of document.
 **Research Baseline:** 2s (real ticks only) — pinned 2025-09-26T23:24:19Z
 
 **1s Status:** Permissive PASS; R1 PASS; R2 PASS; R3 PASS; R4 PASS; R5 PASS → **COURT-STRICT 1s ACHIEVED** (all rungs passed with microstructure remedies)
+
+**Court 1s Baseline:** ✅ **PROMOTED** - Court 1s baseline established with ALL5, stitch=0, coverage≥0.999, permutes≥5000
