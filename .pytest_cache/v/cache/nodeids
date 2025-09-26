@@ -117,5 +117,8 @@
   "tests/phase3/test_reporting_v2.py::TestReportV2Generator::test_mirroring_driver_calculation",
   "tests/phase3/test_reporting_v2.py::TestReportV2Generator::test_recommendations_generation",
   "tests/phase3/test_reporting_v2.py::TestReportV2Generator::test_save_bundle",
-  "tests/phase3/test_reporting_v2.py::TestReportV2Generator::test_vmm_contribution_calculation"
+  "tests/phase3/test_reporting_v2.py::TestReportV2Generator::test_vmm_contribution_calculation",
+  "tests/test_overlap_orchestrator.py::test_heartbeat_csv_initialization",
+  "tests/test_overlap_orchestrator.py::test_pin_snapshot_path_build",
+  "tests/test_overlap_orchestrator.py::test_status_json_shape"
 ]
