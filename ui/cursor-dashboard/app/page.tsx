@@ -337,8 +337,8 @@ const readBar = (bar: any): { ts: number | string | null; close: number | null }
     }
 
     return isTie
-      ? { venue: null, score: pct, tie: [best.v, second.v] }   // optional: signal tie
-      : { venue: best.v, score: pct };
+      ? { venue: null, score: pct, tie: [best.v, second.v], ranking: { table: ranking } }   // optional: signal tie
+      : { venue: best.v, score: pct, ranking: { table: ranking } };
   }
 
   function computeDataQualityLeader(aligned:any[]){
@@ -354,20 +354,20 @@ const readBar = (bar: any): { ts: number | string | null; close: number | null }
 
   function computePriceLeader(aligned:any[]){
     const lag = computeLeadLagLeader(aligned, { minPairs: 60, eps: 0.0 });
-    if (lag) return { venue: lag.venue, pct: lag.score, venues: lag.totalPairs, method:'lead-lag' as const };
+    if (lag) return { venue: lag.venue, pct: lag.score, venues: lag.totalPairs, method:'lead-lag' as const, ranking: undefined };
 
     const cons = computeConsensusLeader(aligned, 60);
-    if (cons) return { venue: cons.venue, pct: cons.score, venues: 0, method:'consensus-proximity' as const };
+    if (cons) return { venue: cons.venue, pct: cons.score, venues: 0, method:'consensus-proximity' as const, ranking: cons.ranking };
 
     const qual = computeDataQualityLeader(aligned);
-    if (qual) return { venue: qual.venue, pct: qual.score, venues: 0, method:'data-quality' as const };
+    if (qual) return { venue: qual.venue, pct: qual.score, venues: 0, method:'data-quality' as const, ranking: undefined };
 
-    return { leader: null, pct: null, venues: 0, method:'none' as const };
+    return { leader: null, pct: null, venues: 0, method:'none' as const, ranking: undefined };
   }
 
   // Temporal Price Leadership calculation with robust fallbacks
   const computeLeadershipFromAligned = (rows: any[], venues: string[]) => {
-    if (!rows.length || venues.length < 2) return { venue: null, score: null };
+    if (!rows.length || venues.length < 2) return { venue: null, score: null, ranking: undefined };
     
     const result = computePriceLeader(rows);
     
@@ -378,8 +378,8 @@ const readBar = (bar: any): { ts: number | string | null; close: number | null }
       console.log('[LEADER] final result =>', result);
     }
     
-    if (result.leader === null) return { venue: null, score: null };
-    return { venue: result.venue, score: result.pct };
+    if (result.leader === null) return { venue: null, score: null, ranking: undefined };
+    return { venue: result.venue, score: result.pct, ranking: result.ranking };
   };
 import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema, BinanceOverviewSchema } from "@/types/api.schemas"
 import { fetchTyped } from "@/lib/backendAdapter"
@@ -617,7 +617,7 @@ export default function CursorDashboard() {
   }, []);
   
   // Leadership state (independent from chart)
-  const [leadership, setLeadership] = React.useState<{leader: VenueKey|null; pct: number|null; venues: number}>({ leader: null, pct: null, venues: 0 });
+  const [leadership, setLeadership] = React.useState<{leader: VenueKey|null; pct: number|null; venues: number; ranking?: {table: Array<{venue: VenueKey; wins: number; pct: number}>}}>({ leader: null, pct: null, venues: 0 });
   
   
   // Helper function to truncate text to specified length
@@ -1146,11 +1146,18 @@ export default function CursorDashboard() {
       
       // Calculate leader from aligned data
       const leader = computeLeadershipFromAligned(chartData, successfulExchanges.map(x => x.venue));
-      setLeadership({ 
-        leader: leader.venue as VenueKey | null, 
-        pct: leader.score ? (leader.score * 100) : null, 
-        venues: successfulExchanges.length 
-      })
+            setLeadership({ 
+              leader: leader.venue as VenueKey | null, 
+              pct: leader.score ? (leader.score * 100) : null, 
+              venues: successfulExchanges.length,
+              ranking: leader.ranking ? {
+                table: leader.ranking.table.map(r => ({
+                  venue: r.venue as VenueKey,
+                  wins: r.wins,
+                  pct: r.pct
+                }))
+              } : undefined
+            })
       
       // Clear any previous errors
       if (exchangeDataError) {
@@ -3007,14 +3014,33 @@ It would also be helpful if you described:
                                     console.debug('[AVATAR] availableUiVenues', availableUiVenues);
                                   }
 
+                                  // Derive ordered venues from leadership ranking
+                                  const defaultOrder: VenueKey[] = ['binance','kraken','coinbase','bybit','okx']; // fallback only
+                                  
+                                  const rankingTable = leadership?.ranking?.table ?? [];
+                                  // sort defensively in case backend didn't sort
+                                  const sorted = rankingTable.length
+                                    ? [...rankingTable].sort((a,b) => b.wins - a.wins || b.pct - a.pct || a.venue.localeCompare(b.venue))
+                                    : [];
+
+                                  const orderedVenues: VenueKey[] = sorted.length
+                                    ? sorted.map(r => r.venue)
+                                    : defaultOrder;
+
+                                  // Optional tiny log (dev only)
+                                  if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+                                    console.log('[AVATARS] ordered', orderedVenues);
+                                  }
+
                                   return (
                                     <div className="flex items-center -space-x-2">
-                                      {availableUiVenues.map((v, i) => (
+                                      {orderedVenues.map((v, i) => (
                                         <div
                                           key={v}
                                           className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white"
                                           style={{ opacity: opacities[i] ?? 0.4 }}
                                           title={v}
+                                          aria-label={`${v}${v === leadership?.leader ? ' (leader)' : ''}`}
                                         >
                                           <img
                                             src={venueMetadata[v].icon}
@@ -3023,9 +3049,9 @@ It would also be helpful if you described:
                                             loading="eager"
                                         />
                                       </div>
-                                      ))}
-                                      </div>
-                                  );
+                                    ))}
+                                  </div>
+                                );
                                 })()}
                         </div>
                       </div>
