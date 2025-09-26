@@ -431,6 +431,19 @@ Next milestones: add policy/regulatory events and the interpretation layer to co
   2) Attempt synchronized-timeboxed capture (best 4 venues) during high-liquidity hours.
   3) Optional (non-court): explore ≤2s tolerance to pre-screen windows before strict rerun.
 
+### 13. Progressive Overlap Sweep & Research Analysis — Sept 26, 2025
+
+- **Sweep Results**: Progressive granularity testing completed (15m, 10m, 5m, 1m)
+- **Windows Found**: 5-venue windows at 1m/5m granularities found; 10m/15m pending
+- **Best Window**: 9.8-minute overlap with all 5 venues (binance, coinbase, kraken, okx, bybit)
+- **Research Analysis**: Lead-lag analysis completed on best 1m window (RESEARCH_g=60s policy)
+- **Evidence Bundle**: Created with 9 BEGIN/END blocks, manifest, and provenance
+- **Orchestrator Status**: Running to accumulate strict 10m+ court windows
+- **Next Steps**: 
+  1) Monitor orchestrator for court-mode overlap detection (BEST4≥10m, BEST4≥20m)
+  2) Auto-run court analyses when strict windows are found
+  3) Compare research vs. court-mode results for evidence quality assessment
+
 ⸻
 
 End of document.
