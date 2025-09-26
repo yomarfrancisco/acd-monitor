@@ -1,0 +1,47 @@
+[
+  {
+    "snapshot": "exports/sweep_continuous/snapshots/sweep_loop_30_g30_20250926T213700.872000+0000__20250926T214607.006000+0000",
+    "minutes": 9.102233333333334,
+    "coverage": 1.0,
+    "venues": [
+      "binance",
+      "coinbase",
+      "kraken",
+      "okx",
+      "bybit"
+    ],
+    "sha": "5b1f5e1",
+    "timestamp": "2025-09-26T21:37:00.872000+00:00",
+    "end_timestamp": "2025-09-26T21:46:07.006000+00:00"
+  },
+  {
+    "snapshot": "exports/sweep_continuous/snapshots/sweep_loop_5_g30_20250926T212400.579000+0000__20250926T213331.765000+0000",
+    "minutes": 9.519766666666667,
+    "coverage": 1.0,
+    "venues": [
+      "binance",
+      "coinbase",
+      "kraken",
+      "okx",
+      "bybit"
+    ],
+    "sha": "5b1f5e1",
+    "timestamp": "2025-09-26T21:24:00.579000+00:00",
+    "end_timestamp": "2025-09-26T21:33:31.765000+00:00"
+  },
+  {
+    "snapshot": "exports/sweep_continuous/snapshots/sweep_loop_46_g30_20250926T214500.827000+0000__20250926T215419.075000+0000",
+    "minutes": 9.304133333333334,
+    "coverage": 1.0,
+    "venues": [
+      "binance",
+      "coinbase",
+      "kraken",
+      "okx",
+      "bybit"
+    ],
+    "sha": "5b1f5e1",
+    "timestamp": "2025-09-26T21:45:00.827000+00:00",
+    "end_timestamp": "2025-09-26T21:54:19.075000+00:00"
+  }
+]

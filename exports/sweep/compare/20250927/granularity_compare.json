@@ -1,0 +1,36 @@
+{
+  "timestamp": "2025-09-27T00:37:13.747392",
+  "infoshare_comparison": {
+    "rank_changes": {
+      "bybit": 0,
+      "coinbase": 0,
+      "binance": 0,
+      "kraken": 0,
+      "okx": 0
+    },
+    "ordering_stable": true,
+    "share_deltas": {
+      "bybit": 0.0,
+      "coinbase": 0.0,
+      "binance": 0.0,
+      "kraken": 0.0,
+      "okx": 0.0
+    }
+  },
+  "spread_comparison": {
+    "episode_count_change": 0,
+    "lift_change": -0.23999999999999988,
+    "p_value_change": -0.004,
+    "median_duration_change": 0.0
+  },
+  "leadlag_comparison": {
+    "coordination_change": -0.039999999999999925,
+    "edge_count_change": 0,
+    "top_leader_change": false
+  },
+  "consistency_flags": {
+    "ordering_stable": true,
+    "ranks_stable": true,
+    "spread_pval_change": true
+  }
+}

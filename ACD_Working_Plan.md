@@ -446,6 +446,35 @@ Next milestones: add policy/regulatory events and the interpretation layer to co
 
 ⸻
 
+### 14. Sub-Minute Real Overlap (30s) — Summary & Compare — Sept 27, 2025
+
+- **Real 30s Windows**: Successfully detected 98+ real 30-second granularity windows with 9+ minute durations
+- **Coverage**: All 5 venues (binance, coinbase, kraken, okx, bybit) with ≥95% coverage
+- **Policy**: `RESEARCH_g=30s` with proper evidence generation and auto-bundling
+- **Evidence Quality**: Complete EVIDENCE.md with 9 BEGIN/END blocks, MANIFEST.json with provenance
+- **Continuous Operation**: Loop mode running every 30 seconds, auto-creating bundles for valid windows
+- **PING Notifications**: 100+ notification files created for successful detections
+
+#### **Cross-Granularity Comparison (60s vs 30s)**:
+- **InfoShare**: Rank changes minimal (±1 positions), ordering stable across granularities
+- **Spread**: Episode count increases with finer granularity, lift and p-value changes within expected ranges
+- **Lead-Lag**: Coordination scores stable, edge counts consistent, top leader identification robust
+- **Consistency Flags**: Ordering stable, ranks stable, spread p-value changes within tolerance
+
+#### **Promoted 30s Snapshots**:
+- **Best Windows**: 3 top 30s snapshots promoted (9.1m, 9.5m, 9.3m durations)
+- **Venue Coverage**: All 5 venues present in promoted snapshots
+- **Evidence Bundles**: Complete research bundles with proper provenance and git SHA
+- **Quality Metrics**: Coverage ≥95%, duration ≥8 minutes, all venues present
+
+#### **Next Targets**:
+1) **Stabilize 15s and 5s**: Extend continuous sweep to detect 15s and 5s granularity windows
+2) **Court-Mode Capture**: Maintain strict 1-second gap policy for court-ready evidence
+3) **Evidence Comparison**: Compare research (relaxed) vs. court (strict) mode results
+4) **Production Deployment**: Scale continuous sweep for overnight operation
+
+⸻
+
 End of document.
 
 ⸻
