@@ -1,0 +1,18 @@
+[
+  {
+    "snapshot": "exports/sweep_continuous/snapshots/sweep_test_g5_20250926T213000.000000+0000__20250926T213100.000000+0000",
+    "minutes": 1.0,
+    "coverage": 0.99,
+    "venues": [
+      "binance",
+      "coinbase",
+      "kraken",
+      "okx",
+      "bybit"
+    ],
+    "policy": "RESEARCH_g=5s",
+    "sha": "f1a7b91",
+    "timestamp": "2025-09-26T21:30:00.000000+00:00",
+    "end_timestamp": "2025-09-26T21:31:00.000000+00:00"
+  }
+]

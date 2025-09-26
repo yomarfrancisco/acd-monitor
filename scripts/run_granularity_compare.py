@@ -161,6 +161,167 @@ def simulate_analysis_results(snapshot_data: Dict) -> Dict:
     }
 
 
+def compare_multi_granularity_results(results: Dict[int, Dict]) -> Dict:
+    """
+    Compare analysis results across multiple granularities.
+    
+    Args:
+        results: Dictionary mapping granularity to analysis results
+        
+    Returns:
+        Multi-granularity comparison results dictionary
+    """
+    logger = logging.getLogger(__name__)
+    
+    granularities = sorted(results.keys())
+    comparison = {
+        'timestamp': datetime.now().isoformat(),
+        'granularities': granularities,
+        'pairwise_comparisons': {},
+        'stability_flags': {}
+    }
+    
+    # Compare each pair of granularities
+    for i, g1 in enumerate(granularities):
+        for g2 in granularities[i+1:]:
+            pair_key = f"{g1}s_vs_{g2}s"
+            logger.info(f"Comparing {g1}s vs {g2}s")
+            
+            # Compare InfoShare results
+            infoshare_comp = compare_infoshare_results(results[g1]['infoshare'], results[g2]['infoshare'])
+            
+            # Compare Spread results
+            spread_comp = compare_spread_results(results[g1]['spread'], results[g2]['spread'])
+            
+            # Compare Lead-Lag results
+            leadlag_comp = compare_leadlag_results(results[g1]['leadlag'], results[g2]['leadlag'])
+            
+            comparison['pairwise_comparisons'][pair_key] = {
+                'infoshare': infoshare_comp,
+                'spread': spread_comp,
+                'leadlag': leadlag_comp
+            }
+    
+    # Calculate overall stability flags
+    comparison['stability_flags'] = calculate_stability_flags(comparison['pairwise_comparisons'])
+    
+    return comparison
+
+
+def compare_infoshare_results(infoshare1: Dict, infoshare2: Dict) -> Dict:
+    """Compare InfoShare results between two granularities."""
+    venues1 = set(infoshare1.keys())
+    venues2 = set(infoshare2.keys())
+    
+    if venues1 != venues2:
+        return {'error': 'Venue sets differ between granularities'}
+    
+    # Calculate rank changes
+    ranks1 = sorted(venues1, key=lambda v: infoshare1[v]['point'], reverse=True)
+    ranks2 = sorted(venues2, key=lambda v: infoshare2[v]['point'], reverse=True)
+    
+    rank_changes = {}
+    for venue in venues1:
+        rank1 = ranks1.index(venue)
+        rank2 = ranks2.index(venue)
+        rank_changes[venue] = rank2 - rank1
+    
+    # Calculate Jensen-Shannon distance
+    js_distance = calculate_js_distance(infoshare1, infoshare2)
+    
+    return {
+        'rank_changes': rank_changes,
+        'ordering_stable': all(abs(change) <= 1 for change in rank_changes.values()),
+        'ranks_stable': all(abs(change) <= 1 for change in rank_changes.values()),
+        'js_distance': js_distance,
+        'share_deltas': {
+            venue: infoshare2[venue]['point'] - infoshare1[venue]['point']
+            for venue in venues1
+        }
+    }
+
+
+def compare_spread_results(spread1: Dict, spread2: Dict) -> Dict:
+    """Compare Spread results between two granularities."""
+    return {
+        'episode_count_change': spread2['episodes'] - spread1['episodes'],
+        'lift_change': spread2['average_lift'] - spread1['average_lift'],
+        'p_value_change': spread2['p_value'] - spread1['p_value'],
+        'median_duration_change': spread2['median_duration'] - spread1['median_duration'],
+        'pval_stable': abs(spread2['p_value'] - spread1['p_value']) < 0.01
+    }
+
+
+def compare_leadlag_results(leadlag1: Dict, leadlag2: Dict) -> Dict:
+    """Compare Lead-Lag results between two granularities."""
+    return {
+        'coordination_change': leadlag2['coordination'] - leadlag1['coordination'],
+        'edge_count_change': leadlag2['edge_count'] - leadlag1['edge_count'],
+        'top_leader_change': leadlag2['top_leader'] != leadlag1['top_leader'],
+        'coordination_stable': abs(leadlag2['coordination'] - leadlag1['coordination']) < 0.1
+    }
+
+
+def calculate_js_distance(infoshare1: Dict, infoshare2: Dict) -> float:
+    """Calculate Jensen-Shannon distance between InfoShare distributions."""
+    import math
+    
+    venues = set(infoshare1.keys()) & set(infoshare2.keys())
+    if not venues:
+        return 1.0
+    
+    # Normalize shares
+    shares1 = [infoshare1[v]['point'] for v in venues]
+    shares2 = [infoshare2[v]['point'] for v in venues]
+    
+    sum1 = sum(shares1)
+    sum2 = sum(shares2)
+    
+    if sum1 == 0 or sum2 == 0:
+        return 1.0
+    
+    p1 = [s/sum1 for s in shares1]
+    p2 = [s/sum2 for s in shares2]
+    
+    # Calculate JS distance
+    m = [(p1[i] + p2[i]) / 2 for i in range(len(p1))]
+    
+    js_distance = 0.0
+    for i in range(len(p1)):
+        if p1[i] > 0 and m[i] > 0:
+            js_distance += p1[i] * math.log(p1[i] / m[i])
+        if p2[i] > 0 and m[i] > 0:
+            js_distance += p2[i] * math.log(p2[i] / m[i])
+    
+    return js_distance / 2.0
+
+
+def calculate_stability_flags(pairwise_comparisons: Dict) -> Dict:
+    """Calculate overall stability flags across all pairwise comparisons."""
+    flags = {
+        'overall_ordering_stable': True,
+        'overall_ranks_stable': True,
+        'overall_spread_pval_stable': True,
+        'overall_leadlag_stable': True
+    }
+    
+    for pair_key, comparison in pairwise_comparisons.items():
+        infoshare = comparison['infoshare']
+        spread = comparison['spread']
+        leadlag = comparison['leadlag']
+        
+        if not infoshare.get('ordering_stable', False):
+            flags['overall_ordering_stable'] = False
+        if not infoshare.get('ranks_stable', False):
+            flags['overall_ranks_stable'] = False
+        if not spread.get('pval_stable', False):
+            flags['overall_spread_pval_stable'] = False
+        if not leadlag.get('coordination_stable', False):
+            flags['overall_leadlag_stable'] = False
+    
+    return flags
+
+
 def compare_analysis_results(results_60s: Dict, results_30s: Dict) -> Dict:
     """
     Compare analysis results between 60s and 30s granularities.
@@ -263,46 +424,50 @@ def generate_comparison_report(comparison: Dict, export_dir: Path) -> None:
     # Write Markdown report
     md_file = compare_dir / "granularity_compare.md"
     with open(md_file, 'w') as f:
-        f.write("# Granularity Comparison Report\n\n")
-        f.write(f"**Generated:** {comparison['timestamp']}\n\n")
+        f.write("# Multi-Granularity Comparison Report\n\n")
+        f.write(f"**Generated:** {comparison['timestamp']}\n")
+        f.write(f"**Granularities:** {', '.join([f'{g}s' for g in comparison['granularities']])}\n\n")
         
-        # InfoShare section
-        f.write("## InfoShare Comparison\n\n")
-        infoshare = comparison['infoshare_comparison']
-        if 'error' in infoshare:
-            f.write(f"**Error:** {infoshare['error']}\n\n")
-        else:
-            f.write("### Rank Changes\n")
-            for venue, change in infoshare['rank_changes'].items():
-                f.write(f"- **{venue}:** {change:+d} positions\n")
-            f.write(f"\n**Ordering Stable:** {infoshare['ordering_stable']}\n\n")
+        # Pairwise comparisons
+        f.write("## Pairwise Comparisons\n\n")
+        for pair_key, pair_comparison in comparison['pairwise_comparisons'].items():
+            f.write(f"### {pair_key.replace('_', ' vs ').replace('s', 's')}\n\n")
             
-            f.write("### Share Deltas\n")
-            for venue, delta in infoshare['share_deltas'].items():
-                f.write(f"- **{venue}:** {delta:+.3f}\n")
-            f.write("\n")
+            # InfoShare section
+            f.write("#### InfoShare\n")
+            infoshare = pair_comparison['infoshare']
+            if 'error' in infoshare:
+                f.write(f"**Error:** {infoshare['error']}\n\n")
+            else:
+                f.write("**Rank Changes:**\n")
+                for venue, change in infoshare['rank_changes'].items():
+                    f.write(f"- **{venue}:** {change:+d} positions\n")
+                f.write(f"\n**Ordering Stable:** {infoshare['ordering_stable']}\n")
+                f.write(f"**JS Distance:** {infoshare['js_distance']:.3f}\n\n")
+            
+            # Spread section
+            f.write("#### Spread\n")
+            spread = pair_comparison['spread']
+            f.write(f"- **Episode Count Change:** {spread['episode_count_change']:+d}\n")
+            f.write(f"- **Lift Change:** {spread['lift_change']:+.3f}\n")
+            f.write(f"- **P-Value Change:** {spread['p_value_change']:+.3f}\n")
+            f.write(f"- **P-Value Stable:** {spread['pval_stable']}\n\n")
+            
+            # Lead-Lag section
+            f.write("#### Lead-Lag\n")
+            leadlag = pair_comparison['leadlag']
+            f.write(f"- **Coordination Change:** {leadlag['coordination_change']:+.3f}\n")
+            f.write(f"- **Edge Count Change:** {leadlag['edge_count_change']:+d}\n")
+            f.write(f"- **Top Leader Change:** {leadlag['top_leader_change']}\n")
+            f.write(f"- **Coordination Stable:** {leadlag['coordination_stable']}\n\n")
         
-        # Spread section
-        f.write("## Spread Comparison\n\n")
-        spread = comparison['spread_comparison']
-        f.write(f"- **Episode Count Change:** {spread['episode_count_change']:+d}\n")
-        f.write(f"- **Lift Change:** {spread['lift_change']:+.3f}\n")
-        f.write(f"- **P-Value Change:** {spread['p_value_change']:+.3f}\n")
-        f.write(f"- **Median Duration Change:** {spread['median_duration_change']:+.1f}s\n\n")
-        
-        # Lead-Lag section
-        f.write("## Lead-Lag Comparison\n\n")
-        leadlag = comparison['leadlag_comparison']
-        f.write(f"- **Coordination Change:** {leadlag['coordination_change']:+.3f}\n")
-        f.write(f"- **Edge Count Change:** {leadlag['edge_count_change']:+d}\n")
-        f.write(f"- **Top Leader Change:** {leadlag['top_leader_change']}\n\n")
-        
-        # Consistency flags
-        f.write("## Consistency Flags\n\n")
-        flags = comparison['consistency_flags']
-        f.write(f"- **Ordering Stable:** {flags['ordering_stable']}\n")
-        f.write(f"- **Ranks Stable:** {flags['ranks_stable']}\n")
-        f.write(f"- **Spread P-Value Change:** {flags['spread_pval_change']}\n\n")
+        # Overall stability flags
+        f.write("## Overall Stability Flags\n\n")
+        flags = comparison['stability_flags']
+        f.write(f"- **Overall Ordering Stable:** {flags['overall_ordering_stable']}\n")
+        f.write(f"- **Overall Ranks Stable:** {flags['overall_ranks_stable']}\n")
+        f.write(f"- **Overall Spread P-Value Stable:** {flags['overall_spread_pval_stable']}\n")
+        f.write(f"- **Overall Lead-Lag Stable:** {flags['overall_leadlag_stable']}\n\n")
     
     logger.info(f"Generated comparison report: {md_file}")
     print(f"[COMPARE:granularity] json={json_file}, md={md_file}")
@@ -318,6 +483,8 @@ def main():
                        help="Target venues (comma-separated)")
     parser.add_argument("--duration-tolerance", type=float, default=2.0,
                        help="Duration tolerance in minutes")
+    parser.add_argument("--granularities", default="30,15,5",
+                       help="Granularities to compare (comma-separated)")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
     
     args = parser.parse_args()
@@ -328,54 +495,56 @@ def main():
     
     # Parse arguments
     target_venues = [v.strip() for v in args.target_venues.split(',')]
+    granularities = [int(g.strip()) for g in args.granularities.split(',')]
     
     # Create export directory
     export_dir = Path(args.export_dir)
     export_dir.mkdir(parents=True, exist_ok=True)
     
-    logger.info("Starting granularity comparison")
+    logger.info("Starting multi-granularity comparison")
     logger.info(f"Target venues: {target_venues}")
+    logger.info(f"Granularities: {granularities}")
     
-    # Find snapshots
+    # Find snapshots for each granularity
     snapshots_dir = Path(args.snapshots_dir)
     if not snapshots_dir.exists():
         logger.error(f"Snapshots directory not found: {snapshots_dir}")
         sys.exit(1)
     
-    # Find 60s snapshots
-    snapshots_60s = find_matching_snapshots(snapshots_dir, target_venues, 9.0, args.duration_tolerance)
-    snapshots_60s = [s for s in snapshots_60s if 'g60' in s['path']]
+    # Find snapshots for each granularity
+    granularity_snapshots = {}
+    for granularity in granularities:
+        snapshots = find_matching_snapshots(snapshots_dir, target_venues, 1.0, args.duration_tolerance)
+        snapshots = [s for s in snapshots if f'g{granularity}' in s['path']]
+        granularity_snapshots[granularity] = snapshots
+        
+        if not snapshots:
+            logger.warning(f"No {granularity}s snapshots found")
+        else:
+            logger.info(f"Found {len(snapshots)} {granularity}s snapshots")
     
-    # Find 30s snapshots
-    snapshots_30s = find_matching_snapshots(snapshots_dir, target_venues, 9.0, args.duration_tolerance)
-    snapshots_30s = [s for s in snapshots_30s if 'g30' in s['path']]
+    # Use best snapshots for each granularity
+    best_snapshots = {}
+    for granularity in granularities:
+        if granularity_snapshots[granularity]:
+            best_snapshots[granularity] = max(granularity_snapshots[granularity], key=lambda x: x['duration'])
+            logger.info(f"Using {granularity}s snapshot: {best_snapshots[granularity]['duration']:.1f}m")
+        else:
+            logger.error(f"No {granularity}s snapshots available")
+            sys.exit(1)
     
-    if not snapshots_60s:
-        logger.error("No 60s snapshots found")
-        sys.exit(1)
+    # Simulate analysis results for each granularity
+    results = {}
+    for granularity in granularities:
+        results[granularity] = simulate_analysis_results(best_snapshots[granularity])
     
-    if not snapshots_30s:
-        logger.error("No 30s snapshots found")
-        sys.exit(1)
-    
-    # Use best snapshots (longest duration)
-    best_60s = max(snapshots_60s, key=lambda x: x['duration'])
-    best_30s = max(snapshots_30s, key=lambda x: x['duration'])
-    
-    logger.info(f"Using 60s snapshot: {best_60s['duration']:.1f}m")
-    logger.info(f"Using 30s snapshot: {best_30s['duration']:.1f}m")
-    
-    # Simulate analysis results
-    results_60s = simulate_analysis_results(best_60s)
-    results_30s = simulate_analysis_results(best_30s)
-    
-    # Compare results
-    comparison = compare_analysis_results(results_60s, results_30s)
+    # Compare results between all granularities
+    comparison = compare_multi_granularity_results(results)
     
     # Generate report
     generate_comparison_report(comparison, export_dir)
     
-    logger.info("Granularity comparison completed")
+    logger.info("Multi-granularity comparison completed")
 
 
 if __name__ == "__main__":
