@@ -2,28 +2,28 @@
   "overall": [
     {
       "venue": "binance",
-      "lower": 0.325,
-      "upper": 0.325
+      "lower": 0.29,
+      "upper": 0.29
     },
     {
       "venue": "coinbase",
-      "lower": 0.25,
-      "upper": 0.25
+      "lower": 0.215,
+      "upper": 0.215
     },
     {
       "venue": "kraken",
-      "lower": 0.2199,
-      "upper": 0.2199
+      "lower": 0.185,
+      "upper": 0.185
     },
     {
       "venue": "bybit",
-      "lower": 0.19,
-      "upper": 0.19
+      "lower": 0.155,
+      "upper": 0.155
     },
     {
       "venue": "okx",
-      "lower": 0.015,
-      "upper": 0.015
+      "lower": 0.155,
+      "upper": 0.155
     }
   ],
   "by_env": {
@@ -31,32 +31,32 @@
       "medium": [
         {
           "venue": "binance",
-          "lower": 0.325,
-          "upper": 0.325,
+          "lower": 0.29,
+          "upper": 0.29,
           "n_days": 58
         },
         {
           "venue": "coinbase",
-          "lower": 0.25,
-          "upper": 0.25,
+          "lower": 0.215,
+          "upper": 0.215,
           "n_days": 58
         },
         {
           "venue": "kraken",
-          "lower": 0.2199,
-          "upper": 0.2199,
+          "lower": 0.185,
+          "upper": 0.185,
           "n_days": 58
         },
         {
           "venue": "bybit",
-          "lower": 0.19,
-          "upper": 0.19,
+          "lower": 0.155,
+          "upper": 0.155,
           "n_days": 58
         },
         {
           "venue": "okx",
-          "lower": 0.015,
-          "upper": 0.015,
+          "lower": 0.155,
+          "upper": 0.155,
           "n_days": 58
         }
       ]
@@ -65,32 +65,32 @@
       "medium": [
         {
           "venue": "binance",
-          "lower": 0.325,
-          "upper": 0.325,
+          "lower": 0.29,
+          "upper": 0.29,
           "n_days": 58
         },
         {
           "venue": "coinbase",
-          "lower": 0.25,
-          "upper": 0.25,
+          "lower": 0.215,
+          "upper": 0.215,
           "n_days": 58
         },
         {
           "venue": "kraken",
-          "lower": 0.2199,
-          "upper": 0.2199,
+          "lower": 0.185,
+          "upper": 0.185,
           "n_days": 58
         },
         {
           "venue": "bybit",
-          "lower": 0.19,
-          "upper": 0.19,
+          "lower": 0.155,
+          "upper": 0.155,
           "n_days": 58
         },
         {
           "venue": "okx",
-          "lower": 0.015,
-          "upper": 0.015,
+          "lower": 0.155,
+          "upper": 0.155,
           "n_days": 58
         }
       ]
@@ -99,32 +99,32 @@
       "medium": [
         {
           "venue": "binance",
-          "lower": 0.325,
-          "upper": 0.325,
+          "lower": 0.29,
+          "upper": 0.29,
           "n_days": 58
         },
         {
           "venue": "coinbase",
-          "lower": 0.25,
-          "upper": 0.25,
+          "lower": 0.215,
+          "upper": 0.215,
           "n_days": 58
         },
         {
           "venue": "kraken",
-          "lower": 0.2199,
-          "upper": 0.2199,
+          "lower": 0.185,
+          "upper": 0.185,
           "n_days": 58
         },
         {
           "venue": "bybit",
-          "lower": 0.19,
-          "upper": 0.19,
+          "lower": 0.155,
+          "upper": 0.155,
           "n_days": 58
         },
         {
           "venue": "okx",
-          "lower": 0.015,
-          "upper": 0.015,
+          "lower": 0.155,
+          "upper": 0.155,
           "n_days": 58
         }
       ]

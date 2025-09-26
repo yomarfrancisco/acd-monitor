@@ -79,9 +79,33 @@ class DataCache:
                 self.logger.info(f"[DATA:cache:miss] {venue}:{pair}:{frequency} - empty file")
                 return None
 
-            # Filter by date range
-            df["time"] = pd.to_datetime(df["time"])
-            mask = (df["time"] >= start_utc) & (df["time"] <= end_utc)
+            # Filter by date range - handle both 'time' and 'timestamp' columns
+            if "time" in df.columns:
+                time_col = "time"
+            elif "timestamp" in df.columns:
+                time_col = "timestamp"
+            else:
+                self.logger.warning(
+                    f"[DATA:cache:error] {venue}:{pair}:{frequency} - no time column found"
+                )
+                return None
+
+            df[time_col] = pd.to_datetime(df[time_col])
+            # Ensure timezone-aware comparison
+            if df[time_col].dt.tz is None:
+                df[time_col] = df[time_col].dt.tz_localize("UTC")
+            else:
+                df[time_col] = df[time_col].dt.tz_convert("UTC")
+
+            # Convert start/end to UTC timezone-aware
+            if start_utc.tzinfo is None:
+                start_utc = start_utc.replace(tzinfo=None)
+                start_utc = pd.Timestamp(start_utc, tz="UTC")
+            if end_utc.tzinfo is None:
+                end_utc = end_utc.replace(tzinfo=None)
+                end_utc = pd.Timestamp(end_utc, tz="UTC")
+
+            mask = (df[time_col] >= start_utc) & (df[time_col] <= end_utc)
             filtered_df = df[mask].copy()
 
             if filtered_df.empty:

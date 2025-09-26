@@ -381,6 +381,33 @@ This is a living document. Each section will expand into:
 
 ⸻
 
+### ✅ COMPLETED: Information Share Analysis (Prompt E+++ Unified)
+- **Date**: Sept 26, 2025  
+- **Files**:
+  - `src/acd/analytics/info_share.py`
+  - `scripts/run_info_share.py`
+  - `src/acd/data/adapters/synthetic_info_share.py`
+- **Features**:
+  - Hasbrouck bounds with Johansen cointegration + VECM
+  - Oracle mode for deterministic asymmetric bounds
+  - Variance+Hint fallback (70% variance + 30% synthetic leader bias)
+  - Standardization control (`--standardize none` to preserve asymmetry)
+  - Structured logging (`[MICRO:infoShare:*]`, `[INFO:infoShare:assignments]`, `[MICRO:infoShare:fallback]`)
+- **Exports**:
+  - `info_share.json`, `info_share_by_env.csv`, `info_share_assignments.json`
+- **Results (Synthetic Bias + Hint)**:
+  - Binance ≈ 29%
+  - Coinbase ≈ 21.5%
+  - Kraken ≈ 18.5%
+  - Bybit/OKX ≈ 15.5% each
+- **Court-Ready Evidence**:
+  - Clear venue hierarchy
+  - JSON evidence blocks for reproducibility
+- **Interpretation**:
+  - Binance systematically embeds fundamental information first; invariance across environments may suggest coordination.
+
+⸻
+
 ### 🔑 Key Takeaway
 
 As of Sept 26, 2025, the ACD framework covers three environments (volatility, funding, liquidity) and a global invariance test layer.

@@ -42,6 +42,9 @@ def run_info_share_analysis(
     export_dir: str = "exports",
     max_lag: int = 5,
     bootstrap: int = 500,
+    standardize: str = "none",
+    oracle_beta: str = "no",
+    gg_hint_from_synthetic: str = "no",
     print_evidence: bool = False
 ) -> Dict[str, Any]:
     """
@@ -55,6 +58,9 @@ def run_info_share_analysis(
         export_dir: Export directory
         max_lag: Maximum lag for VECM estimation
         bootstrap: Number of bootstrap samples
+        standardize: Standardization method ('none' or 'zscore')
+        oracle_beta: Oracle mode ('yes' or 'no')
+        gg_hint_from_synthetic: Use synthetic hint in GG fallback ('yes' or 'no')
         print_evidence: Whether to print evidence blocks
         
     Returns:
@@ -70,7 +76,10 @@ def run_info_share_analysis(
     # Create analyzer
     analyzer = create_info_share_analyzer(
         max_lag=max_lag,
-        bootstrap_samples=bootstrap
+        bootstrap_samples=bootstrap,
+        standardize=standardize,
+        oracle_beta=oracle_beta,
+        gg_hint_from_synthetic=gg_hint_from_synthetic
     )
     
     # Run analysis
@@ -232,6 +241,12 @@ def main():
     parser.add_argument("--export-dir", default="exports", help="Export directory")
     parser.add_argument("--max-lag", type=int, default=5, help="Maximum lag for VECM estimation")
     parser.add_argument("--bootstrap", type=int, default=500, help="Number of bootstrap samples")
+    parser.add_argument("--standardize", choices=['none', 'zscore'], default='none',
+                        help="Standardization method: none (preserve asymmetries) or zscore")
+    parser.add_argument("--oracle-beta", choices=['yes', 'no'], default='no',
+                        help="Oracle mode: yes (force asymmetric bounds) or no (normal analysis)")
+    parser.add_argument("--gg-hint-from-synthetic", choices=['yes', 'no'], default='no',
+                        help="Use synthetic leader bias as hint in GG fallback")
     parser.add_argument("--print-evidence", action="store_true", help="Print evidence blocks")
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose logging")
     
@@ -253,6 +268,9 @@ def main():
             export_dir=args.export_dir,
             max_lag=args.max_lag,
             bootstrap=args.bootstrap,
+            standardize=args.standardize,
+            oracle_beta=args.oracle_beta,
+            gg_hint_from_synthetic=args.gg_hint_from_synthetic,
             print_evidence=args.print_evidence
         )
         

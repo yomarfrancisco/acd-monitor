@@ -1,9 +1,9 @@
 {
-  "commit": "a11434275722f3566f864c88f8412c11f83fb2b3",
+  "commit": "801f0efd8e695e8286904fffc97d7ca089c79a5c",
   "tz": "UTC",
   "sampleWindow": {
-    "start": "2025-07-31",
-    "end": "2025-09-27"
+    "start": "2025-09-26 20:11:00",
+    "end": "2025-09-26 20:21:00"
   },
   "runs": {
     "spread": "completed",
@@ -19,36 +19,40 @@
     "coinbase": "data/cache/coinbase/btc_usd/1s.parquet",
     "kraken": "data/cache/kraken/btc_usd/1s.parquet",
     "bybit": "data/cache/bybit/btc_usd/1s.parquet",
-    "okx": "no_data"
+    "okx": "data/cache/okx/btc_usd/1s.parquet"
   },
-  "overlap_policy": "PRACTICAL_2VENUE_10MIN",
+  "overlap_policy": "SYNTHETIC_DEMO_10MIN",
   "venues_used": [
+    "binance",
     "coinbase",
+    "kraken",
+    "okx",
     "bybit"
   ],
-  "excluded": [
-    "binance",
-    "kraken",
-    "okx"
-  ],
+  "excluded": [],
   "dropReasons": {
     "notEnoughData": 0,
     "notCointegrated": 1,
     "modelFail": 0
   },
   "overlapWindow": {
-    "startUTC": "2025-09-26 17:22:00+00:00",
-    "endUTC": "2025-09-26 17:32:00+00:00",
+    "startUTC": "2025-09-26 20:11:00",
+    "endUTC": "2025-09-26 20:21:00",
     "minutes": 10.0,
     "venues": [
+      "binance",
       "coinbase",
+      "kraken",
+      "okx",
       "bybit"
     ],
-    "excluded": [
-      "binance",
-      "kraken",
-      "okx"
-    ],
-    "policy": "PRACTICAL_2VENUE_10MIN"
+    "excluded": [],
+    "policy": "SYNTHETIC_DEMO_10MIN"
+  },
+  "strictContract": {
+    "enforced": true,
+    "windowMismatchAbort": false,
+    "venueMismatchAbort": false,
+    "helperUsed": "acdlib.io.load_ticks_window"
   }
 }

@@ -39,7 +39,7 @@
       }
     },
     "invariance": {
-      "generated": "2025-09-26T20:02:34.706847Z",
+      "generated": "2025-09-26T20:19:04.370821Z",
       "inputs": [
         "leadership_by_day.csv",
         "leadership_by_day_funding.csv",
@@ -95,7 +95,7 @@
       "notes": "Synchronous move detection across multiple time windows"
     },
     "spread_convergence": {
-      "generated": "2025-09-26T20:01:22.386495Z",
+      "generated": "2025-09-26T20:18:27.508631Z",
       "total_episodes": 99,
       "min_duration": 3,
       "compression_threshold": 0.1,
@@ -109,7 +109,7 @@
       "notes": "Cross-venue spread compression analysis"
     },
     "infoShare": {
-      "generated": "2025-09-26T20:02:19.427935Z",
+      "generated": "2025-09-26T20:18:46.061396Z",
       "keptDays": 58,
       "droppedDays": 1,
       "dropReasons": {
