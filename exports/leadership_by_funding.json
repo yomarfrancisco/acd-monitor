@@ -1,0 +1,182 @@
+{
+  "summary": {
+    "method": "consensus-proximity",
+    "pair": "BTC-USD",
+    "keptDays": 267,
+    "regimes": [
+      {
+        "regime": "low",
+        "days": 88,
+        "sharesPct": [
+          {
+            "venue": "binance",
+            "pct": 14.77
+          },
+          {
+            "venue": "coinbase",
+            "pct": 20.45
+          },
+          {
+            "venue": "kraken",
+            "pct": 28.41
+          },
+          {
+            "venue": "bybit",
+            "pct": 19.32
+          },
+          {
+            "venue": "okx",
+            "pct": 17.05
+          }
+        ],
+        "isTie": false
+      },
+      {
+        "regime": "med",
+        "days": 88,
+        "sharesPct": [
+          {
+            "venue": "binance",
+            "pct": 21.59
+          },
+          {
+            "venue": "coinbase",
+            "pct": 14.77
+          },
+          {
+            "venue": "kraken",
+            "pct": 21.59
+          },
+          {
+            "venue": "bybit",
+            "pct": 17.05
+          },
+          {
+            "venue": "okx",
+            "pct": 25.0
+          }
+        ],
+        "isTie": false
+      },
+      {
+        "regime": "high",
+        "days": 91,
+        "sharesPct": [
+          {
+            "venue": "binance",
+            "pct": 20.88
+          },
+          {
+            "venue": "coinbase",
+            "pct": 15.38
+          },
+          {
+            "venue": "kraken",
+            "pct": 20.88
+          },
+          {
+            "venue": "bybit",
+            "pct": 24.18
+          },
+          {
+            "venue": "okx",
+            "pct": 18.68
+          }
+        ],
+        "isTie": false
+      }
+    ]
+  },
+  "table": [
+    {
+      "venue": "binance",
+      "wins": 51,
+      "pct": 19.1
+    },
+    {
+      "venue": "coinbase",
+      "wins": 45,
+      "pct": 16.85
+    },
+    {
+      "venue": "kraken",
+      "wins": 63,
+      "pct": 23.6
+    },
+    {
+      "venue": "bybit",
+      "wins": 54,
+      "pct": 20.22
+    },
+    {
+      "venue": "okx",
+      "wins": 54,
+      "pct": 20.22
+    }
+  ],
+  "ties": {
+    "byRegime": [
+      {
+        "regime": "low",
+        "tieDays": 0
+      },
+      {
+        "regime": "med",
+        "tieDays": 0
+      },
+      {
+        "regime": "high",
+        "tieDays": 0
+      }
+    ]
+  },
+  "dropped": {
+    "dropped": 0,
+    "drop": {
+      "missing": 0,
+      "notEnoughOthers": 0,
+      "tooTight": 0,
+      "outlier": 0,
+      "nan": 0
+    }
+  },
+  "stats": {
+    "chi2": {
+      "chi2_statistic": 6.3347,
+      "p_value": 0.609793,
+      "degrees_of_freedom": 8,
+      "expected_frequencies": [
+        [
+          17.382022471910112,
+          18.40449438202247,
+          15.337078651685394,
+          21.471910112359552,
+          18.40449438202247
+        ],
+        [
+          16.808988764044944,
+          17.797752808988765,
+          14.831460674157304,
+          20.764044943820224,
+          17.797752808988765
+        ],
+        [
+          16.808988764044944,
+          17.797752808988765,
+          14.831460674157304,
+          20.764044943820224,
+          17.797752808988765
+        ]
+      ]
+    },
+    "cramers_v": {
+      "cramers_v": 0.1089,
+      "interpretation": "medium"
+    },
+    "bootstrap_ci": {
+      "ci_lower": 4.501,
+      "ci_upper": 27.859,
+      "n_bootstrap": 1000
+    }
+  }
+}

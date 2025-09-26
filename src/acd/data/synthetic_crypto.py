@@ -2,6 +2,7 @@
 Synthetic Crypto Data Generator for ACD Validation
 
 Generates competitive vs. coordinated crypto trading scenarios for ICP/VMM validation.
+Also generates synthetic funding rate data for funding regime analysis.
 """
 
 import logging
@@ -303,3 +304,53 @@ if __name__ == "__main__":
     print(competitive.describe())
     print("\nCoordinated scenario summary:")
     print(coordinated.describe())
+
+
+def generate_synthetic_funding_data(
+    start_date: str, end_date: str, venues: List[str]
+) -> pd.DataFrame:
+    """Generate synthetic funding rate data for BTC perpetuals."""
+    logger.info(f"Generating synthetic funding data for {len(venues)} venues")
+
+    # Create date range (8-hour intervals for funding rates)
+    start = datetime.strptime(start_date, "%Y-%m-%d")
+    end = datetime.strptime(end_date, "%Y-%m-%d")
+    date_range = pd.date_range(start=start, end=end, freq="8H")
+
+    funding_data = []
+
+    for venue in venues:
+        # Generate venue-specific funding rate patterns
+        np.random.seed(hash(venue) % 2**32)  # Deterministic but different per venue
+
+        for timestamp in date_range:
+            # Base funding rate with some venue-specific characteristics
+            base_rate = 0.0001  # 0.01% base rate
+
+            # Add some venue-specific bias
+            venue_bias = {
+                "binance": 0.00005,
+                "coinbase": -0.00002,
+                "kraken": 0.00001,
+                "bybit": 0.00003,
+                "okx": -0.00001,
+            }.get(venue, 0)
+
+            # Add time-based patterns (higher funding during volatile periods)
+            time_factor = 1 + 0.5 * np.sin(timestamp.timestamp() / (24 * 3600) * 2 * np.pi)
+
+            # Add random noise
+            noise = np.random.normal(0, 0.0002)
+
+            # Calculate final funding rate
+            funding_rate = (base_rate + venue_bias) * time_factor + noise
+
+            funding_data.append(
+                {"timestamp": timestamp, "venue": venue, "funding_rate": funding_rate}
+            )
+
+    df = pd.DataFrame(funding_data)
+    df.set_index("timestamp", inplace=True)
+
+    logger.info(f"Generated {len(df)} funding rate records")
+    return df
