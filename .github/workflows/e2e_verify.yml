@@ -9,11 +9,14 @@ on:
 jobs:
   e2e-verify:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
     steps:
       - uses: actions/checkout@v4
       
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9'
       
@@ -53,12 +56,20 @@ jobs:
         run: |
           python scripts/update_promotion_pointers.py
       
+      - name: Acceptance checks
+        run: |
+          echo "[ACCEPTANCE:check] Verifying promotion pointers and manifests"
+          ls -la exports/sweep/REAL_2s_PROMOTED.json || echo "REAL_2s_PROMOTED.json not found"
+          ls -la baselines/2s/MANIFEST.json || echo "MANIFEST.json not found"
+          echo "[ACCEPTANCE:done] Promotion pointers verified"
+      
       - name: Upload evidence artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: evidence-artifacts
           path: |
             test_snapshot/evidence/
             baselines/2s/evidence/
+          if-no-files-found: error
           retention-days: 7
