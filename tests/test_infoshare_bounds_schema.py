@@ -10,6 +10,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
 
 
+@pytest.mark.micro
 def test_infoshare_bounds_present():
     """Test that InfoShare results have bounds present."""
     # Mock info_share_results.json
@@ -35,6 +36,7 @@ def test_infoshare_bounds_present():
     assert infoshare_results["venues_count"] == len(infoshare_results["bounds"])
 
 
+@pytest.mark.micro
 def test_infoshare_bounds_in_range_0_1():
     """Test that all bounds are in range [0,1]."""
     bounds = {
@@ -54,6 +56,7 @@ def test_infoshare_bounds_in_range_0_1():
         assert bound["point"] <= bound["upper"], f"{venue} point > upper"
 
 
+@pytest.mark.micro
 def test_infoshare_bounds_sum_approximately_1():
     """Test that venue bounds sum approximately to 1."""
     bounds = {
@@ -67,6 +70,7 @@ def test_infoshare_bounds_sum_approximately_1():
     assert 0.88 <= point_sum <= 1.12, f"Point sum {point_sum} not in [0.88, 1.12]"
 
 
+@pytest.mark.micro
 def test_infoshare_bounds_edge_cases():
     """Test edge cases for bounds."""
     # Edge case: all venues equal (should still be valid)
@@ -94,6 +98,7 @@ def test_infoshare_bounds_edge_cases():
         assert 0 <= bound["point"] <= 1
 
 
+@pytest.mark.micro
 def test_infoshare_bounds_schema_validation():
     """Test that bounds have required schema."""
     bound = {
@@ -120,6 +125,7 @@ def test_infoshare_bounds_schema_validation():
     assert bound["lower"] <= bound["point"] <= bound["upper"]
 
 
+@pytest.mark.micro
 def test_infoshare_missing_bounds_should_abort():
     """Test that missing bounds should trigger abort."""
     # This should trigger [ABORT:infoshare:invalid_bounds]

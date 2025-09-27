@@ -130,3 +130,4 @@ git push origin fix/restore-agents-from-preview
 **This document provides complete context for continuing development on the acd-monitor UI project without losing deployment knowledge or encountering previously resolved issues.**
 
 [preview-deploy] sha=9c59178fa35379e7337ed06631939c37e4454859 ts=2025-09-27T18:48:01Z
+[preview-deploy] sha=acef041e5ff5f9249351895fc93a1d45d1f6a6d0 ts=2025-09-27T20:52:00Z

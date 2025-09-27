@@ -25,6 +25,7 @@ def create_test_data():
     return pd.DataFrame(data)
 
 
+@pytest.mark.micro
 def test_resample_minute_no_nan_leakage():
     """Test that resample_minute produces no NaN leakage."""
     df = create_test_data()
@@ -47,6 +48,7 @@ def test_resample_minute_no_nan_leakage():
     assert (result['low'] <= result['close']).all()
 
 
+@pytest.mark.micro
 def test_resample_second_no_nan_leakage():
     """Test that resample_second produces no NaN leakage."""
     df = create_test_data()
@@ -69,6 +71,7 @@ def test_resample_second_no_nan_leakage():
     assert (result['low'] <= result['close']).all()
 
 
+@pytest.mark.micro
 def test_resample_stable_ohlc_aggregation():
     """Test that OHLC aggregation is stable and deterministic."""
     # Create data with known pattern
@@ -93,6 +96,7 @@ def test_resample_stable_ohlc_aggregation():
         assert abs(row['mid'] - expected_mid) < 1e-10
 
 
+@pytest.mark.micro
 def test_resample_empty_dataframe():
     """Test resampling empty DataFrame."""
     empty_df = pd.DataFrame(columns=['time', 'mid', 'volume'])
@@ -104,6 +108,7 @@ def test_resample_empty_dataframe():
     assert result_second.empty
 
 
+@pytest.mark.micro
 def test_resample_single_row():
     """Test resampling single row data."""
     single_row = pd.DataFrame({

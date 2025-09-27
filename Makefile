@@ -1,7 +1,7 @@
 # ACD Monitor - Backend Operations
 # End-to-end verification and one-click promotion
 
-.PHONY: help baseline-from-snapshot court-from-snapshot verify-bundles test clean
+.PHONY: help baseline-from-snapshot court-from-snapshot verify-bundles test test-micro clean
 
 help:
 	@echo "ACD Monitor Backend Operations"
@@ -12,6 +12,7 @@ help:
 	@echo "  court-from-snapshot SNAPSHOT=path      - Build court evidence from snapshot"
 	@echo "  verify-bundles                        - Check sentinel JSON keys & coverage"
 	@echo "  test                                  - Run unit tests"
+	@echo "  test-micro                            - Run micro tests only (fast)"
 	@echo "  clean                                 - Clean temporary files"
 	@echo ""
 	@echo "Examples:"
@@ -136,6 +137,10 @@ verify-bundles:
 test:
 	@echo "[MAKE:test] Running unit tests"
 	@python -m pytest tests/ -v --tb=short
+
+test-micro:
+	@echo "[MAKE:test-micro] Running micro tests only"
+	@python -m pytest -m micro -q
 
 clean:
 	@echo "[MAKE:clean] Cleaning temporary files"

@@ -12,6 +12,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
 from _analysis_utils import inclusive_end_date
 
 
+@pytest.mark.micro
 def test_inclusive_end_date_basic():
     """Test basic inclusive end date conversion."""
     result = inclusive_end_date("2025-09-26")
@@ -19,6 +20,7 @@ def test_inclusive_end_date_basic():
     assert result == expected
 
 
+@pytest.mark.micro
 def test_inclusive_end_date_edge_cases():
     """Test edge cases for inclusive end date."""
     # Year boundary
@@ -32,6 +34,7 @@ def test_inclusive_end_date_edge_cases():
     assert result == expected
 
 
+@pytest.mark.micro
 def test_inclusive_end_date_invalid_format():
     """Test invalid date format raises ValueError."""
     with pytest.raises(ValueError, match="Invalid date format"):
@@ -41,6 +44,7 @@ def test_inclusive_end_date_invalid_format():
         inclusive_end_date("not-a-date")
 
 
+@pytest.mark.micro
 def test_inclusive_end_date_off_by_one_guard():
     """Test that inclusive end date prevents off-by-one errors."""
     # This should include the entire day

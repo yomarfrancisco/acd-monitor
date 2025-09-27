@@ -10,6 +10,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
 
 
+@pytest.mark.micro
 def test_leadlag_venues_ge_2_edges_gt_0():
     """Test that venues≥2 always produces edges>0."""
     # Test case 1: 2 venues should produce edges
@@ -71,6 +72,7 @@ def test_leadlag_venues_ge_2_edges_gt_0():
     assert leadlag_3_venues["venues_count"] == 3
 
 
+@pytest.mark.micro
 def test_leadlag_venues_lt_2_should_abort():
     """Test that venues<2 should abort with proper error."""
     # Test case: 1 venue should abort
@@ -86,6 +88,7 @@ def test_leadlag_venues_lt_2_should_abort():
     assert len(overlap_1_venue["venues"]) < 2
 
 
+@pytest.mark.micro
 def test_leadlag_empty_edges_should_abort():
     """Test that empty edges should abort with proper error."""
     # Test case: venues≥2 but edges=0 should abort
@@ -109,6 +112,7 @@ def test_leadlag_empty_edges_should_abort():
     assert leadlag_empty_edges["edges_count"] == 0
 
 
+@pytest.mark.micro
 def test_leadlag_edge_schema_validation():
     """Test that edges have required schema."""
     edge = {
