@@ -1,105 +1,32 @@
-name: Release
-
+name: release
 on:
   push:
-    tags: [ 'v*', 'court-*', 'research-*' ]
-  workflow_dispatch:
-    inputs:
-      tag_name:
-        description: 'Tag name for release'
-        required: true
-        default: 'v0.1.0'
-
+    tags:
+      - 'v*'
+      - 'research-*'
+      - 'court-*'
+permissions:
+  contents: write
+  actions: read
 jobs:
   release:
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-        
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-        
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        
-    - name: Create release directory
-      run: mkdir -p out
-      
-    - name: Zip reports
-      run: |
-        echo "Creating reports archive..."
-        if [ -d "exports" ]; then
-          tar -czf out/reports.tgz exports/ || echo "No exports to archive"
-        fi
-        if [ -d "baselines" ]; then
-          tar -czf out/baselines.tgz baselines/ || echo "No baselines to archive"
-        fi
-        if [ -d "court" ]; then
-          tar -czf out/court.tgz court/ || echo "No court data to archive"
-        fi
-        
-    - name: Collect individual reports
-      run: |
-        echo "Collecting individual reports..."
-        find . -name "*REPORT.md" -o -name "*DECISION.md" -o -name "*INDEX.json" -o -name "OVERLAP_SWEEP.md" | head -20
-        find . -name "*REPORT.md" -o -name "*DECISION.md" -o -name "*INDEX.json" -o -name "OVERLAP_SWEEP.md" | xargs tar -czf out/individual-reports.tgz || echo "No individual reports found"
-        
-    - name: Create release notes
-      run: |
-        echo "Creating release notes..."
-        cat > out/RELEASE_NOTES.md << 'EOL'
-        # ACD Monitor Release
-        
-        ## Artifacts Included
-        
-        - **Reports Archive**: Complete exports directory with all analysis results
-        - **Baselines Archive**: 2s research baseline and court 1s baseline
-        - **Court Data Archive**: Court-mode analysis results
-        - **Individual Reports**: Key reports and decision files
-        
-        ## Key Findings
-        
-        - Bilateral collusion detection in binance+bybit pairs
-        - Pairwise analysis across all 10 venue combinations
-        - Regulatory compliance analysis
-        - Real-time market surveillance results
-        
-        ## Usage
-        
-        Extract the archives to access the analysis results:
-        ```bash
-        tar -xzf reports.tgz
-        tar -xzf baselines.tgz
-        tar -xzf court.tgz
-        tar -xzf individual-reports.tgz
-        ```
-        EOL
-        
-    - name: Create Release
-      uses: softprops/action-gh-release@v2
-      with:
-        files: |
-          out/reports.tgz
-          out/baselines.tgz
-          out/court.tgz
-          out/individual-reports.tgz
-          out/RELEASE_NOTES.md
-        body_path: out/RELEASE_NOTES.md
-        generate_release_notes: true
-        draft: false
-        prerelease: false
-        
-    - name: Job Summary
-      run: |
-        echo "### Release created with latest diagnostics and bundles" >> $GITHUB_STEP_SUMMARY
-        echo "**Tag**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
-        echo "**Artifacts**: reports.tgz, baselines.tgz, court.tgz, individual-reports.tgz" >> $GITHUB_STEP_SUMMARY
-        echo "**Files included**: $(find out/ -name "*.tgz" | wc -l) archives" >> $GITHUB_STEP_SUMMARY
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: Create release directory
+        run: mkdir -p out
+      - name: Collect artifacts
+        run: |
+          tar -czf out/exports.tgz exports || true
+          tar -czf out/baselines_2s_evidence.tgz baselines/2s/evidence || true
+          tar -czf out/court_1s.tgz court/1s || true
+          tar -czf out/reports.tgz $(git ls-files '*REPORT*.md' '*SUMMARY*.md' '*DECISION*.md' || true) || true
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            out/*.tgz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
