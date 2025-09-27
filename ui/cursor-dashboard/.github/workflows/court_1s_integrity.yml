@@ -1,0 +1,13 @@
+name: court_1s_integrity
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  noop:
+    runs-on: ubuntu-latest
+    steps:
+      - name: No-op integrity placeholder
+        run: echo "court_1s_integrity workflow OK (placeholder on main only)"
