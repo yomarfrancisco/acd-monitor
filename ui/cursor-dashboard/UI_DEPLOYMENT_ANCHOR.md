@@ -104,7 +104,8 @@ git push origin fix/restore-agents-from-preview
 - **SHA256 artifacts**: Reproducible hashes for zip/json files
 - **E2E CI job**: Runs make targets, verifies bundles, uploads evidence artifacts
 - **No UI deltas**: Backend promotion flow only; consuming same schemas
-- **Commit**: ✅ de941ff
+- **Hotfix**: ✅ d95a591 (upgrade upload-artifact@v4, add permissions, acceptance checks)
+- **Step 5: E2E verify & promote (backend only) — ✅**
 
 ## Step 6 – Reliability hardening (backend only)
 
