@@ -97,6 +97,33 @@ git push origin fix/restore-agents-from-preview
 - **CI fixed: Added statsmodels + smoke test to integrity workflows**: ✅ 4134cb3
 - **Step 4 complete: Materialization fixes - inclusive windows, canonical schema, coverage math**: ✅ 5f33ea4
 
+## Step 5 – E2E verify & promote (backend only)
+
+- **Makefile targets**: baseline-from-snapshot, court-from-snapshot, verify-bundles, test
+- **Promotion pointers**: REAL_2s_PROMOTED.json and MANIFEST.json with stable schema
+- **SHA256 artifacts**: Reproducible hashes for zip/json files
+- **E2E CI job**: Runs make targets, verifies bundles, uploads evidence artifacts
+- **No UI deltas**: Backend promotion flow only; consuming same schemas
+- **Commit**: ✅ de941ff
+
+## Step 6 – Reliability hardening (backend only)
+
+- **Pinned dependencies**: requirements-lock.txt with explicit versions for reproducible builds
+- **Micro tests**: test_inclusive_end_date.py (off-by-one guard), test_resample_minute_second.py (no NaN leakage), test_leadlag_invariant.py (venues≥2 ⇒ edges>0), test_infoshare_bounds_schema.py (bounds present & in [0,1])
+- **CI updates**: All workflows use requirements-lock.txt, unit-smoke job runs before E2E
+- **Fast feedback**: make test runs in <10s, prevents surprise version drift
+- **No UI deltas**: Backend reliability only; consuming same schemas
+- **Commit**: ✅ c5e7776
+
+## Step 7 – Provenance & docs (backend only)
+
+- **Provenance generation**: generate_provenance.py with git_sha, python_version, pip_freeze_hash, platform, seeds, artifact hashes
+- **Operations guide**: docs/OPERATIONS.md with Makefile targets, CI sentinel tags, coverage thresholds, troubleshooting
+- **Auto-provenance**: Makefile targets now auto-generate provenance.json for baseline and court runs
+- **Complete auditability**: Every bundle includes provenance.json for courts/reviewers
+- **No UI deltas**: Backend provenance richer; consuming same schemas
+- **Commit**: ✅ b7aa80e
+
 ---
 
 **This document provides complete context for continuing development on the acd-monitor UI project without losing deployment knowledge or encountering previously resolved issues.**
