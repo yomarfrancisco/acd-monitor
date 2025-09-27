@@ -1,10 +1,10 @@
 """Regression detection for ACD Monitor metrics."""
 
 import logging
-import os
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Any
+from typing import Any, Dict, List
+
 import pandas as pd
 
 from .metrics import RunMetrics
@@ -239,7 +239,7 @@ class RegressionDetector:
         else:
             report += "No regressions detected.\n"
 
-        report += f"""
+        report += """
 ## Detailed Trend Analysis
 
 ### Metric Trends (7-run comparison)

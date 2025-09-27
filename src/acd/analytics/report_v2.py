@@ -8,23 +8,24 @@ This module provides enhanced reporting capabilities with:
 - Audit trails with cryptographic signatures
 """
 
-import json
 import hashlib
+import json
 import logging
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple
-import pandas as pd
+from typing import Any, Dict, List, Optional, Tuple
+
 import numpy as np
+import pandas as pd
 
 from ..icp.engine import ICPResult
-from ..vmm.engine import VMMOutput
-from ..vmm.crypto_moments import CryptoMoments
-from ..validation.lead_lag import LeadLagResult
-from ..validation.mirroring import MirroringResult
 from ..validation.hmm import HMMResult
 from ..validation.infoflow import InfoFlowResult
+from ..validation.lead_lag import LeadLagResult
+from ..validation.mirroring import MirroringResult
+from ..vmm.crypto_moments import CryptoMoments
+from ..vmm.engine import VMMOutput
 from .integrated_engine import IntegratedResult
 
 logger = logging.getLogger(__name__)
@@ -511,11 +512,11 @@ class ReportV2Generator:
         drivers.sort(key=lambda x: x[1], reverse=True)
         top_drivers = drivers[:3]
 
-        summary += f"\n## Top Risk Drivers\n"
+        summary += "\n## Top Risk Drivers\n"
         for driver, score in top_drivers:
             summary += f"- **{driver}**: {score:.1f}/100\n"
 
-        summary += f"\n## Statistical Significance\n"
+        summary += "\n## Statistical Significance\n"
         summary += f"- **ICP p-value**: {attribution_table.icp_p_value:.4f}\n"
         if attribution_table.vmm_p_value is not None:
             summary += f"- **VMM p-value**: {attribution_table.vmm_p_value:.4f}\n"

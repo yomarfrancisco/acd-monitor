@@ -1,12 +1,11 @@
 """Feature engineering for ACD Monitor demo pipeline."""
 
 import logging
-from typing import Dict, List, Tuple
+from typing import Dict, List
 
 import numpy as np
 import pandas as pd
 
-from ..data.features import DataWindowing
 from ..vmm import VMMConfig, VMMOutput, run_vmm
 
 logger = logging.getLogger(__name__)

@@ -4,11 +4,13 @@ VMM (Variational Method of Moments) Engine
 Implements VMM methodology for continuous monitoring and coordination detection.
 """
 
+import logging
+from dataclasses import dataclass
+from typing import Any, Dict, List, Optional, Tuple
+
 import numpy as np
 import pandas as pd
-from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple, Any
-import logging
+
 from .provenance import VMMProvenance, create_provenance_data
 
 logger = logging.getLogger(__name__)
@@ -183,8 +185,8 @@ class VMMEngine:
             Tuple of (convergence_status, iterations, final_loss)
         """
         beta = beta_init.copy()
-        sigma = sigma_init.copy()
-        rho = rho_init.copy()
+        sigma_init.copy()
+        rho_init.copy()
 
         for iteration in range(self.config.max_iterations):
             # Calculate moment conditions
@@ -418,7 +420,7 @@ class VMMEngine:
                 "sigma0": sigma0,
                 "fitted": True,
             }
-            logger.info(f"Per-timestep stabilizer fitted:")
+            logger.info("Per-timestep stabilizer fitted:")
             logger.info(f"  Winsorization: q01={q01}, q99={q99}")
             logger.info(f"  Centering: mu0={mu0}")
             logger.info(f"  Variance targeting: sigma0={sigma0}")
@@ -537,7 +539,7 @@ class VMMEngine:
 
         prices = data[price_columns].values
         N = len(prices)
-        n_exchanges = prices.shape[1]
+        prices.shape[1]
 
         # Define moment components (k0 ≈ 6-12 depending on pairs)
         moment_components = []

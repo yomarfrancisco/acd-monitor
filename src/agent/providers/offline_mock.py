@@ -6,13 +6,11 @@ deterministic, templated responses using ACD artifacts and fixtures.
 It's designed for testing and fallback scenarios when Chatbase is unavailable.
 """
 
-import os
 import json
-import hashlib
-from typing import Dict, List, Optional, Any
+import logging
 from dataclasses import dataclass
 from pathlib import Path
-import logging
+from typing import Any, Dict, List, Optional
 
 from .chatbase_adapter import AgentMessage, Health
 
@@ -147,7 +145,10 @@ class OfflineMockProvider:
         return {
             "risk_assessment": MockResponseTemplate(
                 intent="risk_assessment",
-                pattern="risk level|risk band|risk assessment|summary|verdict|low/amber/red|amber/red|assessment|screening memo",
+                pattern=(
+                    "risk level|risk band|risk assessment|summary|verdict|"
+                    "low/amber/red|amber/red|assessment|screening memo"
+                ),
                 template="""
 ## Risk Assessment Summary
 
@@ -397,7 +398,10 @@ Based on the available data, the following alternative explanations were evaluat
             ),
             "exchange_mirroring": MockResponseTemplate(
                 intent="exchange_mirroring",
-                pattern="mirroring episodes|top-10 depth|external venues|arbitrage windows|depth tier|heatmap|trading hours",
+                pattern=(
+                    "mirroring episodes|top-10 depth|external venues|"
+                    "arbitrage windows|depth tier|heatmap|trading hours"
+                ),
                 template="""
 ## Exchange Mirroring Analysis
 
@@ -650,7 +654,10 @@ Based on the available data, the following alternative explanations were evaluat
             ),
             "exchange_reporting": MockResponseTemplate(
                 intent="exchange_reporting",
-                pattern="internal memo|cco|findings|caveats|alternative explanations|next steps|export",
+                pattern=(
+                    "internal memo|cco|findings|caveats|"
+                    "alternative explanations|next steps|export"
+                ),
                 template="""
 ## Exchange Internal Memo
 
@@ -742,7 +749,10 @@ Based on the available data, the following alternative explanations were evaluat
             ),
             "exchange_market_maker": MockResponseTemplate(
                 intent="exchange_market_maker",
-                pattern="undercut initiation|market maker.*escalate|escalate.*repeated|undercut.*episodes",
+                pattern=(
+                    "undercut initiation|market maker.*escalate|"
+                    "escalate.*repeated|undercut.*episodes"
+                ),
                 template="""
 ## Exchange Market Maker Analysis
 
@@ -987,11 +997,12 @@ Based on the available data, the following alternative explanations were evaluat
 
 **Query:** {prompt}
 
-I understand you're asking about algorithmic coordination detection. Based on the available analysis artifacts, here's what I can tell you:
+I understand you're asking about algorithmic coordination detection. "
+                "Based on the available analysis artifacts, here's what I can tell you:"
 
 ### Available Analysis:
 - **ICP Invariance Tests:** Available
-- **VMM Moment Analysis:** Available  
+- **VMM Moment Analysis:** Available
 - **Validation Layers:** Lead-lag, Mirroring, HMM, Information Flow
 - **Risk Assessment:** Integrated scoring available
 - **Bundle Generation:** Regulatory-ready bundles available
@@ -1022,13 +1033,23 @@ Please be more specific about which aspect of the analysis you'd like to explore
             "default_seed": "42",
             "default_timestamp": self._get_timestamp(),
             "interpretations": {
-                "mirroring_high": "High mirroring ratios suggest potential coordination between exchanges.",
-                "mirroring_low": "Low mirroring ratios indicate competitive pricing behavior.",
-                "lead_lag_persistent": "Low switching entropy suggests persistent leadership patterns.",
-                "lead_lag_competitive": "High switching entropy indicates competitive leadership dynamics.",
-                "spread_floor_detected": "Spread floor patterns detected, suggesting potential coordination.",
+                "mirroring_high": (
+                    "High mirroring ratios suggest potential coordination " "between exchanges."
+                ),
+                "mirroring_low": ("Low mirroring ratios indicate competitive pricing behavior."),
+                "lead_lag_persistent": (
+                    "Low switching entropy suggests persistent leadership patterns."
+                ),
+                "lead_lag_competitive": (
+                    "High switching entropy indicates competitive leadership dynamics."
+                ),
+                "spread_floor_detected": (
+                    "Spread floor patterns detected, suggesting potential coordination."
+                ),
                 "spread_floor_none": "No significant spread floor patterns detected.",
-                "icp_reject": "ICP rejects invariance, suggesting coordination across environments.",
+                "icp_reject": (
+                    "ICP rejects invariance, suggesting coordination across environments."
+                ),
                 "icp_accept": "ICP accepts invariance, suggesting competitive behavior.",
                 "vmm_reject": "VMM rejects moment conditions, indicating structural instability.",
                 "vmm_accept": "VMM accepts moment conditions, indicating structural stability.",
@@ -1432,19 +1453,32 @@ Please be more specific about which aspect of the analysis you'd like to explore
                     "sender": "Surveillance Team",
                     "memo_date": "2025-09-21",
                     "subject": "Coordination Signals Analysis - BTC/USD",
-                    "executive_summary": "Coordination signals detected in BTC/USD pair requiring immediate attention",
-                    "coordination_signals": "5 signals detected with 85% confidence",
+                    "executive_summary": (
+                        "Coordination signals detected in BTC/USD pair "
+                        "requiring immediate attention"
+                    ),
+                    "coordination_signals": ("5 signals detected with 85% confidence"),
                     "risk_assessment": "AMBER risk level with increasing trend",
-                    "market_impact": "Reduced arbitrage opportunities, potential market manipulation",
-                    "regulatory_implications": "Potential regulatory scrutiny if patterns persist",
-                    "data_limitations": "Limited historical data for comparison",
-                    "analysis_constraints": "Real-time analysis only, no historical validation",
+                    "market_impact": (
+                        "Reduced arbitrage opportunities, potential market manipulation"
+                    ),
+                    "regulatory_implications": (
+                        "Potential regulatory scrutiny if patterns persist"
+                    ),
+                    "data_limitations": ("Limited historical data for comparison"),
+                    "analysis_constraints": ("Real-time analysis only, no historical validation"),
                     "uncertainty_factors": "Market volatility, external events",
                     "assumptions_made": "Standard market conditions, no technical issues",
-                    "arbitrage_latency_explanation": "Cross-venue latency may explain some patterns",
-                    "fee_tier_explanation": "VIP fee tiers may incentivize coordination",
-                    "inventory_shock_explanation": "Market maker inventory changes may drive signals",
-                    "market_conditions_explanation": "High volatility may trigger similar responses",
+                    "arbitrage_latency_explanation": (
+                        "Cross-venue latency may explain some patterns"
+                    ),
+                    "fee_tier_explanation": ("VIP fee tiers may incentivize coordination"),
+                    "inventory_shock_explanation": (
+                        "Market maker inventory changes may drive signals"
+                    ),
+                    "market_conditions_explanation": (
+                        "High volatility may trigger similar responses"
+                    ),
                     "immediate_actions": "Investigate coordination signals, prepare case files",
                     "short_term_actions": "Enhanced monitoring, market maker warnings",
                     "medium_term_actions": "Review fee tier structure, improve surveillance",
@@ -1496,7 +1530,7 @@ Please be more specific about which aspect of the analysis you'd like to explore
                     "priority_level": "HIGH",
                     "recommended_actions": "Investigate MM1, review market maker agreements",
                     "risk_level": "AMBER",
-                    "coordination_indicators": "Systematic undercutting patterns",
+                    "coordination_indicators": ("Systematic undercutting patterns"),
                     "market_impact": "Reduced market efficiency",
                     "regulatory_risk": "MODERATE",
                     "cases_opened": 2,
@@ -1511,7 +1545,9 @@ Please be more specific about which aspect of the analysis you'd like to explore
                 {
                     "submission_type": "Pre-Submission Pack",
                     "regulatory_authority": "SEC Division of Trading and Markets",
-                    "execulatory_summary": "Coordination signals detected in cryptocurrency trading",
+                    "execulatory_summary": (
+                        "Coordination signals detected in cryptocurrency trading"
+                    ),
                     "coordination_detection": "ICP and VMM analysis confirm coordination",
                     "risk_assessment": "AMBER risk level with regulatory implications",
                     "methodology": "Invariant Causal Prediction and Variational Method of Moments",
@@ -1540,7 +1576,7 @@ Please be more specific about which aspect of the analysis you'd like to explore
             data.update(
                 {
                     "risk_level": integrated.get("risk_band", "AMBER"),
-                    "coordination_detected": integrated.get("composite_score", 50) > 60,
+                    "coordination_detected": (integrated.get("composite_score", 50) > 60),
                     "confidence_level": "Medium",
                     "composite_score": integrated.get("composite_score", 50),
                     "icp_contribution": integrated.get("icp_contribution", 0.4),
@@ -1551,28 +1587,40 @@ Please be more specific about which aspect of the analysis you'd like to explore
         elif template.intent == "alternative_explanations":
             data.update(
                 {
-                    "arbitrage_analysis": "Latency constraints were within normal ranges",
+                    "arbitrage_analysis": ("Latency constraints were within normal ranges"),
                     "fee_analysis": "Fee tier structures showed no significant impact",
-                    "inventory_analysis": "Inventory shocks were not detected during the analysis period",
+                    "inventory_analysis": (
+                        "Inventory shocks were not detected during the analysis period"
+                    ),
                     "volatility_analysis": "Volatility controls were properly applied",
-                    "explanation_conclusion": "Alternative explanations do not fully account for the observed coordination patterns",
+                    "explanation_conclusion": (
+                        "Alternative explanations do not fully account for the observed "
+                        "coordination patterns"
+                    ),
                 }
             )
 
         elif template.intent == "bundle_generation":
             integrated = artifacts.get("integrated", {})
-            attribution = artifacts.get("attribution", {})
+            # attribution = artifacts.get("attribution", {})  # Unused for now
             data.update(
                 {
-                    "bundle_id": f"ACD_BUNDLE_{self.fixtures['default_seed']}_{self.fixtures['default_timestamp'].replace(':', '').replace('-', '').replace(' ', '_')}",
+                    "bundle_id": (
+                        f"ACD_BUNDLE_{self.fixtures['default_seed']}_"
+                        f"{self.fixtures['default_timestamp'].replace(':', '').replace('-', '').replace(' ', '_')}"
+                    ),
                     "executive_summary_length": 528,
                     "risk_band": integrated.get("risk_band", "AMBER"),
                     "n_findings": 3,
                     "n_recommendations": 6,
                     "n_alternatives": 3,
                     "json_path": f"artifacts/reports/bundle_{self.fixtures['default_seed']}.json",
-                    "attribution_path": f"artifacts/reports/attribution_{self.fixtures['default_seed']}.json",
-                    "provenance_path": f"artifacts/reports/provenance_{self.fixtures['default_seed']}.json",
+                    "attribution_path": (
+                        f"artifacts/reports/attribution_{self.fixtures['default_seed']}.json"
+                    ),
+                    "provenance_path": (
+                        f"artifacts/reports/provenance_{self.fixtures['default_seed']}.json"
+                    ),
                 }
             )
 
@@ -1582,15 +1630,29 @@ Please be more specific about which aspect of the analysis you'd like to explore
                 {
                     "original_bundle_id": f"ACD_BUNDLE_{self.fixtures['default_seed']}_original",
                     "refined_bundle_id": f"ACD_BUNDLE_{self.fixtures['default_seed']}_refined_1",
-                    "refinement_instructions": "Enhance alternative explanations, Add attribution tables",
-                    "refinement_summary": "Applied 2 refinement instructions: enhanced alternative explanations and added detailed attribution tables",
+                    "refinement_instructions": (
+                        "Enhance alternative explanations, Add attribution tables"
+                    ),
+                    "refinement_summary": (
+                        "Applied 2 refinement instructions: enhanced alternative explanations "
+                        "and added detailed attribution tables"
+                    ),
                     "n_findings": 4,
                     "n_recommendations": 7,
                     "n_alternatives": 5,
-                    "json_path": f"artifacts/reports/refined_bundle_{self.fixtures['default_seed']}.json",
-                    "attribution_path": f"artifacts/reports/refined_attribution_{self.fixtures['default_seed']}.json",
-                    "provenance_path": f"artifacts/reports/refined_provenance_{self.fixtures['default_seed']}.json",
-                    "refinement_history": f"1. Enhanced alternative explanations at {self.fixtures['default_timestamp']}\n2. Added attribution tables at {self.fixtures['default_timestamp']}",
+                    "json_path": (
+                        f"artifacts/reports/refined_bundle_{self.fixtures['default_seed']}.json"
+                    ),
+                    "attribution_path": (
+                        f"artifacts/reports/refined_attribution_{self.fixtures['default_seed']}.json"
+                    ),
+                    "provenance_path": (
+                        f"artifacts/reports/refined_provenance_{self.fixtures['default_seed']}.json"
+                    ),
+                    "refinement_history": (
+                        f"1. Enhanced alternative explanations at {self.fixtures['default_timestamp']}\n"
+                        f"2. Added attribution tables at {self.fixtures['default_timestamp']}"
+                    ),
                 }
             )
 
@@ -1613,8 +1675,14 @@ Please be more specific about which aspect of the analysis you'd like to explore
                     "bundle1_conf": 0.85,
                     "bundle2_conf": 0.70,
                     "conf_diff": 0.15,
-                    "differences_summary": "Bundle 1 shows significantly higher coordination risk with stronger ICP and VMM signals",
-                    "attribution_comparison": "Bundle 1 has higher attribution across all components, particularly ICP analysis",
+                    "differences_summary": (
+                        "Bundle 1 shows significantly higher coordination risk "
+                        "with stronger ICP and VMM signals"
+                    ),
+                    "attribution_comparison": (
+                        "Bundle 1 has higher attribution across all components, "
+                        "particularly ICP analysis"
+                    ),
                 }
             )
 
@@ -1624,16 +1692,22 @@ Please be more specific about which aspect of the analysis you'd like to explore
                     "bundle_id": f"ACD_BUNDLE_{self.fixtures['default_seed']}",
                     "analysis_id": f"ACD_ANALYSIS_{self.fixtures['default_seed']}",
                     "version": "2.0.0",
-                    "content_hash": f"abc123def456{self.fixtures['default_seed']}",
-                    "signature": f"ACD_SIG_abc123def456{self.fixtures['default_seed']}",
+                    "content_hash": (f"abc123def456{self.fixtures['default_seed']}"),
+                    "signature": (f"ACD_SIG_abc123def456{self.fixtures['default_seed']}"),
                     "generation_timestamp": self.fixtures["default_timestamp"],
                     "n_data_files": 2,
                     "n_config_files": 1,
                     "n_result_files": 4,
-                    "audit_trail_summary": f"1. Analysis initiated at {self.fixtures['default_timestamp']}\n2. Bundle generated at {self.fixtures['default_timestamp']}\n3. Provenance tracked with hash verification",
+                    "audit_trail_summary": (
+                        f"1. Analysis initiated at {self.fixtures['default_timestamp']}\n"
+                        f"2. Bundle generated at {self.fixtures['default_timestamp']}\n"
+                        f"3. Provenance tracked with hash verification"
+                    ),
                     "icp_config_summary": "significance_level: 0.05, n_bootstrap: 1000",
                     "vmm_config_summary": "max_iterations: 1000, convergence_tolerance: 1e-6",
-                    "validation_config_summary": "lead_lag: window_size=30, mirroring: threshold=0.7",
+                    "validation_config_summary": (
+                        "lead_lag: window_size=30, mirroring: threshold=0.7"
+                    ),
                 }
             )
 
@@ -1666,7 +1740,10 @@ Please be more specific about which aspect of the analysis you'd like to explore
     ) -> AgentMessage:
         """Generate error response"""
         return AgentMessage(
-            content=f"[Error] I encountered an issue processing your request: {error}. Please try again or contact support.",
+            content=(
+                f"[Error] I encountered an issue processing your request: {error}. "
+                f"Please try again or contact support."
+            ),
             session_id=session_id or f"error_{hash(prompt) % 10000}",
             usage={"mode": "error", "error": error},
             metadata={"provider": "offline_mock", "error": error},

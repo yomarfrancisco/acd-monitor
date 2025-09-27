@@ -5,10 +5,9 @@ This module provides functionality to compose structured answers from
 ACD artifacts and analysis results for agent responses.
 """
 
-import json
-from typing import Dict, List, Optional, Any, Union
-from dataclasses import dataclass
 import logging
+from dataclasses import dataclass
+from typing import Any, Dict
 
 logger = logging.getLogger(__name__)
 
