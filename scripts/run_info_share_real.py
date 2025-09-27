@@ -47,6 +47,8 @@ def load_real_tick_data(venues: list, pair: str, cache_dir: str, start_date: str
         venues: List of venues
         pair: Trading pair
         cache_dir: Cache directory
+        start_date: Start date (YYYY-MM-DD)
+        end_date: End date (YYYY-MM-DD) - will be made inclusive
         
     Returns:
         Dictionary mapping venue names to minute DataFrames
@@ -55,25 +57,24 @@ def load_real_tick_data(venues: list, pair: str, cache_dir: str, start_date: str
     cache = DataCache(cache_dir)
     venue_data = {}
     
+    # Use inclusive end date to prevent dropping final day
+    start_utc = datetime.strptime(start_date, "%Y-%m-%d")
+    end_utc = inclusive_end_date(end_date)  # 23:59:59 inclusive
+    
+    logger.info(f"Loading data from {start_utc} to {end_utc} (inclusive)")
+    
     for venue in venues:
         try:
-            # Load from cache
-            start_utc = datetime.strptime(start_date, "%Y-%m-%d")
-            end_utc = datetime.strptime(end_date, "%Y-%m-%d")
+            # Load from cache with inclusive end
             df = cache.get(venue=venue, pair=pair, frequency="1s",
                           start_utc=start_utc, end_utc=end_utc)
             
             if df is not None and len(df) > 0:
-                # Ensure proper column names and types
-                if 'timestamp' in df.columns:
-                    df = df.rename(columns={'timestamp': 'time'})
-                if 'price' in df.columns:
-                    df = df.rename(columns={'price': 'mid'})
-                df['time'] = pd.to_datetime(df['time'])
-                df = df.sort_values('time')
+                # Normalize schema using foundation utilities
+                df = ensure_time_mid_volume(df)
                 
-                # Resample to minute bars
-                df_minute = resample_to_minute_bars(df, venue)
+                # Resample to minute bars using foundation utilities
+                df_minute = resample_minute(df)
                 
                 if len(df_minute) > 0:
                     venue_data[venue] = df_minute
@@ -90,46 +91,6 @@ def load_real_tick_data(venues: list, pair: str, cache_dir: str, start_date: str
     return venue_data
 
 
-def resample_to_minute_bars(df: pd.DataFrame, venue: str) -> pd.DataFrame:
-    """
-    Resample tick data to minute OHLCV bars.
-    
-    Args:
-        df: Tick DataFrame with columns [time, mid, volume]
-        venue: Venue name
-        
-    Returns:
-        DataFrame with minute OHLCV bars
-    """
-    try:
-        # Set time as index
-        df = df.set_index('time')
-        
-        # Resample to minute bars
-        minute_bars = df['mid'].resample('1T').agg({
-            'open': 'first',
-            'high': 'max', 
-            'low': 'min',
-            'close': 'last',
-            'volume': 'sum'
-        })
-        
-        # Add mid price (average of OHLC)
-        minute_bars['mid'] = (minute_bars['open'] + minute_bars['high'] + 
-                             minute_bars['low'] + minute_bars['close']) / 4
-        
-        # Drop rows with NaN values
-        minute_bars = minute_bars.dropna()
-        
-        # Reset index
-        minute_bars = minute_bars.reset_index()
-        
-        return minute_bars
-        
-    except Exception as e:
-        logger = logging.getLogger(__name__)
-        logger.error(f"Failed to resample data for {venue}: {e}")
-        return pd.DataFrame()
 
 
 def run_info_share_analysis(
@@ -156,12 +117,50 @@ def run_info_share_analysis(
     logger = logging.getLogger(__name__)
     logger.info("Starting information share analysis on real data")
     
-    # Load real tick data
+    # Use inclusive end date to prevent dropping final day
+    start_utc = datetime.strptime(start_date, "%Y-%m-%d")
+    end_utc = inclusive_end_date(end_date)  # 23:59:59 inclusive
+    
+    logger.info(f"Analysis window: {start_utc} to {end_utc} (inclusive)")
+    
+    # Load real tick data with normalized schema
     venue_data = load_real_tick_data(venues, pair, cache_dir, start_date, end_date)
     
     if len(venue_data) < 3:
-        logger.error(f"Insufficient venues with data: {len(venue_data)} < 3")
-        return
+        logger.error(f"[ABORT:infoshare:insufficient_venues] Found {len(venue_data)} venues, need ≥3")
+        sys.exit(2)
+    
+    # Build inner-joined minute grid across all venues
+    logger.info("Building inner-joined minute grid across venues")
+    
+    # Start with the first venue as base
+    base_venue = list(venue_data.keys())[0]
+    base_df = venue_data[base_venue].copy()
+    base_df = base_df.set_index('time')
+    
+    # Inner join with remaining venues
+    for venue in list(venue_data.keys())[1:]:
+        venue_df = venue_data[venue].copy()
+        venue_df = venue_df.set_index('time')
+        base_df = base_df.join(venue_df, how='inner', rsuffix=f'_{venue}')
+    
+    # Drop NaN rows and reset index
+    initial_rows = len(base_df)
+    base_df = base_df.dropna()
+    final_rows = len(base_df)
+    
+    if final_rows < initial_rows:
+        logger.warning(f"Dropped {initial_rows - final_rows} rows with NaN values after inner join")
+    
+    # Guardrail: Check for sufficient data
+    window_days = (end_utc - start_utc).days
+    min_required_rows = 300 if window_days > 1 else 60
+    
+    if final_rows < min_required_rows:
+        logger.error(f"[ABORT:infoshare:insufficient_rows] Found {final_rows} rows, need ≥{min_required_rows} for {window_days}-day window")
+        sys.exit(2)
+    
+    logger.info(f"[STATS:infoShare:rows] total={final_rows} venues={len(venue_data)}")
     
     # Create analyzer with real data settings
     analyzer = InfoShareAnalyzer(
@@ -172,10 +171,6 @@ def run_info_share_analysis(
     
     # Run analysis
     try:
-        # Parse dates for the analyzer
-        start_utc = datetime.strptime(start_date, "%Y-%m-%d")
-        end_utc = datetime.strptime(end_date, "%Y-%m-%d")
-        
         results = analyzer.analyze_info_share(
             pair=pair,
             venues=list(venue_data.keys()),
@@ -187,15 +182,67 @@ def run_info_share_analysis(
         )
         
         if results:
+            # Validate bounds with guardrails
+            bounds = results.get('bounds', {})
+            if not bounds:
+                logger.error("[ABORT:infoshare:invalid_bounds] No bounds found in results")
+                sys.exit(2)
+            
+            # Check each venue has valid bounds
+            for venue in venues:
+                if venue not in bounds:
+                    logger.error(f"[ABORT:infoshare:invalid_bounds] Missing bounds for venue {venue}")
+                    sys.exit(2)
+                
+                venue_bounds = bounds[venue]
+                if not all(key in venue_bounds for key in ['lower', 'upper', 'point']):
+                    logger.error(f"[ABORT:infoshare:invalid_bounds] Incomplete bounds for venue {venue}")
+                    sys.exit(2)
+                
+                # Check bounds are in valid range
+                if not (0 <= venue_bounds['lower'] <= venue_bounds['point'] <= venue_bounds['upper'] <= 1):
+                    logger.error(f"[ABORT:infoshare:invalid_bounds] Invalid bounds for venue {venue}: {venue_bounds}")
+                    sys.exit(2)
+            
+            # Check sum of point estimates is reasonable
+            point_sum = sum(bounds[venue]['point'] for venue in venues if venue in bounds)
+            if not (0.98 <= point_sum <= 1.02):
+                logger.warning(f"[WARN:infoshare:sum_point] Sum of point estimates is {point_sum:.3f}, expected ~1.0")
+            
+            # Log bounds summary
+            min_lower = min(bounds[venue]['lower'] for venue in venues if venue in bounds)
+            max_upper = max(bounds[venue]['upper'] for venue in venues if venue in bounds)
+            logger.info(f"[STATS:infoShare:bounds] min_lower={min_lower:.3f} max_upper={max_upper:.3f} sum_point={point_sum:.3f}")
+            
+            # Write stable output schema
+            output_results = {
+                "bounds": bounds,
+                "overlap_window": {
+                    "start": start_utc.isoformat(),
+                    "end": end_utc.isoformat(),
+                    "minutes": (end_utc - start_utc).total_seconds() / 60,
+                    "venues": venues
+                },
+                "standardize": "none",
+                "gg_blend_alpha": 0.7
+            }
+            
+            results_file = Path(export_dir) / "info_share_results.json"
+            with open(results_file, 'w') as f:
+                json.dump(output_results, f, indent=2)
+            
             logger.info("Information share analysis completed successfully")
+            logger.info(f"Saved results to {results_file}")
             
             # Print evidence blocks
             print_evidence_blocks(export_dir, results)
         else:
-            logger.warning("No information share results generated")
+            logger.error("[ABORT:infoshare:no_results] Analysis failed - no results generated")
+            sys.exit(2)
             
     except Exception as e:
-        logger.error(f"Analysis failed: {e}", exc_info=True)
+        logger.error(f"[ABORT:infoshare:analysis_error] Analysis failed: {e}", exc_info=True)
+        sys.exit(2)
 
 
 def print_evidence_blocks(export_dir: str, results: dict) -> None:
