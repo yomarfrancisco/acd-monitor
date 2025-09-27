@@ -1,6 +1,6 @@
 {
   "baseline_type": "2s_research",
-  "git_sha": "7727eef",
+  "git_sha": "9c59178",
   "policy": "RESEARCH_g=2s",
   "coverage": 0.99,
   "duration_minutes": 2.0,
@@ -14,6 +14,6 @@
   "timestamp": "2025-09-27T01:00:00.000000+00:00",
   "end_timestamp": "2025-09-27T01:02:00.000000+00:00",
   "snapshot_path": "real_data_runs/20250927T010000__20250927T010200",
-  "baseline_pinned": "2025-09-27T01:16:15.487781",
+  "baseline_pinned": "2025-09-27T20:41:52.406684",
   "research_baseline": "2s"
 }

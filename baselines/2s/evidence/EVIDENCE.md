@@ -60,7 +60,7 @@ Lead-Lag analysis completed on 2s research baseline with:
 - Duration: 2.0 minutes
 - Coverage: 0.990
 - Venues: 5
-- Analysis timestamp: 2025-09-27T01:16:48.116196
+- Analysis timestamp: 2025-09-27T20:41:55.611700
 ## END STATS
 
 ## BEGIN GUARDRAILS
@@ -76,7 +76,7 @@ Lead-Lag analysis completed on 2s research baseline with:
   "baseline_type": "2s_research",
   "policy": "RESEARCH_g=2s",
   "research_baseline": "2s",
-  "timestamp": "2025-09-27T01:16:48.116220"
+  "timestamp": "2025-09-27T20:41:55.611724"
 }
 ## END MANIFEST
 

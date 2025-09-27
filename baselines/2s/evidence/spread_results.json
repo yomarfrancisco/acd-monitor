@@ -21,19 +21,19 @@
       "start_idx": 0,
       "end_idx": 10,
       "duration": 10,
-      "lift": 0.61,
-      "p_value": 0.032,
-      "leader": "kraken"
+      "lift": 0.515,
+      "p_value": 0.013000000000000001,
+      "leader": "okx"
     },
     {
       "start_idx": 100,
       "end_idx": 110,
       "duration": 10,
-      "lift": 0.8400000000000001,
-      "p_value": 0.027999999999999997,
+      "lift": 0.89,
+      "p_value": 0.038,
       "leader": "okx"
     }
   ],
   "permutes": 2000,
-  "analysis_timestamp": "2025-09-27T01:16:47.183844"
+  "analysis_timestamp": "2025-09-27T20:41:55.036412"
 }

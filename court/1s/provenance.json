@@ -1,0 +1,28 @@
+{
+  "git_sha": "9c59178fa35379e7337ed06631939c37e4454859",
+  "python_version": "3.10.16",
+  "pip_freeze_hash": "2eaf50b0239d476f",
+  "platform": {
+    "system": "Darwin",
+    "release": "22.4.0",
+    "machine": "arm64"
+  },
+  "seeds": {
+    "numpy": 42,
+    "random": 123
+  },
+  "snapshot_path": "/Users/ygorfrancisco/Desktop/acd-monitor/court/1s",
+  "analysis_params": {
+    "permutes": 5000,
+    "alpha": 0.05,
+    "gg_blend_alpha": 0.7
+  },
+  "created_at": "2025-09-27T20:42:03.073340Z",
+  "artifacts": {
+    "leadlag_results.json": "18b7cf30c87a42d3da08d911dc5a7baac86f4506aef32a9364ebd3d489a25caf",
+    "spread_results.json": "4f3721dbeff17ca00fd610f975fa35027311d48190e6a720cba6b42a58df1ef4",
+    "info_share_results.json": "06738c626709e6bfa37a13094c87388557257629dfa3c5a4a57a1ca4455c641b",
+    "EVIDENCE.md": "4d1e7c25ce36aa2e4c17b950c56bc46647c8df5938b879e7c5efb8f5582426b6",
+    "MANIFEST.json": "76c21ceb27c5dbacb42048c067ad8fd54db282e0536b33e00a46aae983629542"
+  }
+}

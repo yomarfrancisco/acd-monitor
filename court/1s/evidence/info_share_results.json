@@ -21,33 +21,33 @@
   },
   "bounds": {
     "binance": {
-      "lower": 0.17,
-      "upper": 0.37,
-      "point": 0.27
+      "lower": 0.143,
+      "upper": 0.34299999999999997,
+      "point": 0.243
     },
     "coinbase": {
-      "lower": 0.11300000000000002,
-      "upper": 0.31300000000000006,
-      "point": 0.21300000000000002
+      "lower": 0.17900000000000002,
+      "upper": 0.379,
+      "point": 0.279
     },
     "kraken": {
-      "lower": 0.13,
-      "upper": 0.33,
-      "point": 0.23
+      "lower": 0.19900000000000004,
+      "upper": 0.399,
+      "point": 0.29900000000000004
     },
     "okx": {
-      "lower": 0.153,
-      "upper": 0.353,
-      "point": 0.253
+      "lower": 0.119,
+      "upper": 0.319,
+      "point": 0.219
     },
     "bybit": {
-      "lower": 0.134,
-      "upper": 0.334,
-      "point": 0.234
+      "lower": 0.19300000000000003,
+      "upper": 0.393,
+      "point": 0.29300000000000004
     }
   },
   "window_minutes": 2.0,
   "standardize": "none",
   "gg_blend_alpha": 0.7,
-  "analysis_timestamp": "2025-09-27T01:40:23.213826"
+  "analysis_timestamp": "2025-09-27T20:42:01.072409"
 }

@@ -22,41 +22,41 @@ help:
 
 baseline-from-snapshot:
 	@if [ -z "$(SNAPSHOT)" ]; then \
-	echo "Error: SNAPSHOT path required"; \
-	echo "Usage: make baseline-from-snapshot SNAPSHOT=baselines/2s"; \
-	exit 1; \
+		echo "Error: SNAPSHOT path required"; \
+		echo "Usage: make baseline-from-snapshot SNAPSHOT=baselines/2s"; \
+		exit 1; \
 	fi
 	@echo "[MAKE:baseline] Building baseline evidence from $(SNAPSHOT)"
 	@python scripts/build_research_baseline_2s.py \
-	--export-dir $(SNAPSHOT)/evidence \
-	--verbose
+		--export-dir $(SNAPSHOT)/evidence \
+		--verbose
 	@python scripts/generate_provenance.py \
-	--snapshot $(SNAPSHOT) \
-	--permutes 1000 \
-	--alpha 0.05 \
-	--gg-blend-alpha 0.7
+		--snapshot $(SNAPSHOT) \
+		--permutes 1000 \
+		--alpha 0.05 \
+		--gg-blend-alpha 0.7
 	@echo "[MAKE:baseline] Baseline evidence built successfully"
 
 court-from-snapshot:
 	@if [ -z "$(SNAPSHOT)" ]; then \
-	echo "Error: SNAPSHOT path required"; \
-	echo "Usage: make court-from-snapshot SNAPSHOT=court/1s"; \
-	exit 1; \
+		echo "Error: SNAPSHOT path required"; \
+		echo "Usage: make court-from-snapshot SNAPSHOT=court/1s"; \
+		exit 1; \
 	fi
 	@echo "[MAKE:court] Building court evidence from $(SNAPSHOT)"
 	@python scripts/build_court_bundle_from_snapshot.py \
-	--snapshot $(SNAPSHOT) \
-	--export-dir $(SNAPSHOT)/evidence \
-	--permutes 5000 \
-	--alpha 0.05 \
-	--no-stitch \
-	--all5 \
-	--verbose
+		--snapshot $(SNAPSHOT) \
+		--export-dir $(SNAPSHOT)/evidence \
+		--permutes 5000 \
+		--alpha 0.05 \
+		--no-stitch \
+		--all5 \
+		--verbose
 	@python scripts/generate_provenance.py \
-	--snapshot $(SNAPSHOT) \
-	--permutes 5000 \
-	--alpha 0.05 \
-	--gg-blend-alpha 0.7
+		--snapshot $(SNAPSHOT) \
+		--permutes 5000 \
+		--alpha 0.05 \
+		--gg-blend-alpha 0.7
 	@echo "[MAKE:court] Court evidence built successfully"
 
 verify-bundles:
