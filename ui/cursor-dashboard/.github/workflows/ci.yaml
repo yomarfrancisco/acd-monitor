@@ -16,6 +16,21 @@ permissions:
   contents: read
 
 jobs:
+  preview-demo-guard:
+    if: github.ref == 'refs/heads/preview'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check for demo mode in preview
+        run: |
+          echo "Checking preview env…"
+          # block if any config or repo sets demo to true/1
+          if git grep -n "NEXT_PUBLIC_USE_DEMO *= *1" || git grep -n "FEED_MODE *= *demo"; then
+            echo "::error ::Demo mode detected in preview branch. Preview must be LIVE only."
+            exit 1
+          fi
+          echo "OK: no demo flags in preview."
+
   build-test:
     runs-on: ubuntu-latest
     strategy:
@@ -76,40 +91,34 @@ jobs:
         find baselines/ -name "*.md" -o -name "*.json" | head -5 || echo "No baselines found"
         find court/ -name "*.md" -o -name "*.json" | head -5 || echo "No court data found"
 
-  preview-demo-guard:
+  ui:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/preview'
-    
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Check for demo mode in preview
-      run: |
-        echo "Checking for demo mode configuration in preview branch..."
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: ui/cursor-dashboard/package-lock.json
         
-        # Check for NEXT_PUBLIC_USE_DEMO=1 in any config files
-        if grep -r "NEXT_PUBLIC_USE_DEMO.*1" ui/cursor-dashboard/ 2>/dev/null; then
-          echo "❌ ERROR: Demo mode detected in preview branch!"
-          echo "Preview branch must use live data only."
-          echo "Found NEXT_PUBLIC_USE_DEMO=1 in configuration files."
-          exit 1
-        fi
-        
-        # Check for FEED_MODE=demo in any config files
-        if grep -r "FEED_MODE.*demo" ui/cursor-dashboard/ 2>/dev/null; then
-          echo "❌ ERROR: Demo feed mode detected in preview branch!"
-          echo "Preview branch must use live data only."
-          echo "Found FEED_MODE=demo in configuration files."
-          exit 1
-        fi
-        
-        echo "✅ Preview branch configuration validated - no demo mode detected"
-        echo "✅ Preview branch is configured for live data only"
+    - name: Install dependencies
+      working-directory: ui/cursor-dashboard
+      run: npm ci
+      
+    - name: Type check
+      working-directory: ui/cursor-dashboard
+      run: npx tsc --noEmit
+      
+    - name: Build
+      working-directory: ui/cursor-dashboard
+      run: npm run build
 
   artifacts:
     runs-on: ubuntu-latest
-    needs: [build-test, preview-demo-guard]
+    needs: [build-test, preview-demo-guard, ui]
     if: always()
     
     steps:

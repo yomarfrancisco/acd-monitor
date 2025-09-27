@@ -1,50 +1,46 @@
 /**
  * Environment configuration for ACD Monitor
- * Normalizes env vars to booleans/strings safely and forces LIVE when VERCEL_ENV === 'preview'
+ * Fixes boolean typing and enforces LIVE data in preview mode
  */
 
-type Boolish = string | boolean | undefined;
-
-function toBool(v: Boolish, def = false): boolean {
+// helpers (top of file)
+const toBool = (v: string | boolean | undefined, def = false): boolean => {
   if (typeof v === 'boolean') return v;
   if (typeof v === 'string') {
     const s = v.trim().toLowerCase();
-    return s === '1' || s === 'true' || s === 'yes' || s === 'on';
+    return ['1', 'true', 'yes', 'on'].includes(s);
   }
   return def;
-}
+};
+const toStr = (v: string | undefined, def = ''): string => (v ?? def);
 
-function toStr(v: string | undefined, def = ''): string {
-  return (v ?? def).trim();
-}
+// detect vercel preview
+const IS_PREVIEW =
+  (process.env.VERCEL_ENV ?? process.env.NEXT_PUBLIC_VERCEL_ENV ?? '').toLowerCase() === 'preview';
 
-const isPreview = toStr(process.env.VERCEL_ENV, '').toLowerCase() === 'preview';
+// normalize raw envs
+const RAW_USE_DEMO = process.env.NEXT_PUBLIC_USE_DEMO as string | boolean | undefined;
+const RAW_FEED_MODE = process.env.FEED_MODE as string | undefined;
 
-// Raw env (as provided by Vercel/GitHub)
-const RAW_USE_DEMO: Boolish = process.env.NEXT_PUBLIC_USE_DEMO;
-const RAW_FEED_MODE = toStr(process.env.FEED_MODE);
+// hard force LIVE in preview
+export const USE_DEMO: boolean = IS_PREVIEW ? false : toBool(RAW_USE_DEMO, false);
+export const FEED_MODE: string = IS_PREVIEW ? 'live' : toStr(RAW_FEED_MODE, 'live');
 
-// Normalize
-let USE_DEMO = toBool(RAW_USE_DEMO, false);
-let FEED_MODE = RAW_FEED_MODE || 'live';
-
-// **Enforce live-only in preview**
-if (isPreview) {
-  USE_DEMO = false;
-  FEED_MODE = 'live';
-  // Optional: noisy log to surface misconfig
+// optional: console guard in preview
+if (IS_PREVIEW) {
   // eslint-disable-next-line no-console
   console.warn('[env] Preview mode: forcing USE_DEMO=false and FEED_MODE=live');
 }
 
-export const Env = {
-  isPreview,
-  USE_DEMO,         // boolean
-  FEED_MODE,        // 'live' | 'demo' (but 'live' in preview)
+export const EnvConfig = {
+  isPreview: IS_PREVIEW,
+  useDemo: USE_DEMO,
+  feedMode: FEED_MODE,
 };
+export type EnvConfigT = typeof EnvConfig;
 
 // Legacy interface for backward compatibility
-export interface EnvConfig {
+export interface EnvConfigLegacy {
   isLive: boolean;
   isPreview: boolean;
   isProduction: boolean;
@@ -54,7 +50,7 @@ export interface EnvConfig {
   apiUrl: string;
 }
 
-function getEnvConfig(): EnvConfig {
+function getEnvConfig(): EnvConfigLegacy {
   const isVercel = typeof process !== 'undefined' && process.env.VERCEL;
   const isProduction = isVercel && process.env.VERCEL_ENV === 'production';
   
@@ -67,7 +63,7 @@ function getEnvConfig(): EnvConfig {
   
   return {
     isLive,
-    isPreview,
+    isPreview: IS_PREVIEW,
     isProduction,
     useDemo: USE_DEMO,
     feedMode: FEED_MODE as 'live' | 'demo' | 'synthetic',

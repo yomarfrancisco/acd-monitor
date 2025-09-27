@@ -1,13 +1,11 @@
-name: baseline_integrity
+name: integrity (main only)
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
-permissions:
-  contents: read
+
 jobs:
   noop:
     runs-on: ubuntu-latest
     steps:
-      - name: No-op integrity placeholder
-        run: echo "baseline_integrity workflow OK (placeholder on main only)"
+      - run: echo "Integrity workflows run only on main."
