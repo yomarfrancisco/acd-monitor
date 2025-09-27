@@ -477,9 +477,12 @@ def build_research_bundle(snapshot_dir: str, export_dir: str, pair: str,
     
     # Validate venues count - must have at least 2 for Lead-Lag edges
     venues = overlap['overlap_data'].get('venues', [])
+    print(f"[BUNDLE:leadlag:call] export_dir={export_dir}")
+    print(f"[BUNDLE:leadlag:venues] {venues}")
+    
     if len(venues) < 2:
+        print("[ABORT:bundle:venues_lt_2]")
         logger.error(f"[ABORT:bundle:venues_lt_2] Found {len(venues)} venues, need ≥2 for Lead-Lag edges")
-        print(f"[ABORT:bundle:venues_lt_2] Found {len(venues)} venues, need ≥2 for Lead-Lag edges")
         sys.exit(2)
     
     print(f"[STATS:bundle:venues] {len(venues)}")

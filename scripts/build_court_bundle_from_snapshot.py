@@ -215,9 +215,12 @@ def main():
             overlap_data = json.load(f)
         
         venues = overlap_data.get('venues', [])
+        print(f"[BUNDLE:leadlag:call] export_dir={out_dir}")
+        print(f"[BUNDLE:leadlag:venues] {venues}")
+        
         if len(venues) < 2:
+            print("[ABORT:bundle:venues_lt_2]")
             logger.error(f"[ABORT:bundle:venues_lt_2] Found {len(venues)} venues, need ≥2 for Lead-Lag edges")
-            print(f"[ABORT:bundle:venues_lt_2] Found {len(venues)} venues, need ≥2 for Lead-Lag edges")
             return 2
         
         print(f"[STATS:bundle:venues] {len(venues)}")
