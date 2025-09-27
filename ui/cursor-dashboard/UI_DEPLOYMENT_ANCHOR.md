@@ -83,6 +83,10 @@ git push origin fix/restore-agents-from-preview
 - **Build Status**: ✅ TypeScript compilation passed, analysis pipeline fully hardened
 - **Verification**: GitHub Actions workflow should be green, Vercel Preview should be live
 - **Analysis Step 3**: Lead-Lag normalized, bundles aligned, manifest hardened, CI sentinels on
+- **Step 3(a)**: Lead-lag non-empty edges invariant committed – preview updated
+- **Step 3(b)**: Schema alignment with CI sentinels – preview updated  
+- **Step 3(c)**: CI debug echo for faster triage – preview updated
+- **Step 3(d)**: Bundle venues<2 guardrails – preview updated
 
 ---
 
