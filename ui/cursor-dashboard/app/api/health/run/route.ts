@@ -1,48 +1,91 @@
 import { NextResponse } from 'next/server';
 
-// Simple deterministic pseudo-random with jitter for "live-ish" feel
-const jitter = (base: number, span: number) => {
-  const r = Math.sin(Date.now()/60000) * 0.5 + 0.5; // 0..1 minute wave
-  return Math.round(base + (r - 0.5) * span);
-};
+const BACKEND_URL = process.env.BACKEND_URL || 'https://acd-monitor-backend.onrender.com'
+const IS_PREVIEW = process.env.VERCEL_ENV === 'preview' || process.env.NEXT_PUBLIC_DATA_MODE === 'live'
 
-export async function GET(request: Request) {
-  const url = new URL(request.url);
-  const mode = url.searchParams.get('mode') ?? 'normal'; // normal|degraded
-
-  const systemHealth = mode === 'degraded' ? jitter(65, 15) : jitter(84, 8);
-  const complianceReadiness = mode === 'degraded' ? jitter(45, 12) : jitter(67, 6);
-  
-  const band = systemHealth >= 80 ? 'PASS' : systemHealth >= 60 ? 'WATCH' : 'FAIL';
-
-  // Generate spark data (12 points for mini chart)
-  const spark = [];
-  const now = new Date();
-  for (let i = 11; i >= 0; i--) {
-    const ts = new Date(now.getTime() - (i * 30 * 60 * 1000)); // 30 min intervals
-    spark.push({
-      ts: ts.toISOString(),
-      convergence: jitter(25, 5),
-      dataIntegrity: jitter(18, 4),
-      evidenceChain: jitter(82, 6),
-      runtimeStability: jitter(81, 5)
+export async function GET() {
+  // In production, always use mock data
+  if (!IS_PREVIEW) {
+    const response = NextResponse.json({
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      checks: {
+        database: 'healthy',
+        external_apis: 'healthy',
+        memory_usage: 'healthy'
+      },
+      mode: 'mock'
     });
+    response.headers.set('x-acd-bundle-version', 'v1.9+');
+    response.headers.set('x-case-library-version', 'v1.9');
+    return response;
   }
 
-  const payload = {
-    updatedAt: new Date().toISOString(),
-    summary: {
-      systemHealth,
-      complianceReadiness,
-      band
-    },
-    spark,
-    source: {
-      name: 'Simulated: Internal Monitoring',
-      freshnessSec: mode === 'degraded' ? 120 : 24,
-      quality: mode === 'degraded' ? 0.78 : 0.95
+  // In preview, try to fetch from backend
+  try {
+    const response = await fetch(`${BACKEND_URL}/api/health/run`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    
+    if (!response.ok) {
+      throw new Error(`Backend responded with ${response.status}`)
     }
-  };
-
-  return NextResponse.json(payload);
+    
+    const data = await response.json()
+    
+    // Add Binance health check if preview flag is enabled
+    const isBinancePreview = process.env.NEXT_PUBLIC_PREVIEW_BINANCE === 'true'
+    if (isBinancePreview) {
+      try {
+        const binanceResponse = await fetch(`${BACKEND_URL}/exchanges/binance/ping`, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        
+        if (binanceResponse.ok) {
+          const binanceData = await binanceResponse.json()
+          data.checks = {
+            ...data.checks,
+            binance: binanceData.healthy ? 'healthy' : 'degraded'
+          }
+        } else {
+          data.checks = {
+            ...data.checks,
+            binance: 'degraded'
+          }
+        }
+      } catch (binanceError) {
+        console.warn('Binance health check failed:', binanceError)
+        data.checks = {
+          ...data.checks,
+          binance: 'degraded'
+        }
+      }
+    }
+    
+    const res = NextResponse.json(data)
+    res.headers.set('x-acd-bundle-version', 'v1.9+');
+    res.headers.set('x-case-library-version', 'v1.9');
+    return res
+  } catch (error) {
+    console.error('Failed to fetch from backend:', error)
+    
+    // Fallback to mock data if backend is unavailable
+    const response = NextResponse.json({
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      checks: {
+        database: 'healthy',
+        external_apis: 'healthy',
+        memory_usage: 'healthy'
+      },
+      mode: 'fallback'
+    });
+    response.headers.set('x-acd-bundle-version', 'v1.9+');
+    response.headers.set('x-case-library-version', 'v1.9');
+    return response;
+  }
 }

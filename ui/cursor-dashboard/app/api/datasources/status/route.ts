@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { proxyJson } from '@/lib/proxy-utils';
 
 // Simple deterministic pseudo-random with jitter for "live-ish" feel
 const jitter = (base: number, span: number) => {
@@ -6,11 +7,9 @@ const jitter = (base: number, span: number) => {
   return Math.round(base + (r - 0.5) * span);
 };
 
-export async function GET(request: Request) {
-  const url = new URL(request.url);
-  const mode = url.searchParams.get('mode') ?? 'normal'; // normal|degraded
-
-  const payload = {
+// Generate mock data sources
+function generateMockDataSources(mode: string) {
+  return {
     updatedAt: new Date().toISOString(),
     items: [
       {
@@ -18,15 +17,15 @@ export async function GET(request: Request) {
         name: 'Internal Monitoring',
         tier: 'T2',
         status: mode === 'degraded' ? 'DEGRADED' : 'OK',
-        freshnessSec: mode === 'degraded' ? jitter(300, 60) : jitter(22, 8),
-        quality: mode === 'degraded' ? 0.78 : 0.96
+        freshnessSec: mode === 'degraded' ? jitter(300, 60) : jitter(15, 5),
+        quality: mode === 'degraded' ? 0.85 : 0.98
       },
       {
         id: 'ds2',
-        name: 'Bloomberg Terminal',
+        name: 'Exchange Feeds',
         tier: 'T1',
         status: 'OK',
-        freshnessSec: jitter(15, 5),
+        freshnessSec: jitter(30, 10),
         quality: 0.98
       },
       {
@@ -47,6 +46,33 @@ export async function GET(request: Request) {
       }
     ]
   };
+}
 
-  return NextResponse.json(payload);
+export async function GET(request: Request) {
+  const url = new URL(request.url);
+  const mode = url.searchParams.get('mode') ?? 'normal';
+  
+  const result = await proxyJson('/api/datasources/status', {
+    mockFallback: () => generateMockDataSources(mode)
+  });
+
+  if (!result.success) {
+    return NextResponse.json(
+      { error: 'Service unavailable' },
+      { status: 503 }
+    );
+  }
+
+  const response = NextResponse.json(result.data, { status: result.status });
+  
+  // Add custom headers
+  response.headers.set('x-acd-bundle-version', 'v1.9+');
+  response.headers.set('x-case-library-version', 'v1.9');
+  if (result.headers) {
+    Object.entries(result.headers).forEach(([key, value]) => {
+      response.headers.set(key, value);
+    });
+  }
+
+  return response;
 }

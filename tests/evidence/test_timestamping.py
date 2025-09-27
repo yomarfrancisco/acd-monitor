@@ -4,13 +4,12 @@ Unit tests for ACD Monitor timestamping system.
 Tests TSA providers, circuit breakers, timestamp clients, and integration.
 """
 
-import pytest
 import time
-from unittest.mock import Mock, patch, MagicMock
-from datetime import datetime, timezone
-from pathlib import Path
 
-from acd.evidence.timestamping import (
+# from unittest.mock import Mock  # noqa: F401, patch, MagicMock
+from datetime import datetime, timezone  # noqa: F401
+
+from acd.evidence.timestamping import (  # noqa: F401
     TSAProvider,
     TimestampResponse,
     TimestampChain,

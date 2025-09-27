@@ -10,6 +10,17 @@ Thank you for your interest in contributing to the Algorithmic Coordination Diag
 - Include comprehensive tests for new features
 - Document all public APIs and functions
 
+### Code Formatting
+- **Pre-commit hooks**: Install and run pre-commit hooks to ensure consistent formatting:
+  ```bash
+  pre-commit install
+  pre-commit run --all-files
+  ```
+- **Black**: Python code is automatically formatted with Black (line length: 100)
+- **Flake8**: Python linting is enforced for `backend/` and `src/` directories
+- **Line endings**: All files use LF line endings (enforced via `.gitattributes`)
+- **Tool versions**: CI uses pinned versions (Black 24.8.0, Flake8 7.1.0) for deterministic builds
+
 ### Pull Request Process
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)

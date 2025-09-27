@@ -1,0 +1,16 @@
+{
+  "title": "Technical Deep-Dive - v1.4 Analysis",
+  "methodology": "v1.4 Baseline Standard Implementation",
+  "metrics": {
+    "depth_weighted_cosine": 0.76,
+    "jaccard_index": 0.73,
+    "composite_coordination_score": 0.74
+  },
+  "statistical_tests": {
+    "icp_p_value": 0.003,
+    "vmm_coordination_index": 0.184,
+    "network_clustering": 0.73
+  },
+  "economic_interpretation": "Strong evidence of coordination requiring investigation",
+  "limitations": "Investigation triggers only, not conclusive evidence of violation"
+}

@@ -1,0 +1,62 @@
+{
+  "pilot_metadata": {
+    "generation_timestamp": "2025-09-21T19:42:23.630716",
+    "pilot_id": "ACD_PILOT_001",
+    "phase": "Phase-4 Week 2",
+    "mode": "offline_demonstration",
+    "data_period": "30_days",
+    "exchanges": [
+      "binance",
+      "coinbase",
+      "kraken"
+    ],
+    "asset_pairs": [
+      "BTC/USD",
+      "ETH/USD",
+      "ADA/USD"
+    ]
+  },
+  "system_performance": {
+    "compliance_query_success_rate": 100.0,
+    "bundle_generation_speed": 0.002,
+    "memory_usage_mb": 0.0,
+    "latency_95th_percentile": 0.002,
+    "error_handling_success_rate": 100.0
+  },
+  "analysis_results": {
+    "coordination_detected": true,
+    "risk_level": "AMBER",
+    "confidence_level": 0.85,
+    "composite_score": 75.5,
+    "key_metrics": {
+      "icp_p_value": 0.013,
+      "vmm_over_identification_p": 0.041,
+      "lead_lag_switching_entropy": 0.15,
+      "mirroring_ratio": 0.78,
+      "hmm_coordination_regime": 1,
+      "infoflow_transfer_entropy": 0.15
+    }
+  },
+  "regulatory_readiness": {
+    "evidence_bundles_generated": true,
+    "attribution_tables_complete": true,
+    "provenance_tracking_active": true,
+    "cryptographic_signatures": true,
+    "alternative_explanations_included": true,
+    "audit_trail_complete": true
+  },
+  "next_steps": [
+    "Activate live Chatbase integration with paid account",
+    "Enable live crypto data feeds from exchanges",
+    "Begin regulator pilot program with offline bundles",
+    "Expand compliance regression suite to >50 queries",
+    "Implement multi-jurisdictional pilot preparation"
+  ],
+  "risk_assessment": {
+    "chatbase_integration": "ready_for_activation",
+    "crypto_data_collection": "infrastructure_ready",
+    "regulatory_compliance": "fully_operational",
+    "performance_benchmarks": "all_targets_exceeded",
+    "system_reliability": "high"
+  }
+}

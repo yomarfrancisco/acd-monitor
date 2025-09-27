@@ -1,0 +1,105 @@
+{
+  "generation_info": {
+    "seed": 42,
+    "generated_at": "2025-09-21T17:22:39.839849",
+    "n_records": 1460,
+    "n_days": 365,
+    "airlines": [
+      "BA",
+      "VS",
+      "EI",
+      "FR"
+    ],
+    "route": {
+      "origin": "LHR",
+      "destination": "DUB",
+      "distance": 288,
+      "typical_duration": 75
+    }
+  },
+  "coordination_periods": [
+    {
+      "start": "2023-01-15",
+      "end": "2023-02-28",
+      "strength": 0.8,
+      "description": "Post-holiday coordination"
+    },
+    {
+      "start": "2023-06-01",
+      "end": "2023-07-15",
+      "strength": 0.9,
+      "description": "Summer peak coordination"
+    },
+    {
+      "start": "2023-09-15",
+      "end": "2023-10-31",
+      "strength": 0.7,
+      "description": "Autumn business travel coordination"
+    }
+  ],
+  "data_schema": {
+    "columns": [
+      "date",
+      "airline",
+      "airline_name",
+      "price",
+      "market_share",
+      "day_of_week",
+      "is_weekend",
+      "is_holiday",
+      "demand_multiplier",
+      "coordination_strength",
+      "coordination_period",
+      "market_event",
+      "event_impact",
+      "price_change",
+      "price_change_pct",
+      "market_min_price",
+      "market_max_price",
+      "market_mean_price",
+      "market_std_price",
+      "price_vs_market",
+      "price_vs_market_pct",
+      "market_spread",
+      "price_rank"
+    ],
+    "dtypes": {
+      "date": "datetime64[ns]",
+      "airline": "object",
+      "airline_name": "object",
+      "price": "float64",
+      "market_share": "float64",
+      "day_of_week": "int64",
+      "is_weekend": "bool",
+      "is_holiday": "bool",
+      "demand_multiplier": "float64",
+      "coordination_strength": "float64",
+      "coordination_period": "object",
+      "market_event": "object",
+      "event_impact": "float64",
+      "price_change": "float64",
+      "price_change_pct": "float64",
+      "market_min_price": "float64",
+      "market_max_price": "float64",
+      "market_mean_price": "float64",
+      "market_std_price": "float64",
+      "price_vs_market": "float64",
+      "price_vs_market_pct": "float64",
+      "market_spread": "float64",
+      "price_rank": "float64"
+    }
+  },
+  "summary_stats": {
+    "price_range": [
+      124.09,
+      375.51
+    ],
+    "avg_price": 216.45598630136985,
+    "coordination_days": 548,
+    "market_events": {
+      "normal": 1368,
+      "fuel_shock": 60,
+      "regulatory_announcement": 32
+    }
+  }
+}

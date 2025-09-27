@@ -1,16 +1,4 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "ui/cursor-dashboard/package.json",
-      "use": "@vercel/next"
-    }
-  ],
-  "framework": "nextjs",
-  "functions": {
-    "api/**": {
-      "memory": 256,
-      "maxDuration": 10
-    }
-  }
+  "functions": { "api/**": { "memory": 256, "maxDuration": 10 } }
 }

@@ -1,0 +1,82 @@
+# Executive Summary: Provenance Test - BTC/USD
+
+## Risk Assessment
+**Overall Risk Level:** AMBER
+**Confidence Level:** 85.0%
+**Composite Risk Score:** 75.5/100
+
+## Key Findings
+- **MEDIUM RISK**: Borderline coordination patterns detected requiring enhanced monitoring
+
+## Top Risk Drivers
+- **Regime Analysis**: 72.5/100
+- **ICP Analysis**: 68.5/100
+- **Mirroring Behavior**: 66.5/100
+
+## Statistical Significance
+- **ICP p-value**: 0.0130
+- **VMM p-value**: 0.0450
+- **Lead-Lag Significance**: 0.750
+- **Mirroring Significance**: 0.700
+
+# Risk Assessment
+
+## Overall Risk Classification: AMBER
+
+**Risk Score:** 75.5/100
+**Confidence Level:** 85.0%
+
+## Risk Attribution Breakdown
+
+### Component Contributions
+- **ICP Analysis**: 68.5/100
+- **VMM Analysis**: 57.5/100
+- **Crypto Moments**: 25.5/100
+- **Validation Layers**: 13.6/100
+
+### Driver Analysis
+- **Lead-Lag Patterns**: 28.0/100
+- **Mirroring Behavior**: 66.5/100
+- **Regime Analysis**: 72.5/100
+- **Information Flow**: 63.0/100
+
+## Data Quality Assessment
+- **Completeness**: 95.0%
+- **Consistency**: 90.0%
+- **Sample Size Adequacy**: 85.0%
+
+# Methodology
+
+## Analysis Framework
+This analysis uses the Algorithmic Coordination Diagnostic (ACD) framework version 2.0.0.
+
+## Components
+1. **ICP (Invariant Causal Prediction)**: Tests for environment-invariant relationships
+2. **VMM (Variational Method of Moments)**: Analyzes structural stability and regime changes
+3. **Validation Layers**: Lead-lag, mirroring, HMM regime detection, information flow
+4. **Crypto Moments**: Market microstructure analysis specific to crypto markets
+
+## Configuration
+- **Analysis ID**: ACD_BUNDLE_5a751dc0_20250921_183712
+- **Timestamp**: 2025-09-21T18:37:12.133949
+- **Seed**: 42
+
+## Data Sources
+- mock_data.csv
+
+## Provenance
+- **Content Hash**: 1e12a1e3050748578e4e81bf9568a256ffdfd854d1ba7c3508a1f38c3c7b69ed
+- **Signature**: ACD_SIG_1e12a1e305074857
+
+Key Findings:
+- ICP analysis rejected invariance hypothesis (p=0.0130), indicating coordination patterns
+- VMM analysis detected high structural instability (0.750), consistent with coordination
+- Mirroring analysis detected high price similarity (ratio=0.650)
+
+Recommendations:
+- **ENHANCED MONITORING**: Medium coordination risk detected - recommend enhanced monitoring
+- Continue surveillance and consider additional data sources
+- Prepare for potential escalation if patterns persist
+- Validate findings with additional data sources and time periods
+- Consider alternative explanations for observed patterns
+- Implement ongoing monitoring system for early detection

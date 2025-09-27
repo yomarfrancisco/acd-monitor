@@ -3,12 +3,6 @@ Test VMM on Competitive Golden Dataset
 Enforces spurious regime rate ≤ 5% acceptance gate
 """
 
-from pathlib import Path
-
-import numpy as np
-import pandas as pd
-import pytest
-
 from acd.vmm import VMMConfig, run_vmm
 
 
@@ -60,7 +54,7 @@ class TestVMMCompetitive:
 
                 # Log progress for debugging
                 if (i + 1) % 10 == 0:
-                    print(f"Processed {i + 1}/{len(competitive_windows)} competitive windows")
+                    print("Processed {i + 1}/{len(competitive_windows)} competitive windows")
 
             except Exception as e:
                 pytest.fail(f"VMM failed on competitive window {i}: {e}")
@@ -72,9 +66,9 @@ class TestVMMCompetitive:
         spurious_rate = spurious_regimes / len(regime_confidence_scores)
 
         print("Competitive dataset results:")
-        print(f"Total windows: {len(competitive_windows)}")
-        print(f"Spurious regimes (≥{threshold}): {spurious_regimes}")
-        print(f"Spurious rate: {spurious_rate:.3f}")
+        print("Total windows: {len(competitive_windows)}")
+        print("Spurious regimes (≥{threshold}): {spurious_regimes}")
+        print("Spurious rate: {spurious_rate:.3f}")
         print("Acceptance gate: ≤0.05")
 
         # Assert acceptance gate - adjusted for current implementation
@@ -174,8 +168,8 @@ class TestVMMCompetitive:
         mean_coordinated = np.mean(coordinated_scores)
 
         print("Mean regime confidence:")
-        print(f"  Competitive: {mean_competitive:.3f}")
-        print(f"  Coordinated: {mean_coordinated:.3f}")
+        print("  Competitive: {mean_competitive:.3f}")
+        print("  Coordinated: {mean_coordinated:.3f}")
 
         # Competitive should be lower (less coordination-like)
         # TODO: Improve VMM calibration to better distinguish competitive vs coordinated

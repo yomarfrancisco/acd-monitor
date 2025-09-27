@@ -1,0 +1,26 @@
+{
+  "timestamp": "2025-09-21T19:23:18.846096",
+  "data_source": "mock_crypto_data.csv",
+  "total_records": 181449,
+  "exchanges": 3,
+  "symbols": 3,
+  "time_range": {
+    "start": "2025-09-07T19:04:18.301626",
+    "end": "2025-09-21T19:04:18.301626"
+  },
+  "data_quality": {
+    "missing_values": {
+      "timestamp": 0,
+      "exchange": 0,
+      "symbol": 0,
+      "bid_price": 0,
+      "ask_price": 0,
+      "bid_volume": 0,
+      "ask_volume": 0,
+      "spread": 0,
+      "mid_price": 0,
+      "coordination_strength": 0
+    },
+    "duplicate_records": 0
+  }
+}

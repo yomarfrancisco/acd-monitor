@@ -8,10 +8,6 @@ Tests feature engineering and windowing functionality:
 - Feature extraction
 """
 
-import numpy as np
-import pandas as pd
-import pytest
-
 from src.acd.data.features import (
     DataWindowing,
     FeatureEngineering,

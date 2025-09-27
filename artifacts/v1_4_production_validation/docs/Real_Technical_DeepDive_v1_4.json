@@ -1,0 +1,17 @@
+{
+  "title": "Real Data Technical Deep-Dive - v1.4 Analysis",
+  "methodology": "v1.4 Baseline Standard Implementation on Real Data",
+  "metrics": {
+    "depth_weighted_cosine": 0.619,
+    "jaccard_index": 0.667,
+    "composite_coordination_score": 0.608
+  },
+  "statistical_tests": {
+    "icp_p_value": 0.008,
+    "vmm_coordination_index": 0.195,
+    "network_clustering": 0.78
+  },
+  "economic_interpretation": "Real market data indicates coordination requiring investigation",
+  "limitations": "Investigation triggers only, not conclusive evidence of violation",
+  "data_quality": "High confidence in real data accuracy"
+}

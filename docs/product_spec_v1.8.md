@@ -354,6 +354,16 @@ Success depends on maintaining methodological rigor while delivering practical v
 
 ---
 
+## Agent Role
+
+The ACD delivers its monitoring and diagnostic capabilities through an intelligent agent that communicates findings in natural language.  
+
+- Explains the econometric methodology (multi-data strategy, regulatory credibility, etc.) in digestible terms  
+- Serves as the front-end interface for firms, regulators, and courts  
+- Augments accessibility without replacing the econometric core  
+
+---
+
 **Document Version:** 1.8  
 **Last Updated:** January 2025  
 **Next Review:** March 2025  

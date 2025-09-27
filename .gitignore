@@ -61,3 +61,7 @@ yarn-error.log*
 dist/
 build/
 *.tsbuildinfo
+.vercel
+.vercel
+.vercel
+.vercel
