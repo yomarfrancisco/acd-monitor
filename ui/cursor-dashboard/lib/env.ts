@@ -3,32 +3,34 @@
  * Forces LIVE data in preview mode, prevents synthetic fallbacks
  */
 
-const rawUseDemo = process.env.NEXT_PUBLIC_USE_DEMO; // string | undefined
-const rawFeedMode = process.env.FEED_MODE;           // string | undefined
+const toBool = (v: unknown, def = false) =>
+  typeof v === 'boolean'
+    ? v
+    : typeof v === 'string'
+      ? ['1','true','yes','on'].includes(v.trim().toLowerCase())
+      : def;
 
-const toBool = (v: unknown): boolean => {
-  if (typeof v === 'boolean') return v;
-  if (typeof v === 'string') {
-    const s = v.trim().toLowerCase();
-    return ['1','true','yes','on'].includes(s);
-  }
-  return false;
+const VERCEL_ENV = process.env.VERCEL_ENV || process.env.NEXT_PUBLIC_VERCEL_ENV || '';
+export const IS_PREVIEW = VERCEL_ENV === 'preview' || process.env.GITHUB_REF?.includes('/preview');
+
+const RAW_USE_DEMO = process.env.NEXT_PUBLIC_USE_DEMO ?? process.env.USE_DEMO;
+const RAW_FEED_MODE = process.env.FEED_MODE ?? process.env.NEXT_PUBLIC_FEED_MODE;
+
+// 🔒 Force LIVE on Preview no matter what is set in Vercel/CI
+export const FEED_MODE = IS_PREVIEW ? 'live' : (RAW_FEED_MODE || 'live');
+export const USE_DEMO = IS_PREVIEW ? false : toBool(RAW_USE_DEMO, false);
+
+// Useful flags (server + client)
+export const NEXT_PUBLIC_FEED_MODE = FEED_MODE;
+export const NEXT_PUBLIC_USE_DEMO = USE_DEMO ? '1' : '0';
+
+// Optional: surface in /api/debug/env (non-secret)
+export const PUBLIC_RUNTIME_DEBUG = {
+  vercelEnv: VERCEL_ENV,
+  isPreview: IS_PREVIEW,
+  feedMode: FEED_MODE,
+  useDemo: USE_DEMO,
 };
-
-let USE_DEMO = toBool(rawUseDemo);
-let FEED_MODE: 'live' | 'demo' | 'synthetic' = (rawFeedMode?.trim().toLowerCase() as any) || 'live';
-
-// Force live in preview
-if (process.env.VERCEL_ENV === 'preview') {
-  USE_DEMO = false;
-  FEED_MODE = 'live';
-  if (typeof console !== 'undefined') {
-    // eslint-disable-next-line no-console
-    console.warn('[env] Preview mode: forcing USE_DEMO=false and FEED_MODE=live');
-  }
-}
-
-export { USE_DEMO, FEED_MODE };
 
 // Legacy interface for backward compatibility
 export interface EnvConfig {
@@ -54,10 +56,10 @@ function getEnvConfig(): EnvConfig {
   
   return {
     isLive,
-    isPreview: process.env.VERCEL_ENV === 'preview',
+    isPreview: IS_PREVIEW,
     isProduction: Boolean(isProduction),
     useDemo: USE_DEMO,
-    feedMode: FEED_MODE,
+    feedMode: FEED_MODE as 'live' | 'demo' | 'synthetic',
     wsUrl,
     apiUrl
   };

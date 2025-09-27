@@ -47,5 +47,5 @@ export async function GET(req: Request) {
   } catch (e) {
     console.error("[UI API okx] fallback failed:", e);
   }
-  return NextResponse.json({ venue: "okx", symbol, asOf: new Date().toISOString(), ticker: { bid:0, ask:0, mid:0, ts:new Date().toISOString() }, ohlcv: [], error: "okx_unavailable" }, { status: 502 });
+  return NextResponse.json({ venue: "okx", symbol, asOf: new Date().toISOString(), ticker: { bid:0, ask:0, mid:0, ts:new Date().toISOString() }, ohlcv: [], error: "okx_unavailable" }, { status: 200 });
 }

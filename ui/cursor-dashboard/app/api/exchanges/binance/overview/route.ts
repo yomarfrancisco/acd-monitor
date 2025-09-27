@@ -80,6 +80,6 @@ export async function GET(req: Request) {
       venue:'binance', symbol, asOf:new Date().toISOString(),
       ticker:{ bid:0, ask:0, mid:0, ts:new Date().toISOString() },
       ohlcv: [], error:'binance_unavailable'
-    }, { status: 502 });
+    }, { status: 200 });
   }
 }
