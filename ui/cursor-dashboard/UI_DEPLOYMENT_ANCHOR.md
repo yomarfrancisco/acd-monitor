@@ -292,3 +292,4 @@ git push
 **This document provides complete context for continuing development on the acd-monitor UI project without losing deployment knowledge or encountering previously resolved issues.**
 Sat Sep 27 11:51:17 UTC 2025 – preview live deploy bump
 2025-09-27: Preview CI excludes /scripts from lint/tests to unblock deploy; runtime lint intact.
+2025-09-27T12:25:22Z – preview heartbeat (no-op)
