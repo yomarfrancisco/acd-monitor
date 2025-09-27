@@ -64,38 +64,35 @@ jobs:
           PY
         shell: bash
       - name: Debug Lead-Lag results
+        shell: bash
         run: |
           set -e
-          f=$(git ls-files | grep -E 'leadlag_results\.json$' || true)
-          [ -z "$f" ] && echo "[CI:debug] no leadlag_results.json found" && exit 2
-          echo "[CI:debug] file=$f"
           python - <<'PY'
-import json,sys,glob
-fns = glob.glob("**/leadlag_results.json", recursive=True)
+import json, sys, glob, pathlib
+fns = list(pathlib.Path(".").rglob("leadlag_results.json"))
 if not fns:
-    print("[CI:debug] no file"); sys.exit(2)
-p=fns[0]
-d=json.load(open(p))
+    print("[CI:debug] no leadlag_results.json found"); sys.exit(2)
+p = str(fns[0])
+d = json.load(open(p))
+print("[CI:debug] file=", p)
 print("[CI:debug] keys=", list(d.keys()))
 print("[CI:debug] venues_count=", d.get("venues_count"))
-edges=d.get("edges", [])
+edges = d.get("edges", [])
 print("[CI:debug] edges_count=", len(edges))
 print("[CI:debug] horizons=", d.get("horizons"))
 PY
-        shell: bash
       - name: Check Lead-Lag results
+        shell: bash
         run: |
           python - <<'PY'
-import json,sys,glob
-fns = glob.glob("**/leadlag_results.json", recursive=True)
+import json, sys, glob, pathlib
+fns = list(pathlib.Path(".").rglob("leadlag_results.json"))
 if not fns:
     print("[CI:fail:leadlag_missing] leadlag_results.json missing"); sys.exit(2)
-d=json.load(open(fns[0]))
-vc=d.get("venues_count", 0)
-ec=d.get("edges_count", len(d.get("edges", [])))
+d = json.load(open(str(fns[0])))
+vc = int(d.get("venues_count", 0) or 0)
+ec = int(d.get("edges_count", len(d.get("edges", []))) or 0)
 if vc >= 2 and ec == 0:
-    print("[CI:fail:leadlag_empty] Lead-Lag edges are empty")
-    sys.exit(2)
+    print("[CI:fail:leadlag_empty] Lead-Lag edges are empty"); sys.exit(2)
 print("[CI:pass:leadlag] vc=", vc, " ec=", ec)
 PY
-        shell: bash
