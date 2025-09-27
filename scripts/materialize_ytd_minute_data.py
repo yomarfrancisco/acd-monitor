@@ -55,9 +55,9 @@ def materialize_minute_data(
     logger = logging.getLogger(__name__)
     logger.info(f"Materializing minute data for {pair} across {len(venues)} venues")
     
-    # Parse dates
+    # Parse dates with inclusive end
     start_utc = datetime.strptime(start_date, "%Y-%m-%d")
-    end_utc = datetime.strptime(end_date, "%Y-%m-%d")
+    end_utc = inclusive_end_date(end_date)  # 23:59:59 inclusive
     
     # Create adapters and cache
     adapter = MinuteBarsAdapter()

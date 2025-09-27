@@ -62,9 +62,9 @@ def materialize_real_data(
     logger = logging.getLogger(__name__)
     logger.info(f"Materializing real tick data for {pair}")
     
-    # Parse dates
+    # Parse dates with inclusive end
     start_time = datetime.strptime(start_date, "%Y-%m-%d")
-    end_time = datetime.strptime(end_date, "%Y-%m-%d")
+    end_time = inclusive_end_date(end_date)  # 23:59:59 inclusive
     
     # Calculate expected days
     expected_days = (end_time - start_time).days

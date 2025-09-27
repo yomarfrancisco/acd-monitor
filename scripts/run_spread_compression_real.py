@@ -41,12 +41,14 @@ def setup_logging(verbose: bool = False):
 
 def load_real_tick_data(venues: list, pair: str, cache_dir: str, start_date: str, end_date: str) -> dict:
     """
-    Load real tick data from cache.
+    Load real tick data from cache with normalized schema.
     
     Args:
         venues: List of venues
         pair: Trading pair
         cache_dir: Cache directory
+        start_date: Start date (YYYY-MM-DD)
+        end_date: End date (YYYY-MM-DD) - will be made inclusive
         
     Returns:
         Dictionary mapping venue names to DataFrames
@@ -55,22 +57,21 @@ def load_real_tick_data(venues: list, pair: str, cache_dir: str, start_date: str
     cache = DataCache(cache_dir)
     venue_data = {}
     
+    # Use inclusive end date to prevent dropping final day
+    start_utc = datetime.strptime(start_date, "%Y-%m-%d")
+    end_utc = inclusive_end_date(end_date)  # 23:59:59 inclusive
+    
+    logger.info(f"Loading data from {start_utc} to {end_utc} (inclusive)")
+    
     for venue in venues:
         try:
-            # Load from cache
-            start_utc = datetime.strptime(start_date, "%Y-%m-%d")
-            end_utc = datetime.strptime(end_date, "%Y-%m-%d")
+            # Load from cache with inclusive end
             df = cache.get(venue=venue, pair=pair, frequency="1s", 
                           start_utc=start_utc, end_utc=end_utc)
             
             if df is not None and len(df) > 0:
-                # Ensure proper column names and types
-                if 'timestamp' in df.columns:
-                    df = df.rename(columns={'timestamp': 'time'})
-                if 'price' in df.columns:
-                    df = df.rename(columns={'price': 'mid'})
-                df['time'] = pd.to_datetime(df['time'])
-                df = df.sort_values('time')
+                # Normalize schema using foundation utilities
+                df = ensure_time_mid_volume(df)
                 
                 venue_data[venue] = df
                 logger.info(f"Loaded {len(df)} ticks for {venue}")
@@ -108,22 +109,56 @@ def run_spread_compression_analysis(
     logger = logging.getLogger(__name__)
     logger.info("Starting spread compression analysis on real data")
     
-    # Load real tick data
+    # Use inclusive end date to prevent dropping final day
+    start_utc = datetime.strptime(start_date, "%Y-%m-%d")
+    end_utc = inclusive_end_date(end_date)  # 23:59:59 inclusive
+    
+    logger.info(f"Analysis window: {start_utc} to {end_utc} (inclusive)")
+    
+    # Load real tick data with normalized schema
     venue_data = load_real_tick_data(venues, pair, cache_dir, start_date, end_date)
     
     if len(venue_data) < 3:
-        logger.error(f"Insufficient venues with data: {len(venue_data)} < 3")
-        return
+        logger.error(f"[ABORT:spread:insufficient_venues] Found {len(venue_data)} venues, need ≥3")
+        sys.exit(2)
+    
+    # Build inner-joined second grid across all venues
+    logger.info("Building inner-joined second grid across venues")
+    
+    # Start with the first venue as base
+    base_venue = list(venue_data.keys())[0]
+    base_df = venue_data[base_venue].copy()
+    base_df = base_df.set_index('time')
+    
+    # Inner join with remaining venues
+    for venue in list(venue_data.keys())[1:]:
+        venue_df = venue_data[venue].copy()
+        venue_df = venue_df.set_index('time')
+        base_df = base_df.join(venue_df, how='inner', rsuffix=f'_{venue}')
+    
+    # Drop NaN rows and reset index
+    initial_rows = len(base_df)
+    base_df = base_df.dropna()
+    final_rows = len(base_df)
+    
+    if final_rows < initial_rows:
+        logger.warning(f"Dropped {initial_rows - final_rows} rows with NaN values after inner join")
+    
+    # Guardrail: Check for sufficient data
+    window_days = (end_utc - start_utc).days
+    min_required_rows = 300 if window_days > 1 else 60
+    
+    if final_rows < min_required_rows:
+        logger.error(f"[ABORT:spread:insufficient_rows] Found {final_rows} rows, need ≥{min_required_rows} for {window_days}-day window")
+        sys.exit(2)
+    
+    logger.info(f"[STATS:spread:rows] total={final_rows} venues={len(venue_data)}")
     
     # Create analyzer
     analyzer = SpreadConvergenceAnalyzer()
     
     # Run analysis
     try:
-        # Parse dates for the analyzer
-        start_utc = datetime.strptime(start_date, "%Y-%m-%d")
-        end_utc = datetime.strptime(end_date, "%Y-%m-%d")
-        
         results = analyzer.analyze_spread_convergence(
             pair=pair,
             venues=list(venue_data.keys()),
@@ -135,15 +170,53 @@ def run_spread_compression_analysis(
         )
         
         if results:
+            # Validate results structure
+            episodes = results.get('episodes', [])
+            permutes = results.get('permutes', 0)
+            
+            # Guardrail: Check permutations
+            if permutes < 1000:
+                logger.error(f"[ABORT:spread:permutes] n={permutes}, need ≥1000")
+                sys.exit(2)
+            
+            # Log structured results
+            logger.info(f"[STATS:spread:permute] n_permutes={permutes} episodes_found={len(episodes)}")
+            
+            if episodes:
+                median_dur = sum(ep.get('duration', 0) for ep in episodes) / len(episodes)
+                avg_lift = sum(ep.get('lift', 0) for ep in episodes) / len(episodes)
+                logger.info(f"[SPREAD:episodes] count={len(episodes)} medianDur={median_dur:.2f} lift={avg_lift:.3f}")
+            else:
+                logger.info("[SPREAD:episodes] count=0 medianDur=0.00 lift=0.000")
+            
+            # Write stable output schema
+            output_results = {
+                "episodes": episodes,
+                "permutes": permutes,
+                "overlap_window": {
+                    "start": start_utc.isoformat(),
+                    "end": end_utc.isoformat(),
+                    "minutes": (end_utc - start_utc).total_seconds() / 60,
+                    "venues": venues
+                }
+            }
+            
+            results_file = Path(export_dir) / "spread_results.json"
+            with open(results_file, 'w') as f:
+                json.dump(output_results, f, indent=2)
+            
             logger.info("Spread compression analysis completed successfully")
+            logger.info(f"Saved results to {results_file}")
             
             # Print evidence blocks
             print_evidence_blocks(export_dir, results)
         else:
-            logger.warning("No compression episodes detected")
+            logger.error("[ABORT:spread:no_results] Analysis failed - no results generated")
+            sys.exit(2)
             
     except Exception as e:
-        logger.error(f"Analysis failed: {e}", exc_info=True)
+        logger.error(f"[ABORT:spread:analysis_error] Analysis failed: {e}", exc_info=True)
+        sys.exit(2)
 
 
 def print_evidence_blocks(export_dir: str, results: dict) -> None:
