@@ -81,22 +81,45 @@ def validate_infoshare_results(export_dir: str, overlap_data: dict):
     
     results_file = Path(export_dir) / "info_share_results.json"
     if not results_file.exists():
-        logger.error("InfoShare results file not found")
+        logger.error("[ABORT:bundle:missing_artifact] InfoShare results file not found")
+        print("[ABORT:bundle:missing_artifact] InfoShare results file not found")
         return False
     
     try:
         with open(results_file, 'r') as f:
             results = json.load(f)
         
-        bounds = results.get('bounds', {})
-        if not bounds:
-            logger.error("No bounds found in InfoShare results")
+        # Validate unified schema
+        required_keys = ['bounds', 'overlap_window', 'standardize', 'gg_blend_alpha']
+        missing_keys = [key for key in required_keys if key not in results]
+        if missing_keys:
+            logger.error(f"[ABORT:bundle:infoshare_invalid] Missing keys: {missing_keys}")
+            print(f"[ABORT:bundle:infoshare_invalid] Missing keys: {missing_keys}")
             return False
         
-        # Check bounds are in [0,1]
-        for venue, bound in bounds.items():
-            if not (0 <= bound['lower'] <= 1 and 0 <= bound['upper'] <= 1):
-                logger.error(f"Invalid bounds for {venue}: {bound}")
+        bounds = results.get('bounds', {})
+        if not bounds:
+            logger.error("[ABORT:bundle:infoshare_invalid] Empty bounds")
+            print("[ABORT:bundle:infoshare_invalid] Empty bounds")
+            return False
+        
+        # Check each venue has valid bounds
+        for venue in overlap_data['venues']:
+            if venue not in bounds:
+                logger.error(f"[ABORT:bundle:infoshare_invalid] Missing bounds for {venue}")
+                print(f"[ABORT:bundle:infoshare_invalid] Missing bounds for {venue}")
+                return False
+            
+            venue_bounds = bounds[venue]
+            if not all(key in venue_bounds for key in ['lower', 'upper', 'point']):
+                logger.error(f"[ABORT:bundle:infoshare_invalid] Incomplete bounds for {venue}")
+                print(f"[ABORT:bundle:infoshare_invalid] Incomplete bounds for {venue}")
+                return False
+            
+            # Check bounds are in valid range
+            if not (0 <= venue_bounds['lower'] <= venue_bounds['point'] <= venue_bounds['upper'] <= 1):
+                logger.error(f"[ABORT:bundle:infoshare_invalid] Invalid bounds for {venue}: {venue_bounds}")
+                print(f"[ABORT:bundle:infoshare_invalid] Invalid bounds for {venue}: {venue_bounds}")
                 return False
         
         # Check venue sum is approximately 1
@@ -124,17 +147,26 @@ def validate_spread_results(export_dir: str):
     
     results_file = Path(export_dir) / "spread_results.json"
     if not results_file.exists():
-        logger.error("Spread results file not found")
+        logger.error("[ABORT:bundle:missing_artifact] Spread results file not found")
+        print("[ABORT:bundle:missing_artifact] Spread results file not found")
         return False
     
     try:
         with open(results_file, 'r') as f:
             results = json.load(f)
         
+        # Validate unified schema
+        required_keys = ['episodes', 'permutes', 'overlap_window']
+        missing_keys = [key for key in required_keys if key not in results]
+        if missing_keys:
+            logger.error(f"[ABORT:bundle:permutes] Missing keys: {missing_keys}")
+            print(f"[ABORT:bundle:permutes] Missing keys: {missing_keys}")
+            return False
+        
         permutes = results.get('permutes', 0)
         if permutes < 1000:
-            logger.error(f"[ABORT:spread:permutes] n_permutations={permutes} < 1000")
-            print(f"[ABORT:spread:permutes] n_permutations={permutes} < 1000")
+            logger.error(f"[ABORT:bundle:permutes] n_permutations={permutes} < 1000")
+            print(f"[ABORT:bundle:permutes] n_permutations={permutes} < 1000")
             return False
         
         episodes = results.get('episodes', [])
@@ -146,6 +178,51 @@ def validate_spread_results(export_dir: str):
         
     except Exception as e:
         logger.error(f"Error validating Spread results: {e}")
+        return False
+
+
+def validate_leadlag_results(export_dir: str):
+    """
+    Validate Lead-Lag results using unified schema.
+    
+    Args:
+        export_dir: Export directory
+    """
+    logger = logging.getLogger(__name__)
+    
+    results_file = Path(export_dir) / "leadlag_results.json"
+    if not results_file.exists():
+        logger.error("[ABORT:bundle:missing_artifact] Lead-Lag results file not found")
+        print("[ABORT:bundle:missing_artifact] Lead-Lag results file not found")
+        return False
+    
+    try:
+        with open(results_file, 'r') as f:
+            results = json.load(f)
+        
+        # Validate unified schema
+        required_keys = ['overlap_window', 'horizons', 'edges', 'top_leader', 'summary']
+        missing_keys = [key for key in required_keys if key not in results]
+        if missing_keys:
+            logger.error(f"[ABORT:bundle:leadlag_empty] Missing keys: {missing_keys}")
+            print(f"[ABORT:bundle:leadlag_empty] Missing keys: {missing_keys}")
+            return False
+        
+        edges = results.get('edges', [])
+        if not edges:
+            logger.error("[ABORT:bundle:leadlag_empty] No edges found")
+            print("[ABORT:bundle:leadlag_empty] No edges found")
+            return False
+        
+        top_leader = results.get('top_leader')
+        if not top_leader:
+            logger.warning("No top leader identified")
+        
+        logger.info("Lead-Lag validation passed")
+        return True
+        
+    except Exception as e:
+        logger.error(f"Error validating Lead-Lag results: {e}")
         return False
 
 
@@ -473,6 +550,11 @@ def build_research_bundle(snapshot_dir: str, export_dir: str, pair: str,
     if return_code != 0:
         logger.error("Lead-Lag analysis failed")
         logger.error(f"stderr: {stderr}")
+        sys.exit(1)
+    
+    # Validate Lead-Lag results
+    if not validate_leadlag_results(export_dir):
+        logger.error("Lead-Lag validation failed")
         sys.exit(1)
     
     # Create unified evidence bundle
