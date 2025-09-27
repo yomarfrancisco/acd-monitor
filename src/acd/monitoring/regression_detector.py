@@ -122,7 +122,7 @@ class RegressionDetector:
                         metrics_dict[col] = float(value)
                     else:
                         metrics_dict[col] = value
-                except:
+                except Exception:
                     metrics_dict[col] = value
             recent_metrics.append(metrics_dict)
 

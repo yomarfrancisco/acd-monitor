@@ -362,9 +362,9 @@ class CryptoMomentCalculator:
         m^arb = E[min(τ_close, τ_max)/τ_max] per environment
         where τ_close = time to cross-venue price convergence after divergence > threshold
         """
-        len(price_columns)
-        tau_max = 50  # Reduced for performance
-        divergence_threshold = 0.001  # 0.1% price divergence threshold
+        n_exchanges = len(price_columns)
+        # tau_max = 50  # Reduced for performance
+        # divergence_threshold = 0.001  # 0.1% price divergence threshold
 
         # Simplified calculation for performance
         if environment_column and environment_column in data.columns:
@@ -467,7 +467,7 @@ class CryptoMomentCalculator:
         From spread series s_t, indicator I_t = 1[s_t >= s_min]
         Moment = mean dwell probability and HMM-based dwell
         """
-        len(price_columns)
+        n_exchanges = len(price_columns)
 
         if environment_column and environment_column in data.columns:
             environments = data[environment_column].unique()
@@ -617,7 +617,7 @@ class CryptoMomentCalculator:
             environments = data[environment_column].unique()
             if len(environments) >= 2:
                 # Calculate environment deltas
-                env1, env2 = environments[0], environments[1]
+                # env1, env2 = environments[0], environments[1]
 
                 # Arbitrage timing delta
                 if len(arbitrage_moments["arbitrage_timing"]) >= 2:

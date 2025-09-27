@@ -14,6 +14,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+import numpy as np
+import pandas as pd
+
 from acd.analytics.integrated_engine import IntegratedResult
 from acd.analytics.report_v2 import RegulatoryBundle, ReportV2Generator
 from acd.icp.engine import ICPResult
@@ -803,11 +806,6 @@ class ACDBundleGenerator:
             "configs": {"icp": {"significance_level": 0.05}},
             "result_file_paths": {"integrated": "mock_results.json"},
         }
-
-
-# Import numpy and pandas for mock data
-import numpy as np
-import pandas as pd
 
 
 def generate_bundle_from_query(
