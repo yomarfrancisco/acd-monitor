@@ -1,8 +1,24 @@
 /**
  * Environment configuration for ACD Monitor
- * Forces live data in preview mode, prevents synthetic fallbacks
+ * Forces LIVE data in preview mode, prevents synthetic fallbacks
  */
 
+const isPreview = process.env.VERCEL_ENV === 'preview';
+const useDemoEnv = String(process.env.NEXT_PUBLIC_USE_DEMO ?? '').toLowerCase();
+const useDemo = ['1','true','yes','on'].includes(useDemoEnv);
+
+let USE_DEMO: boolean = useDemo;
+let FEED_MODE: string = String(process.env.FEED_MODE ?? 'live');
+
+if (isPreview) {
+  console.warn('[env] Preview mode: forcing USE_DEMO=false and FEED_MODE=live');
+  USE_DEMO = false;
+  FEED_MODE = 'live';
+}
+
+export const Env = { USE_DEMO, FEED_MODE };
+
+// Legacy interface for backward compatibility
 export interface EnvConfig {
   isLive: boolean;
   isPreview: boolean;
@@ -15,16 +31,10 @@ export interface EnvConfig {
 
 function getEnvConfig(): EnvConfig {
   const isVercel = typeof process !== 'undefined' && process.env.VERCEL;
-  const isPreview = isVercel && process.env.VERCEL_ENV === 'preview';
   const isProduction = isVercel && process.env.VERCEL_ENV === 'production';
   
-  // Force live data in preview mode
-  const forceLiveInPreview = isPreview;
-  const useDemo = forceLiveInPreview ? false : (process.env.NEXT_PUBLIC_USE_DEMO === '1');
-  const feedMode = forceLiveInPreview ? 'live' : (process.env.FEED_MODE as 'live' | 'demo' | 'synthetic') || 'live';
-  
-  // Live data configuration
-  const isLive = !useDemo && feedMode === 'live';
+  // Use normalized values
+  const isLive = !USE_DEMO && FEED_MODE === 'live';
   
   // API endpoints
   const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'wss://acd-monitor-backend.railway.app/ws';
@@ -32,10 +42,10 @@ function getEnvConfig(): EnvConfig {
   
   return {
     isLive,
-    isPreview,
+    isPreview: isPreview,
     isProduction,
-    useDemo,
-    feedMode,
+    useDemo: USE_DEMO,
+    feedMode: FEED_MODE as 'live' | 'demo' | 'synthetic',
     wsUrl,
     apiUrl
   };
