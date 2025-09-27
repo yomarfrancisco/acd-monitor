@@ -1,0 +1,8 @@
+{
+  "start": "2025-09-27T09:40:00.380000+00:00",
+  "end": "2025-09-27T09:49:48.383000+00:00",
+  "minutes": 9.80005,
+  "venues": ["binance", "bybit"],
+  "excluded": [],
+  "policy": "RESEARCH_g=30s"
+}

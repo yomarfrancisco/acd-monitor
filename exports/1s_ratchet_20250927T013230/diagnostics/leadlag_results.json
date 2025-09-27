@@ -1,0 +1,252 @@
+{
+  "overlap_window": {
+    "startUTC": "2025-09-26T20:30:00",
+    "endUTC": "2025-09-26T21:00:00",
+    "minutes": 30.0,
+    "venues": [
+      "binance",
+      "coinbase",
+      "kraken",
+      "okx"
+    ],
+    "excluded": [
+      "bybit"
+    ],
+    "policy": "BEST4_30m"
+  },
+  "horizons": [
+    1,
+    2,
+    5
+  ],
+  "analyses": {
+    "horizon_1s": {
+      "horizon_sec": 1,
+      "status": "simulated",
+      "lead_lag_matrix": {
+        "binance_coinbase": {
+          "lead_score": 0.4,
+          "lag_score": 0.6,
+          "correlation": 0.8500000000000001
+        },
+        "binance_kraken": {
+          "lead_score": 0.3,
+          "lag_score": 0.7,
+          "correlation": 0.9
+        },
+        "binance_okx": {
+          "lead_score": 0.19999999999999996,
+          "lag_score": 0.8,
+          "correlation": 0.9500000000000001
+        },
+        "coinbase_binance": {
+          "lead_score": 0.6,
+          "lag_score": 0.4,
+          "correlation": 0.8500000000000001
+        },
+        "coinbase_kraken": {
+          "lead_score": 0.4,
+          "lag_score": 0.6,
+          "correlation": 0.9500000000000001
+        },
+        "coinbase_okx": {
+          "lead_score": 0.3,
+          "lag_score": 0.7,
+          "correlation": 1.0
+        },
+        "kraken_binance": {
+          "lead_score": 0.7,
+          "lag_score": 0.3,
+          "correlation": 0.9
+        },
+        "kraken_coinbase": {
+          "lead_score": 0.6,
+          "lag_score": 0.4,
+          "correlation": 0.9500000000000001
+        },
+        "kraken_okx": {
+          "lead_score": 0.4,
+          "lag_score": 0.6,
+          "correlation": 1.05
+        },
+        "okx_binance": {
+          "lead_score": 0.8,
+          "lag_score": 0.19999999999999996,
+          "correlation": 0.9500000000000001
+        },
+        "okx_coinbase": {
+          "lead_score": 0.7,
+          "lag_score": 0.3,
+          "correlation": 1.0
+        },
+        "okx_kraken": {
+          "lead_score": 0.6,
+          "lag_score": 0.4,
+          "correlation": 1.05
+        }
+      },
+      "coordination_score": 0.8,
+      "venue_rankings": [
+        "okx",
+        "coinbase",
+        "kraken",
+        "binance"
+      ],
+      "timestamp": "2025-09-27T01:32:33.752506"
+    },
+    "horizon_2s": {
+      "horizon_sec": 2,
+      "status": "simulated",
+      "lead_lag_matrix": {
+        "binance_coinbase": {
+          "lead_score": 0.4,
+          "lag_score": 0.6,
+          "correlation": 0.8500000000000001
+        },
+        "binance_kraken": {
+          "lead_score": 0.3,
+          "lag_score": 0.7,
+          "correlation": 0.9
+        },
+        "binance_okx": {
+          "lead_score": 0.19999999999999996,
+          "lag_score": 0.8,
+          "correlation": 0.9500000000000001
+        },
+        "coinbase_binance": {
+          "lead_score": 0.6,
+          "lag_score": 0.4,
+          "correlation": 0.8500000000000001
+        },
+        "coinbase_kraken": {
+          "lead_score": 0.4,
+          "lag_score": 0.6,
+          "correlation": 0.9500000000000001
+        },
+        "coinbase_okx": {
+          "lead_score": 0.3,
+          "lag_score": 0.7,
+          "correlation": 1.0
+        },
+        "kraken_binance": {
+          "lead_score": 0.7,
+          "lag_score": 0.3,
+          "correlation": 0.9
+        },
+        "kraken_coinbase": {
+          "lead_score": 0.6,
+          "lag_score": 0.4,
+          "correlation": 0.9500000000000001
+        },
+        "kraken_okx": {
+          "lead_score": 0.4,
+          "lag_score": 0.6,
+          "correlation": 1.05
+        },
+        "okx_binance": {
+          "lead_score": 0.8,
+          "lag_score": 0.19999999999999996,
+          "correlation": 0.9500000000000001
+        },
+        "okx_coinbase": {
+          "lead_score": 0.7,
+          "lag_score": 0.3,
+          "correlation": 1.0
+        },
+        "okx_kraken": {
+          "lead_score": 0.6,
+          "lag_score": 0.4,
+          "correlation": 1.05
+        }
+      },
+      "coordination_score": 0.85,
+      "venue_rankings": [
+        "okx",
+        "coinbase",
+        "kraken",
+        "binance"
+      ],
+      "timestamp": "2025-09-27T01:32:33.752567"
+    },
+    "horizon_5s": {
+      "horizon_sec": 5,
+      "status": "simulated",
+      "lead_lag_matrix": {
+        "binance_coinbase": {
+          "lead_score": 0.4,
+          "lag_score": 0.6,
+          "correlation": 0.8500000000000001
+        },
+        "binance_kraken": {
+          "lead_score": 0.3,
+          "lag_score": 0.7,
+          "correlation": 0.9
+        },
+        "binance_okx": {
+          "lead_score": 0.19999999999999996,
+          "lag_score": 0.8,
+          "correlation": 0.9500000000000001
+        },
+        "coinbase_binance": {
+          "lead_score": 0.6,
+          "lag_score": 0.4,
+          "correlation": 0.8500000000000001
+        },
+        "coinbase_kraken": {
+          "lead_score": 0.4,
+          "lag_score": 0.6,
+          "correlation": 0.9500000000000001
+        },
+        "coinbase_okx": {
+          "lead_score": 0.3,
+          "lag_score": 0.7,
+          "correlation": 1.0
+        },
+        "kraken_binance": {
+          "lead_score": 0.7,
+          "lag_score": 0.3,
+          "correlation": 0.9
+        },
+        "kraken_coinbase": {
+          "lead_score": 0.6,
+          "lag_score": 0.4,
+          "correlation": 0.9500000000000001
+        },
+        "kraken_okx": {
+          "lead_score": 0.4,
+          "lag_score": 0.6,
+          "correlation": 1.05
+        },
+        "okx_binance": {
+          "lead_score": 0.8,
+          "lag_score": 0.19999999999999996,
+          "correlation": 0.9500000000000001
+        },
+        "okx_coinbase": {
+          "lead_score": 0.7,
+          "lag_score": 0.3,
+          "correlation": 1.0
+        },
+        "okx_kraken": {
+          "lead_score": 0.6,
+          "lag_score": 0.4,
+          "correlation": 1.05
+        }
+      },
+      "coordination_score": 1.0,
+      "venue_rankings": [
+        "okx",
+        "coinbase",
+        "kraken",
+        "binance"
+      ],
+      "timestamp": "2025-09-27T01:32:33.752598"
+    }
+  },
+  "summary": {
+    "total_horizons": 3,
+    "successful_analyses": 3,
+    "average_coordination": 0.8833333333333333,
+    "analysis_timestamp": "2025-09-27T01:32:33.752620"
+  }
+}

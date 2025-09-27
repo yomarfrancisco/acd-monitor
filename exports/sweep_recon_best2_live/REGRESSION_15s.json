@@ -1,0 +1,17 @@
+{
+  "regression_passed": false,
+  "js_distance": 1.0,
+  "js_threshold": 0.02,
+  "spread_flip": false,
+  "spread_p_baseline": 1.0,
+  "spread_p_target": 1.0,
+  "leadlag_delta": 0.0,
+  "leadlag_delta_threshold": 0.1,
+  "leader_stable": true,
+  "baseline_leader": "",
+  "target_leader": "",
+  "baseline_venues": [],
+  "target_venues": [],
+  "baseline_coordination": 0.0,
+  "target_coordination": 0.0
+}

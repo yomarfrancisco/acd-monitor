@@ -1,0 +1,5 @@
+Sub-minute window found: 15s granularity
+Duration: 1.6 minutes
+Venues: binance, coinbase, kraken, okx, bybit
+Evidence bundle: exports/sweep_continuous/subminute_15s/research_bundle_15s.zip
+Timestamp: 2025-09-27T04:02:05.849746

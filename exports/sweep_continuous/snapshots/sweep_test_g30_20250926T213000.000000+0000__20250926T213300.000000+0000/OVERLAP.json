@@ -1,0 +1,16 @@
+{
+  "start": "2025-09-26T21:30:00.000000+00:00",
+  "end": "2025-09-26T21:33:00.000000+00:00",
+  "duration_minutes": 3.0,
+  "venues": [
+    "binance",
+    "coinbase",
+    "kraken",
+    "okx",
+    "bybit"
+  ],
+  "policy": "RESEARCH_g=30s",
+  "coverage": 0.98,
+  "granularity_sec": 30,
+  "min_duration_min": 2
+}

@@ -1,0 +1,37 @@
+{
+  "sweep_id": "sweep_loop_359_g30",
+  "created_at": "2025-09-27T02:32:51.242795",
+  "window": {
+    "start": "2025-09-27T00:23:01.681000+00:00",
+    "end": "2025-09-27T00:32:48.960000+00:00",
+    "duration_minutes": 9.787983333333333,
+    "venues": [
+      "binance",
+      "coinbase",
+      "kraken",
+      "okx",
+      "bybit"
+    ],
+    "policy": "RESEARCH_g=30s",
+    "coverage": 1.0,
+    "granularity_sec": 30,
+    "min_duration_min": 2
+  },
+  "gap_report": {
+    "window_start": "2025-09-27T00:23:01.681000+00:00",
+    "window_end": "2025-09-27T00:32:48.960000+00:00",
+    "granularity_sec": 30,
+    "venues": [
+      "binance",
+      "coinbase",
+      "kraken",
+      "okx",
+      "bybit"
+    ],
+    "coverage": 1.0,
+    "policy": "RESEARCH_g=30s",
+    "sweep_id": "sweep_loop_359_g30"
+  },
+  "snapshot_dir": "exports/sweep_continuous/snapshots/sweep_loop_359_g30_20250927T002301.681000+0000__20250927T003248.960000+0000",
+  "policy": "RESEARCH_g=30s"
+}

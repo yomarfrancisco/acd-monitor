@@ -1,0 +1,31 @@
+{
+  "timestamp": "2025-09-27T08:47:00Z",
+  "data_dir": "exports/overlap",
+  "levels": [
+    {
+      "granularity": "30s",
+      "venues": ["binance", "coinbase", "kraken", "okx"],
+      "duration": 3,
+      "coverage": 0.95,
+      "snapshot_dir": "exports/sweep_recon_demo/snapshot_30s",
+      "policy": "RESEARCH_g=30s"
+    },
+    {
+      "granularity": "15s", 
+      "venues": ["binance", "coinbase", "kraken", "okx"],
+      "duration": 2,
+      "coverage": 0.95,
+      "snapshot_dir": "exports/sweep_recon_demo/snapshot_15s",
+      "policy": "RESEARCH_g=15s"
+    },
+    {
+      "granularity": "5s",
+      "venues": ["binance", "coinbase", "kraken", "okx", "bybit"],
+      "duration": 1.5,
+      "coverage": 0.97,
+      "snapshot_dir": "exports/sweep_recon_demo/snapshot_5s", 
+      "policy": "RESEARCH_g=5s"
+    }
+  ],
+  "total_windows": 3
+}

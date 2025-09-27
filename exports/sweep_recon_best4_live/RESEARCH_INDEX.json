@@ -1,0 +1,30 @@
+[
+  {
+    "granularity": "30s",
+    "window_start": "2025-09-27T09:12:02.236000+00:00",
+    "window_end": "2025-09-27T09:21:54.279000+00:00",
+    "venues": ["binance", "coinbase", "okx", "bybit"],
+    "top_leader": "bybit",
+    "max_infoshare": 0.301,
+    "spread_p": 0.036,
+    "episodes": 6,
+    "coordination": 0.617,
+    "decision": "CLEAR",
+    "status": "research/clear",
+    "checksum": "e0aeadbd4cfab9c1ac697038d36d04d82c60332dfcd8a8ed6c4adb507f2a6ec4"
+  },
+  {
+    "granularity": "15s",
+    "window_start": "2025-09-27T09:12:02.236000+00:00",
+    "window_end": "2025-09-27T09:21:54.279000+00:00",
+    "venues": ["binance", "coinbase", "okx", "bybit"],
+    "top_leader": "bybit",
+    "max_infoshare": 0.301,
+    "spread_p": 0.036,
+    "episodes": 6,
+    "coordination": 0.617,
+    "decision": "CLEAR",
+    "status": "research/clear",
+    "checksum": "b5060493ae26d889af66371d6fc9d3d92ca501569af040a0666ae2b0a7f97d89"
+  }
+]

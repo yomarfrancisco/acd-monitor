@@ -1,0 +1,13 @@
+{
+  "start": "2025-09-27T09:40:00.237000+00:00",
+  "end": "2025-09-27T09:49:49.113000+00:00",
+  "duration_minutes": 9.8146,
+  "venues": [
+    "binance",
+    "okx"
+  ],
+  "policy": "RESEARCH_g=30s",
+  "coverage": 1.0,
+  "granularity_sec": 30,
+  "min_duration_min": 3
+}

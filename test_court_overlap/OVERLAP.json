@@ -1,0 +1,9 @@
+{
+  "startUTC": "2025-09-27T01:50:00.000000+00:00",
+  "endUTC": "2025-09-27T01:52:00.000000+00:00",
+  "minutes": 2.0,
+  "venues": ["binance", "coinbase", "kraken", "okx", "bybit"],
+  "excluded": [],
+  "policy": "BEST4_10m",
+  "coverage": 0.999
+}

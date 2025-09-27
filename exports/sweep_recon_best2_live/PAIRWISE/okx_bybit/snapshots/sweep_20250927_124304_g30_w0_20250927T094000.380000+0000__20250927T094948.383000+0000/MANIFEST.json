@@ -1,0 +1,31 @@
+{
+  "sweep_id": "sweep_20250927_124304_g30_w0",
+  "created_at": "2025-09-27T12:43:04.220827",
+  "window": {
+    "start": "2025-09-27T09:40:00.380000+00:00",
+    "end": "2025-09-27T09:49:48.383000+00:00",
+    "duration_minutes": 9.80005,
+    "venues": [
+      "okx",
+      "bybit"
+    ],
+    "policy": "RESEARCH_g=30s",
+    "coverage": 1.0,
+    "granularity_sec": 30,
+    "min_duration_min": 3
+  },
+  "gap_report": {
+    "window_start": "2025-09-27T09:40:00.380000+00:00",
+    "window_end": "2025-09-27T09:49:48.383000+00:00",
+    "granularity_sec": 30,
+    "venues": [
+      "okx",
+      "bybit"
+    ],
+    "coverage": 1.0,
+    "policy": "RESEARCH_g=30s",
+    "sweep_id": "sweep_20250927_124304_g30_w0"
+  },
+  "snapshot_dir": "exports/sweep_recon_best2_live/PAIRWISE/okx_bybit/snapshots/sweep_20250927_124304_g30_w0_20250927T094000.380000+0000__20250927T094948.383000+0000",
+  "policy": "RESEARCH_g=30s"
+}

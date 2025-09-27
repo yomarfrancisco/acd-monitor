@@ -1,0 +1,41 @@
+{
+  "created_at": "2025-09-27T11:53:13.702054",
+  "granularity_sec": 30,
+  "policy": "RESEARCH_g=30s",
+  "window": {
+    "start": "2025-09-27T09:40:02.252000+00:00",
+    "end": "2025-09-27T09:49:48.383000+00:00",
+    "duration_minutes": 9.768849999999999,
+    "venues": [
+      "binance",
+      "coinbase",
+      "okx",
+      "bybit"
+    ],
+    "policy": "RESEARCH_g=30s",
+    "coverage": 1.0,
+    "granularity_sec": 30,
+    "min_duration_min": 3
+  },
+  "analyses": {
+    "infoshare": {
+      "status": "completed",
+      "resample": "1s",
+      "standardize": "none"
+    },
+    "spread": {
+      "status": "completed",
+      "native": "1s",
+      "episodes": 5
+    },
+    "leadlag": {
+      "status": "completed",
+      "horizons": [
+        1,
+        5
+      ],
+      "coordination": 0.85
+    }
+  },
+  "analysis_type": "subminute_research"
+}

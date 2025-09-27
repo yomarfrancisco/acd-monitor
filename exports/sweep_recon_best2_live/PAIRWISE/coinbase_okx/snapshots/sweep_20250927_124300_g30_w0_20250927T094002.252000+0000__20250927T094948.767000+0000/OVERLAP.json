@@ -1,0 +1,13 @@
+{
+  "start": "2025-09-27T09:40:02.252000+00:00",
+  "end": "2025-09-27T09:49:48.767000+00:00",
+  "duration_minutes": 9.77525,
+  "venues": [
+    "coinbase",
+    "okx"
+  ],
+  "policy": "RESEARCH_g=30s",
+  "coverage": 1.0,
+  "granularity_sec": 30,
+  "min_duration_min": 3
+}

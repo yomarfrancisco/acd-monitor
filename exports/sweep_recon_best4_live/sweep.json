@@ -1,0 +1,124 @@
+[
+  {
+    "granularity_sec": 30,
+    "min_duration_min": 3,
+    "windows": [
+      {
+        "start": "2025-09-27T09:40:02.252000+00:00",
+        "end": "2025-09-27T09:49:48.383000+00:00",
+        "duration_minutes": 9.768849999999999,
+        "venues": [
+          "binance",
+          "coinbase",
+          "okx",
+          "bybit"
+        ],
+        "policy": "RESEARCH_g=30s",
+        "coverage": 1.0,
+        "granularity_sec": 30,
+        "min_duration_min": 3
+      }
+    ],
+    "analyses": [
+      {
+        "granularity_sec": 30,
+        "min_duration_min": 3,
+        "analyses_run": [
+          "InfoShare",
+          "Spread_Convergence",
+          "Lead_Lag"
+        ],
+        "results": {
+          "infoshare": {
+            "status": "completed",
+            "resample": "1s",
+            "standardize": "none"
+          },
+          "spread": {
+            "status": "completed",
+            "native": "1s",
+            "episodes": 5
+          },
+          "leadlag": {
+            "status": "completed",
+            "horizons": [
+              1,
+              5
+            ],
+            "coordination": 0.85
+          }
+        },
+        "evidence_bundle": "exports/sweep_recon_best4_live/subminute_30s/research_bundle_30s.zip"
+      }
+    ],
+    "windows_found": 1
+  },
+  {
+    "granularity_sec": 15,
+    "min_duration_min": 2,
+    "windows": [
+      {
+        "start": "2025-09-27T09:40:02.252000+00:00",
+        "end": "2025-09-27T09:49:48.383000+00:00",
+        "duration_minutes": 9.768849999999999,
+        "venues": [
+          "binance",
+          "coinbase",
+          "okx",
+          "bybit"
+        ],
+        "policy": "RESEARCH_g=15s",
+        "coverage": 1.0,
+        "granularity_sec": 15,
+        "min_duration_min": 2
+      }
+    ],
+    "analyses": [
+      {
+        "granularity_sec": 15,
+        "min_duration_min": 2,
+        "analyses_run": [
+          "InfoShare",
+          "Spread_Convergence",
+          "Lead_Lag"
+        ],
+        "results": {
+          "infoshare": {
+            "status": "completed",
+            "resample": "1s",
+            "standardize": "none"
+          },
+          "spread": {
+            "status": "completed",
+            "native": "1s",
+            "episodes": 5
+          },
+          "leadlag": {
+            "status": "completed",
+            "horizons": [
+              1,
+              5
+            ],
+            "coordination": 0.85
+          }
+        },
+        "evidence_bundle": "exports/sweep_recon_best4_live/subminute_15s/research_bundle_15s.zip"
+      }
+    ],
+    "windows_found": 1
+  },
+  {
+    "granularity_sec": 5,
+    "min_duration_min": 2,
+    "windows": [],
+    "analyses": [],
+    "windows_found": 0
+  },
+  {
+    "granularity_sec": 2,
+    "min_duration_min": 2,
+    "windows": [],
+    "analyses": [],
+    "windows_found": 0
+  }
+]

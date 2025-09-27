@@ -1,0 +1,23 @@
+[
+  {
+    "granularity_sec": 30,
+    "min_duration_min": 1,
+    "windows": [],
+    "analyses": [],
+    "windows_found": 0
+  },
+  {
+    "granularity_sec": 15,
+    "min_duration_min": 1,
+    "windows": [],
+    "analyses": [],
+    "windows_found": 0
+  },
+  {
+    "granularity_sec": 5,
+    "min_duration_min": 1,
+    "windows": [],
+    "analyses": [],
+    "windows_found": 0
+  }
+]

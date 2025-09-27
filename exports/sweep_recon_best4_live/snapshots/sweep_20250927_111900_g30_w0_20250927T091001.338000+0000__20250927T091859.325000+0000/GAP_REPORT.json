@@ -1,0 +1,14 @@
+{
+  "window_start": "2025-09-27T09:10:01.338000+00:00",
+  "window_end": "2025-09-27T09:18:59.325000+00:00",
+  "granularity_sec": 30,
+  "venues": [
+    "binance",
+    "coinbase",
+    "okx",
+    "bybit"
+  ],
+  "coverage": 1.0,
+  "policy": "RESEARCH_g=30s",
+  "sweep_id": "sweep_20250927_111900_g30_w0"
+}
