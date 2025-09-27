@@ -87,6 +87,10 @@ git push origin fix/restore-agents-from-preview
 - **Step 3(b)**: Schema alignment with CI sentinels – preview updated  
 - **Step 3(c)**: CI debug echo for faster triage – preview updated
 - **Step 3(d)**: Bundle venues<2 guardrails – preview updated
+- **Step 3A (leadlag invariant)**: ✅ 9092ca4
+- **Step 3B (CI debug)**: ✅ 62191a5
+- **Step 3C (sentinel alignment)**: ✅ cbf5d50
+- **Step 3D (bundle echo)**: ✅ 75a0bfb
 
 ---
 
