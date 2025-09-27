@@ -63,6 +63,23 @@ jobs:
               sys.exit(2)
           PY
         shell: bash
+      - name: Debug Lead-Lag results
+        run: |
+          python - <<PY
+          import json, sys
+          try:
+              with open("court/1s/evidence/leadlag_results.json") as f:
+                  data = json.load(f)
+              edges = data.get('edges', [])
+              print(f"Keys: {list(data.keys())}")
+              print(f"Edges count: {len(edges)}")
+              print(f"Horizons: {data.get('horizons', [])}")
+              if edges:
+                  print(f"Unique from venues: {len(set([e.get('from') for e in edges if 'from' in e]))}")
+          except Exception as e:
+              print(f"Debug error: {e}")
+          PY
+        shell: bash
       - name: Check Lead-Lag results
         run: |
           python - <<PY
