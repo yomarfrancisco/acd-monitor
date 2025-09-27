@@ -77,6 +77,11 @@ def main():
     parser = argparse.ArgumentParser(description="Run court diagnostics")
     parser.add_argument("--overlap-json", required=True, help="OVERLAP.json file")
     parser.add_argument("--out-dir", required=True, help="Output directory")
+    parser.add_argument("--strict", action="store_true", help="Strict court mode")
+    parser.add_argument("--permutes", type=int, default=5000, help="Number of permutations")
+    parser.add_argument("--no-stitch", action="store_true", help="No micro-gap stitching")
+    parser.add_argument("--all5", action="store_true", help="Require all 5 venues")
+    parser.add_argument("--real-only", action="store_true", help="Real data only")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
     
     args = parser.parse_args()
@@ -97,24 +102,51 @@ def main():
     
     logger.info(f"Running court diagnostics for window: {overlap_data['startUTC']} to {overlap_data['endUTC']}")
     
+    # Create output directory
+    out_dir.mkdir(parents=True, exist_ok=True)
+    
     # Run court bundle validation
     logger.info("Running court bundle validation...")
     validation_cmd = [
         "python", "scripts/validate_court_bundle.py",
         "--overlap-json", str(overlap_file),
         "--out-dir", str(out_dir),
-        "--require-all5",
+        "--require-all5" if args.all5 else "",
         "--coverage-min", "0.999",
-        "--permutes-min", "5000",
-        "--no-stitch",
+        "--permutes-min", str(args.permutes),
+        "--no-stitch" if args.no_stitch else "",
         "--alpha", "0.05",
-        "--verbose"
+        "--verbose" if args.verbose else ""
     ]
+    # Remove empty arguments
+    validation_cmd = [arg for arg in validation_cmd if arg]
     
     result = subprocess.run(validation_cmd, capture_output=True, text=True)
     if result.returncode != 0:
         logger.error(f"Court bundle validation failed: {result.stderr}")
         return 1
+    
+    # Generate complete evidence bundle
+    logger.info("Generating complete evidence bundle...")
+    evidence_cmd = [
+        "python", "scripts/build_court_bundle_from_snapshot.py",
+        "--snapshot", str(overlap_file.parent),
+        "--export-dir", str(out_dir),
+        "--permutes", str(args.permutes),
+        "--alpha", "0.05",
+        "--no-stitch" if args.no_stitch else "",
+        "--all5" if args.all5 else "",
+        "--verbose" if args.verbose else ""
+    ]
+    # Remove empty arguments
+    evidence_cmd = [arg for arg in evidence_cmd if arg]
+    
+    result = subprocess.run(evidence_cmd, capture_output=True, text=True)
+    if result.returncode != 0:
+        logger.error(f"Evidence bundle generation failed: {result.stderr}")
+        return 1
+    
+    logger.info("Evidence bundle generated successfully")
     
     # Check substantive flags
     logger.info("Checking substantive flags...")

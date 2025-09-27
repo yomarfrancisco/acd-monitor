@@ -58,7 +58,7 @@ def main():
         return 1
     
     # Validate policy
-    if not policy.startswith("BEST4") and not policy.startswith("ALL5"):
+    if not (policy.startswith("BEST4") or policy.startswith("ALL5") or policy.startswith("COURT")):
         logger.error(f"Invalid policy for court mode: {policy}")
         return 1
     

@@ -613,3 +613,28 @@ End of document.
 **1s Status:** Permissive PASS; R1 PASS; R2 PASS; R3 PASS; R4 PASS; R5 PASS → **COURT-STRICT 1s ACHIEVED** (all rungs passed with microstructure remedies)
 
 **Court 1s Baseline:** ✅ **PROMOTED** - Court 1s baseline established with ALL5, stitch=0, coverage≥0.999, permutes≥5000
+
+## 18. Court 1s Orchestrator Status — Sept 27, 2025
+
+### **Active Court-Mode System**
+- **Orchestrator PID**: 730 (restarted 7:23AM)
+- **Policy Order**: BEST4_10m → BEST4_20m → BEST4_30m → ALL5_10m
+- **Gap Policy**: ≤1s (strict), no micro-gap-stitch
+- **Coverage Requirement**: ≥0.999 for court-quality overlap
+- **Venues**: All 5 active (binance, coinbase, kraken, okx, bybit)
+
+### **Monitoring & Auto-Trigger**
+- **Strict Monitor**: PID 32880 - monitors for ALL5≥0.999 overlap
+- **Auto-Trigger**: Court diagnostics run automatically on [OVERLAP:FOUND]
+- **Evidence Bundle**: Complete 9-block evidence with [COURT:decision] logging
+- **Output**: exports/court_diag_<timestamp>/ with FLAGGED/CLEAR decisions
+
+### **Decision Flags**
+- **Substantive Flags**: spread_clustering, leader_persistence, infoshare_concentration, cross_test_coherence
+- **Court Decision**: [COURT:decision] with explicit reasons for FLAGGED/CLEAR status
+- **Evidence**: EVIDENCE.md, MANIFEST.json, InfoShare, Spread, Lead-Lag results
+
+### **System Integration**
+- **Canonical Workflow**: Court-mode orchestrator is now the primary system
+- **Git Tag**: court-1s-active (canonical court diagnostics workflow)
+- **Status**: ✅ **ACTIVE** - Monitoring for strict 1s overlap with auto-diagnostics
