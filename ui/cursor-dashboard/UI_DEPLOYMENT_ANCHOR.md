@@ -91,6 +91,7 @@ git push origin fix/restore-agents-from-preview
 - **Step 3B (CI debug)**: ✅ 62191a5
 - **Step 3C (sentinel alignment)**: ✅ cbf5d50
 - **Step 3D (bundle echo)**: ✅ 75a0bfb
+- **Fix: YAML heredoc alignment in integrity workflows; restored lead-lag CI sentinels**: ✅ 20b2d63
 
 ---
 
