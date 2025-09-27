@@ -40,7 +40,14 @@ jobs:
           make -n test
       
       - name: Run unit tests (micro fast)
-        run: make test-micro
+        env:
+          PYTEST_DISABLE_PLUGIN_AUTOLOAD: "1"
+        run: |
+          python -m pytest -q --maxfail=1 -x \
+            tests/test_inclusive_end_date.py \
+            tests/test_resample_minute_second.py \
+            tests/test_leadlag_invariant.py \
+            tests/test_infoshare_bounds_schema.py
       
       - name: Create minimal test snapshot
         run: |
