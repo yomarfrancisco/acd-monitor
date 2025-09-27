@@ -28,6 +28,11 @@ baseline-from-snapshot:
 	@python scripts/build_research_baseline_2s.py \
 		--export-dir $(SNAPSHOT)/evidence \
 		--verbose
+	@python scripts/generate_provenance.py \
+		--snapshot $(SNAPSHOT) \
+		--permutes 1000 \
+		--alpha 0.05 \
+		--gg-blend-alpha 0.7
 	@echo "[MAKE:baseline] Baseline evidence built successfully"
 
 court-from-snapshot:
@@ -45,6 +50,11 @@ court-from-snapshot:
 		--no-stitch \
 		--all5 \
 		--verbose
+	@python scripts/generate_provenance.py \
+		--snapshot $(SNAPSHOT) \
+		--permutes 5000 \
+		--alpha 0.05 \
+		--gg-blend-alpha 0.7
 	@echo "[MAKE:court] Court evidence built successfully"
 
 verify-bundles:
