@@ -475,6 +475,16 @@ def build_research_bundle(snapshot_dir: str, export_dir: str, pair: str,
     overlap_json = json.dumps(overlap['overlap_data'])
     print(f'[OVERLAP] {overlap_json}')
     
+    # Validate venues count - must have at least 2 for Lead-Lag edges
+    venues = overlap['overlap_data'].get('venues', [])
+    if len(venues) < 2:
+        logger.error(f"[ABORT:bundle:venues_lt_2] Found {len(venues)} venues, need ≥2 for Lead-Lag edges")
+        print(f"[ABORT:bundle:venues_lt_2] Found {len(venues)} venues, need ≥2 for Lead-Lag edges")
+        sys.exit(2)
+    
+    print(f"[STATS:bundle:venues] {len(venues)}")
+    logger.info(f"Bundle validation: {len(venues)} venues")
+    
     # Create export directory
     export_path = Path(export_dir)
     export_path.mkdir(parents=True, exist_ok=True)

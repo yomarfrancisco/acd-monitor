@@ -209,6 +209,24 @@ def main():
         logger.error(f"OVERLAP.json not found in {snapshot_dir}")
         return 1
     
+    # Load and validate overlap data
+    try:
+        with open(overlap_file, 'r') as f:
+            overlap_data = json.load(f)
+        
+        venues = overlap_data.get('venues', [])
+        if len(venues) < 2:
+            logger.error(f"[ABORT:bundle:venues_lt_2] Found {len(venues)} venues, need ≥2 for Lead-Lag edges")
+            print(f"[ABORT:bundle:venues_lt_2] Found {len(venues)} venues, need ≥2 for Lead-Lag edges")
+            return 2
+        
+        print(f"[STATS:bundle:venues] {len(venues)}")
+        logger.info(f"Court bundle validation: {len(venues)} venues")
+        
+    except Exception as e:
+        logger.error(f"Failed to load OVERLAP.json: {e}")
+        return 1
+    
     # Create output directory
     out_dir.mkdir(parents=True, exist_ok=True)
     
