@@ -4,12 +4,13 @@ Synthetic Crypto Data Generator for ACD Validation
 Generates competitive vs. coordinated crypto trading scenarios for ICP/VMM validation.
 """
 
+import logging
+from dataclasses import dataclass
+from datetime import datetime, timedelta
+from typing import List, Tuple
+
 import numpy as np
 import pandas as pd
-from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple
-from datetime import datetime, timedelta
-import logging
 
 logger = logging.getLogger(__name__)
 

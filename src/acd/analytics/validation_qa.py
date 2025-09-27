@@ -10,16 +10,16 @@ This module implements the validation and QA framework required for the v1.4 bas
 All methods follow the v1.4 professional standards with transparent formulas and economic interpretation.
 """
 
+import logging
+from dataclasses import dataclass
+from datetime import datetime
+from typing import Dict, List, Tuple
+
 import numpy as np
 import pandas as pd
-from typing import Dict, List, Tuple, Optional, Union
-from dataclasses import dataclass
-from sklearn.model_selection import TimeSeriesSplit
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from scipy import stats
-import logging
-from datetime import datetime, timedelta
-import json
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
+from sklearn.model_selection import TimeSeriesSplit
 
 logger = logging.getLogger(__name__)
 
@@ -471,10 +471,8 @@ class SensitivityAnalyzer:
         """Calculate detection rate for given threshold."""
         try:
             # Calculate detection rate as proportion of true positives
-            true_positives = data[
-                (data["similarity"] > threshold) & (data["coordination_flag"] == True)
-            ]
-            total_positives = data[data["coordination_flag"] == True]
+            true_positives = data[(data["similarity"] > threshold) & data["coordination_flag"]]
+            total_positives = data[data["coordination_flag"]]
 
             if len(total_positives) == 0:
                 return 0.0
@@ -490,10 +488,8 @@ class SensitivityAnalyzer:
         """Calculate false positive rate for given threshold."""
         try:
             # Calculate false positive rate as proportion of false positives
-            false_positives = data[
-                (data["similarity"] > threshold) & (data["coordination_flag"] == False)
-            ]
-            total_negatives = data[data["coordination_flag"] == False]
+            false_positives = data[(data["similarity"] > threshold) & (~data["coordination_flag"])]
+            total_negatives = data[~data["coordination_flag"]]
 
             if len(total_negatives) == 0:
                 return 0.0
@@ -634,10 +630,10 @@ class PeerReviewPackager:
         """Create methodology summary for peer review."""
         return """
         Cross-Venue Coordination Analysis Methodology v1.4
-        
+
         This methodology implements a comprehensive framework for detecting algorithmic coordination
         across cryptocurrency exchanges using multi-dimensional similarity analysis.
-        
+
         Key Components:
         1. Depth-Weighted Cosine Similarity: Measures order book similarity across top-50 levels
         2. Jaccard Index: Quantifies order placement overlap with 1000ms time windows
@@ -646,7 +642,7 @@ class PeerReviewPackager:
         5. Power Analysis: Minimum detectable effect sizes with 80% statistical power
         6. Entity Intelligence: Counterparty concentration and network analysis
         7. Operational Integration: 4-tier escalation matrix with 21-day investigation protocol
-        
+
         Statistical Framework:
         - Invariant Causal Prediction (ICP) for environmental stability testing
         - Variational Method of Moments (VMM) for coordination index calculation
@@ -654,7 +650,7 @@ class PeerReviewPackager:
         - Temporal cross-validation for model stability
         - Robustness testing across alternative metrics and parameters
         - Sensitivity analysis across volatility regimes
-        
+
         Validation Approach:
         - 5-fold temporal cross-validation
         - Alternative similarity metric testing

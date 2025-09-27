@@ -5,16 +5,16 @@ Implements Brief 55+ ICP methodology for detecting environment-invariant
 vs. environment-sensitive pricing relationships in crypto markets.
 """
 
+import logging
+from dataclasses import dataclass
+from typing import Dict, List, Optional, Tuple
+
 import numpy as np
 import pandas as pd
-from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple, Union
 from scipy import stats
 from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import cross_val_score
-import logging
 
-from .statistics import EnhancedStatistics, PowerAnalysisConfig, FDRConfig, StatisticalResults
+from .statistics import EnhancedStatistics, FDRConfig, PowerAnalysisConfig, StatisticalResults
 
 logger = logging.getLogger(__name__)
 
@@ -348,7 +348,7 @@ class ICPEngine:
 
         # Simplified power calculation
         # In practice, this would use more sophisticated methods
-        n_environments = len(environment_data)
+        len(environment_data)
         avg_sample_size = np.mean([len(df) for df in environment_data.values()])
 
         # Approximate power calculation

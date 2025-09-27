@@ -6,14 +6,14 @@ regime switching patterns in market spreads and price movements,
 identifying stable coordination regimes vs competitive volatility.
 """
 
+import warnings
+from dataclasses import dataclass
+from typing import Dict, List, Tuple
+
 import numpy as np
 import pandas as pd
-from typing import Dict, List, Tuple, Optional, Any
-from dataclasses import dataclass
-from scipy import stats
 from sklearn.mixture import GaussianMixture
 from sklearn.preprocessing import StandardScaler
-import warnings
 
 warnings.filterwarnings("ignore")
 

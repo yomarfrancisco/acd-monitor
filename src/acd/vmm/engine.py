@@ -4,11 +4,13 @@ VMM (Variational Method of Moments) Engine
 Implements VMM methodology for continuous monitoring and coordination detection.
 """
 
+import logging
+from dataclasses import dataclass
+from typing import Any, Dict, List, Optional, Tuple
+
 import numpy as np
 import pandas as pd
-from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple, Any
-import logging
+
 from .provenance import VMMProvenance, create_provenance_data
 
 logger = logging.getLogger(__name__)
@@ -183,8 +185,8 @@ class VMMEngine:
             Tuple of (convergence_status, iterations, final_loss)
         """
         beta = beta_init.copy()
-        sigma = sigma_init.copy()
-        rho = rho_init.copy()
+        sigma_init.copy()
+        rho_init.copy()
 
         for iteration in range(self.config.max_iterations):
             # Calculate moment conditions
@@ -418,7 +420,7 @@ class VMMEngine:
                 "sigma0": sigma0,
                 "fitted": True,
             }
-            logger.info(f"Per-timestep stabilizer fitted:")
+            logger.info("Per-timestep stabilizer fitted:")
             logger.info(f"  Winsorization: q01={q01}, q99={q99}")
             logger.info(f"  Centering: mu0={mu0}")
             logger.info(f"  Variance targeting: sigma0={sigma0}")
@@ -537,7 +539,7 @@ class VMMEngine:
 
         prices = data[price_columns].values
         N = len(prices)
-        n_exchanges = prices.shape[1]
+        prices.shape[1]
 
         # Define moment components (k0 ≈ 6-12 depending on pairs)
         moment_components = []
@@ -717,25 +719,25 @@ class VMMEngine:
         # Compute autocovariance matrices
         Gamma = np.zeros((L + 1, k, k))
 
-        for l in range(L + 1):
-            if l == 0:
+        for lag in range(L + 1):
+            if lag == 0:
                 # Γ₀ = (1/N) Σ_t (m_t - ḡ)(m_t - ḡ)ᵀ
                 deviations = moment_matrix - g_bar
-                Gamma[l] = np.mean([np.outer(d, d) for d in deviations], axis=0)
+                Gamma[lag] = np.mean([np.outer(d, d) for d in deviations], axis=0)
             else:
                 # Γ_l = (1/N) Σ_{t=l+1}^N (m_t - ḡ)(m_{t-l} - ḡ)ᵀ
-                if N > l:
-                    deviations_t = moment_matrix[l:] - g_bar
-                    deviations_t_lag = moment_matrix[:-l] - g_bar
-                    Gamma[l] = np.mean(
+                if N > lag:
+                    deviations_t = moment_matrix[lag:] - g_bar
+                    deviations_t_lag = moment_matrix[:-lag] - g_bar
+                    Gamma[lag] = np.mean(
                         [np.outer(d1, d2) for d1, d2 in zip(deviations_t, deviations_t_lag)], axis=0
                     )
 
         # Newey-West estimator with Bartlett weights
         S_hat = Gamma[0].copy()
-        for l in range(1, L + 1):
-            weight = 1 - l / (L + 1)  # Bartlett weights
-            S_hat += weight * (Gamma[l] + Gamma[l].T)
+        for lag in range(1, L + 1):
+            weight = 1 - lag / (L + 1)  # Bartlett weights
+            S_hat += weight * (Gamma[lag] + Gamma[lag].T)
 
         return S_hat
 

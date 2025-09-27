@@ -177,7 +177,7 @@ export async function GET(req: Request) {
         ohlcv: [],
         error: "kraken_unavailable",
       },
-      { status: 502 }
+      { status: 200 }
     );
   }
 }

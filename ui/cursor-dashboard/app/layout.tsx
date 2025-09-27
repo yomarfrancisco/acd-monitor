@@ -4,6 +4,7 @@ import { Inter } from "next/font/google"
 import { Suspense } from "react"
 import "./globals.css"
 import 'katex/dist/katex.min.css'
+import LiveDataBanner from '@/components/LiveDataBanner'
 
 const inter = Inter({
   subsets: ["latin"],
@@ -40,6 +41,9 @@ export default function RootLayout({
         </div> */}
         
         <Suspense fallback={null}>{children}</Suspense>
+        
+        {/* Live Data Banner for Preview */}
+        <LiveDataBanner />
       </body>
     </html>
   )

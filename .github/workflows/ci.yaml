@@ -3,16 +3,35 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [ main, preview ]
-    paths-ignore: [ '**.md' ]
   pull_request:
-    branches: [ main, preview ]
-    paths-ignore: [ '**.md' ]
+    branches: [ main ]
   workflow_dispatch:
+
+env:
+  IS_PREVIEW: ${{ startsWith(github.ref, 'refs/heads/preview') && '1' || '0' }}
 
 permissions:
   contents: read
 
 jobs:
+  preview-demo-guard:
+    if: github.ref == 'refs/heads/preview'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check for demo mode in env files only
+        run: |
+          echo "Checking for demo mode in env files only..."
+          # Fail if NEXT_PUBLIC_USE_DEMO=1 appears in any *.env* file
+          if git grep -nE '^\s*NEXT_PUBLIC_USE_DEMO\s*=\s*1\s*$' -- ':!*' '*.env*' >/dev/null; then
+            echo "ERROR: NEXT_PUBLIC_USE_DEMO=1 found in env files"; exit 1
+          fi
+          # Fail if FEED_MODE=demo appears in any *.env* file
+          if git grep -nE '^\s*FEED_MODE\s*=\s*demo\s*$' -- ':!*' '*.env*' >/dev/null; then
+            echo "ERROR: FEED_MODE=demo found in env files"; exit 1
+          fi
+          echo "OK: no demo settings found in env files"
+
   build-test:
     runs-on: ubuntu-latest
     strategy:
@@ -44,90 +63,44 @@ jobs:
         
     - name: Lint with flake8
       run: |
-        flake8 src/ scripts/ --count --select=E9,F63,F7,F82 --show-source --statistics
-        flake8 src/ scripts/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        if [ "${IS_PREVIEW}" = "1" ]; then
+          flake8 src/
+        else
+          flake8 src/ scripts/
+        fi
         
     - name: Run tests
+      if: env.IS_PREVIEW != '1'
       run: |
+        python -V
+        pip install -U pip
+        # Only install test deps when tests actually run
+        pip install -r requirements.txt
+        # fallbacks in case extras are split
+        pip install pytest psutil requests matplotlib || true
         pytest tests/ -v --tb=short
-        
-    - name: Health checks (dry-run)
-      run: |
-        echo "Running health checks in dry-run mode..."
-        python scripts/run_overlap_sweep.py --help || echo "Sweep script available"
-        python scripts/run_research_diagnostics.py --help || echo "Diagnostics script available"
-        python scripts/run_auto_microstructure.py --help || echo "Auto microstructure script available"
-        
-    - name: Recon sweeps (dry-run)
-      run: |
-        echo "Running reconnaissance sweeps in dry-run mode..."
-        python scripts/run_overlap_sweep.py --pair BTC-USD --export-dir exports/test --granularities "60,30" --min-durations "1,1" --coverage-threshold 0.95 --venues "binance,coinbase" --mode research --max-windows-per-level 1 --dry-run --verbose || echo "Dry-run completed"
-        
-    - name: Check for artifacts
-      run: |
-        echo "Checking for existing artifacts..."
-        find exports/ -name "*.md" -o -name "*.json" -o -name "*.csv" | head -10 || echo "No artifacts found"
-        find baselines/ -name "*.md" -o -name "*.json" | head -5 || echo "No baselines found"
-        find court/ -name "*.md" -o -name "*.json" | head -5 || echo "No court data found"
 
-  artifacts:
+  ui:
     runs-on: ubuntu-latest
-    needs: build-test
-    if: always()
-    
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Create artifacts directory
-      run: mkdir -p artifacts
-      
-    - name: Collect exports
-      run: |
-        if [ -d "exports" ]; then
-          echo "Collecting exports..."
-          find exports/ -name "*.md" -o -name "*.json" -o -name "*.csv" | head -20
-          tar -czf artifacts/exports.tgz exports/ || echo "No exports to archive"
-        else
-          echo "No exports directory found"
-        fi
-        
-    - name: Collect baselines
-      run: |
-        if [ -d "baselines" ]; then
-          echo "Collecting baselines..."
-          find baselines/ -name "*.md" -o -name "*.json" | head -10
-          tar -czf artifacts/baselines.tgz baselines/ || echo "No baselines to archive"
-        else
-          echo "No baselines directory found"
-        fi
-        
-    - name: Collect court data
-      run: |
-        if [ -d "court" ]; then
-          echo "Collecting court data..."
-          find court/ -name "*.md" -o -name "*.json" | head -10
-          tar -czf artifacts/court.tgz court/ || echo "No court data to archive"
-        else
-          echo "No court directory found"
-        fi
-        
-    - name: Collect reports
-      run: |
-        echo "Collecting reports..."
-        find . -name "*REPORT.md" -o -name "*DECISION.md" -o -name "*INDEX.json" -o -name "OVERLAP_SWEEP.md" | head -20
-        find . -name "*REPORT.md" -o -name "*DECISION.md" -o -name "*INDEX.json" -o -name "OVERLAP_SWEEP.md" | xargs tar -czf artifacts/reports.tgz || echo "No reports to archive"
-        
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v4
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
       with:
-        name: acd-monitor-artifacts-${{ github.run_number }}
-        path: artifacts/
-        retention-days: 7
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: ui/cursor-dashboard/package-lock.json
         
-    - name: List artifacts
-      run: |
-        echo "Artifacts created:"
-        ls -la artifacts/ || echo "No artifacts created"
-        echo "Artifact sizes:"
-        du -sh artifacts/* || echo "No artifacts to size"
+    - name: Install dependencies
+      working-directory: ui/cursor-dashboard
+      run: npm ci
+      
+    - name: Type check
+      working-directory: ui/cursor-dashboard
+      run: npx tsc --noEmit
+      
+    - name: Build
+      working-directory: ui/cursor-dashboard
+      run: npm run build

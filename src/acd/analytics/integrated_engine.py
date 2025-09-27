@@ -5,15 +5,16 @@ Combines ICP and VMM engines with crypto-specific moment conditions
 to provide comprehensive coordination risk analysis.
 """
 
+import logging
+from dataclasses import dataclass
+from typing import Dict, List, Optional
+
 import numpy as np
 import pandas as pd
-from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple
-import logging
 
-from ..icp.engine import ICPEngine, ICPConfig, ICPResult
-from ..vmm.engine import VMMEngine, VMMConfig, VMMOutput
+from ..icp.engine import ICPConfig, ICPEngine, ICPResult
 from ..vmm.crypto_moments import CryptoMomentCalculator, CryptoMomentConfig, CryptoMoments
+from ..vmm.engine import VMMConfig, VMMEngine, VMMOutput
 
 logger = logging.getLogger(__name__)
 
