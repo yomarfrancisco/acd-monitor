@@ -34,6 +34,11 @@ jobs:
           print("scientific stack OK")
           PY
       
+      - name: Check Makefile whitespace
+        run: |
+          sed -n '55,75p' Makefile | nl -ba
+          make -n test
+      
       - name: Run unit tests (fast)
         run: |
           make test
