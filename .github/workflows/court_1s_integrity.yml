@@ -12,12 +12,16 @@ jobs:
           set -e
           if ls court/1s/ticks/*/*mock*.parquet 2>/dev/null; then exit 1; fi
           if ls court/1s/ticks/*/*_demo*.parquet 2>/dev/null; then exit 1; fi
+        shell: bash
+      - name: Check for empty parquet files
+        run: |
           python - <<PY
-import pathlib, sys
-root = pathlib.Path("court/1s/ticks")
-bad = []
-for f in root.rglob("*.parquet"):
-    if f.stat().st_size == 0: bad.append(str(f))
-if bad:
-    print("Empty parquet:", bad); sys.exit(1)
-PY
+          import pathlib, sys
+          root = pathlib.Path("court/1s/ticks")
+          bad = []
+          for f in root.rglob("*.parquet"):
+              if f.stat().st_size == 0: bad.append(str(f))
+          if bad:
+              print("Empty parquet:", bad); sys.exit(1)
+          PY
+        shell: bash
