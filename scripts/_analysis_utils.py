@@ -261,3 +261,44 @@ def validate_dataframe(df: pd.DataFrame, required_cols: list = None) -> bool:
     
     logger.info(f"DataFrame validation passed: {len(df)} rows, columns: {list(df.columns)}")
     return True
+
+
+def expected_rows(start: datetime, end: datetime, freq: str = 'S') -> int:
+    """
+    Calculate expected number of rows for a time window.
+    
+    Args:
+        start: Start datetime
+        end: End datetime (inclusive)
+        freq: Frequency ('S' for seconds, 'T' for minutes)
+        
+    Returns:
+        Expected number of rows
+    """
+    if freq == 'S':
+        return int((end - start).total_seconds()) + 1
+    elif freq == 'T':
+        return int((end - start).total_seconds() / 60) + 1
+    else:
+        raise ValueError(f"Unsupported frequency: {freq}")
+
+
+def compute_coverage(df: pd.DataFrame, start: datetime, end: datetime, freq: str = 'S') -> float:
+    """
+    Compute coverage ratio for a DataFrame within a time window.
+    
+    Args:
+        df: DataFrame with time index
+        start: Start datetime
+        end: End datetime (inclusive)
+        freq: Frequency ('S' for seconds, 'T' for minutes)
+        
+    Returns:
+        Coverage ratio (0.0 to 1.0)
+    """
+    if df.empty:
+        return 0.0
+    
+    expected = expected_rows(start, end, freq)
+    actual = len(df.index.unique())
+    return round(min(actual / expected, 1.0), 4)

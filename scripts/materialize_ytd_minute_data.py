@@ -59,6 +59,8 @@ def materialize_minute_data(
     start_utc = datetime.strptime(start_date, "%Y-%m-%d")
     end_utc = inclusive_end_date(end_date)  # 23:59:59 inclusive
     
+    print(f"[MZ:start] file=minute_data start={start_utc.isoformat()} end={end_utc.isoformat()} granularity=1m")
+    
     # Create adapters and cache
     adapter = MinuteBarsAdapter()
     cache = DataCache(cache_dir)
@@ -88,10 +90,23 @@ def materialize_minute_data(
                 results['failed_venues'] += 1
                 continue
             
-            # Calculate coverage
-            expected_minutes = (end_utc - start_utc).total_seconds() / 60
-            actual_bars = len(df)
-            coverage_pct = (actual_bars / expected_minutes) * 100 if expected_minutes > 0 else 0
+            # Apply canonical schema normalization
+            df = ensure_time_mid_volume(df)
+            logger.info(f"[MZ:schema] venue={venue} cols={list(df.columns)}")
+            
+            # Calculate coverage with inclusive window
+            expected_minutes = int((end_utc - start_utc).total_seconds() / 60) + 1
+            actual_minutes = len(df.index.unique())
+            coverage = round(min(actual_minutes / expected_minutes, 1.0), 4)
+            
+            logger.info(f"[STATS:materialize:granularity=1m] venue={venue} expected={expected_minutes} actual={actual_minutes} coverage={coverage}")
+            
+            if coverage < 0.9:
+                logger.warning(f"[WARN:materialize:low_coverage] venue={venue} coverage={coverage}")
+            
+            # Legacy fields for compatibility
+            actual_bars = actual_minutes
+            coverage_pct = coverage * 100
             
             # Check coverage requirement
             if coverage_pct < min_coverage * 100:
@@ -111,11 +126,14 @@ def materialize_minute_data(
             # Log materialization
             materialize_log = {
                 "venue": venue,
-                "start": start_date,
-                "end": end_date,
-                "bars": actual_bars,
-                "coveragePct": round(coverage_pct, 2)
+                "startUTC": start_utc.isoformat() + "Z",
+                "endUTC": end_utc.isoformat() + "Z",
+                "granularity_sec": 60,
+                "expected_rows": expected_minutes,
+                "actual_rows": actual_minutes,
+                "coverage": coverage
             }
+            print(f"[MZ:done] venue={venue} path={cache_dir} rows={actual_minutes} coverage={coverage}")
             print(f"[DATA:minute:materialize] {json.dumps(materialize_log, ensure_ascii=False)}")
             
             results['venues'][venue] = {

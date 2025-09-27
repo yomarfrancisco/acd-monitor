@@ -24,7 +24,7 @@ sys.path.append(str(Path(__file__).parent.parent / "src"))
 
 from acd.data.adapters.real_tick_adapters import fetch_real_tick_data
 from acd.data.cache import DataCache
-from _analysis_utils import inclusive_end_date, ensure_time_mid_volume
+from _analysis_utils import inclusive_end_date, ensure_time_mid_volume, resample_second, resample_minute
 
 
 def setup_logging(verbose: bool = False):
@@ -66,6 +66,8 @@ def materialize_real_data(
     start_time = datetime.strptime(start_date, "%Y-%m-%d")
     end_time = inclusive_end_date(end_date)  # 23:59:59 inclusive
     
+    print(f"[MZ:start] file=real_tick_data start={start_time.isoformat()} end={end_time.isoformat()} granularity=1s")
+    
     # Calculate expected days
     expected_days = (end_time - start_time).days
     if expected_days < min_days:
@@ -83,28 +85,40 @@ def materialize_real_data(
         cache_dir=cache_dir
     )
     
-    # Validate data quality
+    # Validate data quality with canonical schema
     successful_venues = []
     for venue, df in venue_data.items():
         if len(df) > 0:
-            # Calculate coverage
-            total_seconds = (end_time - start_time).total_seconds()
-            actual_ticks = len(df)
-            coverage_pct = (actual_ticks / total_seconds) * 100 if total_seconds > 0 else 0
+            # Apply canonical schema normalization
+            df = ensure_time_mid_volume(df)
+            logger.info(f"[MZ:schema] venue={venue} cols={list(df.columns)}")
+            
+            # Calculate coverage with inclusive window
+            expected_seconds = int((end_time - start_time).total_seconds()) + 1
+            actual_seconds = len(df.index.unique())
+            coverage = round(min(actual_seconds / expected_seconds, 1.0), 4)
+            
+            logger.info(f"[STATS:materialize:granularity=1s] venue={venue} expected={expected_seconds} actual={actual_seconds} coverage={coverage}")
+            
+            if coverage < 0.8:
+                logger.warning(f"[WARN:materialize:low_coverage] venue={venue} coverage={coverage}")
             
             # Log materialization
             materialize_log = {
                 "venue": venue,
-                "start": start_date,
-                "end": end_date,
-                "ticks": actual_ticks,
-                "coveragePct": round(coverage_pct, 2),
+                "startUTC": start_time.isoformat() + "Z",
+                "endUTC": end_time.isoformat() + "Z",
+                "granularity_sec": 1,
+                "expected_rows": expected_seconds,
+                "actual_rows": actual_seconds,
+                "coverage": coverage,
                 "source": "real_tick_data"
             }
+            print(f"[MZ:done] venue={venue} path={cache_dir} rows={actual_seconds} coverage={coverage}")
             print(f"[DATA:tick:materialize] {json.dumps(materialize_log, ensure_ascii=False)}")
             
             successful_venues.append(venue)
-            logger.info(f"Cached {actual_ticks} ticks for {venue} ({coverage_pct:.2f}% coverage)")
+            logger.info(f"Cached {actual_seconds} seconds for {venue} ({coverage:.4f} coverage)")
         else:
             logger.warning(f"No data retrieved for {venue}")
     

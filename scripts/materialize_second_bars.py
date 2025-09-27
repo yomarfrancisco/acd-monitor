@@ -61,9 +61,11 @@ def materialize_second_bars(
     logger = logging.getLogger(__name__)
     logger.info("Starting second bars materialization")
     
-    # Parse dates
+    # Parse dates with inclusive end
     start_utc = datetime.strptime(start_date, "%Y-%m-%d")
-    end_utc = datetime.strptime(end_date, "%Y-%m-%d")
+    end_utc = inclusive_end_date(end_date)  # 23:59:59 inclusive
+    
+    print(f"[MZ:start] file=second_bars start={start_utc.isoformat()} end={end_utc.isoformat()} granularity=1s")
     
     # Initialize adapters
     second_adapter = SecondBarsAdapter(cache_enabled=cache_enabled, synthetic=synthetic)
@@ -102,7 +104,11 @@ def materialize_second_bars(
                 if cache:
                     cache.put(venue, pair, '1s', df)
             
-            # Analyze data quality
+            # Apply canonical schema normalization
+            df = ensure_time_mid_volume(df)
+            logger.info(f"[MZ:schema] venue={venue} cols={list(df.columns)}")
+            
+            # Analyze data quality with inclusive window
             venue_results = analyze_data_quality(df, venue, pair, start_utc, end_utc)
             results['venues'][venue] = venue_results
             results['total_bars'] += len(df)
@@ -165,13 +171,20 @@ def analyze_data_quality(
             'end_time': None
         }
     
-    # Calculate expected bars (seconds in period)
-    total_seconds = (end_utc - start_utc).total_seconds()
-    expected_bars = int(total_seconds)
-    actual_bars = len(df)
+    # Calculate expected bars with inclusive window
+    expected_seconds = int((end_utc - start_utc).total_seconds()) + 1
+    actual_seconds = len(df.index.unique())
+    coverage = round(min(actual_seconds / expected_seconds, 1.0), 4)
     
-    # Calculate coverage
-    coverage_pct = (actual_bars / expected_bars) * 100 if expected_bars > 0 else 0
+    logger.info(f"[STATS:materialize:granularity=1s] venue={venue} expected={expected_seconds} actual={actual_seconds} coverage={coverage}")
+    
+    if coverage < 0.8:
+        logger.warning(f"[WARN:materialize:low_coverage] venue={venue} coverage={coverage}")
+    
+    # Legacy fields for compatibility
+    expected_bars = expected_seconds
+    actual_bars = actual_seconds
+    coverage_pct = coverage * 100
     
     # Get time range
     if 'time' in df.columns:
