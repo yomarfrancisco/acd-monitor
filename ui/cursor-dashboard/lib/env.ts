@@ -55,7 +55,7 @@ function getEnvConfig(): EnvConfig {
   return {
     isLive,
     isPreview: process.env.VERCEL_ENV === 'preview',
-    isProduction,
+    isProduction: Boolean(isProduction),
     useDemo: USE_DEMO,
     feedMode: FEED_MODE,
     wsUrl,
