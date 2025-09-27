@@ -6,14 +6,13 @@ information flow patterns between exchanges, identifying coordinated
 information sharing and network effects.
 """
 
+import warnings
+from dataclasses import dataclass
+from typing import Dict, List, Tuple
+
 import numpy as np
 import pandas as pd
-from typing import Dict, List, Tuple, Optional, Any
-from dataclasses import dataclass
 from scipy import stats
-from scipy.spatial.distance import pdist, squareform
-from sklearn.metrics.pairwise import cosine_similarity
-import warnings
 
 warnings.filterwarnings("ignore")
 

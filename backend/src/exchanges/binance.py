@@ -7,12 +7,13 @@ No authentication required for public endpoints.
 Fresh commit - Binance MVP implementation complete.
 """
 
-import httpx
 import asyncio
-from datetime import datetime, timezone
-from typing import Dict, List, Optional
-from functools import lru_cache
 import logging
+from datetime import datetime, timezone
+from functools import lru_cache
+from typing import Dict, List, Optional
+
+import httpx
 
 logger = logging.getLogger(__name__)
 
@@ -65,7 +66,6 @@ class BinanceAPI:
     def _cached_request(self, endpoint: str, params_str: str = ""):
         """LRU cache wrapper for requests (15s TTL handled by cache invalidation)."""
         # This is a synchronous wrapper - actual async calls bypass this
-        pass
 
     async def get_book_ticker(self, symbol: str = "BTCUSDT") -> Dict:
         """

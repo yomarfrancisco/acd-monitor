@@ -5,14 +5,13 @@ This module implements rolling lead-lag betas and Granger causality tests
 to detect price leadership patterns between exchanges.
 """
 
+import warnings
+from dataclasses import dataclass
+from typing import Dict, List, Tuple
+
 import numpy as np
 import pandas as pd
-from typing import Dict, List, Tuple, Optional, Any
-from dataclasses import dataclass
-from scipy import stats
 from statsmodels.tsa.stattools import grangercausalitytests
-from statsmodels.regression.linear_model import OLS
-import warnings
 
 warnings.filterwarnings("ignore")
 
@@ -89,8 +88,6 @@ class LeadLagValidator:
         returns = np.diff(prices, axis=0)
 
         # Initialize results containers
-        lead_lag_betas = {}
-        granger_p_values = {}
         persistence_scores = {ex: 0.0 for ex in exchanges}
         env_persistence = {}
         env_entropy = {}

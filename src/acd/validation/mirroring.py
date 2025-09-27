@@ -6,14 +6,14 @@ using dynamic time warping and cosine similarity to identify coordinated
 order book mirroring patterns.
 """
 
+import warnings
+from dataclasses import dataclass
+from typing import Dict, List, Tuple
+
 import numpy as np
 import pandas as pd
-from typing import Dict, List, Tuple, Optional, Any
-from dataclasses import dataclass
-from scipy.spatial.distance import cosine
 from scipy.stats import pearsonr
 from sklearn.metrics.pairwise import cosine_similarity
-import warnings
 
 warnings.filterwarnings("ignore")
 

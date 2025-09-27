@@ -5,13 +5,14 @@ Implements power analysis, FDR control, and advanced statistical testing
 for court/regulator-ready coordination risk analytics.
 """
 
+import logging
+from dataclasses import dataclass
+from typing import Dict, List, Optional, Tuple
+
 import numpy as np
 import pandas as pd
-from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple, Union
 from scipy import stats
 from scipy.stats import norm
-import logging
 
 logger = logging.getLogger(__name__)
 
