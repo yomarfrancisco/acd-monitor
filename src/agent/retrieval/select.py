@@ -5,10 +5,10 @@ This module provides intelligent selection of relevant ACD artifacts
 based on user queries and context for agent responses.
 """
 
-import re
-from typing import Dict, List, Optional, Any, Tuple
-from dataclasses import dataclass
 import logging
+import re
+from dataclasses import dataclass
+from typing import Any, Dict, List, Optional
 
 from .loader import ACDArtifactLoader
 

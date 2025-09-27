@@ -9,13 +9,11 @@ This module implements the operational integration framework required for the v1
 All methods follow the v1.4 professional standards with transparent formulas and economic interpretation.
 """
 
-import numpy as np
-import pandas as pd
-from typing import Dict, List, Tuple, Optional, Union
+import logging
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum
-import logging
+from typing import Dict, List
 
 logger = logging.getLogger(__name__)
 

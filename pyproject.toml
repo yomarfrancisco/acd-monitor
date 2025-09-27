@@ -1,17 +1,7 @@
 [tool.black]
 line-length = 100
-target-version = ["py311"]
-exclude = '''
-/(
-  \.git
-| \.venv
-| venv
-| build
-| dist
-| node_modules
-| artifacts
-| tmp
-| .mypy_cache
-| .pytest_cache
-)/
-'''
+target-version = ["py311","py312"]
+
+[tool.ruff]
+line-length = 100
+lint.extend-ignore = ["E203"]

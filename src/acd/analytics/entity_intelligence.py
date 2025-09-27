@@ -10,16 +10,13 @@ This module implements the entity intelligence framework required for the v1.4 b
 All methods follow the v1.4 professional standards with transparent formulas and economic interpretation.
 """
 
+import logging
+from dataclasses import dataclass
+from typing import Dict, List
+
+import networkx as nx
 import numpy as np
 import pandas as pd
-from typing import Dict, List, Tuple, Optional, Set
-from dataclasses import dataclass
-from collections import defaultdict, Counter
-import networkx as nx
-from scipy import stats
-from scipy.spatial.distance import pdist, squareform
-import logging
-from datetime import datetime, timedelta
 
 logger = logging.getLogger(__name__)
 
@@ -149,7 +146,7 @@ class CounterpartyConcentrationAnalyzer:
 
             # Calculate coordination volume by entity
             coordination_volumes = (
-                merged_data[merged_data["coordination_flag"] == True]
+                merged_data[merged_data["coordination_flag"]]
                 .groupby("entity_id")["volume"]
                 .sum()
                 .to_dict()
@@ -192,7 +189,7 @@ class CounterpartyConcentrationAnalyzer:
         try:
             # Filter data for this entity
             entity_data = trading_data[trading_data["entity_id"] == entity_id]
-            entity_coordination = coordination_data[coordination_data["entity_id"] == entity_id]
+            # entity_coordination = coordination_data[coordination_data["entity_id"] == entity_id]  # Unused
 
             # Analyze timing patterns
             timing_patterns = self._analyze_timing_patterns(entity_data)
@@ -420,7 +417,7 @@ class CounterpartyConcentrationAnalyzer:
             if "cancelled" not in entity_data.columns:
                 return {}
 
-            cancelled_data = entity_data[entity_data["cancelled"] == True]
+            cancelled_data = entity_data[entity_data["cancelled"]]
             if len(cancelled_data) == 0:
                 return {}
 

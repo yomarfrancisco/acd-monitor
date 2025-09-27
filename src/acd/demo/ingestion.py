@@ -1,15 +1,13 @@
 """Mock data ingestion for ACD Monitor demo pipeline."""
 
-import json
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List
 
 import pandas as pd
 
 from ..data.ingest import DataIngestion, DataIngestionConfig
 from ..data.quality import DataQualityAssessment, create_quality_config
-from ..vmm import VMMConfig, run_vmm
 
 logger = logging.getLogger(__name__)
 
