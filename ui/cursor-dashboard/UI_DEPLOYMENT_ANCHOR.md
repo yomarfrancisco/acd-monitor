@@ -93,6 +93,7 @@ git push origin fix/restore-agents-from-preview
 - **Step 3D (bundle echo)**: ✅ 75a0bfb
 - **Fix: YAML heredoc alignment in integrity workflows; restored lead-lag CI sentinels**: ✅ 20b2d63
 - **Fix: Build evidence before validation in CI workflows; resolves missing files errors**: ✅ f484aa1
+- **CI fixed: YAML heredoc indentation normalized in integrity workflows**: ✅ b1412ff
 
 ---
 
