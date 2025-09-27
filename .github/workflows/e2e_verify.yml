@@ -1,0 +1,64 @@
+name: E2E Verify & Promote
+
+on:
+  push:
+    branches: [preview, main]
+  pull_request:
+    branches: [preview, main]
+
+jobs:
+  e2e-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      
+      - name: Install dependencies
+        run: |
+          python -V
+          python -m pip install --upgrade pip
+          pip install numpy pandas scipy scikit-learn statsmodels pyarrow fastparquet python-dateutil pytz pytest
+      
+      - name: Smoke test scientific stack
+        run: |
+          python - <<'PY'
+          import numpy, pandas, scipy, statsmodels
+          from statsmodels.tsa.vector_ar.vecm import VECM, coint_johansen
+          print("scientific stack OK")
+          PY
+      
+      - name: Run unit tests
+        run: |
+          make test
+      
+      - name: Create minimal test snapshot
+        run: |
+          mkdir -p test_snapshot/ticks
+          # Create minimal test data structure
+          echo '{"startUTC":"2025-09-26T20:48:04Z","endUTC":"2025-09-26T20:57:52Z","venues":["binance","coinbase"],"policy":"TEST_2s"}' > test_snapshot/OVERLAP.json
+      
+      - name: E2E verify baseline
+        run: |
+          make baseline-from-snapshot SNAPSHOT=test_snapshot
+      
+      - name: Verify bundles
+        run: |
+          make verify-bundles
+      
+      - name: Update promotion pointers
+        run: |
+          python scripts/update_promotion_pointers.py
+      
+      - name: Upload evidence artifacts
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: evidence-artifacts
+          path: |
+            test_snapshot/evidence/
+            baselines/2s/evidence/
+          retention-days: 7
