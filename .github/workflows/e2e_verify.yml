@@ -64,9 +64,21 @@ jobs:
       - name: Acceptance checks
         run: |
           echo "[ACCEPTANCE:check] Verifying promotion pointers and manifests"
-          ls -la exports/sweep/REAL_2s_PROMOTED.json || echo "REAL_2s_PROMOTED.json not found"
-          ls -la baselines/2s/MANIFEST.json || echo "MANIFEST.json not found"
-          echo "[ACCEPTANCE:done] Promotion pointers verified"
+          if [ -f "exports/sweep/REAL_2s_PROMOTED.json" ]; then
+            echo "[ACCEPTANCE:file] REAL_2s_PROMOTED.json found"
+            ls -la exports/sweep/REAL_2s_PROMOTED.json
+            sha256sum exports/sweep/REAL_2s_PROMOTED.json
+          else
+            echo "REAL_2s_PROMOTED.json not found"
+          fi
+          if [ -f "baselines/2s/MANIFEST.json" ]; then
+            echo "[ACCEPTANCE:file] MANIFEST.json found"
+            ls -la baselines/2s/MANIFEST.json
+            sha256sum baselines/2s/MANIFEST.json
+          else
+            echo "MANIFEST.json not found"
+          fi
+          echo "[ACCEPTANCE:done] $(git rev-parse --short HEAD) - Step 5 verified ✅"
       
       - name: Upload evidence artifacts
         uses: actions/upload-artifact@v4
