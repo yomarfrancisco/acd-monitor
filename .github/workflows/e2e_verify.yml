@@ -21,7 +21,7 @@ jobs:
         run: |
           python -V
           python -m pip install --upgrade pip
-          pip install numpy pandas scipy scikit-learn statsmodels pyarrow fastparquet python-dateutil pytz pytest
+          pip install -r requirements-lock.txt
       
       - name: Smoke test scientific stack
         run: |
@@ -31,7 +31,7 @@ jobs:
           print("scientific stack OK")
           PY
       
-      - name: Run unit tests
+      - name: Run unit tests (fast)
         run: |
           make test
       

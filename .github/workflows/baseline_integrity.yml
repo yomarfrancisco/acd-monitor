@@ -15,7 +15,7 @@ jobs:
         run: |
           python -V
           python -m pip install --upgrade pip
-          pip install numpy pandas scipy scikit-learn statsmodels pyarrow fastparquet python-dateutil pytz
+          pip install -r requirements-lock.txt
       - name: Smoke test scientific stack
         run: |
           python - <<'PY'
