@@ -13,8 +13,16 @@ jobs:
           python-version: '3.9'
       - name: Install dependencies
         run: |
+          python -V
           python -m pip install --upgrade pip
-          pip install pandas numpy scipy scikit-learn
+          pip install numpy pandas scipy scikit-learn statsmodels pyarrow fastparquet python-dateutil pytz
+      - name: Smoke test scientific stack
+        run: |
+          python - <<'PY'
+          import numpy, pandas, scipy, statsmodels
+          from statsmodels.tsa.vector_ar.vecm import VECM, coint_johansen
+          print("scientific stack OK")
+          PY
       - name: Build baseline evidence bundle
         run: |
           python scripts/build_research_baseline_2s.py \
