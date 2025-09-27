@@ -95,6 +95,7 @@ git push origin fix/restore-agents-from-preview
 - **Fix: Build evidence before validation in CI workflows; resolves missing files errors**: ✅ f484aa1
 - **CI fixed: YAML heredoc indentation normalized in integrity workflows**: ✅ b1412ff
 - **CI fixed: Added statsmodels + smoke test to integrity workflows**: ✅ 4134cb3
+- **Step 4 complete: Materialization fixes - inclusive windows, canonical schema, coverage math**: ✅ 5f33ea4
 
 ---
 
