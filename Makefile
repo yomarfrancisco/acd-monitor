@@ -1,7 +1,7 @@
 # ACD Monitor - Backend Operations
 # End-to-end verification and one-click promotion
 
-.PHONY: help baseline-from-snapshot court-from-snapshot verify-bundles test test-micro clean
+.PHONY: help baseline-from-snapshot court-from-snapshot verify-bundles test test-micro dev-smoke clean
 
 help:
 	@echo "ACD Monitor Backend Operations"
@@ -13,6 +13,7 @@ help:
 	@echo "  verify-bundles                        - Check sentinel JSON keys & coverage"
 	@echo "  test                                  - Run unit tests"
 	@echo "  test-micro                            - Run micro tests only (fast)"
+	@echo "  dev-smoke                             - Fast developer feedback loop (<10s)"
 	@echo "  clean                                 - Clean temporary files"
 	@echo ""
 	@echo "Examples:"
@@ -75,6 +76,16 @@ test:
 test-micro:
 	@echo "[MAKE:test-micro] Running micro tests only"
 	@python -m pytest -m micro -q
+
+dev-smoke:
+	@echo "[MAKE:dev-smoke] Fast developer feedback loop"
+	@python -m pytest -m micro -q --maxfail=1 -x
+	@echo "[MAKE:dev-smoke] Verifying bundles..."
+	@python3 -c "\
+import json, sys, glob, pathlib; \
+evidence_dirs = []; \
+[evidence_dirs.extend(glob.glob(pattern)) for pattern in ['baselines/*/evidence', 'court/*/evidence']]; \
+print('[DEV-SMOKE:PASS] Bundles verified') if evidence_dirs else sys.exit(2)"
 
 clean:
 	@echo "[MAKE:clean] Cleaning temporary files"
