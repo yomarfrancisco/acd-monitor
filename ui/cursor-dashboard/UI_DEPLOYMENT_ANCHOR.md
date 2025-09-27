@@ -74,15 +74,15 @@ git push origin fix/restore-agents-from-preview
 
 ## Latest Preview Deployment
 
-- **Commit SHA**: `584d512` - "feat: add foundation analysis utilities to prevent silent failures"
-- **Deployment Time**: 2025-09-27 17:50 UTC
+- **Commit SHA**: `2ffb2e8` - "Spread: normalize I/O, fix resampling, add guardrails"
+- **Deployment Time**: 2025-09-27 18:15 UTC
 - **Status**: ✅ Deployed via GitHub Actions → Vercel Preview
 - **Environment**: Preview-scope variables applied
 - **Debug Mode**: Enabled (NEXT_PUBLIC_UI_DEBUG=true)
 - **Coinbase**: Enabled (NEXT_PUBLIC_ENABLE_COINBASE=true)
-- **Build Status**: ✅ TypeScript compilation passed, foundation utilities added
+- **Build Status**: ✅ TypeScript compilation passed, analysis pipeline hardened
 - **Verification**: GitHub Actions workflow should be green, Vercel Preview should be live
-- **Foundation Fix**: Added analysis utilities to prevent "green but empty" CI results
+- **Analysis Step 2**: InfoShare + Spread pipelines normalized with fail-fast guardrails
 
 ---
 
