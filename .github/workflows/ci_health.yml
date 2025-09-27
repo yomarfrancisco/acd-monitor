@@ -35,7 +35,7 @@ jobs:
       - name: Check Makefile tab consistency
         run: |
           echo "[CI-HEALTH] Checking Makefile tab consistency..."
-          if grep -P '^\s+[^@\s]' Makefile; then
+          if grep -E '^[ ]+[^@[:space:]]' Makefile; then
             echo "[CI-HEALTH:FAIL] Found spaces instead of tabs in Makefile"
             exit 1
           fi
