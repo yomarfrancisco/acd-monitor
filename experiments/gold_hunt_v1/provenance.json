@@ -1,0 +1,9 @@
+{
+  "git_sha": "6fbc14d0160c567dc585a91ccd1de3b27ea8fa2c",
+  "python_version": "Python 3.10.16",
+  "platform": "Darwin",
+  "timestamp": "2025-09-27T23:41:02.131632",
+  "analysis_engine": "Lead-Lag v2 + InfoShare + Spread",
+  "window_policy": "RESEARCH_g=60s",
+  "robustness_tested": true
+}
