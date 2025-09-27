@@ -25,3 +25,56 @@ jobs:
               print("Empty parquet:", bad); sys.exit(1)
           PY
         shell: bash
+      - name: Check for ABORT tags in analysis results
+        run: |
+          set -e
+          if grep -r "\[ABORT:" court/1s/evidence/ 2>/dev/null; then
+            echo "[CI:fail:abort_tags] Found ABORT tags in court evidence"
+            exit 2
+          fi
+        shell: bash
+      - name: Check InfoShare results
+        run: |
+          python - <<PY
+          import json, sys
+          try:
+              with open("court/1s/evidence/info_share_results.json") as f:
+                  data = json.load(f)
+              if not data.get("bounds") or data["bounds"] == {}:
+                  print("[CI:fail:infoshare_empty] InfoShare bounds are empty")
+                  sys.exit(2)
+          except FileNotFoundError:
+              print("[CI:fail:infoshare_missing] InfoShare results not found")
+              sys.exit(2)
+          PY
+        shell: bash
+      - name: Check Spread results
+        run: |
+          python - <<PY
+          import json, sys
+          try:
+              with open("court/1s/evidence/spread_results.json") as f:
+                  data = json.load(f)
+              if data.get("permutes", 0) < 1000:
+                  print("[CI:fail:permutes_low] Spread permutations < 1000")
+                  sys.exit(2)
+          except FileNotFoundError:
+              print("[CI:fail:spread_missing] Spread results not found")
+              sys.exit(2)
+          PY
+        shell: bash
+      - name: Check Lead-Lag results
+        run: |
+          python - <<PY
+          import json, sys
+          try:
+              with open("court/1s/evidence/leadlag_results.json") as f:
+                  data = json.load(f)
+              if not data.get("edges") or data["edges"] == []:
+                  print("[CI:fail:leadlag_empty] Lead-Lag edges are empty")
+                  sys.exit(2)
+          except FileNotFoundError:
+              print("[CI:fail:leadlag_missing] Lead-Lag results not found")
+              sys.exit(2)
+          PY
+        shell: bash
