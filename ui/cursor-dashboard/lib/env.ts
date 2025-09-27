@@ -3,20 +3,32 @@
  * Forces LIVE data in preview mode, prevents synthetic fallbacks
  */
 
-const isPreview = process.env.VERCEL_ENV === 'preview';
-const useDemoEnv = String(process.env.NEXT_PUBLIC_USE_DEMO ?? '').toLowerCase();
-const useDemo = ['1','true','yes','on'].includes(useDemoEnv);
+const rawUseDemo = process.env.NEXT_PUBLIC_USE_DEMO; // string | undefined
+const rawFeedMode = process.env.FEED_MODE;           // string | undefined
 
-let USE_DEMO: boolean = useDemo;
-let FEED_MODE: string = String(process.env.FEED_MODE ?? 'live');
+const toBool = (v: unknown): boolean => {
+  if (typeof v === 'boolean') return v;
+  if (typeof v === 'string') {
+    const s = v.trim().toLowerCase();
+    return ['1','true','yes','on'].includes(s);
+  }
+  return false;
+};
 
-if (isPreview) {
-  console.warn('[env] Preview mode: forcing USE_DEMO=false and FEED_MODE=live');
+let USE_DEMO = toBool(rawUseDemo);
+let FEED_MODE: 'live' | 'demo' | 'synthetic' = (rawFeedMode?.trim().toLowerCase() as any) || 'live';
+
+// Force live in preview
+if (process.env.VERCEL_ENV === 'preview') {
   USE_DEMO = false;
   FEED_MODE = 'live';
+  if (typeof console !== 'undefined') {
+    // eslint-disable-next-line no-console
+    console.warn('[env] Preview mode: forcing USE_DEMO=false and FEED_MODE=live');
+  }
 }
 
-export const Env = { USE_DEMO, FEED_MODE };
+export { USE_DEMO, FEED_MODE };
 
 // Legacy interface for backward compatibility
 export interface EnvConfig {
@@ -42,10 +54,10 @@ function getEnvConfig(): EnvConfig {
   
   return {
     isLive,
-    isPreview: isPreview,
+    isPreview: process.env.VERCEL_ENV === 'preview',
     isProduction,
     useDemo: USE_DEMO,
-    feedMode: FEED_MODE as 'live' | 'demo' | 'synthetic',
+    feedMode: FEED_MODE,
     wsUrl,
     apiUrl
   };
