@@ -49,6 +49,31 @@ jobs:
             tests/test_leadlag_invariant.py \
             tests/test_infoshare_bounds_schema.py
       
+      - name: Run experiment smoke test
+        run: |
+          python experiments/run_experiment.py --snapshot baselines/2s --modules leadlag,infoshare,spread --notes "CI smoke"
+          # Verify experiment output exists
+          if [ ! -f experiments/out/*/summary.json ]; then
+            echo "[EXPERIMENT:FAIL] No summary.json found"
+            exit 1
+          fi
+          # Check required keys in summary.json
+          python -c "
+          import json, glob
+          summary_files = glob.glob('experiments/out/*/summary.json')
+          if not summary_files:
+              print('[EXPERIMENT:FAIL] No summary files found')
+              exit(1)
+          with open(summary_files[0]) as f:
+              data = json.load(f)
+          required_keys = ['timestamp', 'snapshot', 'modules', 'metrics']
+          missing = [k for k in required_keys if k not in data]
+          if missing:
+              print(f'[EXPERIMENT:FAIL] Missing keys: {missing}')
+              exit(1)
+          print('[EXPERIMENT:PASS] Summary.json has required keys')
+          "
+      
       - name: Create minimal test snapshot
         run: |
           mkdir -p test_snapshot/ticks

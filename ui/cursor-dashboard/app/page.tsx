@@ -3552,6 +3552,28 @@ It would also be helpful if you described:
                 </Card>
               </div>
             )}
+            
+            {/* Latest Experiments Panel */}
+            {activeSidebarItem === "overview" && (
+              <div className="space-y-3 max-w-2xl mt-6">
+                <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                  <CardContent className="p-4">
+                    <h3 className="text-sm font-medium text-[#f9fafb] mb-3">Latest Experiments</h3>
+                    <div className="space-y-2">
+                      <div className="text-xs text-[#a1a1aa]">
+                        Recent analysis runs and findings
+                      </div>
+                      <div className="text-xs text-[#a1a1aa]">
+                        <a href="/api/experiments" className="text-blue-400 hover:text-blue-300">
+                          View Experiments API
+                        </a>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+            
             {/* Configuration Page */}
             {activeSidebarItem === "configuration" && (
               <div className="space-y-6 max-w-2xl">
