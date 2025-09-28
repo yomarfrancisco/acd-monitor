@@ -29,7 +29,7 @@ This analysis implements the updated Spread v2 detector with z-score dispersion 
 **Gate Assessment:**
 - **Gate 1**: ✅ PASSED - Multiple episodes with Δz ≤ -0.75 and p < 0.10
 - **Gate 2**: ❌ FAILED - No significant lead-lag edges detected (ρ < 0.12)
-- **Gate 3**: ⏳ PENDING - InfoShare analysis not yet completed
+- **Gate 3**: ❌ FAILED - No cointegration found, cannot estimate information shares
 
 **Artifacts:**
 - [Control v2 Results](reports/btc_window1/control_v2_results.json)
@@ -38,6 +38,8 @@ This analysis implements the updated Spread v2 detector with z-score dispersion 
 - [Updated Gates](reports/btc_window1/updated_gates.json)
 - [Lead-Lag v2 Results](experiments/phase5/leadlag_v2/btc_window1/leadlag_results.json)
 - [Lead-Lag Report](experiments/phase5/leadlag_v2/btc_window1/leadlag_report.md)
+- [InfoShare v2 Results](experiments/phase5/infoshare_v2/btc_window1/infoshare_results.json)
+- [InfoShare Report](experiments/phase5/infoshare_v2/btc_window1/report.md)
 
 ### ETH-USD Window (2025-09-28 11:00-11:30 UTC)
 
@@ -56,7 +58,7 @@ This analysis implements the updated Spread v2 detector with z-score dispersion 
 **Gate Assessment:**
 - **Gate 1**: ✅ PASSED - Multiple episodes with Δz ≤ -0.75 and p < 0.10
 - **Gate 2**: ❌ FAILED - No significant lead-lag edges detected (ρ < 0.12)
-- **Gate 3**: ⏳ PENDING - InfoShare analysis not yet completed
+- **Gate 3**: ❌ FAILED - No cointegration found, cannot estimate information shares
 
 **Artifacts:**
 - [Control v2 Results](reports/eth_window1/control_v2_results.json)
@@ -65,6 +67,8 @@ This analysis implements the updated Spread v2 detector with z-score dispersion 
 - [Updated Gates](reports/eth_window1/updated_gates.json)
 - [Lead-Lag v2 Results](experiments/phase5/leadlag_v2/eth_window1/leadlag_results.json)
 - [Lead-Lag Report](experiments/phase5/leadlag_v2/eth_window1/leadlag_report.md)
+- [InfoShare v2 Results](experiments/phase5/infoshare_v2/eth_window1/infoshare_results.json)
+- [InfoShare Report](experiments/phase5/infoshare_v2/eth_window1/report.md)
 
 ## Statistical Validation
 
@@ -118,6 +122,29 @@ The absence of significant lead-lag edges suggests that:
 2. **Efficient Price Discovery**: All venues respond to information simultaneously
 3. **Arbitrage Efficiency**: Price differences are quickly arbitraged away
 4. **Methodological Validation**: Placebo tests confirm the null result is genuine
+
+## InfoShare v2 Results
+
+**Analysis Summary:**
+- **Methodology**: Johansen cointegration test + Hasbrouck Information Share
+- **Parameters**: max_lags=4, det_order=0, ADF stationarity tests
+- **Placebo Test**: Circular time-shift ±60s
+- **VECM Estimation**: Requires cointegration rank > 0
+
+**Results:**
+- **BTC-USD Window**: Cointegration rank = 0 (no cointegration)
+- **ETH-USD Window**: Cointegration rank = 0 (no cointegration)
+- **Stationarity**: All venues non-stationary (ADF p > 0.05)
+- **Placebo Collapse**: ✅ Both windows show complete placebo collapse
+- **Gate 3 Status**: ❌ FAILED - No cointegration found, cannot estimate information shares
+
+**Interpretation:**
+The absence of cointegration suggests that:
+1. **No Long-Run Price Relationships**: Venue prices do not share common stochastic trends
+2. **Independent Price Discovery**: Each venue operates independently
+3. **No Systematic Price Leadership**: No venue consistently leads price formation
+4. **Market Efficiency**: Prices reflect venue-specific information and liquidity
+5. **Methodological Validation**: Placebo tests confirm the null result is genuine
 
 ## Methodological Improvements
 
