@@ -24,6 +24,7 @@ jobs:
           print("scientific stack OK")
           PY
       - name: Check for tick data availability
+        id: detect
         run: |
           python - <<PY
           import pathlib, sys
@@ -41,13 +42,14 @@ jobs:
           if not has_data:
               print("[CI:skip:no_data] No tick data available - skipping court evidence bundle")
               print("[CI:info] This is expected when orchestrators haven't collected data yet")
-              sys.exit(0)
+              print("has_data=false", file=open("$GITHUB_OUTPUT", "a"))
           else:
               print("[CI:info] Tick data found - proceeding with analysis")
+              print("has_data=true", file=open("$GITHUB_OUTPUT", "a"))
           PY
         shell: bash
       - name: Build court evidence bundle
-        if: success()
+        if: ${{ steps.detect.outputs.has_data == 'true' }}
         run: |
           python scripts/build_court_bundle_from_snapshot.py \
             --snapshot court/1s \
@@ -57,15 +59,21 @@ jobs:
             --no-stitch \
             --all5 \
             --verbose
+      - name: Mark skipped (no data)
+        if: ${{ steps.detect.outputs.has_data == 'false' }}
+        run: |
+          echo "[CI:skip:no_data] Court integrity checks skipped - no tick data available"
+          echo "[CI:info] This is expected when orchestrators haven't collected data yet"
+        shell: bash
       - name: Reject mock/demo/empty parquet
-        if: success() || failure()
+        if: ${{ steps.detect.outputs.has_data == 'true' }}
         run: |
           set -e
           if ls court/1s/ticks/*/*mock*.parquet 2>/dev/null; then exit 1; fi
           if ls court/1s/ticks/*/*_demo*.parquet 2>/dev/null; then exit 1; fi
         shell: bash
       - name: Check for empty parquet files
-        if: success() || failure()
+        if: ${{ steps.detect.outputs.has_data == 'true' }}
         run: |
           python - <<PY
           import pathlib, sys
@@ -78,7 +86,7 @@ jobs:
           PY
         shell: bash
       - name: Check for ABORT tags in analysis results
-        if: success() || failure()
+        if: ${{ steps.detect.outputs.has_data == 'true' }}
         run: |
           set -e
           if grep -r "\[ABORT:" court/1s/evidence/ 2>/dev/null; then
@@ -87,7 +95,7 @@ jobs:
           fi
         shell: bash
       - name: Check InfoShare results
-        if: success() || failure()
+        if: ${{ steps.detect.outputs.has_data == 'true' }}
         run: |
           python - <<PY
           import json, sys
@@ -103,7 +111,7 @@ jobs:
           PY
         shell: bash
       - name: Check Spread results
-        if: success() || failure()
+        if: ${{ steps.detect.outputs.has_data == 'true' }}
         run: |
           python - <<PY
           import json, sys
@@ -119,7 +127,7 @@ jobs:
           PY
         shell: bash
       - name: Debug Lead-Lag results
-        if: success() || failure()
+        if: ${{ steps.detect.outputs.has_data == 'true' }}
         shell: bash
         run: |
           set -e
@@ -138,7 +146,7 @@ jobs:
           print("[CI:debug] horizons=", d.get("horizons"))
           PY
       - name: Check Lead-Lag results
-        if: success() || failure()
+        if: ${{ steps.detect.outputs.has_data == 'true' }}
         shell: bash
         run: |
           python - <<'PY'
