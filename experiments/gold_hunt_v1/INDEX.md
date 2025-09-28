@@ -6,6 +6,8 @@
 
 The control-period contrast analysis revealed that volume, volatility, and spread differences are not statistically significant (p=0.864/0.245/0.218), meaning our earlier "episodes" are indistinguishable from normal microstructure on this window. This is precisely the kind of scientific humility regulators expect.
 
+**Demo runs are for method sanity only and never used for regulatory conclusions.**
+
 ## Window Specification
 - **Pair**: BTC-USD
 - **Duration**: 9.8 minutes (588 seconds)

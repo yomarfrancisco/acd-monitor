@@ -1,0 +1,10 @@
+{
+  "gates": {
+    "gate1_episode_control": false,
+    "gate2_leadlag": false,
+    "gate3_infoshare": false
+  },
+  "reason": "Demo data - gates only apply to real data",
+  "significant_episodes": 0,
+  "total_episodes": 21
+}

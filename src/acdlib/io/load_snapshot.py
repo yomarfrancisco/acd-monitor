@@ -16,17 +16,24 @@ from typing import Dict, Optional
 logger = logging.getLogger(__name__)
 
 
-def load_overlap(overlap_path: str) -> Dict:
+def load_overlap(overlap_path: str, allow_demo: bool = False) -> Dict:
     """
     Parse OVERLAP.json and return window metadata.
 
     Args:
         overlap_path: Path to OVERLAP.json file
+        allow_demo: Allow loading demo/synthetic data (default: False)
 
     Returns:
         Dictionary with start_utc, end_utc, venues, policy, data_root
     """
     logger.info(f"Loading overlap from: {overlap_path}")
+
+    # Guard against demo data unless explicitly allowed
+    if not allow_demo and ("demos/" in overlap_path or "demo" in overlap_path.lower()):
+        logger.error(f"[ABORT:demo_data] Demo data not allowed: {overlap_path}")
+        print(f"[ABORT:demo_data] Demo data not allowed: {overlap_path}")
+        sys.exit(1)
 
     try:
         with open(overlap_path, "r") as f:
@@ -69,7 +76,9 @@ def load_overlap(overlap_path: str) -> Dict:
         raise
 
 
-def load_ticks_snapshot(overlap: Dict, asof: Optional[str] = None) -> Dict[str, pd.DataFrame]:
+def load_ticks_snapshot(
+    overlap: Dict, asof: Optional[str] = None, allow_demo: bool = False
+) -> Dict[str, pd.DataFrame]:
     """
     Load tick parquet files for each venue within the overlap window.
 
@@ -97,19 +106,22 @@ def load_ticks_snapshot(overlap: Dict, asof: Optional[str] = None) -> Dict[str, 
             logger.warning(f"No parquet files found for venue: {venue}")
             continue
 
-        # Safety check: refuse mock/demo files
-        for parquet_file in parquet_files:
-            file_name = parquet_file.name.lower()
-            file_path = str(parquet_file).lower()
+        # Safety check: refuse mock/demo files unless explicitly allowed
+        if not allow_demo:
+            for parquet_file in parquet_files:
+                file_name = parquet_file.name.lower()
+                file_path = str(parquet_file).lower()
 
-            if "mock" in file_name or "mock" in file_path:
-                logger.error(f"[ABORT:snapshot:mock_detected] {parquet_file} - contains 'mock'")
-                print(f"[ABORT:snapshot:mock_detected] {parquet_file} - contains 'mock'")
-                sys.exit(1)
-            elif "_demo" in file_name or "_demo" in file_path:
-                logger.error(f"[ABORT:snapshot:mock_detected] {parquet_file} - contains '_demo'")
-                print(f"[ABORT:snapshot:mock_detected] {parquet_file} - contains '_demo'")
-                sys.exit(1)
+                if "mock" in file_name or "mock" in file_path:
+                    logger.error(f"[ABORT:snapshot:mock_detected] {parquet_file} - contains 'mock'")
+                    print(f"[ABORT:snapshot:mock_detected] {parquet_file} - contains 'mock'")
+                    sys.exit(1)
+                elif "_demo" in file_name or "_demo" in file_path:
+                    logger.error(
+                        f"[ABORT:snapshot:mock_detected] {parquet_file} - contains '_demo'"
+                    )
+                    print(f"[ABORT:snapshot:mock_detected] {parquet_file} - contains '_demo'")
+                    sys.exit(1)
 
         # Load and concatenate parquet files
         venue_ticks = []
@@ -253,13 +265,16 @@ def resample_mids(venues_ticks: Dict[str, pd.DataFrame], rule: str) -> pd.DataFr
         raise
 
 
-def load_snapshot_data(overlap_path: str, resample_rule: str = "1S") -> tuple:
+def load_snapshot_data(
+    overlap_path: str, resample_rule: str = "1S", allow_demo: bool = False
+) -> tuple:
     """
     Complete snapshot loading pipeline.
 
     Args:
         overlap_path: Path to OVERLAP.json
         resample_rule: Resampling frequency
+        allow_demo: Allow loading demo/synthetic data (default: False)
 
     Returns:
         Tuple of (overlap_data, resampled_mids_df)
@@ -267,10 +282,10 @@ def load_snapshot_data(overlap_path: str, resample_rule: str = "1S") -> tuple:
     logger.info(f"Loading snapshot data from {overlap_path}")
 
     # Load overlap metadata
-    overlap = load_overlap(overlap_path)
+    overlap = load_overlap(overlap_path, allow_demo=allow_demo)
 
     # Load tick data
-    venues_ticks = load_ticks_snapshot(overlap)
+    venues_ticks = load_ticks_snapshot(overlap, allow_demo=allow_demo)
 
     if not venues_ticks:
         logger.error("No tick data loaded from snapshot")

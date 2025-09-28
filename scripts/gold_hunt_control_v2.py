@@ -188,6 +188,9 @@ class MatchedControlSampler:
         self.n_controls = n_controls
         self.random_state = random_state
         self.logger = logging.getLogger(__name__)
+        
+        # Set random seed for reproducibility
+        np.random.seed(random_state)
     
     def extract_features(self, mid_prices_df: pd.DataFrame, volume_df: pd.DataFrame = None) -> pd.DataFrame:
         """
@@ -296,17 +299,22 @@ class MatchedControlSampler:
 class EpisodeControlAnalyzer:
     """Analyze episodes vs matched controls."""
     
-    def __init__(self, n_bootstrap: int = 1000, block_size: int = 10):
+    def __init__(self, n_bootstrap: int = 1000, block_size: int = 10, random_state: int = 42):
         """
         Initialize episode-control analyzer.
         
         Args:
             n_bootstrap: Number of bootstrap samples
             block_size: Block size for block bootstrap (seconds)
+            random_state: Random seed for reproducibility
         """
         self.n_bootstrap = n_bootstrap
         self.block_size = block_size
+        self.random_state = random_state
         self.logger = logging.getLogger(__name__)
+        
+        # Set random seed for reproducibility
+        np.random.seed(random_state)
     
     def compare_episode_controls(self, episode_data: pd.DataFrame, control_data: pd.DataFrame) -> Dict[str, Any]:
         """
@@ -416,8 +424,19 @@ class EpisodeControlAnalyzer:
 def run_control_v2_analysis(
     snapshot_dir: str,
     export_dir: str,
+    detector: str = "zscore",
     n_controls: int = 100,
     z_cut: float = -1.5,
+    roll_window: int = 60,
+    merge_gap: int = 2,
+    min_duration: int = 10,
+    mc_features: str = "vol30s,volrate,t_in_window",
+    mc_k: int = 5,
+    mc_gap: int = 10,
+    bb_size: int = 10,
+    bb_n: int = 1000,
+    seed: int = 42,
+    allow_demo: bool = False,
     verbose: bool = False
 ) -> None:
     """
@@ -442,7 +461,7 @@ def run_control_v2_analysis(
         return
     
     # Load snapshot data using the proper function
-    overlap_data, resampled_mids = load_snapshot_data(str(overlap_file))
+    overlap_data, resampled_mids = load_snapshot_data(str(overlap_file), allow_demo=allow_demo)
     
     if resampled_mids.empty:
         logger.error("No tick data loaded from snapshot")
@@ -476,27 +495,36 @@ def run_control_v2_analysis(
     analyzer = SpreadConvergenceAnalyzer()
     dispersion = analyzer.compute_dispersion(base_df)
     
-    # Z-score detector
-    zscore_detector = ZScoreDispersionDetector(z_cut=z_cut)
-    z_scores = zscore_detector.compute_dispersion_zscore(dispersion)
-    zscore_episodes = zscore_detector.detect_episodes(dispersion, z_scores)
+    # Initialize detector based on type
+    if detector == "zscore":
+        zscore_detector = ZScoreDispersionDetector(
+            k_window=roll_window, 
+            z_cut=z_cut, 
+            merge_gap=merge_gap
+        )
+        z_scores = zscore_detector.compute_dispersion_zscore(dispersion)
+        zscore_episodes = zscore_detector.detect_episodes(dispersion, z_scores)
+        episodes = zscore_episodes
+    else:  # percentile detector (original)
+        episodes = analyzer.detect_compression_episodes(dispersion, base_df)
+        z_scores = None
     
     # Original detector for comparison
     original_episodes = analyzer.detect_compression_episodes(dispersion, base_df)
     
-    logger.info(f"Z-score detector: {len(zscore_episodes)} episodes")
+    logger.info(f"Selected detector ({detector}): {len(episodes)} episodes")
     logger.info(f"Original detector: {len(original_episodes)} episodes")
     
     # Matched control analysis
-    if zscore_episodes:
+    if episodes:
         # Extract features
-        sampler = MatchedControlSampler(n_controls=n_controls)
+        sampler = MatchedControlSampler(n_controls=n_controls, random_state=seed)
         all_features = sampler.extract_features(base_df)
         
         # Analyze each episode
         episode_results = []
         
-        for episode in zscore_episodes:
+        for episode in episodes:
             # Get episode features
             episode_start = episode['start_idx']
             episode_end = episode['end_idx']
@@ -528,7 +556,11 @@ def run_control_v2_analysis(
             control_data = pd.concat(control_data_list, ignore_index=True)
             
             # Compare episode vs controls
-            analyzer_episode = EpisodeControlAnalyzer()
+            analyzer_episode = EpisodeControlAnalyzer(
+                n_bootstrap=bb_n, 
+                block_size=bb_size, 
+                random_state=seed
+            )
             comparison = analyzer_episode.compare_episode_controls(episode_data, control_data)
             
             episode_result = {
@@ -539,15 +571,16 @@ def run_control_v2_analysis(
             episode_results.append(episode_result)
         
         # Generate summary report
-        generate_control_v2_report(episode_results, export_dir)
+        generate_control_v2_report(episode_results, export_dir, detector, allow_demo)
         
         # Check updated Phase 5 gates
-        check_updated_gates(episode_results, export_dir)
+        check_updated_gates(episode_results, export_dir, allow_demo)
     
     logger.info("Control v2 analysis completed")
 
 
-def generate_control_v2_report(episode_results: List[Dict], export_dir: str) -> None:
+def generate_control_v2_report(episode_results: List[Dict], export_dir: str, 
+                              detector: str = "zscore", allow_demo: bool = False) -> None:
     """Generate episode vs matched controls summary report."""
     logger = logging.getLogger(__name__)
     
@@ -556,6 +589,10 @@ def generate_control_v2_report(episode_results: List[Dict], export_dir: str) -> 
     all_cohens_d = [r['comparison']['cohens_d'] for r in episode_results]
     all_p_values = [r['comparison']['p_value'] for r in episode_results]
     all_delta_auc = [r['comparison']['delta_auc'] for r in episode_results]
+    
+    # Add provenance tagging
+    provenance = "DEMO" if allow_demo else "REAL"
+    regulatory_grade = not allow_demo
     
     summary = {
         'n_episodes': len(episode_results),
@@ -566,7 +603,10 @@ def generate_control_v2_report(episode_results: List[Dict], export_dir: str) -> 
         'p_value_mean': np.mean(all_p_values),
         'p_value_median': np.median(all_p_values),
         'delta_auc_mean': np.mean(all_delta_auc),
-        'episodes': episode_results
+        'episodes': episode_results,
+        'provenance': provenance,
+        'regulatory_grade': regulatory_grade,
+        'detector_type': detector
     }
     
     # Save results
@@ -627,9 +667,24 @@ def generate_markdown_report(summary: Dict) -> str:
     return "\n".join(report)
 
 
-def check_updated_gates(episode_results: List[Dict], export_dir: str) -> None:
+def check_updated_gates(episode_results: List[Dict], export_dir: str, allow_demo: bool = False) -> None:
     """Check updated Phase 5 gates with matched control requirements."""
     logger = logging.getLogger(__name__)
+    
+    # Skip gates for demo data
+    if allow_demo:
+        logger.info("Skipping Phase 5 gates for demo data")
+        gate_results = {
+            'gates': {'gate1_episode_control': False, 'gate2_leadlag': False, 'gate3_infoshare': False},
+            'reason': 'Demo data - gates only apply to real data',
+            'significant_episodes': 0,
+            'total_episodes': len(episode_results)
+        }
+        
+        export_path = Path(export_dir)
+        with open(export_path / 'updated_gates.json', 'w') as f:
+            json.dump(gate_results, f, indent=2, default=str)
+        return
     
     gates = {
         'gate1_episode_control': False,
@@ -675,8 +730,21 @@ def main():
     parser = argparse.ArgumentParser(description="Gold Hunt Control v2 Analysis")
     parser.add_argument("--snapshot-dir", required=True, help="Snapshot directory")
     parser.add_argument("--export-dir", required=True, help="Export directory")
+    parser.add_argument("--detector", choices=["percentile", "zscore"], default="percentile", 
+                       help="Detector type (default: percentile for backward compatibility)")
     parser.add_argument("--n-controls", type=int, default=100, help="Number of matched controls")
     parser.add_argument("--z-cut", type=float, default=-1.5, help="Z-score threshold")
+    parser.add_argument("--roll", type=int, default=60, help="Rolling window size (seconds)")
+    parser.add_argument("--merge-gap", type=int, default=2, help="Merge gap tolerance (seconds)")
+    parser.add_argument("--min-dur", type=int, default=10, help="Minimum episode duration (seconds)")
+    parser.add_argument("--mc-features", default="vol30s,volrate,t_in_window", 
+                       help="Matched control features (comma-separated)")
+    parser.add_argument("--mc-k", type=int, default=5, help="kNN parameter")
+    parser.add_argument("--mc-gap", type=int, default=10, help="Control exclusion gap (seconds)")
+    parser.add_argument("--bb-size", type=int, default=10, help="Block bootstrap size (seconds)")
+    parser.add_argument("--bb-n", type=int, default=1000, help="Number of bootstrap samples")
+    parser.add_argument("--seed", type=int, default=42, help="Random seed")
+    parser.add_argument("--allow-demo", action="store_true", help="Allow demo/synthetic data")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
     
     args = parser.parse_args()
@@ -686,8 +754,19 @@ def main():
     run_control_v2_analysis(
         snapshot_dir=args.snapshot_dir,
         export_dir=args.export_dir,
+        detector=args.detector,
         n_controls=args.n_controls,
         z_cut=args.z_cut,
+        roll_window=args.roll,
+        merge_gap=args.merge_gap,
+        min_duration=args.min_dur,
+        mc_features=args.mc_features,
+        mc_k=args.mc_k,
+        mc_gap=args.mc_gap,
+        bb_size=args.bb_size,
+        bb_n=args.bb_n,
+        seed=args.seed,
+        allow_demo=args.allow_demo,
         verbose=args.verbose
     )
 
