@@ -40,11 +40,11 @@ jobs:
           --verbose
 
     - name: Assert demo rejection behaved as expected
-      if: ${{ steps.test_rejection.outcome == 'failure' }}
+      if: ${{ steps.test_rejection.conclusion == 'failure' }}
       run: echo "✅ Demo data was rejected (non-zero exit) as expected."
 
     - name: Assert demo rejection failed (should not happen)
-      if: ${{ steps.test_rejection.outcome != 'failure' }}
+      if: ${{ steps.test_rejection.conclusion != 'failure' }}
       run: |
         echo "ERROR: Demo data should be rejected without --allow-demo (expected non-zero exit)." >&2
         exit 1
@@ -52,20 +52,30 @@ jobs:
     - name: Test demo data with --allow-demo (should succeed)
       id: test_allow
       run: |
+        set -euxo pipefail
+        rm -rf /tmp/test_output
+        mkdir -p /tmp/test_output
+
         python scripts/gold_hunt_control_v2.py \
           --snapshot-dir demos/spread_v2_demo/demo_snapshot \
           --export-dir /tmp/test_output \
           --detector zscore \
           --allow-demo \
           --verbose
+
+        echo "Wrote results:"
+        ls -la /tmp/test_output
     
     - name: Assert demo provenance tagging
       run: |
         set -euxo pipefail
-        ls -la /tmp/test_output || true
-        test -f /tmp/test_output/control_v2_results.json
-        jq -r '.provenance' /tmp/test_output/control_v2_results.json | grep -q '^DEMO$'
-        echo "✅ Provenance tag DEMO present."
+        test -f /tmp/test_output/control_v2_results.json \
+          || (echo "Expected results JSON missing at /tmp/test_output/control_v2_results.json" && exit 1)
+
+        jq -e '.provenance == "DEMO"' /tmp/test_output/control_v2_results.json \
+          || (echo "ERROR: provenance must be DEMO" && exit 1)
+
+        echo "✅ Demo provenance is correctly tagged DEMO"
     
     - name: Show last 200 lines of logs on failure
       if: failure()

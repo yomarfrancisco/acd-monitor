@@ -622,12 +622,23 @@ def generate_control_v2_report(episode_results: List[Dict], export_dir: str,
         'detector_type': detector
     }
     
-    # Save results
+    # Save results with robust directory creation
     export_path = Path(export_dir)
     export_path.mkdir(parents=True, exist_ok=True)
     
-    with open(export_path / 'control_v2_results.json', 'w') as f:
-        json.dump(summary, f, indent=2, default=str)
+    # Ensure we always emit the exact filename CI expects
+    results_file = export_path / "control_v2_results.json"
+    
+    # Write results with error handling
+    import sys, traceback
+    try:
+        with results_file.open("w") as f:
+            json.dump(summary, f, indent=2, sort_keys=True, default=str)
+        print(f"[CI] results_json={results_file}")
+    except Exception as e:
+        print(f"[ERROR] Failed to write results to {results_file}: {e}")
+        traceback.print_exc()
+        sys.exit(1)  # non-zero on write failure
     
     # Generate markdown report
     report = generate_markdown_report(summary)
