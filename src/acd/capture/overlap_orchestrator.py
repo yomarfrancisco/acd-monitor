@@ -353,7 +353,7 @@ class OverlapOrchestrator:
     def _copy_venue_snapshot(self, venue: str, overlap_data: Dict, snapshot_dir: Path):
         """Copy parquet files for a venue that intersect the overlap window."""
         try:
-            source_dir = Path("data/ticks") / venue / self.pair / self.freq
+            source_dir = Path(self.export_dir) / "data" / "ticks" / venue / self.pair / self.freq
 
             if not source_dir.exists():
                 logger.warning(f"No data directory for {venue}: {source_dir}")
@@ -825,12 +825,21 @@ class OverlapOrchestrator:
     ):
         """Persist normalized tick data to parquet partitions."""
         try:
-            # Create directory structure: data/ticks/<exchange>/<pair>/1s/<YYYY-MM-DD>/<HH>/
+            # Create directory structure: <export_dir>/data/ticks/<exchange>/<pair>/1s/<YYYY-MM-DD>/<HH>
             dt = datetime.fromtimestamp(ts_local / 1000)
             date_str = dt.strftime("%Y-%m-%d")
             hour_str = dt.strftime("%H")
 
-            base_dir = Path("data/ticks") / exchange / pair / "1s" / date_str / hour_str
+            base_dir = (
+                Path(self.export_dir)
+                / "data"
+                / "ticks"
+                / exchange
+                / pair
+                / "1s"
+                / date_str
+                / hour_str
+            )
             base_dir.mkdir(parents=True, exist_ok=True)
 
             # Create tick row

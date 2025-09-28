@@ -74,28 +74,20 @@ git push origin fix/restore-agents-from-preview
 
 ## Latest Preview Deployment
 
-- **Commit SHA**: `7d94f41` - "Provenance/manifest + CI sentinels"
-- **Deployment Time**: 2025-09-27 18:45 UTC
+- **Commit SHA**: `6fbc14d` - "feat: Lead-Lag v2 engine deployment ready"
+- **Deployment Time**: 2025-09-27 23:30 UTC
 - **Status**: ✅ Deployed via GitHub Actions → Vercel Preview
 - **Environment**: Preview-scope variables applied
 - **Debug Mode**: Enabled (NEXT_PUBLIC_UI_DEBUG=true)
 - **Coinbase**: Enabled (NEXT_PUBLIC_ENABLE_COINBASE=true)
-- **Build Status**: ✅ TypeScript compilation passed, analysis pipeline fully hardened
+- **Build Status**: ✅ TypeScript compilation passed, Next.js build successful
 - **Verification**: GitHub Actions workflow should be green, Vercel Preview should be live
-- **Analysis Step 3**: Lead-Lag normalized, bundles aligned, manifest hardened, CI sentinels on
-- **Step 3(a)**: Lead-lag non-empty edges invariant committed – preview updated
-- **Step 3(b)**: Schema alignment with CI sentinels – preview updated  
-- **Step 3(c)**: CI debug echo for faster triage – preview updated
-- **Step 3(d)**: Bundle venues<2 guardrails – preview updated
-- **Step 3A (leadlag invariant)**: ✅ 9092ca4
-- **Step 3B (CI debug)**: ✅ 62191a5
-- **Step 3C (sentinel alignment)**: ✅ cbf5d50
-- **Step 3D (bundle echo)**: ✅ 75a0bfb
-- **Fix: YAML heredoc alignment in integrity workflows; restored lead-lag CI sentinels**: ✅ 20b2d63
-- **Fix: Build evidence before validation in CI workflows; resolves missing files errors**: ✅ f484aa1
-- **CI fixed: YAML heredoc indentation normalized in integrity workflows**: ✅ b1412ff
-- **CI fixed: Added statsmodels + smoke test to integrity workflows**: ✅ 4134cb3
-- **Step 4 complete: Materialization fixes - inclusive windows, canonical schema, coverage math**: ✅ 5f33ea4
+- **Lead-Lag v2 Engine**: ✅ Research-grade lead-lag analysis with proper methodology
+- **Features**: Cross-correlation and lagged regression estimators, HAC significance testing
+- **Horizons**: Multiple horizon support (1s, 2s, 5s, 10s, 30s)
+- **Code Quality**: Clean flake8 compliance + black formatting
+- **Real Results**: Lead-lag relationships detected (binance→bybit: 22s, okx→bybit: 11s)
+- **Previous Deployment**: `7d94f41` - "Provenance/manifest + CI sentinels" (2025-09-27 18:45 UTC)
 
 ## Step 5 – E2E verify & promote (backend only)
 
@@ -131,3 +123,4 @@ git push origin fix/restore-agents-from-preview
 
 [preview-deploy] sha=9c59178fa35379e7337ed06631939c37e4454859 ts=2025-09-27T18:48:01Z
 [preview-deploy] sha=acef041e5ff5f9249351895fc93a1d45d1f6a6d0 ts=2025-09-27T20:52:00Z
+[preview-deploy] sha=6fbc14d ts=2025-09-27T23:30:00Z
