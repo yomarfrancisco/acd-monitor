@@ -28,7 +28,7 @@ This analysis implements the updated Spread v2 detector with z-score dispersion 
 
 **Gate Assessment:**
 - **Gate 1**: ✅ PASSED - Multiple episodes with Δz ≤ -0.75 and p < 0.10
-- **Gate 2**: ⏳ PENDING - Lead-Lag analysis not yet completed
+- **Gate 2**: ❌ FAILED - No significant lead-lag edges detected (ρ < 0.12)
 - **Gate 3**: ⏳ PENDING - InfoShare analysis not yet completed
 
 **Artifacts:**
@@ -36,6 +36,8 @@ This analysis implements the updated Spread v2 detector with z-score dispersion 
 - [Detailed Report](reports/btc_window1/control_v2_report.md)
 - [Telemetry](reports/btc_window1/telemetry.json)
 - [Updated Gates](reports/btc_window1/updated_gates.json)
+- [Lead-Lag v2 Results](experiments/phase5/leadlag_v2/btc_window1/leadlag_results.json)
+- [Lead-Lag Report](experiments/phase5/leadlag_v2/btc_window1/leadlag_report.md)
 
 ### ETH-USD Window (2025-09-28 11:00-11:30 UTC)
 
@@ -53,7 +55,7 @@ This analysis implements the updated Spread v2 detector with z-score dispersion 
 
 **Gate Assessment:**
 - **Gate 1**: ✅ PASSED - Multiple episodes with Δz ≤ -0.75 and p < 0.10
-- **Gate 2**: ⏳ PENDING - Lead-Lag analysis not yet completed
+- **Gate 2**: ❌ FAILED - No significant lead-lag edges detected (ρ < 0.12)
 - **Gate 3**: ⏳ PENDING - InfoShare analysis not yet completed
 
 **Artifacts:**
@@ -61,6 +63,8 @@ This analysis implements the updated Spread v2 detector with z-score dispersion 
 - [Detailed Report](reports/eth_window1/control_v2_report.md)
 - [Telemetry](reports/eth_window1/telemetry.json)
 - [Updated Gates](reports/eth_window1/updated_gates.json)
+- [Lead-Lag v2 Results](experiments/phase5/leadlag_v2/eth_window1/leadlag_results.json)
+- [Lead-Lag Report](experiments/phase5/leadlag_v2/eth_window1/leadlag_report.md)
 
 ## Statistical Validation
 
@@ -93,6 +97,27 @@ The z-threshold of -1.5 was chosen based on:
 - All 48 episodes in each window show p < 0.001
 - Mean Cohen's d ranges from -1.0 to -3.0 (large effect sizes)
 - ΔAUC consistently > 0.8 (high separation from controls)
+
+## Lead-Lag v2 Results
+
+**Analysis Summary:**
+- **Methodology**: Cross-correlation analysis with HAC standard errors
+- **Parameters**: τ ∈ [-30s, +30s], ρ ≥ 0.12, p < 0.10, FDR q = 0.05
+- **Placebo Test**: Circular time-shift ±60s
+- **Bootstrap**: 300 samples (CI smoke test), 10s blocks
+
+**Results:**
+- **BTC-USD Window**: 0 significant edges detected
+- **ETH-USD Window**: 0 significant edges detected
+- **Placebo Collapse**: ✅ Both windows show complete placebo collapse
+- **Gate 2 Status**: ❌ FAILED - No significant lead-lag relationships found
+
+**Interpretation:**
+The absence of significant lead-lag edges suggests that:
+1. **No Systematic Price Leadership**: No venue consistently leads price movements
+2. **Efficient Price Discovery**: All venues respond to information simultaneously
+3. **Arbitrage Efficiency**: Price differences are quickly arbitraged away
+4. **Methodological Validation**: Placebo tests confirm the null result is genuine
 
 ## Methodological Improvements
 
