@@ -12,7 +12,10 @@ This analysis implements the updated Spread v2 detector with z-score dispersion 
 
 ## Window Results
 
-### BTC-USD Window (2025-09-28 10:00-10:30 UTC)
+### BTC-USD Window 1 (2025-09-28 10:00-10:30 UTC) - Full Venue Analysis
+
+**Venue Coverage:** 5 venues (binance, coinbase, kraken, okx, bybit) - 100% coverage
+**Analysis Type:** Full-venue analysis with complete statistical power
 
 **Summary:**
 - **Episodes Detected**: 48
@@ -41,7 +44,10 @@ This analysis implements the updated Spread v2 detector with z-score dispersion 
 - [InfoShare v2 Results](experiments/phase5/infoshare_v2/btc_window1/infoshare_results.json)
 - [InfoShare Report](experiments/phase5/infoshare_v2/btc_window1/report.md)
 
-### ETH-USD Window (2025-09-28 11:00-11:30 UTC)
+### ETH-USD Window 1 (2025-09-28 11:00-11:30 UTC) - Full Venue Analysis
+
+**Venue Coverage:** 5 venues (binance, coinbase, kraken, okx, bybit) - 100% coverage
+**Analysis Type:** Full-venue analysis with complete statistical power
 
 **Summary:**
 - **Episodes Detected**: 48
@@ -160,11 +166,43 @@ The absence of cointegration suggests that:
 3. **Statistical Power**: 100 controls per episode provide robust comparisons
 4. **Bias Reduction**: kNN matching reduces selection bias
 
+## Replication Testing Status
+
+### Framework Validation
+- **Replication Suite**: ✅ Successfully implemented episode comparison framework
+- **Self-Comparison**: ✅ W1→W1 comparison shows 100% replication (expected)
+- **Metrics**: Jaccard similarity = 1.000, replication rate = 1.000
+- **Framework**: Ready for cross-window analysis
+
+### Cross-Window Limitations
+- **Available Windows**: Only 2 windows with ≥3 venues (both already analyzed)
+- **Reduced-Venue Windows**: 4 additional windows with 2 venues each
+- **Data Format Issues**: Reduced-venue snapshots have incompatible timestamp formats
+- **Statistical Power**: 2-venue analysis has limited regulatory value
+
+### Venue Coverage Summary
+| Symbol | Window | Venues | Status | Analysis Type |
+|--------|--------|--------|--------|---------------|
+| BTC-USD | 10:00-10:30 | 5 | ✅ Completed | Full-venue |
+| BTC-USD | 10:15-10:45 | 2 | ❌ Below threshold | Reduced-venue |
+| BTC-USD | 02:00-02:30 | 2 | ❌ Below threshold | Reduced-venue |
+| ETH-USD | 11:00-11:30 | 5 | ✅ Completed | Full-venue |
+| ETH-USD | 11:15-11:45 | 2 | ❌ Below threshold | Reduced-venue |
+| ETH-USD | 03:00-03:30 | 2 | ❌ Below threshold | Reduced-venue |
+
+### Recommendations
+1. **Data Collection**: Capture additional windows with ≥3 venues
+2. **Format Standardization**: Fix timestamp format issues in reduced-venue snapshots
+3. **Statistical Framework**: Develop venue-adaptive analysis parameters
+4. **Documentation**: Clear flagging of venue limitations in results
+
+**Detailed Limitations Report**: [Replication Limitations](replication_limitations.md)
+
 ## Next Steps
 
-1. **Lead-Lag v2 Analysis**: Complete cross-correlation analysis with placebo tests
-2. **InfoShare Analysis**: Johansen cointegration and Hasbrouck information share
-3. **Replication Testing**: Run on additional 30m windows for stability
+1. **Lead-Lag v2 Analysis**: ✅ Completed - No significant edges detected
+2. **InfoShare Analysis**: ✅ Completed - No cointegration found
+3. **Replication Testing**: ⚠️ Limited by available data - Framework ready, need more windows
 4. **Economic Harm Assessment**: Quantify profitability and consumer impact
 
 ## Regulatory Readiness
