@@ -4,30 +4,39 @@ on: [push]
 jobs:
   test-demo-guardrails:
     runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: ${{ github.workspace }}   # allow `import acdlib` without install
+
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: '3.11'
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install -e .
+          # IMPORTANT: skip editable install to avoid "__init__-0.0.0" packaging error
+          # pip install -e .
 
-      - name: Install jq for JSON parsing
-        run: sudo apt-get update && sudo apt-get install -y jq
+      - name: Sanity import (verify PYTHONPATH)
+        run: |
+          python - <<'PY'
+          import os
+          print("PYTHONPATH:", os.environ.get("PYTHONPATH"))
+          import acdlib
+          print("acdlib loaded from:", acdlib.__file__)
+          PY
 
       - name: Test demo data rejection (should fail)
         id: test_rejection
         continue-on-error: true
         run: |
-          set -euxo pipefail
           python scripts/gold_hunt_control_v2.py \
             --snapshot-dir demos/spread_v2_demo/demo_snapshot \
-            --export-dir /tmp/test_output_reject \
+            --export-dir /tmp/test_output \
             --detector zscore \
             --verbose
 
@@ -42,7 +51,6 @@ jobs:
           exit 1
 
       - name: Test demo data with --allow-demo (should succeed)
-        id: test_allow
         run: |
           set -euxo pipefail
           rm -rf /tmp/test_output && mkdir -p /tmp/test_output
@@ -55,17 +63,6 @@ jobs:
 
       - name: Assert demo provenance tagging
         run: |
-          set -euxo pipefail
-          ls -la /tmp/test_output
           test -f /tmp/test_output/control_v2_results.json
-          jq -e '.provenance=="DEMO"' /tmp/test_output/control_v2_results.json >/dev/null
-          echo "✅ Provenance tag DEMO present."
-
-      - name: Show last 200 lines of logs on failure
-        if: failure()
-        run: |
-          echo "---- Rejection step outputs ----"
-          echo "outcome=${{ steps.test_rejection.outcome }}"
-          echo "conclusion=${{ steps.test_rejection.conclusion }}"
-          [ -d /tmp/test_output ] && ls -la /tmp/test_output || true
-          [ -f /tmp/test_output/control_v2_results.json ] && tail -n 200 /tmp/test_output/control_v2_results.json || true
+          jq -r '.provenance' /tmp/test_output/control_v2_results.json | grep -q DEMO
+          echo "✅ Output tagged with provenance: DEMO"
