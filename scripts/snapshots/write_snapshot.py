@@ -72,8 +72,8 @@ def generate_synthetic_ticks(
     ask_sizes = np.random.uniform(0.1, 10.0, len(timestamps))
     trade_sizes = np.random.uniform(0.01, 5.0, len(timestamps))
     
-    # Convert timestamps to nanoseconds
-    ts_exchange = timestamps.astype('int64') // 1000  # Convert to nanoseconds
+    # Keep timestamps as pandas Timestamps
+    ts_exchange = timestamps
     
     df = pd.DataFrame({
         'ts_exchange': ts_exchange,
@@ -111,10 +111,10 @@ def write_snapshot_to_s3(
     overlap_key = f"{base_key}/OVERLAP.json"
     provenance_key = f"{base_key}/meta/provenance.json"
     
-    # Generate OVERLAP.json
+    # Generate OVERLAP.json (using snake_case for consistency)
     overlap_data = {
-        "start_utc": start_time.isoformat() + "Z",
-        "end_utc": end_time.isoformat() + "Z",
+        "start_utc": start_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "end_utc": end_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
         "cadences": ["1s"],
         "venues": venues,
         "coverage": {venue: 1.0 for venue in venues}

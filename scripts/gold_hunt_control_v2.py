@@ -22,6 +22,23 @@ import scipy.stats as stats
 from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import StandardScaler
 
+
+class PandasJSONEncoder(json.JSONEncoder):
+    """Custom JSON encoder for pandas/numpy types."""
+    
+    def default(self, obj):
+        if isinstance(obj, pd.Timestamp):
+            return obj.isoformat()
+        elif isinstance(obj, (np.int64, np.int32)):
+            return int(obj)
+        elif isinstance(obj, (np.float64, np.float32)):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        elif hasattr(obj, 'isoformat'):  # datetime objects
+            return obj.isoformat()
+        return super().default(obj)
+
 # Add src to path
 sys.path.append(str(Path(__file__).parent.parent / "src"))
 
@@ -676,7 +693,7 @@ def generate_control_v2_report(episode_results: List[Dict], export_dir: str,
     
     # Write results with error handling
     try:
-        results_file.write_text(json.dumps(summary, separators=(",", ":")), encoding="utf-8")
+        results_file.write_text(json.dumps(summary, separators=(",", ":"), cls=PandasJSONEncoder), encoding="utf-8")
         print(f"[INFO] Wrote results to {results_file}")
     except Exception as e:
         print(f"[ERROR] Failed to write results to {results_file}: {e}")

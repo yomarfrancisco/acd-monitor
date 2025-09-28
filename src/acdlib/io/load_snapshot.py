@@ -43,14 +43,27 @@ def load_overlap(overlap_path: str, allow_demo: bool = False) -> Dict:
         overlap_json = json.dumps(overlap_data)
         print(f"[OVERLAP] {overlap_json}")
 
-        # Extract and validate required fields
-        start_utc = overlap_data.get("startUTC") or overlap_data.get("start")
-        end_utc = overlap_data.get("endUTC") or overlap_data.get("end")
+        # Extract and validate required fields (with compatibility shim)
+        start_utc = (
+            overlap_data.get("start_utc")
+            or overlap_data.get("startUTC")
+            or overlap_data.get("start")
+        )
+        end_utc = (
+            overlap_data.get("end_utc") or overlap_data.get("endUTC") or overlap_data.get("end")
+        )
         venues = overlap_data.get("venues", [])
         policy = overlap_data.get("policy", "")
 
+        # Emit deprecation warning for non-snake_case keys
+        if "startUTC" in overlap_data or "endUTC" in overlap_data:
+            logger.warning(
+                "Using deprecated startUTC/endUTC keys. "
+                "Please use start_utc/end_utc for future compatibility."
+            )
+
         if not start_utc or not end_utc:
-            raise ValueError("Missing startUTC/endUTC in overlap data")
+            raise ValueError("Missing start_utc/end_utc in overlap data")
 
         if not venues:
             raise ValueError("No venues specified in overlap data")
