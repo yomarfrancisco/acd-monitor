@@ -576,6 +576,19 @@ def run_control_v2_analysis(
         # Check updated Phase 5 gates
         check_updated_gates(episode_results, export_dir, allow_demo)
     
+    # Emit telemetry metrics
+    emit_telemetry_metrics(
+        detector=detector,
+        roll_window=roll_window,
+        z_cut=z_cut,
+        bb_n=bb_n,
+        mc_k=mc_k,
+        n_episodes=len(episodes) if episodes else 0,
+        allow_demo=allow_demo,
+        seed=seed,
+        export_dir=export_dir
+    )
+    
     logger.info("Control v2 analysis completed")
 
 
@@ -665,6 +678,35 @@ def generate_markdown_report(summary: Dict) -> str:
         report.append("")
     
     return "\n".join(report)
+
+
+def emit_telemetry_metrics(detector: str, roll_window: int, z_cut: float, bb_n: int, 
+                          mc_k: int, n_episodes: int, allow_demo: bool, seed: int, 
+                          export_dir: str) -> None:
+    """Emit telemetry metrics for trend analysis."""
+    import time
+    
+    metrics = {
+        "detector": detector,
+        "roll": roll_window,
+        "z_thresh": z_cut,
+        "bb_n": bb_n,
+        "mc_k": mc_k,
+        "episodes": n_episodes,
+        "demo": allow_demo,
+        "seed": seed,
+        "timestamp": time.time()
+    }
+    
+    # Print to stdout for CI/trend analysis
+    print(f"[TELEMETRY] {json.dumps(metrics)}")
+    
+    # Save to file
+    export_path = Path(export_dir)
+    export_path.mkdir(parents=True, exist_ok=True)
+    
+    with open(export_path / "telemetry.json", "w") as f:
+        json.dump(metrics, f, indent=2)
 
 
 def check_updated_gates(episode_results: List[Dict], export_dir: str, allow_demo: bool = False) -> None:

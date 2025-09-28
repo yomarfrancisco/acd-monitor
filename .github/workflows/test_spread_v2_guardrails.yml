@@ -1,0 +1,64 @@
+name: Test Spread v2 Guardrails
+
+on:
+  push:
+    branches: [preview, main]
+  pull_request:
+    branches: [preview, main]
+
+jobs:
+  test-demo-guardrails:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        pip install -e .
+    
+    - name: Test demo data rejection (should fail)
+      run: |
+        # This should fail with non-zero exit code
+        python scripts/gold_hunt_control_v2.py \
+          --snapshot-dir demos/spread_v2_demo/demo_snapshot \
+          --export-dir /tmp/test_output \
+          --detector zscore \
+          --verbose
+      continue-on-error: true
+      id: test_rejection
+    
+    - name: Assert demo rejection failed
+      run: |
+        if [ "${{ steps.test_rejection.outcome }}" != "failure" ]; then
+          echo "ERROR: Demo data should be rejected without --allow-demo"
+          exit 1
+        fi
+        echo "✅ Demo data correctly rejected without --allow-demo"
+    
+    - name: Test demo data with --allow-demo (should succeed)
+      run: |
+        python scripts/gold_hunt_control_v2.py \
+          --snapshot-dir demos/spread_v2_demo/demo_snapshot \
+          --export-dir /tmp/test_output \
+          --detector zscore \
+          --allow-demo \
+          --verbose
+    
+    - name: Assert demo provenance tagging
+      run: |
+        if ! grep -q '"provenance": "DEMO"' /tmp/test_output/control_v2_results.json; then
+          echo "ERROR: Demo outputs should be tagged with provenance: DEMO"
+          exit 1
+        fi
+        if ! grep -q '"regulatory_grade": false' /tmp/test_output/control_v2_results.json; then
+          echo "ERROR: Demo outputs should be tagged with regulatory_grade: false"
+          exit 1
+        fi
+        echo "✅ Demo outputs correctly tagged with provenance and regulatory_grade"

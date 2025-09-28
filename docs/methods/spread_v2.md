@@ -146,6 +146,12 @@ Requires:
 3. **Feature Selection**: Matched control features may need adjustment for different markets
 4. **Bootstrap**: Block size should match expected episode duration
 
+## ⚠️ Important: Demo Data Usage
+
+**Demos are never used in court workflows. Passing --allow-demo tags outputs with "provenance":"DEMO" and "regulatory_grade": false.**
+
+Demo data is strictly for method development and testing. All court-ready evidence must use real market data with proper provenance tracking.
+
 ## Usage
 
 ```bash
