@@ -825,7 +825,8 @@ class OverlapOrchestrator:
     ):
         """Persist normalized tick data to parquet partitions."""
         try:
-            # Create directory structure: <export_dir>/data/ticks/<exchange>/<pair>/1s/<YYYY-MM-DD>/<HH>
+            # Create directory structure:
+            # <export_dir>/data/ticks/<exchange>/<pair>/1s/<YYYY-MM-DD>/<HH>
             dt = datetime.fromtimestamp(ts_local / 1000)
             date_str = dt.strftime("%Y-%m-%d")
             hour_str = dt.strftime("%H")
