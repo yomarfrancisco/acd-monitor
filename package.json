@@ -20,5 +20,10 @@
   },
   "devDependencies": {
     "@types/node": "^24.3.3"
+  },
+  "pnpm": {
+    "allowedScripts": {
+      "@tailwindcss/oxide": true
+    }
   }
 }

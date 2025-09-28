@@ -6,6 +6,11 @@
   --breakpoint-lg: 1024px;
   --breakpoint-xl: 1280px;
   --breakpoint-2xl: 1536px;
+  
+  /* Custom color tokens for TailwindCSS v4 */
+  --color-bg-tile: #1a1a1a;
+  --color-bg-tile2: #1e1e1e;
+  --color-bg-surface: #212121;
 }
 
 @custom-variant dark (&:is(.dark *));
