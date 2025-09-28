@@ -1,5 +1,11 @@
 # Gold Hunt v1 - Analysis Index
 
+## ⚠️ EXPLORATORY RESULTS - NOT REGULATORY CONCLUSIONS
+
+**All episode results in this analysis are exploratory until they clear matched-control gates on ≥30m windows.**
+
+The control-period contrast analysis revealed that volume, volatility, and spread differences are not statistically significant (p=0.864/0.245/0.218), meaning our earlier "episodes" are indistinguishable from normal microstructure on this window. This is precisely the kind of scientific humility regulators expect.
+
 ## Window Specification
 - **Pair**: BTC-USD
 - **Duration**: 9.8 minutes (588 seconds)
