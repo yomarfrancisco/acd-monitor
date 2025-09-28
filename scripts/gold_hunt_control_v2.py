@@ -421,9 +421,30 @@ class EpisodeControlAnalyzer:
         return np.array(bootstrap_labels[:len(data)])
 
 
+def write_empty_results(out_file: Path, detector: str, allow_demo: bool, error_msg: str) -> None:
+    """Write empty results file with error information."""
+    payload = {
+        "provenance": "DEMO" if allow_demo else "REAL",
+        "detector": detector,
+        "ts": datetime.utcnow().isoformat() + "Z",
+        "n_episodes": 0,
+        "episodes": [],
+        "error": error_msg,
+        "regulatory_grade": not allow_demo
+    }
+    
+    try:
+        out_file.write_text(json.dumps(payload, separators=(",", ":")), encoding="utf-8")
+        print(f"[INFO] Wrote empty results to {out_file}")
+    except Exception as e:
+        print(f"[ERROR] Failed to write empty results to {out_file}: {e}")
+        sys.exit(2 if allow_demo else 1)
+
+
 def run_control_v2_analysis(
     snapshot_dir: str,
     export_dir: str,
+    export_file: str = "control_v2_results.json",
     detector: str = "zscore",
     n_controls: int = 100,
     z_cut: float = -1.5,
@@ -452,148 +473,171 @@ def run_control_v2_analysis(
     logger = logging.getLogger(__name__)
     logger.info("Starting Gold Hunt Control v2 analysis")
     
-    # Load snapshot data
-    snapshot_path = Path(snapshot_dir)
-    overlap_file = snapshot_path / "OVERLAP.json"
+    # Create export directory and standardize filename
+    out_dir = Path(export_dir).resolve()
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_file = out_dir / export_file
     
-    if not overlap_file.exists():
-        logger.error(f"OVERLAP.json not found in {snapshot_dir}")
-        return
+    try:
+        # Load snapshot data
+        snapshot_path = Path(snapshot_dir)
+        overlap_file = snapshot_path / "OVERLAP.json"
+        
+        if not overlap_file.exists():
+            logger.error(f"OVERLAP.json not found in {snapshot_dir}")
+            # Write empty results file on error
+            write_empty_results(out_file, detector, allow_demo, "OVERLAP.json not found")
+            return
+        
+        # Load snapshot data using the proper function
+        overlap_data, resampled_mids = load_snapshot_data(str(overlap_file), allow_demo=allow_demo)
+        
+        if resampled_mids.empty:
+            logger.error("No tick data loaded from snapshot")
+            # Write empty results file on error
+            write_empty_results(out_file, detector, allow_demo, "No tick data loaded")
+            return
     
-    # Load snapshot data using the proper function
-    overlap_data, resampled_mids = load_snapshot_data(str(overlap_file), allow_demo=allow_demo)
+        # Convert to the format expected by the analyzer
+        tick_data = {}
+        for venue in overlap_data['venues']:
+            if venue in resampled_mids.columns:
+                tick_data[venue] = resampled_mids[[venue]].reset_index()
+                tick_data[venue].columns = ['time', 'mid']
+        
+        if len(tick_data) < 3:
+            logger.error(f"Insufficient venues: {len(tick_data)}")
+            write_empty_results(out_file, detector, allow_demo, f"Insufficient venues: {len(tick_data)}")
+            return
     
-    if resampled_mids.empty:
-        logger.error("No tick data loaded from snapshot")
-        return
-    
-    # Convert to the format expected by the analyzer
-    tick_data = {}
-    for venue in overlap_data['venues']:
-        if venue in resampled_mids.columns:
-            tick_data[venue] = resampled_mids[[venue]].reset_index()
-            tick_data[venue].columns = ['time', 'mid']
-    
-    if len(tick_data) < 3:
-        logger.error(f"Insufficient venues: {len(tick_data)}")
-        return
-    
-    # Build aligned price data
-    venues = list(tick_data.keys())
-    base_venue = venues[0]
-    base_df = tick_data[base_venue].copy()
-    base_df = base_df.set_index('time')
-    
-    for venue in venues[1:]:
-        venue_df = tick_data[venue].copy()
-        venue_df = venue_df.set_index('time')
-        base_df = base_df.join(venue_df, how='inner', rsuffix=f'_{venue}')
-    
-    base_df = base_df.dropna()
-    
-    # Compute dispersion
-    analyzer = SpreadConvergenceAnalyzer()
-    dispersion = analyzer.compute_dispersion(base_df)
-    
-    # Initialize detector based on type
-    if detector == "zscore":
-        zscore_detector = ZScoreDispersionDetector(
-            k_window=roll_window, 
-            z_cut=z_cut, 
-            merge_gap=merge_gap
+        # Build aligned price data
+        venues = list(tick_data.keys())
+        base_venue = venues[0]
+        base_df = tick_data[base_venue].copy()
+        base_df = base_df.set_index('time')
+        
+        for venue in venues[1:]:
+            venue_df = tick_data[venue].copy()
+            venue_df = venue_df.set_index('time')
+            base_df = base_df.join(venue_df, how='inner', rsuffix=f'_{venue}')
+        
+        base_df = base_df.dropna()
+        
+        # Compute dispersion
+        analyzer = SpreadConvergenceAnalyzer()
+        dispersion = analyzer.compute_dispersion(base_df)
+        
+        # Initialize detector based on type
+        if detector == "zscore":
+            zscore_detector = ZScoreDispersionDetector(
+                k_window=roll_window, 
+                z_cut=z_cut, 
+                merge_gap=merge_gap
+            )
+            z_scores = zscore_detector.compute_dispersion_zscore(dispersion)
+            zscore_episodes = zscore_detector.detect_episodes(dispersion, z_scores)
+            episodes = zscore_episodes
+        else:  # percentile detector (original)
+            episodes = analyzer.detect_compression_episodes(dispersion, base_df)
+            z_scores = None
+        
+        # Original detector for comparison
+        original_episodes = analyzer.detect_compression_episodes(dispersion, base_df)
+        
+        logger.info(f"Selected detector ({detector}): {len(episodes)} episodes")
+        logger.info(f"Original detector: {len(original_episodes)} episodes")
+        
+        # Always write results, even if no episodes
+        if episodes:
+            # Extract features
+            sampler = MatchedControlSampler(n_controls=n_controls, random_state=seed)
+            all_features = sampler.extract_features(base_df)
+            
+            # Analyze each episode
+            episode_results = []
+            
+            for episode in episodes:
+                # Get episode features
+                episode_start = episode['start_idx']
+                episode_end = episode['end_idx']
+                episode_features = all_features.iloc[episode_start]
+                
+                # Sample matched controls
+                control_indices = sampler.sample_controls(
+                    episode_features, all_features, episode_start, episode_end
+                )
+                
+                if not control_indices:
+                    continue
+                
+                # Extract episode and control data
+                episode_data = base_df.iloc[episode_start:episode_end+1].copy()
+                episode_data['dispersion_zscore'] = z_scores.iloc[episode_start:episode_end+1]
+                
+                control_data_list = []
+                for control_idx in control_indices:
+                    control_start = max(0, control_idx - (episode_end - episode_start))
+                    control_end = min(len(base_df), control_idx + (episode_end - episode_start) + 1)
+                    control_data = base_df.iloc[control_start:control_end].copy()
+                    control_data['dispersion_zscore'] = z_scores.iloc[control_start:control_end]
+                    control_data_list.append(control_data)
+                
+                if not control_data_list:
+                    continue
+                
+                control_data = pd.concat(control_data_list, ignore_index=True)
+                
+                # Compare episode vs controls
+                analyzer_episode = EpisodeControlAnalyzer(
+                    n_bootstrap=bb_n, 
+                    block_size=bb_size, 
+                    random_state=seed
+                )
+                comparison = analyzer_episode.compare_episode_controls(episode_data, control_data)
+                
+                episode_result = {
+                    'episode': episode,
+                    'comparison': comparison,
+                    'n_controls': len(control_indices)
+                }
+                episode_results.append(episode_result)
+            
+            # Generate summary report
+            generate_control_v2_report(episode_results, export_dir, detector, allow_demo, out_file)
+            
+            # Check updated Phase 5 gates
+            check_updated_gates(episode_results, export_dir, allow_demo)
+        else:
+            # No episodes found - write empty results
+            write_empty_results(out_file, detector, allow_demo, "No episodes detected")
+        
+        # Emit telemetry metrics
+        emit_telemetry_metrics(
+            detector=detector,
+            roll_window=roll_window,
+            z_cut=z_cut,
+            bb_n=bb_n,
+            mc_k=mc_k,
+            n_episodes=len(episodes) if episodes else 0,
+            allow_demo=allow_demo,
+            seed=seed,
+            export_dir=export_dir
         )
-        z_scores = zscore_detector.compute_dispersion_zscore(dispersion)
-        zscore_episodes = zscore_detector.detect_episodes(dispersion, z_scores)
-        episodes = zscore_episodes
-    else:  # percentile detector (original)
-        episodes = analyzer.detect_compression_episodes(dispersion, base_df)
-        z_scores = None
-    
-    # Original detector for comparison
-    original_episodes = analyzer.detect_compression_episodes(dispersion, base_df)
-    
-    logger.info(f"Selected detector ({detector}): {len(episodes)} episodes")
-    logger.info(f"Original detector: {len(original_episodes)} episodes")
-    
-    # Matched control analysis
-    if episodes:
-        # Extract features
-        sampler = MatchedControlSampler(n_controls=n_controls, random_state=seed)
-        all_features = sampler.extract_features(base_df)
         
-        # Analyze each episode
-        episode_results = []
+        logger.info("Control v2 analysis completed")
         
-        for episode in episodes:
-            # Get episode features
-            episode_start = episode['start_idx']
-            episode_end = episode['end_idx']
-            episode_features = all_features.iloc[episode_start]
-            
-            # Sample matched controls
-            control_indices = sampler.sample_controls(
-                episode_features, all_features, episode_start, episode_end
-            )
-            
-            if not control_indices:
-                continue
-            
-            # Extract episode and control data
-            episode_data = base_df.iloc[episode_start:episode_end+1].copy()
-            episode_data['dispersion_zscore'] = z_scores.iloc[episode_start:episode_end+1]
-            
-            control_data_list = []
-            for control_idx in control_indices:
-                control_start = max(0, control_idx - (episode_end - episode_start))
-                control_end = min(len(base_df), control_idx + (episode_end - episode_start) + 1)
-                control_data = base_df.iloc[control_start:control_end].copy()
-                control_data['dispersion_zscore'] = z_scores.iloc[control_start:control_end]
-                control_data_list.append(control_data)
-            
-            if not control_data_list:
-                continue
-            
-            control_data = pd.concat(control_data_list, ignore_index=True)
-            
-            # Compare episode vs controls
-            analyzer_episode = EpisodeControlAnalyzer(
-                n_bootstrap=bb_n, 
-                block_size=bb_size, 
-                random_state=seed
-            )
-            comparison = analyzer_episode.compare_episode_controls(episode_data, control_data)
-            
-            episode_result = {
-                'episode': episode,
-                'comparison': comparison,
-                'n_controls': len(control_indices)
-            }
-            episode_results.append(episode_result)
-        
-        # Generate summary report
-        generate_control_v2_report(episode_results, export_dir, detector, allow_demo)
-        
-        # Check updated Phase 5 gates
-        check_updated_gates(episode_results, export_dir, allow_demo)
-    
-    # Emit telemetry metrics
-    emit_telemetry_metrics(
-        detector=detector,
-        roll_window=roll_window,
-        z_cut=z_cut,
-        bb_n=bb_n,
-        mc_k=mc_k,
-        n_episodes=len(episodes) if episodes else 0,
-        allow_demo=allow_demo,
-        seed=seed,
-        export_dir=export_dir
-    )
-    
-    logger.info("Control v2 analysis completed")
+    except Exception as e:
+        # Show where we failed
+        import traceback
+        traceback.print_exc()
+        # Write error results
+        write_empty_results(out_file, detector, allow_demo, f"Analysis failed: {str(e)}")
+        # Ensure a non-zero exit code; 2 means failed during allow-demo path
+        sys.exit(2 if allow_demo else 1)
 
 
 def generate_control_v2_report(episode_results: List[Dict], export_dir: str, 
-                              detector: str = "zscore", allow_demo: bool = False) -> None:
+                              detector: str = "zscore", allow_demo: bool = False, out_file: Path = None) -> None:
     """Generate episode vs matched controls summary report."""
     logger = logging.getLogger(__name__)
     
@@ -622,27 +666,28 @@ def generate_control_v2_report(episode_results: List[Dict], export_dir: str,
         'detector_type': detector
     }
     
-    # Save results with robust directory creation
-    export_path = Path(export_dir)
-    export_path.mkdir(parents=True, exist_ok=True)
-    
-    # Ensure we always emit the exact filename CI expects
-    results_file = export_path / "control_v2_results.json"
+    # Use provided out_file or default to export_dir/control_v2_results.json
+    if out_file is None:
+        export_path = Path(export_dir)
+        export_path.mkdir(parents=True, exist_ok=True)
+        results_file = export_path / "control_v2_results.json"
+    else:
+        results_file = out_file
     
     # Write results with error handling
-    import sys, traceback
     try:
-        with results_file.open("w") as f:
-            json.dump(summary, f, indent=2, sort_keys=True, default=str)
-        print(f"[CI] results_json={results_file}")
+        results_file.write_text(json.dumps(summary, separators=(",", ":")), encoding="utf-8")
+        print(f"[INFO] Wrote results to {results_file}")
     except Exception as e:
         print(f"[ERROR] Failed to write results to {results_file}: {e}")
+        import traceback
         traceback.print_exc()
         sys.exit(1)  # non-zero on write failure
     
     # Generate markdown report
     report = generate_markdown_report(summary)
-    with open(export_path / 'control_v2_report.md', 'w') as f:
+    report_file = results_file.parent / 'control_v2_report.md'
+    with open(report_file, 'w') as f:
         f.write(report)
     
     logger.info(f"Control v2 report saved to {export_dir}")
@@ -783,6 +828,7 @@ def main():
     parser = argparse.ArgumentParser(description="Gold Hunt Control v2 Analysis")
     parser.add_argument("--snapshot-dir", required=True, help="Snapshot directory")
     parser.add_argument("--export-dir", required=True, help="Export directory")
+    parser.add_argument("--export-file", default="control_v2_results.json", help="Export filename")
     parser.add_argument("--detector", choices=["percentile", "zscore"], default="percentile", 
                        help="Detector type (default: percentile for backward compatibility)")
     parser.add_argument("--n-controls", type=int, default=100, help="Number of matched controls")
@@ -807,6 +853,7 @@ def main():
     run_control_v2_analysis(
         snapshot_dir=args.snapshot_dir,
         export_dir=args.export_dir,
+        export_file=args.export_file,
         detector=args.detector,
         n_controls=args.n_controls,
         z_cut=args.z_cut,

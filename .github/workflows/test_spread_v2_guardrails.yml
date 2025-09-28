@@ -85,6 +85,7 @@ jobs:
           exit 1
 
       - name: Test demo data with --allow-demo (should succeed)
+        id: test_allow
         run: |
           set -euxo pipefail
           rm -rf /tmp/test_output && mkdir -p /tmp/test_output
@@ -94,9 +95,21 @@ jobs:
             --detector zscore \
             --allow-demo \
             --verbose
+          echo "RESULTS=/tmp/test_output/control_v2_results.json" >> $GITHUB_ENV
+
+      - name: Show what the script produced (debug)
+        run: |
+          set -euxo pipefail
+          echo "Tree under /tmp/test_output:"
+          find /tmp/test_output -maxdepth 2 -type f -printf "%p\t%k KB\n" || true
+          echo "Scanning for *results*.json under /tmp:"
+          find /tmp -maxdepth 3 -name "*results*.json" -printf "%p\n" || true
 
       - name: Assert demo provenance tagging
+        env:
+          RESULTS: ${{ env.RESULTS }}
         run: |
-          test -f /tmp/test_output/control_v2_results.json
-          jq -r '.provenance' /tmp/test_output/control_v2_results.json | grep -q DEMO
+          set -euxo pipefail
+          test -f "$RESULTS"
+          jq -e '.provenance=="DEMO"' "$RESULTS" > /dev/null
           echo "✅ Output tagged with provenance: DEMO"
