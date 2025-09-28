@@ -24,6 +24,11 @@ jobs:
         # Skip editable install to avoid __init__ package name error
         # pip install -e .
     
+    - name: Install jq for JSON parsing
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y jq
+    
     - name: Test demo data rejection (should fail)
       run: |
         # This should fail with non-zero exit code
@@ -45,21 +50,38 @@ jobs:
     
     - name: Test demo data with --allow-demo (should succeed)
       run: |
+        set -euxo pipefail
+        rm -rf /tmp/test_output && mkdir -p /tmp/test_output
+
+        # Run the script verbosely; capture non-zero exits
         python scripts/gold_hunt_control_v2.py \
           --snapshot-dir demos/spread_v2_demo/demo_snapshot \
           --export-dir /tmp/test_output \
           --detector zscore \
           --allow-demo \
+          --seed 42 \
           --verbose
+
+        echo "== List /tmp/test_output =="
+        ls -lah /tmp/test_output
     
     - name: Assert demo provenance tagging
       run: |
-        if ! grep -q '"provenance": "DEMO"' /tmp/test_output/control_v2_results.json; then
-          echo "ERROR: Demo outputs should be tagged with provenance: DEMO"
-          exit 1
-        fi
-        if ! grep -q '"regulatory_grade": false' /tmp/test_output/control_v2_results.json; then
-          echo "ERROR: Demo outputs should be tagged with regulatory_grade: false"
-          exit 1
-        fi
+        set -euxo pipefail
+        # If you keep the current script filename, adjust here:
+        RESULTS=/tmp/test_output/control_v2_results.json
+
+        test -f "$RESULTS" || { echo "Expected results file missing at: $RESULTS"; exit 1; }
+
+        # Must contain provenance DEMO (exact match)
+        jq -r '.provenance' "$RESULTS" | grep -Fx DEMO
+        
+        # Must contain regulatory_grade false (exact match)
+        jq -r '.regulatory_grade' "$RESULTS" | grep -Fx false
+        
         echo "✅ Demo outputs correctly tagged with provenance and regulatory_grade"
+    
+    - name: Show last 200 lines of logs on failure
+      if: failure()
+      run: |
+        echo "No additional logs captured; ensure the script prints errors with --verbose."
