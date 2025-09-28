@@ -47,6 +47,7 @@ jobs:
           PY
         shell: bash
       - name: Build court evidence bundle
+        if: success()
         run: |
           python scripts/build_court_bundle_from_snapshot.py \
             --snapshot court/1s \
