@@ -1,0 +1,121 @@
+name: Continuous Snapshot Capture
+
+on:
+  schedule:
+    # Run every 15 minutes
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+    inputs:
+      symbols:
+        description: 'Symbols to capture (comma-separated)'
+        required: true
+        default: 'BTC-USD,ETH-USD'
+      venues:
+        description: 'Venues to capture (comma-separated)'
+        required: false
+        default: 'binance,coinbase,kraken,okx,bybit'
+
+env:
+  AWS_REGION: us-east-1
+  ACD_S3_BUCKET: acd-monitor-snapshots
+  ACD_S3_PREFIX: snapshots
+
+jobs:
+  capture-windows:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for commit SHA
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install boto3 pandas pyarrow requests
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Sanity check AWS connectivity
+        run: |
+          aws sts get-caller-identity
+          aws s3 ls s3://${{ env.ACD_S3_BUCKET }}/${{ env.ACD_S3_PREFIX }}/ || echo "Bucket empty or doesn't exist yet"
+      
+      - name: Set capture parameters
+        id: capture_params
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "symbols=${{ github.event.inputs.symbols }}" >> $GITHUB_OUTPUT
+            echo "venues=${{ github.event.inputs.venues }}" >> $GITHUB_OUTPUT
+          else
+            echo "symbols=BTC-USD,ETH-USD" >> $GITHUB_OUTPUT
+            echo "venues=binance,coinbase,kraken,okx,bybit" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Capture windows
+        run: |
+          set -euxo pipefail
+          
+          # Get current time and calculate window
+          CURRENT_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          WINDOW_START=$(date -u -d "@$(($(date -u +%s) / 900 * 900))" +"%Y-%m-%dT%H:%M:%SZ")
+          WINDOW_END=$(date -u -d "@$(($(date -u +%s) / 900 * 900 + 1800))" +"%Y-%m-%dT%H:%M:%SZ")
+          
+          echo "Capturing windows from $WINDOW_START to $WINDOW_END"
+          
+          # Capture each symbol
+          IFS=',' read -ra SYMBOLS <<< "${{ steps.capture_params.outputs.symbols }}"
+          for symbol in "${SYMBOLS[@]}"; do
+            echo "Capturing $symbol"
+            python scripts/capture/capture_window.py \
+              --symbol "$symbol" \
+              --start "$WINDOW_START" \
+              --end "$WINDOW_END" \
+              --venues "${{ steps.capture_params.outputs.venues }}" \
+              --bucket "${{ env.ACD_S3_BUCKET }}" \
+              --prefix "${{ env.ACD_S3_PREFIX }}" \
+              --verbose
+          done
+      
+      - name: Verify captures
+        run: |
+          set -euxo pipefail
+          
+          # Check that windows were created
+          WINDOW_START=$(date -u -d "@$(($(date -u +%s) / 900 * 900))" +"%Y%m%d")
+          TIME_START=$(date -u -d "@$(($(date -u +%s) / 900 * 900))" +"%H%M")
+          TIME_END=$(date -u -d "@$(($(date -u +%s) / 900 * 900 + 1800))" +"%H%M")
+          
+          IFS=',' read -ra SYMBOLS <<< "${{ steps.capture_params.outputs.symbols }}"
+          for symbol in "${SYMBOLS[@]}"; do
+            echo "Verifying $symbol window"
+            aws s3 ls s3://${{ env.ACD_S3_BUCKET }}/${{ env.ACD_S3_PREFIX }}/$symbol/$WINDOW_START/$TIME_START-$TIME_END/ --recursive
+          done
+      
+      - name: Upload capture logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: capture-logs-${{ github.run_number }}
+          path: |
+            *.log
+            logs/
+          retention-days: 7
+      
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "❌ Capture failed for run ${{ github.run_number }}"
+          echo "Check logs in artifacts for details"

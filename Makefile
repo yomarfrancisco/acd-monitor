@@ -1,7 +1,7 @@
 # ACD Monitor - Backend Operations
 # End-to-end verification and one-click promotion
 
-.PHONY: help baseline-from-snapshot court-from-snapshot verify-bundles test test-micro dev-smoke clean write-snapshot verify-snapshot
+.PHONY: help baseline-from-snapshot court-from-snapshot verify-bundles test test-micro dev-smoke clean write-snapshot verify-snapshot capture-once capture-daemon
 
 help:
 	@echo "ACD Monitor Backend Operations"
@@ -16,6 +16,8 @@ help:
 	@echo "  dev-smoke                             - Fast developer feedback loop (<10s)"
 	@echo "  write-snapshot                        - Write snapshot to S3"
 	@echo "  verify-snapshot                       - Verify snapshot in S3"
+	@echo "  capture-once                          - Capture single 30m window"
+	@echo "  capture-daemon                        - Run continuous capture daemon"
 	@echo "  clean                                 - Clean temporary files"
 	@echo ""
 	@echo "Examples:"
@@ -23,6 +25,8 @@ help:
 	@echo "  make court-from-snapshot SNAPSHOT=court/1s"
 	@echo "  make write-snapshot SYMBOL=BTC-USD DATE=20250928 SPAN=0200-0230"
 	@echo "  make verify-snapshot SYMBOL=BTC-USD DATE=20250928 SPAN=0200-0230"
+	@echo "  make capture-once SYMBOL=BTC-USD START=2025-09-28T10:00:00Z END=2025-09-28T10:30:00Z"
+	@echo "  make capture-daemon SYMBOLS=BTC-USD,ETH-USD"
 
 baseline-from-snapshot:
 	@if [ -z "$(SNAPSHOT)" ]; then \
@@ -112,3 +116,34 @@ write-snapshot:
 verify-snapshot:
 	@echo "[MAKE:verify-snapshot] Verifying snapshot..."
 	@python scripts/snapshots/verify_snapshot.py --overlap "$(OVERLAP)"
+
+# Continuous capture targets
+capture-once:
+	@if [ -z "$(SYMBOL)" ] || [ -z "$(START)" ] || [ -z "$(END)" ]; then \
+	echo "Error: SYMBOL, START, and END required"; \
+	echo "Usage: make capture-once SYMBOL=BTC-USD START=2025-09-28T10:00:00Z END=2025-09-28T10:30:00Z"; \
+	exit 1; \
+	fi
+	@echo "[MAKE:capture-once] Capturing single window..."
+	@python scripts/capture/capture_window.py \
+	  --symbol $(SYMBOL) \
+	  --start $(START) \
+	  --end $(END) \
+	  --venues binance,coinbase,kraken,okx,bybit \
+	  --bucket $(ACD_S3_BUCKET) \
+	  --prefix $(ACD_S3_PREFIX) \
+	  --verbose
+
+capture-daemon:
+	@if [ -z "$(SYMBOLS)" ]; then \
+	echo "Error: SYMBOLS required"; \
+	echo "Usage: make capture-daemon SYMBOLS=BTC-USD,ETH-USD"; \
+	exit 1; \
+	fi
+	@echo "[MAKE:capture-daemon] Starting continuous capture daemon..."
+	@python scripts/capture/roll_capture.py \
+	  --symbols $(SYMBOLS) \
+	  --venues binance,coinbase,kraken,okx,bybit \
+	  --bucket $(ACD_S3_BUCKET) \
+	  --prefix $(ACD_S3_PREFIX) \
+	  --verbose
