@@ -1,7 +1,7 @@
 # ACD Monitor - Backend Operations
 # End-to-end verification and one-click promotion
 
-.PHONY: help baseline-from-snapshot court-from-snapshot verify-bundles test test-micro dev-smoke clean
+.PHONY: help baseline-from-snapshot court-from-snapshot verify-bundles test test-micro dev-smoke clean write-snapshot verify-snapshot
 
 help:
 	@echo "ACD Monitor Backend Operations"
@@ -14,11 +14,15 @@ help:
 	@echo "  test                                  - Run unit tests"
 	@echo "  test-micro                            - Run micro tests only (fast)"
 	@echo "  dev-smoke                             - Fast developer feedback loop (<10s)"
+	@echo "  write-snapshot                        - Write snapshot to S3"
+	@echo "  verify-snapshot                       - Verify snapshot in S3"
 	@echo "  clean                                 - Clean temporary files"
 	@echo ""
 	@echo "Examples:"
 	@echo "  make baseline-from-snapshot SNAPSHOT=baselines/2s"
 	@echo "  make court-from-snapshot SNAPSHOT=court/1s"
+	@echo "  make write-snapshot SYMBOL=BTC-USD DATE=20250928 SPAN=0200-0230"
+	@echo "  make verify-snapshot SYMBOL=BTC-USD DATE=20250928 SPAN=0200-0230"
 
 baseline-from-snapshot:
 	@if [ -z "$(SNAPSHOT)" ]; then \
@@ -92,3 +96,19 @@ clean:
 	@find . -name "*.pyc" -delete
 	@find . -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
 	@find . -name ".pytest_cache" -type d -exec rm -rf {} + 2>/dev/null || true
+
+# S3 Snapshot targets
+SYMBOL ?= BTC-USD
+DATE   ?= 20250928
+SPAN   ?= 0200-0230
+OVERLAP := s3://$(ACD_S3_BUCKET)/$(ACD_S3_PREFIX)/$(SYMBOL)/$(DATE)/$(SPAN)/OVERLAP.json
+
+write-snapshot:
+	@echo "[MAKE:write-snapshot] Writing snapshot to S3..."
+	@python scripts/snapshots/write_snapshot.py \
+	  --bucket $$ACD_S3_BUCKET --prefix $$ACD_S3_PREFIX \
+	  --symbol $(SYMBOL) --date $(DATE) --start-time $(shell echo $(SPAN) | cut -d- -f1) --end-time $(shell echo $(SPAN) | cut -d- -f2) --venues binance,coinbase
+
+verify-snapshot:
+	@echo "[MAKE:verify-snapshot] Verifying snapshot..."
+	@python scripts/snapshots/verify_snapshot.py --overlap "$(OVERLAP)"
