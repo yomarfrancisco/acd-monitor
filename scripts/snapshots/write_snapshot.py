@@ -21,7 +21,17 @@ import boto3
 import pandas as pd
 import numpy as np
 
-from .config import DEFAULT_BUCKET, DEFAULT_PREFIX, DEFAULT_REGION
+# Import config from same directory
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent))
+try:
+    from config import DEFAULT_BUCKET, DEFAULT_PREFIX, DEFAULT_REGION
+except ImportError:
+    # Fallback to environment variables
+    DEFAULT_BUCKET = os.getenv('ACD_S3_BUCKET', 'acd-monitor-snapshots')
+    DEFAULT_PREFIX = os.getenv('ACD_S3_PREFIX', 'snapshots')
+    DEFAULT_REGION = os.getenv('AWS_DEFAULT_REGION', 'us-east-1')
 
 logger = logging.getLogger(__name__)
 

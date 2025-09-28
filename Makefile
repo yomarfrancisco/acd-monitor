@@ -107,7 +107,7 @@ write-snapshot:
 	@echo "[MAKE:write-snapshot] Writing snapshot to S3..."
 	@python scripts/snapshots/write_snapshot.py \
 	  --bucket $$ACD_S3_BUCKET --prefix $$ACD_S3_PREFIX \
-	  --symbol $(SYMBOL) --date $(DATE) --start-time $(shell echo $(SPAN) | cut -d- -f1) --end-time $(shell echo $(SPAN) | cut -d- -f2) --venues binance,coinbase
+	  --symbol $(SYMBOL) --date $(shell echo $(DATE) | sed 's/\([0-9]\{4\}\)\([0-9]\{2\}\)\([0-9]\{2\}\)/\1-\2-\3/') --start-time $(shell echo $(SPAN) | cut -d- -f1) --end-time $(shell echo $(SPAN) | cut -d- -f2) --venues binance,coinbase
 
 verify-snapshot:
 	@echo "[MAKE:verify-snapshot] Verifying snapshot..."

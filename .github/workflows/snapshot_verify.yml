@@ -10,7 +10,9 @@ jobs:
   verify-snapshot:
     runs-on: ubuntu-latest
     env:
-      AWS_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
       ACD_S3_BUCKET: acd-monitor-snapshots
       ACD_S3_PREFIX: snapshots
     steps:
@@ -26,14 +28,11 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install boto3
           
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Sanity AWS (whoami + ls bucket)
+        run: |
+          aws sts get-caller-identity
+          aws s3 ls s3://acd-monitor-snapshots/snapshots/ || true
           
       - name: Verify snapshot
         run: |
