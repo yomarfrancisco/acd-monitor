@@ -21,7 +21,8 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
-        pip install -e .
+        # Skip editable install to avoid __init__ package name error
+        # pip install -e .
     
     - name: Test demo data rejection (should fail)
       run: |
