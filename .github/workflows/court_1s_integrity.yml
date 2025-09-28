@@ -23,6 +23,29 @@ jobs:
           from statsmodels.tsa.vector_ar.vecm import VECM, coint_johansen
           print("scientific stack OK")
           PY
+      - name: Check for tick data availability
+        run: |
+          python - <<PY
+          import pathlib, sys
+          snapshot_dir = pathlib.Path("court/1s/ticks")
+          venues = ["binance", "coinbase", "kraken", "okx", "bybit"]
+          
+          # Check if any venue has parquet files
+          has_data = False
+          for venue in venues:
+              venue_dir = snapshot_dir / venue
+              if venue_dir.exists() and list(venue_dir.rglob("*.parquet")):
+                  has_data = True
+                  break
+          
+          if not has_data:
+              print("[CI:skip:no_data] No tick data available - skipping court evidence bundle")
+              print("[CI:info] This is expected when orchestrators haven't collected data yet")
+              sys.exit(0)
+          else:
+              print("[CI:info] Tick data found - proceeding with analysis")
+          PY
+        shell: bash
       - name: Build court evidence bundle
         run: |
           python scripts/build_court_bundle_from_snapshot.py \
@@ -34,12 +57,14 @@ jobs:
             --all5 \
             --verbose
       - name: Reject mock/demo/empty parquet
+        if: success() || failure()
         run: |
           set -e
           if ls court/1s/ticks/*/*mock*.parquet 2>/dev/null; then exit 1; fi
           if ls court/1s/ticks/*/*_demo*.parquet 2>/dev/null; then exit 1; fi
         shell: bash
       - name: Check for empty parquet files
+        if: success() || failure()
         run: |
           python - <<PY
           import pathlib, sys
@@ -52,6 +77,7 @@ jobs:
           PY
         shell: bash
       - name: Check for ABORT tags in analysis results
+        if: success() || failure()
         run: |
           set -e
           if grep -r "\[ABORT:" court/1s/evidence/ 2>/dev/null; then
@@ -60,6 +86,7 @@ jobs:
           fi
         shell: bash
       - name: Check InfoShare results
+        if: success() || failure()
         run: |
           python - <<PY
           import json, sys
@@ -75,6 +102,7 @@ jobs:
           PY
         shell: bash
       - name: Check Spread results
+        if: success() || failure()
         run: |
           python - <<PY
           import json, sys
@@ -90,6 +118,7 @@ jobs:
           PY
         shell: bash
       - name: Debug Lead-Lag results
+        if: success() || failure()
         shell: bash
         run: |
           set -e
@@ -108,6 +137,7 @@ jobs:
           print("[CI:debug] horizons=", d.get("horizons"))
           PY
       - name: Check Lead-Lag results
+        if: success() || failure()
         shell: bash
         run: |
           python - <<'PY'
