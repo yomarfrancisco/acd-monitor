@@ -33,17 +33,369 @@ import {
 import { Separator } from "@/components/ui/separator"
 import Image from "next/image"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useMemo } from "react"
+import * as React from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, ReferenceLine, Label } from "recharts"
-import { CalendarIcon, Copy, RefreshCw, ImageUp, Camera, FolderClosed, Github, AlertTriangle } from "lucide-react"
-import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema } from "@/types/api.schemas"
+import { AssistantBubble } from "@/components/AssistantBubble"
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, ReferenceLine, ReferenceArea, Label } from "recharts"
+import { CalendarIcon, Copy, RefreshCw, ImageUp, Camera, FolderClosed, Github, AlertTriangle, Factory } from "lucide-react"
+import { VENUES, VenueKey, VENUE_LABEL, VENUE_COLOR } from "../src/shared/venues";
+import { normalizeOverview, NormalizedOverview } from "../src/shared/series";
+import { buildAxis, alignOnAxis } from "../src/shared/align";
+import { latestCommonIndex } from "../src/shared/leader";
+
+// Timestamp normalization helpers
+const DAY_MS = 86_400_000;
+
+const toNum = (x: any) => {
+  const n = typeof x === 'string' ? parseFloat(x) : (typeof x === 'number' ? x : NaN);
+  return Number.isFinite(n) ? n : null;
+};
+
+const toMidnightMs = (t: any) => {
+  const ms =
+    t == null ? NaN :
+    typeof t === 'string' ? Date.parse(t) :
+    typeof t === 'number' ? (t < 10_000_000_000 ? t * 1000 : t) :
+    NaN;
+  if (!Number.isFinite(ms)) return null;
+  const d = new Date(ms);
+  return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+};
+
+function getBarTs(bar: any) {
+  // array: [ts, o, h, l, c, v], objects: { time|t|timestamp, ... }
+  const raw =
+    Array.isArray(bar) ? bar[0] :
+    bar?.time ?? bar?.t ?? bar?.timestamp ?? bar?.date ?? null;
+  return toMidnightMs(raw);
+}
+
+function getBarClose(bar: any) {
+  // array close at [4], objects: close|c|price
+  const raw =
+    Array.isArray(bar) ? bar[4] :
+    bar?.close ?? bar?.c ?? bar?.price ?? null;
+  return toNum(raw);
+}
+
+// Robust OHLCV picker (tolerant to different nesting used by Coinbase)
+const pickOhlcv = (ex: any): any[] => {
+  const cand = [
+    ex?.data?.ohlcv,            // standard (binance/okx/…)
+    ex?.ohlcv,                  // simple fallback
+    ex?.data?.ohlcv?.data,      // object wrapping an array
+    ex?.data?.data,             // sometimes providers nest like this
+    ex?.overview?.ohlcv,      // if wrapped in overview
+    ex?.payload?.ohlcv,         // alt wrapper
+    ex?.data?.candles,          // possible alt key (coinbase-style)
+    ex?.data?.bars,             // possible alt key
+  ];
+  for (const c of cand) if (Array.isArray(c)) return c;
+  return [];
+};
+
+// Converts either an array bar or an object bar into { ts, close }
+const readBar = (bar: any): { ts: number | string | null; close: number | null } => {
+  if (!bar) return { ts: null, close: null };
+
+  // Array-shaped: [ts, open, high, low, close, ...]
+  if (Array.isArray(bar)) {
+    const ts = bar[0];
+    const close = toNum(bar[4]);
+    return { ts, close };
+  }
+
+  // Object-shaped: try common key variants
+  // Coinbase often uses { t: <sec>, c: <close> }
+  const tsObj =
+    (bar.ts ?? bar.t ?? bar.time ?? bar.timestamp ?? bar.date ?? bar[0]) ?? null;
+
+  const closeObj =
+    toNum(bar.c ?? bar.close ?? bar.closing ?? bar.price ?? bar.last ?? bar.vwap);
+
+  return { ts: tsObj, close: closeObj };
+};
+
+  const buildYtdAxis = (): number[] => {
+    const startMs = Date.UTC(2025, 0, 1); // 2025-01-01T00:00:00Z
+    const now = new Date();
+    const endMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()); // today 00:00Z
+    const axis: number[] = [];
+    for (let t = startMs; t < endMs; t += DAY_MS) axis.push(t);
+    return axis;
+  };
+
+  // Robust lead-lag leadership with fallbacks
+  function computeLeadLagLeader(
+    aligned: Array<{ts:number; [venue:string]: number|null}>,
+    opts = { minPairs: 60, eps: 0.0 }
+  ) {
+    const venues = Object.keys(aligned[0] || {}).filter(v => v !== 'ts');
+    // build per-venue return arrays
+    const series: Record<string, number[]> = {};
+    const mask: number[] = [];
+    for (let i = 1; i < aligned.length; i++) {
+      const prev = aligned[i-1], cur = aligned[i];
+      const row: Record<string, number> = {};
+      let any = false;
+      for (const v of venues) {
+        const a = Number(prev[v]), b = Number(cur[v]);
+        if (Number.isFinite(a) && Number.isFinite(b) && a > 0 && b > 0) {
+          row[v] = Math.log(b/a);
+          any = true;
+        }
+      }
+      if (!any) continue;
+      mask.push(i);
+      for (const v of venues) {
+        (series[v] ||= []).push(row[v]);
+      }
+    }
+    // winsorize
+    const wins = (xs:number[]) => {
+      const x = xs.filter(Number.isFinite);
+      if (x.length < opts.minPairs) return null;
+      const m = x.reduce((a,b)=>a+b,0)/x.length;
+      const s = Math.sqrt(x.reduce((a,b)=>a+(b-m)*(b-m),0)/x.length) || 1;
+      const hi = m + 3*s, lo = m - 3*s;
+      return xs.map(v => Number.isFinite(v) ? Math.max(lo, Math.min(hi, v)) : NaN);
+    };
+    for (const v of venues) {
+      const w = wins(series[v] || []);
+      if (!w) return null;         // not enough data for at least one venue
+      series[v] = w;
+    }
+    // pairwise lag-1 net lead score
+    const corr = (x:number[], y:number[]) => {
+      const n = Math.min(x.length-1, y.length-1);
+      if (n < opts.minPairs) return null;
+      // ρ(x_t, y_{t+1})
+      const X = x.slice(0, n), Yf = y.slice(1, n+1);
+      const Yb = y.slice(0, n), Xf = x.slice(1, n+1);
+      const c = (a:number[], b:number[]) => {
+        const n = a.length;
+        const ma = a.reduce((s,v)=>s+v,0)/n, mb = b.reduce((s,v)=>s+v,0)/n;
+        let num=0, da=0, db=0;
+        for (let i=0;i<n;i++){ const pa=a[i]-ma, pb=b[i]-mb; num+=pa*pb; da+=pa*pa; db+=pb*pb; }
+        const den = Math.sqrt(da*db);
+        return den ? (num/den) : 0;
+      };
+      return { fwd: c(X, Yf), rev: c(Yb, Xf), n };
+    };
+
+    const leadScore: Record<string, number> = Object.fromEntries(venues.map(v=>[v,0]));
+    let pairCount = 0;
+    for (let i=0;i<venues.length;i++){
+      for (let j=i+1;j<venues.length;j++){
+        const vi = venues[i], vj = venues[j];
+        const cc = corr(series[vi], series[vj]);
+        if (!cc) continue;
+        pairCount++;
+        const net = (cc.fwd - cc.rev); // >0 means vi leads vj
+        if (Math.abs(net) >= (opts.eps || 0)) {
+          leadScore[vi] += net;
+          leadScore[vj] -= net;
+        }
+      }
+    }
+    if (pairCount === 0) return null;
+
+    const ranked = Object.entries(leadScore).sort((a,b)=> b[1]-a[1]);
+    return { venue: ranked[0][0], score: ranked[0][1], totalPairs: pairCount };
+  }
+
+  // Consensus fallback: smallest average relative distance to the (leave-one-out) median.
+  function computeConsensusLeader(aligned: Array<{ts:number; [v:string]: number|null}>, minBars=60) {
+    const venues = Object.keys(aligned[0] || {}).filter(v => v !== 'ts');
+    const eps = 1e-9;
+
+    // Diagnostic logging for day filtering
+    const drop = { missing: 0, notEnoughOthers: 0, tooTight: 0, outlier: 0, nan: 0, other: 0 };
+    let kept = 0;
+
+    const MIN_OTHERS = 3;          // current requirement for leave-one-out
+    const MIN_SPREAD_BPS = 1;      // minimum spread in basis points
+
+    // per-venue distances and daily winners tracking
+    const dist: Record<string, number[]> = Object.fromEntries(venues.map(v => [v, []]));
+    const dayWinners: string[][] = [];
+
+    for (const row of aligned) {
+      // Diagnostic checks - mirror the actual filtering logic
+      if (!row) { drop.other++; continue; }
+
+      const vals = venues
+        .map(v => ({ v, x: Number(row[v]) }))
+        .filter(({x}) => Number.isFinite(x) && x > 0);
+
+      if (vals.length < 2) { drop.nan++; continue; }
+
+      // "not enough others" for leave-one-out median
+      if (vals.length - 1 < MIN_OTHERS) { drop.notEnoughOthers++; continue; }
+
+      // optional "spread too tight" filter
+      const prices = vals.map(({x}) => x);
+      const min = Math.min(...prices), max = Math.max(...prices);
+      const mid = (min + max) / 2;
+      const bps = mid ? ((max - min) / mid) * 1e4 : 0;
+      if (bps < MIN_SPREAD_BPS) { drop.tooTight++; continue; }
+
+      // Pre-sort once for median; cheaper than recomputing from scratch each time
+      const sorted = [...vals].sort((a,b) => a.x - b.x);
+      const getMedian = (arr: {v:string; x:number}[]) => {
+        const n = arr.length, m = Math.floor(n / 2);
+        return n % 2 ? arr[m].x : (arr[m-1].x + arr[m].x) / 2;
+      };
+
+      // Compute distances and find daily winners
+      const dayDistances: Record<string, number> = {};
+      let minDistance = Infinity;
+      
+      for (const { v, x } of vals) {
+        // Leave-one-out median
+        const others = sorted.filter(o => o.v !== v);
+        if (others.length === 0) continue;
+        const med = getMedian(others);
+        if (!Number.isFinite(med) || med <= 0) continue;
+
+        const distance = Math.abs(x - med) / med;
+        dayDistances[v] = distance;
+        dist[v].push(distance);
+        
+        if (distance < minDistance) {
+          minDistance = distance;
+        }
+      }
+      
+      // Find winners for this day (all venues within tolerance of minimum)
+      const relEps = 1e-6; // relative tolerance for near-ties
+      const absEps = 1e-9; // absolute tolerance for near-ties
+      const winners = Object.entries(dayDistances)
+        .filter(([_, distance]) => 
+          distance <= minDistance * (1 + relEps) || 
+          distance <= absEps
+        )
+        .map(([venue, _]) => venue);
+      
+      dayWinners.push(winners);
+      kept++;
+    }
+
+    const avg = (xs:number[]) => xs.length ? xs.reduce((a,b)=>a+b,0) / xs.length : Infinity;
+    const scored = venues
+      .map(v => ({ v, n: dist[v].length, s: avg(dist[v]) }))
+      .filter(x => x.n >= minBars)
+      .sort((a,b) => a.s - b.s);
+
+    if (!scored.length) return null;
+
+    // Tie handling + percent as advantage over #2
+    const best = scored[0];
+    const second = scored[1];
+    const isTie = second && Math.abs(best.s - second.s) < 1e-6;
+
+    // pct expresses separation from #2; 0 when tied/equal, ~1 when huge separation
+    const pct = (!second || isTie) ? 0 : Math.max(0, 1 - (best.s / (second.s + eps)));
+
+    // Count wins only for daily winners
+    const wins = new Map<string, number>();
+    for (const winners of dayWinners) {
+      for (const v of winners) {
+        wins.set(v, (wins.get(v) ?? 0) + 1);
+      }
+    }
+
+    const keptDays = dayWinners.length;
+    const ranking = Array.from(wins.entries())
+      .map(([venue, winCount]) => ({
+        venue,
+        wins: winCount,
+        pct: keptDays ? winCount / keptDays : 0,
+      }))
+      .sort((a, b) => b.wins - a.wins || b.pct - a.pct);
+
+    // top-1 stays our leader
+    const leader = ranking[0]?.venue ?? null;
+    const leaderPct = ranking[0]?.pct ?? null;
+    const venueCount = ranking.length;
+
+    // At the end, log a concise summary
+    if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+      console.log('[LEADER:consensus:keep-vs-drop]', { kept, dropped: aligned.length - kept, drop });
+      console.log('[LEADER:consensus:ranking]', {
+        keptDays,
+        venues: venueCount,
+        table: ranking.map(r => ({
+          venue: r.venue,
+          wins: r.wins,
+          pct: Number((r.pct * 100).toFixed(2)),
+        })),
+      });
+      console.log('[LEADER:consensus]', { topTwo: scored.slice(0,2), isTie, pct });
+    }
+
+    return isTie
+      ? { venue: null, score: pct, tie: [best.v, second.v], ranking: { table: ranking } }   // optional: signal tie
+      : { venue: best.v, score: pct, ranking: { table: ranking } };
+  }
+
+  function computeDataQualityLeader(aligned:any[]){
+    const venues = Object.keys(aligned[0]||{}).filter(v=>v!=='ts');
+    const counts = venues.map(v=>{
+      let ok=0;
+      for (const r of aligned){ const x = Number(r[v]); if (Number.isFinite(x)) ok++; }
+      return { v, ok };
+    }).sort((a,b)=> b.ok - a.ok);
+    if (!counts.length || counts[0].ok===0) return null;
+    return { venue: counts[0].v, score: counts[0].ok/Math.max(1, aligned.length) };
+  }
+
+  function computePriceLeader(aligned:any[]){
+    const lag = computeLeadLagLeader(aligned, { minPairs: 60, eps: 0.0 });
+    if (lag) return { venue: lag.venue, pct: lag.score, venues: lag.totalPairs, method:'lead-lag' as const, ranking: undefined };
+
+    const cons = computeConsensusLeader(aligned, 60);
+    if (cons) return { venue: cons.venue, pct: cons.score, venues: 0, method:'consensus-proximity' as const, ranking: cons.ranking };
+
+    const qual = computeDataQualityLeader(aligned);
+    if (qual) return { venue: qual.venue, pct: qual.score, venues: 0, method:'data-quality' as const, ranking: undefined };
+
+    return { leader: null, pct: null, venues: 0, method:'none' as const, ranking: undefined };
+  }
+
+  // Temporal Price Leadership calculation with robust fallbacks
+  const computeLeadershipFromAligned = (rows: any[], venues: string[]) => {
+    if (!rows.length || venues.length < 2) return { venue: null, score: null, ranking: undefined };
+    
+    const result = computePriceLeader(rows);
+    
+    if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+      console.log('[LEADER] lead-lag =>', result.method === 'lead-lag' ? result : 'null');
+      console.log('[LEADER] consensus =>', result.method === 'consensus-proximity' ? result : 'null');
+      console.log('[LEADER] data-quality =>', result.method === 'data-quality' ? result : 'null');
+      console.log('[LEADER] final result =>', result);
+    }
+    
+    if (result.leader === null) return { venue: null, score: null, ranking: undefined };
+    return { venue: result.venue, score: result.pct, ranking: result.ranking };
+  };
+import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema, BinanceOverviewSchema } from "@/types/api.schemas"
 import { fetchTyped } from "@/lib/backendAdapter"
 import { safe } from "@/lib/safe"
 import { resilientFetch } from "@/lib/resilient-api"
 import { DegradedModeBanner } from "@/components/DegradedModeBanner"
-import type { RiskSummary, MetricsOverview, HealthRun, EventsResponse, DataSources, EvidenceExport } from "@/types/api"
+import { EventsTable } from "@/components/EventsTable"
+import { SelftestIndicator } from "@/components/SelftestIndicator"
+import { useExchangeData } from "../contexts/ExchangeDataContext"
+import { getAvailableUiVenues, uiKeyToDataKey, venueMetadata, type UiVenue } from "../lib/venueMapping"
+import { computePriceLeadership, type DataKey } from "../lib/leadership"
+import { normalizeEvents, pickEventsInDomain, SEED_EVENTS_YTD } from "../utils/events"
+import { toMsTs } from "../lib/time"
+import type { RiskSummary, HealthRun, EventsResponse, DataSources, EvidenceExport } from "@/types/api"
+import type { MetricsOverview } from "@/types/api.schemas"
+import { z } from "zod"
 import {
   MessageSquare,
   GitBranch,
@@ -54,53 +406,75 @@ import {
   SquarePen,
 } from "lucide-react"
 
+// Helper function to synthesize timestamp from date label
+function synthTsFromLabel(lbl: string): number | null {
+  // handles "Feb '25", "Jun '25", "Jul '25" (with apostrophe)
+  const m = lbl?.match(/^([A-Za-z]{3})\s+'(\d{2})$/);
+  if (m) {
+    const [ , monStr, yy ] = m;
+    const year = 2000 + Number(yy);
+    const mon = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].indexOf(monStr);
+    return Date.UTC(year, Math.max(0, mon), 1);
+  }
+  // handles "Jan 25", "Feb 25", "Mar 25" (without apostrophe)
+  const m2 = lbl?.match(/^([A-Za-z]{3})\s+(\d{2})$/);
+  if (m2) {
+    const [ , monStr, yy ] = m2;
+    const year = 2000 + Number(yy);
+    const mon = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].indexOf(monStr);
+    return Date.UTC(year, Math.max(0, mon), 1);
+  }
+  // Also accept ISO or "Feb 03, 2025" etc.
+  return toMsTs(lbl);
+}
+
 // Different data sets for different time periods
 const analyticsData30d = [
-  { date: "Aug 6", fnb: 100, absa: 95, standard: 105, nedbank: 98 },
-  { date: "Aug 13", fnb: 150, absa: 145, standard: 155, nedbank: 148 },
-  { date: "Aug 20", fnb: 200, absa: 190, standard: 210, nedbank: 195 },
-  { date: "Aug 27", fnb: 250, absa: 240, standard: 260, nedbank: 245 },
-  { date: "Sep 3", fnb: 300, absa: 290, standard: 310, nedbank: 295 },
-  { date: "Sep 10", fnb: 350, absa: 330, standard: 370, nedbank: 340 },
-]
+  { date: "Aug 6", ts: synthTsFromLabel("Aug 6"), fnb: 100, absa: 95, standard: 105, nedbank: 98, coinbase: 102 },
+  { date: "Aug 13", ts: synthTsFromLabel("Aug 13"), fnb: 150, absa: 145, standard: 155, nedbank: 148, coinbase: 152 },
+  { date: "Aug 20", ts: synthTsFromLabel("Aug 20"), fnb: 200, absa: 190, standard: 210, nedbank: 195, coinbase: 205 },
+  { date: "Aug 27", ts: synthTsFromLabel("Aug 27"), fnb: 250, absa: 240, standard: 260, nedbank: 245, coinbase: 255 },
+  { date: "Sep 3", ts: synthTsFromLabel("Sep 3"), fnb: 300, absa: 290, standard: 310, nedbank: 295, coinbase: 305 },
+  { date: "Sep 10", ts: synthTsFromLabel("Sep 10"), fnb: 350, absa: 330, standard: 370, nedbank: 340, coinbase: 360 },
+].filter(row => row.ts !== null) as Array<{ date: string; ts: number; fnb: number; absa: number; standard: number; nedbank: number; coinbase: number }>
 
 const analyticsData6m = [
-  { date: "Mar '25", fnb: 80, absa: 75, standard: 85, nedbank: 78 },
-  { date: "Apr '25", fnb: 120, absa: 115, standard: 125, nedbank: 118 },
-  { date: "May '25", fnb: 180, absa: 175, standard: 185, nedbank: 178 },
-  { date: "Jun '25", fnb: 220, absa: 210, standard: 230, nedbank: 215 },
-  { date: "Jul '25", fnb: 280, absa: 270, standard: 290, nedbank: 275 },
-  { date: "Aug '25", fnb: 320, absa: 310, standard: 330, nedbank: 315 },
-  { date: "Sep '25", fnb: 350, absa: 330, standard: 370, nedbank: 340 },
-]
+  { date: "Mar '25", ts: synthTsFromLabel("Mar '25"), fnb: 80, absa: 75, standard: 85, nedbank: 78, coinbase: 82 },
+  { date: "Apr '25", ts: synthTsFromLabel("Apr '25"), fnb: 120, absa: 115, standard: 125, nedbank: 118, coinbase: 122 },
+  { date: "May '25", ts: synthTsFromLabel("May '25"), fnb: 180, absa: 175, standard: 185, nedbank: 178, coinbase: 182 },
+  { date: "Jun '25", ts: synthTsFromLabel("Jun '25"), fnb: 220, absa: 210, standard: 230, nedbank: 215, coinbase: 225 },
+  { date: "Jul '25", ts: synthTsFromLabel("Jul '25"), fnb: 280, absa: 270, standard: 290, nedbank: 275, coinbase: 285 },
+  { date: "Aug '25", ts: synthTsFromLabel("Aug '25"), fnb: 320, absa: 310, standard: 330, nedbank: 315, coinbase: 325 },
+  { date: "Sep '25", ts: synthTsFromLabel("Sep '25"), fnb: 350, absa: 330, standard: 370, nedbank: 340, coinbase: 360 },
+].filter(row => row.ts !== null) as Array<{ date: string; ts: number; fnb: number; absa: number; standard: number; nedbank: number; coinbase: number }>
 
 const analyticsData1y = [
-  { date: "Sep '24", fnb: 60, absa: 55, standard: 65, nedbank: 58 },
-  { date: "Oct '24", fnb: 80, absa: 75, standard: 85, nedbank: 78 },
-  { date: "Nov '24", fnb: 100, absa: 95, standard: 105, nedbank: 98 },
-  { date: "Dec '24", fnb: 120, absa: 115, standard: 125, nedbank: 118 },
-  { date: "Jan '25", fnb: 140, absa: 135, standard: 145, nedbank: 138 },
-  { date: "Feb '25", fnb: 180, absa: 175, standard: 185, nedbank: 178 },
-  { date: "Mar '25", fnb: 220, absa: 210, standard: 230, nedbank: 215 },
-  { date: "Apr '25", fnb: 260, absa: 250, standard: 270, nedbank: 255 },
-  { date: "May '25", fnb: 300, absa: 290, standard: 310, nedbank: 295 },
-  { date: "Jun '25", fnb: 320, absa: 310, standard: 330, nedbank: 315 },
-  { date: "Jul '25", fnb: 340, absa: 330, standard: 350, nedbank: 335 },
-  { date: "Aug '25", fnb: 360, absa: 350, standard: 370, nedbank: 355 },
-  { date: "Sep '25", fnb: 350, absa: 330, standard: 370, nedbank: 340 },
-]
+  { date: "Sep '24", ts: synthTsFromLabel("Sep '24"), fnb: 60, absa: 55, standard: 65, nedbank: 58, coinbase: 62 },
+  { date: "Oct '24", ts: synthTsFromLabel("Oct '24"), fnb: 80, absa: 75, standard: 85, nedbank: 78, coinbase: 82 },
+  { date: "Nov '24", ts: synthTsFromLabel("Nov '24"), fnb: 100, absa: 95, standard: 105, nedbank: 98, coinbase: 102 },
+  { date: "Dec '24", ts: synthTsFromLabel("Dec '24"), fnb: 120, absa: 115, standard: 125, nedbank: 118, coinbase: 122 },
+  { date: "Jan '25", ts: synthTsFromLabel("Jan '25"), fnb: 140, absa: 135, standard: 145, nedbank: 138, coinbase: 142 },
+  { date: "Feb '25", ts: synthTsFromLabel("Feb '25"), fnb: 180, absa: 175, standard: 185, nedbank: 178, coinbase: 182 },
+  { date: "Mar '25", ts: synthTsFromLabel("Mar '25"), fnb: 220, absa: 210, standard: 230, nedbank: 215, coinbase: 225 },
+  { date: "Apr '25", ts: synthTsFromLabel("Apr '25"), fnb: 260, absa: 250, standard: 270, nedbank: 255, coinbase: 265 },
+  { date: "May '25", ts: synthTsFromLabel("May '25"), fnb: 300, absa: 290, standard: 310, nedbank: 295, coinbase: 305 },
+  { date: "Jun '25", ts: synthTsFromLabel("Jun '25"), fnb: 320, absa: 310, standard: 330, nedbank: 315, coinbase: 325 },
+  { date: "Jul '25", ts: synthTsFromLabel("Jul '25"), fnb: 340, absa: 330, standard: 350, nedbank: 335, coinbase: 345 },
+  { date: "Aug '25", ts: synthTsFromLabel("Aug '25"), fnb: 360, absa: 350, standard: 370, nedbank: 355, coinbase: 365 },
+  { date: "Sep '25", ts: synthTsFromLabel("Sep '25"), fnb: 350, absa: 330, standard: 370, nedbank: 340, coinbase: 360 },
+].filter(row => row.ts !== null) as Array<{ date: string; ts: number; fnb: number; absa: number; standard: number; nedbank: number; coinbase: number }>
 
 const analyticsDataYTD = [
-  { date: "Jan '25", fnb: 100, absa: 95, standard: 105, nedbank: 98 },
-  { date: "Feb '25", fnb: 150, absa: 145, standard: 155, nedbank: 148 },
-  { date: "Mar '25", fnb: 200, absa: 190, standard: 210, nedbank: 195 },
-  { date: "Apr '25", fnb: 180, absa: 175, standard: 185, nedbank: 178 },
-  { date: "May '25", fnb: 250, absa: 240, standard: 260, nedbank: 245 },
-  { date: "Jun '25", fnb: 300, absa: 290, standard: 310, nedbank: 295 },
-  { date: "Jul '25", fnb: 280, absa: 270, standard: 290, nedbank: 275 },
-  { date: "Aug '25", fnb: 400, absa: 380, standard: 420, nedbank: 390 },
-  { date: "Sep '25", fnb: 350, absa: 330, standard: 370, nedbank: 340 },
-]
+  { date: "Jan '25", ts: synthTsFromLabel("Jan '25"), fnb: 100, absa: 95, standard: 105, nedbank: 98, coinbase: 102 },
+  { date: "Feb '25", ts: synthTsFromLabel("Feb '25"), fnb: 150, absa: 145, standard: 155, nedbank: 148, coinbase: 152 },
+  { date: "Mar '25", ts: synthTsFromLabel("Mar '25"), fnb: 200, absa: 190, standard: 210, nedbank: 195, coinbase: 205 },
+  { date: "Apr '25", ts: synthTsFromLabel("Apr '25"), fnb: 180, absa: 175, standard: 185, nedbank: 178, coinbase: 182 },
+  { date: "May '25", ts: synthTsFromLabel("May '25"), fnb: 250, absa: 240, standard: 260, nedbank: 245, coinbase: 255 },
+  { date: "Jun '25", ts: synthTsFromLabel("Jun '25"), fnb: 300, absa: 290, standard: 310, nedbank: 295, coinbase: 305 },
+  { date: "Jul '25", ts: synthTsFromLabel("Jul '25"), fnb: 280, absa: 270, standard: 290, nedbank: 275, coinbase: 285 },
+  { date: "Aug '25", ts: synthTsFromLabel("Aug '25"), fnb: 400, absa: 380, standard: 420, nedbank: 390, coinbase: 410 },
+  { date: "Sep '25", ts: synthTsFromLabel("Sep '25"), fnb: 350, absa: 330, standard: 370, nedbank: 340, coinbase: 360 },
+].filter(row => row.ts !== null) as Array<{ date: string; ts: number; fnb: number; absa: number; standard: number; nedbank: number; coinbase: number }>
 
 // Financial Compliance Dashboard - Main Component (CI Test)
 // Dashboard button styling - keep original sizing, only change colors
@@ -109,10 +483,244 @@ const dashboardBtnClass = "border-[#AFC8FF] text-black bg-[#AFC8FF] hover:bg-[#9
 // Dashboard CTA button styling - pastel blue bg + black text for the 13 specific CTA buttons
 const dashboardCtaBtnClass = "bg-[#AFC8FF] text-black hover:bg-[#9FBCFF] active:bg-[#95B4FF] ring-1 ring-inset ring-[#8FB3FF]/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6FA0FF] shadow-sm text-[9px] h-5 px-2 font-normal rounded-full disabled:bg-[#AFC8FF]/60 disabled:text-black/60 disabled:ring-[#8FB3FF]/50 disabled:cursor-not-allowed disabled:opacity-100"
 
+// Custom hook for auto-resizing textarea
+function useAutosizeTextarea(
+  ref: React.RefObject<HTMLTextAreaElement>,
+  value: string,
+  opts: { minPx?: number; maxVh?: number } = {}
+) {
+  const { minPx = 112, maxVh = 40 } = opts;
+
+  React.useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    // apply min/max every run (cheap & avoids CSS drift)
+    el.style.minHeight = `${minPx}px`;
+    el.style.maxHeight = `${maxVh}vh`;
+
+    // measure -> grow to content, clamped by CSS max-height
+    el.style.height = "auto";
+    const next = el.scrollHeight;
+    el.style.height = next + "px";
+
+    // show scrollbar only when clamped
+    const computed = getComputedStyle(el);
+    const maxPx = parseFloat(computed.maxHeight);
+    el.style.overflowY = el.scrollHeight > maxPx ? "auto" : "hidden";
+  }, [ref, value, minPx, maxVh]);
+
+  // keep height sensible on viewport changes
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const onResize = () => {
+      el.style.height = "auto";
+      el.style.height = el.scrollHeight + "px";
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [ref]);
+}
+
+// Permissive overview parser for leadership calculation (independent from chart)
+const OverviewLoose = z.object({
+  venue: z.string().optional(),
+  symbol: z.string().optional(),
+  asOf: z.string().optional(),
+  ticker: z.object({
+    bid: z.union([z.number(), z.string()]).optional(),
+    ask: z.union([z.number(), z.string()]).optional(),
+    mid: z.union([z.number(), z.string()]).optional(),
+    ts:  z.string().optional(),
+  }).optional(),
+  ohlcv: z.array(z.array(z.any())).default([]),
+  error: z.string().optional(),
+});
+
+// Hard-en timestamp normalization to UTC midnight
+function toMsUtcMidnight(ts: number | string): number {
+  const n = typeof ts === 'string' ? Number(ts) : ts;
+  const ms = n < 1e12 ? n * 1000 : n;        // s → ms
+  const d = new Date(ms);
+  // clamp to 00:00:00Z
+  const utc = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+  return utc;
+}
+
+
+// NormalizedOverview and normalizeOverview now imported from shared/series
+
+async function fetchOverviewLoose(venue: string, url: string): Promise<NormalizedOverview | null> {
+  try {
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) return null;
+    const json = await res.json();
+    const parsed = OverviewLoose.safeParse(json);
+    const data = parsed.success ? parsed.data : json as any;
+    const norm = normalizeOverview({ venue: data.venue || venue, ohlcv: data.ohlcv || [] });
+    return norm.ohlcv.length > 0 ? norm : null;
+  } catch {
+    return null;
+  }
+}
+
+// VenueKey now imported from shared/venues
+
+function computeLeadershipFromOverviews(aligned: Record<string, Array<[number, number | null]>>) {
+  const lc = latestCommonIndex(aligned, VENUES);
+  
+  if (!lc.values) {
+    return { leader: null as VenueKey | null, pct: null as number | null, venues: 0 };
+  }
+  
+  // Find highest price (leader)
+  const entries = Object.entries(lc.values) as [VenueKey, number][];
+  const [leader, highestPrice] = entries.reduce((max, [venue, price]) => 
+    price > max[1] ? [venue, price] : max, ['binance' as VenueKey, 0]);
+  
+  // Calculate spread percentage
+  const prices = Object.values(lc.values);
+  const minPrice = Math.min(...prices);
+  const maxPrice = Math.max(...prices);
+  const spread = ((maxPrice - minPrice) / minPrice) * 100;
+  
+  // Debug logging
+  if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+    console.log(`[leader] date=${lc.ts ? new Date(lc.ts).toISOString() : null} leader=${leader} spread=${spread.toFixed(1)}%`);
+  }
+  
+  return { 
+    leader, 
+    pct: Number(spread.toFixed(1)), 
+    venues: entries.length 
+  };
+}
+
 export default function CursorDashboard() {
   const [activeTab, setActiveTab] = useState<"agents" | "dashboard">("agents")
   const [selectedTimeframe, setSelectedTimeframe] = useState<"30d" | "6m" | "1y" | "ytd">("ytd")
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
+  const [isDesktop, setIsDesktop] = useState(false)
+  const [isInputFocused, setIsInputFocused] = useState(false)
+  const [activeAgent, setActiveAgent] = useState<string | null>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  
+  // Console banner for debugging
+  React.useEffect(() => {
+    console.log('🚀 ACD Monitor Dashboard Loaded');
+    console.log(`[env] PROXY_HOST=${process.env.NEXT_PUBLIC_CRYPTO_PROXY_BASE || 'undefined'}`);
+    console.log(`[env] PREVIEW_URL=${window.location.origin}`);
+    console.log(`[env] DEBUG_MODE=${process.env.NEXT_PUBLIC_UI_DEBUG || 'false'}`);
+    console.log(`[env] DATA_MODE=${process.env.NEXT_PUBLIC_DATA_MODE || 'undefined'}`);
+    console.log(`[env] ENABLE_COINBASE=${process.env.NEXT_PUBLIC_ENABLE_COINBASE || 'false'}`);
+    console.log("[DEPLOY_PROOF] preview pipeline ok");
+  }, []);
+  
+  // Leadership state (independent from chart)
+  const [leadership, setLeadership] = React.useState<{leader: VenueKey|null; pct: number|null; venues: number; ranking?: {table: Array<{venue: VenueKey; wins: number; pct: number}>}}>({ leader: null, pct: null, venues: 0 });
+  
+  
+  // Helper function to truncate text to specified length
+  const truncateText = (text: string, maxLength: number = 40) => {
+    return text.length > maxLength ? text.slice(0, maxLength - 1).trimEnd() + "…" : text;
+  };
+
+  // Series adapter: convert exchange data to chart format
+  // Types for the new chart series function
+  type Venue = 'binance'|'okx'|'bybit'|'kraken'|'coinbase';
+  type OhlcvBar = [number|string, number, number, number, number, number?];
+
+  // Series adapter: convert exchange data to chart format with proper timestamp alignment
+  const createChartSeries = (successfulExchanges: Array<{ venue: string; data: any }>) => {
+    const ytdAxis = buildYtdAxis();
+    const startMs = ytdAxis[0];
+    const endMs = ytdAxis[ytdAxis.length - 1] + DAY_MS;
+
+    // Map<venue, Map<dayMs, close>>
+    const venueMap: Record<string, Map<number, number>> = {};
+
+    for (const ex of successfulExchanges) {
+      const venue = ex.venue;
+      const ohlcvData = pickOhlcv(ex);
+
+      if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+        const isArr = Array.isArray(ohlcvData);
+        console.log(`[${venue}] picked OHLCV isArray=${isArr} len=${isArr ? ohlcvData.length : 0}`);
+        // dump minimal shape so we don't blow logs
+        if (!isArr) {
+          const skim = JSON.stringify(ex?.data ?? ex, null, 2);
+          console.log(`[${venue}] non-array OHLCV shape (first 800 chars):`, skim.slice(0, 800));
+        }
+
+        // Add targeted debug for Coinbase bar shapes
+        if (venue === 'coinbase' && ohlcvData.length > 0) {
+          const first = ohlcvData[0];
+          const second = ohlcvData[1];
+          console.log('[coinbase first two bars]', {
+            type0: first && (Array.isArray(first) ? 'array' : typeof first),
+            keys0: first && !Array.isArray(first) ? Object.keys(first).slice(0, 8) : undefined,
+            sample0: first,
+            type1: second && (Array.isArray(second) ? 'array' : typeof second),
+            keys1: second && !Array.isArray(second) ? Object.keys(second).slice(0, 8) : undefined,
+          });
+        }
+      }
+
+      const m = new Map<number, number>();
+
+      for (const bar of ohlcvData) {
+        const { ts, close } = readBar(bar);
+        if (ts == null || close == null) continue;
+
+        const dayKey = toMidnightMs(ts); // your existing normalizer (sec|ms|ISO → UTC midnight ms)
+        if (dayKey == null) continue;
+
+        if (dayKey >= startMs && dayKey < endMs) {
+          m.set(dayKey, close);
+        }
+      }
+      venueMap[venue] = m;
+    }
+
+    if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+      const jan20 = Date.UTC(2025, 0, 20);
+      console.log('[axis]', new Date(startMs).toISOString(), '→', new Date(endMs).toISOString(), 'days=', ytdAxis.length);
+      
+      // Coinbase sample probe
+      const cb = successfulExchanges.find(e => e.venue === 'coinbase');
+      const sample = cb?.data?.ohlcv?.[0];
+      console.log('[coinbase sample]', sample, 'isArray=', Array.isArray(sample));
+      
+      for (const v of ['binance','okx','bybit','kraken','coinbase']) {
+        const m = venueMap[v];
+        const size = m?.size ?? 0;
+        const keys = m ? Array.from(m.keys()).sort((a,b)=>a-b) : [];
+        console.log(`[${v}] size=${size} hasJan20=${m?.has(jan20) ?? false}`,
+          size ? `first=${new Date(keys[0]).toISOString()} last=${new Date(keys.at(-1)!).toISOString()}` : '');
+      }
+    }
+
+    // Build chart rows with numeric ts + venue keys
+    const rows = ytdAxis.map((ts) => {
+      const row: any = {
+        ts,
+        date: new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      };
+      for (const v of Object.keys(venueMap)) {
+        row[v] = venueMap[v].get(ts) ?? null;
+      }
+      return row;
+    });
+
+    // Coinbase sanity check after chartData is built
+    if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+      const firstWithCb = rows.find(p => p.coinbase != null);
+      console.log('[coinbase sanity]', !!firstWithCb, firstWithCb?.ts, firstWithCb?.coinbase);
+    }
+
+    return { rows, venueMap, axis: ytdAxis };
+  };
   
   // Risk summary state
   const [riskSummary, setRiskSummary] = useState<RiskSummary | null>(null)
@@ -123,6 +731,9 @@ export default function CursorDashboard() {
   const [metricsOverview, setMetricsOverview] = useState<MetricsOverview | null>(null)
   const [metricsLoading, setMetricsLoading] = useState(false)
   const [metricsError, setMetricsError] = useState<string | null>(null)
+  
+  // Exchange data state for live chart (using context)
+  const { exchangeData, setExchangeData, exchangeDataLoading, setExchangeDataLoading, exchangeDataError, setExchangeDataError, availableUiVenues, setAvailableUiVenues } = useExchangeData()
   
   // Health run state
   const [healthRun, setHealthRun] = useState<HealthRun | null>(null)
@@ -215,8 +826,35 @@ export default function CursorDashboard() {
   >("overview")
 
   // Add state for selected agent type
-  const [selectedAgent, setSelectedAgent] = useState("Jurisdiction")
+  const [selectedAgent, setSelectedAgent] = useState("Europe")
+  const [selectedIndustry, setSelectedIndustry] = useState("Crypto")
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([])
+
+  // Helper function to map region names to acronyms
+  const getRegionAcronym = (regionName: string): string => {
+    const mapping: Record<string, string> = {
+      "Europe": "EU",
+      "South Africa": "SA", 
+      "United States": "USA",
+      "Australia": "AUS"
+    }
+    return mapping[regionName] || "EU"
+  }
+
+  // Helper function to map industry names to acronyms
+  const getIndustryAcronym = (industryName: string): string => {
+    const mapping: Record<string, string> = {
+      "All": "All",
+      "Travel & Hospitality": "Travel",
+      "E-commerce": "E-com",
+      "Shipping & Logistics": "Logistics",
+      "Media & Advertising": "Media",
+      "Real-Estate": "Real",
+      "Telecommunications": "Telecom",
+      "Financial services": "Finance"
+    }
+    return mapping[industryName] || "Crypto"
+  }
 
   // Configuration input field states
   const [changeThreshold, setChangeThreshold] = useState("5%")
@@ -236,6 +874,18 @@ export default function CursorDashboard() {
   const [hasEngaged, setHasEngaged] = useState<boolean>(false)
   const [isAssistantTyping, setIsAssistantTyping] = useState<boolean>(false)
   
+  // track whether at least one user message has been sent in this session
+  const [hasStartedChat, setHasStartedChat] = useState(false)
+
+  // if you already have `messages` state, you can also derive it:
+  const chatStartedFromHistory = useMemo(
+    () => messages?.some(m => m.type === 'user') ?? false,
+    [messages]
+  )
+
+  // prefer explicit flip on first send; keep derived as safety net
+  const chatStarted = hasStartedChat || chatStartedFromHistory
+  
   // Upload menu state
   const [isUploadMenuOpen, setIsUploadMenuOpen] = useState<boolean>(false)
   const [uploadMenuAnchorRef, setUploadMenuAnchorRef] = useState<HTMLButtonElement | null>(null)
@@ -246,6 +896,10 @@ export default function CursorDashboard() {
   // Role dropdown state
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState<boolean>(false)
   const [roleDropdownFocusIndex, setRoleDropdownFocusIndex] = useState<number>(-1)
+
+  // Industry dropdown state
+  const [isIndustryDropdownOpen, setIsIndustryDropdownOpen] = useState<boolean>(false)
+  const [industryDropdownFocusIndex, setIndustryDropdownFocusIndex] = useState<number>(-1)
   
   // Dual-trigger dropdown refs and state
   const triggerClusterRef = useRef<HTMLDivElement | null>(null)
@@ -254,9 +908,60 @@ export default function CursorDashboard() {
   const firstOptionRef = useRef<HTMLButtonElement | null>(null)
   const lastTriggerUsed = useRef<'icon' | 'text'>('text')
 
+  // Industry dropdown refs
+  const industryTriggerRef = useRef<HTMLButtonElement | null>(null)
+  
+  // Messages scroll ref
+  const scrollRef = useRef<HTMLDivElement | null>(null)
+
+  // Activate auto-resize for textarea
+  useAutosizeTextarea(textareaRef, inputValue, { minPx: 112, maxVh: 40 })
+
+  // Scroll to bottom helper
+  function scrollToBottom(behavior: ScrollBehavior = 'auto') {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollTo({ top: el.scrollHeight, behavior });
+  }
+
   useEffect(() => {
     setIsClient(true)
   }, [])
+
+  // Detect desktop for autoFocus (avoid mobile zoom)
+  useEffect(() => {
+    const checkDesktop = () => {
+      setIsDesktop(window.innerWidth >= 1024)
+    }
+    checkDesktop()
+    window.addEventListener('resize', checkDesktop)
+    return () => window.removeEventListener('resize', checkDesktop)
+  }, [])
+
+  // Manual focus for desktop (after isDesktop is determined)
+  useEffect(() => {
+    if (isDesktop && textareaRef.current) {
+      textareaRef.current.focus()
+    }
+  }, [isDesktop])
+
+  // Restore focus after assistant finishes typing (desktop only)
+  useEffect(() => {
+    if (isDesktop && !isAssistantTyping && textareaRef.current) {
+      // Small delay to ensure the UI has updated
+      setTimeout(() => {
+        if (textareaRef.current) {
+          textareaRef.current.focus()
+        }
+      }, 100)
+    }
+  }, [isAssistantTyping, isDesktop])
+
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    if (!scrollRef.current) return;
+    scrollToBottom('smooth');
+  }, [messages.length])
 
   // Handle click outside to close upload menu and role dropdown
   useEffect(() => {
@@ -269,16 +974,18 @@ export default function CursorDashboard() {
         // Check if click is inside trigger cluster or dropdown
         if (triggerClusterRef.current?.contains(target)) return
         if (document.getElementById('role-dropdown')?.contains(target)) return
+        if (document.getElementById('industry-dropdown')?.contains(target)) return
         closeRoleDropdown()
+        closeIndustryDropdown()
         restoreFocusToTrigger(lastTriggerUsed.current)
       }
     }
 
-    if (isUploadMenuOpen || isRoleDropdownOpen) {
+    if (isUploadMenuOpen || isRoleDropdownOpen || isIndustryDropdownOpen) {
       document.addEventListener('mousedown', handleClickOutside)
       return () => document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [isUploadMenuOpen, uploadMenuAnchorRef, isRoleDropdownOpen])
+  }, [isUploadMenuOpen, uploadMenuAnchorRef, isRoleDropdownOpen, isIndustryDropdownOpen])
 
   // Focus first option when opening dropdown
   useEffect(() => {
@@ -322,10 +1029,169 @@ export default function CursorDashboard() {
     fetchRiskSummary()
   }, [selectedTimeframe, isClient])
 
+  // Helper function to fetch exchange data with proper error handling
+  const fetchExchangeData = async (venue: string, url: string) => {
+    try {
+      const data = await fetchTyped(url, BinanceOverviewSchema)
+      const ohlcvLength = (data as any)?.ohlcv?.length ?? 0
+      console.log(`✅ [UI Frontend] ${venue} OHLCV length: ${ohlcvLength}`)
+      return { venue, ok: true, data }
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error)
+      console.log(`❌ [UI Frontend] ${venue} fetch failed: ${errorMsg}`)
+      return { venue, ok: false, error: errorMsg }
+    }
+  }
+
   // Fetch metrics overview data when timeframe changes
+  // Fetch all exchange overview data (preview only)
+  const fetchExchangeOverview = async () => {
+    if (!isClient) return
+    
+    setExchangeDataLoading(true)
+    setExchangeDataError(null)
+    
+    try {
+      console.log(`🔍 [UI Frontend] Starting multi-exchange overview fetch for timeframe: ${selectedTimeframe}...`)
+      
+      // Fetch exchanges in parallel with robust error handling
+      const fetchPromises = [
+        fetchExchangeData('binance', `/exchanges/binance/overview?symbol=BTCUSDT&tf=${selectedTimeframe}`),
+        fetchExchangeData('okx', `/exchanges/okx/overview?symbol=BTCUSDT&tf=${selectedTimeframe}`),
+        fetchExchangeData('bybit', `/exchanges/bybit/overview?symbol=BTCUSDT&tf=${selectedTimeframe}`),
+        fetchExchangeData('kraken', `/exchanges/kraken/overview?symbol=BTCUSDT&tf=${selectedTimeframe}`)
+      ];
+      
+      // Add Coinbase only if enabled in Preview
+      if (process.env.NEXT_PUBLIC_ENABLE_COINBASE === 'true') {
+        fetchPromises.push(fetchExchangeData('coinbase', `/exchanges/coinbase/overview?symbol=BTC-USD&tf=${selectedTimeframe}`));
+      }
+      
+      const results = await Promise.allSettled(fetchPromises)
+      
+      // Extract successful results
+      const successfulExchanges = results
+        .map(result => result.status === 'fulfilled' ? result.value : null)
+        .filter((result): result is { venue: string; ok: true; data: any } => 
+          result !== null && result.ok === true
+        )
+      
+      
+      console.log('[UI Frontend] venues fetched:', VENUES)
+      
+      // Map fulfilled results to raw data
+      const raw: Partial<Record<VenueKey, any>> = {};
+      for (const r of results) {
+        if (r.status === 'fulfilled' && r.value.ok) {
+          raw[r.value.venue as VenueKey] = r.value.data;
+        }
+      }
+      
+      // Ensure all keys present (null if missing) and normalize
+      const normalized: Record<VenueKey, NormalizedOverview | null> = {
+        binance: raw.binance ? normalizeOverview({ venue: 'binance', ohlcv: raw.binance.ohlcv }) : null,
+        okx: raw.okx ? normalizeOverview({ venue: 'okx', ohlcv: raw.okx.ohlcv }) : null,
+        bybit: raw.bybit ? normalizeOverview({ venue: 'bybit', ohlcv: raw.bybit.ohlcv }) : null,
+        kraken: raw.kraken ? normalizeOverview({ venue: 'kraken', ohlcv: raw.kraken.ohlcv }) : null,
+        coinbase: raw.coinbase ? normalizeOverview({ venue: 'coinbase', ohlcv: raw.coinbase.ohlcv }) : null,
+      };
+      
+      // Build YTD axis (Jan 1 to yesterday UTC midnight)
+      const now = new Date();
+      const ytdStart = new Date('2025-01-01T00:00:00Z').getTime();
+      const ytdEnd = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0).getTime();
+      
+      const ytdAxis = buildAxis(ytdStart, ytdEnd);
+      
+      // Align all series to the common axis
+      const seriesData: Record<string, Array<[number, number | null]>> = {};
+      for (const venue of VENUES) {
+        seriesData[venue] = normalized[venue]?.ohlcv ?? [];
+      }
+      
+      const aligned = alignOnAxis(seriesData, ytdAxis);
+      
+      // Debug logging
+      if (process.env.NEXT_PUBLIC_DEBUG_MODE === 'true' || process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+        console.log('[axis]', { days: ytdAxis.length, first: new Date(ytdAxis[0]).toISOString(), last: new Date(ytdAxis.at(-1)!).toISOString() });
+        for (const v of VENUES) {
+          const nonNull = aligned[v].reduce((a, [,x]) => a + (Number.isFinite(x as number) ? 1 : 0), 0);
+          console.log(`[${v}]`, { nonNull });
+        }
+        
+        // Sample logging for Jan 20, 2025
+        const jan20Ts = Date.UTC(2025, 0, 20);
+        const jan20Idx = ytdAxis.findIndex(ts => ts === jan20Ts);
+        if (jan20Idx >= 0) {
+          const sample: Record<string, number | null> = {};
+          for (const v of VENUES) {
+            sample[v] = aligned[v][jan20Idx]?.[1] ?? null;
+          }
+          console.log('[sample]', `ts=${new Date(jan20Ts).toISOString()}`, sample);
+        }
+        
+        // Chart counts
+        const counts: Record<string, number> = {};
+        for (const v of VENUES) {
+          counts[v] = aligned[v].filter(([,x]) => Number.isFinite(x as number)).length;
+        }
+        console.log('[chart] counts:', counts);
+      }
+      
+      // Use new createChartSeries with proper timestamp alignment
+      const { rows: chartData, venueMap, axis } = createChartSeries(successfulExchanges);
+      
+      // Update context with all venues
+      setAvailableUiVenues(successfulExchanges.map(x => x.venue) as any[])
+      setExchangeData(chartData)
+      
+      // Calculate leader from aligned data
+      const leader = computeLeadershipFromAligned(chartData, successfulExchanges.map(x => x.venue));
+            setLeadership({ 
+              leader: leader.venue as VenueKey | null, 
+              pct: leader.score ? (leader.score * 100) : null, 
+              venues: successfulExchanges.length,
+              ranking: leader.ranking ? {
+                table: leader.ranking.table.map(r => ({
+                  venue: r.venue as VenueKey,
+                  wins: r.wins,
+                  pct: r.pct
+                }))
+              } : undefined
+            })
+      
+      // Clear any previous errors
+      if (exchangeDataError) {
+        setExchangeDataError(null)
+      }
+      
+    } catch (error) {
+      console.error('❌ [UI Frontend] Exchange overview fetch failed:', error)
+      setExchangeDataError('Exchange data temporarily unavailable')
+      
+      // Fallback to demo data if demo mode is enabled
+      if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') {
+        console.log(`🔄 [UI Frontend] Error occurred, falling back to demo data`)
+        const demoData = getAnalyticsData()
+        setExchangeData(demoData)
+        setAvailableUiVenues(['binance', 'coinbase', 'bybit', 'kraken'] as UiVenue[])
+        setExchangeDataError(null)
+      }
+    }
+    
+    setExchangeDataLoading(false)
+  }
+
   useEffect(() => {
     const fetchMetricsOverview = async () => {
       if (!isClient) return
+      
+      // Always fetch live exchange overviews to populate context + chart
+      await fetchExchangeOverview()
+      
+      // (Optional) If you still need legacy metrics for other widgets,
+      // compute them AFTER fetchExchangeOverview() so leadership can use live data.
+      // Do NOT return early; let the rest of the effect proceed.
       
       setMetricsLoading(true)
       setMetricsError(null)
@@ -402,6 +1268,25 @@ export default function CursorDashboard() {
     fetchDataSources()
   }, [isClient])
 
+
+  // API events response state
+  const [apiEventsResponse, setApiEventsResponse] = React.useState<unknown>(null);
+
+  // Fetch environment events
+  useEffect(() => {
+    const loadEnvEvents = async () => {
+      try {
+        const res = await fetch(`/api/events?timeframe=${selectedTimeframe}`, { cache: "no-store" });
+        const json = await res.json().catch(() => ({}));
+        setApiEventsResponse(json);
+      } catch (error) {
+        setApiEventsResponse(null);
+      }
+    };
+
+    loadEnvEvents();
+  }, [selectedTimeframe]);
+
   // Close calendar when switching to agents tab and reset sidebar when switching to dashboard
   const handleTabChange = (tab: "agents" | "dashboard") => {
     setActiveTab(tab)
@@ -416,6 +1301,14 @@ export default function CursorDashboard() {
     const messageContent = customMessage || inputValue.trim()
     if (!messageContent) return
 
+    // Remove focus from input during message sending (desktop only)
+    if (isDesktop && textareaRef.current) {
+      textareaRef.current.blur()
+    }
+
+    // Clear input immediately
+    setInputValue("")
+    
     // Show typing loader immediately
     setIsAssistantTyping(true)
 
@@ -429,6 +1322,11 @@ export default function CursorDashboard() {
 
     setMessages((prev) => [...prev, userMessage])
     setHasEngaged(true)
+    // once the first message is actually sent, lock this in
+    setHasStartedChat(true)
+    
+    // Scroll to bottom after adding user message
+    requestAnimationFrame(() => scrollToBottom('auto'))
 
     // Check if we should use the API or local mock
     const useApi = process.env.NEXT_PUBLIC_AGENT_CHAT_ENABLED === 'true'
@@ -616,8 +1514,6 @@ It would also be helpful if you described:
       setMessages((prev) => [...prev, agentResponse])
     }, 1000)
     }
-
-    setInputValue("")
   }
 
   // Helper function to copy message content to clipboard
@@ -911,8 +1807,8 @@ It would also be helpful if you described:
   const closeRoleDropdown = () => setIsRoleDropdownOpen(false)
   
   const restoreFocusToTrigger = (lastTrigger: 'icon' | 'text') => {
-    if (lastTrigger === 'icon') triggerIconRef.current?.focus()
-    else triggerTextRef.current?.focus()
+    // Both default and chat views now use unified button with triggerIconRef
+    triggerIconRef.current?.focus()
   }
 
   const handleRoleDropdownClose = () => {
@@ -923,6 +1819,16 @@ It would also be helpful if you described:
   const handleRoleSelect = (role: string) => {
     setSelectedAgent(role)
     handleRoleDropdownClose()
+  }
+
+  // Industry dropdown functions
+  const openIndustryDropdown = () => setIsIndustryDropdownOpen(true)
+  const closeIndustryDropdown = () => setIsIndustryDropdownOpen(false)
+  
+  const handleIndustrySelect = (industry: string) => {
+    setSelectedIndustry(industry)
+    setIsIndustryDropdownOpen(false)
+    setIndustryDropdownFocusIndex(-1)
   }
 
   const handleRoleDropdownKeyDown = (event: React.KeyboardEvent) => {
@@ -1030,7 +1936,140 @@ It would also be helpful if you described:
     )
   }
 
-  const currentData = getAnalyticsData()
+  // --- Environment events (single source of truth) ---
+  type EnvEvent = {
+    ts: number;          // ms UTC
+    label: string;       // short title for the bar + tooltip
+    desc?: string;       // 1-line impact note for tooltip
+    color: string;       // used for pill + bar color mapping
+  };
+
+  const ENV_EVENTS = [
+    {
+      ts: Date.parse('2025-01-20T00:00:00Z'),
+      title: 'Inauguration Surge',
+      subtitle: 'U.S. admin change; risk-on bid',
+      color: '#fecaca',
+    },
+    {
+      ts: Date.parse('2025-03-06T00:00:00Z'),
+      title: 'Strategic BTC Reserve EO',
+      subtitle: 'Treasury acquisition directive',
+      color: '#fed7aa',
+    },
+    {
+      ts: Date.parse('2025-07-18T00:00:00Z'),
+      title: 'GENIUS Act Rollout',
+      subtitle: 'Regulatory framework in effect',
+      color: '#bbf7d0',
+    },
+  ] as const;
+
+  const envByTs: Record<number, typeof ENV_EVENTS[number]> =
+    Object.fromEntries(ENV_EVENTS.map(e => [e.ts, e]));
+
+  // Helper function to format date with year
+  const fmtDayYear = (ms: number) =>
+    new Date(ms).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
+
+  // helper: same calendar day in UTC
+  const sameUtcDay = (a: number, b: number) => {
+    const da = new Date(a), db = new Date(b);
+    return (
+      da.getUTCFullYear() === db.getUTCFullYear() &&
+      da.getUTCMonth() === db.getUTCMonth() &&
+      da.getUTCDate() === db.getUTCDate()
+    );
+  };
+
+  // --- Event band sizing (days -> ms) ---
+  const bandDaysByTf: Record<string, number> = { '30d': 7, '6m': 21, 'ytd': 28, '1y': 35 };
+  const dayMs = 24 * 60 * 60 * 1000;
+  const bandHalfMs = ((bandDaysByTf[selectedTimeframe] ?? 4) * dayMs) / 2;
+  const mkBand = (centerTs: number) => ({ x1: centerTs - bandHalfMs, x2: centerTs + bandHalfMs });
+
+  // --- Snap-to-event state ---
+  const [snapTs, setSnapTs] = useState<number | null>(null);
+  const SNAP_PX = 24; // tolerance in pixels
+
+  // Use live exchange data if available, otherwise fall back to static data
+  const currentData = exchangeData.length > 0 ? exchangeData : getAnalyticsData()
+
+  // Compute safe x-domain and guard rendering
+  const tsValues = currentData.map(r => r.ts).filter((n) => Number.isFinite(n));
+  const hasDomain = tsValues.length > 0;
+  const xMin = hasDomain ? Math.min(...tsValues) : undefined;
+  const xMax = hasDomain ? Math.max(...tsValues) : undefined;
+
+  // Build events for domain with proper UTC midnight ms keying
+  const toDayKey = toMidnightMs;
+  
+  function buildEventsForDomain(startMs: number, endMs: number, apiEvents: any[], seeded: any[], enableSeed: boolean) {
+    const all = [...apiEvents, ...(enableSeed ? seeded : [])]
+      .map(e => ({ ...e, day: toDayKey(e.date ?? e.ts ?? e.time) }))
+      .filter(e => e.day != null && e.day >= startMs && e.day < endMs);
+
+    const byTs: Record<number, any[]> = {};
+    for (const e of all) {
+      (byTs[e.day] ??= []).push(e);
+    }
+    return byTs;
+  }
+
+  // Fetch API events (already fetched JSON in `apiEventsResponse`)
+  const apiEvents = normalizeEvents(apiEventsResponse);
+  const enableSeed = process.env.NEXT_PUBLIC_SEED_EVENTS === 'true';
+  const sourceEvents = apiEvents.length > 0 ? apiEvents : SEED_EVENTS_YTD;
+
+  // Build events with proper keying
+  const byTs = Number.isFinite(xMin) && Number.isFinite(xMax)
+    ? buildEventsForDomain(xMin!, xMax!, apiEvents, SEED_EVENTS_YTD, enableSeed)
+    : {};
+
+  // Also build eventsByTs for tooltip lookup using ENV_EVENTS
+  const eventsByTs: Record<number, any[]> = {};
+  if (enableSeed) {
+    for (const event of ENV_EVENTS) {
+      const dayKey = toMidnightMs(event.ts);
+      if (dayKey != null) {
+        (eventsByTs[dayKey] ??= []).push(event);
+      }
+    }
+  }
+
+  // Filter to domain (prevents NaN / off-chart artifacts)
+  const validEvents = Number.isFinite(xMin) && Number.isFinite(xMax)
+    ? pickEventsInDomain(sourceEvents, xMin!, xMax!)
+    : [];
+
+  // Debug
+  if (process.env.NEXT_PUBLIC_UI_DEBUG === "true") {
+    const jan20 = Date.UTC(2025,0,20);
+    console.log("[ENV] domain", xMin, xMax, "api", apiEvents.length, "seed?", enableSeed, "render", validEvents.length);
+    console.log('[events] counts', Object.keys(byTs).length, 'hasJan20=', !!byTs[jan20]);
+    
+    // ENV_EVENTS debug
+    console.log('[ENV_EVENTS]', ENV_EVENTS.map(e => ({title: e.title, ts: e.ts, date: new Date(e.ts).toISOString()})));
+    console.log('[eventsByTs sample]', Object.keys(eventsByTs).slice(0,5));
+  }
+
+  // Leadership display (using independent state)
+  const leaderLabel = leadership.leader
+    ? (leadership.leader === "okx" ? "coinbase" : leadership.leader) // if UI uses Coinbase icon for OKX
+    : null;
+
+  const leadershipPctText =
+    leadership.pct != null ? `${Math.round(leadership.pct)}` : "N/A";
+
+  const leadershipCaption =
+    leadership.leader && leadership.venues >= 2
+      ? `Leader: ${leaderLabel}`
+      : "Requires multiple venues";
+
+  // Debug logging for leadership calculation
+  if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+    console.log("LEADERSHIP_RESULT", leadership);
+  }
 
   return (
     <div className="min-h-screen bg-[#0f0f10] text-[#f9fafb] font-sans p-4">
@@ -1061,12 +2100,18 @@ It would also be helpful if you described:
       {/* Header */}
       <header className="border-b border-[#1a1a1a] px-5 py-1.5 relative">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-<img 
-  src="/ninja-glow-positive.png" 
-  alt="Ninja Glow" 
-              className="h-14 sm:h-16 md:h-24 w-auto opacity-90 hover:opacity-100 transition-opacity -ml-3 sm:ml-0"
-/>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <button 
+              onClick={() => window.location.reload()}
+              className="cursor-pointer focus:outline-none"
+              aria-label="Refresh page"
+            >
+              <img 
+                src="/ninja-glow-positive.png" 
+                alt="Ninja Glow" 
+                className="h-14 sm:h-16 md:h-24 w-auto opacity-90 hover:opacity-100 transition-opacity -ml-3 sm:ml-0 flex-shrink-0 object-contain"
+              />
+            </button>
           </div>
 
           <nav className="flex gap-4 sm:gap-5 absolute left-1/2 transform -translate-x-1/2">
@@ -1127,7 +2172,7 @@ It would also be helpful if you described:
                       onClick={() => setActiveSidebarItem("configuration")}
                     >
                       <Settings className="w-3.5 h-3.5" />
-                      Configuration
+                      Settings
                     </div>
                   </div>
                 </div>
@@ -1141,21 +2186,21 @@ It would also be helpful if you described:
                     onClick={() => setActiveSidebarItem("data-sources")}
                   >
                     <Database className="w-3.5 h-3.5" />
-                    Data Sources
+                    Data
                   </div>
                   <div
                     className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "ai-economists" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
                     onClick={() => setActiveSidebarItem("ai-economists")}
                   >
                     <Bot className="w-3.5 h-3.5" />
-                    AI Agents
+                    Analysts
                   </div>
                   <div
                     className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "health-checks" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
                     onClick={() => setActiveSidebarItem("health-checks")}
                   >
                     <Zap className="w-3.5 h-3.5" />
-                    Health Checks
+                    Health
                   </div>
                 </nav>
 
@@ -1167,14 +2212,14 @@ It would also be helpful if you described:
                     onClick={() => setActiveSidebarItem("events-log")}
                   >
                     <ClipboardList className="w-3.5 h-3.5" />
-                    Events Log
+                    Events
                   </div>
                   <div
                     className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "billing" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
                     onClick={() => setActiveSidebarItem("billing")}
                   >
                     <CreditCard className="w-3.5 h-3.5" />
-                    Billing & Invoices
+                    Billing
                   </div>
                 </nav>
 
@@ -1186,14 +2231,14 @@ It would also be helpful if you described:
                     onClick={() => setActiveSidebarItem("compliance")}
                   >
                     <FileText className="w-3.5 h-3.5" />
-                    Compliance Reports
+                    Reports
                   </div>
                   <div
                     className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "contact" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
                     onClick={() => setActiveSidebarItem("contact")}
                   >
                     <MessageSquare className="w-3.5 h-3.5" />
-                    Contact Us
+                    Contact
                   </div>
                 </nav>
               </div>
@@ -1201,14 +2246,14 @@ It would also be helpful if you described:
           )}
 
           {/* Main Content */}
-          <main className={`${activeTab === "dashboard" ? "min-w-0 p-5" : "flex-1 pt-8 px-5 pb-5 max-w-5xl mx-auto"}`}>
+          <main className={`${activeTab === "dashboard" ? "min-w-0 p-5" : `flex-1 ${messages.length === 0 ? "pt-12" : "pt-6"} px-5 pb-5 max-w-5xl mx-auto`}`}>
             {activeTab === "agents" && (
               <div className="max-w-5xl mx-auto">
                 {/* <CHANGE> Added main headline for Agents tab - only show when no messages */}
                 {messages.length === 0 && (
-                  <div className="text-center mb-12">
+                  <div className="text-center mb-12 mt-8">
                     <h1 className="font-headline text-6xl md:text-6xl lg:text-7xl text-blue-50 font-light leading-tight max-w-4xl mx-auto">
-                      Algorithmic Collusion? Defensible.
+                      Algorithmic Collusion? Detectable.
                     </h1>
                   </div>
                 )}
@@ -1219,39 +2264,42 @@ It would also be helpful if you described:
                       <Bot className="w-4 h-4 text-[#86a789]" />
                       <span className="text-xs font-medium text-[#f9fafb]">{selectedAgent}</span>
                     </div>
-                    <p className="text-xs text-[#f9fafb]">{initialAgentMessage}</p>
+                    <AssistantBubble text={initialAgentMessage} />
                   </div>
                 )}
 
               {/* Chat Interface */}
-              <div className={`${hasEngaged ? "h-[60vh]" : "min-h-[45vh]"} flex flex-col mt-2`}>
+              <div className={`${hasEngaged ? "h-[calc(75vh+16px)]" : "min-h-[calc(50vh+16px)]"} flex flex-col mt-2`}>
                   {/* Chat Messages Area */}
                   {hasEngaged && (
-                    <div className="flex-1 overflow-y-auto mb-4 space-y-4">
+                    <div
+                      ref={scrollRef}
+                      className="flex-1 overflow-y-auto mb-4 space-y-4 messages-container pb-32 pt-6 chat-messages-container"
+                    >
                       {messages.map((message, index) => (
                         <div key={message.id} className="w-full">
                           {message.type === "agent" ? (
                             <div className="flex items-start gap-3">
-                              <div className="h-6 w-6 rounded-full flex items-center justify-center overflow-hidden bg-transparent mt-1 flex-shrink-0">
+                              <div className="h-24 w-24 rounded-full flex items-center justify-center overflow-hidden bg-transparent mt-1 flex-shrink-0">
                                 <Image
                                   src="/icons/icon-americas.png"
                                   alt="Agent"
-                                  width={24}
-                                  height={24}
-                                  className="h-4 w-4 object-contain"
+                                  width={96}
+                                  height={96}
+                                  className="h-18 w-18 object-contain"
                                 />
                               </div>
                               <div className="flex-1">
-                                <div className="text-xs text-[#f9fafb] leading-relaxed">{message.content}</div>
+                                <AssistantBubble text={message.content} />
                                 {/* Control icons for assistant messages (left-aligned) */}
                                 <div className="flex gap-2 mt-1 text-gray-400 hover:text-gray-600 cursor-pointer justify-start">
                                   <Copy 
-                                    className="w-3 h-3 hover:text-[#86a789]" 
+                                    className="w-3 h-3 lg:w-4 lg:h-4 hover:text-[#86a789]" 
                                     onClick={() => handleCopy(message.content)}
                                     aria-label="Copy"
                                   />
                                   <RefreshCw 
-                                    className="w-3 h-3 hover:text-[#86a789]" 
+                                    className="w-3 h-3 lg:w-4 lg:h-4 hover:text-[#86a789]" 
                                     onClick={() => handleRegenerate(index)}
                                     aria-label="Regenerate"
                                   />
@@ -1260,7 +2308,7 @@ It would also be helpful if you described:
                             </div>
                           ) : (
                             <div className="flex justify-end">
-                              <div className="max-w-[60%] bg-[#2a2a2a] rounded-lg px-3 py-2 text-xs text-[#f9fafb]">
+                              <div className="max-w-[60%] bg-[#2a2a2a] rounded-lg px-6 py-4 text-xs lg:text-base lg:leading-5 text-[#f9fafb]">
                                 {message.content}
                               </div>
                             </div>
@@ -1271,17 +2319,20 @@ It would also be helpful if you described:
                       {isAssistantTyping && (
                         <div className="w-full">
                           <div className="flex items-start gap-3">
-                            <div className="h-6 w-6 rounded-full flex items-center justify-center overflow-hidden bg-transparent mt-1 flex-shrink-0">
+                            <div className="h-24 w-24 rounded-full flex items-center justify-center overflow-hidden bg-transparent mt-1 flex-shrink-0">
                               <Image
                                 src="/icons/icon-americas.png"
                                 alt="Agent"
-                                width={24}
-                                height={24}
-                                className="h-4 w-4 object-contain"
+                                width={96}
+                                height={96}
+                                className="h-18 w-18 object-contain animate-scalePulse"
                               />
                             </div>
-                            <div className="flex-1 text-xs text-[#f9fafb] leading-relaxed">
-                              <div className="inline-block w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                            <div className="flex-1 text-xs lg:text-base lg:leading-5 text-[#f9fafb] leading-relaxed">
+                              <div className="flex items-center gap-2">
+                                <div className="inline-block w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                                <span className="text-gray-400 opacity-70">Thinking...</span>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -1290,26 +2341,46 @@ It would also be helpful if you described:
                   )}
 
                   {/* Input Area */}
-                  <div className={`${hasEngaged ? "mt-auto" : "flex flex-col items-center justify-center space-y-5"}`}>
+                  {!hasEngaged && (
+                    <div className={`composer ${chatStarted ? 'composer--tight' : ''} flex flex-col items-center justify-center space-y-5`}>
                   <div className="w-full space-y-3 mx-4 sm:mx-0">
                     <div className="agents-no-zoom-wrapper" data-testid="agents-no-zoom-wrapper">
                       <div className="relative">
                       <textarea
-                          placeholder="How can I help defend your algorithms today?"
+                          ref={textareaRef}
+                          placeholder="How can I help test your algorithm today?"
                           value={inputValue}
-                          onChange={(e) => setInputValue(e.target.value)}
+                          onChange={(e) => setInputValue(e.target.value.slice(0, 25000))}
+                          autoFocus={isDesktop}
+                          onFocus={() => setIsInputFocused(true)}
+                          onBlur={() => {
+                            setIsInputFocused(false)
+                            // Reset scroll position when keyboard dismisses on mobile
+                            if (!isDesktop) {
+                              setTimeout(() => {
+                                window.scrollTo(0, 0)
+                              }, 100)
+                            }
+                          }}
                           onKeyDown={(e) => {
                             if (e.key === "Enter" && !e.shiftKey) {
                               e.preventDefault()
                               handleSendMessage()
                             }
                           }}
-                          className="w-full h-28 bg-bg-tile rounded-lg text-[#f9fafb] pr-16 px-4 py-4 text-base md:text-base leading-5 placeholder:text-xs md:placeholder:text-base placeholder:text-[#71717a] resize-none focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50"
-                          style={{ caretColor: "transparent" }}
-                          rows={5}
+                          className="w-full bg-bg-tile rounded-lg text-[#f9fafb]
+                            px-4 pt-4 pb-16 md:pb-[76px] pr-16
+                            text-xs md:text-base leading-5
+                            placeholder:text-xs md:placeholder:text-base placeholder:text-[#71717a]
+                            whitespace-pre-wrap break-words
+                            resize-none overflow-y-hidden focus:outline-none
+                            shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50
+                            min-h-[112px] max-h-[40vh]"
+                          style={{ caretColor: "rgba(249, 250, 251, 0.8)" }}
+                          rows={1}
                         />
-                        {/* Blinking cursor overlay - only shows when empty */}
-                        {inputValue === "" && (
+                        {/* Blinking cursor overlay - only shows when empty, on mobile, and not focused */}
+                        {inputValue === "" && !isDesktop && !isInputFocused && (
                           <span
                             aria-hidden
                             className="pointer-events-none absolute left-4 top-4 h-[1em] md:h-[1.2em] w-[1px] md:w-[2px] bg-white animate-[blink_1s_steps(1)_infinite]"
@@ -1317,7 +2388,7 @@ It would also be helpful if you described:
                         )}
                         {/* Model selector - bottom left */}
                         <div ref={triggerClusterRef} className="absolute left-3 bottom-3 flex items-center gap-1.5">
-                          {/* ICON TRIGGER */}
+                          {/* UNIFIED GLOBE + TEXT BUTTON */}
                           <button
                             ref={triggerIconRef}
                             type="button"
@@ -1327,7 +2398,7 @@ It would also be helpful if you described:
                             aria-controls="role-dropdown"
                             aria-expanded={isRoleDropdownOpen}
                             aria-label="Select analysis mode"
-                            className="flex items-center justify-center p-1.5 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]"
+                            className="flex items-center gap-1.5 p-1.5 rounded-md bg-transparent border border-[#2a2a2a] hover:border-[#3a3a3a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]"
                           >
                             <Image
                               src="/icons/icon-americas.png"
@@ -1337,20 +2408,27 @@ It would also be helpful if you described:
                               draggable={false}
                               className="shrink-0"
                             />
+                            <span className="text-xs text-[#71717a] font-medium">
+                              {getRegionAcronym(selectedAgent)}
+                            </span>
+                            <ChevronDown className="w-3 h-3 text-[#71717a]" aria-hidden="true" />
                           </button>
 
-                          {/* TEXT TRIGGER */}
+                          {/* INDUSTRY BUTTON */}
                           <button
-                            ref={triggerTextRef}
+                            ref={industryTriggerRef}
                             type="button"
-                            onClick={(e) => { e.stopPropagation(); lastTriggerUsed.current = 'text'; openRoleDropdown(); }}
-                            onKeyDown={onTriggerKeyDown}
+                            onClick={(e) => { e.stopPropagation(); openIndustryDropdown(); }}
                             aria-haspopup="listbox"
-                            aria-controls="role-dropdown"
-                            aria-expanded={isRoleDropdownOpen}
-                            className="bg-transparent text-[10px] text-[#71717a] font-medium border-none outline-none cursor-pointer hover:text-[#a1a1aa] flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]"
+                            aria-controls="industry-dropdown"
+                            aria-expanded={isIndustryDropdownOpen}
+                            aria-label="Select industry"
+                            className="flex items-center gap-1.5 p-1.5 rounded-md bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]"
                           >
-                            {selectedAgent}
+                            <Factory className="w-4 h-4 text-[#71717a]" />
+                            <span className="text-[10px] text-[#71717a] font-medium">
+                              {getIndustryAcronym(selectedIndustry)}
+                            </span>
                             <ChevronDown className="w-3 h-3 text-[#71717a]" aria-hidden="true" />
                           </button>
                         </div>
@@ -1387,6 +2465,36 @@ It would also be helpful if you described:
                           </div>
                         )}
 
+                        {/* Industry Dropdown Menu */}
+                        {isIndustryDropdownOpen && (
+                          <div
+                            id="industry-dropdown"
+                            role="listbox"
+                            aria-label="Select industry"
+                            className="absolute z-50 left-3 top-12 w-40 rounded-md border border-white/10 bg-neutral-900/90 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-neutral-900/80"
+                            aria-orientation="vertical"
+                          >
+                            <div className="py-1">
+                              {["Crypto", "Travel & Hospitality", "E-commerce", "Shipping & Logistics", "Media & Advertising", "Real-Estate", "Telecommunications", "Financial services"].map((industry, index) => (
+                                <button
+                                  key={industry}
+                                  className={`flex items-center gap-2 px-3 py-2 text-sm text-gray-200 hover:text-white hover:bg-white/5 w-full text-left ${
+                                    industryDropdownFocusIndex === index ? 'bg-white/5 text-white' : ''
+                                  } ${selectedIndustry === industry ? 'bg-white/5' : ''}`}
+                                  onClick={() => {
+                                    setSelectedIndustry(industry)
+                                    closeIndustryDropdown()
+                                  }}
+                                  role="option"
+                                  aria-selected={selectedIndustry === industry}
+                                >
+                                  {industry}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
                         {/* Action buttons - bottom right */}
                         <div className="absolute right-3 bottom-3 flex gap-1.5">
                           <div className="relative">
@@ -1411,8 +2519,8 @@ It would also be helpful if you described:
                               >
                                 <div className="py-1">
                                   <button
-                                    className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#86a789] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
-                                      uploadMenuFocusIndex === 0 ? 'bg-zinc-800 text-[#86a789]' : ''
+                                    className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#a1a1aa] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
+                                      uploadMenuFocusIndex === 0 ? 'bg-zinc-800 text-[#a1a1aa]' : ''
                                     }`}
                                     onClick={() => handleUploadAction(0)}
                                     role="menuitem"
@@ -1421,8 +2529,8 @@ It would also be helpful if you described:
                                     Photo Library
                                   </button>
                                   <button
-                                    className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#86a789] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
-                                      uploadMenuFocusIndex === 1 ? 'bg-zinc-800 text-[#86a789]' : ''
+                                    className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#a1a1aa] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
+                                      uploadMenuFocusIndex === 1 ? 'bg-zinc-800 text-[#a1a1aa]' : ''
                                     }`}
                                     onClick={() => handleUploadAction(1)}
                                     role="menuitem"
@@ -1431,8 +2539,8 @@ It would also be helpful if you described:
                                     Take Photo or Video
                                   </button>
                                   <button
-                                    className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#86a789] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
-                                      uploadMenuFocusIndex === 2 ? 'bg-zinc-800 text-[#86a789]' : ''
+                                    className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#a1a1aa] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
+                                      uploadMenuFocusIndex === 2 ? 'bg-zinc-800 text-[#a1a1aa]' : ''
                                     }`}
                                     onClick={() => handleUploadAction(2)}
                                     role="menuitem"
@@ -1441,8 +2549,8 @@ It would also be helpful if you described:
                                     Choose Files
                                   </button>
                                   <button
-                                    className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#86a789] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
-                                      uploadMenuFocusIndex === 3 ? 'bg-zinc-800 text-[#86a789]' : ''
+                                    className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#a1a1aa] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
+                                      uploadMenuFocusIndex === 3 ? 'bg-zinc-800 text-[#a1a1aa]' : ''
                                     }`}
                                     onClick={() => handleUploadAction(3)}
                                     role="menuitem"
@@ -1481,7 +2589,7 @@ It would also be helpful if you described:
 
                       {/* Quick Action Buttons - only show when not engaged */}
                       {!hasEngaged && (
-                        <div className="space-y-4 mt-8">
+                        <div className="space-y-4 mt-6">
                       <p className="text-[10px] text-[#a1a1aa] text-center">Try these examples to get started</p>
 
                           <div className="flex flex-wrap gap-2 justify-center max-w-4xl mx-auto sm:flex-nowrap">
@@ -1490,7 +2598,7 @@ It would also be helpful if you described:
                               className="agents-quick-btn"
                             >
                               <Search className="w-2 h-2 md:w-2.5 md:h-2.5" />
-                              Analyze algorithms
+                              Audit my algorithm
                             </button>
                             <button 
                               type="button"
@@ -1504,21 +2612,247 @@ It would also be helpful if you described:
                               className="agents-quick-btn"
                             >
                               <Scale className="w-2 h-2 md:w-2.5 md:h-2.5" />
-                              Compliance check
+                              Compliance risks
                             </button>
                             <button 
                               type="button"
                               className="agents-quick-btn"
                             >
                               <ClipboardList className="w-2 h-2 md:w-2.5 md:h-2.5" />
-                              Court-ready report
+                              Evidence bundle
                             </button>
                       </div>
                     </div>
                       )}
                   </div>
                 </div>
+                  )}
               </div>
+
+              {/* Fixed Input Area for Chat State */}
+              {hasEngaged && (
+                <div className="fixed bottom-0 left-0 right-0 bg-black md:bg-[#0f0f10] border-t border-[#2a2a2a] z-50 fixed-input-container">
+                  <div className="max-w-5xl mx-auto px-5 py-4 pb-8 md:pb-4">
+                    <div className="w-full space-y-3">
+                      <div className="agents-no-zoom-wrapper" data-testid="agents-no-zoom-wrapper">
+                        <div className="relative">
+                          <textarea
+                            ref={textareaRef}
+                            placeholder="How can I help test your algorithm today?"
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value.slice(0, 25000))}
+                            autoFocus={isDesktop}
+                            onFocus={() => setIsInputFocused(true)}
+                            onBlur={() => {
+                              setIsInputFocused(false)
+                              // Reset scroll position when keyboard dismisses on mobile
+                              if (!isDesktop) {
+                                setTimeout(() => {
+                                  window.scrollTo(0, 0)
+                                }, 100)
+                              }
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" && !e.shiftKey) {
+                                e.preventDefault()
+                                handleSendMessage()
+                              }
+                            }}
+                            className="w-full bg-bg-tile rounded-lg text-[#f9fafb]
+                              px-4 pt-4 pb-16 md:pb-[76px] pr-16
+                              text-xs md:text-base leading-5
+                              placeholder:text-xs md:placeholder:text-base placeholder:text-[#71717a]
+                              whitespace-pre-wrap break-words
+                              resize-none overflow-y-hidden focus:outline-none
+                              shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50
+                              min-h-[112px] max-h-[40vh]"
+                            style={{ caretColor: "rgba(249, 250, 251, 0.8)" }}
+                            rows={1}
+                          />
+                          {/* Blinking cursor overlay - only shows when empty, on mobile, and not focused */}
+                          {inputValue === "" && !isDesktop && !isInputFocused && (
+                            <span
+                              aria-hidden
+                              className="pointer-events-none absolute left-4 top-4 h-[1em] md:h-[1.2em] w-[1px] md:w-[2px] bg-white animate-[blink_1s_steps(1)_infinite]"
+                            />
+                          )}
+                          {/* Model selector - bottom left */}
+                          <div ref={triggerClusterRef} className="absolute left-3 bottom-3 flex items-center gap-1.5">
+                            {/* UNIFIED GLOBE + TEXT BUTTON */}
+                            <button
+                              ref={triggerIconRef}
+                              type="button"
+                              onClick={(e) => { e.stopPropagation(); lastTriggerUsed.current = 'icon'; openRoleDropdown(); }}
+                              onKeyDown={onTriggerKeyDown}
+                              aria-haspopup="listbox"
+                              aria-controls="role-dropdown"
+                              aria-expanded={isRoleDropdownOpen}
+                              aria-label="Select analysis mode"
+                              className="flex items-center gap-1.5 p-1.5 rounded-md bg-transparent border border-[#2a2a2a] hover:border-[#3a3a3a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]"
+                            >
+                              <Image
+                                src="/icons/icon-americas.png"
+                                alt="Select analysis mode"
+                                width={18}
+                                height={18}
+                                draggable={false}
+                                className="shrink-0"
+                              />
+                              <span className="text-xs text-[#71717a] font-medium">
+                                {getRegionAcronym(selectedAgent)}
+                              </span>
+                              <ChevronDown className="w-3 h-3 text-[#71717a]" aria-hidden="true" />
+                            </button>
+
+                            {/* INDUSTRY BUTTON */}
+                            <button
+                              ref={industryTriggerRef}
+                              type="button"
+                              onClick={(e) => { e.stopPropagation(); openIndustryDropdown(); }}
+                              aria-haspopup="listbox"
+                              aria-controls="industry-dropdown"
+                              aria-expanded={isIndustryDropdownOpen}
+                              aria-label="Select industry"
+                              className="flex items-center gap-1.5 p-1.5 rounded-md bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]"
+                            >
+                              <Factory className="w-4 h-4 text-[#71717a]" />
+                              <span className="text-[10px] text-[#71717a] font-medium">
+                                {getIndustryAcronym(selectedIndustry)}
+                              </span>
+                              <ChevronDown className="w-3 h-3 text-[#71717a]" aria-hidden="true" />
+                            </button>
+
+                            {/* Role Dropdown */}
+                            {isRoleDropdownOpen && (
+                              <div
+                                id="role-dropdown"
+                                role="listbox"
+                                aria-label="Select analysis mode"
+                                className="absolute bottom-full mb-2 left-0 min-w-[200px] bg-zinc-800 border border-zinc-700 rounded-lg shadow-lg py-1 z-50"
+                              >
+                                {["Europe", "South Africa", "United States", "Australia"].map((role, index) => (
+                                  <div
+                                    key={role}
+                                    role="option"
+                                    aria-selected={selectedAgent === role}
+                                    tabIndex={index === 0 ? 0 : -1}
+                                    className={`px-3 py-2 text-sm cursor-pointer ${
+                                      roleDropdownFocusIndex === index ? 'bg-zinc-700 text-[#a1a1aa]' : 'text-zinc-300 hover:bg-zinc-700 hover:text-[#a1a1aa]'
+                                    }`}
+                                    onClick={() => handleRoleSelect(role)}
+                                  >
+                                    {role}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+
+                            {/* Industry Dropdown */}
+                            {isIndustryDropdownOpen && (
+                              <div
+                                id="industry-dropdown"
+                                role="listbox"
+                                aria-label="Select industry"
+                                className="absolute bottom-full mb-2 left-0 min-w-[200px] bg-zinc-800 border border-zinc-700 rounded-lg shadow-lg py-1 z-50"
+                              >
+                                {["Crypto", "Travel & Hospitality", "E-commerce", "Shipping & Logistics", "Media & Advertising", "Real-Estate", "Telecommunications", "Financial services"].map((industry, index) => (
+                                  <div
+                                    key={industry}
+                                    role="option"
+                                    aria-selected={selectedIndustry === industry}
+                                    tabIndex={index === 0 ? 0 : -1}
+                                    className={`px-3 py-2 text-sm cursor-pointer ${
+                                      industryDropdownFocusIndex === index ? 'bg-zinc-700 text-[#a1a1aa]' : 'text-zinc-300 hover:bg-zinc-700 hover:text-[#a1a1aa]'
+                                    }`}
+                                    onClick={() => handleIndustrySelect(industry)}
+                                  >
+                                    {industry}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Upload Button - bottom right before send */}
+                          <div className="absolute right-12 bottom-3 flex items-center gap-1.5">
+                            <button
+                              type="button"
+                              aria-label="Upload files"
+                              className="h-6 w-6 flex items-center justify-center cursor-pointer text-[#71717a] hover:text-[#a1a1aa] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10] transition-colors motion-reduce:transition-none"
+                              onClick={handleUploadMenuToggle}
+                            >
+                              <CloudUpload className="w-4 h-4" />
+                            </button>
+
+                            {/* Upload Menu */}
+                            {isUploadMenuOpen && (
+                              <div className="absolute bottom-full mb-2 right-0 min-w-[180px] bg-zinc-800 border border-zinc-700 rounded-lg shadow-lg py-1 z-50">
+                                <button
+                                  className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#a1a1aa] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
+                                    uploadMenuFocusIndex === 0 ? 'bg-zinc-800 text-[#a1a1aa]' : ''
+                                  }`}
+                                  onClick={() => handleUploadAction(0)}
+                                  role="menuitem"
+                                >
+                                  <FileText className="w-4 h-4" />
+                                  Upload Document
+                                </button>
+                                <button
+                                  className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#a1a1aa] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
+                                    uploadMenuFocusIndex === 1 ? 'bg-zinc-800 text-[#a1a1aa]' : ''
+                                  }`}
+                                  onClick={() => handleUploadAction(1)}
+                                  role="menuitem"
+                                >
+                                  <Camera className="w-4 h-4" />
+                                  Take Photo or Video
+                                </button>
+                                <button
+                                  className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#a1a1aa] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
+                                    uploadMenuFocusIndex === 2 ? 'bg-zinc-800 text-[#a1a1aa]' : ''
+                                  }`}
+                                  onClick={() => handleUploadAction(2)}
+                                  role="menuitem"
+                                >
+                                  <FolderClosed className="w-4 h-4" />
+                                  Choose Files
+                                </button>
+                                <button
+                                  className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#a1a1aa] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
+                                    uploadMenuFocusIndex === 3 ? 'bg-zinc-800 text-[#a1a1aa]' : ''
+                                  }`}
+                                  onClick={() => handleUploadAction(3)}
+                                  role="menuitem"
+                                >
+                                  <Github className="w-4 h-4" />
+                                  Link GitHub
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                          {/* Send Button - bottom right */}
+                          <div className="absolute right-3 bottom-3 flex items-center gap-1.5">
+                            <button
+                              type="button"
+                              aria-label="Send"
+                              className="h-6 w-6 flex items-center justify-center cursor-pointer text-[#f9fafb] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10] disabled:text-[#a1a1aa]/50 transition-colors motion-reduce:transition-none"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                handleSendMessage();
+                              }}
+                            >
+                              <Send 
+                                className="w-6 h-6 opacity-85 hover:opacity-100 text-current transition-opacity duration-200"
+                                stroke="currentColor"
+                              />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
               </div>
             )}
             {activeTab === "dashboard" && (
@@ -1570,7 +2904,9 @@ It would also be helpful if you described:
                                       ? "Mar '25 - Sep '25"
                                       : selectedTimeframe === "1y"
                                         ? "Sep '24 - Sep '25"
-                                        : "Jan 01 - Sep 05"}
+                                        : exchangeData.length > 0 
+                                          ? "Live Data"
+                                          : "Jan '25 - Sep '25"}
                           </button>
 
                         <div className="flex gap-1">
@@ -1605,7 +2941,9 @@ It would also be helpful if you described:
                     </div>
 
                     <div className="mb-4">
-                          <h3 className="text-xs font-medium text-[#f9fafb] mb-3">Algorithmic Cartel Diagnostic</h3>
+                          <div className="flex items-center justify-between mb-3">
+                            <h3 className="text-xs font-medium text-[#f9fafb]">Collusion Risk Score</h3>
+                          </div>
                           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 mb-10">
                             <div className="rounded-lg bg-bg-surface shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 relative">
                               {/* Live indicator - pulsing green dot with frame */}
@@ -1647,48 +2985,75 @@ It would also be helpful if you described:
                               <div className="flex items-center justify-between">
                         <div>
                                   <div className="text-xl font-bold text-[#f9fafb]">
-                                    {selectedTimeframe === "30d" ? "78" : 
-                                     selectedTimeframe === "6m" ? "82" : 
-                                     selectedTimeframe === "1y" ? "79" : "84"}%
+                                    {leadershipPctText}%
                         </div>
                                   <div className="text-xs text-[#a1a1aa]">
-                                    {selectedTimeframe === "30d" ? "30d" : 
-                                     selectedTimeframe === "6m" ? "6m" : 
-                                     selectedTimeframe === "1y" ? "1y" : 
-                                     selectedTimeframe === "ytd" ? "YTD" : "Cal"} Price Leader
+                                    {leadershipCaption}
                                   </div>
                                 </div>
-                                {/* FANS Avatar Flow */}
+                                {/* Venue Avatars (dynamic, in lockstep with series) */}
+                                {(() => {
+                                  const { availableUiVenues } = useExchangeData();
+
+                                  // optional: gradient opacity for visual hierarchy
+                                  const opacities = [1, 0.8, 0.6, 0.4];
+
+                                  // fallback if nothing is available (should be rare)
+                                  if (!availableUiVenues || availableUiVenues.length === 0) {
+                                    return (
                                 <div className="flex items-center -space-x-2">
                                   <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white">
-                                    <img 
-                                      src="/fnb-logo.png" 
-                                      alt="FNB" 
-                                      className="w-full h-full object-contain p-0.5"
-                                    />
+                                          <img src={venueMetadata.binance.icon} alt={venueMetadata.binance.label} className="w-full h-full object-contain p-0.5" />
                                   </div>
-                                  <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-80">
-                                    <img 
-                                      src="/absa-logo.png" 
-                                      alt="ABSA" 
-                                      className="w-full h-full object-contain p-0.5"
-                                    />
+                                      </div>
+                                    );
+                                  }
+
+                                  if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+                                    // one parity log here is enough to diagnose avatar/series mismatches
+                                    // eslint-disable-next-line no-console
+                                    console.debug('[AVATAR] availableUiVenues', availableUiVenues);
+                                  }
+
+                                  // Derive ordered venues from leadership ranking
+                                  const defaultOrder: VenueKey[] = ['binance','kraken','coinbase','bybit','okx']; // fallback only
+                                  
+                                  const rankingTable = leadership?.ranking?.table ?? [];
+                                  // sort defensively in case backend didn't sort
+                                  const sorted = rankingTable.length
+                                    ? [...rankingTable].sort((a,b) => b.wins - a.wins || b.pct - a.pct || a.venue.localeCompare(b.venue))
+                                    : [];
+
+                                  const orderedVenues: VenueKey[] = sorted.length
+                                    ? sorted.map(r => r.venue)
+                                    : defaultOrder;
+
+                                  // Optional tiny log (dev only)
+                                  if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+                                    console.log('[AVATARS] ordered', orderedVenues);
+                                  }
+
+                                  return (
+                                    <div className="flex items-center -space-x-2">
+                                      {orderedVenues.map((v, i) => (
+                                        <div
+                                          key={v}
+                                          className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white"
+                                          style={{ opacity: opacities[i] ?? 0.4 }}
+                                          title={v}
+                                          aria-label={`${v}${v === leadership?.leader ? ' (leader)' : ''}`}
+                                        >
+                                          <img
+                                            src={venueMetadata[v].icon}
+                                            alt={venueMetadata[v].label}
+                                          className="w-full h-full object-contain p-0.5"
+                                            loading="eager"
+                                        />
+                                      </div>
+                                    ))}
                                   </div>
-                                  <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-60">
-                                    <img 
-                                      src="/nedbank-logo.png" 
-                                      alt="Nedbank" 
-                                      className="w-full h-full object-contain p-0.5"
-                                    />
-                                  </div>
-                                  <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-40">
-                                    <img 
-                                      src="/standard-logo.png" 
-                                      alt="Standard Bank" 
-                                      className="w-full h-full object-contain p-0.5"
-                                    />
-                                  </div>
-                                </div>
+                                );
+                                })()}
                         </div>
                       </div>
 
@@ -1715,19 +3080,44 @@ It would also be helpful if you described:
 
                           <div className="h-80 relative focus:outline-none" style={{ outline: "none" }}>
                             <ResponsiveContainer width="100%" height="100%" style={{ outline: "none" }}>
-                          <LineChart data={currentData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                          <LineChart 
+                            data={currentData} 
+                            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                            onMouseMove={(e:any) => {
+                              if (!e || !e.activeCoordinate || !e.chartX || !e.chartWidth) { setSnapTs(null); return; }
+                              const { chartX, chartWidth } = e;
+                              // Build linear scale from domain to pixels
+                              const [dMin, dMax] = [currentData[0]?.ts, currentData[currentData.length-1]?.ts];
+                              if (!Number.isFinite(dMin) || !Number.isFinite(dMax) || dMin >= dMax) { setSnapTs(null); return; }
+                              const scale = (ts:number) => ((ts - dMin) / (dMax - dMin)) * chartWidth;
+                              // Find nearest event center by pixel distance
+                              const centers = [
+                                Date.parse('2025-01-20T00:00:00Z'),
+                                Date.parse('2025-03-06T00:00:00Z'),
+                                Date.parse('2025-07-18T00:00:00Z'),
+                              ];
+                              let best: {ts:number, dx:number} | null = null;
+                              for (const ts of centers) {
+                                const dx = Math.abs(scale(ts) - chartX);
+                                if (!best || dx < best.dx) best = { ts, dx };
+                              }
+                              setSnapTs(best && best.dx < SNAP_PX ? best.ts : null);
+                            }}
+                            onMouseLeave={() => setSnapTs(null)}
+                          >
                             <XAxis
-                              dataKey="date"
-                              axisLine={false}
-                              tickLine={false}
-                              tick={{ fill: "#a1a1aa", fontSize: 10 }}
+                              dataKey="ts"
+                              type="number"
+                              domain={['dataMin', 'dataMax']}
+                              tickFormatter={(v) => new Date(v).toLocaleDateString('en-US', { month:'short', day:'2-digit' })}
+                              tick={{ fontSize: 10 }}
                             />
                             <YAxis
                               axisLine={false}
                               tickLine={false}
                               tick={{ fill: "#a1a1aa", fontSize: 10 }}
                               label={{
-                                    value: "SA Bank CDS Spread %",
+                                    value: exchangeData.length > 0 ? "BTC Price ($)" : "Market Spread %",
                                 angle: -90,
                                 position: "insideLeft",
                                 style: { textAnchor: "middle", fill: "#a1a1aa", fontSize: 10 },
@@ -1735,212 +3125,155 @@ It would also be helpful if you described:
                             />
                                 <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" opacity={0.75} />
 
-                                {/* Option 2: Event Dots - Small colored indicators */}
-                                <ReferenceLine
-                                  x="Feb '25"
-                                  stroke="#ef4444"
-                                  strokeOpacity={0}
-                                  strokeWidth={0}
-                                >
-                                  <Label value="●" position="top" />
-                                </ReferenceLine>
-                                <ReferenceLine
-                                  x="Jun '25"
-                                  stroke="#f59e0b"
-                                  strokeOpacity={0}
-                                  strokeWidth={0}
-                                >
-                                  <Label value="●" position="top" />
-                                </ReferenceLine>
-                                <ReferenceLine
-                                  x="Jul '25"
-                                  stroke="#10b981"
-                                  strokeOpacity={0}
-                                  strokeWidth={0}
-                                >
-                                  <Label value="●" position="top" />
-                                </ReferenceLine>
-
-                                {/* Option 3: Subtle Background Shading - Colored bands for event periods */}
-                                <ReferenceLine
-                                  x="Feb '25"
-                                  stroke="rgba(255, 200, 200, 0.15)"
-                                  strokeOpacity={1}
-                                  strokeWidth={40}
-                                  strokeDasharray="0"
-                                />
-                                <ReferenceLine
-                                  x="Jun '25"
-                                  stroke="rgba(255, 220, 180, 0.15)"
-                                  strokeOpacity={1}
-                                  strokeWidth={40}
-                                  strokeDasharray="0"
-                                />
-                                <ReferenceLine
-                                  x="Jul '25"
-                                  stroke="rgba(200, 255, 220, 0.15)"
-                                  strokeOpacity={1}
-                                  strokeWidth={40}
-                                  strokeDasharray="0"
-                                />
-
                             <Tooltip
                                   cursor={false}
-                              content={({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string }) => {
-                                if (active && payload && payload.length) {
-                                      // Market share data for each bank
-                                      const marketShare = {
-                                        FNB: 21,
-                                        ABSA: 21,
-                                        "Standard Bank": 26,
-                                        Nedbank: 16,
-                                      }
+                              labelFormatter={(ms) => new Date(Number(ms)).toLocaleDateString('en-US', { month:'short', day:'2-digit', year:'numeric' })}
+                              content={({ active, payload, label }) => {
+                                if (!active || !payload?.length) return null;
+                                const timestamp = Number(label);
+                                
+                                // Find matching event for this day
+                                const ev = eventsByTs[timestamp]?.[0] as any;
 
-                                      // Compute HHI and CR4 from market shares with guardrails
-                                      function computeHHIandCR4(sharesPct: (number | null | undefined)[]) {
-                                        // Filter out null/undefined/NaN values
-                                        const validShares = sharesPct.filter(s => 
-                                          s !== null && s !== undefined && !isNaN(s)
-                                        );
-                                        
-                                        // Need at least 2 valid shares to compute meaningful metrics
-                                        if (validShares.length < 2) {
-                                          return null;
-                                        }
-                                        
-                                        // Round to integers (HHI rule: integer, no commas)
-                                        const pctPts = validShares.map(s => Math.round(s as number));
-                                        
-                                        // HHI: sum of squared percentage points
-                                        const hhi = pctPts.reduce((acc, p) => acc + p*p, 0);
-                                        
-                                        // CR4: sum of top 4 firms, rounded to nearest whole percent
-                                        const cr4 = Math.round(
-                                          [...pctPts].sort((a,b)=>b-a).slice(0,4).reduce((a,b)=>a+b,0)
-                                        );
-                                        
-                                        return { hhi, cr4 };
-                                      }
-
-                                      // Extract shares from marketShare object
-                                      const shares = Object.values(marketShare);
-                                      const concentrationData = computeHHIandCR4(shares);
-
-                                      // Event data for significant dates
-                                      const eventData = {
-                                        "Feb '25": {
-                                          type: "SARB Rate Cut",
-                                          impact: "Price Adaptation",
-                                          color: "#ef4444",
-                                        },
-                                        "Jun '25": {
-                                          type: "Market Shock",
-                                          impact: "Price Invariance",
-                                          color: "#f59e0b",
-                                        },
-                                        "Jul '25": {
-                                          type: "Price Adaptation",
-                                          impact: "Competitive Response",
-                                          color: "#10b981",
-                                        },
-                                      }
-
-                                      const currentEvent = eventData[label as keyof typeof eventData]
-
-                                  return (
-                                        <div className="bg-black border border-[#1a1a1a] rounded-lg p-3 shadow-2xl shadow-black/50">
-                                          <p className="text-[#a1a1aa] text-[10px] mb-1.5">{label}</p>
-                                          
-                                          {/* Concentration Information - only show if valid data */}
-                                          {/* Date → Concentration (HHI | CR4) → Optional Event → Bank rows */}
-                                          {concentrationData && (
-                                            <p className="text-gray-300 text-[10px] font-medium mb-1.5">
-                                              Concentration  HHI {concentrationData.hhi} | {concentrationData.cr4}%
-                                            </p>
-                                          )}
-
-                                          {/* Event Information */}
-                                          {currentEvent && (
-                                            <div
-                                              className="mb-2 p-2 bg-bg-tile rounded border-l-2"
-                                              style={{ borderLeftColor: currentEvent.color }}
-                                            >
-                                              <div className="flex items-center gap-2 mb-1">
-                                                <div
-                                                  className="w-2 h-2 rounded-full"
-                                                  style={{ backgroundColor: currentEvent.color }}
-                                                ></div>
-                                                <span className="text-[#f9fafb] font-semibold text-[10px]">
-                                                  {currentEvent.type}
-                                                </span>
-                                              </div>
-                                              <p className="text-[#a1a1aa] text-[9px]">{currentEvent.impact}</p>
-                                            </div>
-                                          )}
-
-                                          {/* Bank Data */}
-                                      {payload.map((entry: any, index: number) => (
-                                            <div key={index} className="flex items-center gap-2 text-[9px]">
-                                          <div 
-                                            className="w-2 h-2 rounded-full" 
-                                            style={{ backgroundColor: entry.color }}
-                                          />
-                                              <span className="text-[#f9fafb] font-semibold">
-                                                {entry.name}: <span className="font-bold">{entry.value} bps</span> |{" "}
-                                                <span className="text-[#a1a1aa]">
-                                                  {marketShare[entry.name as keyof typeof marketShare]}% share
-                                                </span>
-                                              </span>
+                                return (
+                                  <div className="bg-black border border-[#1a1a1a] rounded-lg p-3 shadow-2xl shadow-black/50">
+                                    <p className="text-[#a1a1aa] text-[10px] mb-1.5">
+                                      {new Date(timestamp).toLocaleDateString('en-US', { month:'short', day:'2-digit', year:'numeric' })}
+                                    </p>
+                                    
+                                    {/* Event Information - only show if there's a matching event */}
+                                    {ev && (
+                                      <div className="mb-2 p-2 bg-bg-tile rounded border-l-2" style={{ borderLeftColor: ev.color }}>
+                                        <div className="flex items-center gap-2 mb-1">
+                                          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: ev.color }} />
+                                          <span className="text-[#f9fafb] font-semibold text-[10px]">{ev.title}</span>
                                         </div>
-                                      ))}
-                                    </div>
-                                      )
-                                }
-                                    return null
+                                        <p className="text-[#a1a1aa] text-[9px]">{ev.subtitle}</p>
+                                      </div>
+                                    )}
+                                    
+                                    {payload.map((entry, i) => {
+                                      const value = entry.value as number | null | undefined;
+                                      const venue = String(entry.dataKey);
+                                      const fmt = (n: number | null | undefined) => Number.isFinite(Number(n)) ? `$${Number(n).toFixed(2)}` : '—';
+                                      return (
+                                        <div key={i} className="flex items-center gap-2 text-[9px]">
+                                          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
+                                          <span className="text-[#f9fafb] font-semibold">
+                                            {venue.charAt(0).toUpperCase() + venue.slice(1)}: <span className="font-bold">{fmt(value)}</span>
+                                          </span>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                );
                               }}
                             />
-                            <Line
-                              type="monotone"
-                              dataKey="fnb"
-                              stroke="#60a5fa"
-                              strokeWidth={2}
-                              dot={{ fill: "#60a5fa", strokeWidth: 2, r: 3 }}
-                              activeDot={{ r: 4, fill: "#60a5fa" }}
-                              name="FNB"
-                            />
-                            <Line
-                              type="monotone"
-                              dataKey="absa"
-                              stroke="#a1a1aa"
-                              strokeWidth={1.5}
-                              dot={{ fill: "#a1a1aa", strokeWidth: 1.5, r: 2 }}
-                              activeDot={{ r: 3, fill: "#a1a1aa" }}
-                              name="ABSA"
-                            />
-                            <Line
-                              type="monotone"
-                              dataKey="standard"
-                              stroke="#71717a"
-                              strokeWidth={1.5}
-                              dot={{ fill: "#71717a", strokeWidth: 1.5, r: 2 }}
-                              activeDot={{ r: 3, fill: "#71717a" }}
-                              name="Standard Bank"
-                            />
-                            <Line
-                              type="monotone"
-                              dataKey="nedbank"
-                              stroke="#52525b"
-                              strokeWidth={1.5}
-                              dot={{ fill: "#52525b", strokeWidth: 1.5, r: 2 }}
-                              activeDot={{ r: 3, fill: "#52525b" }}
-                              name="Nedbank"
-                            />
+                            {/* Conditional Line components - only mount when data exists */}
+            {availableUiVenues.map((venue) => {
+              const color: Record<string, string> = {
+                binance: '#f59e0b',
+                okx: '#60a5fa',
+                bybit: '#a1a1aa',
+                kraken: '#71717a',
+                coinbase: '#52525b'
+              };
+
+              const hasData = currentData.some(p => p[venue] != null);
+              if (!hasData) return null;
+              return (
+                <Line
+                  key={venue}
+                  type="monotone"
+                  dataKey={venue}
+                  stroke={color[venue]}
+                  strokeWidth={venue === 'binance' ? 2 : 1.5}
+                  dot={{ fill: color[venue], strokeWidth: venue === 'binance' ? 2 : 1.5, r: venue === 'binance' ? 3 : 2 }}
+                  activeDot={{ r: venue === 'binance' ? 4 : 3, fill: color[venue] }}
+                  connectNulls={false}
+                  name={venue.charAt(0).toUpperCase() + venue.slice(1)}
+                />
+              );
+            })}
+
+                            {/* Regime A → B */}
+                            {(() => { const {x1,x2} = mkBand(Date.parse('2025-01-20T00:00:00Z')); return (
+                              <ReferenceArea x1={x1} x2={x2} fill="#fecaca" fillOpacity={0.40} isFront />
+                            );})()}
+
+                            {/* Strategic Reserve EO */}
+                            {(() => { const {x1,x2} = mkBand(Date.parse('2025-03-06T00:00:00Z')); return (
+                              <ReferenceArea x1={x1} x2={x2} fill="#fed7aa" fillOpacity={0.40} isFront />
+                            );})()}
+
+                            {/* GENIUS Act Impl. */}
+                            {(() => { const {x1,x2} = mkBand(Date.parse('2025-07-18T00:00:00Z')); return (
+                              <ReferenceArea x1={x1} x2={x2} fill="#bbf7d0" fillOpacity={0.40} isFront />
+                            );})()}
+
+                            {/* Invisible hit targets for mobile interaction */}
+                            {(() => { const {x1,x2} = mkBand(Date.parse('2025-01-20T00:00:00Z')); return (
+                              <ReferenceArea
+                                x1={x1} x2={x2}
+                                isFront
+                                fillOpacity={0}
+                                // @ts-ignore recharts passes through to underlying <rect>
+                                pointerEvents="all"
+                                onMouseEnter={() => setSnapTs(Date.parse('2025-01-20T00:00:00Z'))}
+                                onMouseLeave={() => setSnapTs(null)}
+                                onClick={() => setSnapTs(Date.parse('2025-01-20T00:00:00Z'))}
+                              />
+                            );})()}
+
+                            {(() => { const {x1,x2} = mkBand(Date.parse('2025-03-06T00:00:00Z')); return (
+                              <ReferenceArea
+                                x1={x1} x2={x2}
+                                isFront
+                                fillOpacity={0}
+                                // @ts-ignore recharts passes through to underlying <rect>
+                                pointerEvents="all"
+                                onMouseEnter={() => setSnapTs(Date.parse('2025-03-06T00:00:00Z'))}
+                                onMouseLeave={() => setSnapTs(null)}
+                                onClick={() => setSnapTs(Date.parse('2025-03-06T00:00:00Z'))}
+                              />
+                            );})()}
+
+                            {(() => { const {x1,x2} = mkBand(Date.parse('2025-07-18T00:00:00Z')); return (
+                              <ReferenceArea
+                                x1={x1} x2={x2}
+                                isFront
+                                fillOpacity={0}
+                                // @ts-ignore recharts passes through to underlying <rect>
+                                pointerEvents="all"
+                                onMouseEnter={() => setSnapTs(Date.parse('2025-07-18T00:00:00Z'))}
+                                onMouseLeave={() => setSnapTs(null)}
+                                onClick={() => setSnapTs(Date.parse('2025-07-18T00:00:00Z'))}
+                              />
+                            );})()}
+
+                            {/* Keep thin ReferenceLines for precision */}
+                            {ENV_EVENTS.map((e) => (
+                              <ReferenceLine
+                                key={e.ts}
+                                x={e.ts}
+                                stroke={e.color}
+                                strokeWidth={2}
+                                strokeOpacity={0.60}
+                                isFront
+                              >
+                                <Label value={e.title} position="top" />
+                              </ReferenceLine>
+                            ))}
                           </LineChart>
                         </ResponsiveContainer>
                       </div>
                           {/* Data source indicator */}
                           <div className="text-[9px] text-[#71717a] mt-2 text-center">
-                            {dataSourcesLoading ? (
+                            {exchangeData.length > 0 ? (
+                              `Data source: Live Exchange Data • ${exchangeData.length} points • Quality 98%`
+                            ) : process.env.NEXT_PUBLIC_PREVIEW_BINANCE === 'true' ? (
+                              'Data source: Binance • 15s • Quality 98%'
+                            ) : dataSourcesLoading ? (
                               <div className="animate-pulse">
                                 <div className="h-3 bg-[#2a2a2a] rounded w-32 mx-auto"></div>
                               </div>
@@ -1948,7 +3281,7 @@ It would also be helpful if you described:
                               <div className="text-[#fca5a5]">Data source: Error</div>
                             ) : dataSources ? (
                               <>
-                                Data source: {dataSources.items[0]?.name || 'Bloomberg Terminal'} • 
+                                Data source: {dataSources.items[0]?.name || 'Exchange feeds'} • 
                                 {dataSources.items[0]?.freshnessSec < 60 
                                   ? `${dataSources.items[0]?.freshnessSec}s` 
                                   : `${Math.round((dataSources.items[0]?.freshnessSec || 0) / 60)}m`
@@ -1956,7 +3289,7 @@ It would also be helpful if you described:
                                 Quality {Math.round((dataSources.items[0]?.quality || 0.96) * 100)}%
                               </>
                             ) : (
-                              'Data source: Bloomberg Terminal'
+                              'Data source: Exchange feeds'
                             )}
                       </div>
                     </div>
@@ -1973,7 +3306,7 @@ It would also be helpful if you described:
                           <div>
                             <div className="text-[#f9fafb] font-medium text-xs">Price Stability</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
-                                  How steady your prices are compared to competitors
+                                  How steady your prices are vs competitors
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">2m ago • 45s</div>
                           </div>
@@ -2031,9 +3364,9 @@ It would also be helpful if you described:
                         <div className="flex items-center gap-2.5">
                           <GitBranch className="w-4 h-4 text-[#a1a1aa]" />
                           <div>
-                            <div className="text-[#f9fafb] font-medium text-xs">Price Synchronization</div>
+                            <div className="text-[#f9fafb] font-medium text-xs">Price Sync</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
-                                  How much your prices move together with other banks
+                                  How closely prices move with others
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">1m ago • 32s</div>
                           </div>
@@ -2093,7 +3426,7 @@ It would also be helpful if you described:
                           <div>
                             <div className="text-[#f9fafb] font-medium text-xs">Environmental Sensitivity</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
-                                  How well you respond to market changes and economic events
+                                  How well you react to shifts
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">30s ago • 18s</div>
                           </div>
@@ -2150,10 +3483,10 @@ It would also be helpful if you described:
                         <div className="flex items-center gap-2.5">
                               <Database className="w-4 h-4 text-[#a1a1aa]" />
                           <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">Enable Bloomberg Data Feed</div>
-                                <div className="text-[10px] text-[#a1a1aa]">Real-time market data and analytics</div>
+                                <div className="text-[#f9fafb] font-medium text-xs">Enable Exchange Data Feed</div>
+                                <div className="text-[10px] text-[#a1a1aa]">Real-time trading data and analytics</div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">
-                                  Live pricing • Market depth • News feed
+                                  Live pricing • Depth • Order flow
                             </div>
                           </div>
                         </div>
@@ -2188,7 +3521,7 @@ It would also be helpful if you described:
                           <div>
                             <div className="text-[#f9fafb] font-medium text-xs">Regulatory Notices</div>
                             <div className="text-[10px] text-[#a1a1aa]">
-                              Important updates and compliance notifications
+                              Key compliance updates
                             </div>
                           </div>
                         </div>
@@ -2208,7 +3541,7 @@ It would also be helpful if you described:
                   <CardContent className="p-4 text-center">
                     <h3 className="text-[#f9fafb] font-medium mb-1.5 text-xs">Assign Reviewers</h3>
                     <p className="text-[10px] text-[#a1a1aa] mb-2.5">
-                      Ensure independent oversight of monitoring outputs.
+                      Invite oversight to review monitoring outputs.
                     </p>
                     <Button
                       className={dashboardCtaBtnClass}
@@ -2219,6 +3552,28 @@ It would also be helpful if you described:
                 </Card>
               </div>
             )}
+            
+            {/* Latest Experiments Panel */}
+            {activeSidebarItem === "overview" && (
+              <div className="space-y-3 max-w-2xl mt-6">
+                <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                  <CardContent className="p-4">
+                    <h3 className="text-sm font-medium text-[#f9fafb] mb-3">Latest Experiments</h3>
+                    <div className="space-y-2">
+                      <div className="text-xs text-[#a1a1aa]">
+                        Recent analysis runs and findings
+                      </div>
+                      <div className="text-xs text-[#a1a1aa]">
+                        <a href="/api/experiments" className="text-blue-400 hover:text-blue-300">
+                          View Experiments API
+                        </a>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+            
             {/* Configuration Page */}
             {activeSidebarItem === "configuration" && (
               <div className="space-y-6 max-w-2xl">
@@ -2240,7 +3595,7 @@ It would also be helpful if you described:
                                     Automatically Detect Market Changes
                           </div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    Enable automatic detection of significant market changes
+                                    Auto-detect significant market shifts
                                   </div>
                                 </div>
                               </div>
@@ -2277,7 +3632,7 @@ It would also be helpful if you described:
                                 <div>
                                   <div className="text-xs font-medium text-[#f9fafb]">Price Change Threshold</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    Minimum change required to trigger analysis
+                                    Trigger level for analysis
                           </div>
                         </div>
                               </div>
@@ -2314,7 +3669,7 @@ It would also be helpful if you described:
                                 <div>
                             <div className="text-xs font-medium text-[#f9fafb]">Confidence Level</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    Statistical confidence required for alerts
+                                    Confidence required for alerts
                           </div>
                         </div>
                               </div>
@@ -2355,7 +3710,7 @@ It would also be helpful if you described:
                                 <div>
                             <div className="text-xs font-medium text-[#f9fafb]">Enable Live Monitoring</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    Real-time analysis and risk assessment
+                                    Real-time risk analysis
                           </div>
                                 </div>
                               </div>
@@ -2391,7 +3746,7 @@ It would also be helpful if you described:
                                 <Clock className="w-4 h-4 text-[#a1a1aa] self-center" />
                                 <div>
                             <div className="text-xs font-medium text-[#f9fafb]">Update Frequency</div>
-                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">How often to run analysis</div>
+                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">Analysis interval</div>
                           </div>
                         </div>
                             </div>
@@ -2428,7 +3783,7 @@ It would also be helpful if you described:
                                 <div>
                             <div className="text-xs font-medium text-[#f9fafb]">Sensitivity Level</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    How sensitive the detection should be
+                                    Detection sensitivity
                           </div>
                         </div>
                               </div>
@@ -2466,7 +3821,7 @@ It would also be helpful if you described:
                                 <div>
                             <div className="text-xs font-medium text-[#f9fafb]">Check Data Quality</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    Validate data accuracy and consistency
+                                    Validate accuracy and consistency
                           </div>
                                 </div>
                               </div>
@@ -2503,7 +3858,7 @@ It would also be helpful if you described:
                                 <div>
                             <div className="text-xs font-medium text-[#f9fafb]">Max Data Age</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    Maximum age before switching to backup
+                                    Max age before backup
                           </div>
                         </div>
                               </div>
@@ -2664,27 +4019,27 @@ It would also be helpful if you described:
                         <div className="space-y-2">
                           <button className="w-full text-left p-3 bg-bg-surface hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
                             <div>
-                              <div className="font-medium">Analyze pricing patterns</div>
+                              <div className="font-medium">Analyze Pricing</div>
                               <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                Identify trends and anomalies in market data
+                                Identify trends and anomalies
                               </div>
                             </div>
                             <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
                           </button>
                           <button className="w-full text-left p-3 bg-bg-surface hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
                             <div>
-                              <div className="font-medium">Check compliance status</div>
+                              <div className="font-medium">Check Compliance</div>
                               <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                Review regulatory requirements and violations
+                                Review regulatory gaps
                               </div>
                             </div>
                             <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
                           </button>
                           <button className="w-full text-left p-3 bg-bg-surface hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
                             <div>
-                              <div className="font-medium">Generate report</div>
+                              <div className="font-medium">Generate Report</div>
                               <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                Create comprehensive analysis document
+                                Comprehensive analysis doc
                               </div>
                             </div>
                             <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
@@ -2696,19 +4051,10 @@ It would also be helpful if you described:
                           >
                             <div>
                               <div className="font-medium">
-                                {evidenceLoading ? 'Generating...' : 'Generate Evidence Package'}
+                                {evidenceLoading ? 'Generating...' : 'Evidence Bundle'}
                               </div>
                               <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                Court-ready evidence bundle with cryptographic timestamps
-                              </div>
-                            </div>
-                            <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
-                          </button>
-                          <button className="w-full text-left p-3 bg-bg-surface hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
-                            <div>
-                              <div className="font-medium">Assess Statistical Confidence</div>
-                              <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                P-values, confidence intervals, and methodological validation
+                                Cryptographic timestamps
                               </div>
                             </div>
                             <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
@@ -2722,7 +4068,7 @@ It would also be helpful if you described:
                       <CardContent className="p-0">
                         {/* Section Header */}
                         <div className="px-4 py-3 border-b border-[#2a2a2a]">
-                          <h2 className="text-sm font-medium text-[#f9fafb]">Available Agents</h2>
+                          <h2 className="text-sm font-medium text-[#f9fafb]">Agent Type</h2>
                         </div>
                         {/* Configuration Items */}
                         <div className="p-4">
@@ -2731,19 +4077,26 @@ It would also be helpful if you described:
                               <div className="flex items-start gap-2">
                                 <Brain className="w-4 h-4 text-[#a1a1aa] self-center" />
                                 <div>
-                                  <div className="text-xs font-medium text-[#f9fafb]">General Analysis</div>
+                                  <div className="text-xs font-medium text-[#f9fafb]">General Analyst</div>
                                   <div className="text-[10px] text-[#a1a1aa] mt-0.5">
                                     Accuracy: 94.2% • Response time: 1.2s
                                   </div>
                                 </div>
                               </div>
                             </div>
-                            <Button
-                              size="sm"
-                              className={dashboardCtaBtnClass}
+                            <button 
+                              onClick={() => setActiveAgent(activeAgent === "general" ? null : "general")}
+                              className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
+                                activeAgent === "general" ? "bg-[#86a789]" : "bg-[#374151]"
+                              }`}
+                              aria-pressed={activeAgent === "general"}
                             >
-                              Deploy
-                            </Button>
+                              <div
+                                className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-200 ${
+                                  activeAgent === "general" ? "right-0.5" : "left-0.5"
+                                }`}
+                              ></div>
+                            </button>
                           </div>
                         </div>
                         <div
@@ -2762,12 +4115,19 @@ It would also be helpful if you described:
                                 </div>
                               </div>
                             </div>
-                            <Button
-                              size="sm"
-                              className={dashboardCtaBtnClass}
+                            <button 
+                              onClick={() => setActiveAgent(activeAgent === "compliance" ? null : "compliance")}
+                              className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
+                                activeAgent === "compliance" ? "bg-[#86a789]" : "bg-[#374151]"
+                              }`}
+                              aria-pressed={activeAgent === "compliance"}
                             >
-                              Deploy
-                            </Button>
+                              <div
+                                className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-200 ${
+                                  activeAgent === "compliance" ? "right-0.5" : "left-0.5"
+                                }`}
+                              ></div>
+                            </button>
                           </div>
                         </div>
                         <div
@@ -2786,12 +4146,19 @@ It would also be helpful if you described:
                                 </div>
                               </div>
                             </div>
-                            <Button
-                              size="sm"
-                              className={dashboardCtaBtnClass}
+                            <button 
+                              onClick={() => setActiveAgent(activeAgent === "pricing" ? null : "pricing")}
+                              className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
+                                activeAgent === "pricing" ? "bg-[#86a789]" : "bg-[#374151]"
+                              }`}
+                              aria-pressed={activeAgent === "pricing"}
                             >
-                              Deploy
-                            </Button>
+                              <div
+                                className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-200 ${
+                                  activeAgent === "pricing" ? "right-0.5" : "left-0.5"
+                                }`}
+                              ></div>
+                            </button>
                           </div>
                         </div>
                         <div
@@ -2810,12 +4177,19 @@ It would also be helpful if you described:
                                 </div>
                               </div>
                             </div>
-                            <Button
-                              size="sm"
-                              className={dashboardCtaBtnClass}
+                            <button 
+                              onClick={() => setActiveAgent(activeAgent === "data" ? null : "data")}
+                              className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
+                                activeAgent === "data" ? "bg-[#86a789]" : "bg-[#374151]"
+                              }`}
+                              aria-pressed={activeAgent === "data"}
                             >
-                              Deploy
-                            </Button>
+                              <div
+                                className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-200 ${
+                                  activeAgent === "data" ? "right-0.5" : "left-0.5"
+                                }`}
+                              ></div>
+                            </button>
                           </div>
                         </div>
                       </CardContent>
@@ -3028,7 +4402,7 @@ It would also be helpful if you described:
                               <div>
                                 <div className="text-[#f9fafb] font-medium text-xs">Convergence Rate</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
-                                  Shows how often the risk model finishes its job without errors
+                                  How often the model runs without errors
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">2m ago • 45s</div>
                               </div>
@@ -3057,7 +4431,7 @@ It would also be helpful if you described:
                               <div>
                                 <div className="text-[#f9fafb] font-medium text-xs">Data Integrity</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
-                                  Checks if incoming market data is in the right format and free from errors
+                                  Checks if market data is valid and clean
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">5m ago • 1m 12s</div>
                               </div>
@@ -3086,7 +4460,7 @@ It would also be helpful if you described:
                               <div>
                                 <div className="text-[#f9fafb] font-medium text-xs">Evidence Chain</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
-                                  Confirms all results are time-stamped and stored for audit and legal use
+                                  Ensures results are timestamped for audit
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">30s ago • 18s</div>
                               </div>
@@ -3115,7 +4489,7 @@ It would also be helpful if you described:
                               <div>
                                 <div className="text-[#f9fafb] font-medium text-xs">Runtime Stability</div>
                                 <div className="text-[10px] text-[#a1a1aa]">
-                                  Tracks how fast the system runs compared to targets (slow runs may signal problems)
+                                  Tracks run speed vs targets
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">Updated just now</div>
                               </div>
@@ -3136,55 +4510,10 @@ It would also be helpful if you described:
                 {/* Events Log Page */}
                 {activeSidebarItem === "events-log" && (
                   <div className="space-y-3 max-w-2xl">
-                    {/* First shell tile with left and right containers */}
-                    <div className="bg-transparent">
-                      <div className="flex items-center justify-between mb-4">
-                        {/* Left Container - Date Range and Time Tabs */}
-                        <div className="flex items-center gap-4">
-                          {/* Date Range Button */}
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="text-xs bg-transparent border-[#2a2a2a] text-[#f9fafb] hover:bg-bg-tile"
-                          >
-                            Jan 01 - Sep 05
-                            <ChevronDown className="w-3 h-3 ml-1" />
-                          </Button>
-
-                          {/* Time Tabs */}
-                          <div className="flex gap-1">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-bg-tile hover:text-[#f9fafb]"
-                            >
-                              30d
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-bg-tile hover:text-[#f9fafb]"
-                            >
-                              6m
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-bg-tile hover:text-[#f9fafb]"
-                            >
-                              1y
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="text-xs bg-bg-tile border-[#2a2a2a] text-[#f9fafb]"
-                            >
-                              YTD
-                            </Button>
-                          </div>
-                        </div>
-
-                        {/* Right Container - Post Button */}
+                    {/* Simplified header with responsive layout */}
+                    <div className="bg-transparent overflow-x-hidden px-4">
+                      <div className="flex flex-wrap items-center gap-2 justify-between mb-4">
+                        {/* Right Container - Log Event Button */}
                         <div className="flex justify-end">
                           <Button
                             variant="outline"
@@ -3206,164 +4535,19 @@ It would also be helpful if you described:
                       </div>
                     </div>
 
-                    {/* Option 3: Text Labels Metrics Tile */}
-                    <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                      <CardContent className="p-0">
-                        {/* Title Section */}
-                        <div className="px-4 py-3 border-b border-[#2a2a2a]">
-                          <h2 className="text-sm font-medium text-[#f9fafb]">All Events</h2>
-                        </div>
-
-                        {/* Event Status 1 */}
-                        <div className="p-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2.5">
-                              <CalendarCheck2 className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">ZAR depreciates 1.9%</div>
-                                <div className="text-[10px] text-[#a1a1aa]">
-                                  Broad CDS widening; sensitivity ↑ to 84
-                                </div>
-                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">2m ago • 45s</div>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <div className="flex items-center gap-1.5">
-                                <div className="text-[#f9fafb] font-bold text-sm">66</div>
-                                <div className="text-[#fca5a5] text-xs">✗</div>
-                              </div>
-                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Separator line */}
-                        <div
-                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        ></div>
-
-                        {/* Event Status 2 */}
-                        <div className="p-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2.5">
-                              <CalendarCheck2 className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">SARB guidance unchanged</div>
-                                <div className="text-[10px] text-[#a1a1aa]">No regime break detected</div>
-                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">1m ago • 32s</div>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <div className="flex items-center gap-1.5">
-                                <div className="text-[#f9fafb] font-bold text-sm">43</div>
-                                <div className="text-[#a7f3d0] text-xs">✓</div>
-                              </div>
-                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Separator line */}
-                        <div
-                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        ></div>
-
-                        {/* Event Status 3 */}
-                        <div className="p-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2.5">
-                              <CalendarCheck2 className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">Sovereign outlook stable</div>
-                                <div className="text-[10px] text-[#a1a1aa]">Idiosyncratic responses across banks</div>
-                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">30s ago • 18s</div>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <div className="flex items-center gap-1.5">
-                                <div className="text-[#f9fafb] font-bold text-sm">18</div>
-                                <div className="text-[#fca5a5] text-xs">✗</div>
-                              </div>
-                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Pagination Footer */}
-                        <div className="px-4 py-3 border-t border-[#2a2a2a]">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-4 text-[10px] text-[#a1a1aa]">
-                              <span>Showing 1 - 3 of 3 events</span>
-                              <div className="flex items-center gap-2">
-                                <span>Rows per page:</span>
-                                <select className="bg-transparent border border-[#2a2a2a] rounded px-2 py-1 text-[#f9fafb] text-[10px]">
-                                  <option value="100">100</option>
-                                </select>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-2 text-[10px] text-[#a1a1aa]">
-                              <span>Page 1 of 1</span>
-                              <div className="flex gap-1">
-                                <button
-                                  className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50"
-                                  disabled
-                                >
-                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
-                                    />
-                                  </svg>
-                                </button>
-                                <button
-                                  className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50"
-                                  disabled
-                                >
-                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M15 19l-7-7 7-7"
-                                    />
-                                  </svg>
-                                </button>
-                                <button
-                                  className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50"
-                                  disabled
-                                >
-                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M9 5l7 7-7 7"
-                                    />
-                                  </svg>
-                                </button>
-                                <button
-                                  className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50"
-                                  disabled
-                                >
-                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M13 5l7 7-7 7M5 5l7 7-7 7"
-                                    />
-                                  </svg>
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
+                    <EventsTable 
+                      timeframe={selectedTimeframe}
+                      region="US"
+                      industry="CRYPTO"
+                      onLogEvent={() => {
+                        setActiveTab("agents")
+                        setInitialAgentMessage("")
+                        // Trigger the event logging flow
+                        setTimeout(() => {
+                          handleSendMessage("Help me log a market event")
+                        }, 100)
+                      }}
+                    />
                   </div>
                 )}
 
@@ -3421,11 +4605,11 @@ It would also be helpful if you described:
                 {/* Compliance Reports Page */}
                 {activeSidebarItem === "compliance" && (
                   <div className="space-y-3 max-w-2xl">
-                    {/* First shell tile with left and right containers */}
+                    {/* Simplified header with mobile-responsive layout */}
                     <div className="bg-transparent">
                       <div className="flex items-center justify-between mb-4">
-                        {/* Left Container - Date Range and Time Tabs */}
-                        <div className="flex items-center gap-4">
+                        {/* Date Range and Time Tabs - Hidden on mobile */}
+                        <div className="hidden md:flex items-center gap-4 report-filters">
                           {/* Date Range Button */}
                           <Button
                             variant="outline"
@@ -3469,15 +4653,17 @@ It would also be helpful if you described:
                           </div>
                         </div>
 
-                        {/* Right Container - Export ZIP Button */}
-                        <div className="flex justify-end">
+                        {/* Export ZIP Button - Always visible, right-aligned */}
+                        <div className="flex justify-end ml-auto min-w-max">
                           <Button
                             variant="outline"
                             size="sm"
                             className="text-xs bg-transparent border-[#2a2a2a] text-[#f9fafb] hover:bg-bg-tile"
+                            onClick={handleEvidenceExport}
+                            disabled={evidenceLoading}
                           >
                             <Download className="w-3 h-3 mr-1" />
-                            Export ZIP
+                            {evidenceLoading ? 'Generating...' : 'Export ZIP'}
                           </Button>
                         </div>
                       </div>
@@ -3497,8 +4683,12 @@ It would also be helpful if you described:
                               <ShieldCheck className="w-4 h-4 text-[#a1a1aa]" />
                               <div>
                                 <div className="text-[#f9fafb] font-medium text-xs">Monthly Compliance Report</div>
-                                <div className="text-[10px] text-[#a1a1aa]">
-                                  Healthy: 3 instances of competitive adaptation to regime breaks
+                                <div 
+                                  className="text-[10px] text-[#a1a1aa]"
+                                  title="Healthy: 3 instances of competitive adaptation to regime breaks"
+                                  aria-label="Healthy: 3 instances of competitive adaptation to regime breaks"
+                                >
+                                  {truncateText("Healthy: 3 instances of competitive adaptation to regime breaks")}
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">2m ago • 45s</div>
                               </div>
@@ -3528,8 +4718,12 @@ It would also be helpful if you described:
                               <Moon className="w-4 h-4 text-[#a1a1aa]" />
                               <div>
                                 <div className="text-[#f9fafb] font-medium text-xs">Nightly Competitive Assessment</div>
-                                <div className="text-[10px] text-[#a1a1aa]">
-                                  Spread Dispersion of 17 bps, ↑ +15% in 24 hrs
+                                <div 
+                                  className="text-[10px] text-[#a1a1aa]"
+                                  title="Spread Dispersion of 17 bps, ↑ +15% in 24 hrs"
+                                  aria-label="Spread Dispersion of 17 bps, ↑ +15% in 24 hrs"
+                                >
+                                  {truncateText("Spread Dispersion of 17 bps, ↑ +15% in 24 hrs")}
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">1m ago • 32s</div>
                               </div>
@@ -3559,8 +4753,12 @@ It would also be helpful if you described:
                               <Scale className="w-4 h-4 text-[#a1a1aa]" />
                               <div>
                                 <div className="text-[#f9fafb] font-medium text-xs">Quarterly Evidence Bundle</div>
-                                <div className="text-[10px] text-[#a1a1aa]">
-                                  96.8% statistical confidence over 18-month view
+                                <div 
+                                  className="text-[10px] text-[#a1a1aa]"
+                                  title="96.8% statistical confidence over 18-month view"
+                                  aria-label="96.8% statistical confidence over 18-month view"
+                                >
+                                  {truncateText("96.8% statistical confidence over 18-month view")}
                                 </div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">30s ago • 18s</div>
                               </div>
@@ -3577,73 +4775,20 @@ It would also be helpful if you described:
                           </div>
                         </div>
 
-                        {/* Pagination Footer */}
+                        {/* Pagination Info */}
                         <div className="px-4 py-3 border-t border-[#2a2a2a]">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-4 text-[10px] text-[#a1a1aa]">
-                              <span>Showing 1 - 3 of 3 events</span>
+                              <span>Showing 1 – 3 of 3 reports</span>
                               <div className="flex items-center gap-2">
                                 <span>Rows per page:</span>
-                                <select className="bg-transparent border border-[#2a2a2a] rounded px-2 py-1 text-[#f9fafb] text-[10px]">
+                                <select 
+                                  className="bg-transparent border border-[#2a2a2a] rounded px-2 py-1 text-[#f9fafb] text-[10px]"
+                                  aria-label="Rows per page"
+                                >
+                                  <option value="50">50</option>
                                   <option value="100">100</option>
                                 </select>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-2 text-[10px] text-[#a1a1aa]">
-                              <span>Page 1 of 1</span>
-                              <div className="flex gap-1">
-                                <button
-                                  className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50"
-                                  disabled
-                                >
-                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
-                                    />
-                                  </svg>
-                                </button>
-                                <button
-                                  className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50"
-                                  disabled
-                                >
-                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M15 19l-7-7 7-7"
-                                    />
-                                  </svg>
-                                </button>
-                                <button
-                                  className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50"
-                                  disabled
-                                >
-                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M9 5l7 7-7 7"
-                                    />
-                                  </svg>
-                                </button>
-                                <button
-                                  className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50"
-                                  disabled
-                                >
-                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M13 5l7 7-7 7M5 5l7 7-7 7"
-                                    />
-                                  </svg>
-                                </button>
                               </div>
                             </div>
                           </div>
@@ -3718,6 +4863,13 @@ It would also be helpful if you described:
         </div>
       )}
 
+      {/* TEMP: preview proof */}
+      {process.env.NEXT_PUBLIC_UI_DEBUG === 'true' && (
+        <div className="fixed bottom-2 right-2 text-[10px] px-2 py-1 rounded bg-black/60 border border-zinc-700">
+          preview: {process.env.NEXT_PUBLIC_BUILD_MODE} · {process.env.NEXT_PUBLIC_DATA_MODE}
+        </div>
+      )}
+
       <style jsx>{`
         @keyframes blink {
           0%, 50% { opacity: 1; }
@@ -3727,3 +4879,4 @@ It would also be helpful if you described:
     </div>
   )
 }
+

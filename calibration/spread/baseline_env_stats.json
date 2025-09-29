@@ -1,0 +1,107 @@
+{
+  "volatility": {
+    "low": {
+      "environment": "volatility",
+      "value": "low",
+      "n_points": 7191,
+      "median": -0.00017113852790049417,
+      "mad": 0.6528041855398564,
+      "percentile_5": -1.6197854327978585,
+      "percentile_50": -0.00017113852790049417,
+      "percentile_95": 1.693319389700957,
+      "mean": -0.0016030636187368051,
+      "std": 0.9901402833271469,
+      "min": -3.1262946799327795,
+      "max": 3.685168770991509,
+      "status": "sufficient_data"
+    },
+    "high": {
+      "environment": "volatility",
+      "value": "high",
+      "n_points": 7191,
+      "median": -0.00017113852790049417,
+      "mad": 0.6528041855398564,
+      "percentile_5": -1.6197854327978585,
+      "percentile_50": -0.00017113852790049417,
+      "percentile_95": 1.693319389700957,
+      "mean": -0.0016030636187368051,
+      "std": 0.9901402833271469,
+      "min": -3.1262946799327795,
+      "max": 3.685168770991509,
+      "status": "sufficient_data"
+    }
+  },
+  "liquidity": {
+    "combined": {
+      "environment": "liquidity",
+      "value": "combined",
+      "n_points": 7191,
+      "median": -0.00017113852790049417,
+      "mad": 0.6528041855398564,
+      "percentile_5": -1.6197854327978585,
+      "percentile_50": -0.00017113852790049417,
+      "percentile_95": 1.693319389700957,
+      "mean": -0.0016030636187368051,
+      "std": 0.9901402833271469,
+      "min": -3.1262946799327795,
+      "max": 3.685168770991509,
+      "status": "sufficient_data"
+    }
+  },
+  "time_of_day": {
+    "early": {
+      "environment": "time_of_day",
+      "value": "early",
+      "n_points": 7191,
+      "median": -0.00017113852790049417,
+      "mad": 0.6528041855398564,
+      "percentile_5": -1.6197854327978585,
+      "percentile_50": -0.00017113852790049417,
+      "percentile_95": 1.693319389700957,
+      "mean": -0.0016030636187368051,
+      "std": 0.9901402833271469,
+      "min": -3.1262946799327795,
+      "max": 3.685168770991509,
+      "status": "sufficient_data"
+    },
+    "late": {
+      "environment": "time_of_day",
+      "value": "late",
+      "n_points": 7191,
+      "median": -0.00017113852790049417,
+      "mad": 0.6528041855398564,
+      "percentile_5": -1.6197854327978585,
+      "percentile_50": -0.00017113852790049417,
+      "percentile_95": 1.693319389700957,
+      "mean": -0.0016030636187368051,
+      "std": 0.9901402833271469,
+      "min": -3.1262946799327795,
+      "max": 3.685168770991509,
+      "status": "sufficient_data"
+    }
+  },
+  "metadata": {
+    "created_at": "2025-09-29T16:59:05.113337",
+    "windows_processed": [
+      "1200-1230",
+      "1230-1300",
+      "1300-1330",
+      "1330-1400"
+    ],
+    "total_points": 7200,
+    "environment_partition": {
+      "volatility": [
+        "low",
+        "high"
+      ],
+      "liquidity": [
+        "combined"
+      ],
+      "time_of_day": [
+        "early",
+        "late"
+      ]
+    },
+    "status": "phase0_provisional"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "leadlag": {
+    "observed_rho": 0.15,
+    "threshold": 0.12,
+    "n_observations": 1000,
+    "mde_80_power": 0.12387316045315251,
+    "power_at_threshold": 0.751271658673492,
+    "alpha": 0.05,
+    "target_power": 0.8
+  },
+  "spread": {
+    "observed_delta_z": -2.1,
+    "threshold": -1.5,
+    "n_episodes": 50,
+    "mde_80_power": 0.19810199057996727,
+    "power_at_threshold": 0.0,
+    "alpha": 0.05,
+    "target_power": 0.8
+  },
+  "analysis_timestamp": "2025-09-29T15:03:04.747898",
+  "methodology": "Bootstrap-based power analysis with MDE calculation"
+}

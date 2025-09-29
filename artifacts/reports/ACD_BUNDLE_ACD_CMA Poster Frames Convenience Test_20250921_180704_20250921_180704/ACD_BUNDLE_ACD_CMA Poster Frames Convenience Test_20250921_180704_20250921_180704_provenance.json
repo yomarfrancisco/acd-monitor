@@ -1,0 +1,15 @@
+{
+  "analysis_id": "ACD_CMA Poster Frames Convenience Test_20250921_180704",
+  "timestamp": "2025-09-21 18:07:04.643242",
+  "version": "2.0.0",
+  "seed": 42,
+  "data_file_paths": [],
+  "config_files": [],
+  "icp_config": {},
+  "vmm_config": {},
+  "validation_configs": {},
+  "result_file_paths": {},
+  "intermediate_artifacts": [],
+  "content_hash": "895d13cd6af617e70e0079c381ed3d8ecf74a72b192f097c6e5782596862250d",
+  "signature": "ACD_SIG_895d13cd6af617e7"
+}

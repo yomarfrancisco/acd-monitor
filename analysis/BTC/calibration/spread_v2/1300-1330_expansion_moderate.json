@@ -1,0 +1,12 @@
+{
+  "window": "1300-1330",
+  "injection_type": "expansion_moderate",
+  "injection_params": {
+    "type": "expansion",
+    "intensity": 0.6,
+    "duration": 60,
+    "description": "Moderate spread expansion (60% increase)"
+  },
+  "created_at": "2025-09-29T16:42:09.692991",
+  "status": "created"
+}

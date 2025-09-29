@@ -29,7 +29,7 @@ export default function Page() {
                       Automatically Detect Market Changes
                     </div>
                     <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                      Enable automatic detection of significant market changes
+                      Auto-detect significant market shifts
                     </div>
                   </div>
                 </div>
@@ -66,7 +66,7 @@ export default function Page() {
                   <div>
                     <div className="text-xs font-medium text-[#f9fafb]">Price Change Threshold</div>
                     <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                      Minimum change required to trigger analysis
+                      Trigger level for analysis
                     </div>
                   </div>
                 </div>
@@ -103,7 +103,7 @@ export default function Page() {
                   <div>
                     <div className="text-xs font-medium text-[#f9fafb]">Confidence Level</div>
                     <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                      Statistical confidence required for alerts
+                      Confidence required for alerts
                     </div>
                   </div>
                 </div>

@@ -6,8 +6,8 @@ Defines quality thresholds and validation rules for different data source types.
 
 import logging
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Any
 from enum import Enum
+from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -290,7 +290,7 @@ class QualityProfileManager:
     def auto_detect_profile(self, source_metadata: Dict[str, Any]) -> QualityProfile:
         """Auto-detect quality profile based on source metadata."""
         source_type = source_metadata.get("type", "").lower()
-        source_name = source_metadata.get("name", "").lower()
+        source_metadata.get("name", "").lower()
 
         # Auto-detection logic
         if "cds" in source_type or "credit" in source_type or "swap" in source_type:

@@ -7,6 +7,18 @@ module.exports = {
   ],
   theme: {
     extend: {
+      animation: {
+        'scalePulse': 'scalePulse 2s ease-in-out infinite',
+      },
+      keyframes: {
+        scalePulse: {
+          '0%': { transform: 'scale(1)', opacity: '0.8' },
+          '25%': { transform: 'scale(1.1)', opacity: '1' },
+          '50%': { transform: 'scale(1.2)', opacity: '0.9' },
+          '75%': { transform: 'scale(1.1)', opacity: '1' },
+          '100%': { transform: 'scale(1)', opacity: '0.8' },
+        },
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

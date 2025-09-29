@@ -31,6 +31,22 @@ export const MetricsOverviewSchema = z.object({
 });
 export type MetricsOverview = z.infer<typeof MetricsOverviewSchema>;
 
+// Binance Overview Schema
+export const BinanceOverviewSchema = z.object({
+  venue: z.string(),
+  symbol: z.string(),
+  asOf: z.string().datetime(),
+  ticker: z.object({
+    bid: z.number(),
+    ask: z.number(),
+    mid: z.number(),
+    ts: z.string().datetime(),
+  }),
+  ohlcv: z.array(z.array(z.union([z.string(), z.number()]))),
+  error: z.string().optional(),
+});
+export type BinanceOverview = z.infer<typeof BinanceOverviewSchema>;
+
 // Health Run Schema
 export const HealthPointSchema = z.object({
   ts: z.string().datetime(),

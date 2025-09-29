@@ -1,0 +1,58 @@
+{
+  "timestamp": "2025-09-21T19:05:44.835577",
+  "data_file": "artifacts/mock_crypto_data.csv",
+  "lead_lag_results": {
+    "BTC/USD": {
+      "switching_entropy": 0.0,
+      "avg_granger_p": 0.5000661876955311,
+      "n_windows": 20131,
+      "n_exchanges": 3
+    },
+    "ETH/USD": {
+      "switching_entropy": 0.0,
+      "avg_granger_p": 0.5155909651142745,
+      "n_windows": 20131,
+      "n_exchanges": 3
+    },
+    "ADA/USD": {
+      "switching_entropy": 0.0,
+      "avg_granger_p": 0.6164507242865856,
+      "n_windows": 20131,
+      "n_exchanges": 3
+    }
+  },
+  "mirroring_results": {
+    "BTC/USD": {
+      "mirroring_ratio": 1.0,
+      "coordination_score": 0.5144037996039896,
+      "avg_cosine_similarity": 0.9987066932674352,
+      "n_windows": 20112,
+      "n_exchanges": 3
+    },
+    "ETH/USD": {
+      "mirroring_ratio": 1.0,
+      "coordination_score": 0.5400089884763468,
+      "avg_cosine_similarity": 0.9971123910046954,
+      "n_windows": 20112,
+      "n_exchanges": 3
+    },
+    "ADA/USD": {
+      "mirroring_ratio": 1.0,
+      "coordination_score": 0.5596775136858748,
+      "avg_cosine_similarity": 0.9983675266877516,
+      "n_windows": 20112,
+      "n_exchanges": 3
+    }
+  },
+  "crypto_moment_results": {
+    "BTC/USD": {
+      "error": "CryptoMomentCalculator.calculate_moments() missing 1 required positional argument: 'price_columns'"
+    },
+    "ETH/USD": {
+      "error": "CryptoMomentCalculator.calculate_moments() missing 1 required positional argument: 'price_columns'"
+    },
+    "ADA/USD": {
+      "error": "CryptoMomentCalculator.calculate_moments() missing 1 required positional argument: 'price_columns'"
+    }
+  }
+}

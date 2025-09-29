@@ -3,7 +3,7 @@
   "items": [
     {
       "id": "ds-001",
-      "name": "Bloomberg Terminal",
+      "name": "Exchange Feeds",
       "tier": "T1",
       "status": "OK",
       "freshnessSec": 30,

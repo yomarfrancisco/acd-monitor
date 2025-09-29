@@ -1,0 +1,127 @@
+{
+  "icp": "ICPResult(test_statistic=1.0, p_value=0.012916939430614338, reject_h0=True, effect_size=2.6262310312510206, power=-0.23777167091182672, n_environments=4, environment_sizes={'Autumn business travel coordination_normal': 47, 'Post-holiday coordination_normal': 45, 'Summer peak coordination_normal': 45, 'competitive_normal': 205}, confidence_interval=(1.0, 1), bootstrap_ci=(1.0, 1.0), r_squared=0.9631500147813999, residual_normality=0.00028723978225566926, heteroscedasticity=0.5)",
+  "vmm": "VMMOutput(convergence_status='max_iterations', iterations=1000, final_loss=1.0135936058030406, beta_estimates=array([0.10848988, 0.07999516, 0.05118132]), sigma_estimates=array([[0.1, 0. , 0. ],\n       [0. , 0.1, 0. ],\n       [0. , 0. , 0.1]]), rho_estimates=array([[0.3, 0. , 0. ],\n       [0. , 0.3, 0. ],\n       [0. , 0. , 0.3]]), structural_stability=0.0, regime_confidence=0.9955893467686429, over_identification_stat=6412.614303676108, over_identification_p_value=0.0)",
+  "validation": {
+    "lead_lag": "LeadLagResult(lead_lag_betas={('BA', 'VS'): nan, ('BA', 'EI'): nan, ('BA', 'FR'): nan, ('VS', 'BA'): nan, ('VS', 'EI'): nan, ('VS', 'FR'): nan, ('EI', 'BA'): nan, ('EI', 'VS'): nan, ('EI', 'FR'): nan, ('FR', 'BA'): nan, ('FR', 'VS'): nan, ('FR', 'EI'): nan}, granger_p_values={('BA', 'VS'): 0.0007213947072022053, ('BA', 'EI'): 0.0008497589677184768, ('BA', 'FR'): 4.3491309902776734e-05, ('VS', 'BA'): 2.593467768835357e-06, ('VS', 'EI'): 0.001237582742081548, ('VS', 'FR'): 2.1720431107272096e-06, ('EI', 'BA'): 0.00024441281032450607, ('EI', 'VS'): 0.005380632500100249, ('EI', 'FR'): 0.00030904112561813777, ('FR', 'BA'): 0.03528577847306614, ('FR', 'VS'): 0.046785805419554544, ('FR', 'EI'): 0.006056487975940561}, persistence_scores={'BA': 0.0, 'VS': 0.0, 'EI': 0.0, 'FR': 0.0}, switching_entropy=0.0, significant_relationships=[('BA', 'VS'), ('BA', 'EI'), ('BA', 'FR'), ('VS', 'BA'), ('VS', 'EI'), ('VS', 'FR'), ('EI', 'BA'), ('EI', 'VS'), ('EI', 'FR'), ('FR', 'BA'), ('FR', 'VS'), ('FR', 'EI')], avg_granger_p=0.008076595961865727, env_persistence={'competitive': {'BA': 0.0, 'VS': 0.0, 'EI': 0.0, 'FR': 0.0}}, env_entropy={'competitive': 0.0}, n_windows=335, n_exchanges=4, config=LeadLagConfig(window_size=30, min_lag=1, max_lag=5, significance_level=0.05, min_observations=50, persistence_threshold=0.6))",
+    "mirroring": "MirroringResult(cosine_similarities={('BA', 'VS'): 0.9984679542621753, ('BA', 'EI'): 0.9987494032696861, ('BA', 'FR'): 0.9939588938223048, ('VS', 'EI'): 0.9985832290798922, ('VS', 'FR'): 0.9959930769370362, ('EI', 'FR'): 0.9942110867551208}, pearson_correlations={('BA', 'VS'): 0.9630918479445338, ('BA', 'EI'): 0.9703530725209034, ('BA', 'FR'): 0.8458361120233364, ('VS', 'EI'): 0.9657971674065193, ('VS', 'FR'): 0.8932626000129558, ('EI', 'FR'): 0.852169471362809}, depth_weighted_similarities={('BA', 'VS'): 0.0, ('BA', 'EI'): 0.0, ('BA', 'FR'): 0.0, ('VS', 'EI'): 0.0, ('VS', 'FR'): 0.0, ('EI', 'FR'): 0.0}, significant_correlations=[('BA', 'VS'), ('BA', 'EI'), ('BA', 'FR'), ('VS', 'EI'), ('VS', 'FR'), ('EI', 'FR')], avg_cosine_similarity=0.9966606073543692, avg_pearson_correlation=0.915085045211843, env_similarities={'competitive': {('BA', 'VS'): 0.9983752714262847, ('BA', 'EI'): 0.9982880431689444, ('BA', 'FR'): 0.9979602316716449, ('VS', 'EI'): 0.9983970850447097, ('VS', 'FR'): 0.9976741397511665, ('EI', 'FR'): 0.9977505433708409}, 'Post-holiday coordination': {('BA', 'VS'): 0.9999125566655805, ('BA', 'EI'): 0.9999179828948905, ('BA', 'FR'): 0.9999416871176963, ('VS', 'EI'): 0.9998620266453917, ('VS', 'FR'): 0.9999165445605109, ('EI', 'FR'): 0.9999176645572823}, 'Summer peak coordination': {('BA', 'VS'): 0.9999297520226748, ('BA', 'EI'): 0.9999486136207888, ('BA', 'FR'): 0.9999330812312561, ('VS', 'EI'): 0.9999364927493277, ('VS', 'FR'): 0.9999220999948519, ('EI', 'FR'): 0.9999252727935584}, 'Autumn business travel coordination': {('BA', 'VS'): 0.9997808877444855, ('BA', 'EI'): 0.9998934792953168, ('BA', 'FR'): 0.9998858250626519, ('VS', 'EI'): 0.9997731765884365, ('VS', 'FR'): 0.9997971753131057, ('EI', 'FR'): 0.9998683170310235}}, env_correlations={'competitive': {('BA', 'VS'): 0.9662564469316008, ('BA', 'EI'): 0.9630786821713084, ('BA', 'FR'): 0.9555682562671017, ('VS', 'EI'): 0.9667687296265325, ('VS', 'FR'): 0.9514908220712357, ('EI', 'FR'): 0.9515963336461248}, 'Post-holiday coordination': {('BA', 'VS'): 0.9897005128023076, ('BA', 'EI'): 0.990476769935447, ('BA', 'FR'): 0.993493576953701, ('VS', 'EI'): 0.9838124879209733, ('VS', 'FR'): 0.990293869905183, ('EI', 'FR'): 0.9904342622166076}, 'Summer peak coordination': {('BA', 'VS'): 0.9916522784343463, ('BA', 'EI'): 0.9940800408734441, ('BA', 'FR'): 0.9950052170202981, ('VS', 'EI'): 0.9927748174583259, ('VS', 'FR'): 0.9944734129925775, ('EI', 'FR'): 0.9934328594591698}, 'Autumn business travel coordination': {('BA', 'VS'): 0.9786415822703893, ('BA', 'EI'): 0.9897043381854832, ('BA', 'FR'): 0.988240905699021, ('VS', 'EI'): 0.97352153967035, ('VS', 'FR'): 0.9777479739989917, ('EI', 'FR'): 0.9853828411190104}}, high_mirroring_pairs=[('BA', 'VS'), ('BA', 'EI'), ('BA', 'FR'), ('VS', 'EI'), ('VS', 'FR'), ('EI', 'FR')], mirroring_ratio=1.0, coordination_score=0.612715934328665, n_windows=336, n_exchanges=4, config=MirroringConfig(window_size=30, top_k_levels=5, similarity_threshold=0.7, min_observations=20, depth_weight_power=0.5, correlation_threshold=0.6))",
+    "hmm": "HMMResult(state_sequence=array([2, 2, 2, 2, 0, 2, 0, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1,\n       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,\n       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 2, 2, 0, 0, 2, 0,\n       2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 0, 2,\n       2, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 0, 2, 0, 2, 0, 2, 0, 0, 2, 2, 2,\n       0, 2, 2, 0, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 0, 2,\n       2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 2, 2, 0, 2, 2, 2, 2, 2, 2, 1, 1, 1,\n       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1,\n       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2,\n       2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 2, 2,\n       2, 2, 2, 2, 2, 2, 2, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0,\n       2, 2, 2, 0, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1,\n       1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,\n       1, 2, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 2, 0,\n       0, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 0, 2, 2, 0, 2, 2, 2, 2,\n       2, 2, 2, 0, 2, 2, 2, 2, 0, 0, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2,\n       2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0]), state_probabilities=array([[3.42666122e-014, 1.36318697e-025, 1.00000000e+000],\n       [8.48490026e-020, 0.00000000e+000, 1.00000000e+000],\n       [1.05712593e-002, 3.11064471e-036, 9.89428741e-001],\n       ...,\n       [8.19757718e-013, 1.82913304e-078, 1.00000000e+000],\n       [1.88856909e-016, 7.06545833e-119, 1.00000000e+000],\n       [1.00000000e+000, 4.33650942e-243, 0.00000000e+000]]), transition_matrix=array([[0.33333333, 0.33333333, 0.33333333],\n       [0.33333333, 0.33333333, 0.33333333],\n       [0.33333333, 0.33333333, 0.33333333]]), emission_means=array([[-0.36509937,  0.82478212,  0.41567758, -0.26141962,  0.90243821,\n         0.16615125,  0.8123884 , -0.20065525,  0.8123884 ],\n       [-0.74948227, -0.45611373, -1.05596374, -0.76551142, -0.9398052 ,\n        -1.04698766, -0.99087784, -0.00533548, -0.99087784],\n       [ 0.58271344,  0.13204954,  0.62327644,  0.57147489,  0.44151445,\n         0.67027348,  0.49507727,  0.04625261,  0.49507727]]), emission_covariances=array([[[ 0.77861846,  1.00076459,  0.44432869,  0.1024591 ,\n          0.05408905,  0.0120094 ,  0.21222129, -0.19565271,\n          0.21222129],\n        [ 1.00076459,  2.14716679,  0.88073262,  0.31701115,\n          0.39700539,  0.06260839,  0.58472066, -0.1425267 ,\n          0.58472066],\n        [ 0.44432869,  0.88073262,  0.8145287 , -0.0239271 ,\n          0.72346214,  0.47809342,  0.28690289, -0.20084875,\n          0.28690289],\n        [ 0.1024591 ,  0.31701115, -0.0239271 ,  0.59178314,\n         -0.03056134, -0.08737127,  0.33335096, -0.03269276,\n          0.33335096],\n        [ 0.05408905,  0.39700539,  0.72346214, -0.03056134,\n          0.90014432,  0.64492221,  0.26553689, -0.10475169,\n          0.26553689],\n        [ 0.0120094 ,  0.06260839,  0.47809342, -0.08737127,\n          0.64492221,  0.58724261,  0.13210441, -0.04233606,\n          0.13210441],\n        [ 0.21222129,  0.58472066,  0.28690289,  0.33335096,\n          0.26553689,  0.13210441,  0.97102041, -0.09020934,\n          0.97101941],\n        [-0.19565271, -0.1425267 , -0.20084875, -0.03269276,\n         -0.10475169, -0.04233606, -0.09020934,  0.91752231,\n         -0.09020934],\n        [ 0.21222129,  0.58472066,  0.28690289,  0.33335096,\n          0.26553689,  0.13210441,  0.97101941, -0.09020934,\n          0.97102041]],\n\n       [[ 0.05402615,  0.02920705,  0.01570161,  0.01603558,\n         -0.01545212,  0.0056483 ,  0.00562476, -0.03186563,\n          0.00562476],\n        [ 0.02920705,  0.07614037,  0.01182689, -0.01446762,\n         -0.00380033, -0.01689478, -0.00419052, -0.06187681,\n         -0.00419052],\n        [ 0.01570161,  0.01182689,  0.01473406,  0.00622206,\n          0.0093803 ,  0.0113855 ,  0.00748846, -0.01825038,\n          0.00748846],\n        [ 0.01603558, -0.01446762,  0.00622206,  0.04040212,\n         -0.00245651,  0.01241112,  0.00939632, -0.00915447,\n          0.00939632],\n        [-0.01545212, -0.00380033,  0.0093803 , -0.00245651,\n          0.02334077,  0.01167505,  0.0063756 , -0.00314691,\n          0.0063756 ],\n        [ 0.0056483 , -0.01689478,  0.0113855 ,  0.01241112,\n          0.01167505,  0.01896968,  0.00977223,  0.00434494,\n          0.00977223],\n        [ 0.00562476, -0.00419052,  0.00748846,  0.00939632,\n          0.0063756 ,  0.00977223,  0.03021801,  0.01359125,\n          0.03021701],\n        [-0.03186563, -0.06187681, -0.01825038, -0.00915447,\n         -0.00314691,  0.00434494,  0.01359125,  0.77436004,\n          0.01359125],\n        [ 0.00562476, -0.00419052,  0.00748846,  0.00939632,\n          0.0063756 ,  0.00977223,  0.03021701,  0.01359125,\n          0.03021801]],\n\n       [[ 0.93812981,  0.63397756,  0.37642718,  0.3604866 ,\n         -0.12677465,  0.05299406,  0.03734694, -0.03038072,\n          0.03734694],\n        [ 0.63397756,  1.07648656,  0.28653072, -0.27111808,\n         -0.04182731, -0.14903606,  0.09520508,  0.04438591,\n          0.09520508],\n        [ 0.37642718,  0.28653072,  0.52675314,  0.09297165,\n          0.46159459,  0.40733596,  0.00383711, -0.08867364,\n          0.00383711],\n        [ 0.3604866 , -0.27111808,  0.09297165,  0.99744518,\n         -0.11919833,  0.33096948,  0.08294818, -0.13442456,\n          0.08294818],\n        [-0.12677465, -0.04182731,  0.46159459, -0.11919833,\n          0.71612664,  0.51943612, -0.02025328, -0.10021676,\n         -0.02025328],\n        [ 0.05299406, -0.14903606,  0.40733596,  0.33096948,\n          0.51943612,  0.55500899,  0.01925792, -0.13715694,\n          0.01925792],\n        [ 0.03734694,  0.09520508,  0.00383711,  0.08294818,\n         -0.02025328,  0.01925792,  0.61263294,  0.06917313,\n          0.61263194],\n        [-0.03038072,  0.04438591, -0.08867364, -0.13442456,\n         -0.10021676, -0.13715694,  0.06917313,  1.15888311,\n          0.06917313],\n        [ 0.03734694,  0.09520508,  0.00383711,  0.08294818,\n         -0.02025328,  0.01925792,  0.61263194,  0.06917313,\n          0.61263294]]]), dwell_times={0: 1.1388888888888888, 1: 16.25, 2: 4.948717948717949}, state_frequencies={0: 0.11263736263736264, 1: 0.35714285714285715, 2: 0.5302197802197802}, regime_stability=0.3311730252414177, env_dwell_times={'competitive': {0: 1.1470588235294117, 1: 0.0, 2: 5.529411764705882}}, env_state_frequencies={'competitive': {0: 0.17180616740088106, 1: 0.0, 2: 0.8281938325991189}}, env_stability={'competitive': 0.4577819478708113}, wide_spread_regime=2, lockstep_regime=1, coordination_regime_score=0.44368131868131866, log_likelihood=10.156694792563451, aic=39.6866104148731, bic=156.60122644397532, n_observations=364, n_features=9, config=HMMConfig(n_states=3, window_size=100, min_observations=50, convergence_threshold=1e-06, max_iterations=100, random_state=42))",
+    "infoflow": "InfoFlowResult(transfer_entropies={('BA', 'VS'): 4.7098916278559635, ('BA', 'EI'): 4.733951967949169, ('BA', 'FR'): 4.863160417124083, ('VS', 'BA'): 4.496636694835945, ('VS', 'EI'): 4.608278283429944, ('VS', 'FR'): 5.196900394789683, ('EI', 'BA'): 4.74730919893804, ('EI', 'VS'): 4.511254457932909, ('EI', 'FR'): 5.162139672872723, ('FR', 'BA'): 4.751061272294914, ('FR', 'VS'): 5.114512501163216, ('FR', 'EI'): 4.920992345638367}, directed_correlations={('BA', 'VS'): 0.3328100205626049, ('BA', 'EI'): 0.32097758265348403, ('BA', 'FR'): 0.34519068724370905, ('VS', 'BA'): 0.37982396885016834, ('VS', 'EI'): 0.3578039478585662, ('VS', 'FR'): 0.36100253459607373, ('EI', 'BA'): 0.34756069436998355, ('EI', 'VS'): 0.3940968715744365, ('EI', 'FR'): 0.3256242731650896, ('FR', 'BA'): 0.31198212360380007, ('FR', 'VS'): 0.3375783680507138, ('FR', 'EI'): 0.32298930973970386}, network_centrality={'BA': 28.302011178998114, 'VS': 28.63747396000766, 'EI': 28.68392592676115, 'FR': 30.00876660388299}, out_degree_concentration=0.006779910170924497, eigenvector_centrality={'BA': 0.24805799449419189, 'VS': 0.24808805569944484, 'EI': 0.24962337995700598, 'FR': 0.2542305698493573}, network_density=1.0, clustering_coefficient=1.0, significant_te_links=[], te_p_values={('BA', 'VS'): 1.0, ('BA', 'EI'): 1.0, ('BA', 'FR'): 1.0, ('VS', 'BA'): 1.0, ('VS', 'EI'): 1.0, ('VS', 'FR'): 1.0, ('EI', 'BA'): 1.0, ('EI', 'VS'): 1.0, ('EI', 'FR'): 1.0, ('FR', 'BA'): 1.0, ('FR', 'VS'): 1.0, ('FR', 'EI'): 1.0}, avg_transfer_entropy=4.81800740290208, env_transfer_entropies={'competitive': {('BA', 'VS'): 6.323418865749582, ('BA', 'EI'): 6.779955034935799, ('BA', 'FR'): 6.894122076894494, ('VS', 'BA'): 6.411728147985119, ('VS', 'EI'): 6.382199192188503, ('VS', 'FR'): 6.543258456024475, ('EI', 'BA'): 6.534237861656052, ('EI', 'VS'): 6.210945425125558, ('EI', 'FR'): 6.656198838930333, ('FR', 'BA'): 6.83020523601083, ('FR', 'VS'): 6.810758882477488, ('FR', 'EI'): 6.886189812766434}}, env_centrality={'competitive': {'BA': 39.773667223231875, 'VS': 38.682308969550725, 'EI': 39.449726165602684, 'FR': 40.62073330310405}}, env_network_density={'competitive': 1.0}, information_hub_score=0.011170589245860674, coordination_network_score=10.601650259435853, n_observations=364, n_exchanges=4, config=InfoFlowConfig(window_size=100, n_bins=10, max_lag=5, significance_level=0.05, min_observations=50, permutation_tests=100))"
+  },
+  "integrated": "IntegratedResult(icp_result=ICPResult(test_statistic=1.0, p_value=0.012916939430614338, reject_h0=True, effect_size=2.6262310312510206, power=-0.23777167091182672, n_environments=4, environment_sizes={'Autumn business travel coordination_normal': 47, 'Post-holiday coordination_normal': 45, 'Summer peak coordination_normal': 45, 'competitive_normal': 205}, confidence_interval=(1.0, 1), bootstrap_ci=(1.0, 1.0), r_squared=0.9631500147813999, residual_normality=0.00028723978225566926, heteroscedasticity=0.5), vmm_result=VMMOutput(convergence_status='max_iterations', iterations=1000, final_loss=189982.64916247185, beta_estimates=array([0.04473905, 0.07673042, 0.08696352]), sigma_estimates=array([[0.1, 0. , 0. ],\n       [0. , 0.1, 0. ],\n       [0. , 0. , 0.1]]), rho_estimates=array([[0.3, 0. , 0. ],\n       [0. , 0.3, 0. ],\n       [0. , 0. , 0.3]]), structural_stability=0.0, regime_confidence=0.0, over_identification_stat=7715.255766325448, over_identification_p_value=0.0), crypto_moments=CryptoMoments(lead_lag_betas=array([0.29087519]), lead_lag_significance=array([0.]), mirroring_ratios=array([0.91508504]), mirroring_consistency=array([0.]), spread_floor_dwell_times=array([0.04574825]), spread_floor_frequency=array([0.]), undercut_initiation_rate=array([0.16265879]), undercut_response_time=array([0.25110517]), mev_coordination_score=array([0.37454012, 0.95071431, 0.73199394, 0.59865848]), mev_interaction_patterns=array([[0.15601864, 0.15599452, 0.05808361, 0.86617615],\n       [0.60111501, 0.70807258, 0.02058449, 0.96990985],\n       [0.83244264, 0.21233911, 0.18182497, 0.18340451],\n       [0.30424224, 0.52475643, 0.43194502, 0.29122914]])), composite_risk_score=47.886396549115055, risk_classification='AMBER', confidence_level=0.26489133163526934, coordination_indicators={'environment_invariance': 1.0, 'invariance_strength': 2.6262310312510206, 'structural_stability': 0.0, 'regime_confidence': 0.0, 'lead_lag_strength': 0.29087518836819565, 'mirroring_strength': 0.9150850448078666, 'spread_floor_persistence': 0.045748252894331085, 'undercut_coordination': 0.16265878751467008}, alternative_explanations=['High mirroring may reflect arbitrage constraints rather than coordination', 'Environment invariance may reflect insufficient environmental variation in data'], analysis_timestamp=Timestamp('2025-09-21 17:44:30.535529'), data_quality_score=0.9853881278538813)",
+  "summary": {
+    "analysis_info": {
+      "case_study": "CMA Poster Frames",
+      "analysis_date": "2025-09-21T17:44:30.540195",
+      "seed": 42,
+      "n_records": 1460,
+      "date_range": {
+        "start": "2023-01-01T00:00:00",
+        "end": "2023-12-31T00:00:00"
+      }
+    },
+    "icp_results": {
+      "invariance_rejected": "True",
+      "p_value": 0.012916939430614338,
+      "environments_tested": 4,
+      "power": -0.23777167091182672
+    },
+    "vmm_results": {
+      "j_statistic": null,
+      "p_value": null,
+      "stability": null,
+      "convergence_achieved": false
+    },
+    "validation_results": {
+      "lead_lag": {
+        "persistence_score": null,
+        "switching_entropy": 0.0
+      },
+      "mirroring": {
+        "mirroring_ratio": 1.0,
+        "coordination_score": 0.612715934328665
+      },
+      "hmm": {
+        "n_states": null,
+        "dwell_times": {
+          "0": 1.1388888888888888,
+          "1": 16.25,
+          "2": 4.948717948717949
+        }
+      },
+      "infoflow": {
+        "transfer_entropy": null,
+        "network_concentration": null
+      }
+    },
+    "integrated_results": {
+      "composite_score": null,
+      "risk_band": null,
+      "coordination_detected": null,
+      "confidence_level": 0.26489133163526934
+    },
+    "coordination_analysis": {
+      "coordination_detected": true,
+      "n_periods": 3,
+      "total_coordination_days": 548,
+      "periods": [
+        {
+          "period": "Post-holiday coordination",
+          "start_date": "2023-01-15T00:00:00",
+          "end_date": "2023-02-28T00:00:00",
+          "strength": 0.7999999999999998,
+          "avg_price": 200.75799999999998,
+          "price_volatility": 19.44422964194558
+        },
+        {
+          "period": "Summer peak coordination",
+          "start_date": "2023-06-01T00:00:00",
+          "end_date": "2023-07-15T00:00:00",
+          "strength": 0.9000000000000004,
+          "avg_price": 199.8960555555555,
+          "price_volatility": 19.567373525867158
+        },
+        {
+          "period": "Autumn business travel coordination",
+          "start_date": "2023-09-15T00:00:00",
+          "end_date": "2023-10-31T00:00:00",
+          "strength": 0.7000000000000001,
+          "avg_price": 201.23058510638293,
+          "price_volatility": 20.366912854628023
+        }
+      ]
+    },
+    "market_event_analysis": {
+      "events_detected": true,
+      "n_events": 2,
+      "events": [
+        {
+          "event": "fuel_shock",
+          "start_date": "2023-03-01T00:00:00",
+          "end_date": "2023-03-15T00:00:00",
+          "impact": 0.30000000000000004,
+          "avg_price": 245.3126,
+          "price_change": 30.35300935672518
+        },
+        {
+          "event": "regulatory_announcement",
+          "start_date": "2023-05-15T00:00:00",
+          "end_date": "2023-05-22T00:00:00",
+          "impact": 0.2,
+          "avg_price": 226.32074999999998,
+          "price_change": 11.361159356725153
+        }
+      ]
+    },
+    "key_findings": [
+      "ICP analysis rejected invariance hypothesis, indicating coordination patterns",
+      "VMM analysis found structural stability, consistent with competitive behavior",
+      "Mirroring analysis detected high price similarity between airlines"
+    ],
+    "recommendations": [
+      "Low coordination risk - continue routine monitoring",
+      "Validate findings with additional data sources and time periods",
+      "Consider alternative explanations for observed patterns",
+      "Implement ongoing monitoring system for early detection"
+    ]
+  }
+}

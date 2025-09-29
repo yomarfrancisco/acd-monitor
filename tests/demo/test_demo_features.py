@@ -1,9 +1,6 @@
 """Unit tests for demo pipeline feature engineering module."""
 
-import pytest
-import numpy as np
-import pandas as pd
-from unittest.mock import patch, MagicMock
+# from unittest.mock import patch, MagicMock  # noqa: F401
 
 from acd.demo.features import DemoFeatureEngineering
 

@@ -1,0 +1,181 @@
+{
+  "calibration_preparation": {
+    "timestamp": "2025-09-29T16:42:09.695802",
+    "base_windows": [
+      "1200-1230",
+      "1230-1300",
+      "1300-1330",
+      "1330-1400"
+    ],
+    "injection_types_count": 9,
+    "expected_thresholds_count": 9,
+    "synthetic_datasets_count": 36,
+    "validation_passed": true
+  },
+  "injection_types": {
+    "compression_mild": {
+      "type": "compression",
+      "intensity": 0.3,
+      "duration": 30,
+      "description": "Mild spread compression (30% reduction)"
+    },
+    "compression_moderate": {
+      "type": "compression",
+      "intensity": 0.6,
+      "duration": 60,
+      "description": "Moderate spread compression (60% reduction)"
+    },
+    "compression_severe": {
+      "type": "compression",
+      "intensity": 0.9,
+      "duration": 120,
+      "description": "Severe spread compression (90% reduction)"
+    },
+    "expansion_mild": {
+      "type": "expansion",
+      "intensity": 0.3,
+      "duration": 30,
+      "description": "Mild spread expansion (30% increase)"
+    },
+    "expansion_moderate": {
+      "type": "expansion",
+      "intensity": 0.6,
+      "duration": 60,
+      "description": "Moderate spread expansion (60% increase)"
+    },
+    "expansion_severe": {
+      "type": "expansion",
+      "intensity": 0.9,
+      "duration": 120,
+      "description": "Severe spread expansion (90% increase)"
+    },
+    "oscillation_mild": {
+      "type": "oscillation",
+      "intensity": 0.3,
+      "duration": 60,
+      "description": "Mild spread oscillation (30% variation)"
+    },
+    "oscillation_moderate": {
+      "type": "oscillation",
+      "intensity": 0.6,
+      "duration": 120,
+      "description": "Moderate spread oscillation (60% variation)"
+    },
+    "oscillation_severe": {
+      "type": "oscillation",
+      "intensity": 0.9,
+      "duration": 180,
+      "description": "Severe spread oscillation (90% variation)"
+    }
+  },
+  "expected_thresholds": {
+    "compression_mild": {
+      "min_delta_z": -0.5,
+      "max_delta_z": -0.2,
+      "expected_detection": true,
+      "confidence": 0.7
+    },
+    "compression_moderate": {
+      "min_delta_z": -1.0,
+      "max_delta_z": -0.5,
+      "expected_detection": true,
+      "confidence": 0.8
+    },
+    "compression_severe": {
+      "min_delta_z": -2.0,
+      "max_delta_z": -1.0,
+      "expected_detection": true,
+      "confidence": 0.9
+    },
+    "expansion_mild": {
+      "min_delta_z": 0.2,
+      "max_delta_z": 0.5,
+      "expected_detection": true,
+      "confidence": 0.7
+    },
+    "expansion_moderate": {
+      "min_delta_z": 0.5,
+      "max_delta_z": 1.0,
+      "expected_detection": true,
+      "confidence": 0.8
+    },
+    "expansion_severe": {
+      "min_delta_z": 1.0,
+      "max_delta_z": 2.0,
+      "expected_detection": true,
+      "confidence": 0.9
+    },
+    "oscillation_mild": {
+      "min_delta_z": -0.3,
+      "max_delta_z": 0.3,
+      "expected_detection": true,
+      "confidence": 0.6
+    },
+    "oscillation_moderate": {
+      "min_delta_z": -0.6,
+      "max_delta_z": 0.6,
+      "expected_detection": true,
+      "confidence": 0.7
+    },
+    "oscillation_severe": {
+      "min_delta_z": -1.0,
+      "max_delta_z": 1.0,
+      "expected_detection": true,
+      "confidence": 0.8
+    }
+  },
+  "synthetic_datasets": {
+    "1200-1230_compression_mild": "analysis/BTC/calibration/spread_v2/1200-1230_compression_mild.json",
+    "1200-1230_compression_moderate": "analysis/BTC/calibration/spread_v2/1200-1230_compression_moderate.json",
+    "1200-1230_compression_severe": "analysis/BTC/calibration/spread_v2/1200-1230_compression_severe.json",
+    "1200-1230_expansion_mild": "analysis/BTC/calibration/spread_v2/1200-1230_expansion_mild.json",
+    "1200-1230_expansion_moderate": "analysis/BTC/calibration/spread_v2/1200-1230_expansion_moderate.json",
+    "1200-1230_expansion_severe": "analysis/BTC/calibration/spread_v2/1200-1230_expansion_severe.json",
+    "1200-1230_oscillation_mild": "analysis/BTC/calibration/spread_v2/1200-1230_oscillation_mild.json",
+    "1200-1230_oscillation_moderate": "analysis/BTC/calibration/spread_v2/1200-1230_oscillation_moderate.json",
+    "1200-1230_oscillation_severe": "analysis/BTC/calibration/spread_v2/1200-1230_oscillation_severe.json",
+    "1230-1300_compression_mild": "analysis/BTC/calibration/spread_v2/1230-1300_compression_mild.json",
+    "1230-1300_compression_moderate": "analysis/BTC/calibration/spread_v2/1230-1300_compression_moderate.json",
+    "1230-1300_compression_severe": "analysis/BTC/calibration/spread_v2/1230-1300_compression_severe.json",
+    "1230-1300_expansion_mild": "analysis/BTC/calibration/spread_v2/1230-1300_expansion_mild.json",
+    "1230-1300_expansion_moderate": "analysis/BTC/calibration/spread_v2/1230-1300_expansion_moderate.json",
+    "1230-1300_expansion_severe": "analysis/BTC/calibration/spread_v2/1230-1300_expansion_severe.json",
+    "1230-1300_oscillation_mild": "analysis/BTC/calibration/spread_v2/1230-1300_oscillation_mild.json",
+    "1230-1300_oscillation_moderate": "analysis/BTC/calibration/spread_v2/1230-1300_oscillation_moderate.json",
+    "1230-1300_oscillation_severe": "analysis/BTC/calibration/spread_v2/1230-1300_oscillation_severe.json",
+    "1300-1330_compression_mild": "analysis/BTC/calibration/spread_v2/1300-1330_compression_mild.json",
+    "1300-1330_compression_moderate": "analysis/BTC/calibration/spread_v2/1300-1330_compression_moderate.json",
+    "1300-1330_compression_severe": "analysis/BTC/calibration/spread_v2/1300-1330_compression_severe.json",
+    "1300-1330_expansion_mild": "analysis/BTC/calibration/spread_v2/1300-1330_expansion_mild.json",
+    "1300-1330_expansion_moderate": "analysis/BTC/calibration/spread_v2/1300-1330_expansion_moderate.json",
+    "1300-1330_expansion_severe": "analysis/BTC/calibration/spread_v2/1300-1330_expansion_severe.json",
+    "1300-1330_oscillation_mild": "analysis/BTC/calibration/spread_v2/1300-1330_oscillation_mild.json",
+    "1300-1330_oscillation_moderate": "analysis/BTC/calibration/spread_v2/1300-1330_oscillation_moderate.json",
+    "1300-1330_oscillation_severe": "analysis/BTC/calibration/spread_v2/1300-1330_oscillation_severe.json",
+    "1330-1400_compression_mild": "analysis/BTC/calibration/spread_v2/1330-1400_compression_mild.json",
+    "1330-1400_compression_moderate": "analysis/BTC/calibration/spread_v2/1330-1400_compression_moderate.json",
+    "1330-1400_compression_severe": "analysis/BTC/calibration/spread_v2/1330-1400_compression_severe.json",
+    "1330-1400_expansion_mild": "analysis/BTC/calibration/spread_v2/1330-1400_expansion_mild.json",
+    "1330-1400_expansion_moderate": "analysis/BTC/calibration/spread_v2/1330-1400_expansion_moderate.json",
+    "1330-1400_expansion_severe": "analysis/BTC/calibration/spread_v2/1330-1400_expansion_severe.json",
+    "1330-1400_oscillation_mild": "analysis/BTC/calibration/spread_v2/1330-1400_oscillation_mild.json",
+    "1330-1400_oscillation_moderate": "analysis/BTC/calibration/spread_v2/1330-1400_oscillation_moderate.json",
+    "1330-1400_oscillation_severe": "analysis/BTC/calibration/spread_v2/1330-1400_oscillation_severe.json"
+  },
+  "validation_results": {
+    "synthetic_datasets_count": 36,
+    "expected_thresholds_count": 9,
+    "validation_passed": true,
+    "warnings": [],
+    "errors": []
+  },
+  "next_steps": [
+    "Review injection types and expected thresholds",
+    "Validate synthetic datasets",
+    "Execute calibration runs",
+    "Analyze results and adjust thresholds",
+    "Generate final calibration report"
+  ],
+  "warnings": [],
+  "errors": []
+}

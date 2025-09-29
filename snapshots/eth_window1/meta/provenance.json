@@ -1,0 +1,22 @@
+{
+  "provenance": "REAL",
+  "seed": 42,
+  "code_version": "acdm-local",
+  "snapshot": "s3://acd-monitor-snapshots/snapshots/ETH-USD/20250928/1100-1130/OVERLAP.json",
+  "created_at_utc": "2025-09-28T21:00:03.180044+00:00",
+  "module": "write_snapshot.py",
+  "params": {
+    "symbol": "ETH-USD",
+    "date": "20250928",
+    "time_range": "1100-1130",
+    "venues": [
+      "binance",
+      "coinbase",
+      "kraken",
+      "okx",
+      "bybit"
+    ],
+    "start_time": "2025-09-28T11:00:00+00:00",
+    "end_time": "2025-09-28T11:30:00+00:00"
+  }
+}

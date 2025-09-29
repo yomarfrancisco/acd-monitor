@@ -3,12 +3,6 @@ Test VMM on Coordinated Golden Dataset
 Sanity check that median regime_confidence ≥ 0.8
 """
 
-from pathlib import Path
-
-import numpy as np
-import pandas as pd
-import pytest
-
 from acd.vmm import VMMConfig, run_vmm
 
 
@@ -60,7 +54,7 @@ class TestVMMCoordinated:
 
                 # Log progress for debugging
                 if (i + 1) % 10 == 0:
-                    print(f"Processed {i + 1}/{len(coordinated_windows)} coordinated windows")
+                    print("Processed {i + 1}/{len(coordinated_windows)} coordinated windows")
 
             except Exception as e:
                 pytest.fail(f"VMM failed on coordinated window {i}: {e}")
@@ -72,10 +66,10 @@ class TestVMMCoordinated:
         max_confidence = np.max(regime_confidence_scores)
 
         print("Coordinated dataset results:")
-        print(f"Total windows: {len(coordinated_windows)}")
-        print(f"Median regime confidence: {median_confidence:.3f}")
-        print(f"Mean regime confidence: {mean_confidence:.3f}")
-        print(f"Range: [{min_confidence:.3f}, {max_confidence:.3f}]")
+        print("Total windows: {len(coordinated_windows)}")
+        print("Median regime confidence: {median_confidence:.3f}")
+        print("Mean regime confidence: {mean_confidence:.3f}")
+        print("Range: [{min_confidence:.3f}, {max_confidence:.3f}]")
 
         # Primary assertion: median should be ≥ 0.8 (adjusted for current implementation)
         # TODO: Improve VMM calibration to meet 0.8 threshold
@@ -122,8 +116,8 @@ class TestVMMCoordinated:
         mean_stability = np.mean(structural_stability_scores)
 
         print("Structural stability results:")
-        print(f"Median: {median_stability:.3f}")
-        print(f"Mean: {mean_stability:.3f}")
+        print("Median: {median_stability:.3f}")
+        print("Mean: {mean_stability:.3f}")
 
         # High stability expected for coordinated behavior (adjusted for current implementation)
         # TODO: Improve VMM calibration to meet 0.6 threshold
@@ -239,8 +233,8 @@ class TestVMMCoordinated:
         stability_cv = np.std(stability_scores) / np.mean(stability_scores)
 
         print("Consistency metrics:")
-        print(f"Regime confidence CV: {regime_cv:.3f}")
-        print(f"Structural stability CV: {stability_cv:.3f}")
+        print("Regime confidence CV: {regime_cv:.3f}")
+        print("Structural stability CV: {stability_cv:.3f}")
 
         # Coefficient of variation should be reasonable (adjusted for current implementation)
         # TODO: Improve consistency to meet 0.3/0.4 thresholds

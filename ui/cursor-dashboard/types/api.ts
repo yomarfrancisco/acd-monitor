@@ -19,9 +19,11 @@ export interface MetricItem {
   label: string;       // e.g., "Price Stability"
   score: number;       // 0-100
   direction: "UP" | "DOWN" | "FLAT";
+  note?: string;       // Optional note
 }
 
 export interface MetricsOverview {
+  timeframe: '30d' | '6m' | '1y' | 'ytd';
   items: MetricItem[]; // [stability, synchronization, environmental]
   updatedAt: string;
 }

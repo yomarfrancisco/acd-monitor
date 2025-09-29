@@ -4,12 +4,12 @@ This module defines the EvidenceBundle class that encapsulates all
 evidence from VMM analysis, calibration, and validation processes.
 """
 
-import json
 import hashlib
+import json
+from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Union
-from dataclasses import dataclass, asdict
+from typing import Any, Dict, List, Optional, Union
 
 from ..vmm import VMMConfig, VMMOutput
 

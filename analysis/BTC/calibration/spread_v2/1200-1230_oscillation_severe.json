@@ -1,0 +1,12 @@
+{
+  "window": "1200-1230",
+  "injection_type": "oscillation_severe",
+  "injection_params": {
+    "type": "oscillation",
+    "intensity": 0.9,
+    "duration": 180,
+    "description": "Severe spread oscillation (90% variation)"
+  },
+  "created_at": "2025-09-29T16:42:09.691337",
+  "status": "created"
+}

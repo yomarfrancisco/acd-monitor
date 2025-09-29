@@ -1,0 +1,16 @@
+venue,out_degree,in_degree,net_outflow,total_score,horizon
+binance,2,2,0,7.9866,1s
+coinbase,2,2,0,7.9866,1s
+kraken,2,2,0,7.9866,1s
+bybit,0,0,0,0.0,1s
+okx,0,0,0,0.0,1s
+binance,2,2,0,15.0586,5s
+coinbase,2,2,0,15.0586,5s
+kraken,2,2,0,15.0586,5s
+bybit,0,0,0,0.0,5s
+okx,0,0,0,0.0,5s
+binance,0,0,0,0.0,30s
+coinbase,0,0,0,0.0,30s
+kraken,0,0,0,0.0,30s
+bybit,0,0,0,0.0,30s
+okx,0,0,0,0.0,30s

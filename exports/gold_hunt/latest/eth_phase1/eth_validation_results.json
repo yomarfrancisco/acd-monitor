@@ -1,0 +1,89 @@
+{
+  "status": "success",
+  "episodes": [
+    {
+      "episode_id": 0,
+      "start_idx": 466,
+      "end_idx": 481,
+      "duration": 15,
+      "leader": "binance",
+      "lift": 0.4836995567863468,
+      "p_value": 0.04003377500251197
+    },
+    {
+      "episode_id": 1,
+      "start_idx": 359,
+      "end_idx": 374,
+      "duration": 15,
+      "leader": "okx",
+      "lift": 0.3225646316108401,
+      "p_value": 0.07497988950401423
+    },
+    {
+      "episode_id": 2,
+      "start_idx": 413,
+      "end_idx": 423,
+      "duration": 10,
+      "leader": "okx",
+      "lift": 0.3727299868828402,
+      "p_value": 0.026506405886809047
+    },
+    {
+      "episode_id": 3,
+      "start_idx": 459,
+      "end_idx": 469,
+      "duration": 10,
+      "leader": "okx",
+      "lift": 0.30282652208788696,
+      "p_value": 0.012075618253727419
+    }
+  ],
+  "episode_count": 4,
+  "episodes_survived_fdr": 4,
+  "infoshare": {
+    "bounds": {
+      "binance": {
+        "lower": 0.1,
+        "upper": 0.30000000000000004,
+        "point": 0.2
+      },
+      "coinbase": {
+        "lower": 0.24999999999999997,
+        "upper": 0.44999999999999996,
+        "point": 0.35
+      },
+      "kraken": {
+        "lower": 0.04999999999999999,
+        "upper": 0.25,
+        "point": 0.15
+      },
+      "okx": {
+        "lower": 0.19999999999999998,
+        "upper": 0.4,
+        "point": 0.3
+      },
+      "bybit": {
+        "lower": 0.04999999999999999,
+        "upper": 0.25,
+        "point": 0.15
+      }
+    },
+    "window_minutes": 9.8,
+    "standardize": "none",
+    "gg_blend_alpha": 0.7,
+    "analysis_timestamp": "2025-09-28T11:45:36.144949"
+  },
+  "window_spec": {
+    "pair": "ETH-USD",
+    "duration_minutes": 9.8,
+    "time_range": "2025-09-26T20:48:04 to 2025-09-26T20:57:52 UTC",
+    "venues": [
+      "binance",
+      "coinbase",
+      "kraken",
+      "okx",
+      "bybit"
+    ],
+    "policy": "RESEARCH_g=60s"
+  }
+}

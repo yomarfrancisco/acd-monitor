@@ -1,0 +1,4 @@
+pair,llv2_best_lag_s,llv2_score,llv2_p,infoshare_from_rank,infoshare_to_rank,infoshare_from_score,infoshare_to_score,spread_episodes,spread_median_lift,spread_p_value
+binance-okx,2,0.162,0.313,3,4,0.218,0.204,6,0.777,0.032
+binance-bybit,22,0.132,0.010,3,5,0.218,0.273,6,0.777,0.032
+okx-bybit,-11,0.163,0.004,4,5,0.204,0.273,6,0.777,0.032

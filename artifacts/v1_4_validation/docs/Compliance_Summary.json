@@ -1,0 +1,19 @@
+{
+  "title": "Compliance Summary - BTC/USD Coordination Alert",
+  "risk_level": "Critical",
+  "composite_score": 8.1,
+  "key_findings": [
+    "Cross-venue similarity exceeds arbitrage-explainable bounds",
+    "Statistical significance p < 0.001",
+    "Top-5 entities control 80% of coordination activity"
+  ],
+  "recommended_actions": [
+    "Immediate investigation initiation",
+    "Regulatory consultation within 24 hours",
+    "Enhanced monitoring deployment",
+    "Legal review and evidence preservation",
+    "Executive notification to C-Suite"
+  ],
+  "timeline": "24 hours",
+  "approval_required": "C-Suite"
+}

@@ -6,12 +6,6 @@ for VMM regime confidence scores to ensure proper separation between competitive
 and coordinated behavior patterns.
 """
 
-import tempfile
-from pathlib import Path
-
-import numpy as np
-import pytest
-
 from src.acd.vmm.metrics import (
     calibrate_confidence,
     compute_calibration_curves,

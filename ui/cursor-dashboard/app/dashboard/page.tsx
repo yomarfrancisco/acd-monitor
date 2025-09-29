@@ -3,6 +3,9 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { CalendarIcon, Clock } from "lucide-react";
+import { TimeseriesChart } from "@/components/TimeseriesChart";
+import { useExchangeData } from "@/contexts/ExchangeDataContext";
+import { venueMetadata, type UiVenue } from "../../lib/venueMapping";
 
 // PageWrapper removed - was causing layout conflicts
 
@@ -58,6 +61,7 @@ export default function Page() {
   const [selectedTimeframe, setSelectedTimeframe] = useState<"30d" | "6m" | "1y" | "ytd">("ytd");
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const { availableUiVenues } = useExchangeData();
 
   useEffect(() => {
     setIsClient(true);
@@ -66,6 +70,11 @@ export default function Page() {
   const currentData = selectedTimeframe === "30d" ? analyticsData30d :
                      selectedTimeframe === "6m" ? analyticsData6m :
                      selectedTimeframe === "1y" ? analyticsData1y : analyticsDataYTD;
+
+  // Debug logging for avatar venues
+  if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
+    console.log('AVATAR_VENUES=', availableUiVenues);
+  }
 
   return (
     <div className="space-y-6">
@@ -150,7 +159,7 @@ export default function Page() {
           </div>
 
           <div className="mb-4">
-            <h3 className="text-xs font-medium text-[#f9fafb] mb-3">Algorithmic Cartel Diagnostic</h3>
+            <h3 className="text-xs font-medium text-[#f9fafb] mb-3">Collusion Risk Score</h3>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 mb-10">
               <div className="rounded-lg bg-bg-surface shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 relative">
                 <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-bg-tile border border-[#2a2a2a] rounded-full px-2 py-1">
@@ -175,46 +184,27 @@ export default function Page() {
                        selectedTimeframe === "ytd" ? "YTD" : "Cal"} Price Leader
                     </div>
                   </div>
-                  <div className="flex items-center -space-x-2">
-                    <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white">
-                      <img 
-                        src="/fnb-logo.png" 
-                        alt="FNB" 
-                        className="w-full h-full object-contain p-0.5"
-                      />
-                    </div>
-                    <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-80">
-                      <img 
-                        src="/absa-logo.png" 
-                        alt="ABSA" 
-                        className="w-full h-full object-contain p-0.5"
-                      />
-                    </div>
-                    <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-60">
-                      <img 
-                        src="/nedbank-logo.png" 
-                        alt="Nedbank" 
-                        className="w-full h-full object-contain p-0.5"
-                      />
-                    </div>
-                    <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white opacity-40">
-                      <img 
-                        src="/standard-logo.png" 
-                        alt="Standard Bank" 
-                        className="w-full h-full object-contain p-0.5"
-                      />
-                    </div>
+                  <div className={`flex items-center ${availableUiVenues.length <= 4 ? '-space-x-2' : '-space-x-2.5'}`}>
+                    {availableUiVenues.map((venue: UiVenue) => (
+                      <div key={venue} className={`${availableUiVenues.length <= 4 ? 'w-8 h-8' : 'w-7 h-7'} rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white`}>
+                        <img 
+                          src={venueMetadata[venue].icon}
+                          alt={venueMetadata[venue].label}
+                          className="w-full h-full object-contain p-0.5"
+                        />
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="h-80 relative focus:outline-none bg-bg-surface rounded-lg flex items-center justify-center">
-              <div className="text-center">
-                <div className="text-sm text-[#a1a1aa] mb-2">Chart Placeholder</div>
-                <div className="text-xs text-[#71717a]">Interactive chart will be rendered here</div>
-              </div>
-            </div>
+            <TimeseriesChart 
+              timeframe={selectedTimeframe}
+              region="US"
+              industry="CRYPTO"
+              height={320}
+            />
           </div>
         </CardContent>
       </Card>

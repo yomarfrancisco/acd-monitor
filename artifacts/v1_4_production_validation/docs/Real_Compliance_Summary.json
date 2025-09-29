@@ -1,0 +1,20 @@
+{
+  "title": "Real Data Compliance Summary - BTC/USD Coordination Alert",
+  "risk_level": "High",
+  "composite_score": 7.8,
+  "key_findings": [
+    "Real market data shows elevated coordination patterns",
+    "Statistical significance p < 0.01",
+    "Top-5 entities control 95% of coordination activity",
+    "Network clustering coefficient: 0.78"
+  ],
+  "recommended_actions": [
+    "Enhanced monitoring activation",
+    "Regulatory consultation within 72 hours",
+    "Legal review and evidence preservation",
+    "Executive notification to CRO"
+  ],
+  "timeline": "72 hours",
+  "approval_required": "Chief Risk Officer",
+  "data_source": "REAL_BTC_USD_DATA"
+}

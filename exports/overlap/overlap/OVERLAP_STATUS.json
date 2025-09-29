@@ -1,0 +1,25 @@
+{
+  "policy_checked": [
+    "BEST4_30m",
+    "ALL5_30m"
+  ],
+  "best_window": {
+    "start": null,
+    "end": null,
+    "minutes": 0,
+    "venues": [],
+    "gaps_ok": false
+  },
+  "venues_ready": [
+    "binance",
+    "coinbase",
+    "kraken",
+    "okx",
+    "bybit"
+  ],
+  "venues_gappy": [],
+  "venues_idle": [],
+  "last_check_utc": "2025-09-28T11:51:40.659251",
+  "capture_uptime_sec": 8399.022089,
+  "micro_gap_stitch": false
+}

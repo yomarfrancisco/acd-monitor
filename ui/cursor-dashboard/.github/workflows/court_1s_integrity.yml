@@ -1,0 +1,11 @@
+name: integrity (main only)
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  noop:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Integrity workflows run only on main."

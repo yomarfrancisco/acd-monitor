@@ -1,0 +1,11 @@
+{
+  "detector": "zscore",
+  "roll": 60,
+  "z_thresh": -1.5,
+  "bb_n": 1000,
+  "mc_k": 5,
+  "episodes": 48,
+  "demo": false,
+  "seed": 42,
+  "timestamp": 1759095608.9152582
+}

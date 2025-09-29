@@ -1,0 +1,21 @@
+{
+  "analysis_id": "ACD_BUNDLE_c78c39fa_20250921_202359",
+  "timestamp": "2025-09-21 20:23:59.327314",
+  "version": "2.0.0",
+  "seed": 42,
+  "data_file_paths": [
+    "mock_data.csv"
+  ],
+  "config_files": [],
+  "icp_config": {
+    "significance_level": 0.05
+  },
+  "vmm_config": {},
+  "validation_configs": {},
+  "result_file_paths": {
+    "integrated": "mock_results.json"
+  },
+  "intermediate_artifacts": [],
+  "content_hash": "6ae92fb6a7db91ac1a4dd270e54fc95a5bf106a2851711c01b71f88ba6c88dfa",
+  "signature": "ACD_SIG_6ae92fb6a7db91ac"
+}

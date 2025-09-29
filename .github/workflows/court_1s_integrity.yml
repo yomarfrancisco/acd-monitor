@@ -1,0 +1,163 @@
+name: Court 1s Integrity
+
+on: [push, pull_request]
+
+jobs:
+  check-court-1s:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Install dependencies
+        run: |
+          python -V
+          python -m pip install --upgrade pip
+          pip install -r requirements-lock.txt
+      - name: Smoke test scientific stack
+        run: |
+          python - <<'PY'
+          import numpy, pandas, scipy, statsmodels
+          from statsmodels.tsa.vector_ar.vecm import VECM, coint_johansen
+          print("scientific stack OK")
+          PY
+      - name: Check for tick data availability
+        id: detect
+        run: |
+          python - <<PY
+          import pathlib, sys
+          snapshot_dir = pathlib.Path("court/1s/ticks")
+          venues = ["binance", "coinbase", "kraken", "okx", "bybit"]
+          
+          # Check if any venue has parquet files
+          has_data = False
+          for venue in venues:
+              venue_dir = snapshot_dir / venue
+              if venue_dir.exists() and list(venue_dir.rglob("*.parquet")):
+                  has_data = True
+                  break
+          
+          if not has_data:
+              print("[CI:skip:no_data] No tick data available - skipping court evidence bundle")
+              print("[CI:info] This is expected when orchestrators haven't collected data yet")
+              print("has_data=false", file=open("$GITHUB_OUTPUT", "a"))
+          else:
+              print("[CI:info] Tick data found - proceeding with analysis")
+              print("has_data=true", file=open("$GITHUB_OUTPUT", "a"))
+          PY
+        shell: bash
+      - name: Build court evidence bundle
+        if: ${{ steps.detect.outputs.has_data == 'true' }}
+        run: |
+          python scripts/build_court_bundle_from_snapshot.py \
+            --snapshot court/1s \
+            --export-dir court/1s/evidence \
+            --permutes 1000 \
+            --alpha 0.05 \
+            --no-stitch \
+            --all5 \
+            --verbose
+      - name: Mark skipped (no data)
+        if: ${{ steps.detect.outputs.has_data == 'false' }}
+        run: |
+          echo "[CI:skip:no_data] Court integrity checks skipped - no tick data available"
+          echo "[CI:info] This is expected when orchestrators haven't collected data yet"
+        shell: bash
+      - name: Reject mock/demo/empty parquet
+        if: ${{ steps.detect.outputs.has_data == 'true' }}
+        run: |
+          set -e
+          if ls court/1s/ticks/*/*mock*.parquet 2>/dev/null; then exit 1; fi
+          if ls court/1s/ticks/*/*_demo*.parquet 2>/dev/null; then exit 1; fi
+        shell: bash
+      - name: Check for empty parquet files
+        if: ${{ steps.detect.outputs.has_data == 'true' }}
+        run: |
+          python - <<PY
+          import pathlib, sys
+          root = pathlib.Path("court/1s/ticks")
+          bad = []
+          for f in root.rglob("*.parquet"):
+              if f.stat().st_size == 0: bad.append(str(f))
+          if bad:
+              print("Empty parquet:", bad); sys.exit(1)
+          PY
+        shell: bash
+      - name: Check for ABORT tags in analysis results
+        if: ${{ steps.detect.outputs.has_data == 'true' }}
+        run: |
+          set -e
+          if grep -r "\[ABORT:" court/1s/evidence/ 2>/dev/null; then
+            echo "[CI:fail:abort_tags] Found ABORT tags in court evidence"
+            exit 2
+          fi
+        shell: bash
+      - name: Check InfoShare results
+        if: ${{ steps.detect.outputs.has_data == 'true' }}
+        run: |
+          python - <<PY
+          import json, sys
+          try:
+              with open("court/1s/evidence/info_share_results.json") as f:
+                  data = json.load(f)
+              if not data.get("bounds") or data["bounds"] == {}:
+                  print("[CI:fail:infoshare_empty] InfoShare bounds are empty")
+                  sys.exit(2)
+          except FileNotFoundError:
+              print("[CI:fail:infoshare_missing] InfoShare results not found")
+              sys.exit(2)
+          PY
+        shell: bash
+      - name: Check Spread results
+        if: ${{ steps.detect.outputs.has_data == 'true' }}
+        run: |
+          python - <<PY
+          import json, sys
+          try:
+              with open("court/1s/evidence/spread_results.json") as f:
+                  data = json.load(f)
+              if data.get("permutes", 0) < 1000:
+                  print("[CI:fail:permutes_low] Spread permutations < 1000")
+                  sys.exit(2)
+          except FileNotFoundError:
+              print("[CI:fail:spread_missing] Spread results not found")
+              sys.exit(2)
+          PY
+        shell: bash
+      - name: Debug Lead-Lag results
+        if: ${{ steps.detect.outputs.has_data == 'true' }}
+        shell: bash
+        run: |
+          set -e
+          python - <<'PY'
+          import json, sys, glob, pathlib
+          fns = list(pathlib.Path(".").rglob("leadlag_results.json"))
+          if not fns:
+              print("[CI:debug] no leadlag_results.json found"); sys.exit(2)
+          p = str(fns[0])
+          d = json.load(open(p))
+          print("[CI:debug] file=", p)
+          print("[CI:debug] keys=", list(d.keys()))
+          print("[CI:debug] venues_count=", d.get("venues_count"))
+          edges = d.get("edges", [])
+          print("[CI:debug] edges_count=", len(edges))
+          print("[CI:debug] horizons=", d.get("horizons"))
+          PY
+      - name: Check Lead-Lag results
+        if: ${{ steps.detect.outputs.has_data == 'true' }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, sys, glob, pathlib
+          fns = list(pathlib.Path(".").rglob("leadlag_results.json"))
+          if not fns:
+              print("[CI:fail:leadlag_missing] leadlag_results.json missing"); sys.exit(2)
+          d = json.load(open(str(fns[0])))
+          vc = int(d.get("venues_count", 0) or 0)
+          ec = int(d.get("edges_count", len(d.get("edges", []))) or 0)
+          if vc >= 2 and ec == 0:
+              print("[CI:fail:leadlag_empty] Lead-Lag edges are empty"); sys.exit(2)
+          print("[CI:pass:leadlag] vc=", vc, " ec=", ec)
+          PY

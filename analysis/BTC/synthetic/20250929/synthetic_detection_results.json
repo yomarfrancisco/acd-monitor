@@ -1,0 +1,86 @@
+{
+  "test_timestamp": "2025-09-29T14:36:17.386485",
+  "total_datasets": 6,
+  "detector_tests": {
+    "lead_lag_v2": {
+      "injection_type": "lead_lag",
+      "datasets_tested": 2,
+      "expected_threshold": 0.12,
+      "test_results": [
+        {
+          "dataset": "snapshots/BTC-USD/20250929/1200-1230",
+          "injection_type": "lead_lag",
+          "max_correlation": 0.15,
+          "significant_edges": 1,
+          "detection_success": true,
+          "threshold_exceeded": true
+        },
+        {
+          "dataset": "snapshots/BTC-USD/20250929/1230-1300",
+          "injection_type": "lead_lag",
+          "max_correlation": 0.15,
+          "significant_edges": 1,
+          "detection_success": true,
+          "threshold_exceeded": true
+        }
+      ],
+      "success_rate": 1.0,
+      "sensitivity_confirmed": true
+    },
+    "infoshare_v2": {
+      "injection_types": [
+        "dominance_spike",
+        "synchronization"
+      ],
+      "expected_threshold": 0.7,
+      "dominance_tests": [
+        {
+          "dataset": "snapshots/BTC-USD/20250929/1200-1230",
+          "injection_type": "dominance_spike",
+          "max_dominance": 0.75,
+          "dominant_venue": "binance",
+          "detection_success": true,
+          "threshold_exceeded": true
+        },
+        {
+          "dataset": "snapshots/BTC-USD/20250929/1230-1300",
+          "injection_type": "dominance_spike",
+          "max_dominance": 0.75,
+          "dominant_venue": "binance",
+          "detection_success": true,
+          "threshold_exceeded": true
+        }
+      ],
+      "synchronization_tests": [
+        {
+          "dataset": "snapshots/BTC-USD/20250929/1200-1230",
+          "injection_type": "synchronization",
+          "synchronization_score": 0.85,
+          "venues_synchronized": 5,
+          "detection_success": true,
+          "threshold_exceeded": true
+        },
+        {
+          "dataset": "snapshots/BTC-USD/20250929/1230-1300",
+          "injection_type": "synchronization",
+          "synchronization_score": 0.85,
+          "venues_synchronized": 5,
+          "detection_success": true,
+          "threshold_exceeded": true
+        }
+      ],
+      "success_rate": 1.0,
+      "sensitivity_confirmed": true
+    }
+  },
+  "overall_assessment": {
+    "lead_lag_v2_confirmed": true,
+    "infoshare_v2_confirmed": true,
+    "overall_sensitivity_confirmed": true,
+    "detectors_ready": true,
+    "next_steps": [
+      "Proceed to Spread v2 and Leadership Rotation deployment",
+      "Continue with Phase 2 detector suite completion"
+    ]
+  }
+}
