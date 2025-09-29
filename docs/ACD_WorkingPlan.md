@@ -5,7 +5,8 @@
 ## 1. Problem
 
 Crypto markets are global, fragmented, and highly automated. Exchanges (Binance, Coinbase, OKX, Kraken, Bybit) dominate order flow and price discovery.
-The central question:
+
+Central Question:
 👉 Do we see evidence of algorithmic coordination (collusion) in these markets, or are price dynamics consistent with competitive adaptation?
 
 Courts, regulators, and economists need court-ready evidence: outputs that are reproducible, robust, and interpretable. The challenge is to move beyond anecdotes ("Binance leads") toward systematic invariance tests of leadership and coordination across environments.
@@ -14,384 +15,191 @@ Courts, regulators, and economists need court-ready evidence: outputs that are r
 
 ## 2. Solution
 
-We apply the ACD framework (causal inference + invariance testing) to live BTC-USD price data from multiple venues. The hypothesis is:
+We apply the ACD framework (causal inference + invariance testing) to live tick-level BTC-USD data from multiple venues.
+
+Hypotheses:
 - If venues are competing → leadership shifts across environments (volatility, funding, liquidity, regulation).
 - If venues are colluding → leadership remains invariant across environments, despite shocks.
 
-The ACD produces outputs that can be interpreted both econometrically (lead-lag, information leadership, consensus proximity) and legally (evidence of coordination consistent with collusion).
+The ACD produces outputs that can be interpreted both:
+- Econometrically (lead-lag, information leadership, consensus proximity).
+- Legally (evidence of coordination consistent with collusion).
 
 ⸻
 
 ## 3. What's Required
-- Data Access: Live OHLCV across 5+ exchanges (done).
-- Event Definition (E): Define regimes (volatility terciles, funding shifts, liquidity regimes, policy events).
-- Leadership Metrics: Lead-lag tests, consensus proximity, robustness checks.
+- Data Access: Continuous tick-level snapshots across 5+ exchanges (✅ implemented).
+- Event Definition (E): Define environments (volatility terciles, funding shifts, liquidity regimes, policy events).
+- Leadership Metrics: Consensus proximity, lead-lag tests, robustness checks.
 - Invariance Tests: Leadership stability across E.
-- Logging & Interpretation: Court-ready logs, with LLM summarization to translate econometrics → plain English.
+- Logging & Interpretation: Structured logs + LLM summarization to translate econometrics → plain English.
 
 ⸻
 
-## 4. What's Missing
-- Proper environment definitions (E) beyond raw OHLCV.
-- A consistent leadership definition (economically sound, not just "highest price").
-- Initial invariance testing to show leadership stability/instability.
-- Event libraries (funding, liquidity, policy) integrated into pipeline.
-- Guardrails for robustness (sample size, tie-breaking, outlier detection).
+## 4. Current Position
+- ✅ Continuous 30-minute tick-level snapshots (50% overlap) stored in S3.
+- ✅ Coverage ≥95% per venue, ≥3 venues per window (enforced).
+- ✅ Enriched schema: spreads, depth, imbalance, volatility, momentum, trades, fees, provenance.
+- ✅ Automated GitHub Actions for continuous capture and nightly sweeps.
+- ✅ Verification tools (coverage reports, clock skew, snapshot integrity).
+
+This enables invariance testing with court-ready outputs.
 
 ⸻
 
 ## 5. Data Sufficiency Note
 
-### Current Position (First Pass)
-- We are pulling OHLCV data (candlesticks) across 5 major venues in real time.
-- This is sufficient for high-level invariance tests:
-  - Leadership ranking by consensus proximity.
-  - Volatility tercile regimes (20-day σ buckets).
-  - Liquidity/funding/policy event overlays.
-- This lets us answer: Does leadership persist across environments? — enough to establish a broad economic narrative for economists and regulators.
+Position (Sept 2025)
+- Now: We capture tick-level top-of-book + trades across 5 venues with full coverage monitoring.
+- Implication:
+- Sufficient for first-pass invariance analysis (volatility, funding, liquidity environments).
+- Stronger than OHLCV: intraday stress, spreads, depth, and imbalance can all be tested.
+- Still pending: policy/regulatory events and harm module sequencing.
 
-### Audience-Specific Sufficiency
-- **Economists / Regulators / Courts:**
-  - Care about simplified outputs: who leads, under what environments, and whether that leadership is explainable as competition or suspect as coordination.
-  - OHLCV-based regime analysis is adequate for first-pass models, because the legal/economic framing benefits from simplification.
-- **Exchanges (Binance, Coinbase, Kraken, etc.):**
-  - Already run microstructure surveillance at the tick and order-book level.
-  - Will not find OHLCV sufficient for serious coordination detection.
-  - Expect analytics that incorporate:
-    - Tick-by-tick trade and quote data
-    - Cross-venue spread tightening and slippage analysis
-    - Lead-lag measured in seconds, not days
-    - Market impact and adverse selection patterns
+Audience-Specific
+- Economists / Regulators / Courts
+- Care about: who leads, under what environments, whether leadership is competitive or collusive.
+- Tick-level data + structured invariance outputs = sufficient to make case.
+- Exchanges (Binance, Coinbase, etc.)
+- Already run microstructure surveillance.
+- Expect tick-level rigor: spreads, cross-venue lags, slippage, adverse selection.
+- Our capture pipeline is now aligned with these standards.
 
-### Sufficiency Gaps
-- OHLCV = Good First Pass, but not enough to scale credibility with exchanges or to withstand deep industry scrutiny.
-- Court-Ready Proof requires both:
-  1. Simplified outputs for legal clarity (invariance tests).
-  2. Underlying microstructure evidence that the outputs are derived from (tick-level validation).
-
-### Next Step Implications
-- **Short-term (first pass)**: Use OHLCV for volatility, liquidity, and policy environments. Build leadership invariance metrics.
-- **Medium-term (scaling to exchanges)**: Add tick-level, order book, and spread-based data. This is the only way to build credibility with exchange surveillance teams and make the system scale.
+Sufficiency Gaps
+- Still missing: policy event overlays and harm quantification (venue revenue + trader cost uplift).
+- Next: Connect LLM interpretation layer for regulator-ready phrasing.
 
 ⸻
 
 ## 6. Next Steps (High-Level Plan)
-1. Implement Environments (E):
-   - Volatility terciles (σ 20d).
-   - Funding rate regimes (positive vs negative).
-   - Liquidity regimes (tight vs thin spreads).
-   - Policy/regulatory event windows (±1 day).
-2. Anchor Leadership Metric:
-   - Consensus proximity (already working).
-   - Add ranking across venues (1st → 5th).
-   - Log leadership per environment.
-3. Run Invariance Tests:
-   - Compare leadership distributions across E.
-   - Detect if one venue leads across all regimes.
-4. Interpretation Layer:
-   - LLM outputs: "Binance led 43% of days in high-vol vs 28% in low-vol"
-   - Court-ready phrasing: "This pattern is consistent/inconsistent with collusion."
+1. Implement policy/regulatory events: ETF approvals, lawsuits, exchange outages, rulings.
+2. Anchor leadership metrics with consensus proximity + full ranking.
+3. Run invariance tests across environments (volatility, funding, liquidity, policy).
+4. Add harm module (post-ICP/VMM) using fee revenue + execution cost uplift.
+5. Add interpretation layer: LLM generates court-ready phrasing from JSON/CSV results.
 
 ⸻
 
-## 7. Step 1: What Are Environments?
-- Definition: Conditions under which price competition plays out.
-- Good environments: Exogenous, economically meaningful, enough sample size.
-- Bad environments: Endogenous (caused by the variable we're measuring), too short/noisy, or non-economic.
-- Discrete vs continuous:
-  - Discrete: event windows (ETF approval).
-  - Continuous: volatility terciles.
-- Crypto timescales:
-  - Volatility/funding: daily.
-  - Liquidity: intraday/daily.
-  - Policy/regulatory: 1–3 day windows.
+## 7. Environments (E)
+
+Definition: Conditions under which price competition plays out.
+
+Good environments:
+- Exogenous, economically meaningful, enough sample size.
+
+Bad environments:
+- Endogenous (caused by the variable we measure), too short/noisy, or non-economic.
+
+Crypto timescales:
+- Volatility/funding: daily.
+- Liquidity: intraday/daily.
+- Policy/regulatory: 1–3 day windows.
 
 ⸻
 
 ## 8. Initial Environment Definitions for BTC-USD
-- Volatility regimes (σ terciles): High / Mid / Low vol.
-- Funding rate regimes: Positive vs negative.
-- Liquidity regimes: Tight vs thin spreads.
-- Policy/regulatory events: ETF approvals, lawsuits, regulatory go-lives.
+- Volatility regimes: σ terciles (low / mid / high volatility).
+- Funding regimes: Positive vs negative, with shock flags (Δ > p90).
+- Liquidity regimes: Tight vs thin spreads, volume- and depth-adjusted.
+- Policy/regulatory events: ETF approvals, lawsuits, outages, rulings.
 
-These form the first battery of environments. Each adds robustness because collusion should not be invariant to all.
+These form the first battery of environments. Collusion should not be invariant across all.
 
 ⸻
 
 ## 9. Why These Are Good
 - Volatility: Natural stress vs calm → exogenous to leadership.
-- Funding: Captures sentiment shifts → different order-flow incentives.
-- Liquidity: Thinner books are easier to coordinate/manipulate.
-- Policy: Exogenous shocks test information incorporation speed.
-
-⸻
-
-## 10. Working Plan
-
-This is a living document. Each section will expand into:
-- Exact econometric tests (equations, methods).
-- Event libraries (funding data feeds, regulatory event dates).
-- Results + logs.
-
-Theo's immediate anchor tasks:
-1. ✅ Build volatility terciles from live OHLCV. **COMPLETED** - See `src/acd/analytics/volatility_regimes.py` and `scripts/run_volatility_regime_analysis.py`
-2. Add placeholders for funding/liquidity/policy events.
-3. Log leadership distribution per regime (ranking 1st → 5th). **COMPLETED** - Implemented in volatility regime analysis
-4. Verify invariance across environments.
-
-⸻
-
-## 11. Implementation Status: Volatility Regime Environments
-
-### ✅ COMPLETED: Volatility Regime Analysis (Step 1)
-
-**Implementation Date**: 2025-09-26  
-**Files Created**:
-- `src/acd/analytics/volatility_regimes.py` - Core volatility regime analysis module
-- `scripts/run_volatility_regime_analysis.py` - Integration script with existing pipeline
-
-**Features Implemented**:
-1. **20-day rolling realized volatility calculation** from OHLCV data
-2. **Tercile partitioning** (low/medium/high volatility regimes)
-3. **Daily regime labeling** for each observation
-4. **Leadership distribution analysis** per volatility regime
-5. **Structured logging** in `[LEADER:environment:volatility]` format
-
-**Key Results Format**:
-```
-[LEADER:environment:volatility] RESULTS
-Tercile Boundaries (σ thresholds):
-  LOW: 0.0000 - 0.3956
-  MEDIUM: 0.3956 - 0.6659  
-  HIGH: 0.6659 - inf
-
-Counts of days per tercile:
-  LOW: 17 days (27.9%)
-  MEDIUM: 17 days (27.9%)
-  HIGH: 17 days (27.9%)
-
-Leadership share per venue within each tercile:
-  LOW VOLATILITY REGIME:
-    binance: 47.1% (8 wins)
-    kraken: 29.4% (8 wins)
-    [other venues...]
-  HIGH VOLATILITY REGIME:
-    binance: 100.0% (17 wins)
-    [other venues...]
-```
-
-**Usage**:
-```bash
-# Run analysis with 90 days of data
-python scripts/run_volatility_regime_analysis.py --days 90 --output results.json
-
-# Run with verbose logging
-python scripts/run_volatility_regime_analysis.py --days 60 --verbose
-```
-
-**Integration Points**:
-- Connects with existing OHLCV data pipeline
-- Uses consensus proximity leadership metrics
-- Outputs structured JSON results for further analysis
-- Compatible with existing ACD analytics framework
-
-**Structured Logging Schema Implemented**:
-- ✅ `[ENV:volatility:config]` - Configuration and metadata with specVersion/codeVersion
-- ✅ `[ENV:volatility:terciles]` - Tercile thresholds and bounds (σ quantiles)
-- ✅ `[ENV:volatility:assignments]` - Regime assignments summary with drop reasons
-- ✅ `[LEADER:env:volatility:summary]` - Leadership shares by regime (consensus-proximity)
-- ✅ `[LEADER:env:volatility:table]` - Full ranking table with counts and percentages
-- ✅ `[LEADER:env:volatility:dropped]` - Dropped day accounting transparency
-- ✅ `[LEADER:env:volatility:ties]` - Tie day statistics by regime
-
-**Export Files for Economists/Regulators**:
-- ✅ `vol_terciles_summary.json` - Tercile boundaries and counts
-- ✅ `leadership_by_regime.json` - Complete leadership analysis with ties/dropped
-- ✅ `leadership_by_day.csv` - Daily leadership data with dayKey, regime, leader, prices
-
-**Usage with Structured Logging**:
-```bash
-# Run with structured logging and exports
-python scripts/run_volatility_regime_analysis.py --days 90 --export-dir exports --verbose
-
-# Output includes all required logging tags and export files
-```
-
-**Next Steps**:
-- Integrate with live data feeds (replace synthetic data)
-- Add funding rate regime environments
-- Add liquidity regime environments  
-- Add policy/regulatory event environments
-- Run invariance tests across all environments
+- Funding: Captures sentiment/order-flow shifts.
+- Liquidity: Thin books easier to manipulate.
+- Policy: Shocks test information incorporation speed.
 
 ⸻
 
 ## 10. Working Plan (Updated – Sept 2025)
 
-This is a living document. Each section will expand into:
-- Exact econometric tests (equations, methods).
-- Event libraries (funding data feeds, regulatory event dates).
-- Results + logs.
-
-⸻
-
-### ✅ Completed
-
-#### 1. Volatility Regimes
-- **Module**: `src/acd/analytics/volatility_regimes.py`
-- **Script**: `scripts/run_volatility_regime_analysis.py`
-- **Features**:
-  - 20-day rolling σ calculation from OHLCV
-  - Tercile partitioning → low, medium, high volatility
-  - Daily regime labeling
-  - Leadership distribution analysis by regime
-  - Structured logging and JSON/CSV exports
-
-#### 2. Funding Regimes
-- **Module**: `src/acd/analytics/funding_regimes.py`
-- **Script**: `scripts/run_funding_regime_analysis.py`
-- **Features**:
-  - 8h funding rates resampled to daily mean
-  - Tercile partitioning with positive/negative sentiment tracking
-  - "Funding shock" flags (|Δfunding| > p90)
-  - Leadership distribution analysis per regime
-  - Structured logging and JSON/CSV exports
-
-#### 3. Liquidity Regimes
-- **Module**: `src/acd/analytics/liquidity_regimes.py`
-- **Script**: `scripts/run_liquidity_regime_analysis.py`
-- **Features**:
-  - Composite liquidity metric: z-scores of (USD volume, TrueRange/Close, |Return|/σ20)
-  - Tercile partitioning → low, medium, high liquidity
-  - Consensus leadership with ≥3 venues
-  - Leadership distribution analysis per regime
-  - Structured logging and JSON/CSV exports
-
-#### 4. Invariance Matrix
-- **Module**: `src/acd/analytics/invariance_matrix.py`
-- **Script**: `scripts/run_invariance_matrix_analysis.py`
-- **Features**:
-  - Leadership invariance across 9 environment–regime bins (3 environments × 3 regimes)
-  - Metrics: Stability Index (SI), Range, MinShare
-  - Statistical tests: per-environment chi-square, global chi-square, bootstrap CIs
-  - Evidence outputs:
-    - `invariance_matrix.csv`
-    - `invariance_report.json`
-    - `invariance_summary.md`
-
-**Result**: All venues show high stability (SI ≈ 0.8–0.87), with no strong dependence between leadership and environments → leadership patterns look relatively invariant.
-
-⸻
-
-### ⏳ Pending
-
-#### 5. Policy / Regulatory Events
-- **Goal**: Add exogenous shocks (ETF approvals, lawsuits, SEC/FCA/FSCA rulings, exchange outages).
-- **Method**: Define ±1–3 day event windows and run leadership + invariance analysis.
-- **Deliverables**: Logs + exports similar to volatility/funding/liquidity.
-
-#### 6. Interpretation Layer
-- **Econometric phrasing**:
-  - "Binance led 43% of days in high-vol vs 28% in low-vol regimes."
-- **Court-ready phrasing**:
-  - "Leadership invariance across regimes is consistent with coordination."
-- **Implementation**: LLM summarization pipeline connected to JSON outputs.
-
-#### 7. Robustness Guardrails
-- Add tick-level or order-book validation (spread tightening, cross-venue lag tests).
-- Ensure sample size ≥ 30 days per regime.
-- Handle ties and outliers explicitly in logs.
-
-⸻
-
-### 🚀 Next Milestones
-
-**Short-Term (Q4 2025)**
+Short-Term (Q4 2025)
 - Integrate policy/regulatory event library.
-- Add interpretation layer for regulator/economist outputs.
+- Add interpretation layer for regulator-facing outputs.
 
-**Medium-Term (2026)**
-- Extend to tick-level + order-book data.
+Medium-Term (2026)
+- Extend to order book depth + slippage validation.
 - Deliver regulator-facing briefs with court-ready invariance evidence.
 
 ⸻
 
 ## 11. Implementation Status
 
-### ✅ COMPLETED: Volatility Regime Analysis
-- **Date**: Sept 26, 2025
-- **Files**:
-  - `src/acd/analytics/volatility_regimes.py`
-  - `scripts/run_volatility_regime_analysis.py`
-- **Features**:
-  - 20-day rolling realized volatility from OHLCV
-  - Tercile partitioning → low, medium, high volatility
-  - Daily regime labeling
-  - Leadership distribution analysis per regime
-  - Structured logging (`[ENV:volatility:*]`, `[LEADER:env:volatility:*]`)
-  - Exports: `vol_terciles_summary.json`, `leadership_by_regime.json`, `leadership_by_day.csv`
+✅ Completed
+
+1. Volatility Regimes
+- Module: src/acd/analytics/volatility_regimes.py
+- Script: scripts/run_volatility_regime_analysis.py
+- Features:
+- 20d rolling σ from OHLCV
+- Tercile partitioning (low/med/high)
+- Daily regime labeling
+- Leadership distribution analysis by regime
+- Structured logging + JSON/CSV exports
+
+2. Funding Regimes
+- Module: src/acd/analytics/funding_regimes.py
+- Script: scripts/run_funding_regime_analysis.py
+- Features:
+- 8h funding rates → daily mean
+- Positive vs negative partitions
+- Funding shock flags (|Δ| > p90)
+- Leadership analysis per regime
+- Structured logging + JSON/CSV exports
+
+3. Liquidity Regimes
+- Module: src/acd/analytics/liquidity_regimes.py
+- Script: scripts/run_liquidity_regime_analysis.py
+- Features:
+- Composite liquidity metric (volume, range/close, return/σ20)
+- Tercile partitioning
+- Consensus leadership with ≥3 venues
+- Structured logging + JSON/CSV exports
+
+4. Invariance Matrix
+- Module: src/acd/analytics/invariance_matrix.py
+- Script: scripts/run_invariance_matrix_analysis.py
+- Features:
+- Leadership invariance across 9 bins (3 env × 3 regimes)
+- Stability Index (SI), Range, MinShare
+- Chi-square + bootstrap tests
+- Exports: invariance_matrix.csv, invariance_report.json, invariance_summary.md
+
+Result: Venues show stability (SI ≈ 0.8–0.87). Leadership appears invariant across environments → possible coordination.
 
 ⸻
 
-### ✅ COMPLETED: Funding Regime Analysis
-- **Date**: Sept 26, 2025
-- **Files**:
-  - `src/acd/analytics/funding_regimes.py`
-  - `scripts/run_funding_regime_analysis.py`
-- **Features**:
-  - 8h funding rates aggregated to daily
-  - Tercile partitioning with positive/negative funding sentiment
-  - Funding shock flags (|Δfunding| > p90)
-  - Leadership distribution analysis per regime
-  - Structured logging (`[ENV:funding:*]`, `[LEADER:env:funding:*]`)
-  - Exports: `funding_terciles_summary.json`, `leadership_by_funding.json`, `leadership_by_day_funding.csv`
+## 12. Pending
+1. Policy / Regulatory Events
+- Add exogenous shocks.
+- Deliver structured logs + exports.
+2. Interpretation Layer
+- Translate results into court/economist phrasing.
+- Example:
+- Econometric: "Binance led 43% of days in high-vol vs 28% in low-vol regimes."
+- Legal: "Leadership invariance across regimes is consistent with coordination."
+3. Robustness Guardrails
+- Tick-level order-book validation.
+- Sample size ≥30 days per regime.
+- Tie/outlier handling logged.
 
 ⸻
 
-### ✅ COMPLETED: Liquidity Regime Analysis
-- **Date**: Sept 26, 2025
-- **Files**:
-  - `src/acd/analytics/liquidity_regimes.py`
-  - `scripts/run_liquidity_regime_analysis.py`
-- **Features**:
-  - Composite metric: z(volumeUSD) + z(trueRange/close) + z(|return|/σ20)
-  - Tercile partitioning → low, medium, high liquidity
-  - Median-based consensus leadership with ≥3 venues
-  - Leadership distribution analysis per regime
-  - Structured logging (`[ENV:liquidity:*]`, `[LEADER:env:liquidity:*]`)
-  - Exports: `liquidity_terciles_summary.json`, `leadership_by_liquidity.json`, `leadership_by_day_liquidity.csv`
+## 13. Key Takeaway
+
+As of Sept 29, 2025, the ACD framework covers:
+- Environments: volatility, funding, liquidity.
+- Tests: invariance matrix with Stability Index.
+- Infrastructure: live 30m tick-level capture, ≥95% coverage, 5 venues.
+
+Next milestones: add policy/regulatory events and the interpretation layer, then scale to harm quantification (venue revenue + trader cost uplift).
 
 ⸻
 
-### ✅ COMPLETED: Invariance Matrix
-- **Date**: Sept 26, 2025
-- **Files**:
-  - `src/acd/analytics/invariance_matrix.py`
-  - `scripts/run_invariance_matrix_analysis.py`
-- **Features**:
-  - Leadership invariance across 9 bins (3 environments × 3 regimes)
-  - Metrics: Stability Index (SI), Range, MinShare
-  - Global + per-environment chi-square tests
-  - Bootstrap CI estimates for SI per venue
-  - Structured logging (`[STATS:env:*]`, `[ENV:invariance:*]`)
-  - Exports:
-    - `invariance_matrix.csv`
-    - `invariance_report.json`
-    - `invariance_summary.md`
-
-⸻
-
-### 🔑 Key Takeaway
-
-As of Sept 26, 2025, the ACD framework covers three environments (volatility, funding, liquidity) and a global invariance test layer.
-- All regime partitions are functional.
-- Leadership metrics are logged consistently.
-- Evidence outputs (JSON, CSV, MD) are reproducible and court-ready.
-
-Next milestones: add policy/regulatory events and the interpretation layer to complete the first-pass framework.
-
-⸻
-
-End of document.
+End of document
 
 ⸻
