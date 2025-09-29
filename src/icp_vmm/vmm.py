@@ -10,7 +10,8 @@ import numpy as np
 from typing import Dict, Optional
 from statsmodels.tsa.vector_ar.vecm import VECM, coint_johansen
 from statsmodels.tsa.vector_ar.var_model import VAR
-from statsmodels.tsa.vector_ar.impulse_response import irf  # noqa: F401
+
+# from statsmodels.tsa.vector_ar.impulse_response import irf  # noqa: F401
 import logging
 
 logger = logging.getLogger(__name__)

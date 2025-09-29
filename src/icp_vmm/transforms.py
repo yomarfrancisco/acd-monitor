@@ -101,22 +101,24 @@ class DataTransformer:
         data = data.copy()
         data[timestamp_col] = data[timestamp_col].dt.floor(f"{self.aggregation_seconds}s")
 
-        # Aggregate by timestamp
-        agg_data = (
-            data.groupby(timestamp_col)
-            .agg(
-                {
-                    "last_px": "last",
-                    "best_bid": "last",
-                    "best_ask": "last",
-                    "spread_bps": "mean",
-                    "bid_sz": "mean",
-                    "ask_sz": "mean",
-                    "imbalance": "mean",
-                }
-            )
-            .reset_index()
-        )
+        # Aggregate by timestamp - only use available columns
+        agg_dict = {
+            "last_px": "last",
+            "best_bid": "last",
+            "best_ask": "last",
+            "bid_sz": "mean",
+            "ask_sz": "mean",
+        }
+
+        # Add optional columns if they exist
+        if "spread_bps" in data.columns:
+            agg_dict["spread_bps"] = "mean"
+        if "imbalance" in data.columns:
+            agg_dict["imbalance"] = "mean"
+        if "trade_sz" in data.columns:
+            agg_dict["trade_sz"] = "mean"
+
+        agg_data = data.groupby(timestamp_col).agg(agg_dict).reset_index()
 
         return agg_data
 
