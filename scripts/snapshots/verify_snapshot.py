@@ -14,6 +14,7 @@ import re
 from pathlib import Path
 from typing import Dict, List, Any, Tuple
 import boto3
+from botocore.exceptions import ClientError
 import pandas as pd
 from datetime import datetime, timezone
 import numpy as np
@@ -46,6 +47,19 @@ except ImportError:
     DEFAULT_REGION = os.getenv('AWS_DEFAULT_REGION', 'us-east-1')
 
 logger = logging.getLogger(__name__)
+
+
+def _load_json_s3(s3_client, bucket: str, key: str, *, allow_missing=False, log=logger):
+    """Load JSON from S3 with optional missing file handling."""
+    try:
+        obj = s3_client.get_object(Bucket=bucket, Key=key)
+        return json.loads(obj["Body"].read())
+    except ClientError as e:
+        code = getattr(e, "response", {}).get("Error", {}).get("Code")
+        if code == "NoSuchKey" and allow_missing:
+            log.warning("Missing %s (coverage meta); downgrading to quality warning", key)
+            return None
+        raise
 
 
 def _first_parquet_key(s3_client, bucket: str, prefix: str) -> str:
@@ -183,13 +197,19 @@ def verify_coverage(s3_client, bucket: str, base_key: str, overlap_data: Dict) -
     
     # Read coverage from meta/coverage.json if available
     coverage_key = f"{base_key}/meta/coverage.json"
-    try:
-        coverage_data = load_s3_json(s3_client, bucket, coverage_key)
-        if coverage_data:
-            claimed_coverage = coverage_data
-            logger.info(f"Loaded coverage from meta/coverage.json: {claimed_coverage}")
-    except Exception as e:
-        logger.debug(f"Could not load meta/coverage.json: {e}")
+    coverage_data = _load_json_s3(
+        s3_client,
+        bucket,
+        coverage_key,
+        allow_missing=args.allow_missing_coverage_meta,
+        log=logger,
+    )
+    if coverage_data is not None:
+        claimed_coverage = coverage_data
+        logger.info(f"Loaded coverage from meta/coverage.json: {claimed_coverage}")
+    elif args.allow_missing_coverage_meta:
+        # Missing coverage.json is treated as quality warning, not critical
+        issues.append("Missing meta/coverage.json (quality warning)")
     
     for venue in venues:
         venue_prefix = f"{base_key}/ticks/{venue}/"
@@ -460,6 +480,8 @@ def main():
                        help="Warn on quality issues instead of failing")
     parser.add_argument("--soft-fail", action="store_true",
                        help="Exit 0 for quality issues, only fail on structural errors")
+    parser.add_argument("--allow-missing-coverage-meta", action="store_true",
+                       help="Treat missing meta/coverage.json as a quality warning")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
     
     args = parser.parse_args()
