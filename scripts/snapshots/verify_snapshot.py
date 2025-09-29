@@ -327,7 +327,11 @@ def discover_and_verify_windows(args) -> int:
             return 1
         else:
             if total_quality > 0:
-                logger.warning(f"Verification passed with {total_quality} quality warnings")
+                if args.soft_fail:
+                    logger.warning(f"Verification passed with {total_quality} quality warnings (soft-fail mode)")
+                    return 0
+                else:
+                    logger.warning(f"Verification passed with {total_quality} quality warnings")
             else:
                 logger.info("All verifications passed")
             return 0
@@ -454,6 +458,8 @@ def main():
                        help="Comma-separated list: clocks,coverage,provenance")
     parser.add_argument("--warn-on-quality", action="store_true",
                        help="Warn on quality issues instead of failing")
+    parser.add_argument("--soft-fail", action="store_true",
+                       help="Exit 0 for quality issues, only fail on structural errors")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
     
     args = parser.parse_args()
@@ -497,7 +503,11 @@ def main():
     else:
         if quality_issues:
             if args.warn_on_quality:
-                logger.warning(f"Verification passed with {len(quality_issues)} quality warnings")
+                if args.soft_fail:
+                    logger.warning(f"Verification passed with {len(quality_issues)} quality warnings (soft-fail mode)")
+                    return 0
+                else:
+                    logger.warning(f"Verification passed with {len(quality_issues)} quality warnings")
             else:
                 logger.error(f"Verification failed with {len(quality_issues)} quality issues")
                 return 1

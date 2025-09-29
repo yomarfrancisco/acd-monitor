@@ -80,7 +80,10 @@ class ICPVMMExporter:
             date_str = window_id.split("_")[0] if "_" in window_id else window_id[:8]
 
             # S3 path structure
-            s3_path = f"s3://{self.bucket}/{self.prefix}/{symbol}/{date_str}/{window_id}/icp_vmm_provisional/"
+            s3_path = (
+                f"s3://{self.bucket}/{self.prefix}/{symbol}/{date_str}/"
+                f"{window_id}/icp_vmm_provisional/"
+            )
 
             # Export manifest
             manifest = self.generate_manifest(
@@ -170,7 +173,10 @@ class ICPVMMExporter:
             summary += "## Invariance-Conditional Pricing Tests\n\n"
             overall = icp_tests.get("overall", {})
             summary += f"**Overall Status**: {overall.get('status', 'unknown')}\n"
-            summary += f"**Significant Tests**: {overall.get('significant_tests', 0)}/{overall.get('total_tests', 0)}\n\n"
+            summary += (
+                f"**Significant Tests**: {overall.get('significant_tests', 0)}/"
+                f"{overall.get('total_tests', 0)}\n\n"
+            )
 
             if "parameter_tests" in icp_tests:
                 summary += "### Parameter Stability\n\n"
@@ -284,7 +290,10 @@ class ICPVMMExporter:
 
         overall = icp_tests.get("overall", {})
         content = f"Overall Status: {overall.get('status', 'unknown')}\n"
-        content += f"Significant Tests: {overall.get('significant_tests', 0)}/{overall.get('total_tests', 0)}\n\n"
+        content += (
+            f"Significant Tests: {overall.get('significant_tests', 0)}/"
+            f"{overall.get('total_tests', 0)}\n\n"
+        )
 
         return content
 
