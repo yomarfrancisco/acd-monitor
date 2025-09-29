@@ -220,13 +220,13 @@ async def capture_window_enhanced(symbol: str, start_time: datetime, end_time: d
     try:
         logger.info(f"Capturing {symbol} from {start_time} to {end_time}")
         
-        # Try WebSocket capture first
+        # Try WebSocket capture first (now enabled by default)
         if use_websocket:
-            logger.info("Attempting WebSocket capture")
+            logger.info("Attempting real WebSocket capture")
             result = await capture_window_websocket(symbol, start_time, end_time, venues, bucket, prefix)
             
             if result.get("success"):
-                logger.info("WebSocket capture successful")
+                logger.info("Real WebSocket capture successful")
                 return result
             else:
                 logger.warning(f"WebSocket capture failed: {result.get('reason')}")

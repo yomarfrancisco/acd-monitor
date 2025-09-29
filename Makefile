@@ -1,7 +1,7 @@
 # ACD Monitor - Backend Operations
 # End-to-end verification and one-click promotion
 
-.PHONY: help baseline-from-snapshot court-from-snapshot verify-bundles test test-micro dev-smoke clean write-snapshot verify-snapshot capture-once capture-daemon coverage-report
+.PHONY: help baseline-from-snapshot court-from-snapshot verify-bundles test test-micro dev-smoke clean write-snapshot verify-snapshot capture-once capture-daemon coverage-report s3-lifecycle daily-health-report
 
 help:
 	@echo "ACD Monitor Backend Operations"
@@ -19,6 +19,8 @@ help:
 	@echo "  capture-once                          - Capture single 30m window"
 	@echo "  capture-daemon                        - Run continuous capture daemon"
 	@echo "  coverage-report                       - Generate venue coverage report"
+	@echo "  s3-lifecycle                          - Configure S3 lifecycle policies"
+	@echo "  daily-health-report                   - Generate daily health report"
 	@echo "  clean                                 - Clean temporary files"
 	@echo ""
 	@echo "Examples:"
@@ -29,6 +31,8 @@ help:
 	@echo "  make capture-once SYMBOL=BTC-USD START=2025-09-28T10:00:00Z END=2025-09-28T10:30:00Z"
 	@echo "  make capture-daemon SYMBOLS=BTC-USD,ETH-USD"
 	@echo "  make coverage-report SYMBOLS=BTC-USD,ETH-USD"
+	@echo "  make s3-lifecycle --estimate-costs"
+	@echo "  make daily-health-report SYMBOLS=BTC-USD,ETH-USD"
 
 baseline-from-snapshot:
 	@if [ -z "$(SNAPSHOT)" ]; then \
@@ -163,4 +167,27 @@ coverage-report:
 	  --bucket acd-monitor-snapshots \
 	  --prefix snapshots \
 	  --output reports/coverage_report.json \
+	  --verbose
+
+s3-lifecycle:
+	@echo "[MAKE:s3-lifecycle] Configuring S3 lifecycle policies..."
+	@python scripts/capture/s3_lifecycle_config.py \
+	  --bucket acd-monitor-snapshots \
+	  --prefix snapshots \
+	  --estimate-costs \
+	  --verbose
+
+daily-health-report:
+	@if [ -z "$(SYMBOLS)" ]; then \
+	echo "Error: SYMBOLS required"; \
+	echo "Usage: make daily-health-report SYMBOLS=BTC-USD,ETH-USD"; \
+	exit 1; \
+	fi
+	@echo "[MAKE:daily-health-report] Generating daily health report..."
+	@python scripts/ops/daily_health_report.py \
+	  --symbols $(SYMBOLS) \
+	  --days-back 1 \
+	  --bucket acd-monitor-snapshots \
+	  --prefix snapshots \
+	  --output reports/daily_status.json \
 	  --verbose

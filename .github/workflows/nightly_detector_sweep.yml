@@ -1,0 +1,270 @@
+name: Nightly Detector Sweep
+
+on:
+  schedule:
+    # Run every night at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      symbols:
+        description: 'Symbols to analyze (comma-separated)'
+        required: false
+        default: 'BTC-USD,ETH-USD'
+      days_back:
+        description: 'Number of days to look back'
+        required: false
+        default: '1'
+
+env:
+  AWS_REGION: us-east-1
+  ACD_S3_BUCKET: acd-monitor-snapshots
+  ACD_S3_PREFIX: snapshots
+
+jobs:
+  nightly-sweep:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install boto3 pandas pyarrow requests websockets
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Set sweep parameters
+        id: sweep_params
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "symbols=${{ github.event.inputs.symbols }}" >> $GITHUB_OUTPUT
+            echo "days_back=${{ github.event.inputs.days_back }}" >> $GITHUB_OUTPUT
+          else
+            echo "symbols=BTC-USD,ETH-USD" >> $GITHUB_OUTPUT
+            echo "days_back=1" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Find qualifying windows
+        id: find_windows
+        run: |
+          set -euxo pipefail
+          
+          echo "Finding windows with ≥3 venues @ ≥95% coverage..."
+          
+          # Create results directory
+          mkdir -p experiments/phase5
+          
+          # Find qualifying windows
+          python scripts/capture/coverage_monitor.py \
+            --symbols ${{ steps.sweep_params.outputs.symbols }} \
+            --days-back ${{ steps.sweep_params.outputs.days_back }} \
+            --bucket ${{ env.ACD_S3_BUCKET }} \
+            --prefix ${{ env.ACD_S3_PREFIX }} \
+            --output experiments/phase5/coverage_report.json \
+            --verbose
+          
+          # Extract qualifying windows
+          python -c "
+          import json
+          with open('experiments/phase5/coverage_report.json', 'r') as f:
+              report = json.load(f)
+          
+          qualifying_windows = []
+          for window in report.get('window_details', []):
+              if window.get('meets_threshold', False):
+                  qualifying_windows.append(window['window'])
+          
+          print(f'Found {len(qualifying_windows)} qualifying windows')
+          for window in qualifying_windows:
+              print(f'  {window}')
+          
+          with open('qualifying_windows.txt', 'w') as f:
+              for window in qualifying_windows:
+                  f.write(f'{window}\n')
+          "
+      
+      - name: Run Spread v2 on qualifying windows
+        if: steps.find_windows.outputs.qualifying_count > 0
+        run: |
+          set -euxo pipefail
+          
+          echo "Running Spread v2 on qualifying windows..."
+          
+          while IFS= read -r window; do
+            if [ -z "$window" ]; then continue; fi
+            
+            echo "Processing window: $window"
+            
+            # Extract symbol, date, and time from window string
+            IFS='/' read -r symbol date time <<< "$window"
+            
+            # Run Spread v2
+            python scripts/gold_hunt_control_v2.py \
+              --snapshot-dir "s3://${{ env.ACD_S3_BUCKET }}/${{ env.ACD_S3_PREFIX }}/$symbol/$date/$time" \
+              --export-dir "experiments/phase5/$symbol/$date/$time/spread_v2" \
+              --detector zscore \
+              --roll 60 \
+              --z-thresh -1.5 \
+              --min-dur 10 \
+              --merge-gap 2 \
+              --mc-k 5 \
+              --mc-per-episode 100 \
+              --mc-gap 10 \
+              --bb-size 10 \
+              --bb-n 1000 \
+              --fdr 0.05 \
+              --seed 42 \
+              --verbose || echo "Spread v2 failed for $window"
+              
+          done < qualifying_windows.txt
+      
+      - name: Run Lead-Lag v2 on qualifying windows
+        if: steps.find_windows.outputs.qualifying_count > 0
+        run: |
+          set -euxo pipefail
+          
+          echo "Running Lead-Lag v2 on qualifying windows..."
+          
+          while IFS= read -r window; do
+            if [ -z "$window" ]; then continue; fi
+            
+            echo "Processing window: $window"
+            
+            # Extract symbol, date, and time from window string
+            IFS='/' read -r symbol date time <<< "$window"
+            
+            # Run Lead-Lag v2
+            python scripts/detect/leadlag_v2.py \
+              --snapshot "s3://${{ env.ACD_S3_BUCKET }}/${{ env.ACD_S3_PREFIX }}/$symbol/$date/$time/OVERLAP.json" \
+              --horizons 1 5 10 30 \
+              --rho-min 0.12 \
+              --alpha 0.10 \
+              --bootstrap 300 \
+              --block 10 \
+              --placebo-shifts -60 60 \
+              --seed 42 \
+              --export-dir "experiments/phase5/$symbol/$date/$time/leadlag_v2" \
+              --verbose || echo "Lead-Lag v2 failed for $window"
+              
+          done < qualifying_windows.txt
+      
+      - name: Run InfoShare v2 on qualifying windows
+        if: steps.find_windows.outputs.qualifying_count > 0
+        run: |
+          set -euxo pipefail
+          
+          echo "Running InfoShare v2 on qualifying windows..."
+          
+          while IFS= read -r window; do
+            if [ -z "$window" ]; then continue; fi
+            
+            echo "Processing window: $window"
+            
+            # Extract symbol, date, and time from window string
+            IFS='/' read -r symbol date time <<< "$window"
+            
+            # Run InfoShare v2
+            python scripts/detect/infoshare_v2.py \
+              --snapshot "s3://${{ env.ACD_S3_BUCKET }}/${{ env.ACD_S3_PREFIX }}/$symbol/$date/$time/OVERLAP.json" \
+              --cadences 1s \
+              --vecm-lags auto \
+              --bootstrap 300 \
+              --seed 42 \
+              --export-dir "experiments/phase5/$symbol/$date/$time/infoshare_v2" \
+              --verbose || echo "InfoShare v2 failed for $window"
+              
+          done < qualifying_windows.txt
+      
+      - name: Update Phase 5 index
+        if: steps.find_windows.outputs.qualifying_count > 0
+        run: |
+          set -euxo pipefail
+          
+          echo "Updating Phase 5 index with nightly sweep results..."
+          
+          # Create or update index.md
+          python -c "
+          import json
+          from datetime import datetime
+          
+          # Load coverage report
+          with open('experiments/phase5/coverage_report.json', 'r') as f:
+              report = json.load(f)
+          
+          # Generate index update
+          index_content = f'''# Phase 5 Analysis Results - Nightly Sweep
+          
+          **Generated**: {datetime.utcnow().isoformat()}Z
+          **Qualifying Windows**: {len([w for w in report.get('window_details', []) if w.get('meets_threshold', False)])}
+          
+          ## Coverage Summary
+          
+          | Window | Binance | Coinbase | Kraken | OKX | Bybit | Venues_OK? |
+          |--------|---------|----------|--------|-----|-------|------------|
+          '''
+          
+          for window in report.get('window_details', []):
+              if window.get('status') == 'available':
+                  window_name = window.get('window', 'Unknown')
+                  coverage_data = window.get('coverage_data', {})
+                  meets_threshold = window.get('meets_threshold', False)
+                  
+                  binance_cov = coverage_data.get('binance', {}).get('coverage_percentage', 0)
+                  coinbase_cov = coverage_data.get('coinbase', {}).get('coverage_percentage', 0)
+                  kraken_cov = coverage_data.get('kraken', {}).get('coverage_percentage', 0)
+                  okx_cov = coverage_data.get('okx', {}).get('coverage_percentage', 0)
+                  bybit_cov = coverage_data.get('bybit', {}).get('coverage_percentage', 0)
+                  
+                  status = 'YES' if meets_threshold else 'NO'
+                  
+                  index_content += f'| {window_name} | {binance_cov:.0f}% | {coinbase_cov:.0f}% | {kraken_cov:.0f}% | {okx_cov:.0f}% | {bybit_cov:.0f}% | {status} |\n'
+          
+          # Write index file
+          with open('experiments/phase5/index.md', 'w') as f:
+              f.write(index_content)
+          
+          print('Phase 5 index updated successfully')
+          "
+      
+      - name: Upload results to S3
+        if: always()
+        run: |
+          set -euxo pipefail
+          
+          echo "Uploading nightly sweep results to S3..."
+          
+          # Upload results to S3
+          aws s3 sync experiments/phase5/ s3://${{ env.ACD_S3_BUCKET }}/experiments/phase5/ --delete
+          
+          echo "Results uploaded successfully"
+      
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-sweep-results-${{ github.run_number }}
+          path: |
+            experiments/phase5/
+            qualifying_windows.txt
+          retention-days: 7
+      
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "❌ Nightly detector sweep failed for run ${{ github.run_number }}"
+          echo "Check logs and artifacts for details"
