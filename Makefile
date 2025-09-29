@@ -1,7 +1,7 @@
 # ACD Monitor - Backend Operations
 # End-to-end verification and one-click promotion
 
-.PHONY: help baseline-from-snapshot court-from-snapshot verify-bundles test test-micro dev-smoke clean write-snapshot verify-snapshot capture-once capture-daemon
+.PHONY: help baseline-from-snapshot court-from-snapshot verify-bundles test test-micro dev-smoke clean write-snapshot verify-snapshot capture-once capture-daemon coverage-report
 
 help:
 	@echo "ACD Monitor Backend Operations"
@@ -18,6 +18,7 @@ help:
 	@echo "  verify-snapshot                       - Verify snapshot in S3"
 	@echo "  capture-once                          - Capture single 30m window"
 	@echo "  capture-daemon                        - Run continuous capture daemon"
+	@echo "  coverage-report                       - Generate venue coverage report"
 	@echo "  clean                                 - Clean temporary files"
 	@echo ""
 	@echo "Examples:"
@@ -27,6 +28,7 @@ help:
 	@echo "  make verify-snapshot SYMBOL=BTC-USD DATE=20250928 SPAN=0200-0230"
 	@echo "  make capture-once SYMBOL=BTC-USD START=2025-09-28T10:00:00Z END=2025-09-28T10:30:00Z"
 	@echo "  make capture-daemon SYMBOLS=BTC-USD,ETH-USD"
+	@echo "  make coverage-report SYMBOLS=BTC-USD,ETH-USD"
 
 baseline-from-snapshot:
 	@if [ -z "$(SNAPSHOT)" ]; then \
@@ -124,8 +126,8 @@ capture-once:
 	echo "Usage: make capture-once SYMBOL=BTC-USD START=2025-09-28T10:00:00Z END=2025-09-28T10:30:00Z"; \
 	exit 1; \
 	fi
-	@echo "[MAKE:capture-once] Capturing single window..."
-	@python scripts/capture/capture_window.py \
+	@echo "[MAKE:capture-once] Capturing single window with enhanced WebSocket support..."
+	@python scripts/capture/capture_window_enhanced.py \
 	  --symbol $(SYMBOL) \
 	  --start $(START) \
 	  --end $(END) \
@@ -146,4 +148,19 @@ capture-daemon:
 	  --venues binance,coinbase,kraken,okx,bybit \
 	  --bucket $(ACD_S3_BUCKET) \
 	  --prefix $(ACD_S3_PREFIX) \
+	  --verbose
+
+coverage-report:
+	@if [ -z "$(SYMBOLS)" ]; then \
+	echo "Error: SYMBOLS required"; \
+	echo "Usage: make coverage-report SYMBOLS=BTC-USD,ETH-USD"; \
+	exit 1; \
+	fi
+	@echo "[MAKE:coverage-report] Generating venue coverage report..."
+	@python scripts/capture/coverage_monitor.py \
+	  --symbols $(SYMBOLS) \
+	  --days-back 1 \
+	  --bucket acd-monitor-snapshots \
+	  --prefix snapshots \
+	  --output reports/coverage_report.json \
 	  --verbose
