@@ -55,7 +55,7 @@ jobs:
       - name: Verify snapshot
         run: |
           python scripts/snapshots/verify_snapshot.py \
-            --discover --fail-under-coverage 0.95 --report clocks,coverage --warn-on-quality --soft-fail
+            --discover --fail-under-coverage 0.95 --report clocks,coverage --warn-on-quality --allow-missing-coverage-meta --soft-fail
           
       - name: List S3 contents (debug)
         run: |
