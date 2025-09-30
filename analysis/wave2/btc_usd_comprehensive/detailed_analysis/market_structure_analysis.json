@@ -1,0 +1,25 @@
+{
+  "total_bars": 4374,
+  "swing_analysis": {
+    "swing_high_count": 642,
+    "swing_low_count": 651,
+    "swing_high_pct": 14.67764060356653,
+    "swing_low_pct": 14.883401920438958
+  },
+  "bos_choch_analysis": {
+    "bos_up_count": 495,
+    "bos_dn_count": 573,
+    "bos_up_pct": 11.316872427983538,
+    "bos_dn_pct": 13.100137174211248,
+    "choch_up_count": 99,
+    "choch_dn_count": 94,
+    "choch_up_pct": 2.263374485596708,
+    "choch_dn_pct": 2.1490626428898034
+  },
+  "volatility_analysis": {
+    "mean_atr": 438.1816810603775,
+    "atr_std": 692.4586580934089,
+    "max_atr": 8511.577240279881,
+    "min_atr": 2.4600000000209548
+  }
+}

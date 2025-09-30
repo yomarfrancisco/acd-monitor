@@ -1,0 +1,45 @@
+{
+  "panel_quality": {
+    "total_observations": 21854,
+    "date_range_hours": 14.4825,
+    "venue_coverage": {
+      "binance": {
+        "observations": 21605,
+        "coverage_pct": 98.86
+      },
+      "coinbase": {
+        "observations": 18258,
+        "coverage_pct": 83.55
+      },
+      "kraken": {
+        "observations": 21605,
+        "coverage_pct": 98.86
+      },
+      "okx": {
+        "observations": 18015,
+        "coverage_pct": 82.43
+      },
+      "bybit": {
+        "observations": 21605,
+        "coverage_pct": 98.86
+      }
+    },
+    "missing_data_percentage": {
+      "binance": 1.14,
+      "coinbase": 16.45,
+      "kraken": 1.14,
+      "okx": 17.57,
+      "bybit": 1.14
+    }
+  },
+  "env_flags_quality": {
+    "total_observations": 21854,
+    "columns": 29,
+    "missing_data_percentage": {}
+  },
+  "market_structure_quality": {
+    "total_observations": 4374,
+    "columns": 12,
+    "missing_data_percentage": {}
+  }
+}

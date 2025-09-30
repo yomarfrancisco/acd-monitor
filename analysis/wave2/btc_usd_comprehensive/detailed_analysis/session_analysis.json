@@ -1,0 +1,36 @@
+{
+  "session_distribution": {
+    "Europe": 16204,
+    "US": 3601,
+    "Asia": 1800,
+    "Pacific": 249
+  },
+  "session_percentages": {
+    "Europe": 74.14660931637229,
+    "US": 16.477532717122724,
+    "Asia": 8.236478447881394,
+    "Pacific": 1.1393795186235929
+  },
+  "session_events": {
+    "Asia": {
+      "observations": 1800,
+      "ny_open_events": 0,
+      "session_transitions": 300
+    },
+    "Europe": {
+      "observations": 16204,
+      "ny_open_events": 0,
+      "session_transitions": 660
+    },
+    "US": {
+      "observations": 3601,
+      "ny_open_events": 960,
+      "session_transitions": 360
+    },
+    "Pacific": {
+      "observations": 249,
+      "ny_open_events": 0,
+      "session_transitions": 0
+    }
+  }
+}
