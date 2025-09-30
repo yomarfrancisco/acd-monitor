@@ -147,7 +147,10 @@ class VenueWebSocket:
             return True
 
         except Exception as e:
-            logger.error(f"Failed to connect to {self.venue}: {e}")
+            if "HTTP 451" in str(e) or "geographic" in str(e).lower():
+                logger.warning(f"Geographic restriction for {self.venue}: {e}")
+            else:
+                logger.error(f"Failed to connect to {self.venue}: {e}")
             return False
 
     async def listen(self, duration_seconds: int = 1800):
@@ -187,10 +190,26 @@ class VenueWebSocket:
             # Parse message based on venue
             tick_data = self._parse_venue_message(data)
             if tick_data:
+                # Check for duplicates before adding to buffer
+                if self._is_duplicate(tick_data):
+                    return
                 self.ring_buffer.append(tick_data)
 
         except Exception as e:
             logger.error(f"Error processing message from {self.venue}: {e}")
+
+    def _is_duplicate(self, parsed: Dict) -> bool:
+        """Check if message is a duplicate based on timestamp, price, and size."""
+        if not self.ring_buffer:
+            return False
+            
+        # Check last few messages for duplicates
+        for recent in list(self.ring_buffer)[-10:]:  # Check last 10 messages
+            if (recent.get("ts_exchange") == parsed.get("ts_exchange") and
+                recent.get("last_px") == parsed.get("last_px") and
+                recent.get("last_sz") == parsed.get("last_sz")):
+                return True
+        return False
 
     def _parse_venue_message(self, data: Dict) -> Optional[Dict]:
         """Parse venue-specific message format."""
@@ -266,12 +285,16 @@ class VenueWebSocket:
                 if len(data) > 1 and isinstance(data[1], list) and len(data[1]) > 2:
                     # Nested format: data[1] is the trade array
                     trade_data = data[1]
-                    price = float(trade_data[0]) if trade_data[0] else 0
-                    volume = float(trade_data[1]) if trade_data[1] else 0
+                    price = float(trade_data[0]) if isinstance(trade_data[0], (int, float, str)) and trade_data[0] else 0
+                    volume = float(trade_data[1]) if isinstance(trade_data[1], (int, float, str)) and trade_data[1] else 0
                     timestamp = KrakenTimestamp.normalize(trade_data[2])
                 else:
                     # Standard format: data is the trade array
                     if len(data) > 2:
+                        # Check if data[0] and data[1] are not lists
+                        if isinstance(data[0], list) or isinstance(data[1], list):
+                            logger.warning(f"Kraken message contains lists where numbers expected: {data}")
+                            return None
                         price = float(data[0]) if data[0] else 0
                         volume = float(data[1]) if data[1] else 0
                         timestamp = KrakenTimestamp.normalize(data[2])
@@ -394,8 +417,8 @@ class WebSocketCapture:
             logger.error(f"Only {len(successful_venues)} venues connected, need ≥3")
             return {"success": False, "reason": "insufficient_venues"}
 
-        # Listen for data
-        duration_seconds = int((end_time - start_time).total_seconds())
+        # Listen for data (limit to 15 minutes to avoid GitHub Actions timeout)
+        duration_seconds = min(int((end_time - start_time).total_seconds()), 900)  # Max 15 minutes
         listen_tasks = []
 
         for venue in successful_venues:
@@ -404,8 +427,17 @@ class WebSocketCapture:
             )
             listen_tasks.append(task)
 
-        # Wait for all listening to complete
-        await asyncio.gather(*listen_tasks, return_exceptions=True)
+        # Wait for all listening to complete with timeout
+        try:
+            await asyncio.wait_for(
+                asyncio.gather(*listen_tasks, return_exceptions=True),
+                timeout=duration_seconds + 60  # Add 1 minute buffer
+            )
+        except asyncio.TimeoutError:
+            logger.warning("Capture timeout reached, stopping all connections")
+            for task in listen_tasks:
+                if not task.done():
+                    task.cancel()
 
         # Collect data and calculate coverage
         venue_data = {}
