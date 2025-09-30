@@ -11,6 +11,10 @@ on:
         required: false
         default: 'latest'
 
+permissions:
+  id-token: write
+  contents: read
+
 # Ensure only one analysis runs at a time
 concurrency:
   group: icp-vmm-analysis-${{ github.ref }}
@@ -51,8 +55,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: arn:aws:iam::514258695205:role/acd-ci-oidc
           aws-region: us-east-1
       
       - name: Run ICP-VMM Analysis

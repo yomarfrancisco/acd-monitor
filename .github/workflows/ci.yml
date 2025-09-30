@@ -15,6 +15,10 @@ on:
       - 'fix/**'
   workflow_dispatch:
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   detect:
     runs-on: ubuntu-latest

@@ -15,6 +15,10 @@ on:
         required: false
         default: 'binance,coinbase,kraken,okx,bybit'
 
+permissions:
+  id-token: write
+  contents: read
+
 # 1) ensure only one capture loop at a time AND auto-cancel older runs
 concurrency:
   group: capture_continuous-${{ github.ref }}   # branch-specific
@@ -59,8 +63,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: arn:aws:iam::514258695205:role/acd-ci-oidc
           aws-region: ${{ env.AWS_REGION }}
       
       - name: Sanity check AWS connectivity
