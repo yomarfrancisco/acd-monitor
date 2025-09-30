@@ -1,0 +1,127 @@
+{
+  "audit_date": "2025-09-30T16:52:36.704910",
+  "bucket": "acd-monitor-snapshots",
+  "total_objects": 385,
+  "btc_objects": 249,
+  "recent_objects": 6,
+  "parquet_objects": 101,
+  "venue_data": {
+    "binance": 19,
+    "coinbase": 25,
+    "kraken": 17,
+    "okx": 23,
+    "bybit": 17
+  },
+  "sample_objects": [
+    {
+      "Key": "analysis/BTC/20250929/1200-1230/infoshare_v2/cointegration.json",
+      "LastModified": "2025-09-29 12:40:46+00:00",
+      "ETag": "\"261bcb2bd8221a397b7831061e6e2dbc\"",
+      "ChecksumAlgorithm": [
+        "CRC64NVME"
+      ],
+      "ChecksumType": "FULL_OBJECT",
+      "Size": 1304,
+      "StorageClass": "STANDARD"
+    },
+    {
+      "Key": "analysis/BTC/20250929/1200-1230/infoshare_v2/infoshare.json",
+      "LastModified": "2025-09-29 12:40:46+00:00",
+      "ETag": "\"99914b932bd37a50b983c5e7c90ae93b\"",
+      "ChecksumAlgorithm": [
+        "CRC64NVME"
+      ],
+      "ChecksumType": "FULL_OBJECT",
+      "Size": 2,
+      "StorageClass": "STANDARD"
+    },
+    {
+      "Key": "analysis/BTC/20250929/1200-1230/infoshare_v2/infoshare_results.json",
+      "LastModified": "2025-09-29 12:40:46+00:00",
+      "ETag": "\"80388c53ab700b5938ceca9e3af6040d\"",
+      "ChecksumAlgorithm": [
+        "CRC64NVME"
+      ],
+      "ChecksumType": "FULL_OBJECT",
+      "Size": 3923,
+      "StorageClass": "STANDARD"
+    },
+    {
+      "Key": "analysis/BTC/20250929/1200-1230/infoshare_v2/params.json",
+      "LastModified": "2025-09-29 12:40:46+00:00",
+      "ETag": "\"d67b051938768b3407082016ed8e77dc\"",
+      "ChecksumAlgorithm": [
+        "CRC64NVME"
+      ],
+      "ChecksumType": "FULL_OBJECT",
+      "Size": 326,
+      "StorageClass": "STANDARD"
+    },
+    {
+      "Key": "analysis/BTC/20250929/1200-1230/infoshare_v2/placebo.json",
+      "LastModified": "2025-09-29 12:40:46+00:00",
+      "ETag": "\"d5f24407bc31c87398f4a1fae2e54b11\"",
+      "ChecksumAlgorithm": [
+        "CRC64NVME"
+      ],
+      "ChecksumType": "FULL_OBJECT",
+      "Size": 1972,
+      "StorageClass": "STANDARD"
+    },
+    {
+      "Key": "analysis/BTC/20250929/1200-1230/infoshare_v2/report.md",
+      "LastModified": "2025-09-29 12:40:46+00:00",
+      "ETag": "\"7818ac4cfa71248c552e92a9fa94fe66\"",
+      "ChecksumAlgorithm": [
+        "CRC64NVME"
+      ],
+      "ChecksumType": "FULL_OBJECT",
+      "Size": 1193,
+      "StorageClass": "STANDARD"
+    },
+    {
+      "Key": "analysis/BTC/20250929/1200-1230/leadlag_v2/edges.json",
+      "LastModified": "2025-09-29 12:40:46+00:00",
+      "ETag": "\"d751713988987e9331980363e24189ce\"",
+      "ChecksumAlgorithm": [
+        "CRC64NVME"
+      ],
+      "ChecksumType": "FULL_OBJECT",
+      "Size": 2,
+      "StorageClass": "STANDARD"
+    },
+    {
+      "Key": "analysis/BTC/20250929/1200-1230/leadlag_v2/leadlag_report.md",
+      "LastModified": "2025-09-29 12:40:46+00:00",
+      "ETag": "\"cbed94ead9cd15d134dc079a9e99fb65\"",
+      "ChecksumAlgorithm": [
+        "CRC64NVME"
+      ],
+      "ChecksumType": "FULL_OBJECT",
+      "Size": 516,
+      "StorageClass": "STANDARD"
+    },
+    {
+      "Key": "analysis/BTC/20250929/1200-1230/leadlag_v2/leadlag_results.json",
+      "LastModified": "2025-09-29 12:40:46+00:00",
+      "ETag": "\"b3507f37507bdd5b01a38e785ad9eae7\"",
+      "ChecksumAlgorithm": [
+        "CRC64NVME"
+      ],
+      "ChecksumType": "FULL_OBJECT",
+      "Size": 597,
+      "StorageClass": "STANDARD"
+    },
+    {
+      "Key": "analysis/BTC/20250929/1200-1230/leadlag_v2/params.json",
+      "LastModified": "2025-09-29 12:40:46+00:00",
+      "ETag": "\"5d298336c2473f74d2b19a03147ca061\"",
+      "ChecksumAlgorithm": [
+        "CRC64NVME"
+      ],
+      "ChecksumType": "FULL_OBJECT",
+      "Size": 430,
+      "StorageClass": "STANDARD"
+    }
+  ]
+}
