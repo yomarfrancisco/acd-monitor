@@ -133,7 +133,7 @@ def verify_overlap_json(overlap_data: Dict) -> List[str]:
         if field not in overlap_data:
             issues.append(f"Missing required field: {field}")
 
-    # Check venues and coverage match
+    # Check venues and coverage keys match (structure only)
     if "venues" in overlap_data and "coverage" in overlap_data:
         venues = overlap_data["venues"]
         coverage = overlap_data["coverage"]
@@ -141,8 +141,6 @@ def verify_overlap_json(overlap_data: Dict) -> List[str]:
         for venue in venues:
             if venue not in coverage:
                 issues.append(f"Venue {venue} missing from coverage")
-            elif coverage[venue] < 0.95:
-                issues.append(f"Low coverage for {venue}: {coverage[venue]:.3f}")
 
     return issues
 
@@ -247,19 +245,7 @@ def verify_coverage(
         except Exception as e:
             issues.append(f"Failed to verify coverage for {venue}: {e}")
 
-    # Check coverage thresholds
-    for venue in venues:
-        if venue in claimed_coverage:
-            coverage_value = claimed_coverage[venue]
-            # Handle both dict and float coverage values
-            if isinstance(coverage_value, dict):
-                coverage_pct = coverage_value.get("coverage_percentage", 0.0)
-            else:
-                coverage_pct = float(coverage_value)
-
-            if coverage_pct < 0.95:
-                issues.append(f"Low coverage for {venue}: {coverage_pct:.3f}")
-
+    # Note: Do not enforce thresholds here; handled centrally in verify_single_window()
     return issues
 
 
