@@ -41,5 +41,5 @@ jobs:
       - name: Test S3 Access
         run: |
           echo "🔍 Testing S3 access with OIDC role..."
-          aws s3 ls s3://acd-monitor-snapshots/ --max-items 3
+          aws s3 ls s3://acd-monitor-snapshots/ | head -3
           echo "✅ S3 access successful with OIDC role"
