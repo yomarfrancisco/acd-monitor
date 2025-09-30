@@ -1,0 +1,930 @@
+{
+  "summary": {
+    "total_windows": 21,
+    "available_windows": 21,
+    "meets_threshold_windows": 18,
+    "threshold_rate": 0.8571428571428571
+  },
+  "venue_performance": {
+    "binance": {
+      "windows": 20,
+      "total_coverage": 1795.039471122548,
+      "high_coverage": 18,
+      "avg_coverage": 89.75197355612741,
+      "high_coverage_rate": 0.9
+    },
+    "coinbase": {
+      "windows": 21,
+      "total_coverage": 2095.5180987875883,
+      "high_coverage": 21,
+      "avg_coverage": 99.7865761327423,
+      "high_coverage_rate": 1.0
+    },
+    "kraken": {
+      "windows": 18,
+      "total_coverage": 1792.5728444468937,
+      "high_coverage": 18,
+      "avg_coverage": 99.58738024704965,
+      "high_coverage_rate": 1.0
+    },
+    "okx": {
+      "windows": 18,
+      "total_coverage": 1791.7110872425967,
+      "high_coverage": 18,
+      "avg_coverage": 99.53950484681093,
+      "high_coverage_rate": 1.0
+    },
+    "bybit": {
+      "windows": 18,
+      "total_coverage": 1491.9040532829663,
+      "high_coverage": 15,
+      "avg_coverage": 82.88355851572035,
+      "high_coverage_rate": 0.8333333333333334
+    }
+  },
+  "window_details": [
+    {
+      "status": "available",
+      "window": "BTC-USD/2025-09-28/0100-0130",
+      "venues": [
+        "binance",
+        "coinbase"
+      ],
+      "coverage_data": {
+        "binance": {
+          "coverage_percentage": 100.0
+        },
+        "coinbase": {
+          "coverage_percentage": 100.0
+        }
+      },
+      "high_coverage_venues": [
+        "binance",
+        "coinbase"
+      ],
+      "venues_count": 2,
+      "high_coverage_count": 2,
+      "meets_threshold": false,
+      "min_coverage": 100.0,
+      "max_coverage": 100.0,
+      "avg_coverage": 100.0
+    },
+    {
+      "status": "available",
+      "window": "BTC-USD/20250928/0200-0230",
+      "venues": [
+        "binance",
+        "coinbase"
+      ],
+      "coverage_data": {
+        "binance": {
+          "coverage_percentage": 100.0
+        },
+        "coinbase": {
+          "coverage_percentage": 100.0
+        }
+      },
+      "high_coverage_venues": [
+        "binance",
+        "coinbase"
+      ],
+      "venues_count": 2,
+      "high_coverage_count": 2,
+      "meets_threshold": false,
+      "min_coverage": 100.0,
+      "max_coverage": 100.0,
+      "avg_coverage": 100.0
+    },
+    {
+      "status": "available",
+      "window": "BTC-USD/20250928/1000-1030",
+      "venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "coverage_data": {
+        "binance": {
+          "coverage_percentage": 100.0
+        },
+        "coinbase": {
+          "coverage_percentage": 100.0
+        },
+        "kraken": {
+          "coverage_percentage": 100.0
+        },
+        "okx": {
+          "coverage_percentage": 100.0
+        },
+        "bybit": {
+          "coverage_percentage": 100.0
+        }
+      },
+      "high_coverage_venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "venues_count": 5,
+      "high_coverage_count": 5,
+      "meets_threshold": true,
+      "min_coverage": 100.0,
+      "max_coverage": 100.0,
+      "avg_coverage": 100.0
+    },
+    {
+      "status": "available",
+      "window": "BTC-USD/20250928/1015-1045",
+      "venues": [
+        "binance",
+        "coinbase"
+      ],
+      "coverage_data": {
+        "binance": {
+          "coverage_percentage": 100.0
+        },
+        "coinbase": {
+          "coverage_percentage": 100.0
+        }
+      },
+      "high_coverage_venues": [
+        "binance",
+        "coinbase"
+      ],
+      "venues_count": 2,
+      "high_coverage_count": 2,
+      "meets_threshold": false,
+      "min_coverage": 100.0,
+      "max_coverage": 100.0,
+      "avg_coverage": 100.0
+    },
+    {
+      "status": "available",
+      "window": "BTC-USD/20250929/0730-0800",
+      "venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "coverage_data": {
+        "binance": {
+          "coverage_percentage": 100.0
+        },
+        "coinbase": {
+          "coverage_percentage": 100.0
+        },
+        "kraken": {
+          "coverage_percentage": 100.0
+        },
+        "okx": {
+          "coverage_percentage": 100.0
+        },
+        "bybit": {
+          "coverage_percentage": 100.0
+        }
+      },
+      "high_coverage_venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "venues_count": 5,
+      "high_coverage_count": 5,
+      "meets_threshold": true,
+      "min_coverage": 100.0,
+      "max_coverage": 100.0,
+      "avg_coverage": 100.0
+    },
+    {
+      "status": "available",
+      "window": "BTC-USD/20250929/0745-0815",
+      "venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "coverage_data": {
+        "binance": {
+          "coverage_percentage": 100.0
+        },
+        "coinbase": {
+          "coverage_percentage": 100.0
+        },
+        "kraken": {
+          "coverage_percentage": 100.0
+        },
+        "okx": {
+          "coverage_percentage": 100.0
+        },
+        "bybit": {
+          "coverage_percentage": 100.0
+        }
+      },
+      "high_coverage_venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "venues_count": 5,
+      "high_coverage_count": 5,
+      "meets_threshold": true,
+      "min_coverage": 100.0,
+      "max_coverage": 100.0,
+      "avg_coverage": 100.0
+    },
+    {
+      "status": "available",
+      "window": "BTC-USD/20250929/0800-0830",
+      "venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "coverage_data": {
+        "binance": {
+          "coverage_percentage": 100.0
+        },
+        "coinbase": {
+          "coverage_percentage": 100.0
+        },
+        "kraken": {
+          "coverage_percentage": 100.0
+        },
+        "okx": {
+          "coverage_percentage": 100.0
+        },
+        "bybit": {
+          "coverage_percentage": 100.0
+        }
+      },
+      "high_coverage_venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "venues_count": 5,
+      "high_coverage_count": 5,
+      "meets_threshold": true,
+      "min_coverage": 100.0,
+      "max_coverage": 100.0,
+      "avg_coverage": 100.0
+    },
+    {
+      "status": "available",
+      "window": "BTC-USD/20250929/0830-0900",
+      "venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "coverage_data": {
+        "binance": {
+          "coverage_percentage": 100.0
+        },
+        "coinbase": {
+          "coverage_percentage": 100.0
+        },
+        "kraken": {
+          "coverage_percentage": 100.0
+        },
+        "okx": {
+          "coverage_percentage": 100.0
+        },
+        "bybit": {
+          "coverage_percentage": 100.0
+        }
+      },
+      "high_coverage_venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "venues_count": 5,
+      "high_coverage_count": 5,
+      "meets_threshold": true,
+      "min_coverage": 100.0,
+      "max_coverage": 100.0,
+      "avg_coverage": 100.0
+    },
+    {
+      "status": "available",
+      "window": "BTC-USD/20250929/0845-0915",
+      "venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "coverage_data": {
+        "binance": {
+          "coverage_percentage": 100.0
+        },
+        "coinbase": {
+          "coverage_percentage": 100.0
+        },
+        "kraken": {
+          "coverage_percentage": 100.0
+        },
+        "okx": {
+          "coverage_percentage": 100.0
+        },
+        "bybit": {
+          "coverage_percentage": 100.0
+        }
+      },
+      "high_coverage_venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "venues_count": 5,
+      "high_coverage_count": 5,
+      "meets_threshold": true,
+      "min_coverage": 100.0,
+      "max_coverage": 100.0,
+      "avg_coverage": 100.0
+    },
+    {
+      "status": "available",
+      "window": "BTC-USD/20250929/0900-0930",
+      "venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "coverage_data": {
+        "binance": {
+          "coverage_percentage": 100.0
+        },
+        "coinbase": {
+          "coverage_percentage": 100.0
+        },
+        "kraken": {
+          "coverage_percentage": 100.0
+        },
+        "okx": {
+          "coverage_percentage": 100.0
+        },
+        "bybit": {
+          "coverage_percentage": 100.0
+        }
+      },
+      "high_coverage_venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "venues_count": 5,
+      "high_coverage_count": 5,
+      "meets_threshold": true,
+      "min_coverage": 100.0,
+      "max_coverage": 100.0,
+      "avg_coverage": 100.0
+    },
+    {
+      "status": "available",
+      "window": "BTC-USD/20250929/0930-1000",
+      "venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "coverage_data": {
+        "binance": {
+          "coverage_percentage": 100.0
+        },
+        "coinbase": {
+          "coverage_percentage": 100.0
+        },
+        "kraken": {
+          "coverage_percentage": 100.0
+        },
+        "okx": {
+          "coverage_percentage": 100.0
+        },
+        "bybit": {
+          "coverage_percentage": 100.0
+        }
+      },
+      "high_coverage_venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "venues_count": 5,
+      "high_coverage_count": 5,
+      "meets_threshold": true,
+      "min_coverage": 100.0,
+      "max_coverage": 100.0,
+      "avg_coverage": 100.0
+    },
+    {
+      "status": "available",
+      "window": "BTC-USD/20250929/0945-1015",
+      "venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "coverage_data": {
+        "binance": {
+          "coverage_percentage": 100.0
+        },
+        "coinbase": {
+          "coverage_percentage": 100.0
+        },
+        "kraken": {
+          "coverage_percentage": 100.0
+        },
+        "okx": {
+          "coverage_percentage": 100.0
+        },
+        "bybit": {
+          "coverage_percentage": 100.0
+        }
+      },
+      "high_coverage_venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "venues_count": 5,
+      "high_coverage_count": 5,
+      "meets_threshold": true,
+      "min_coverage": 100.0,
+      "max_coverage": 100.0,
+      "avg_coverage": 100.0
+    },
+    {
+      "status": "available",
+      "window": "BTC-USD/20250929/1000-1030",
+      "venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "coverage_data": {
+        "binance": {
+          "coverage_percentage": 100.0
+        },
+        "coinbase": {
+          "coverage_percentage": 100.0
+        },
+        "kraken": {
+          "coverage_percentage": 100.0
+        },
+        "okx": {
+          "coverage_percentage": 100.0
+        },
+        "bybit": {
+          "coverage_percentage": 100.0
+        }
+      },
+      "high_coverage_venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "venues_count": 5,
+      "high_coverage_count": 5,
+      "meets_threshold": true,
+      "min_coverage": 100.0,
+      "max_coverage": 100.0,
+      "avg_coverage": 100.0
+    },
+    {
+      "status": "available",
+      "window": "BTC-USD/20250929/1030-1100",
+      "venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "coverage_data": {
+        "binance": {
+          "coverage_percentage": 100.0
+        },
+        "coinbase": {
+          "coverage_percentage": 100.0
+        },
+        "kraken": {
+          "coverage_percentage": 100.0
+        },
+        "okx": {
+          "coverage_percentage": 100.0
+        },
+        "bybit": {
+          "coverage_percentage": 100.0
+        }
+      },
+      "high_coverage_venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "venues_count": 5,
+      "high_coverage_count": 5,
+      "meets_threshold": true,
+      "min_coverage": 100.0,
+      "max_coverage": 100.0,
+      "avg_coverage": 100.0
+    },
+    {
+      "status": "available",
+      "window": "BTC-USD/20250929/1045-1115",
+      "venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "coverage_data": {
+        "binance": {
+          "coverage_percentage": 100.0
+        },
+        "coinbase": {
+          "coverage_percentage": 100.0
+        },
+        "kraken": {
+          "coverage_percentage": 100.0
+        },
+        "okx": {
+          "coverage_percentage": 100.0
+        },
+        "bybit": {
+          "coverage_percentage": 100.0
+        }
+      },
+      "high_coverage_venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "venues_count": 5,
+      "high_coverage_count": 5,
+      "meets_threshold": true,
+      "min_coverage": 100.0,
+      "max_coverage": 100.0,
+      "avg_coverage": 100.0
+    },
+    {
+      "status": "available",
+      "window": "BTC-USD/20250929/1100-1130",
+      "venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "coverage_data": {
+        "binance": {
+          "coverage_percentage": 100.0
+        },
+        "coinbase": {
+          "coverage_percentage": 100.0
+        },
+        "kraken": {
+          "coverage_percentage": 100.0
+        },
+        "okx": {
+          "coverage_percentage": 100.0
+        },
+        "bybit": {
+          "coverage_percentage": 100.0
+        }
+      },
+      "high_coverage_venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "venues_count": 5,
+      "high_coverage_count": 5,
+      "meets_threshold": true,
+      "min_coverage": 100.0,
+      "max_coverage": 100.0,
+      "avg_coverage": 100.0
+    },
+    {
+      "status": "available",
+      "window": "BTC-USD/20250929/1200-1230",
+      "venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "coverage_data": {
+        "binance": {
+          "coverage_percentage": 0.0019718319008399407,
+          "messages_received": 1,
+          "connection_drops": 1,
+          "start_time": "2025-09-28T23:05:10.641477",
+          "end_time": "2025-09-29T13:10:24.903660"
+        },
+        "coinbase": {
+          "coverage_percentage": 100.0,
+          "messages_received": 9834,
+          "connection_drops": 0,
+          "start_time": "2025-09-28T23:05:09.825716",
+          "end_time": "2025-09-28T23:35:13.236451"
+        },
+        "kraken": {
+          "coverage_percentage": 100.0,
+          "messages_received": 2385,
+          "connection_drops": 0,
+          "start_time": "2025-09-28T23:05:09.572176",
+          "end_time": "2025-09-28T23:35:10.197205"
+        },
+        "okx": {
+          "coverage_percentage": 100.0,
+          "messages_received": 21609,
+          "connection_drops": 0,
+          "start_time": "2025-09-28T23:05:10.539889",
+          "end_time": "2025-09-28T23:35:10.584459"
+        },
+        "bybit": {
+          "coverage_percentage": 0.002622739816556256,
+          "messages_received": 1,
+          "connection_drops": 1,
+          "start_time": "2025-09-28T23:05:10.170746",
+          "end_time": "2025-09-29T09:40:38.237956"
+        }
+      },
+      "high_coverage_venues": [
+        "coinbase",
+        "kraken",
+        "okx"
+      ],
+      "venues_count": 5,
+      "high_coverage_count": 3,
+      "meets_threshold": true,
+      "min_coverage": 0.0019718319008399407,
+      "max_coverage": 100.0,
+      "avg_coverage": 60.00091891434348
+    },
+    {
+      "status": "available",
+      "window": "BTC-USD/20250929/1200-1500",
+      "venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "coverage_data": {
+        "binance": {
+          "coverage_percentage": 0.004582427630125868,
+          "messages_received": 1,
+          "connection_drops": 1,
+          "start_time": "2025-09-29T07:29:59.027412",
+          "end_time": "2025-09-29T13:33:41.521529"
+        },
+        "coinbase": {
+          "coverage_percentage": 100.0,
+          "messages_received": 28414,
+          "connection_drops": 0,
+          "start_time": "2025-09-29T07:29:58.293469",
+          "end_time": "2025-09-29T10:29:58.392030"
+        },
+        "kraken": {
+          "coverage_percentage": 100.0,
+          "messages_received": 12355,
+          "connection_drops": 0,
+          "start_time": "2025-09-29T07:29:59.172836",
+          "end_time": "2025-09-29T10:29:59.730518"
+        },
+        "okx": {
+          "coverage_percentage": 100.0,
+          "messages_received": 15011,
+          "connection_drops": 1,
+          "start_time": "2025-09-29T07:29:59.027908",
+          "end_time": "2025-09-29T07:55:03.791519"
+        },
+        "bybit": {
+          "coverage_percentage": 0.01275280153464408,
+          "messages_received": 1,
+          "connection_drops": 1,
+          "start_time": "2025-09-29T07:29:58.675297",
+          "end_time": "2025-09-29T09:40:40.089572"
+        }
+      },
+      "high_coverage_venues": [
+        "coinbase",
+        "kraken",
+        "okx"
+      ],
+      "venues_count": 5,
+      "high_coverage_count": 3,
+      "meets_threshold": true,
+      "min_coverage": 0.004582427630125868,
+      "max_coverage": 100.0,
+      "avg_coverage": 60.00346704583295
+    },
+    {
+      "status": "available",
+      "window": "BTC-USD/20250929/1230-1300",
+      "venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "coverage_data": {
+        "binance": {
+          "coverage_percentage": 96.85379098759023,
+          "messages_received": 1801,
+          "connection_drops": 0
+        },
+        "coinbase": {
+          "coverage_percentage": 98.64382041462832,
+          "messages_received": 1801,
+          "connection_drops": 0
+        },
+        "kraken": {
+          "coverage_percentage": 95.29642812680906,
+          "messages_received": 1801,
+          "connection_drops": 0
+        },
+        "okx": {
+          "coverage_percentage": 95.50088918556686,
+          "messages_received": 1801,
+          "connection_drops": 0
+        },
+        "bybit": {
+          "coverage_percentage": 95.2974465375388,
+          "messages_received": 1801,
+          "connection_drops": 0
+        }
+      },
+      "high_coverage_venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "venues_count": 5,
+      "high_coverage_count": 5,
+      "meets_threshold": true,
+      "min_coverage": 95.29642812680906,
+      "max_coverage": 98.64382041462832,
+      "avg_coverage": 96.31847505042666
+    },
+    {
+      "status": "available",
+      "window": "BTC-USD/20250929/1300-1330",
+      "venues": [
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "coverage_data": {
+        "coinbase": {
+          "coverage_percentage": 100.0,
+          "messages_received": 7392,
+          "connection_drops": 0,
+          "start_time": "2025-09-29T13:05:42.264699",
+          "end_time": "2025-09-29T13:35:42.935657"
+        },
+        "kraken": {
+          "coverage_percentage": 100.0,
+          "messages_received": 2318,
+          "connection_drops": 0,
+          "start_time": "2025-09-29T13:05:43.742676",
+          "end_time": "2025-09-29T13:35:44.343633"
+        },
+        "okx": {
+          "coverage_percentage": 100.0,
+          "messages_received": 20961,
+          "connection_drops": 0,
+          "start_time": "2025-09-29T13:05:42.789230",
+          "end_time": "2025-09-29T13:35:42.888554"
+        },
+        "bybit": {
+          "coverage_percentage": 0.01198238095558561,
+          "messages_received": 1,
+          "connection_drops": 1,
+          "start_time": "2025-09-29T13:05:42.768968",
+          "end_time": "2025-09-29T15:24:48.355740"
+        }
+      },
+      "high_coverage_venues": [
+        "coinbase",
+        "kraken",
+        "okx"
+      ],
+      "venues_count": 4,
+      "high_coverage_count": 3,
+      "meets_threshold": true,
+      "min_coverage": 0.01198238095558561,
+      "max_coverage": 100.0,
+      "avg_coverage": 75.0029955952389
+    },
+    {
+      "status": "available",
+      "window": "BTC-USD/20250929/1330-1400",
+      "venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "coverage_data": {
+        "binance": {
+          "coverage_percentage": 98.17912587542705,
+          "messages_received": 1801,
+          "connection_drops": 0
+        },
+        "coinbase": {
+          "coverage_percentage": 96.87427837296012,
+          "messages_received": 1801,
+          "connection_drops": 0
+        },
+        "kraken": {
+          "coverage_percentage": 97.27641632008445,
+          "messages_received": 1801,
+          "connection_drops": 0
+        },
+        "okx": {
+          "coverage_percentage": 96.21019805702987,
+          "messages_received": 1801,
+          "connection_drops": 0
+        },
+        "bybit": {
+          "coverage_percentage": 96.57924882312102,
+          "messages_received": 1801,
+          "connection_drops": 0
+        }
+      },
+      "high_coverage_venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "venues_count": 5,
+      "high_coverage_count": 5,
+      "meets_threshold": true,
+      "min_coverage": 96.21019805702987,
+      "max_coverage": 98.17912587542705,
+      "avg_coverage": 97.0238534897245
+    }
+  ],
+  "generated_at": "2025-09-30T08:46:50.063329Z"
+}

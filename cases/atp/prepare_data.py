@@ -246,3 +246,4 @@ if __name__ == "__main__":
     print(
         f"Airline columns: {[col for col in atp_data.columns if col.startswith('Airline_')]}"
     )
+

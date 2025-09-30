@@ -111,6 +111,63 @@ jobs:
           bash .github/scripts/verify_snippet.sh
         continue-on-error: true  # non-blocking
       
+      - name: Validate coverage + emit health metrics (WARN only)
+        env:
+          AWS_REGION: us-east-1
+          ACD_S3_BUCKET: acd-monitor-snapshots
+          ACD_S3_PREFIX: snapshots
+          FAIL_ON_MISSING_COVERAGE: "false"   # flip to "true" after 48–72h
+          SYMBOLS: "BTC-USD ETH-USD"
+          VENUES: "binance coinbase kraken okx bybit"
+        run: |
+          set -euo pipefail
+          echo "🔍 Validating coverage metadata generation..."
+          
+          # Check if coverage.json was created for each captured window
+          IFS=' ' read -ra SYMBOLS <<< "$SYMBOLS"
+          for symbol in "${SYMBOLS[@]}"; do
+            echo "Checking coverage for $symbol..."
+            
+            # Find the most recent window for this symbol
+            LATEST_WINDOW=$(aws s3 ls s3://$ACD_S3_BUCKET/$ACD_S3_PREFIX/$symbol/ --recursive | \
+              grep "OVERLAP.json" | \
+              sort -k1,2 | \
+              tail -1 | \
+              awk '{print $4}' | \
+              sed 's|/OVERLAP.json||')
+            
+            if [ -n "$LATEST_WINDOW" ]; then
+              COVERAGE_KEY="$LATEST_WINDOW/meta/coverage.json"
+              echo "Checking: s3://$ACD_S3_BUCKET/$COVERAGE_KEY"
+              
+              if aws s3 ls "s3://$ACD_S3_BUCKET/$COVERAGE_KEY" >/dev/null 2>&1; then
+                echo "✅ Coverage metadata found for $symbol"
+                
+                # Extract coverage metrics
+                COVERAGE_DATA=$(aws s3 cp "s3://$ACD_S3_BUCKET/$COVERAGE_KEY" - 2>/dev/null || echo "{}")
+                if [ "$COVERAGE_DATA" != "{}" ]; then
+                  echo "📊 Coverage metrics for $symbol:"
+                  echo "$COVERAGE_DATA" | jq -r 'to_entries[] | "  \(.key): \(.value.coverage_percentage // "N/A")%"' 2>/dev/null || echo "  (Unable to parse coverage data)"
+                fi
+              else
+                echo "⚠️  WARNING: Coverage metadata missing for $symbol"
+                echo "   This may indicate an issue with the enhanced capture script"
+                
+                if [ "$FAIL_ON_MISSING_COVERAGE" = "true" ]; then
+                  echo "❌ FAILING: Coverage validation is now blocking"
+                  exit 1
+                else
+                  echo "⚠️  WARN-ONLY: Coverage validation is non-blocking for now"
+                fi
+              fi
+            else
+              echo "⚠️  No windows found for $symbol"
+            fi
+          done
+          
+          echo "📈 Health check completed (WARN mode: $FAIL_ON_MISSING_COVERAGE)"
+        continue-on-error: true  # non-blocking warning
+      
       - name: Upload capture logs
         if: always()
         uses: actions/upload-artifact@v4
