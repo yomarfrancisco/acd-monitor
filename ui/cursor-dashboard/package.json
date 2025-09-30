@@ -86,8 +86,9 @@
     "@tailwindcss/postcss": "^4.0.0",
     "typescript": "^5"
   },
+  "packageManager": "pnpm@10.0.0",
   "engines": {
     "node": "22.x",
-    "pnpm": "9.x"
+    "pnpm": "10.x"
   }
 }
