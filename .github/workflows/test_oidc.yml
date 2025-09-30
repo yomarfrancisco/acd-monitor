@@ -1,0 +1,51 @@
+name: Test OIDC Authentication
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  test-oidc:
+    name: Test OIDC Authentication
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::514258695205:role/acd-ci-oidc
+          aws-region: us-east-1
+
+      - name: Test AWS Identity
+        run: |
+          echo "🔍 Testing OIDC authentication..."
+          echo "📋 AWS Identity:"
+          aws sts get-caller-identity
+          echo ""
+          echo "✅ OIDC authentication successful!"
+          echo "🎯 Role assumed: arn:aws:iam::514258695205:role/acd-ci-oidc"
+
+      - name: Verify No Static Keys
+        run: |
+          echo "🔍 Checking for static AWS keys in environment..."
+          if [ -n "$AWS_ACCESS_KEY_ID" ]; then
+            echo "❌ AWS_ACCESS_KEY_ID found in environment"
+            exit 1
+          fi
+          if [ -n "$AWS_SECRET_ACCESS_KEY" ]; then
+            echo "❌ AWS_SECRET_ACCESS_KEY found in environment"
+            exit 1
+          fi
+          echo "✅ No static AWS keys found in environment"
+          echo "✅ OIDC authentication working correctly"
+
+      - name: Test S3 Access
+        run: |
+          echo "🔍 Testing S3 access with OIDC role..."
+          aws s3 ls s3://acd-monitor-snapshots/ --max-items 3
+          echo "✅ S3 access successful with OIDC role"
