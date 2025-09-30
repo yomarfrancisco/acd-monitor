@@ -86,9 +86,14 @@ class PreconditionTester:
         try:
             if test_type == "adf":
                 # Augmented Dickey-Fuller test
-                adf_stat, adf_pvalue, adf_usedlag, adf_nobs, adf_critical, adf_icbest = adfuller(
-                    returns.dropna()
-                )
+                (
+                    adf_stat,
+                    adf_pvalue,
+                    adf_usedlag,
+                    adf_nobs,
+                    adf_critical,
+                    adf_icbest,
+                ) = adfuller(returns.dropna())
 
                 is_stationary = adf_pvalue < 0.05
                 test_results = {
@@ -253,7 +258,10 @@ class PreconditionTester:
                     if not is_stationary:
                         stationarity_passes = False
 
-        results["stationarity"] = {"passes": stationarity_passes, "results": stationarity_results}
+        results["stationarity"] = {
+            "passes": stationarity_passes,
+            "results": stationarity_results,
+        }
 
         # Test clock skew
         clock_skew_passes, skew_measures = self.test_clock_skew(venue_data)
@@ -261,7 +269,10 @@ class PreconditionTester:
 
         # Test environment balance
         env_balance_passes, env_warnings = self.test_environment_balance(env_counts)
-        results["environment_balance"] = {"passes": env_balance_passes, "warnings": env_warnings}
+        results["environment_balance"] = {
+            "passes": env_balance_passes,
+            "warnings": env_warnings,
+        }
 
         # Overall assessment
         overall_passes = (

@@ -186,7 +186,12 @@ class CrossValidator:
             recall = recall_score(test_target, predictions, zero_division=0)
             f1 = f1_score(test_target, predictions, zero_division=0)
 
-            return {"accuracy": accuracy, "precision": precision, "recall": recall, "f1_score": f1}
+            return {
+                "accuracy": accuracy,
+                "precision": precision,
+                "recall": recall,
+                "f1_score": f1,
+            }
 
         except Exception as e:
             self.logger.error(f"Error training and evaluating model: {e}")
@@ -409,7 +414,10 @@ class SensitivityAnalyzer:
         self.logger = logging.getLogger(__name__)
 
     def analyze_threshold_sensitivity(
-        self, data: pd.DataFrame, volatility_regimes: List[str], threshold_values: List[float]
+        self,
+        data: pd.DataFrame,
+        volatility_regimes: List[str],
+        threshold_values: List[float],
     ) -> List[SensitivityAnalysisResult]:
         """
         Analyze threshold sensitivity across volatility regimes.
@@ -798,7 +806,9 @@ if __name__ == "__main__":
     # Test robustness testing
     robustness_tester = RobustnessTester()
     robustness_tests = robustness_tester.test_alternative_metrics(
-        data, "similarity", ["depth_weighted_cosine", "jaccard_index", "composite_score"]
+        data,
+        "similarity",
+        ["depth_weighted_cosine", "jaccard_index", "composite_score"],
     )
 
     print("\nRobustness Test Results:")

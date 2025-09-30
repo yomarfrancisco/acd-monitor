@@ -160,15 +160,34 @@ class ACDArtifactSelector:
                 "artifacts": ["validation", "lead_lag"],
             },
             "spread_floor_analysis": {
-                "keywords": [r"spread floor", r"dwell", r"volatility", r"regime", r"hmm", r"state"],
+                "keywords": [
+                    r"spread floor",
+                    r"dwell",
+                    r"volatility",
+                    r"regime",
+                    r"hmm",
+                    r"state",
+                ],
                 "artifacts": ["validation", "hmm"],
             },
             "icp_analysis": {
-                "keywords": [r"icp", r"invariance", r"environment", r"fdr", r"bootstrap"],
+                "keywords": [
+                    r"icp",
+                    r"invariance",
+                    r"environment",
+                    r"fdr",
+                    r"bootstrap",
+                ],
                 "artifacts": ["icp", "validation"],
             },
             "vmm_analysis": {
-                "keywords": [r"vmm", r"over.identification", r"stability", r"moments", r"gmm"],
+                "keywords": [
+                    r"vmm",
+                    r"over.identification",
+                    r"stability",
+                    r"moments",
+                    r"gmm",
+                ],
                 "artifacts": ["vmm", "validation"],
             },
             "risk_assessment": {
@@ -188,7 +207,13 @@ class ACDArtifactSelector:
                 "artifacts": ["atp_case"],
             },
             "artifacts_list": {
-                "keywords": [r"artifacts", r"files", r"data sources", r"provenance", r"seeds"],
+                "keywords": [
+                    r"artifacts",
+                    r"files",
+                    r"data sources",
+                    r"provenance",
+                    r"seeds",
+                ],
                 "artifacts": ["all"],
             },
         }

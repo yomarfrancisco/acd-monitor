@@ -63,7 +63,10 @@ class BaiPerronStructuralBreakDetector:
     """
 
     def __init__(
-        self, max_breaks: int = 5, min_segment_length: int = 30, significance_level: float = 0.05
+        self,
+        max_breaks: int = 5,
+        min_segment_length: int = 30,
+        significance_level: float = 0.05,
     ):
         """
         Initialize Bai-Perron detector.
@@ -463,7 +466,10 @@ class AdaptiveBaselineCalibrator:
             raise
 
     def _calculate_adaptive_baseline(
-        self, data: pd.Series, structural_breaks: List[StructuralBreakResult], drift_analysis: Dict
+        self,
+        data: pd.Series,
+        structural_breaks: List[StructuralBreakResult],
+        drift_analysis: Dict,
     ) -> float:
         """Calculate adaptive baseline using structural break information."""
         try:

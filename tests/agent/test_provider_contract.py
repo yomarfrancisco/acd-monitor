@@ -76,7 +76,8 @@ class TestProviderContract:
 
         # Mock environment variables
         with patch.dict(
-            os.environ, {"CHATBASE_API_KEY": "test_key", "CHATBASE_ASSISTANT_ID": "test_id"}
+            os.environ,
+            {"CHATBASE_API_KEY": "test_key", "CHATBASE_ASSISTANT_ID": "test_id"},
         ):
             result = adapter.generate(
                 prompt="Test prompt",
@@ -262,5 +263,3 @@ class TestProviderFactory:
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
-
-

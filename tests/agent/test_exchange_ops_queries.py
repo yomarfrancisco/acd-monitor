@@ -61,13 +61,21 @@ class ExchangeOpsQueryTester:
                 "id": "exch_003",
                 "query": "List mirroring episodes on top-10 depth vs external venues; annotate arbitrage windows.",  # noqa: E501
                 "category": "mirroring",
-                "expected_components": ["mirroring", "depth_analysis", "arbitrage_windows"],
+                "expected_components": [
+                    "mirroring",
+                    "depth_analysis",
+                    "arbitrage_windows",
+                ],
             },
             {
                 "id": "exch_004",
                 "query": "Explain whether our VIP fee ladder or inventory shocks could explain the signal on 2025-09-15.",  # noqa: E501
                 "category": "analysis",
-                "expected_components": ["fee_ladder", "inventory_shocks", "signal_explanation"],
+                "expected_components": [
+                    "fee_ladder",
+                    "inventory_shocks",
+                    "signal_explanation",
+                ],
             },
             {
                 "id": "exch_005",
@@ -89,7 +97,11 @@ class ExchangeOpsQueryTester:
                 "id": "exch_007",
                 "query": "Simulate stricter latency-arb constraints; does the red flag persist?",
                 "category": "simulation",
-                "expected_components": ["latency_arb", "constraints", "red_flag_persistence"],
+                "expected_components": [
+                    "latency_arb",
+                    "constraints",
+                    "red_flag_persistence",
+                ],
             },
             {
                 "id": "exch_008",
@@ -118,13 +130,21 @@ class ExchangeOpsQueryTester:
                 "id": "exch_011",
                 "query": "Identify undercut initiation episodes by market maker; escalate if repeated.",  # noqa: E501
                 "category": "market_maker",
-                "expected_components": ["undercut_initiation", "market_maker", "escalation"],
+                "expected_components": [
+                    "undercut_initiation",
+                    "market_maker",
+                    "escalation",
+                ],
             },
             {
                 "id": "exch_012",
                 "query": "Produce a pre-submission pack we can send to our regulator on request.",
                 "category": "regulatory",
-                "expected_components": ["pre_submission", "regulatory_pack", "compliance"],
+                "expected_components": [
+                    "pre_submission",
+                    "regulatory_pack",
+                    "compliance",
+                ],
             },
         ]
 

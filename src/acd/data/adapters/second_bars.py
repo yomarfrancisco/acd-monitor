@@ -26,7 +26,12 @@ class SecondBarsAdapter(BaseBarsAdapter):
         self.logger = logging.getLogger(__name__)
 
     def get(
-        self, pair: str, venue: str, start_utc: datetime, end_utc: datetime, tz: str = "UTC"
+        self,
+        pair: str,
+        venue: str,
+        start_utc: datetime,
+        end_utc: datetime,
+        tz: str = "UTC",
     ) -> pd.DataFrame:
         """
         Get second-level bars for the specified parameters.
@@ -99,7 +104,10 @@ class SecondBarsAdapter(BaseBarsAdapter):
 
             # Create 60 second timestamps within this minute
             second_timestamps = pd.date_range(
-                start=minute_start, end=minute_end - timedelta(seconds=1), freq="1s", tz="UTC"
+                start=minute_start,
+                end=minute_end - timedelta(seconds=1),
+                freq="1s",
+                tz="UTC",
             )
 
             # Distribute the minute move across 60 seconds

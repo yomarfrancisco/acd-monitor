@@ -69,14 +69,18 @@ class TestICPEngine:
         assert (
             result.reject_h0
         ), f"Coordinated scenario should reject invariance, but didn't reject H0 with p={result.p_value}"  # noqa: E501
-        assert result.p_value <= 0.05, f"Coordinated p-value should be ≤0.05, got {result.p_value}"
+        assert (
+            result.p_value <= 0.05
+        ), f"Coordinated p-value should be ≤0.05, got {result.p_value}"
         assert (
             result.adjusted_p_value <= 0.1
         ), f"BH-FDR adjusted p-value should be ≤0.1, got {result.adjusted_p_value}"
 
         # Check finite values
         assert np.isfinite(result.p_value), "p-value should be finite"
-        assert np.isfinite(result.adjusted_p_value), "FDR adjusted p-value should be finite"
+        assert np.isfinite(
+            result.adjusted_p_value
+        ), "FDR adjusted p-value should be finite"
 
     def test_bootstrap_ci(self, icp_engine, competitive_data):
         """Test bootstrap confidence intervals"""
@@ -90,7 +94,9 @@ class TestICPEngine:
 
         # Check bootstrap CI
         assert result.bootstrap_ci is not None, "Bootstrap CI should be calculated"
-        assert len(result.bootstrap_ci) == 2, "Bootstrap CI should have 2 elements (lower, upper)"
+        assert (
+            len(result.bootstrap_ci) == 2
+        ), "Bootstrap CI should have 2 elements (lower, upper)"
 
         lower, upper = result.bootstrap_ci
         assert np.isfinite(lower), "Bootstrap CI lower bound should be finite"
@@ -103,15 +109,21 @@ class TestICPEngine:
 
         print("Bootstrap CI timing: {elapsed:.2f}s")
 
-    def test_effect_size_calculation(self, icp_engine, competitive_data, coordinated_data):
+    def test_effect_size_calculation(
+        self, icp_engine, competitive_data, coordinated_data
+    ):
         """Test effect size calculation"""
         price_columns = ["Exchange_0", "Exchange_1", "Exchange_2", "Exchange_3"]
 
         # Test competitive (should have lower effect size)
-        competitive_result = icp_engine.analyze_invariance_enhanced(competitive_data, price_columns)
+        competitive_result = icp_engine.analyze_invariance_enhanced(
+            competitive_data, price_columns
+        )
 
         # Test coordinated (should have higher effect size)
-        coordinated_result = icp_engine.analyze_invariance_enhanced(coordinated_data, price_columns)
+        coordinated_result = icp_engine.analyze_invariance_enhanced(
+            coordinated_data, price_columns
+        )
 
         # Effect sizes should be finite and non-negative
         assert np.isfinite(
@@ -131,12 +143,18 @@ class TestICPEngine:
 
         # FDR should be controlled
         assert result.fdr_controlled is not None, "FDR control flag should be set"
-        assert np.isfinite(result.adjusted_p_value), "FDR adjusted p-value should be finite"
-        assert 0.0 <= result.adjusted_p_value <= 1.0, "FDR adjusted p-value should be in [0,1]"
+        assert np.isfinite(
+            result.adjusted_p_value
+        ), "FDR adjusted p-value should be finite"
+        assert (
+            0.0 <= result.adjusted_p_value <= 1.0
+        ), "FDR adjusted p-value should be in [0,1]"
 
         # For competitive scenario, FDR should typically not be controlled (high p-value)
         if result.p_value > 0.1:
-            assert not result.fdr_controlled, "High p-value should not trigger FDR control"
+            assert (
+                not result.fdr_controlled
+            ), "High p-value should not trigger FDR control"
 
 
 if __name__ == "__main__":

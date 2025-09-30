@@ -38,7 +38,9 @@ def fetch_real_btc_data():
             if venue == "Binance":
                 price = base_price + np.random.normal(0, 50)
             elif venue == "Coinbase":
-                price = base_price + np.random.normal(0, 75)  # Slightly higher volatility
+                price = base_price + np.random.normal(
+                    0, 75
+                )  # Slightly higher volatility
             else:  # Kraken
                 price = base_price + np.random.normal(0, 60)
 
@@ -78,7 +80,11 @@ def calculate_real_metrics(order_book_data):
     print("Calculating v1.4 metrics on real data...")
 
     venues = ["Binance", "Coinbase", "Kraken"]
-    venue_pairs = [("Binance", "Coinbase"), ("Binance", "Kraken"), ("Coinbase", "Kraken")]
+    venue_pairs = [
+        ("Binance", "Coinbase"),
+        ("Binance", "Kraken"),
+        ("Coinbase", "Kraken"),
+    ]
 
     results = {}
 
@@ -193,12 +199,16 @@ def calculate_price_correlation(book1, book2):
         book2_mid = book2.groupby("timestamp")["price"].mean()
 
         # Align time series
-        aligned_prices = pd.DataFrame({"venue1": book1_mid, "venue2": book2_mid}).dropna()
+        aligned_prices = pd.DataFrame(
+            {"venue1": book1_mid, "venue2": book2_mid}
+        ).dropna()
 
         if len(aligned_prices) < 2:
             return 0.0
 
-        correlation = np.corrcoef(aligned_prices["venue1"], aligned_prices["venue2"])[0, 1]
+        correlation = np.corrcoef(aligned_prices["venue1"], aligned_prices["venue2"])[
+            0, 1
+        ]
 
         if np.isnan(correlation):
             return 0.0
@@ -282,7 +292,10 @@ def create_real_data_plots(results):
 
     for bar, value in zip(bars, values):
         plt.text(
-            bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.02, f"{value:.3f}", ha="center"
+            bar.get_x() + bar.get_width() / 2,
+            bar.get_height() + 0.02,
+            f"{value:.3f}",
+            ha="center",
         )
 
     # Plot 2: Venue pair comparisons
@@ -291,7 +304,11 @@ def create_real_data_plots(results):
     dwc_values = []
 
     for key, value in results.items():
-        if key != "average_metrics" and key != "data_source" and key != "analysis_window":
+        if (
+            key != "average_metrics"
+            and key != "data_source"
+            and key != "analysis_window"
+        ):
             venue_pairs.append(key.replace("_vs_", " vs "))
             dwc_values.append(value["dwc"])
 
@@ -323,7 +340,11 @@ def create_real_data_plots(results):
     metric_names = []
 
     for key, value in results.items():
-        if key != "average_metrics" and key != "data_source" and key != "analysis_window":
+        if (
+            key != "average_metrics"
+            and key != "data_source"
+            and key != "analysis_window"
+        ):
             metric_names.append(key.replace("_vs_", " vs "))
             ci = value["confidence_interval"]
             confidence_intervals.append(ci[1] - ci[0])
@@ -341,7 +362,9 @@ def create_real_data_plots(results):
     )
     plt.close()
 
-    print("Plots saved to artifacts/v1_4_production_validation/metrics/real_data_metrics.png")
+    print(
+        "Plots saved to artifacts/v1_4_production_validation/metrics/real_data_metrics.png"
+    )
 
 
 def main():
@@ -359,5 +382,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-

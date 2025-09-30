@@ -37,7 +37,9 @@ class TestScriptedComplianceQueries:
 
     def test_query_3_spread_floors(self, offline_provider):
         """Test: Highlight any periods where spread floors emerged despite high volatility."""
-        query = "Highlight any periods where spread floors emerged despite high volatility."
+        query = (
+            "Highlight any periods where spread floors emerged despite high volatility."
+        )
         result = offline_provider.generate(prompt=query)
 
         assert "spread" in result.content.lower()
@@ -67,7 +69,10 @@ class TestScriptedComplianceQueries:
         query = "List all alternative explanations that could account for the coordination signal flagged on 2025-09-15."  # noqa: E501
         result = offline_provider.generate(prompt=query)
 
-        assert "alternative" in result.content.lower() or "explanation" in result.content.lower()
+        assert (
+            "alternative" in result.content.lower()
+            or "explanation" in result.content.lower()
+        )
         assert (
             result.usage.get("intent") == "alternative_explanations"
         )  # Should detect alternative explanations intent
@@ -97,7 +102,10 @@ class TestScriptedComplianceQueries:
         query = "Which alternative explanations (arbitrage latency, fee tiers, inventory shocks) were triggered for ETH/USD in the last 72h?"  # noqa: E501
         result = offline_provider.generate(prompt=query)
 
-        assert "alternative" in result.content.lower() or "explanation" in result.content.lower()
+        assert (
+            "alternative" in result.content.lower()
+            or "explanation" in result.content.lower()
+        )
         assert (
             result.usage.get("intent") == "alternative_explanations"
         )  # Should detect alternative explanations intent
@@ -126,7 +134,9 @@ class TestAdditionalComplianceQueries:
         query = "Analyze MEV bot coordination patterns in Ethereum mempool for the last 48 hours. Focus on sandwich attacks and front-running."  # noqa: E501
         result = offline_provider.generate(prompt=query)
 
-        assert "mev" in result.content.lower() or "coordination" in result.content.lower()
+        assert (
+            "mev" in result.content.lower() or "coordination" in result.content.lower()
+        )
         assert result.usage.get("mode") == "offline_mock"
         # Should fall back to default since MEV-specific patterns aren't implemented yet
 
@@ -135,7 +145,9 @@ class TestAdditionalComplianceQueries:
         query = "Compare coordination risk scores across Binance, Coinbase, and Kraken for BTC/USD over the past 30 days. Rank venues by risk level."  # noqa: E501
         result = offline_provider.generate(prompt=query)
 
-        assert "risk" in result.content.lower() or "coordination" in result.content.lower()
+        assert (
+            "risk" in result.content.lower() or "coordination" in result.content.lower()
+        )
         assert result.usage.get("intent") == "risk_assessment"
         assert result.usage.get("mode") == "offline_mock"
 
@@ -144,7 +156,10 @@ class TestAdditionalComplianceQueries:
         query = "Generate a rolling weekly summary of coordination signals for ETH/USD. Include trend analysis and alert escalation recommendations."  # noqa: E501
         result = offline_provider.generate(prompt=query)
 
-        assert "summary" in result.content.lower() or "coordination" in result.content.lower()
+        assert (
+            "summary" in result.content.lower()
+            or "coordination" in result.content.lower()
+        )
         assert result.usage.get("intent") == "risk_assessment"
         assert result.usage.get("mode") == "offline_mock"
 
@@ -153,7 +168,10 @@ class TestAdditionalComplianceQueries:
         query = "Triage the coordination alerts from the last 24 hours. Prioritize by severity and provide recommended actions for each alert."  # noqa: E501
         result = offline_provider.generate(prompt=query)
 
-        assert "alert" in result.content.lower() or "coordination" in result.content.lower()
+        assert (
+            "alert" in result.content.lower()
+            or "coordination" in result.content.lower()
+        )
         assert result.usage.get("mode") == "offline_mock"
         # Should fall back to default since alert triage isn't implemented yet
 

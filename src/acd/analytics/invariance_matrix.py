@@ -48,7 +48,10 @@ class InvarianceMatrixAnalyzer:
 
         try:
             result = subprocess.run(
-                ["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True, check=True
+                ["git", "rev-parse", "--short", "HEAD"],
+                capture_output=True,
+                text=True,
+                check=True,
             )
             return result.stdout.strip()
         except (subprocess.CalledProcessError, FileNotFoundError):
@@ -144,7 +147,11 @@ class InvarianceMatrixAnalyzer:
         guardrails = []
 
         # Process each environment
-        for env_name, df in [("volatility", vol_df), ("funding", fund_df), ("liquidity", liq_df)]:
+        for env_name, df in [
+            ("volatility", vol_df),
+            ("funding", fund_df),
+            ("liquidity", liq_df),
+        ]:
             shares[env_name] = {}
 
             for regime in self.regimes:
@@ -272,7 +279,11 @@ class InvarianceMatrixAnalyzer:
         stats_results = {}
 
         # Per-environment chi-square tests
-        for env_name, df in [("volatility", vol_df), ("funding", fund_df), ("liquidity", liq_df)]:
+        for env_name, df in [
+            ("volatility", vol_df),
+            ("funding", fund_df),
+            ("liquidity", liq_df),
+        ]:
             # Create contingency table: venue × regime
             contingency = pd.crosstab(df["leader"], df["regime"])
 
@@ -602,7 +613,11 @@ class InvarianceMatrixAnalyzer:
             )
 
     def _update_manifest(
-        self, output_dir: str, start_date: str, end_date: str, guardrails: List[Dict[str, Any]]
+        self,
+        output_dir: str,
+        start_date: str,
+        end_date: str,
+        guardrails: List[Dict[str, Any]],
     ) -> None:
         """Update MANIFEST.json with invariance run data."""
         manifest_path = os.path.join(output_dir, "MANIFEST.json")

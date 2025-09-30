@@ -533,7 +533,14 @@ def plot_reliability_diagram(
     plt.figure(figsize=(8, 6))
 
     # Plot reliability diagram
-    plt.plot(bin_confidences, bin_accuracies, "o-", label="Reliability", linewidth=2, markersize=8)
+    plt.plot(
+        bin_confidences,
+        bin_accuracies,
+        "o-",
+        label="Reliability",
+        linewidth=2,
+        markersize=8,
+    )
     plt.plot([0, 1], [0, 1], "--", color="gray", label="Perfect Calibration", alpha=0.7)
 
     # Add confidence intervals (simplified)

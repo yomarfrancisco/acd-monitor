@@ -19,7 +19,12 @@ class BaseBarsAdapter(ABC):
 
     @abstractmethod
     def get(
-        self, pair: str, venue: str, start_utc: datetime, end_utc: datetime, tz: str = "UTC"
+        self,
+        pair: str,
+        venue: str,
+        start_utc: datetime,
+        end_utc: datetime,
+        tz: str = "UTC",
     ) -> pd.DataFrame:
         """
         Get market data for the specified parameters.

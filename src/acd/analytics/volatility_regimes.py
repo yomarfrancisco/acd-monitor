@@ -344,7 +344,8 @@ class VolatilityRegimeAnalyzer:
             },
             "counts": {r.regime: r.count for r in results.regimes},
             "coveragePct": round(
-                sum(r.count for r in results.regimes) / len(results.regime_labels) * 100, 2
+                sum(r.count for r in results.regimes) / len(results.regime_labels) * 100,
+                2,
             ),
         }
 
@@ -365,7 +366,13 @@ class VolatilityRegimeAnalyzer:
             "ties": {"byRegime": []},
             "dropped": {
                 "dropped": 0,
-                "drop": {"missing": 0, "notEnoughOthers": 0, "tooTight": 0, "outlier": 0, "nan": 0},
+                "drop": {
+                    "missing": 0,
+                    "notEnoughOthers": 0,
+                    "tooTight": 0,
+                    "outlier": 0,
+                    "nan": 0,
+                },
             },
         }
 
@@ -483,7 +490,12 @@ class VolatilityRegimeAnalyzer:
                 "volatility": {
                     "keptDays": kept_days,
                     "droppedDays": dropped_days,
-                    "dropReasons": {"missing": 0, "nan": 0, "tooFewBars": 0, "notEnoughOthers": 0},
+                    "dropReasons": {
+                        "missing": 0,
+                        "nan": 0,
+                        "tooFewBars": 0,
+                        "notEnoughOthers": 0,
+                    },
                 }
             },
         }
@@ -495,7 +507,12 @@ class VolatilityRegimeAnalyzer:
         assignments_data = {
             "keptDays": len(results.regime_labels.dropna()),
             "droppedDays": len(results.regime_labels) - len(results.regime_labels.dropna()),
-            "dropReasons": {"missing": 0, "nan": 0, "tooFewBars": 0, "notEnoughOthers": 0},
+            "dropReasons": {
+                "missing": 0,
+                "nan": 0,
+                "tooFewBars": 0,
+                "notEnoughOthers": 0,
+            },
             "byRegime": [
                 {"regime": regime, "days": int((results.regime_labels == regime).sum())}
                 for regime in ["low", "medium", "high"]
@@ -593,7 +610,10 @@ class VolatilityRegimeAnalyzer:
         return regime_labels, regimes
 
     def compute_leadership_by_regime(
-        self, regime_labels: pd.Series, ohlcv_data: pd.DataFrame, venue_columns: List[str]
+        self,
+        regime_labels: pd.Series,
+        ohlcv_data: pd.DataFrame,
+        venue_columns: List[str],
     ) -> Tuple[List[LeadershipDistribution], Dict[str, int]]:
         """
         Compute leadership distribution for each volatility regime using consensus-based leadership.

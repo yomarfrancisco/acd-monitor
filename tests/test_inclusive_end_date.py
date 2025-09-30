@@ -1,6 +1,7 @@
 """
 Test inclusive_end_date function for off-by-one guard.
 """
+
 import pytest
 from datetime import datetime
 import sys
@@ -27,7 +28,7 @@ def test_inclusive_end_date_edge_cases():
     result = inclusive_end_date("2024-12-31")
     expected = datetime(2024, 12, 31, 23, 59, 59, 999999)
     assert result == expected
-    
+
     # Leap year
     result = inclusive_end_date("2024-02-29")
     expected = datetime(2024, 2, 29, 23, 59, 59, 999999)
@@ -39,7 +40,7 @@ def test_inclusive_end_date_invalid_format():
     """Test invalid date format raises ValueError."""
     with pytest.raises(ValueError, match="Invalid date format"):
         inclusive_end_date("2025/09/26")
-    
+
     with pytest.raises(ValueError, match="Invalid date format"):
         inclusive_end_date("not-a-date")
 
@@ -50,7 +51,7 @@ def test_inclusive_end_date_off_by_one_guard():
     # This should include the entire day
     start = datetime(2025, 9, 26, 0, 0, 0)
     end = inclusive_end_date("2025-09-26")
-    
+
     # Should be 24 hours minus 1 microsecond
     duration = end - start
     assert duration.total_seconds() > 86399.9  # Just under 24 hours

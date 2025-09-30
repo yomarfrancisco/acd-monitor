@@ -288,7 +288,13 @@ def validate_exported_bundle(export_dir: Union[str, Path]) -> Dict[str, Any]:
         for file in bundle_files:
             if not any(
                 suffix in file.name
-                for suffix in ["_metadata", "_timestamp", "_quality", "_config", "_validation"]
+                for suffix in [
+                    "_metadata",
+                    "_timestamp",
+                    "_quality",
+                    "_config",
+                    "_validation",
+                ]
             ):
                 bundle_file = file
                 break
@@ -303,7 +309,12 @@ def validate_exported_bundle(export_dir: Union[str, Path]) -> Dict[str, Any]:
             bundle_data = json.load(f)
 
         # Basic structure validation
-        required_fields = ["bundle_id", "vmm_outputs", "calibration_artifacts", "data_quality"]
+        required_fields = [
+            "bundle_id",
+            "vmm_outputs",
+            "calibration_artifacts",
+            "data_quality",
+        ]
         for field in required_fields:
             if field not in bundle_data:
                 validation_results["validation_errors"].append(f"Missing required field: {field}")

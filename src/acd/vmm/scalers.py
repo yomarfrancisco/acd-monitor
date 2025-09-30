@@ -82,7 +82,11 @@ class GlobalZScaler:
 
     def get_params(self) -> Dict[str, float]:
         """Get scaler parameters"""
-        return {"mean_val": self.mean_val, "std_val": self.std_val, "fitted": self.fitted}
+        return {
+            "mean_val": self.mean_val,
+            "std_val": self.std_val,
+            "fitted": self.fitted,
+        }
 
 
 class GlobalRobustScaler:
@@ -121,7 +125,11 @@ class GlobalRobustScaler:
 
     def get_params(self) -> Dict[str, float]:
         """Get scaler parameters"""
-        return {"median_val": self.median_val, "iqr_val": self.iqr_val, "fitted": self.fitted}
+        return {
+            "median_val": self.median_val,
+            "iqr_val": self.iqr_val,
+            "fitted": self.fitted,
+        }
 
 
 class GlobalMomentScaler:

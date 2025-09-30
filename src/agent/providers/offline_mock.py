@@ -137,7 +137,9 @@ class OfflineMockProvider:
 
         except Exception as e:
             return Health(
-                status="unhealthy", details={"error": str(e)}, last_check=self._get_timestamp()
+                status="unhealthy",
+                details={"error": str(e)},
+                last_check=self._get_timestamp(),
             )
 
     def _load_response_templates(self) -> Dict[str, MockResponseTemplate]:

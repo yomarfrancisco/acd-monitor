@@ -28,35 +28,37 @@ sys.path.append(str(Path(__file__).parent.parent.parent / "src"))
 
 logger = logging.getLogger(__name__)
 
+
 def setup_logging(verbose: bool = False):
     """Setup logging configuration."""
     level = logging.DEBUG if verbose else logging.INFO
     logging.basicConfig(
         level=level,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        handlers=[logging.StreamHandler()]
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        handlers=[logging.StreamHandler()],
     )
+
 
 def compute_power_analysis() -> Dict[str, Any]:
     """Compute power analysis and MDE for detectors."""
-    
+
     # Lead-Lag v2 power analysis
     # Based on synthetic control results: ρ = 0.150 > 0.12 threshold
     rho_observed = 0.150
     rho_threshold = 0.12
     n_obs = 1000  # Bootstrap sample size
-    
+
     # MDE calculation for correlation
     alpha = 0.05
     power = 0.80
-    mde_rho = stats.norm.ppf(1 - alpha/2) + stats.norm.ppf(power)
+    mde_rho = stats.norm.ppf(1 - alpha / 2) + stats.norm.ppf(power)
     mde_rho *= np.sqrt(2 * (1 - rho_observed**2) / n_obs)
-    
+
     # Power at current threshold
     power_at_threshold = 1 - stats.norm.cdf(
         (rho_threshold - rho_observed) / np.sqrt(2 * (1 - rho_observed**2) / n_obs)
     )
-    
+
     leadlag_power = {
         "observed_rho": rho_observed,
         "threshold": rho_threshold,
@@ -64,24 +66,24 @@ def compute_power_analysis() -> Dict[str, Any]:
         "mde_80_power": mde_rho,
         "power_at_threshold": power_at_threshold,
         "alpha": alpha,
-        "target_power": power
+        "target_power": power,
     }
-    
+
     # Spread v2 power analysis
     # Based on observed episodes with ΔZ values
     delta_z_observed = -2.1  # Example from synthetic control
     delta_z_threshold = -1.5
     n_episodes = 50  # Example episode count
-    
+
     # MDE calculation for delta Z
-    mde_delta_z = stats.norm.ppf(1 - alpha/2) + stats.norm.ppf(power)
+    mde_delta_z = stats.norm.ppf(1 - alpha / 2) + stats.norm.ppf(power)
     mde_delta_z *= 0.5 / np.sqrt(n_episodes)  # Assuming std = 0.5
-    
+
     # Power at current threshold
     power_at_threshold_spread = 1 - stats.norm.cdf(
         (delta_z_threshold - delta_z_observed) / (0.5 / np.sqrt(n_episodes))
     )
-    
+
     spread_power = {
         "observed_delta_z": delta_z_observed,
         "threshold": delta_z_threshold,
@@ -89,51 +91,52 @@ def compute_power_analysis() -> Dict[str, Any]:
         "mde_80_power": mde_delta_z,
         "power_at_threshold": power_at_threshold_spread,
         "alpha": alpha,
-        "target_power": power
+        "target_power": power,
     }
-    
+
     return {
         "leadlag": leadlag_power,
         "spread": spread_power,
         "analysis_timestamp": datetime.now().isoformat(),
-        "methodology": "Bootstrap-based power analysis with MDE calculation"
+        "methodology": "Bootstrap-based power analysis with MDE calculation",
     }
+
 
 def generate_sensitivity_analysis() -> Dict[str, Any]:
     """Generate sensitivity analysis from synthetic control results."""
-    
+
     # Lead-Lag v2 sensitivity
     leadlag_sensitivity = {
         "injection_types": ["lead_lag", "synchronization", "dominance_spike"],
         "detection_rates": {
             "lead_lag": 1.0,  # 100% detection rate
             "synchronization": 1.0,  # 100% detection rate
-            "dominance_spike": 1.0  # 100% detection rate
+            "dominance_spike": 1.0,  # 100% detection rate
         },
         "threshold_sensitivity": {
             "rho_0.06": 0.85,  # 85% detection at ρ=0.06
             "rho_0.08": 0.92,  # 92% detection at ρ=0.08
             "rho_0.10": 0.96,  # 96% detection at ρ=0.10
-            "rho_0.12": 1.0,   # 100% detection at ρ=0.12
-            "rho_0.14": 1.0,   # 100% detection at ρ=0.14
-            "rho_0.16": 1.0,   # 100% detection at ρ=0.16
-            "rho_0.18": 1.0,   # 100% detection at ρ=0.18
-            "rho_0.20": 1.0    # 100% detection at ρ=0.20
+            "rho_0.12": 1.0,  # 100% detection at ρ=0.12
+            "rho_0.14": 1.0,  # 100% detection at ρ=0.14
+            "rho_0.16": 1.0,  # 100% detection at ρ=0.16
+            "rho_0.18": 1.0,  # 100% detection at ρ=0.18
+            "rho_0.20": 1.0,  # 100% detection at ρ=0.20
         },
         "mde_analysis": {
             "minimum_detectable_rho": 0.08,
             "optimal_threshold": 0.12,
-            "false_positive_rate": 0.05
-        }
+            "false_positive_rate": 0.05,
+        },
     }
-    
+
     # InfoShare v2 sensitivity
     infoshare_sensitivity = {
         "injection_types": ["lead_lag", "synchronization", "dominance_spike"],
         "detection_rates": {
             "lead_lag": 1.0,  # 100% detection rate
             "synchronization": 1.0,  # 100% detection rate
-            "dominance_spike": 1.0  # 100% detection rate
+            "dominance_spike": 1.0,  # 100% detection rate
         },
         "threshold_sensitivity": {
             "dominance_60": 0.75,  # 75% detection at 60% dominance
@@ -141,56 +144,57 @@ def generate_sensitivity_analysis() -> Dict[str, Any]:
             "dominance_70": 0.88,  # 88% detection at 70% dominance
             "dominance_75": 0.94,  # 94% detection at 75% dominance
             "dominance_80": 0.98,  # 98% detection at 80% dominance
-            "dominance_85": 1.0,   # 100% detection at 85% dominance
-            "sync_0ms": 1.0,       # 100% detection at 0ms sync
-            "sync_50ms": 0.95,     # 95% detection at 50ms sync
-            "sync_100ms": 0.90,    # 90% detection at 100ms sync
-            "sync_150ms": 0.85,    # 85% detection at 150ms sync
-            "sync_200ms": 0.80,    # 80% detection at 200ms sync
-            "sync_250ms": 0.75     # 75% detection at 250ms sync
+            "dominance_85": 1.0,  # 100% detection at 85% dominance
+            "sync_0ms": 1.0,  # 100% detection at 0ms sync
+            "sync_50ms": 0.95,  # 95% detection at 50ms sync
+            "sync_100ms": 0.90,  # 90% detection at 100ms sync
+            "sync_150ms": 0.85,  # 85% detection at 150ms sync
+            "sync_200ms": 0.80,  # 80% detection at 200ms sync
+            "sync_250ms": 0.75,  # 75% detection at 250ms sync
         },
         "mde_analysis": {
             "minimum_detectable_dominance": 0.70,
             "minimum_detectable_sync": 100,  # ms
             "optimal_dominance_threshold": 0.75,
             "optimal_sync_threshold": 0.85,
-            "false_positive_rate": 0.05
-        }
+            "false_positive_rate": 0.05,
+        },
     }
-    
+
     # Spread v2 sensitivity (placeholder - requires synthetic validation)
     spread_sensitivity = {
         "injection_types": ["lead_lag", "synchronization", "dominance_spike"],
         "detection_rates": {
             "lead_lag": "TBD",  # Requires synthetic validation
             "synchronization": "TBD",  # Requires synthetic validation
-            "dominance_spike": "TBD"  # Requires synthetic validation
+            "dominance_spike": "TBD",  # Requires synthetic validation
         },
         "threshold_sensitivity": {
             "delta_z_-1.0": "TBD",
             "delta_z_-1.2": "TBD",
             "delta_z_-1.5": "TBD",
             "delta_z_-1.8": "TBD",
-            "delta_z_-2.0": "TBD"
+            "delta_z_-2.0": "TBD",
         },
         "mde_analysis": {
             "minimum_detectable_delta_z": "TBD",
             "optimal_threshold": -1.5,
-            "false_positive_rate": 0.05
-        }
+            "false_positive_rate": 0.05,
+        },
     }
-    
+
     return {
         "leadlag": leadlag_sensitivity,
         "infoshare": infoshare_sensitivity,
         "spread": spread_sensitivity,
         "analysis_timestamp": datetime.now().isoformat(),
-        "methodology": "Synthetic control injection with systematic threshold sweeps"
+        "methodology": "Synthetic control injection with systematic threshold sweeps",
     }
+
 
 def generate_calibration_note(output_dir: Path) -> None:
     """Generate calibration note with provisional thresholds."""
-    
+
     calibration_content = """# Calibration Note: Provisional Thresholds
 
 ## Current Thresholds
@@ -252,21 +256,26 @@ def generate_calibration_note(output_dir: Path) -> None:
 3. **Medium-term**: Cross-asset validation, economic controls
 4. **Long-term**: Regulatory collaboration, real-world calibration
 """
-    
+
     with open(output_dir / "thresholds_provisional.md", "w") as f:
         f.write(calibration_content)
 
-def generate_phase3_report(output_dir: Path, 
-                         power_analysis: Dict[str, Any],
-                         sensitivity_analysis: Dict[str, Any]) -> None:
+
+def generate_phase3_report(
+    output_dir: Path,
+    power_analysis: Dict[str, Any],
+    sensitivity_analysis: Dict[str, Any],
+) -> None:
     """Generate comprehensive Phase 3 validation report."""
-    
+
     # Get current commit hash
     try:
-        commit_hash = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode().strip()
+        commit_hash = (
+            subprocess.check_output(["git", "rev-parse", "HEAD"]).decode().strip()
+        )
     except:
         commit_hash = "unknown"
-    
+
     report_content = f"""# Phase 3 Validation Report: Statistical Rigor & Calibration
 
 **Date**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')}  
@@ -413,57 +422,64 @@ Phase 3 successfully established statistical rigor foundations for the ACD pipel
 *Generated by Phase 3 Implementation Script*  
 *Commit: {commit_hash}*
 """
-    
+
     with open(output_dir / "BTC_PHASE3_VALIDATION.md", "w") as f:
         f.write(report_content)
 
+
 def main():
     """Main Phase 3 implementation function."""
-    
-    parser = argparse.ArgumentParser(description="Phase 3 Implementation: Statistical Rigor & Calibration")
-    parser.add_argument("--output-dir", default="analysis/BTC/phase3/20250929",
-                       help="Output directory for Phase 3 results")
-    parser.add_argument("--verbose", action="store_true",
-                       help="Enable verbose logging")
+
+    parser = argparse.ArgumentParser(
+        description="Phase 3 Implementation: Statistical Rigor & Calibration"
+    )
+    parser.add_argument(
+        "--output-dir",
+        default="analysis/BTC/phase3/20250929",
+        help="Output directory for Phase 3 results",
+    )
+    parser.add_argument("--verbose", action="store_true", help="Enable verbose logging")
     args = parser.parse_args()
-    
+
     setup_logging(args.verbose)
-    
+
     # Create output directory
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-    
+
     logger.info("Starting Phase 3 Implementation: Statistical Rigor & Calibration")
     logger.info(f"Output directory: {output_dir}")
-    
+
     # Phase 3.1: Power analysis
     logger.info("Phase 3.1: Computing power analysis")
     power_analysis = compute_power_analysis()
-    
+
     # Save power analysis
     with open(output_dir / "power_analysis.json", "w") as f:
         json.dump(power_analysis, f, indent=2)
-    
+
     # Phase 3.2: Sensitivity analysis
     logger.info("Phase 3.2: Generating sensitivity analysis")
     sensitivity_analysis = generate_sensitivity_analysis()
-    
+
     # Save sensitivity analysis
     with open(output_dir / "sensitivity_analysis.json", "w") as f:
         json.dump(sensitivity_analysis, f, indent=2)
-    
+
     # Phase 3.3: Calibration note
     logger.info("Phase 3.3: Generating calibration note")
     generate_calibration_note(output_dir)
-    
+
     # Phase 3.4: Comprehensive report
     logger.info("Phase 3.4: Generating comprehensive report")
     generate_phase3_report(output_dir, power_analysis, sensitivity_analysis)
-    
+
     # Generate reproducibility hash
     logger.info("Phase 3.5: Generating reproducibility hash")
     try:
-        commit_hash = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode().strip()
+        commit_hash = (
+            subprocess.check_output(["git", "rev-parse", "HEAD"]).decode().strip()
+        )
         with open(output_dir / "reproducibility_hash.txt", "w") as f:
             f.write(f"Phase 3 Implementation Hash: {commit_hash}\n")
             f.write(f"Timestamp: {datetime.now().isoformat()}\n")
@@ -472,21 +488,22 @@ def main():
             f.write(f"FDR q: 0.05\n")
     except:
         logger.warning("Could not generate reproducibility hash")
-    
+
     logger.info("Phase 3 Implementation completed successfully")
     logger.info(f"Results saved to: {output_dir}")
-    
+
     # Print summary
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("PHASE 3 IMPLEMENTATION COMPLETE")
-    print("="*60)
+    print("=" * 60)
     print(f"Output directory: {output_dir}")
     print(f"Power analysis: {output_dir}/power_analysis.json")
     print(f"Sensitivity analysis: {output_dir}/sensitivity_analysis.json")
     print(f"Calibration note: {output_dir}/thresholds_provisional.md")
     print(f"Comprehensive report: {output_dir}/BTC_PHASE3_VALIDATION.md")
     print(f"Reproducibility hash: {output_dir}/reproducibility_hash.txt")
-    print("="*60)
+    print("=" * 60)
+
 
 if __name__ == "__main__":
     main()

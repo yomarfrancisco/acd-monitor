@@ -50,7 +50,12 @@ class DataCache:
         return path
 
     def get(
-        self, venue: str, pair: str, frequency: str, start_utc: datetime, end_utc: datetime
+        self,
+        venue: str,
+        pair: str,
+        frequency: str,
+        start_utc: datetime,
+        end_utc: datetime,
     ) -> Optional[pd.DataFrame]:
         """
         Retrieve cached data if available.

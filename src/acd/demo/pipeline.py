@@ -55,7 +55,8 @@ class DemoPipeline:
         self.metrics_collector = MetricsCollector(self.output_dir)
         self.health_checker = HealthChecker()
         self.regression_detector = RegressionDetector(
-            self.output_dir / "artifacts" / "metrics" / "run_log.parquet", Path("docs/regressions")
+            self.output_dir / "artifacts" / "metrics" / "run_log.parquet",
+            Path("docs/regressions"),
         )
 
     def run_full_pipeline(self) -> Dict[str, any]:
@@ -435,7 +436,10 @@ class DemoPipeline:
         report = {
             "timestamp": pd.Timestamp.now().isoformat(),
             "bundle_id": bundle.bundle_id,
-            "calibration_summary": {"calibration_score": 0.8, "method": "demo_calibration"},
+            "calibration_summary": {
+                "calibration_score": 0.8,
+                "method": "demo_calibration",
+            },
             "vmm_performance": {
                 "regime_confidence": bundle.vmm_outputs.regime_confidence,
                 "structural_stability": bundle.vmm_outputs.structural_stability,

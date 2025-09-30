@@ -52,13 +52,18 @@ class CMAPosterFramesAnalyzer:
         # VMM Configuration
         self.vmm_config = VMMConfig(max_iterations=1000, convergence_tolerance=1e-6)
         self.crypto_config = CryptoMomentConfig(
-            max_lag=10, lead_lag_threshold=0.1, mirroring_window=5, mirroring_threshold=0.8
+            max_lag=10,
+            lead_lag_threshold=0.1,
+            mirroring_window=5,
+            mirroring_threshold=0.8,
         )
         self.crypto_calculator = CryptoMomentCalculator(self.crypto_config)
         self.vmm_engine = VMMEngine(self.vmm_config, self.crypto_calculator)
 
         # Validation Layer Configurations
-        self.lead_lag_config = LeadLagConfig(window_size=30, max_lag=5, significance_level=0.05)
+        self.lead_lag_config = LeadLagConfig(
+            window_size=30, max_lag=5, significance_level=0.05
+        )
         self.lead_lag_validator = LeadLagValidator(self.lead_lag_config)
 
         self.mirroring_config = MirroringConfig(
@@ -69,7 +74,9 @@ class CMAPosterFramesAnalyzer:
         self.hmm_config = HMMConfig(n_states=3, window_size=100, max_iterations=100)
         self.hmm_validator = HMMValidator(self.hmm_config)
 
-        self.infoflow_config = InfoFlowConfig(max_lag=5, n_bins=10, significance_level=0.05)
+        self.infoflow_config = InfoFlowConfig(
+            max_lag=5, n_bins=10, significance_level=0.05
+        )
         self.infoflow_validator = InfoFlowValidator(self.infoflow_config)
 
         # Integrated Engine
@@ -138,7 +145,11 @@ class CMAPosterFramesAnalyzer:
         env_data = (
             self.data.groupby("date")
             .agg(
-                {"environment": "first", "coordination_strength": "first", "market_event": "first"}
+                {
+                    "environment": "first",
+                    "coordination_strength": "first",
+                    "market_event": "first",
+                }
             )
             .reset_index()
         )
@@ -177,7 +188,11 @@ class CMAPosterFramesAnalyzer:
         env_data = (
             self.data.groupby("date")
             .agg(
-                {"environment": "first", "coordination_strength": "first", "market_event": "first"}
+                {
+                    "environment": "first",
+                    "coordination_strength": "first",
+                    "market_event": "first",
+                }
             )
             .reset_index()
         )
@@ -217,7 +232,11 @@ class CMAPosterFramesAnalyzer:
         env_data = (
             self.data.groupby("date")
             .agg(
-                {"environment": "first", "coordination_strength": "first", "market_event": "first"}
+                {
+                    "environment": "first",
+                    "coordination_strength": "first",
+                    "market_event": "first",
+                }
             )
             .reset_index()
         )
@@ -280,7 +299,11 @@ class CMAPosterFramesAnalyzer:
         env_data = (
             self.data.groupby("date")
             .agg(
-                {"environment": "first", "coordination_strength": "first", "market_event": "first"}
+                {
+                    "environment": "first",
+                    "coordination_strength": "first",
+                    "market_event": "first",
+                }
             )
             .reset_index()
         )
@@ -295,13 +318,17 @@ class CMAPosterFramesAnalyzer:
         from src.acd.analytics.integrated_engine import run_integrated_analysis
 
         integrated_result = run_integrated_analysis(
-            data=integrated_data, price_columns=price_columns, config=self.integrated_config
+            data=integrated_data,
+            price_columns=price_columns,
+            config=self.integrated_config,
         )
 
         self.results["integrated"] = integrated_result
 
         print(f"Integrated Analysis Complete:")
-        print(f"  - Composite Score: {getattr(integrated_result, 'composite_score', 'N/A')}")
+        print(
+            f"  - Composite Score: {getattr(integrated_result, 'composite_score', 'N/A')}"
+        )
         print(f"  - Risk Band: {getattr(integrated_result, 'risk_band', 'N/A')}")
         print(
             f"  - Coordination Detected: {getattr(integrated_result, 'coordination_detected', 'N/A')}"
@@ -347,29 +374,45 @@ class CMAPosterFramesAnalyzer:
                 "j_statistic": getattr(vmm_result, "j_statistic", None),
                 "p_value": getattr(vmm_result, "p_value", None),
                 "stability": getattr(vmm_result, "stability", None),
-                "convergence_achieved": getattr(vmm_result, "convergence_achieved", False),
+                "convergence_achieved": getattr(
+                    vmm_result, "convergence_achieved", False
+                ),
             },
             "validation_results": {
                 "lead_lag": {
                     "persistence_score": (
-                        getattr(validation_results.get("lead_lag"), "persistence_score", None)
+                        getattr(
+                            validation_results.get("lead_lag"),
+                            "persistence_score",
+                            None,
+                        )
                         if validation_results.get("lead_lag")
                         else None
                     ),
                     "switching_entropy": (
-                        getattr(validation_results.get("lead_lag"), "switching_entropy", None)
+                        getattr(
+                            validation_results.get("lead_lag"),
+                            "switching_entropy",
+                            None,
+                        )
                         if validation_results.get("lead_lag")
                         else None
                     ),
                 },
                 "mirroring": {
                     "mirroring_ratio": (
-                        getattr(validation_results.get("mirroring"), "mirroring_ratio", None)
+                        getattr(
+                            validation_results.get("mirroring"), "mirroring_ratio", None
+                        )
                         if validation_results.get("mirroring")
                         else None
                     ),
                     "coordination_score": (
-                        getattr(validation_results.get("mirroring"), "coordination_score", None)
+                        getattr(
+                            validation_results.get("mirroring"),
+                            "coordination_score",
+                            None,
+                        )
                         if validation_results.get("mirroring")
                         else None
                     ),
@@ -388,12 +431,18 @@ class CMAPosterFramesAnalyzer:
                 },
                 "infoflow": {
                     "transfer_entropy": (
-                        getattr(validation_results.get("infoflow"), "transfer_entropy", None)
+                        getattr(
+                            validation_results.get("infoflow"), "transfer_entropy", None
+                        )
                         if validation_results.get("infoflow")
                         else None
                     ),
                     "network_concentration": (
-                        getattr(validation_results.get("infoflow"), "network_concentration", None)
+                        getattr(
+                            validation_results.get("infoflow"),
+                            "network_concentration",
+                            None,
+                        )
                         if validation_results.get("infoflow")
                         else None
                     ),
@@ -402,8 +451,12 @@ class CMAPosterFramesAnalyzer:
             "integrated_results": {
                 "composite_score": getattr(integrated_result, "composite_score", None),
                 "risk_band": getattr(integrated_result, "risk_band", None),
-                "coordination_detected": getattr(integrated_result, "coordination_detected", None),
-                "confidence_level": getattr(integrated_result, "confidence_level", None),
+                "coordination_detected": getattr(
+                    integrated_result, "coordination_detected", None
+                ),
+                "confidence_level": getattr(
+                    integrated_result, "confidence_level", None
+                ),
             },
             "coordination_analysis": coordination_analysis,
             "market_event_analysis": event_analysis,
@@ -464,7 +517,9 @@ class CMAPosterFramesAnalyzer:
 
             # Calculate average price from long format data
             avg_price = float(event_data["price"].mean())
-            normal_price = float(self.data[self.data["market_event"] == "normal"]["price"].mean())
+            normal_price = float(
+                self.data[self.data["market_event"] == "normal"]["price"].mean()
+            )
 
             event_analysis.append(
                 {
@@ -477,7 +532,11 @@ class CMAPosterFramesAnalyzer:
                 }
             )
 
-        return {"events_detected": True, "n_events": len(event_analysis), "events": event_analysis}
+        return {
+            "events_detected": True,
+            "n_events": len(event_analysis),
+            "events": event_analysis,
+        }
 
     def _generate_key_findings(self) -> List[str]:
         """Generate key findings from analysis"""
@@ -510,14 +569,20 @@ class CMAPosterFramesAnalyzer:
         validation_results = self.results.get("validation", {})
         lead_lag_result = validation_results.get("lead_lag")
         if getattr(lead_lag_result, "persistence_score", 0) > 0.7:
-            findings.append("Lead-lag analysis detected persistent price leadership patterns")
+            findings.append(
+                "Lead-lag analysis detected persistent price leadership patterns"
+            )
 
         mirroring_result = validation_results.get("mirroring")
         if getattr(mirroring_result, "mirroring_ratio", 0) > 0.6:
-            findings.append("Mirroring analysis detected high price similarity between airlines")
+            findings.append(
+                "Mirroring analysis detected high price similarity between airlines"
+            )
 
         # Coordination periods
-        coordination_analysis = self.results.get("summary", {}).get("coordination_analysis", {})
+        coordination_analysis = self.results.get("summary", {}).get(
+            "coordination_analysis", {}
+        )
         if coordination_analysis.get("coordination_detected", False):
             findings.append(
                 f"Detected {coordination_analysis.get('n_periods', 0)} coordination periods"
@@ -543,12 +608,20 @@ class CMAPosterFramesAnalyzer:
                 "Medium coordination risk detected - recommend enhanced monitoring"
             )
         else:
-            recommendations.append("Low coordination risk - continue routine monitoring")
+            recommendations.append(
+                "Low coordination risk - continue routine monitoring"
+            )
 
         # Methodology recommendations
-        recommendations.append("Validate findings with additional data sources and time periods")
-        recommendations.append("Consider alternative explanations for observed patterns")
-        recommendations.append("Implement ongoing monitoring system for early detection")
+        recommendations.append(
+            "Validate findings with additional data sources and time periods"
+        )
+        recommendations.append(
+            "Consider alternative explanations for observed patterns"
+        )
+        recommendations.append(
+            "Implement ongoing monitoring system for early detection"
+        )
 
         return recommendations
 
@@ -558,12 +631,16 @@ class CMAPosterFramesAnalyzer:
         output_dir.mkdir(parents=True, exist_ok=True)
 
         # Save summary report
-        summary_path = output_dir / f"cma_poster_frames_analysis_summary_seed_{self.seed}.json"
+        summary_path = (
+            output_dir / f"cma_poster_frames_analysis_summary_seed_{self.seed}.json"
+        )
         with open(summary_path, "w") as f:
             json.dump(self.results.get("summary", {}), f, indent=2, default=str)
 
         # Save detailed results
-        results_path = output_dir / f"cma_poster_frames_analysis_results_seed_{self.seed}.json"
+        results_path = (
+            output_dir / f"cma_poster_frames_analysis_results_seed_{self.seed}.json"
+        )
         with open(results_path, "w") as f:
             json.dump(self.results, f, indent=2, default=str)
 
@@ -620,7 +697,11 @@ def main():
     print("KEY RESULTS:")
     print(f"  ICP Invariance Rejected: {summary['icp_results']['invariance_rejected']}")
     vmm_p_value = summary["vmm_results"]["p_value"]
-    print(f"  VMM P-value: {vmm_p_value:.4f}" if vmm_p_value is not None else "  VMM P-value: N/A")
+    print(
+        f"  VMM P-value: {vmm_p_value:.4f}"
+        if vmm_p_value is not None
+        else "  VMM P-value: N/A"
+    )
 
     composite_score = summary["integrated_results"]["composite_score"]
     print(

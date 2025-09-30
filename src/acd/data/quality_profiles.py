@@ -349,6 +349,8 @@ class QualityProfileManager:
         return validation_result
 
 
-def create_quality_profile_manager(config: Optional[Dict] = None) -> QualityProfileManager:
+def create_quality_profile_manager(
+    config: Optional[Dict] = None,
+) -> QualityProfileManager:
     """Factory function to create a quality profile manager."""
     return QualityProfileManager(config)

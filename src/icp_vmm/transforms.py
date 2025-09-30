@@ -159,7 +159,11 @@ class DataTransformer:
 
         # Check continuous metrics completeness
         missing_metrics = []
-        required_metrics = ["liquidity_ratio", "liquidity_volatility", "leadership_shares"]
+        required_metrics = [
+            "liquidity_ratio",
+            "liquidity_volatility",
+            "leadership_shares",
+        ]
 
         for metric in required_metrics:
             if metric not in continuous_metrics:

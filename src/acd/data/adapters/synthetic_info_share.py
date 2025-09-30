@@ -382,7 +382,11 @@ class CointegratedSyntheticGenerator:
         return df
 
     def generate_cointegrated_data(
-        self, venues: List[str], start_price: float, start_time: datetime, end_time: datetime
+        self,
+        venues: List[str],
+        start_price: float,
+        start_time: datetime,
+        end_time: datetime,
     ) -> Dict[str, pd.DataFrame]:
         """
         Generate cointegrated data for all venues.

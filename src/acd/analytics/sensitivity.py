@@ -26,7 +26,9 @@ class SensitivityAnalyzer:
         self.results = []
 
     def run_sensitivity_analysis(
-        self, coordination_strengths: List[float] = [0.0, 0.25, 0.5, 0.75, 1.0], seed: int = 42
+        self,
+        coordination_strengths: List[float] = [0.0, 0.25, 0.5, 0.75, 1.0],
+        seed: int = 42,
     ) -> pd.DataFrame:
         """
         Run sensitivity analysis across coordination strengths
@@ -63,10 +65,16 @@ class SensitivityAnalyzer:
 
             # Run VMM on both scenarios
             competitive_result = vmm_engine.run_vmm(
-                competitive_data, price_columns, environment_column="volatility_regime", seed=seed
+                competitive_data,
+                price_columns,
+                environment_column="volatility_regime",
+                seed=seed,
             )
             coordinated_result = vmm_engine.run_vmm(
-                coordinated_data, price_columns, environment_column="volatility_regime", seed=seed
+                coordinated_data,
+                price_columns,
+                environment_column="volatility_regime",
+                seed=seed,
             )
 
             # Store results
@@ -209,10 +217,16 @@ class PowerAnalyzer:
 
             # Run VMM
             competitive_result = vmm_engine.run_vmm(
-                competitive_data, price_columns, environment_column="volatility_regime", seed=seed
+                competitive_data,
+                price_columns,
+                environment_column="volatility_regime",
+                seed=seed,
             )
             coordinated_result = vmm_engine.run_vmm(
-                coordinated_data, price_columns, environment_column="volatility_regime", seed=seed
+                coordinated_data,
+                price_columns,
+                environment_column="volatility_regime",
+                seed=seed,
             )
 
             # Calculate power (simplified - based on p-value difference)
@@ -245,7 +259,7 @@ class PowerAnalyzer:
             "target_power": target_power,
             "power_results": power_results,
             "required_n": required_n,
-            "achieved_power": power_results[-1]["estimated_power"] if power_results else 0.0,
+            "achieved_power": (power_results[-1]["estimated_power"] if power_results else 0.0),
         }
 
     def save_report(self, power_results: Dict[str, Any], output_path: str) -> None:

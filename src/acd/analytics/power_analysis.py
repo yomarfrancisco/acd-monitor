@@ -144,7 +144,11 @@ class PowerAnalysisCalculator:
             return 1000
 
     def calculate_statistical_power(
-        self, effect_size: float, sample_size: int, baseline_similarity: float, volatility: float
+        self,
+        effect_size: float,
+        sample_size: int,
+        baseline_similarity: float,
+        volatility: float,
     ) -> float:
         """
         Calculate statistical power for given parameters.

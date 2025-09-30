@@ -375,7 +375,12 @@ python scripts/icp_vmm/run_icp_vmm_window.py \\
         return repro
 
     def export_refined_results(
-        self, results: Dict, window_id: str, symbol: str, s3_inputs: List[str], output_dir: str
+        self,
+        results: Dict,
+        window_id: str,
+        symbol: str,
+        s3_inputs: List[str],
+        output_dir: str,
     ) -> Dict:
         """Export results with refined format and canonical paths."""
 

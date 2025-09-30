@@ -27,7 +27,9 @@ from acd.validation.infoflow import analyze_infoflow
 from agent.providers.offline_mock import OfflineMockProvider
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 
@@ -57,7 +59,10 @@ def run_phase2_analysis(seed: int = 42, n_samples: int = 6000):
         ]:
             try:
                 result = icp_engine.run_icp(
-                    data, ["exchange_1", "exchange_2", "exchange_3"], "volatility_regime", seed
+                    data,
+                    ["exchange_1", "exchange_2", "exchange_3"],
+                    "volatility_regime",
+                    seed,
                 )
                 icp_results[scenario_name] = {
                     "invariance_p_value": result.invariance_p_value,
@@ -70,7 +75,8 @@ def run_phase2_analysis(seed: int = 42, n_samples: int = 6000):
         # 3. Run VMM analysis
         logger.info("Running VMM analysis...")
         vmm_engine = VMMEngine(
-            VMMConfig(), CryptoMomentCalculator(CryptoMomentConfig(), GlobalMomentScaler())
+            VMMConfig(),
+            CryptoMomentCalculator(CryptoMomentConfig(), GlobalMomentScaler()),
         )
         vmm_results = {}
 
@@ -80,7 +86,10 @@ def run_phase2_analysis(seed: int = 42, n_samples: int = 6000):
         ]:
             try:
                 result = vmm_engine.run_vmm(
-                    data, ["exchange_1", "exchange_2", "exchange_3"], "volatility_regime", seed
+                    data,
+                    ["exchange_1", "exchange_2", "exchange_3"],
+                    "volatility_regime",
+                    seed,
                 )
                 vmm_results[scenario_name] = {
                     "over_identification_p_value": result.over_identification_p_value,
@@ -103,7 +112,10 @@ def run_phase2_analysis(seed: int = 42, n_samples: int = 6000):
             # Lead-lag
             try:
                 lead_lag_result = analyze_lead_lag(
-                    data, ["exchange_1", "exchange_2", "exchange_3"], "volatility_regime", seed
+                    data,
+                    ["exchange_1", "exchange_2", "exchange_3"],
+                    "volatility_regime",
+                    seed,
                 )
                 scenario_results["lead_lag"] = {
                     "switching_entropy": lead_lag_result.switching_entropy,
@@ -115,7 +127,10 @@ def run_phase2_analysis(seed: int = 42, n_samples: int = 6000):
             # Mirroring
             try:
                 mirroring_result = analyze_mirroring(
-                    data, ["exchange_1", "exchange_2", "exchange_3"], "volatility_regime", seed
+                    data,
+                    ["exchange_1", "exchange_2", "exchange_3"],
+                    "volatility_regime",
+                    seed,
                 )
                 scenario_results["mirroring"] = {
                     "coordination_score": mirroring_result.coordination_score,
@@ -127,7 +142,10 @@ def run_phase2_analysis(seed: int = 42, n_samples: int = 6000):
             # HMM
             try:
                 hmm_result = analyze_hmm(
-                    data, ["exchange_1", "exchange_2", "exchange_3"], "volatility_regime", seed
+                    data,
+                    ["exchange_1", "exchange_2", "exchange_3"],
+                    "volatility_regime",
+                    seed,
                 )
                 scenario_results["hmm"] = {
                     "regime_stability": hmm_result.regime_stability,
@@ -139,7 +157,10 @@ def run_phase2_analysis(seed: int = 42, n_samples: int = 6000):
             # Info flow
             try:
                 infoflow_result = analyze_infoflow(
-                    data, ["exchange_1", "exchange_2", "exchange_3"], "volatility_regime", seed
+                    data,
+                    ["exchange_1", "exchange_2", "exchange_3"],
+                    "volatility_regime",
+                    seed,
                 )
                 scenario_results["infoflow"] = {
                     "coordination_network_score": infoflow_result.coordination_network_score,
@@ -154,8 +175,13 @@ def run_phase2_analysis(seed: int = 42, n_samples: int = 6000):
         logger.info("Testing agent integration...")
         try:
             provider = OfflineMockProvider()
-            test_result = provider.generate(prompt="Show mirroring ratios for BTC/USD last week")
-            agent_results = {"status": "success", "response_length": len(test_result.content)}
+            test_result = provider.generate(
+                prompt="Show mirroring ratios for BTC/USD last week"
+            )
+            agent_results = {
+                "status": "success",
+                "response_length": len(test_result.content),
+            }
         except Exception as e:
             agent_results = {"status": "failed", "error": str(e)}
 
@@ -194,8 +220,12 @@ def run_phase2_analysis(seed: int = 42, n_samples: int = 6000):
 def main():
     """Main entry point"""
     parser = argparse.ArgumentParser(description="Phase-2 Synthetic Analysis Pipeline")
-    parser.add_argument("--seed", type=int, default=42, help="Random seed for reproducibility")
-    parser.add_argument("--N", type=int, default=6000, help="Number of samples per scenario")
+    parser.add_argument(
+        "--seed", type=int, default=42, help="Random seed for reproducibility"
+    )
+    parser.add_argument(
+        "--N", type=int, default=6000, help="Number of samples per scenario"
+    )
     parser.add_argument("--verbose", action="store_true", help="Verbose output")
 
     args = parser.parse_args()
@@ -211,7 +241,9 @@ def main():
         print("=" * 80)
         print(f"Seed: {args.seed}")
         print(f"Sample Size: {args.N}")
-        print(f"Execution Time: {results['pipeline_info']['execution_time']:.2f} seconds")
+        print(
+            f"Execution Time: {results['pipeline_info']['execution_time']:.2f} seconds"
+        )
         print(f"Results saved to: artifacts/phase2_results_seed_{args.seed}.json")
 
         # Print key findings

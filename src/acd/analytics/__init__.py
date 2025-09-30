@@ -12,4 +12,9 @@ from .integrated_engine import (
     run_integrated_analysis,
 )
 
-__all__ = ["IntegratedACDEngine", "IntegratedConfig", "IntegratedResult", "run_integrated_analysis"]
+__all__ = [
+    "IntegratedACDEngine",
+    "IntegratedConfig",
+    "IntegratedResult",
+    "run_integrated_analysis",
+]

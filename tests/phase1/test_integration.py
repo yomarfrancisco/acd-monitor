@@ -40,7 +40,9 @@ class TestIntegration:
         generator = SyntheticCryptoGenerator(config)
         return generator.generate_coordinated_scenario()
 
-    def test_labels_end_to_end(self, integrated_engine, competitive_data, coordinated_data):
+    def test_labels_end_to_end(
+        self, integrated_engine, competitive_data, coordinated_data
+    ):
         """Test that competitive→LOW and coordinated→RED with seed=42"""
         price_columns = ["Exchange_0", "Exchange_1", "Exchange_2", "Exchange_3"]
 
@@ -81,7 +83,9 @@ class TestIntegration:
         """Test that all required report fields are present and finite"""
         price_columns = ["Exchange_0", "Exchange_1", "Exchange_2", "Exchange_3"]
 
-        result = integrated_engine.analyze_coordination_risk(competitive_data, price_columns)
+        result = integrated_engine.analyze_coordination_risk(
+            competitive_data, price_columns
+        )
 
         # Check ICP fields
         assert hasattr(result, "icp_result"), "Result should have ICP analysis"
@@ -101,7 +105,9 @@ class TestIntegration:
         assert (
             0.0 <= result.vmm_result.over_identification_p_value <= 1.0
         ), "VMM over-ID p-value should be in [0,1]"
-        assert np.isfinite(result.vmm_result.structural_stability), "VMM stability should be finite"
+        assert np.isfinite(
+            result.vmm_result.structural_stability
+        ), "VMM stability should be finite"
         assert (
             0.0 <= result.vmm_result.structural_stability <= 1.0
         ), "VMM stability should be in [0,1]"
@@ -110,8 +116,12 @@ class TestIntegration:
         assert hasattr(result, "crypto_moments"), "Result should have crypto moments"
 
         # Check composite score
-        assert np.isfinite(result.composite_risk_score), "Composite score should be finite"
-        assert 0.0 <= result.composite_risk_score <= 100.0, "Composite score should be in [0,100]"
+        assert np.isfinite(
+            result.composite_risk_score
+        ), "Composite score should be finite"
+        assert (
+            0.0 <= result.composite_risk_score <= 100.0
+        ), "Composite score should be in [0,100]"
 
         # Check risk classification
         assert result.risk_classification in [
@@ -122,11 +132,15 @@ class TestIntegration:
 
         # Check diagnostics
         assert hasattr(result, "diagnostics"), "Result should have diagnostics"
-        assert isinstance(result.diagnostics, dict), "Diagnostics should be a dictionary"
+        assert isinstance(
+            result.diagnostics, dict
+        ), "Diagnostics should be a dictionary"
 
         print("All report fields present and finite ✓")
 
-    def test_icp_analysis_integration(self, integrated_engine, competitive_data, coordinated_data):
+    def test_icp_analysis_integration(
+        self, integrated_engine, competitive_data, coordinated_data
+    ):
         """Test ICP analysis integration"""
         price_columns = ["Exchange_0", "Exchange_1", "Exchange_2", "Exchange_3"]
 
@@ -141,14 +155,19 @@ class TestIntegration:
         )
 
         # Competitive should not reject H0 (maintain invariance)
-        assert not competitive_result.icp_result.reject_h0, "Competitive should maintain invariance"
+        assert (
+            not competitive_result.icp_result.reject_h0
+        ), "Competitive should maintain invariance"
 
         # Coordinated should reject H0 (reject invariance)
-        assert coordinated_result.icp_result.reject_h0, "Coordinated should reject invariance"
+        assert (
+            coordinated_result.icp_result.reject_h0
+        ), "Coordinated should reject invariance"
 
         # P-values should be different
         assert (
-            competitive_result.icp_result.p_value > coordinated_result.icp_result.p_value
+            competitive_result.icp_result.p_value
+            > coordinated_result.icp_result.p_value
         ), "Competitive p-value should be higher than coordinated"
 
         print("ICP Analysis:")
@@ -159,7 +178,9 @@ class TestIntegration:
             f"  Coordinated: p={coordinated_result.icp_result.p_value:.6f}, reject_H0={coordinated_result.icp_result.reject_h0}"  # noqa: E501
         )
 
-    def test_vmm_analysis_integration(self, integrated_engine, competitive_data, coordinated_data):
+    def test_vmm_analysis_integration(
+        self, integrated_engine, competitive_data, coordinated_data
+    ):
         """Test VMM analysis integration"""
         price_columns = ["Exchange_0", "Exchange_1", "Exchange_2", "Exchange_3"]
 
@@ -190,18 +211,28 @@ class TestIntegration:
         ), "Coordinated stability should be bounded"
 
         print("VMM Analysis:")
-        print("  Competitive: stability={competitive_result.vmm_result.structural_stability:.6f}")
-        print("  Coordinated: stability={coordinated_result.vmm_result.structural_stability:.6f}")
+        print(
+            "  Competitive: stability={competitive_result.vmm_result.structural_stability:.6f}"
+        )
+        print(
+            "  Coordinated: stability={coordinated_result.vmm_result.structural_stability:.6f}"
+        )
 
     def test_crypto_moments_integration(self, integrated_engine, competitive_data):
         """Test crypto moments integration"""
         price_columns = ["Exchange_0", "Exchange_1", "Exchange_2", "Exchange_3"]
 
-        result = integrated_engine.analyze_coordination_risk(competitive_data, price_columns)
+        result = integrated_engine.analyze_coordination_risk(
+            competitive_data, price_columns
+        )
 
         # Check crypto moments structure
-        assert hasattr(result.crypto_moments, "lead_lag_betas"), "Should have lead-lag betas"
-        assert hasattr(result.crypto_moments, "mirroring_ratios"), "Should have mirroring ratios"
+        assert hasattr(
+            result.crypto_moments, "lead_lag_betas"
+        ), "Should have lead-lag betas"
+        assert hasattr(
+            result.crypto_moments, "mirroring_ratios"
+        ), "Should have mirroring ratios"
         assert hasattr(
             result.crypto_moments, "spread_floor_frequency"
         ), "Should have spread floor frequency"
@@ -243,12 +274,14 @@ class TestIntegration:
 
         # Composite scores should be different
         assert (
-            competitive_result.composite_risk_score != coordinated_result.composite_risk_score
+            competitive_result.composite_risk_score
+            != coordinated_result.composite_risk_score
         ), "Composite scores should be different"
 
         # Competitive should have lower score
         assert (
-            competitive_result.composite_risk_score < coordinated_result.composite_risk_score
+            competitive_result.composite_risk_score
+            < coordinated_result.composite_risk_score
         ), "Competitive should have lower composite score"
 
         # Both should be bounded
@@ -263,7 +296,9 @@ class TestIntegration:
         print("  Competitive: {competitive_result.composite_risk_score:.2f}")
         print("  Coordinated: {coordinated_result.composite_risk_score:.2f}")
 
-    def test_risk_classification_logic(self, integrated_engine, competitive_data, coordinated_data):
+    def test_risk_classification_logic(
+        self, integrated_engine, competitive_data, coordinated_data
+    ):
         """Test risk classification logic"""
         price_columns = ["Exchange_0", "Exchange_1", "Exchange_2", "Exchange_3"]
 
@@ -279,23 +314,36 @@ class TestIntegration:
 
         # Risk classifications should be different
         assert (
-            competitive_result.risk_classification != coordinated_result.risk_classification
+            competitive_result.risk_classification
+            != coordinated_result.risk_classification
         ), "Risk classifications should be different"
 
         # Check classification logic
         if competitive_result.composite_risk_score <= 33.0:
-            assert competitive_result.risk_classification == "LOW", "Score ≤33 should be LOW"
+            assert (
+                competitive_result.risk_classification == "LOW"
+            ), "Score ≤33 should be LOW"
         elif competitive_result.composite_risk_score <= 66.0:
-            assert competitive_result.risk_classification == "AMBER", "Score 34-66 should be AMBER"
+            assert (
+                competitive_result.risk_classification == "AMBER"
+            ), "Score 34-66 should be AMBER"
         else:
-            assert competitive_result.risk_classification == "RED", "Score ≥67 should be RED"
+            assert (
+                competitive_result.risk_classification == "RED"
+            ), "Score ≥67 should be RED"
 
         if coordinated_result.composite_risk_score <= 33.0:
-            assert coordinated_result.risk_classification == "LOW", "Score ≤33 should be LOW"
+            assert (
+                coordinated_result.risk_classification == "LOW"
+            ), "Score ≤33 should be LOW"
         elif coordinated_result.composite_risk_score <= 66.0:
-            assert coordinated_result.risk_classification == "AMBER", "Score 34-66 should be AMBER"
+            assert (
+                coordinated_result.risk_classification == "AMBER"
+            ), "Score 34-66 should be AMBER"
         else:
-            assert coordinated_result.risk_classification == "RED", "Score ≥67 should be RED"
+            assert (
+                coordinated_result.risk_classification == "RED"
+            ), "Score ≥67 should be RED"
 
         print("Risk Classification Logic:")
         print(

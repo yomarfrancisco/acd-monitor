@@ -183,7 +183,11 @@ class TestCMAPosterFramesGoldenFiles:
         if integrated_results["confidence_level"] is not None:
             # confidence_level can be a string or float
             if isinstance(integrated_results["confidence_level"], str):
-                assert integrated_results["confidence_level"] in ["Low", "Medium", "High"]
+                assert integrated_results["confidence_level"] in [
+                    "Low",
+                    "Medium",
+                    "High",
+                ]
             else:
                 assert isinstance(integrated_results["confidence_level"], (int, float))
                 assert 0 <= integrated_results["confidence_level"] <= 1
@@ -211,7 +215,10 @@ class TestCMAPosterFramesGoldenFiles:
         if coordination_analysis["coordination_detected"]:
             assert coordination_analysis["n_periods"] > 0
             assert coordination_analysis["total_coordination_days"] > 0
-            assert len(coordination_analysis["periods"]) == coordination_analysis["n_periods"]
+            assert (
+                len(coordination_analysis["periods"])
+                == coordination_analysis["n_periods"]
+            )
 
             # Check period structure
             for period in coordination_analysis["periods"]:

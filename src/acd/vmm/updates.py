@@ -189,7 +189,11 @@ class VariationalUpdates:
         return gradient
 
     def update_params(
-        self, params: VariationalParams, mu_grad: np.ndarray, sigma_grad: np.ndarray, iteration: int
+        self,
+        params: VariationalParams,
+        mu_grad: np.ndarray,
+        sigma_grad: np.ndarray,
+        iteration: int,
     ) -> VariationalParams:
         """Update parameters with adaptive learning rate and stability"""
 

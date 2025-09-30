@@ -89,7 +89,12 @@ class AnalystFeedValidator:
         self, data: pd.DataFrame, source_metadata: Dict[str, Any]
     ) -> Dict[str, Any]:
         """Validate analyst feed data and metadata"""
-        validation_results = {"is_valid": True, "errors": [], "warnings": [], "quality_score": 0.0}
+        validation_results = {
+            "is_valid": True,
+            "errors": [],
+            "warnings": [],
+            "quality_score": 0.0,
+        }
 
         # Check required fields
         missing_fields = [field for field in self.required_fields if field not in data.columns]
@@ -130,7 +135,11 @@ class AnalystFeedValidator:
 
     def _validate_metadata(self, metadata: Dict[str, Any]) -> bool:
         """Validate source metadata"""
-        required_metadata = ["analyst_credentials", "methodology_description", "data_freshness"]
+        required_metadata = [
+            "analyst_credentials",
+            "methodology_description",
+            "data_freshness",
+        ]
         return all(field in metadata for field in required_metadata)
 
     def _calculate_quality_score(
@@ -175,7 +184,12 @@ class RegulatoryFeedValidator:
             "regulatory_action",
         ]
 
-        self.compliance_statuses = ["compliant", "non_compliant", "under_review", "pending"]
+        self.compliance_statuses = [
+            "compliant",
+            "non_compliant",
+            "under_review",
+            "pending",
+        ]
 
     def validate_regulatory_feed(
         self, data: pd.DataFrame, source_metadata: Dict[str, Any]
@@ -237,7 +251,11 @@ class RegulatoryFeedValidator:
 
     def _validate_metadata(self, metadata: Dict[str, Any]) -> bool:
         """Validate regulatory metadata"""
-        required_metadata = ["regulatory_authority", "jurisdiction", "compliance_framework"]
+        required_metadata = [
+            "regulatory_authority",
+            "jurisdiction",
+            "compliance_framework",
+        ]
         return all(field in metadata for field in required_metadata)
 
     def _calculate_quality_score(
@@ -728,7 +746,11 @@ class DataIngestion:
         return data
 
     def _update_stats(
-        self, file_path: Path, data: Optional[pd.DataFrame], success: bool, source_type: str
+        self,
+        file_path: Path,
+        data: Optional[pd.DataFrame],
+        success: bool,
+        source_type: str,
     ) -> None:
         """Update ingestion statistics"""
         self.ingestion_stats["total_files"] += 1
@@ -763,7 +785,10 @@ class DataIngestion:
         return stats
 
     def ingest_directory(
-        self, directory_path: Union[str, Path], source_type: str, file_pattern: str = "*.*"
+        self,
+        directory_path: Union[str, Path],
+        source_type: str,
+        file_pattern: str = "*.*",
     ) -> List[pd.DataFrame]:
         """
         Ingest all files in a directory matching the pattern
@@ -803,7 +828,9 @@ class DataIngestion:
 
 
 def create_ingestion_config(
-    max_file_size_mb: int = 100, validation_strict: bool = True, cache_enabled: bool = True
+    max_file_size_mb: int = 100,
+    validation_strict: bool = True,
+    cache_enabled: bool = True,
 ) -> DataIngestionConfig:
     """Create a standard ingestion configuration"""
     return DataIngestionConfig(

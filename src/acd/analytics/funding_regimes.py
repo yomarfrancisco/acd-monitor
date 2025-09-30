@@ -93,7 +93,10 @@ class FundingRegimeAnalyzer:
             },
             "bounds": {
                 "low": {"max": round(terciles["q33"], 6)},
-                "medium": {"min": round(terciles["q33"], 6), "max": round(terciles["q66"], 6)},
+                "medium": {
+                    "min": round(terciles["q33"], 6),
+                    "max": round(terciles["q66"], 6),
+                },
                 "high": {"min": round(terciles["q66"], 6)},
             },
             "counts": counts,
@@ -170,7 +173,13 @@ class FundingRegimeAnalyzer:
         """Log dropped day accounting."""
         dropped_data = {
             "dropped": 0,
-            "drop": {"missing": 0, "notEnoughOthers": 0, "tooTight": 0, "outlier": 0, "nan": 0},
+            "drop": {
+                "missing": 0,
+                "notEnoughOthers": 0,
+                "tooTight": 0,
+                "outlier": 0,
+                "nan": 0,
+            },
         }
         self.logger.info(
             f"[LEADER:env:funding:dropped] {json.dumps(dropped_data, indent=2, default=str)}"
@@ -244,7 +253,13 @@ class FundingRegimeAnalyzer:
             "ties": {"byRegime": []},
             "dropped": {
                 "dropped": 0,
-                "drop": {"missing": 0, "notEnoughOthers": 0, "tooTight": 0, "outlier": 0, "nan": 0},
+                "drop": {
+                    "missing": 0,
+                    "notEnoughOthers": 0,
+                    "tooTight": 0,
+                    "outlier": 0,
+                    "nan": 0,
+                },
             },
             "stats": results.stats_results,
         }
@@ -373,7 +388,12 @@ class FundingRegimeAnalyzer:
         manifest_data["runs"]["funding"] = {
             "keptDays": kept_days,
             "droppedDays": dropped_days,
-            "dropReasons": {"missing": 0, "nan": 0, "tooFewBars": 0, "notEnoughOthers": 0},
+            "dropReasons": {
+                "missing": 0,
+                "nan": 0,
+                "tooFewBars": 0,
+                "notEnoughOthers": 0,
+            },
         }
 
         with open(manifest_path, "w") as f:
@@ -383,7 +403,12 @@ class FundingRegimeAnalyzer:
         funding_assignments_data = {
             "keptDays": len(results.regime_assignments),
             "droppedDays": 0,
-            "dropReasons": {"missing": 0, "nan": 0, "tooFewBars": 0, "notEnoughOthers": 0},
+            "dropReasons": {
+                "missing": 0,
+                "nan": 0,
+                "tooFewBars": 0,
+                "notEnoughOthers": 0,
+            },
             "byRegime": [
                 {
                     "regime": regime,
@@ -427,7 +452,11 @@ class FundingRegimeAnalyzer:
                 regime = "high"
 
             regime_assignments.append(
-                {"date": pd.Timestamp(date), "funding_rate": funding_rate, "regime": regime}
+                {
+                    "date": pd.Timestamp(date),
+                    "funding_rate": funding_rate,
+                    "regime": regime,
+                }
             )
 
         assignments_df = pd.DataFrame(regime_assignments)
@@ -537,7 +566,10 @@ class FundingRegimeAnalyzer:
 
         # Prepare data for tests
         regime_leadership = leadership_data.merge(
-            regime_assignments[["regime"]], left_index=True, right_index=True, how="inner"
+            regime_assignments[["regime"]],
+            left_index=True,
+            right_index=True,
+            how="inner",
         )
 
         # Chi-square test

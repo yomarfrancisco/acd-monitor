@@ -49,7 +49,10 @@ class SpreadConvergenceAnalyzer:
 
         try:
             result = subprocess.run(
-                ["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True, check=True
+                ["git", "rev-parse", "--short", "HEAD"],
+                capture_output=True,
+                text=True,
+                check=True,
             )
             return result.stdout.strip()
         except (subprocess.CalledProcessError, FileNotFoundError):
@@ -376,7 +379,7 @@ class SpreadConvergenceAnalyzer:
             count = leader_counts.get(venue, 0)
             overall_shares[venue] = {
                 "count": int(count),
-                "share": round(count / total_episodes * 100, 2) if total_episodes > 0 else 0,
+                "share": (round(count / total_episodes * 100, 2) if total_episodes > 0 else 0),
             }
 
         # Environment-specific leadership
@@ -472,7 +475,11 @@ class SpreadConvergenceAnalyzer:
         return 0.0
 
     def export_results(
-        self, result: SpreadConvergenceResult, output_dir: str, start_date: str, end_date: str
+        self,
+        result: SpreadConvergenceResult,
+        output_dir: str,
+        start_date: str,
+        end_date: str,
     ) -> None:
         """
         Export all spread convergence results to files.
@@ -501,7 +508,11 @@ class SpreadConvergenceAnalyzer:
         self.logger.info(f"Exported spread convergence analysis results to {output_dir}/")
 
     def _update_manifest(
-        self, output_dir: str, start_date: str, end_date: str, result: SpreadConvergenceResult
+        self,
+        output_dir: str,
+        start_date: str,
+        end_date: str,
+        result: SpreadConvergenceResult,
     ) -> None:
         """Update MANIFEST.json with spread convergence run data."""
         manifest_path = os.path.join(output_dir, "MANIFEST.json")
@@ -591,7 +602,7 @@ class SpreadConvergenceAnalyzer:
         # Log results
         episode_log = {
             "count": len(episodes),
-            "medianDur": round(episodes_df["duration"].median(), 2) if len(episodes) > 0 else 0,
+            "medianDur": (round(episodes_df["duration"].median(), 2) if len(episodes) > 0 else 0),
             "envBreakdown": cross_env_results,
         }
         print(f"[SPREAD:episodes] {json.dumps(episode_log, ensure_ascii=False)}")
@@ -620,6 +631,8 @@ class SpreadConvergenceAnalyzer:
         return result
 
 
-def create_spread_convergence_analyzer(spec_version: str = "1.0.0") -> SpreadConvergenceAnalyzer:
+def create_spread_convergence_analyzer(
+    spec_version: str = "1.0.0",
+) -> SpreadConvergenceAnalyzer:
     """Create a spread convergence analyzer instance."""
     return SpreadConvergenceAnalyzer(spec_version=spec_version)

@@ -13,7 +13,11 @@ import numpy as np
 import pandas as pd
 
 from ..icp.engine import ICPConfig, ICPEngine, ICPResult
-from ..vmm.crypto_moments import CryptoMomentCalculator, CryptoMomentConfig, CryptoMoments
+from ..vmm.crypto_moments import (
+    CryptoMomentCalculator,
+    CryptoMomentConfig,
+    CryptoMoments,
+)
 from ..vmm.engine import VMMConfig, VMMEngine, VMMOutput
 
 logger = logging.getLogger(__name__)
@@ -165,7 +169,10 @@ class IntegratedACDEngine:
             raise ValueError("Insufficient data for analysis")
 
     def _calculate_composite_risk_score(
-        self, icp_result: ICPResult, vmm_result: VMMOutput, crypto_moments: CryptoMoments
+        self,
+        icp_result: ICPResult,
+        vmm_result: VMMOutput,
+        crypto_moments: CryptoMoments,
     ) -> float:
         """Calculate composite risk score from all engines"""
 
@@ -204,7 +211,10 @@ class IntegratedACDEngine:
             return "RED"
 
     def _calculate_confidence_level(
-        self, icp_result: ICPResult, vmm_result: VMMOutput, crypto_moments: CryptoMoments
+        self,
+        icp_result: ICPResult,
+        vmm_result: VMMOutput,
+        crypto_moments: CryptoMoments,
     ) -> float:
         """Calculate overall confidence level"""
 
@@ -227,7 +237,10 @@ class IntegratedACDEngine:
         return confidence
 
     def _identify_coordination_indicators(
-        self, icp_result: ICPResult, vmm_result: VMMOutput, crypto_moments: CryptoMoments
+        self,
+        icp_result: ICPResult,
+        vmm_result: VMMOutput,
+        crypto_moments: CryptoMoments,
     ) -> Dict[str, float]:
         """Identify specific coordination indicators"""
 
@@ -384,7 +397,9 @@ class IntegratedACDEngine:
 
 
 def run_integrated_analysis(
-    data: pd.DataFrame, price_columns: List[str], config: Optional[IntegratedConfig] = None
+    data: pd.DataFrame,
+    price_columns: List[str],
+    config: Optional[IntegratedConfig] = None,
 ) -> IntegratedResult:
     """
     Convenience function to run integrated ACD analysis

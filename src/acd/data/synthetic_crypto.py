@@ -237,7 +237,9 @@ class SyntheticCryptoGenerator:
 
         # Create timestamp index
         timestamps = pd.date_range(
-            start=datetime.now() - timedelta(days=30), periods=self.config.n_timepoints, freq="1min"
+            start=datetime.now() - timedelta(days=30),
+            periods=self.config.n_timepoints,
+            freq="1min",
         )
 
         # Create DataFrame

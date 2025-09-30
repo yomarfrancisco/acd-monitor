@@ -49,7 +49,10 @@ class LeadLagMatrixAnalyzer:
 
         try:
             result = subprocess.run(
-                ["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True, check=True
+                ["git", "rev-parse", "--short", "HEAD"],
+                capture_output=True,
+                text=True,
+                check=True,
             )
             return result.stdout.strip()
         except (subprocess.CalledProcessError, FileNotFoundError):
@@ -403,7 +406,10 @@ class LeadLagMatrixAnalyzer:
                         for dst_venue in self.venues:
                             if src_venue != dst_venue:
                                 edge = self.compute_leadlag_score(
-                                    regime_returns[self.venues], src_venue, dst_venue, "1s"
+                                    regime_returns[self.venues],
+                                    src_venue,
+                                    dst_venue,
+                                    "1s",
                                 )
                                 regime_edges.append(edge)
 

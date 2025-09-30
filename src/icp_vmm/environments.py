@@ -56,7 +56,8 @@ class EnvironmentLabeler:
             Series with labels: {below, above}
         """
         return pd.Series(
-            ["below" if px < daily_vwap else "above" for px in prices], index=prices.index
+            ["below" if px < daily_vwap else "above" for px in prices],
+            index=prices.index,
         )
 
     def label_high_low(self, prices: pd.Series, day_high: float, day_low: float) -> pd.Series:
@@ -167,13 +168,16 @@ class EnvironmentLabeler:
             and "day_low" in continuous_metrics
         ):
             labeled_data["hl_bucket"] = self.label_high_low(
-                data["last_px"], continuous_metrics["day_high"], continuous_metrics["day_low"]
+                data["last_px"],
+                continuous_metrics["day_high"],
+                continuous_metrics["day_low"],
             )
 
         # Liquidity regime labeling
         if "liquidity_ratio" in continuous_metrics and "liquidity_volatility" in continuous_metrics:
             labeled_data["liquidity_regime"] = self.label_liquidity(
-                continuous_metrics["liquidity_ratio"], continuous_metrics["liquidity_volatility"]
+                continuous_metrics["liquidity_ratio"],
+                continuous_metrics["liquidity_volatility"],
             )
 
         # Leadership regime labeling
@@ -194,7 +198,13 @@ class EnvironmentLabeler:
         Returns:
             Dict with counts per environment
         """
-        env_columns = ["session", "vwap_side", "hl_bucket", "liquidity_regime", "leadership_regime"]
+        env_columns = [
+            "session",
+            "vwap_side",
+            "hl_bucket",
+            "liquidity_regime",
+            "leadership_regime",
+        ]
         counts = {}
 
         for col in env_columns:

@@ -44,7 +44,9 @@ class TestPhase1Integration:
         assert len(coordinated_data) > 0
 
         # Check columns
-        price_cols = [col for col in competitive_data.columns if col.startswith("Exchange_")]
+        price_cols = [
+            col for col in competitive_data.columns if col.startswith("Exchange_")
+        ]
         assert len(price_cols) >= 2
 
         # Check environment columns
@@ -59,7 +61,9 @@ class TestPhase1Integration:
         """Test ICP engine basic functionality"""
         competitive_data, coordinated_data = synthetic_data
 
-        price_cols = [col for col in competitive_data.columns if col.startswith("Exchange_")]
+        price_cols = [
+            col for col in competitive_data.columns if col.startswith("Exchange_")
+        ]
 
         # Test ICP on competitive data
         icp_config = ICPConfig(min_samples_per_env=50)
@@ -83,13 +87,17 @@ class TestPhase1Integration:
         """Test crypto moments calculation"""
         competitive_data, coordinated_data = synthetic_data
 
-        price_cols = [col for col in competitive_data.columns if col.startswith("Exchange_")]
+        price_cols = [
+            col for col in competitive_data.columns if col.startswith("Exchange_")
+        ]
 
         # Test crypto moments on competitive data
         crypto_config = CryptoMomentConfig(max_lag=3)
         crypto_calculator = CryptoMomentCalculator(crypto_config)
 
-        moments_competitive = crypto_calculator.calculate_moments(competitive_data, price_cols)
+        moments_competitive = crypto_calculator.calculate_moments(
+            competitive_data, price_cols
+        )
 
         # Check moment structure
         assert hasattr(moments_competitive, "lead_lag_betas")
@@ -111,7 +119,9 @@ class TestPhase1Integration:
         """Test integrated engine analysis"""
         competitive_data, coordinated_data = synthetic_data
 
-        price_cols = [col for col in competitive_data.columns if col.startswith("Exchange_")]
+        price_cols = [
+            col for col in competitive_data.columns if col.startswith("Exchange_")
+        ]
 
         # Test integrated analysis
         integrated_engine = IntegratedACDEngine(integrated_config)
@@ -138,11 +148,15 @@ class TestPhase1Integration:
         assert isinstance(result_competitive.coordination_indicators, dict)
         assert len(result_competitive.coordination_indicators) > 0
 
-    def test_competitive_vs_coordinated_distinction(self, synthetic_data, integrated_config):
+    def test_competitive_vs_coordinated_distinction(
+        self, synthetic_data, integrated_config
+    ):
         """Test that engine can distinguish competitive vs coordinated scenarios"""
         competitive_data, coordinated_data = synthetic_data
 
-        price_cols = [col for col in competitive_data.columns if col.startswith("Exchange_")]
+        price_cols = [
+            col for col in competitive_data.columns if col.startswith("Exchange_")
+        ]
 
         integrated_engine = IntegratedACDEngine(integrated_config)
 
@@ -156,7 +170,10 @@ class TestPhase1Integration:
         )
 
         # Coordinated scenario should show higher risk
-        assert result_coordinated.composite_risk_score >= result_competitive.composite_risk_score
+        assert (
+            result_coordinated.composite_risk_score
+            >= result_competitive.composite_risk_score
+        )
 
         # Check that we can distinguish the scenarios
         print("Competitive risk score: {result_competitive.composite_risk_score:.2f}")
@@ -168,11 +185,15 @@ class TestPhase1Integration:
         """Test diagnostic report generation"""
         competitive_data, coordinated_data = synthetic_data
 
-        price_cols = [col for col in competitive_data.columns if col.startswith("Exchange_")]
+        price_cols = [
+            col for col in competitive_data.columns if col.startswith("Exchange_")
+        ]
 
         integrated_engine = IntegratedACDEngine(integrated_config)
 
-        result = integrated_engine.analyze_coordination_risk(competitive_data, price_cols)
+        result = integrated_engine.analyze_coordination_risk(
+            competitive_data, price_cols
+        )
         report = integrated_engine.generate_diagnostic_report(result)
 
         # Check report structure
@@ -195,10 +216,14 @@ class TestPhase1Integration:
         integrated_engine = IntegratedACDEngine(integrated_config)
 
         # Test with insufficient data
-        small_data = pd.DataFrame({"Exchange_0": [100, 101, 102], "Exchange_1": [100, 101, 102]})
+        small_data = pd.DataFrame(
+            {"Exchange_0": [100, 101, 102], "Exchange_1": [100, 101, 102]}
+        )
 
         with pytest.raises(ValueError):
-            integrated_engine.analyze_coordination_risk(small_data, ["Exchange_0", "Exchange_1"])
+            integrated_engine.analyze_coordination_risk(
+                small_data, ["Exchange_0", "Exchange_1"]
+            )
 
         # Test with missing columns
         data = pd.DataFrame(
@@ -206,7 +231,9 @@ class TestPhase1Integration:
         )
 
         with pytest.raises(ValueError):
-            integrated_engine.analyze_coordination_risk(data, ["Exchange_0", "Missing_Exchange"])
+            integrated_engine.analyze_coordination_risk(
+                data, ["Exchange_0", "Missing_Exchange"]
+            )
 
 
 if __name__ == "__main__":
@@ -233,13 +260,19 @@ if __name__ == "__main__":
         crypto_moments_config=CryptoMomentConfig(max_lag=3),
     )
 
-    price_cols = [col for col in competitive_data.columns if col.startswith("Exchange_")]
+    price_cols = [
+        col for col in competitive_data.columns if col.startswith("Exchange_")
+    ]
 
     integrated_engine = IntegratedACDEngine(integrated_config)
 
     print("\nRunning integrated analysis...")
-    result_competitive = integrated_engine.analyze_coordination_risk(competitive_data, price_cols)
-    result_coordinated = integrated_engine.analyze_coordination_risk(coordinated_data, price_cols)
+    result_competitive = integrated_engine.analyze_coordination_risk(
+        competitive_data, price_cols
+    )
+    result_coordinated = integrated_engine.analyze_coordination_risk(
+        coordinated_data, price_cols
+    )
 
     print("\nCompetitive scenario:")
     print("  Risk classification: {result_competitive.risk_classification}")

@@ -229,7 +229,13 @@ class OverlapOrchestrator:
         try:
             # This is a simplified version - in practice, you'd load recent data
             # and calculate actual overlap windows
-            return {"start": None, "end": None, "minutes": 0, "venues": [], "gaps_ok": False}
+            return {
+                "start": None,
+                "end": None,
+                "minutes": 0,
+                "venues": [],
+                "gaps_ok": False,
+            }
         except Exception:
             return None
 
@@ -297,7 +303,11 @@ class OverlapOrchestrator:
     def _log_overlap_event(self, event_type: str, data: Dict):
         """Log overlap events to the status log file."""
         try:
-            log_entry = {"timestamp": datetime.now().isoformat(), "event": event_type, "data": data}
+            log_entry = {
+                "timestamp": datetime.now().isoformat(),
+                "event": event_type,
+                "data": data,
+            }
 
             with open(self.log_file, "a") as f:
                 f.write(f"[OVERLAP:{event_type}] {json.dumps(log_entry)}\n")
@@ -489,7 +499,7 @@ class OverlapOrchestrator:
                 "total_seconds": window_seconds,
                 "missing_seconds": missing_seconds,
                 "max_consecutive_gap": max_consecutive_gap,
-                "gap_ratio": missing_seconds / window_seconds if window_seconds > 0 else 0,
+                "gap_ratio": (missing_seconds / window_seconds if window_seconds > 0 else 0),
                 "first_missing": gaps.index[0] if len(gaps) > 0 else None,
                 "last_missing": gaps.index[-1] if len(gaps) > 0 else None,
             }
@@ -990,7 +1000,8 @@ class OverlapOrchestrator:
             logger.error(f"stderr: {e.stderr}")
             # Log the abort
             self._log_overlap_event(
-                "ABORT", {"reason": "auto_analysis_failed", "error": str(e), "run_dir": run_dir}
+                "ABORT",
+                {"reason": "auto_analysis_failed", "error": str(e), "run_dir": run_dir},
             )
             raise
 
@@ -1035,13 +1046,18 @@ async def main():
         "--min-minutes", default="30,20,10", help="Minimum minutes (comma-separated)"
     )
     parser.add_argument(
-        "--policy-order", default="BEST4_30m,BEST4_20m,BEST4_10m,ALL5_10m", help="Policy order"
+        "--policy-order",
+        default="BEST4_30m,BEST4_20m,BEST4_10m,ALL5_10m",
+        help="Policy order",
     )
     parser.add_argument("--max-gap-s", type=float, default=1.0, help="Maximum gap in seconds")
     parser.add_argument("--export-dir", default="exports", help="Export directory")
     parser.add_argument("--heartbeat-s", type=int, default=5, help="Heartbeat interval in seconds")
     parser.add_argument(
-        "--check-interval-s", type=int, default=30, help="Overlap check interval in seconds"
+        "--check-interval-s",
+        type=int,
+        default=30,
+        help="Overlap check interval in seconds",
     )
     parser.add_argument(
         "--micro-gap-stitch", action="store_true", help="Enable micro-gap stitching"

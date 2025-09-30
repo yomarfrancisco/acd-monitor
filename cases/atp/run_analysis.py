@@ -41,7 +41,8 @@ class ATPAnalyzer:
 
         self.icp_engine = ICPEngine(self.icp_config)
         self.vmm_engine = VMMEngine(
-            self.vmm_config, CryptoMomentCalculator(self.crypto_config, GlobalMomentScaler())
+            self.vmm_config,
+            CryptoMomentCalculator(self.crypto_config, GlobalMomentScaler()),
         )
 
         # Initialize integrated engine with proper config
@@ -142,19 +143,26 @@ class ATPAnalyzer:
         except Exception as e:
             return {"error": str(e), "status": "failed"}
 
-    def _run_validation_layers(self, data: pd.DataFrame, airline_columns: List[str]) -> Dict:
+    def _run_validation_layers(
+        self, data: pd.DataFrame, airline_columns: List[str]
+    ) -> Dict:
         """Run all validation layers on ATP data"""
         validation_results = {}
 
         # Lead-lag analysis
         try:
             lead_lag_result = analyze_lead_lag(
-                data, airline_columns, environment_column="volatility_regime", seed=self.seed
+                data,
+                airline_columns,
+                environment_column="volatility_regime",
+                seed=self.seed,
             )
             validation_results["lead_lag"] = {
                 "switching_entropy": lead_lag_result.switching_entropy,
                 "avg_granger_p": lead_lag_result.avg_granger_p,
-                "significant_relationships": len(lead_lag_result.significant_relationships),
+                "significant_relationships": len(
+                    lead_lag_result.significant_relationships
+                ),
                 "persistence_scores": lead_lag_result.persistence_scores,
                 "status": "success",
             }
@@ -164,7 +172,10 @@ class ATPAnalyzer:
         # Mirroring analysis
         try:
             mirroring_result = analyze_mirroring(
-                data, airline_columns, environment_column="volatility_regime", seed=self.seed
+                data,
+                airline_columns,
+                environment_column="volatility_regime",
+                seed=self.seed,
             )
             validation_results["mirroring"] = {
                 "coordination_score": mirroring_result.coordination_score,
@@ -179,7 +190,10 @@ class ATPAnalyzer:
         # HMM analysis
         try:
             hmm_result = analyze_hmm(
-                data, airline_columns, environment_column="volatility_regime", seed=self.seed
+                data,
+                airline_columns,
+                environment_column="volatility_regime",
+                seed=self.seed,
             )
             validation_results["hmm"] = {
                 "regime_stability": hmm_result.regime_stability,
@@ -195,7 +209,10 @@ class ATPAnalyzer:
         # Information flow analysis
         try:
             infoflow_result = analyze_infoflow(
-                data, airline_columns, environment_column="volatility_regime", seed=self.seed
+                data,
+                airline_columns,
+                environment_column="volatility_regime",
+                seed=self.seed,
             )
             validation_results["infoflow"] = {
                 "coordination_network_score": infoflow_result.coordination_network_score,
@@ -209,7 +226,9 @@ class ATPAnalyzer:
 
         return validation_results
 
-    def _run_integrated_analysis(self, data: pd.DataFrame, airline_columns: List[str]) -> Dict:
+    def _run_integrated_analysis(
+        self, data: pd.DataFrame, airline_columns: List[str]
+    ) -> Dict:
         """Run integrated ACD analysis"""
         try:
             # Run integrated analysis
@@ -259,14 +278,18 @@ class ATPAnalyzer:
             icp_p = self.results["icp"]["invariance_p_value"]
             if icp_p < 0.05:
                 summary["coordination_detected"] = True
-                summary["key_findings"].append(f"ICP rejects invariance (p={icp_p:.3f})")
+                summary["key_findings"].append(
+                    f"ICP rejects invariance (p={icp_p:.3f})"
+                )
 
         # Check VMM results
         if self.results.get("vmm", {}).get("status") == "success":
             vmm_p = self.results["vmm"]["over_identification_p_value"]
             if vmm_p < 0.05:
                 summary["coordination_detected"] = True
-                summary["key_findings"].append(f"VMM rejects moment conditions (p={vmm_p:.3f})")
+                summary["key_findings"].append(
+                    f"VMM rejects moment conditions (p={vmm_p:.3f})"
+                )
 
         # Check validation layers
         validation = self.results.get("validation", {})
@@ -311,7 +334,9 @@ class ATPAnalyzer:
         if validation.get("lead_lag", {}).get("status") == "success":
             indicators["lead_lag_persistence"] = {
                 "switching_entropy": validation["lead_lag"]["switching_entropy"],
-                "significant_relationships": validation["lead_lag"]["significant_relationships"],
+                "significant_relationships": validation["lead_lag"][
+                    "significant_relationships"
+                ],
             }
 
         if validation.get("mirroring", {}).get("status") == "success":
@@ -323,12 +348,16 @@ class ATPAnalyzer:
         if validation.get("hmm", {}).get("status") == "success":
             indicators["regime_stability"] = {
                 "regime_stability": validation["hmm"]["regime_stability"],
-                "coordination_regime_score": validation["hmm"]["coordination_regime_score"],
+                "coordination_regime_score": validation["hmm"][
+                    "coordination_regime_score"
+                ],
             }
 
         if validation.get("infoflow", {}).get("status") == "success":
             indicators["information_flow"] = {
-                "coordination_network_score": validation["infoflow"]["coordination_network_score"],
+                "coordination_network_score": validation["infoflow"][
+                    "coordination_network_score"
+                ],
                 "significant_te_links": validation["infoflow"]["significant_te_links"],
             }
 
@@ -347,7 +376,9 @@ class ATPAnalyzer:
             significance["icp_p_value"] = self.results["icp"]["invariance_p_value"]
 
         if self.results.get("vmm", {}).get("status") == "success":
-            significance["vmm_p_value"] = self.results["vmm"]["over_identification_p_value"]
+            significance["vmm_p_value"] = self.results["vmm"][
+                "over_identification_p_value"
+            ]
 
         validation = self.results.get("validation", {})
         if validation.get("lead_lag", {}).get("status") == "success":
@@ -376,9 +407,15 @@ class ATPAnalyzer:
         summary = self.results.get("report", {}).get("summary", {})
 
         if summary.get("coordination_detected"):
-            recommendations.append("Investigate potential coordination patterns in airline pricing")
-            recommendations.append("Review fare filing timelines for evidence of coordination")
-            recommendations.append("Consider regulatory intervention if coordination is confirmed")
+            recommendations.append(
+                "Investigate potential coordination patterns in airline pricing"
+            )
+            recommendations.append(
+                "Review fare filing timelines for evidence of coordination"
+            )
+            recommendations.append(
+                "Consider regulatory intervention if coordination is confirmed"
+            )
         else:
             recommendations.append("Continue monitoring for coordination patterns")
             recommendations.append("Regular analysis recommended for early detection")
@@ -421,8 +458,12 @@ class ATPAnalyzer:
             f.write(
                 f"**Overall Risk Assessment:** {summary.get('overall_risk_assessment', 'N/A')}\n"
             )
-            f.write(f"**Coordination Detected:** {summary.get('coordination_detected', 'N/A')}\n")
-            f.write(f"**Confidence Level:** {summary.get('confidence_level', 'N/A')}\n\n")
+            f.write(
+                f"**Coordination Detected:** {summary.get('coordination_detected', 'N/A')}\n"
+            )
+            f.write(
+                f"**Confidence Level:** {summary.get('confidence_level', 'N/A')}\n\n"
+            )
 
             f.write("## Key Findings\n\n")
             for finding in summary.get("key_findings", []):

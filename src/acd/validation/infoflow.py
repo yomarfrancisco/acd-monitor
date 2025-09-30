@@ -201,7 +201,8 @@ class InfoFlowValidator:
                     target_disc[lag:], target_disc[:-lag]
                 )
                 h_target_given_past_and_source = self._conditional_entropy(
-                    target_disc[lag:], np.column_stack([target_disc[:-lag], source_disc[:-lag]])
+                    target_disc[lag:],
+                    np.column_stack([target_disc[:-lag], source_disc[:-lag]]),
                 )
 
                 # Transfer entropy contribution
@@ -447,7 +448,11 @@ class InfoFlowValidator:
         return float(coordination_score)
 
     def _analyze_by_environment(
-        self, data: pd.DataFrame, returns: np.ndarray, exchanges: List[str], environment_column: str
+        self,
+        data: pd.DataFrame,
+        returns: np.ndarray,
+        exchanges: List[str],
+        environment_column: str,
     ) -> Tuple[Dict, Dict, Dict]:
         """Analyze information flow patterns by environment"""
         env_transfer_entropies = {}

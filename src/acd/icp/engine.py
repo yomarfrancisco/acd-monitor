@@ -14,7 +14,12 @@ import pandas as pd
 from scipy import stats
 from sklearn.linear_model import LinearRegression
 
-from .statistics import EnhancedStatistics, FDRConfig, PowerAnalysisConfig, StatisticalResults
+from .statistics import (
+    EnhancedStatistics,
+    FDRConfig,
+    PowerAnalysisConfig,
+    StatisticalResults,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -198,7 +203,10 @@ class ICPEngine:
         return potential_env_cols
 
     def _validate_input(
-        self, data: pd.DataFrame, price_columns: List[str], environment_columns: List[str]
+        self,
+        data: pd.DataFrame,
+        price_columns: List[str],
+        environment_columns: List[str],
     ) -> None:
         """Validate input data requirements"""
 
@@ -277,7 +285,11 @@ class ICPEngine:
 
         if len(env_labels) < 2:
             # Not enough environments to test
-            return {"test_statistic": 0.0, "p_value": 1.0, "confidence_interval": (0.0, 0.0)}
+            return {
+                "test_statistic": 0.0,
+                "p_value": 1.0,
+                "confidence_interval": (0.0, 0.0),
+            }
 
         # Compare correlation patterns between environments
         max_ks_statistic = 0.0
@@ -360,7 +372,10 @@ class ICPEngine:
         return power
 
     def _bootstrap_confidence_interval(
-        self, data: pd.DataFrame, price_columns: List[str], environment_columns: List[str]
+        self,
+        data: pd.DataFrame,
+        price_columns: List[str],
+        environment_columns: List[str],
     ) -> Tuple[float, float]:
         """Calculate bootstrap confidence interval for the test statistic"""
 

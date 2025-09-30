@@ -201,7 +201,9 @@ class TestReportV2Generator:
             state_probabilities=np.array([[0.8, 0.1, 0.1], [0.2, 0.6, 0.2]]),
             transition_matrix=np.array([[0.7, 0.2, 0.1], [0.3, 0.5, 0.2]]),
             emission_means=np.array([[1.0, 2.0], [1.5, 2.5]]),
-            emission_covariances=np.array([[[1.0, 0.0], [0.0, 1.0]], [[1.5, 0.0], [0.0, 1.5]]]),
+            emission_covariances=np.array(
+                [[[1.0, 0.0], [0.0, 1.0]], [[1.5, 0.0], [0.0, 1.5]]]
+            ),
             dwell_times={0: 5.0, 1: 3.0, 2: 2.0},
             state_frequencies={0: 0.5, 1: 0.3, 2: 0.2},
             regime_stability=0.75,
@@ -253,7 +255,11 @@ class TestReportV2Generator:
         return {"completeness": 0.95, "consistency": 0.90, "sample_size_adequacy": 0.85}
 
     def test_generate_attribution_table(
-        self, generator, mock_integrated_result, mock_validation_results, mock_data_quality_metrics
+        self,
+        generator,
+        mock_integrated_result,
+        mock_validation_results,
+        mock_data_quality_metrics,
     ):
         """Test attribution table generation"""
 
@@ -291,7 +297,11 @@ class TestReportV2Generator:
         assert provenance.signature is not None
 
     def test_generate_regulatory_bundle(
-        self, generator, mock_integrated_result, mock_validation_results, mock_data_quality_metrics
+        self,
+        generator,
+        mock_integrated_result,
+        mock_validation_results,
+        mock_data_quality_metrics,
     ):
         """Test regulatory bundle generation"""
 
@@ -328,7 +338,11 @@ class TestReportV2Generator:
         assert bundle.provenance == provenance
 
     def test_save_bundle(
-        self, generator, mock_integrated_result, mock_validation_results, mock_data_quality_metrics
+        self,
+        generator,
+        mock_integrated_result,
+        mock_validation_results,
+        mock_data_quality_metrics,
     ):
         """Test bundle saving functionality"""
 
@@ -402,7 +416,9 @@ class TestReportV2Generator:
             heteroscedasticity=0.10,
         )
 
-        contribution_no_reject = generator._calculate_icp_contribution(icp_result_no_reject)
+        contribution_no_reject = generator._calculate_icp_contribution(
+            icp_result_no_reject
+        )
         assert contribution_no_reject == 5.0  # Should be low due to no rejection
 
     def test_vmm_contribution_calculation(self, generator):
@@ -463,7 +479,11 @@ class TestReportV2Generator:
         assert driver <= 100.0
 
     def test_executive_summary_generation(
-        self, generator, mock_integrated_result, mock_validation_results, mock_data_quality_metrics
+        self,
+        generator,
+        mock_integrated_result,
+        mock_validation_results,
+        mock_data_quality_metrics,
     ):
         """Test executive summary generation"""
 
@@ -482,7 +502,11 @@ class TestReportV2Generator:
         assert "ICP Analysis" in summary
 
     def test_key_findings_generation(
-        self, generator, mock_integrated_result, mock_validation_results, mock_data_quality_metrics
+        self,
+        generator,
+        mock_integrated_result,
+        mock_validation_results,
+        mock_data_quality_metrics,
     ):
         """Test key findings generation"""
 
@@ -707,7 +731,11 @@ class TestIntegration:
 
         # Generate bundle
         bundle = generator.generate_regulatory_bundle(
-            integrated_result, validation_results, attribution_table, provenance, "Integration Test"
+            integrated_result,
+            validation_results,
+            attribution_table,
+            provenance,
+            "Integration Test",
         )
 
         # Verify bundle structure

@@ -114,7 +114,11 @@ class BinanceAPI:
             bids = [[float(price), float(qty)] for price, qty in data["bids"]]
             asks = [[float(price), float(qty)] for price, qty in data["asks"]]
 
-            return {"bids": bids, "asks": asks, "ts": datetime.now(timezone.utc).isoformat()}
+            return {
+                "bids": bids,
+                "asks": asks,
+                "ts": datetime.now(timezone.utc).isoformat(),
+            }
         except Exception as e:
             logger.error(f"Failed to get depth for {symbol}: {e}")
             raise

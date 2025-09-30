@@ -51,9 +51,15 @@ class TestVMMEngine:
         assert np.isfinite(result.final_loss), "Final loss should be finite"
 
         # Check parameter estimates
-        assert np.all(np.isfinite(result.beta_estimates)), "Beta estimates should be finite"
-        assert np.all(np.isfinite(result.sigma_estimates)), "Sigma estimates should be finite"
-        assert np.all(np.isfinite(result.rho_estimates)), "Rho estimates should be finite"
+        assert np.all(
+            np.isfinite(result.beta_estimates)
+        ), "Beta estimates should be finite"
+        assert np.all(
+            np.isfinite(result.sigma_estimates)
+        ), "Sigma estimates should be finite"
+        assert np.all(
+            np.isfinite(result.rho_estimates)
+        ), "Rho estimates should be finite"
 
         print(
             f"Convergence: {result.convergence_status}, iterations: {result.iterations}, loss: {result.final_loss:.6f}"  # noqa: E501
@@ -66,8 +72,12 @@ class TestVMMEngine:
         result = vmm_engine.run_vmm(competitive_data, price_columns)
 
         # Over-identification test should be well-behaved
-        assert np.isfinite(result.over_identification_stat), "Over-ID statistic should be finite"
-        assert np.isfinite(result.over_identification_p_value), "Over-ID p-value should be finite"
+        assert np.isfinite(
+            result.over_identification_stat
+        ), "Over-ID statistic should be finite"
+        assert np.isfinite(
+            result.over_identification_p_value
+        ), "Over-ID p-value should be finite"
         assert (
             0.0 <= result.over_identification_p_value <= 1.0
         ), "Over-ID p-value should be in [0,1]"
@@ -108,7 +118,9 @@ class TestVMMEngine:
                 0.0 <= result.structural_stability <= 1.0
             ), f"{scenario} stability should be in [0,1], got {result.structural_stability}"
 
-            print("{scenario.capitalize()} stability: {result.structural_stability:.6f}")
+            print(
+                "{scenario.capitalize()} stability: {result.structural_stability:.6f}"
+            )
 
     def test_regime_confidence(self, vmm_engine, competitive_data):
         """Test regime confidence calculation"""
@@ -117,7 +129,9 @@ class TestVMMEngine:
         result = vmm_engine.run_vmm(competitive_data, price_columns)
 
         # Regime confidence should be bounded
-        assert np.isfinite(result.regime_confidence), "Regime confidence should be finite"
+        assert np.isfinite(
+            result.regime_confidence
+        ), "Regime confidence should be finite"
         assert (
             0.0 <= result.regime_confidence <= 1.0
         ), f"Regime confidence should be in [0,1], got {result.regime_confidence}"

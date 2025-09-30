@@ -382,7 +382,10 @@ class VMMEngine:
         return max(0.0, min(1.0, confidence))
 
     def _fit_global_weight_matrix(
-        self, data: pd.DataFrame, price_columns: List[str], environment_column: Optional[str] = None
+        self,
+        data: pd.DataFrame,
+        price_columns: List[str],
+        environment_column: Optional[str] = None,
     ) -> None:
         """Fit global weight matrix W = S^(-1) using 4-dim per-timestep moments with HAC"""
 
@@ -428,7 +431,9 @@ class VMMEngine:
         # Apply stabilization pipeline
         # Step 1: Winsorize
         moment_matrix_winsorized = np.clip(
-            moment_matrix, self._per_timestep_scaler["q01"], self._per_timestep_scaler["q99"]
+            moment_matrix,
+            self._per_timestep_scaler["q01"],
+            self._per_timestep_scaler["q99"],
         )
 
         # Step 2: Center
@@ -533,7 +538,10 @@ class VMMEngine:
         self._weight_matrix_fitted = True
 
     def _get_per_timestep_moments(
-        self, data: pd.DataFrame, price_columns: List[str], environment_column: Optional[str] = None
+        self,
+        data: pd.DataFrame,
+        price_columns: List[str],
+        environment_column: Optional[str] = None,
     ) -> np.ndarray:
         """Get per-timestep moment matrix M ∈ R^(N×k) with proper time variation"""
 
@@ -730,7 +738,8 @@ class VMMEngine:
                     deviations_t = moment_matrix[l:] - g_bar
                     deviations_t_lag = moment_matrix[:-l] - g_bar
                     Gamma[l] = np.mean(
-                        [np.outer(d1, d2) for d1, d2 in zip(deviations_t, deviations_t_lag)], axis=0
+                        [np.outer(d1, d2) for d1, d2 in zip(deviations_t, deviations_t_lag)],
+                        axis=0,
                     )
 
         # Newey-West estimator with Bartlett weights
@@ -816,7 +825,9 @@ class VMMEngine:
         if hasattr(self, "_per_timestep_scaler") and self._per_timestep_scaler.get("fitted", False):
             # Step 1: Winsorize
             moment_matrix_winsorized = np.clip(
-                moment_matrix, self._per_timestep_scaler["q01"], self._per_timestep_scaler["q99"]
+                moment_matrix,
+                self._per_timestep_scaler["q01"],
+                self._per_timestep_scaler["q99"],
             )
 
             # Step 2: Center
@@ -922,7 +933,8 @@ class VMMEngine:
             q01=self._per_timestep_scaler["q01"],
             q99=self._per_timestep_scaler["q99"],
             valid_components=self._per_timestep_scaler.get(
-                "valid_components", np.ones(len(self._per_timestep_scaler["mu0"]), dtype=bool)
+                "valid_components",
+                np.ones(len(self._per_timestep_scaler["mu0"]), dtype=bool),
             ),
             W=self._global_weight_matrix,
             N=self._weight_matrix_metadata["N"],

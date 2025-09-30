@@ -185,7 +185,11 @@ class LeadLagV2Engine:
             # Bootstrap significance test
             p_value = self._bootstrap_significance(r1, r2, peak_correlation, peak_lag)
 
-            results[f"{horizon}s"] = {"score": peak_correlation, "lag": peak_lag, "p": p_value}
+            results[f"{horizon}s"] = {
+                "score": peak_correlation,
+                "lag": peak_lag,
+                "p": p_value,
+            }
 
         return results
 
@@ -361,7 +365,11 @@ class LeadLagV2Engine:
         return p_value
 
     def analyze_pair(
-        self, returns1: pd.Series, returns2: pd.Series, horizons: List[int], methods: List[str]
+        self,
+        returns1: pd.Series,
+        returns2: pd.Series,
+        horizons: List[int],
+        methods: List[str],
     ) -> Dict:
         """
         Analyze lead-lag relationship between two venues.

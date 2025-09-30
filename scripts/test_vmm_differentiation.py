@@ -34,7 +34,9 @@ def test_vmm_differentiation():
     competitive_data = generator.generate_competitive_scenario()
     coordinated_data = generator.generate_coordinated_scenario()
 
-    price_columns = [col for col in competitive_data.columns if col.startswith("Exchange_")]
+    price_columns = [
+        col for col in competitive_data.columns if col.startswith("Exchange_")
+    ]
 
     # Create global scaler
     global_scaler = GlobalMomentScaler(method="minmax")
@@ -46,23 +48,33 @@ def test_vmm_differentiation():
     # Fit scaler on competitive data first
     print("Fitting global scaler on competitive data...")
     competitive_moment_vector = crypto_calculator.get_combined_moment_vector(
-        competitive_data, price_columns, environment_column="volatility_regime", fit_scaler=True
+        competitive_data,
+        price_columns,
+        environment_column="volatility_regime",
+        fit_scaler=True,
     )
 
     # Get moment vectors for both scenarios
     print("Calculating moment vectors...")
     competitive_moment_vector = crypto_calculator.get_combined_moment_vector(
-        competitive_data, price_columns, environment_column="volatility_regime", fit_scaler=False
+        competitive_data,
+        price_columns,
+        environment_column="volatility_regime",
+        fit_scaler=False,
     )
 
     coordinated_moment_vector = crypto_calculator.get_combined_moment_vector(
-        coordinated_data, price_columns, environment_column="volatility_regime", fit_scaler=False
+        coordinated_data,
+        price_columns,
+        environment_column="volatility_regime",
+        fit_scaler=False,
     )
 
     # Calculate distances and hashes
     l2_distance = np.linalg.norm(competitive_moment_vector - coordinated_moment_vector)
     cosine_sim = np.dot(competitive_moment_vector, coordinated_moment_vector) / (
-        np.linalg.norm(competitive_moment_vector) * np.linalg.norm(coordinated_moment_vector)
+        np.linalg.norm(competitive_moment_vector)
+        * np.linalg.norm(coordinated_moment_vector)
     )
 
     comp_hash = hashlib.sha256(competitive_moment_vector.tobytes()).hexdigest()[:16]
@@ -154,8 +166,12 @@ def test_vmm_differentiation():
 
     # Check expected patterns
     print(f"\nExpected Patterns:")
-    print(f"Competitive p > 0.05: {competitive_result.over_identification_p_value > 0.05}")
-    print(f"Coordinated p < 0.05: {coordinated_result.over_identification_p_value < 0.05}")
+    print(
+        f"Competitive p > 0.05: {competitive_result.over_identification_p_value > 0.05}"
+    )
+    print(
+        f"Coordinated p < 0.05: {coordinated_result.over_identification_p_value < 0.05}"
+    )
 
     # Print scaler parameters
     scaler_params = global_scaler.get_params()
@@ -230,7 +246,9 @@ def test_coordination_strength_sensitivity():
 
         # Run VMM analysis
         price_columns = [col for col in data.columns if col.startswith("Exchange_")]
-        result = vmm_engine.run_vmm(data, price_columns, environment_column="volatility_regime")
+        result = vmm_engine.run_vmm(
+            data, price_columns, environment_column="volatility_regime"
+        )
 
         results.append(
             {
@@ -268,7 +286,8 @@ if __name__ == "__main__":
 
     differentiation_working = (
         comp_result.over_identification_stat != coord_result.over_identification_stat
-        and comp_result.over_identification_p_value != coord_result.over_identification_p_value
+        and comp_result.over_identification_p_value
+        != coord_result.over_identification_p_value
         and comp_result.structural_stability != coord_result.structural_stability
     )
 

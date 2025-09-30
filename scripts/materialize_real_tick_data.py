@@ -5,7 +5,7 @@ Materialize real tick data for BTC-USD across multiple venues.
 This script fetches real tick/trade data from:
 - Binance
 - Coinbase
-- Kraken  
+- Kraken
 - OKX
 - Bybit
 
@@ -24,7 +24,12 @@ sys.path.append(str(Path(__file__).parent.parent / "src"))
 
 from acd.data.adapters.real_tick_adapters import fetch_real_tick_data
 from acd.data.cache import DataCache
-from _analysis_utils import inclusive_end_date, ensure_time_mid_volume, resample_second, resample_minute
+from _analysis_utils import (
+    inclusive_end_date,
+    ensure_time_mid_volume,
+    resample_second,
+    resample_minute,
+)
 
 
 def setup_logging(verbose: bool = False):
@@ -32,11 +37,11 @@ def setup_logging(verbose: bool = False):
     level = logging.DEBUG if verbose else logging.INFO
     logging.basicConfig(
         level=level,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         handlers=[
             logging.StreamHandler(),
-            logging.FileHandler('real_tick_materialization.log')
-        ]
+            logging.FileHandler("real_tick_materialization.log"),
+        ],
     )
 
 
@@ -46,11 +51,11 @@ def materialize_real_data(
     pair: str,
     venues: list,
     cache_dir: str = "data/cache",
-    min_days: int = 30
+    min_days: int = 30,
 ) -> None:
     """
     Materialize real tick data for specified period.
-    
+
     Args:
         start_date: Start date (YYYY-MM-DD)
         end_date: End date (YYYY-MM-DD)
@@ -61,30 +66,32 @@ def materialize_real_data(
     """
     logger = logging.getLogger(__name__)
     logger.info(f"Materializing real tick data for {pair}")
-    
+
     # Parse dates with inclusive end
     start_time = datetime.strptime(start_date, "%Y-%m-%d")
     end_time = inclusive_end_date(end_date)  # 23:59:59 inclusive
-    
-    print(f"[MZ:start] file=real_tick_data start={start_time.isoformat()} end={end_time.isoformat()} granularity=1s")
-    
+
+    print(
+        f"[MZ:start] file=real_tick_data start={start_time.isoformat()} end={end_time.isoformat()} granularity=1s"
+    )
+
     # Calculate expected days
     expected_days = (end_time - start_time).days
     if expected_days < min_days:
         logger.warning(f"Period {expected_days} days < minimum {min_days} days")
-    
+
     # Create cache
     cache = DataCache(cache_dir)
-    
+
     # Fetch data for all venues
     venue_data = fetch_real_tick_data(
         venues=venues,
         pair=pair,
         start_time=start_time,
         end_time=end_time,
-        cache_dir=cache_dir
+        cache_dir=cache_dir,
     )
-    
+
     # Validate data quality with canonical schema
     successful_venues = []
     for venue, df in venue_data.items():
@@ -92,17 +99,21 @@ def materialize_real_data(
             # Apply canonical schema normalization
             df = ensure_time_mid_volume(df)
             logger.info(f"[MZ:schema] venue={venue} cols={list(df.columns)}")
-            
+
             # Calculate coverage with inclusive window
             expected_seconds = int((end_time - start_time).total_seconds()) + 1
             actual_seconds = len(df.index.unique())
             coverage = round(min(actual_seconds / expected_seconds, 1.0), 4)
-            
-            logger.info(f"[STATS:materialize:granularity=1s] venue={venue} expected={expected_seconds} actual={actual_seconds} coverage={coverage}")
-            
+
+            logger.info(
+                f"[STATS:materialize:granularity=1s] venue={venue} expected={expected_seconds} actual={actual_seconds} coverage={coverage}"
+            )
+
             if coverage < 0.8:
-                logger.warning(f"[WARN:materialize:low_coverage] venue={venue} coverage={coverage}")
-            
+                logger.warning(
+                    f"[WARN:materialize:low_coverage] venue={venue} coverage={coverage}"
+                )
+
             # Log materialization
             materialize_log = {
                 "venue": venue,
@@ -112,16 +123,22 @@ def materialize_real_data(
                 "expected_rows": expected_seconds,
                 "actual_rows": actual_seconds,
                 "coverage": coverage,
-                "source": "real_tick_data"
+                "source": "real_tick_data",
             }
-            print(f"[MZ:done] venue={venue} path={cache_dir} rows={actual_seconds} coverage={coverage}")
-            print(f"[DATA:tick:materialize] {json.dumps(materialize_log, ensure_ascii=False)}")
-            
+            print(
+                f"[MZ:done] venue={venue} path={cache_dir} rows={actual_seconds} coverage={coverage}"
+            )
+            print(
+                f"[DATA:tick:materialize] {json.dumps(materialize_log, ensure_ascii=False)}"
+            )
+
             successful_venues.append(venue)
-            logger.info(f"Cached {actual_seconds} seconds for {venue} ({coverage:.4f} coverage)")
+            logger.info(
+                f"Cached {actual_seconds} seconds for {venue} ({coverage:.4f} coverage)"
+            )
         else:
             logger.warning(f"No data retrieved for {venue}")
-    
+
     # Export data inventory
     inventory = {
         "source": "real_tick_data",
@@ -134,41 +151,59 @@ def materialize_real_data(
         "coverage": {
             venue: {
                 "ticks": len(venue_data.get(venue, [])),
-                "coverage_pct": round((len(venue_data.get(venue, [])) / (end_time - start_time).total_seconds()) * 100, 2)
-            } for venue in successful_venues
-        }
+                "coverage_pct": round(
+                    (
+                        len(venue_data.get(venue, []))
+                        / (end_time - start_time).total_seconds()
+                    )
+                    * 100,
+                    2,
+                ),
+            }
+            for venue in successful_venues
+        },
     }
-    
+
     # Write inventory
     import json
+
     inventory_path = Path(cache_dir) / "real_tick_inventory.json"
-    with open(inventory_path, 'w') as f:
+    with open(inventory_path, "w") as f:
         json.dump(inventory, f, indent=2, default=str)
-    
-    logger.info(f"Successfully materialized real tick data for {len(successful_venues)}/{len(venues)} venues")
+
+    logger.info(
+        f"Successfully materialized real tick data for {len(successful_venues)}/{len(venues)} venues"
+    )
     logger.info(f"Data inventory saved to {inventory_path}")
 
 
 def main():
     """Main function to materialize real tick data."""
-    parser = argparse.ArgumentParser(description="Materialize real tick data for BTC-USD")
+    parser = argparse.ArgumentParser(
+        description="Materialize real tick data for BTC-USD"
+    )
     parser.add_argument("--start", required=True, help="Start date (YYYY-MM-DD)")
     parser.add_argument("--end", required=True, help="End date (YYYY-MM-DD)")
     parser.add_argument("--pair", default="BTC-USD", help="Trading pair")
-    parser.add_argument("--venues", default="binance,coinbase,kraken,okx,bybit", 
-                       help="Comma-separated list of venues")
+    parser.add_argument(
+        "--venues",
+        default="binance,coinbase,kraken,okx,bybit",
+        help="Comma-separated list of venues",
+    )
     parser.add_argument("--cache-dir", default="data/cache", help="Cache directory")
-    parser.add_argument("--min-days", type=int, default=30, help="Minimum days of data required")
+    parser.add_argument(
+        "--min-days", type=int, default=30, help="Minimum days of data required"
+    )
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose logging")
-    
+
     args = parser.parse_args()
-    
+
     # Setup logging
     setup_logging(args.verbose)
-    
+
     # Parse venues
-    venues = [v.strip() for v in args.venues.split(',')]
-    
+    venues = [v.strip() for v in args.venues.split(",")]
+
     try:
         # Materialize data
         materialize_real_data(
@@ -177,20 +212,22 @@ def main():
             pair=args.pair,
             venues=venues,
             cache_dir=args.cache_dir,
-            min_days=args.min_days
+            min_days=args.min_days,
         )
-        
-        print("\n" + "="*80)
+
+        print("\n" + "=" * 80)
         print("REAL TICK DATA MATERIALIZATION COMPLETE")
-        print("="*80)
+        print("=" * 80)
         print(f"Period: {args.start} to {args.end}")
         print(f"Pair: {args.pair}")
         print(f"Venues: {', '.join(venues)}")
         print(f"Cache directory: {args.cache_dir}")
-        print("="*80 + "\n")
-        
+        print("=" * 80 + "\n")
+
     except Exception as e:
-        logging.error(f"An error occurred during data materialization: {e}", exc_info=True)
+        logging.error(
+            f"An error occurred during data materialization: {e}", exc_info=True
+        )
         sys.exit(1)
 
 

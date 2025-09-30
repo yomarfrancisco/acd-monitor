@@ -274,7 +274,11 @@ class LeadLagValidator:
         return normalized_entropy
 
     def _analyze_by_environment(
-        self, data: pd.DataFrame, returns: np.ndarray, exchanges: List[str], environment_column: str
+        self,
+        data: pd.DataFrame,
+        returns: np.ndarray,
+        exchanges: List[str],
+        environment_column: str,
     ) -> Tuple[Dict, Dict]:
         """Analyze lead-lag patterns by environment"""
         env_persistence = {}

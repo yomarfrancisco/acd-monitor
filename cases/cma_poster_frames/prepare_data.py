@@ -141,7 +141,9 @@ class CMAPosterFramesDataGenerator:
 
         return df
 
-    def _apply_price_leadership(self, df: pd.DataFrame, mask: pd.Series, strength: float):
+    def _apply_price_leadership(
+        self, df: pd.DataFrame, mask: pd.Series, strength: float
+    ):
         """Apply price leadership patterns during coordination periods"""
 
         # British Airways as price leader
@@ -186,7 +188,9 @@ class CMAPosterFramesDataGenerator:
                         elif row["price"] == min_price:
                             df.loc[idx, "price"] = round(row["price"] - adjustment, 2)
 
-    def _apply_mirroring_patterns(self, df: pd.DataFrame, mask: pd.Series, strength: float):
+    def _apply_mirroring_patterns(
+        self, df: pd.DataFrame, mask: pd.Series, strength: float
+    ):
         """Apply price mirroring patterns during coordination periods"""
 
         for date in df[mask]["date"].unique():
@@ -202,7 +206,9 @@ class CMAPosterFramesDataGenerator:
                     current_price = row["price"]
                     target_price = mean_price + np.random.normal(0, 5)
 
-                    new_price = current_price + (target_price - current_price) * strength * 0.3
+                    new_price = (
+                        current_price + (target_price - current_price) * strength * 0.3
+                    )
                     df.loc[idx, "price"] = round(new_price, 2)
 
     def _is_holiday_period(self, date: datetime) -> bool:
@@ -286,7 +292,9 @@ class CMAPosterFramesDataGenerator:
         df["price_change_pct"] = df.groupby("airline")["price"].pct_change()
 
         # Market statistics
-        daily_stats = df.groupby("date")["price"].agg(["min", "max", "mean", "std"]).reset_index()
+        daily_stats = (
+            df.groupby("date")["price"].agg(["min", "max", "mean", "std"]).reset_index()
+        )
         daily_stats.columns = [
             "date",
             "market_min_price",
@@ -381,5 +389,3 @@ def main():
 
 if __name__ == "__main__":
     df = main()
-
-

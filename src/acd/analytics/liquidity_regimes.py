@@ -58,7 +58,10 @@ class LiquidityRegimeAnalyzer:
 
         try:
             result = subprocess.run(
-                ["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True, check=True
+                ["git", "rev-parse", "--short", "HEAD"],
+                capture_output=True,
+                text=True,
+                check=True,
             )
             return result.stdout.strip()
         except (subprocess.CalledProcessError, FileNotFoundError):
@@ -356,7 +359,12 @@ class LiquidityRegimeAnalyzer:
         assignments = {
             "keptDays": int(kept_days),
             "droppedDays": int(dropped_days),
-            "dropReasons": {"missing": 0, "nan": 0, "tooFewBars": 0, "notEnoughOthers": 0},
+            "dropReasons": {
+                "missing": 0,
+                "nan": 0,
+                "tooFewBars": 0,
+                "notEnoughOthers": 0,
+            },
             "byRegime": by_regime,
         }
         self.logger.info(
@@ -573,7 +581,12 @@ class LiquidityRegimeAnalyzer:
         manifest_data["runs"]["liquidity"] = {
             "keptDays": kept_days,
             "droppedDays": dropped_days,
-            "dropReasons": {"missing": 0, "nan": 0, "tooFewBars": 0, "notEnoughOthers": 0},
+            "dropReasons": {
+                "missing": 0,
+                "nan": 0,
+                "tooFewBars": 0,
+                "notEnoughOthers": 0,
+            },
         }
 
         with open(manifest_path, "w") as f:
@@ -583,7 +596,12 @@ class LiquidityRegimeAnalyzer:
         liquidity_assignments_data = {
             "keptDays": len(results.regime_assignments),
             "droppedDays": 0,
-            "dropReasons": {"missing": 0, "nan": 0, "tooFewBars": 0, "notEnoughOthers": 0},
+            "dropReasons": {
+                "missing": 0,
+                "nan": 0,
+                "tooFewBars": 0,
+                "notEnoughOthers": 0,
+            },
             "byRegime": [
                 {
                     "regime": regime,
@@ -691,6 +709,8 @@ class LiquidityRegimeAnalyzer:
         )
 
 
-def create_liquidity_regime_analyzer(spec_version: str = "1.0.0") -> LiquidityRegimeAnalyzer:
+def create_liquidity_regime_analyzer(
+    spec_version: str = "1.0.0",
+) -> LiquidityRegimeAnalyzer:
     """Create a liquidity regime analyzer instance."""
     return LiquidityRegimeAnalyzer(spec_version=spec_version)

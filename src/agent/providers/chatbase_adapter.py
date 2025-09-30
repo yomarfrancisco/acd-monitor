@@ -153,7 +153,9 @@ class ChatbaseAdapter:
 
         except Exception as e:
             return Health(
-                status="unhealthy", details={"error": str(e)}, last_check=self._get_timestamp()
+                status="unhealthy",
+                details={"error": str(e)},
+                last_check=self._get_timestamp(),
             )
 
     def _normalize_messages(self, messages: List[Dict[str, str]]) -> List[Dict[str, str]]:

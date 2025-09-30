@@ -29,7 +29,10 @@ class DiagnosticLayersAnalyzer:
         self.layer_results = {}
 
     def run_diagnostic_layers(
-        self, competitive_data: pd.DataFrame, coordinated_data: pd.DataFrame, seed: int = 42
+        self,
+        competitive_data: pd.DataFrame,
+        coordinated_data: pd.DataFrame,
+        seed: int = 42,
     ) -> Dict[str, Any]:
         """
         Run all diagnostic layers on both scenarios
@@ -62,10 +65,16 @@ class DiagnosticLayersAnalyzer:
         # Run VMM analysis
         logger.info("Running VMM analysis")
         competitive_vmm = vmm_engine.run_vmm(
-            competitive_data, price_columns, environment_column="volatility_regime", seed=seed
+            competitive_data,
+            price_columns,
+            environment_column="volatility_regime",
+            seed=seed,
         )
         coordinated_vmm = vmm_engine.run_vmm(
-            coordinated_data, price_columns, environment_column="volatility_regime", seed=seed
+            coordinated_data,
+            price_columns,
+            environment_column="volatility_regime",
+            seed=seed,
         )
 
         # Run ICP analysis

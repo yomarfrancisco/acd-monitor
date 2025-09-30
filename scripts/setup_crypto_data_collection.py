@@ -149,7 +149,11 @@ def create_crypto_data_schema():
             },
             "mirroring": {
                 "description": "Order book mirroring patterns",
-                "parameters": {"similarity_threshold": 0.7, "depth_levels": 10, "time_window": 60},
+                "parameters": {
+                    "similarity_threshold": 0.7,
+                    "depth_levels": 10,
+                    "time_window": 60,
+                },
             },
             "spread_floors": {
                 "description": "Spread floor detection and dwell times",
@@ -211,7 +215,9 @@ def create_mock_crypto_data():
         for pair in pairs:
             # Generate base price with trend and volatility
             base_price = 50000 if "BTC" in pair else (3000 if "ETH" in pair else 0.5)
-            price_trend = np.cumsum(np.random.normal(0, base_price * 0.001, len(timestamps)))
+            price_trend = np.cumsum(
+                np.random.normal(0, base_price * 0.001, len(timestamps))
+            )
             prices = base_price + price_trend
 
             # Add exchange-specific variations
@@ -606,10 +612,19 @@ def create_data_collection_infrastructure():
         },
         "monitoring": {
             "enabled": True,
-            "metrics": ["data_quality_score", "collection_latency", "error_rate", "throughput"],
+            "metrics": [
+                "data_quality_score",
+                "collection_latency",
+                "error_rate",
+                "throughput",
+            ],
             "alerts": [
                 {"metric": "error_rate", "threshold": 0.05, "action": "email_alert"},
-                {"metric": "collection_latency", "threshold": 5.0, "action": "log_warning"},
+                {
+                    "metric": "collection_latency",
+                    "threshold": 5.0,
+                    "action": "log_warning",
+                },
             ],
         },
     }
@@ -684,5 +699,3 @@ def main():
 if __name__ == "__main__":
     success = main()
     sys.exit(0 if success else 1)
-
-

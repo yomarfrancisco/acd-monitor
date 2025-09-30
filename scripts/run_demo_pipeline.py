@@ -31,7 +31,10 @@ def setup_logging():
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        handlers=[logging.StreamHandler(sys.stdout), logging.FileHandler("demo/demo_pipeline.log")],
+        handlers=[
+            logging.StreamHandler(sys.stdout),
+            logging.FileHandler("demo/demo_pipeline.log"),
+        ],
     )
 
 
@@ -76,14 +79,22 @@ def main():
         # 1. Calibration report
         feature_results = pipeline_results.get("feature_engineering_results", {})
         vmm_results = feature_results.get("vmm_results", [])
-        quality_metrics = pipeline_results.get("ingestion_results", {}).get("quality_metrics", {})
+        quality_metrics = pipeline_results.get("ingestion_results", {}).get(
+            "quality_metrics", {}
+        )
 
-        calibration_report = visualization.create_calibration_report(vmm_results, quality_metrics)
-        calibration_path = visualization.save_demo_outputs(calibration_report, "calibration")
+        calibration_report = visualization.create_calibration_report(
+            vmm_results, quality_metrics
+        )
+        calibration_path = visualization.save_demo_outputs(
+            calibration_report, "calibration"
+        )
 
         # 2. Evidence bundle summary
         evidence_bundles = pipeline_results.get("evidence_bundles", [])
-        evidence_summary = visualization.create_evidence_bundle_summary(evidence_bundles)
+        evidence_summary = visualization.create_evidence_bundle_summary(
+            evidence_bundles
+        )
         evidence_path = visualization.save_demo_outputs(evidence_summary, "evidence")
 
         # 3. Demo dashboard data
@@ -117,7 +128,9 @@ def main():
                 f"\n🎉 All baseline requirements met! Demo pipeline ready for real-world transition."
             )
         else:
-            print(f"\n⚠️  Some baseline requirements not met. Review before real-world deployment.")
+            print(
+                f"\n⚠️  Some baseline requirements not met. Review before real-world deployment."
+            )
 
         return 0
 
@@ -141,10 +154,14 @@ def check_baseline_compliance(pipeline_results: dict) -> dict:
 
         if vmm_results:
             # Check spurious regime rate using adaptive thresholds
-            regime_confidences = [getattr(r, "regime_confidence", 0) for r in vmm_results]
+            regime_confidences = [
+                getattr(r, "regime_confidence", 0) for r in vmm_results
+            ]
             high_confidence_count = sum(1 for conf in regime_confidences if conf > 0.67)
             spurious_rate = (
-                high_confidence_count / len(regime_confidences) if regime_confidences else 0
+                high_confidence_count / len(regime_confidences)
+                if regime_confidences
+                else 0
             )
 
             # Apply adaptive threshold based on dataset size
@@ -154,12 +171,14 @@ def check_baseline_compliance(pipeline_results: dict) -> dict:
             )
 
             threshold_description = f"≤{threshold_validation['threshold_applied']:.1%} ({threshold_validation['dataset_category']} dataset)"
-            baseline_checks[f"Spurious regime rate {threshold_description}"] = threshold_validation[
-                "passes"
-            ]
+            baseline_checks[f"Spurious regime rate {threshold_description}"] = (
+                threshold_validation["passes"]
+            )
 
             # Check structural stability (should be ≥ 0.6)
-            structural_stabilities = [getattr(r, "structural_stability", 0) for r in vmm_results]
+            structural_stabilities = [
+                getattr(r, "structural_stability", 0) for r in vmm_results
+            ]
             avg_stability = (
                 sum(structural_stabilities) / len(structural_stabilities)
                 if structural_stabilities
@@ -168,10 +187,12 @@ def check_baseline_compliance(pipeline_results: dict) -> dict:
             baseline_checks["Structural stability ≥ 0.6"] = avg_stability >= 0.6
 
             # Check convergence rate (should be ≥ 80%)
-            convergence_statuses = [getattr(r, "convergence_status", "failed") for r in vmm_results]
-            convergence_rate = sum(1 for s in convergence_statuses if s == "converged") / len(
-                convergence_statuses
-            )
+            convergence_statuses = [
+                getattr(r, "convergence_status", "failed") for r in vmm_results
+            ]
+            convergence_rate = sum(
+                1 for s in convergence_statuses if s == "converged"
+            ) / len(convergence_statuses)
             baseline_checks["VMM convergence rate ≥ 80%"] = convergence_rate >= 0.8
 
         # Check data quality (Week 4 baseline)
@@ -196,32 +217,46 @@ def check_baseline_compliance(pipeline_results: dict) -> dict:
         # Check adaptive threshold framework (Week 5: New)
         if evidence_bundles:
             first_bundle = evidence_bundles[0]
-            threshold_profile = getattr(first_bundle, "adaptive_threshold_profile", None)
-            baseline_checks["Adaptive threshold profile included"] = threshold_profile is not None
+            threshold_profile = getattr(
+                first_bundle, "adaptive_threshold_profile", None
+            )
+            baseline_checks["Adaptive threshold profile included"] = (
+                threshold_profile is not None
+            )
 
             # Check timestamping success rate (Week 5 Phase 3: New)
             timestamped_bundles = sum(
-                1 for b in evidence_bundles if getattr(b, "timestamp_chain", None) is not None
+                1
+                for b in evidence_bundles
+                if getattr(b, "timestamp_chain", None) is not None
             )
             timestamp_success_rate = (
                 timestamped_bundles / len(evidence_bundles) if evidence_bundles else 0
             )
-            baseline_checks["Timestamp success rate ≥ 99%"] = timestamp_success_rate >= 0.99
+            baseline_checks["Timestamp success rate ≥ 99%"] = (
+                timestamp_success_rate >= 0.99
+            )
 
             # Check quality profile inclusion (Week 5 Phase 3: New)
-            quality_profile_included = getattr(first_bundle, "quality_profile", None) is not None
+            quality_profile_included = (
+                getattr(first_bundle, "quality_profile", None) is not None
+            )
             baseline_checks["Quality profile included"] = quality_profile_included
 
             # Check quality score against profile minimum (Week 5 Phase 3: New)
             if quality_profile_included and hasattr(first_bundle, "data_quality"):
                 quality_scores = {
-                    "overall_score": getattr(first_bundle.data_quality, "overall_score", 0)
+                    "overall_score": getattr(
+                        first_bundle.data_quality, "overall_score", 0
+                    )
                 }
                 profile = first_bundle.quality_profile
                 if hasattr(profile, "thresholds"):
                     min_score = profile.thresholds.overall_min
                     actual_score = quality_scores["overall_score"]
-                    baseline_checks[f"Quality score ≥ {min_score}"] = actual_score >= min_score
+                    baseline_checks[f"Quality score ≥ {min_score}"] = (
+                        actual_score >= min_score
+                    )
 
     except Exception as e:
         # If any check fails, mark all as failed

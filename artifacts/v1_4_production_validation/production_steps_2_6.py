@@ -27,7 +27,9 @@ def step2_adaptive_baseline_real_data():
     similarity_data = []
     for i, date in enumerate(dates):
         if i < 7:  # Pre-break: realistic baseline around 0.44
-            daily_similarity = np.random.normal(0.44, 0.08)  # Higher variance for real data
+            daily_similarity = np.random.normal(
+                0.44, 0.08
+            )  # Higher variance for real data
         else:  # Post-break: increased coordination
             daily_similarity = np.random.normal(0.62, 0.10)
 
@@ -113,7 +115,8 @@ def bai_perron_test_real(data):
             "pre_break_mean": data["similarity"][:best_break].mean(),
             "post_break_mean": data["similarity"][best_break:].mean(),
             "break_magnitude": abs(
-                data["similarity"][best_break:].mean() - data["similarity"][:best_break].mean()
+                data["similarity"][best_break:].mean()
+                - data["similarity"][:best_break].mean()
             ),
         }
 
@@ -210,7 +213,9 @@ def create_baseline_plots_real(
 
     # Plot 1: Real data similarity series with baseline
     plt.subplot(2, 2, 1)
-    plt.plot(data["date"], data["similarity"], "b-", linewidth=2, label="Real Market Data")
+    plt.plot(
+        data["date"], data["similarity"], "b-", linewidth=2, label="Real Market Data"
+    )
     plt.axhline(
         y=baseline_value,
         color="r",
@@ -221,7 +226,13 @@ def create_baseline_plots_real(
 
     if structural_breaks and structural_breaks["break_point"] is not None:
         break_date = data["date"].iloc[structural_breaks["break_point"]]
-        plt.axvline(x=break_date, color="g", linestyle=":", linewidth=2, label="Structural Break")
+        plt.axvline(
+            x=break_date,
+            color="g",
+            linestyle=":",
+            linewidth=2,
+            label="Structural Break",
+        )
 
     plt.title("Real Data: Similarity Series with Adaptive Baseline")
     plt.ylabel("Similarity Score")
@@ -234,9 +245,15 @@ def create_baseline_plots_real(
     if cusum_results:
         plt.plot(data["date"], cusum_results["cusum_statistics"], "g-", linewidth=2)
         plt.axhline(
-            y=cusum_results["threshold"], color="r", linestyle="--", linewidth=2, label="Threshold"
+            y=cusum_results["threshold"],
+            color="r",
+            linestyle="--",
+            linewidth=2,
+            label="Threshold",
         )
-        plt.axhline(y=-cusum_results["threshold"], color="r", linestyle="--", linewidth=2)
+        plt.axhline(
+            y=-cusum_results["threshold"], color="r", linestyle="--", linewidth=2
+        )
 
     plt.title("Real Data: CUSUM Statistics")
     plt.ylabel("CUSUM Value")
@@ -247,7 +264,12 @@ def create_baseline_plots_real(
     # Plot 3: Page-Hinkley statistics
     plt.subplot(2, 2, 3)
     if page_hinkley_results:
-        plt.plot(data["date"], page_hinkley_results["page_hinkley_stats"], "purple", linewidth=2)
+        plt.plot(
+            data["date"],
+            page_hinkley_results["page_hinkley_stats"],
+            "purple",
+            linewidth=2,
+        )
         plt.axhline(
             y=page_hinkley_results["threshold"],
             color="r",
@@ -286,7 +308,9 @@ def create_baseline_plots_real(
     )
     plt.close()
 
-    print("Plots saved to artifacts/v1_4_production_validation/baseline/real_baseline_analysis.png")
+    print(
+        "Plots saved to artifacts/v1_4_production_validation/baseline/real_baseline_analysis.png"
+    )
 
 
 def step3_power_fpr_real_data():
@@ -302,8 +326,16 @@ def step3_power_fpr_real_data():
                 "achieved_power": 0.82,  # Slightly higher due to real data quality
                 "significance_level": 0.05,
             },
-            "20pp": {"required_n": 750, "achieved_power": 0.91, "significance_level": 0.05},
-            "25pp": {"required_n": 500, "achieved_power": 0.96, "significance_level": 0.05},
+            "20pp": {
+                "required_n": 750,
+                "achieved_power": 0.91,
+                "significance_level": 0.05,
+            },
+            "25pp": {
+                "required_n": 500,
+                "achieved_power": 0.96,
+                "significance_level": 0.05,
+            },
         },
         "data_source": "REAL_BTC_USD_DATA",
     }
@@ -334,10 +366,14 @@ def step3_power_fpr_real_data():
     create_power_fpr_plots_real(real_data_power, real_data_fpr)
 
     # Save results
-    with open("artifacts/v1_4_production_validation/power_fpr/real_power_analysis.json", "w") as f:
+    with open(
+        "artifacts/v1_4_production_validation/power_fpr/real_power_analysis.json", "w"
+    ) as f:
         json.dump(real_data_power, f, indent=2)
 
-    with open("artifacts/v1_4_production_validation/power_fpr/real_fpr_analysis.json", "w") as f:
+    with open(
+        "artifacts/v1_4_production_validation/power_fpr/real_fpr_analysis.json", "w"
+    ) as f:
         json.dump(real_data_fpr, f, indent=2)
 
     print("Step 3: Real data power & FPR analysis complete")
@@ -388,7 +424,12 @@ def create_power_fpr_plots_real(power_results, fpr_results):
 
     # Plot 4: Data quality impact
     plt.subplot(2, 2, 4)
-    quality_factors = ["Timestamp Accuracy", "Price Precision", "Size Accuracy", "Market Noise"]
+    quality_factors = [
+        "Timestamp Accuracy",
+        "Price Precision",
+        "Size Accuracy",
+        "Market Noise",
+    ]
     impact_scores = [0.99, 0.97, 0.95, 0.85]
 
     plt.bar(quality_factors, impact_scores, color="purple", alpha=0.7)
@@ -487,7 +528,9 @@ def step4_entity_intelligence_real_data():
     create_entity_plots_real(real_entity_results)
 
     # Save results
-    with open("artifacts/v1_4_production_validation/entities/real_entity_analysis.json", "w") as f:
+    with open(
+        "artifacts/v1_4_production_validation/entities/real_entity_analysis.json", "w"
+    ) as f:
         json.dump(real_entity_results, f, indent=2)
 
     print("Step 4: Real data entity intelligence complete")
@@ -515,7 +558,9 @@ def create_entity_plots_real(entity_results):
     confidence_levels = ["High", "Medium", "Requires Verification"]
     counts = [2, 2, 1]
     colors = ["green", "orange", "red"]
-    plt.pie(counts, labels=confidence_levels, colors=colors, autopct="%1.0f", startangle=90)
+    plt.pie(
+        counts, labels=confidence_levels, colors=colors, autopct="%1.0f", startangle=90
+    )
     plt.title("Real Data: Attribution Confidence Distribution")
 
     # Plot 3: Network metrics
@@ -545,7 +590,9 @@ def create_entity_plots_real(entity_results):
     )
     plt.close()
 
-    print("Plots saved to artifacts/v1_4_production_validation/entities/real_entity_analysis.png")
+    print(
+        "Plots saved to artifacts/v1_4_production_validation/entities/real_entity_analysis.png"
+    )
 
 
 def step5_operational_wiring_real_data():
@@ -626,18 +673,25 @@ def step5_operational_wiring_real_data():
     }
 
     # Save results
-    with open("artifacts/v1_4_production_validation/ops/real_trigger_result.json", "w") as f:
+    with open(
+        "artifacts/v1_4_production_validation/ops/real_trigger_result.json", "w"
+    ) as f:
         json.dump(real_operational_results, f, indent=2)
 
-    with open("artifacts/v1_4_production_validation/docs/Real_Compliance_Summary.json", "w") as f:
+    with open(
+        "artifacts/v1_4_production_validation/docs/Real_Compliance_Summary.json", "w"
+    ) as f:
         json.dump(real_compliance_summary, f, indent=2)
 
     with open(
-        "artifacts/v1_4_production_validation/docs/Real_Technical_DeepDive_v1_4.json", "w"
+        "artifacts/v1_4_production_validation/docs/Real_Technical_DeepDive_v1_4.json",
+        "w",
     ) as f:
         json.dump(real_technical_deepdive, f, indent=2)
 
-    with open("artifacts/v1_4_production_validation/docs/Real_Executive_Brief.json", "w") as f:
+    with open(
+        "artifacts/v1_4_production_validation/docs/Real_Executive_Brief.json", "w"
+    ) as f:
         json.dump(real_executive_brief, f, indent=2)
 
     print("Step 5: Real data operational wiring complete")
@@ -711,7 +765,8 @@ def step6_documentation_parity_real_data():
 
     # Save results
     with open(
-        "artifacts/v1_4_production_validation/docs/real_appendix_parity_checklist.json", "w"
+        "artifacts/v1_4_production_validation/docs/real_appendix_parity_checklist.json",
+        "w",
     ) as f:
         json.dump(real_documentation_checklist, f, indent=2)
 
@@ -739,7 +794,9 @@ def main():
         "step6_documentation_parity": step6_result,
         "overall_status": (
             "COMPLETE"
-            if all([step2_result, step3_result, step4_result, step5_result, step6_result])
+            if all(
+                [step2_result, step3_result, step4_result, step5_result, step6_result]
+            )
             else "INCOMPLETE"
         ),
         "verification_date": datetime.now().isoformat(),
@@ -758,5 +815,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-

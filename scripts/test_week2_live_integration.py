@@ -68,7 +68,9 @@ def test_chatbase_live_integration():
 
             if health.status == "unhealthy":
                 results["error_handling"] = True
-                print("   ✅ Error handling working correctly (unhealthy status detected)")
+                print(
+                    "   ✅ Error handling working correctly (unhealthy status detected)"
+                )
             else:
                 print(f"   ⚠️ Unexpected health status: {health.status}")
 
@@ -89,7 +91,9 @@ def test_chatbase_live_integration():
         mock_provider = OfflineMockProvider()
         test_query = "Generate a regulatory bundle for BTC/USD coordination signals"
 
-        response = mock_provider.generate(prompt=test_query, session_id="fallback_test_001")
+        response = mock_provider.generate(
+            prompt=test_query, session_id="fallback_test_001"
+        )
 
         if response and response.content:
             results["fallback_functionality"] = True
@@ -181,8 +185,16 @@ def test_live_crypto_data_collection():
             "exchanges": df["exchange"].nunique() if "exchange" in df.columns else 0,
             "symbols": df["symbol"].nunique() if "symbol" in df.columns else 0,
             "time_range": {
-                "start": df["timestamp"].min().isoformat() if "timestamp" in df.columns else None,
-                "end": df["timestamp"].max().isoformat() if "timestamp" in df.columns else None,
+                "start": (
+                    df["timestamp"].min().isoformat()
+                    if "timestamp" in df.columns
+                    else None
+                ),
+                "end": (
+                    df["timestamp"].max().isoformat()
+                    if "timestamp" in df.columns
+                    else None
+                ),
             },
             "data_quality": {
                 "missing_values": df.isnull().sum().to_dict(),
@@ -284,7 +296,9 @@ def test_expanded_compliance_regression():
             print(f"   Testing query {i+1}/{len(compliance_queries)}: {query[:50]}...")
 
             try:
-                response = mock_provider.generate(prompt=query, session_id=f"regression_test_{i}")
+                response = mock_provider.generate(
+                    prompt=query, session_id=f"regression_test_{i}"
+                )
 
                 # Check response quality
                 has_content = len(response.content) > 0
@@ -303,7 +317,9 @@ def test_expanded_compliance_regression():
                         "query": query,
                         "success": success,
                         "intent": (
-                            response.usage.get("intent", "unknown") if response.usage else "unknown"
+                            response.usage.get("intent", "unknown")
+                            if response.usage
+                            else "unknown"
                         ),
                         "content_length": len(response.content),
                     }
@@ -313,11 +329,15 @@ def test_expanded_compliance_regression():
 
             except Exception as e:
                 results["failed_queries"] += 1
-                results["query_results"].append({"query": query, "success": False, "error": str(e)})
+                results["query_results"].append(
+                    {"query": query, "success": False, "error": str(e)}
+                )
                 print(f"     ❌ Error: {e}")
 
         # Calculate success rate
-        results["success_rate"] = results["successful_queries"] / results["total_queries"] * 100
+        results["success_rate"] = (
+            results["successful_queries"] / results["total_queries"] * 100
+        )
 
         # Test bundle-level functionality
         bundle_queries = [
@@ -329,7 +349,9 @@ def test_expanded_compliance_regression():
         bundle_success = 0
         for query in bundle_queries:
             try:
-                response = mock_provider.generate(prompt=query, session_id="bundle_test")
+                response = mock_provider.generate(
+                    prompt=query, session_id="bundle_test"
+                )
                 if "bundle" in response.content.lower():
                     bundle_success += 1
             except:
@@ -337,17 +359,23 @@ def test_expanded_compliance_regression():
 
         results["bundle_level_tests"] = bundle_success >= 2
         results["attribution_tests"] = any(
-            "attribution" in r["query"].lower() for r in results["query_results"] if r["success"]
+            "attribution" in r["query"].lower()
+            for r in results["query_results"]
+            if r["success"]
         )
         results["provenance_tests"] = any(
-            "provenance" in r["query"].lower() for r in results["query_results"] if r["success"]
+            "provenance" in r["query"].lower()
+            for r in results["query_results"]
+            if r["success"]
         )
 
         print(f"   ✅ Compliance regression testing completed")
         print(
             f"   Success Rate: {results['success_rate']:.1f}% ({results['successful_queries']}/{results['total_queries']})"
         )
-        print(f"   Bundle-level tests: {'✅' if results['bundle_level_tests'] else '❌'}")
+        print(
+            f"   Bundle-level tests: {'✅' if results['bundle_level_tests'] else '❌'}"
+        )
         print(f"   Attribution tests: {'✅' if results['attribution_tests'] else '❌'}")
         print(f"   Provenance tests: {'✅' if results['provenance_tests'] else '❌'}")
 
@@ -402,7 +430,9 @@ def test_performance_benchmarking():
         }
 
         results["latency_tests"] = max_latency < 2.0
-        print(f"   ✅ Latency tests: avg={avg_latency:.3f}s, max={max_latency:.3f}s (target: <2s)")
+        print(
+            f"   ✅ Latency tests: avg={avg_latency:.3f}s, max={max_latency:.3f}s (target: <2s)"
+        )
 
         # Test memory usage (target: <200MB)
         import psutil
@@ -413,7 +443,8 @@ def test_performance_benchmarking():
         # Generate multiple responses to test memory usage
         for i in range(10):
             response = mock_provider.generate(
-                prompt=f"Generate a regulatory bundle for test {i}", session_id=f"memory_test_{i}"
+                prompt=f"Generate a regulatory bundle for test {i}",
+                session_id=f"memory_test_{i}",
             )
 
         memory_after = process.memory_info().rss / 1024 / 1024  # MB
@@ -433,7 +464,8 @@ def test_performance_benchmarking():
         for i in range(20):
             try:
                 response = mock_provider.generate(
-                    prompt="Generate a regulatory bundle", session_id=f"success_test_{i}"
+                    prompt="Generate a regulatory bundle",
+                    session_id=f"success_test_{i}",
                 )
                 success = len(response.content) > 0
                 bundle_tests.append(success)
@@ -494,9 +526,16 @@ def save_week2_benchmarks(results: Dict[str, Any]):
             "chatbase_integration": results.get("chatbase", {}).get(
                 "adapter_initialization", False
             ),
-            "crypto_data_collection": results.get("crypto", {}).get("schema_validation", False),
-            "compliance_regression": results.get("compliance", {}).get("success_rate", 0) >= 90.0,
-            "performance_benchmarks": results.get("performance", {}).get("latency_tests", False),
+            "crypto_data_collection": results.get("crypto", {}).get(
+                "schema_validation", False
+            ),
+            "compliance_regression": results.get("compliance", {}).get(
+                "success_rate", 0
+            )
+            >= 90.0,
+            "performance_benchmarks": results.get("performance", {}).get(
+                "latency_tests", False
+            ),
         },
     }
 
@@ -568,7 +607,9 @@ def main():
             passed_subtests = sum(1 for v in result.values() if v is True)
             total_subtests = sum(1 for v in result.values() if isinstance(v, bool))
             status = "✅ PASS" if passed_subtests >= total_subtests * 0.5 else "❌ FAIL"
-            print(f"   {test_name}: {status} ({passed_subtests}/{total_subtests} subtests)")
+            print(
+                f"   {test_name}: {status} ({passed_subtests}/{total_subtests} subtests)"
+            )
         else:
             status = "✅ PASS" if result else "❌ FAIL"
             print(f"   {test_name}: {status}")

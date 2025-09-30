@@ -24,7 +24,12 @@ class MinuteBarsAdapter(BaseBarsAdapter):
         self.logger = logging.getLogger(__name__)
 
     def get(
-        self, pair: str, venue: str, start_utc: datetime, end_utc: datetime, tz: str = "UTC"
+        self,
+        pair: str,
+        venue: str,
+        start_utc: datetime,
+        end_utc: datetime,
+        tz: str = "UTC",
     ) -> pd.DataFrame:
         """
         Get minute-level bars for the specified parameters.

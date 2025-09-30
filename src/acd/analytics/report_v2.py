@@ -795,7 +795,11 @@ This analysis uses the Algorithmic Coordination Diagnostic (ACD) framework versi
                 )
             else:
                 summary_data.append(
-                    {"Layer": layer_name, "Status": "Not Available", "Key_Metric": "N/A"}
+                    {
+                        "Layer": layer_name,
+                        "Status": "Not Available",
+                        "Key_Metric": "N/A",
+                    }
                 )
 
         tables["validation_summary"] = pd.DataFrame(summary_data)
@@ -981,7 +985,11 @@ def generate_regulatory_bundle(
 
     # Generate regulatory bundle
     bundle = generator.generate_regulatory_bundle(
-        integrated_result, validation_results, attribution_table, provenance, case_study_name
+        integrated_result,
+        validation_results,
+        attribution_table,
+        provenance,
+        case_study_name,
     )
 
     # Save bundle

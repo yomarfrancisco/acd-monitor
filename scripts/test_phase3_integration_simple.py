@@ -142,7 +142,9 @@ def create_mock_analysis_results():
             state_probabilities=np.array([[0.8, 0.1, 0.1], [0.2, 0.6, 0.2]]),
             transition_matrix=np.array([[0.7, 0.2, 0.1], [0.3, 0.5, 0.2]]),
             emission_means=np.array([[1.0, 2.0], [1.5, 2.5]]),
-            emission_covariances=np.array([[[1.0, 0.0], [0.0, 1.0]], [[1.5, 0.0], [0.0, 1.5]]]),
+            emission_covariances=np.array(
+                [[[1.0, 0.0], [0.0, 1.0]], [[1.5, 0.0], [0.0, 1.5]]]
+            ),
             dwell_times={0: 5.0, 1: 3.0, 2: 2.0},
             state_frequencies={0: 0.5, 1: 0.3, 2: 0.2},
             regime_stability=0.75,
@@ -212,7 +214,11 @@ def test_reporting_v2_integration():
 
         # Generate regulatory bundle
         bundle = report_generator.generate_regulatory_bundle(
-            integrated_result, validation_results, attribution_table, provenance, "Integration Test"
+            integrated_result,
+            validation_results,
+            attribution_table,
+            provenance,
+            "Integration Test",
         )
 
         print(
@@ -258,7 +264,10 @@ def test_bundle_generation_integration():
         # Test bundle refinement
         refinement_request = BundleRefinementRequest(
             bundle_id=response.bundle_id,
-            refinement_instructions=["Add alternative explanations", "Enhance attribution tables"],
+            refinement_instructions=[
+                "Add alternative explanations",
+                "Enhance attribution tables",
+            ],
         )
 
         refined_response = bundle_generator.refine_bundle(refinement_request)
@@ -268,7 +277,9 @@ def test_bundle_generation_integration():
             return False
 
         print(f"   ✅ Bundle Refined: {refined_response.bundle_id}")
-        print(f"   ✅ Refinement History: {len(refined_response.refinement_history)} entries")
+        print(
+            f"   ✅ Refinement History: {len(refined_response.refinement_history)} entries"
+        )
 
         return True
 
@@ -402,7 +413,9 @@ def test_seed_consistency():
 
             # Check if results are consistent (same risk band)
             consistent_bands = len(set(risk_bands)) == 1
-            print(f"     Consistent Risk Bands: {'✅ Yes' if consistent_bands else '❌ No'}")
+            print(
+                f"     Consistent Risk Bands: {'✅ Yes' if consistent_bands else '❌ No'}"
+            )
 
         return len(successful_results) == len(seeds)
 
@@ -498,7 +511,9 @@ def test_edge_cases():
                     print(f"     ❌ Failed: {response.error_message}")
 
             except Exception as e:
-                results.append({"name": test_case["name"], "success": False, "error": str(e)})
+                results.append(
+                    {"name": test_case["name"], "success": False, "error": str(e)}
+                )
                 print(f"     ❌ Exception: {e}")
 
         # Summary
@@ -558,13 +573,21 @@ def main():
         print(f"   ✅ Test Success Rate: {successful_tests/total_tests*100:.1f}%")
 
         print(f"\n📋 Integration Test Summary:")
-        print(f"   ✅ Reporting v2 Integration: {'Passed' if reporting_success else 'Failed'}")
+        print(
+            f"   ✅ Reporting v2 Integration: {'Passed' if reporting_success else 'Failed'}"
+        )
         print(
             f"   ✅ Bundle Generation Integration: {'Passed' if bundle_generation_success else 'Failed'}"
         )
-        print(f"   ✅ Provenance Tracking: {'Passed' if provenance_success else 'Failed'}")
-        print(f"   ✅ Seed Consistency: {'Passed' if seed_consistency_success else 'Failed'}")
-        print(f"   ✅ Edge Case Handling: {'Passed' if edge_case_success else 'Failed'}")
+        print(
+            f"   ✅ Provenance Tracking: {'Passed' if provenance_success else 'Failed'}"
+        )
+        print(
+            f"   ✅ Seed Consistency: {'Passed' if seed_consistency_success else 'Failed'}"
+        )
+        print(
+            f"   ✅ Edge Case Handling: {'Passed' if edge_case_success else 'Failed'}"
+        )
 
         print(f"\n🔍 Key Integration Features Verified:")
         print(f"   ✅ Reporting v2 System Integration")

@@ -12,7 +12,9 @@ class TestVMMCompetitive:
     @pytest.fixture
     def competitive_windows(self):
         """Load competitive golden dataset windows"""
-        competitive_dir = Path(__file__).parent.parent.parent / "data" / "golden" / "competitive"
+        competitive_dir = (
+            Path(__file__).parent.parent.parent / "data" / "golden" / "competitive"
+        )
         windows = []
 
         for parquet_file in competitive_dir.glob("*.parquet"):
@@ -54,7 +56,9 @@ class TestVMMCompetitive:
 
                 # Log progress for debugging
                 if (i + 1) % 10 == 0:
-                    print("Processed {i + 1}/{len(competitive_windows)} competitive windows")
+                    print(
+                        "Processed {i + 1}/{len(competitive_windows)} competitive windows"
+                    )
 
             except Exception as e:
                 pytest.fail(f"VMM failed on competitive window {i}: {e}")
@@ -62,7 +66,9 @@ class TestVMMCompetitive:
         # Calculate spurious regime rate
         # Threshold: regime_confidence ≥ 0.67 indicates coordination-like behavior
         threshold = 0.67
-        spurious_regimes = sum(1 for score in regime_confidence_scores if score >= threshold)
+        spurious_regimes = sum(
+            1 for score in regime_confidence_scores if score >= threshold
+        )
         spurious_rate = spurious_regimes / len(regime_confidence_scores)
 
         print("Competitive dataset results:")
@@ -124,7 +130,9 @@ class TestVMMCompetitive:
                 pytest.fail(f"VMM failed on competitive window: {e}")
 
         # Most windows should converge
-        converged_count = sum(1 for status in convergence_statuses if status == "converged")
+        converged_count = sum(
+            1 for status in convergence_statuses if status == "converged"
+        )
         convergence_rate = converged_count / len(convergence_statuses)
 
         assert (
@@ -139,12 +147,16 @@ class TestVMMCompetitive:
             f"Mean iteration count {mean_iterations:.1f} above expected threshold 200"
         )
 
-    def test_competitive_vs_coordinated_distinction(self, competitive_windows, vmm_config):
+    def test_competitive_vs_coordinated_distinction(
+        self, competitive_windows, vmm_config
+    ):
         """
         Test that VMM can distinguish competitive from coordinated behavior
         """
         # Load a few coordinated windows for comparison
-        coordinated_dir = Path(__file__).parent.parent.parent / "data" / "golden" / "coordinated"
+        coordinated_dir = (
+            Path(__file__).parent.parent.parent / "data" / "golden" / "coordinated"
+        )
         coordinated_windows = []
 
         for parquet_file in list(coordinated_dir.glob("*.parquet"))[:10]:  # Sample 10
@@ -181,5 +193,6 @@ class TestVMMCompetitive:
         # Difference should be meaningful (relaxed for current implementation)
         difference = abs(mean_coordinated - mean_competitive)
         assert difference >= 0.01, (  # Relaxed threshold
-            f"Insufficient distinction between competitive and coordinated: " f"{difference:.3f}"
+            f"Insufficient distinction between competitive and coordinated: "
+            f"{difference:.3f}"
         )

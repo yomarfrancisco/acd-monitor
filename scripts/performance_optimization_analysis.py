@@ -100,7 +100,9 @@ def profile_bundle_generation():
                 "memory_delta_mb": memory_delta,
                 "peak_memory_mb": peak_memory_mb,
                 "bundle_id": bundle_response.bundle_id if bundle_response else None,
-                "files_generated": len(bundle_response.file_paths) if bundle_response else 0,
+                "files_generated": (
+                    len(bundle_response.file_paths) if bundle_response else 0
+                ),
                 "cpu_profile": cpu_profile,
                 "error": None,
             }
@@ -374,7 +376,9 @@ def profile_memory_efficiency():
 
 
 def analyze_performance_bottlenecks(
-    profiling_results: List[Dict], attribution_results: List[Dict], memory_results: List[Dict]
+    profiling_results: List[Dict],
+    attribution_results: List[Dict],
+    memory_results: List[Dict],
 ) -> Dict[str, Any]:
     """Analyze performance bottlenecks and optimization opportunities"""
 
@@ -382,14 +386,22 @@ def analyze_performance_bottlenecks(
     print("=" * 60)
 
     # Analyze bundle generation performance
-    bundle_times = [r["execution_time"] for r in profiling_results if r["status"] == "SUCCESS"]
-    bundle_memory = [r["memory_delta_mb"] for r in profiling_results if r["status"] == "SUCCESS"]
+    bundle_times = [
+        r["execution_time"] for r in profiling_results if r["status"] == "SUCCESS"
+    ]
+    bundle_memory = [
+        r["memory_delta_mb"] for r in profiling_results if r["status"] == "SUCCESS"
+    ]
 
     bundle_analysis = {
-        "avg_execution_time": sum(bundle_times) / len(bundle_times) if bundle_times else 0,
+        "avg_execution_time": (
+            sum(bundle_times) / len(bundle_times) if bundle_times else 0
+        ),
         "max_execution_time": max(bundle_times) if bundle_times else 0,
         "min_execution_time": min(bundle_times) if bundle_times else 0,
-        "avg_memory_usage": sum(bundle_memory) / len(bundle_memory) if bundle_memory else 0,
+        "avg_memory_usage": (
+            sum(bundle_memory) / len(bundle_memory) if bundle_memory else 0
+        ),
         "max_memory_usage": max(bundle_memory) if bundle_memory else 0,
         "min_memory_usage": min(bundle_memory) if bundle_memory else 0,
     }
@@ -409,7 +421,9 @@ def analyze_performance_bottlenecks(
         "max_execution_time": max(attribution_times) if attribution_times else 0,
         "min_execution_time": min(attribution_times) if attribution_times else 0,
         "avg_memory_usage": (
-            sum(attribution_memory) / len(attribution_memory) if attribution_memory else 0
+            sum(attribution_memory) / len(attribution_memory)
+            if attribution_memory
+            else 0
         ),
         "max_memory_usage": max(attribution_memory) if attribution_memory else 0,
         "min_memory_usage": min(attribution_memory) if attribution_memory else 0,
@@ -481,7 +495,10 @@ def analyze_performance_bottlenecks(
         )
 
     # Memory efficiency optimizations
-    if memory_analysis["concurrent_query_memory"] > memory_analysis["single_query_memory"] * 3:
+    if (
+        memory_analysis["concurrent_query_memory"]
+        > memory_analysis["single_query_memory"] * 3
+    ):
         optimization_opportunities.append(
             {
                 "component": "Memory Efficiency",
@@ -594,7 +611,9 @@ def main():
         print(f"\n🔧 Optimization Opportunities:")
         for i, opp in enumerate(analysis["optimization_opportunities"], 1):
             print(f"   {i}. {opp['component']}: {opp['issue']}")
-            print(f"      Current: {opp['current_value']}, Target: {opp['target_value']}")
+            print(
+                f"      Current: {opp['current_value']}, Target: {opp['target_value']}"
+            )
             print(f"      Optimization: {opp['optimization']}")
 
         print(f"\n📁 Results saved to: {results_file}")
@@ -612,5 +631,3 @@ def main():
 if __name__ == "__main__":
     success = main()
     sys.exit(0 if success else 1)
-
-

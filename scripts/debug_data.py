@@ -30,7 +30,9 @@ def debug_data():
     print(f"Missing values: {competitive_data.isnull().sum()}")
 
     # Check specific columns
-    price_cols = [col for col in competitive_data.columns if col.startswith("Exchange_")]
+    price_cols = [
+        col for col in competitive_data.columns if col.startswith("Exchange_")
+    ]
     print(f"Price columns: {price_cols}")
 
     for col in price_cols:

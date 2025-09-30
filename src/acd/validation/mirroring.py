@@ -243,7 +243,8 @@ class MirroringValidator:
         try:
             # Calculate depth weights (deeper levels get lower weights)
             depth_weights = np.power(
-                np.arange(1, self.config.top_k_levels + 1), -self.config.depth_weight_power
+                np.arange(1, self.config.top_k_levels + 1),
+                -self.config.depth_weight_power,
             )
 
             # Normalize weights

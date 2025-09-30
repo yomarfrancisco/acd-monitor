@@ -43,7 +43,11 @@ class RegressionDetector:
         """
         if not self.metrics_log_path.exists():
             logger.info("No historical metrics available for regression detection")
-            return {"regressions_detected": False, "regression_notes": [], "trend_analysis": {}}
+            return {
+                "regressions_detected": False,
+                "regression_notes": [],
+                "trend_analysis": {},
+            }
 
         try:
             # Load historical metrics
@@ -54,7 +58,11 @@ class RegressionDetector:
 
             if len(recent_metrics) < 3:  # Need at least 3 runs for meaningful analysis
                 logger.info("Insufficient historical data for regression detection")
-                return {"regressions_detected": False, "regression_notes": [], "trend_analysis": {}}
+                return {
+                    "regressions_detected": False,
+                    "regression_notes": [],
+                    "trend_analysis": {},
+                }
 
             # Analyze each metric for regressions
             regression_notes = []

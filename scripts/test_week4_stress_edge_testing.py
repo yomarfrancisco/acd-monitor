@@ -31,7 +31,11 @@ def get_week4_stress_edge_queries() -> List[Dict[str, Any]]:
             "category": "stress_test",
             "subcategory": "mev_shocks",
             "expected_complexity": "extreme",
-            "stress_factors": ["mev_events", "sudden_shocks", "alternative_explanations"],
+            "stress_factors": [
+                "mev_events",
+                "sudden_shocks",
+                "alternative_explanations",
+            ],
         },
         {
             "id": 47,
@@ -51,7 +55,11 @@ def get_week4_stress_edge_queries() -> List[Dict[str, Any]]:
             "category": "stress_test",
             "subcategory": "mev_shocks",
             "expected_complexity": "extreme",
-            "stress_factors": ["cross_chain_mev", "simultaneous_events", "coordination_methods"],
+            "stress_factors": [
+                "cross_chain_mev",
+                "simultaneous_events",
+                "coordination_methods",
+            ],
         },
         # Flash Crash Scenarios (49-51)
         {
@@ -60,7 +68,11 @@ def get_week4_stress_edge_queries() -> List[Dict[str, Any]]:
             "category": "stress_test",
             "subcategory": "flash_crashes",
             "expected_complexity": "extreme",
-            "stress_factors": ["flash_crash", "rapid_price_movement", "coordination_vs_cascading"],
+            "stress_factors": [
+                "flash_crash",
+                "rapid_price_movement",
+                "coordination_vs_cascading",
+            ],
         },
         {
             "id": 50,
@@ -68,7 +80,11 @@ def get_week4_stress_edge_queries() -> List[Dict[str, Any]]:
             "category": "stress_test",
             "subcategory": "flash_crashes",
             "expected_complexity": "extreme",
-            "stress_factors": ["coordinated_attack", "multi_exchange", "regulatory_response"],
+            "stress_factors": [
+                "coordinated_attack",
+                "multi_exchange",
+                "regulatory_response",
+            ],
         },
         {
             "id": 51,
@@ -109,7 +125,11 @@ def get_week4_stress_edge_queries() -> List[Dict[str, Any]]:
             "category": "stress_test",
             "subcategory": "latency_coordination",
             "expected_complexity": "extreme",
-            "stress_factors": ["hft_algorithms", "sub_millisecond", "algorithmic_coordination"],
+            "stress_factors": [
+                "hft_algorithms",
+                "sub_millisecond",
+                "algorithmic_coordination",
+            ],
         },
         # Extreme Market Conditions (55-57)
         {
@@ -118,7 +138,11 @@ def get_week4_stress_edge_queries() -> List[Dict[str, Any]]:
             "category": "stress_test",
             "subcategory": "extreme_conditions",
             "expected_complexity": "extreme",
-            "stress_factors": ["extreme_volatility", "market_stress", "confidence_intervals"],
+            "stress_factors": [
+                "extreme_volatility",
+                "market_stress",
+                "confidence_intervals",
+            ],
         },
         {
             "id": 56,
@@ -126,7 +150,11 @@ def get_week4_stress_edge_queries() -> List[Dict[str, Any]]:
             "category": "stress_test",
             "subcategory": "extreme_conditions",
             "expected_complexity": "extreme",
-            "stress_factors": ["liquidity_crisis", "wide_spreads", "alternative_explanations"],
+            "stress_factors": [
+                "liquidity_crisis",
+                "wide_spreads",
+                "alternative_explanations",
+            ],
         },
         {
             "id": 57,
@@ -134,7 +162,11 @@ def get_week4_stress_edge_queries() -> List[Dict[str, Any]]:
             "category": "stress_test",
             "subcategory": "extreme_conditions",
             "expected_complexity": "extreme",
-            "stress_factors": ["regulatory_announcement", "event_driven", "coordinated_vs_natural"],
+            "stress_factors": [
+                "regulatory_announcement",
+                "event_driven",
+                "coordinated_vs_natural",
+            ],
         },
         # Advanced Edge Cases (58-60)
         {
@@ -143,7 +175,11 @@ def get_week4_stress_edge_queries() -> List[Dict[str, Any]]:
             "category": "stress_test",
             "subcategory": "advanced_edge_cases",
             "expected_complexity": "extreme",
-            "stress_factors": ["exchange_outage", "partial_data", "coordination_detection"],
+            "stress_factors": [
+                "exchange_outage",
+                "partial_data",
+                "coordination_detection",
+            ],
         },
         {
             "id": 59,
@@ -159,7 +195,11 @@ def get_week4_stress_edge_queries() -> List[Dict[str, Any]]:
             "category": "stress_test",
             "subcategory": "advanced_edge_cases",
             "expected_complexity": "extreme",
-            "stress_factors": ["conflicting_signals", "signal_resolution", "dominant_pattern"],
+            "stress_factors": [
+                "conflicting_signals",
+                "signal_resolution",
+                "dominant_pattern",
+            ],
         },
     ]
 
@@ -261,7 +301,9 @@ def assess_stress_response_quality(response: Any, query_obj: Dict[str, Any]) -> 
     ]
 
     indicator_count = sum(
-        1 for indicator in stress_indicators if indicator.lower() in response_str.lower()
+        1
+        for indicator in stress_indicators
+        if indicator.lower() in response_str.lower()
     )
     score += min(indicator_count * 0.1, 1.0)
 
@@ -394,7 +436,9 @@ def run_bundle_stress_testing(provider: OfflineMockProvider) -> Dict[str, Any]:
                 "error": None,
             }
 
-            print(f"   ✅ PASS - {response_time:.3f}s - Quality: {quality_score:.1f}/5.0")
+            print(
+                f"   ✅ PASS - {response_time:.3f}s - Quality: {quality_score:.1f}/5.0"
+            )
 
         except Exception as e:
             end_time = time.time()
@@ -418,8 +462,12 @@ def run_bundle_stress_testing(provider: OfflineMockProvider) -> Dict[str, Any]:
     successful_conditions = [r for r in stress_results if r["status"] == "PASS"]
     success_rate = len(successful_conditions) / len(stress_results) * 100
 
-    avg_response_time = sum(r["response_time"] for r in stress_results) / len(stress_results)
-    avg_quality_score = sum(r["quality_score"] for r in stress_results) / len(stress_results)
+    avg_response_time = sum(r["response_time"] for r in stress_results) / len(
+        stress_results
+    )
+    avg_quality_score = sum(r["quality_score"] for r in stress_results) / len(
+        stress_results
+    )
 
     return {
         "total_conditions": len(stress_results),
@@ -449,7 +497,11 @@ def generate_stress_test_report(
     for result in stress_results["results"]:
         subcategory = result["subcategory"]
         if subcategory not in subcategories:
-            subcategories[subcategory] = {"total": 0, "successful": 0, "avg_quality": 0.0}
+            subcategories[subcategory] = {
+                "total": 0,
+                "successful": 0,
+                "avg_quality": 0.0,
+            }
 
         subcategories[subcategory]["total"] += 1
         if result["status"] == "PASS":
@@ -459,9 +511,13 @@ def generate_stress_test_report(
     # Calculate subcategory averages
     for subcategory in subcategories:
         if subcategories[subcategory]["total"] > 0:
-            subcategories[subcategory]["avg_quality"] /= subcategories[subcategory]["total"]
+            subcategories[subcategory]["avg_quality"] /= subcategories[subcategory][
+                "total"
+            ]
             subcategories[subcategory]["success_rate"] = (
-                subcategories[subcategory]["successful"] / subcategories[subcategory]["total"] * 100
+                subcategories[subcategory]["successful"]
+                / subcategories[subcategory]["total"]
+                * 100
             )
 
     return {
@@ -532,7 +588,9 @@ def main():
         print(
             f"   Average Quality Score: {test_report['overall_metrics']['avg_quality_score']:.1f}/5.0"
         )
-        print(f"   Throughput: {test_report['overall_metrics']['throughput']:.1f} queries/minute")
+        print(
+            f"   Throughput: {test_report['overall_metrics']['throughput']:.1f} queries/minute"
+        )
 
         print(f"\n📋 Subcategory Breakdown:")
         for subcategory, metrics in test_report["subcategory_breakdown"].items():
@@ -555,5 +613,3 @@ def main():
 if __name__ == "__main__":
     success = main()
     sys.exit(0 if success else 1)
-
-

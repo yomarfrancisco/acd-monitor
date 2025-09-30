@@ -190,7 +190,10 @@ class DemoFeatureEngineering:
         return dummy_result
 
     def prepare_evidence_data(
-        self, window_data: pd.DataFrame, vmm_result: VMMOutput, quality_metrics: Dict[str, float]
+        self,
+        window_data: pd.DataFrame,
+        vmm_result: VMMOutput,
+        quality_metrics: Dict[str, float],
     ) -> Dict:
         """Prepare data for EvidenceBundle creation.
 

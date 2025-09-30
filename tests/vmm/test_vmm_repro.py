@@ -13,8 +13,12 @@ class TestVMMReproducibility:
     def test_windows(self):
         """Load a sample of test windows for reproducibility testing"""
         # Use a mix of competitive and coordinated windows
-        competitive_dir = Path(__file__).parent.parent.parent / "data" / "golden" / "competitive"
-        coordinated_dir = Path(__file__).parent.parent.parent / "data" / "golden" / "coordinated"
+        competitive_dir = (
+            Path(__file__).parent.parent.parent / "data" / "golden" / "competitive"
+        )
+        coordinated_dir = (
+            Path(__file__).parent.parent.parent / "data" / "golden" / "coordinated"
+        )
 
         windows = []
 
@@ -98,7 +102,9 @@ class TestVMMReproducibility:
                 }
             )
 
-            print("  {window_type}: max_diff={max_diff:.4f}, median_diff={median_diff:.4f}")
+            print(
+                "  {window_type}: max_diff={max_diff:.4f}, median_diff={median_diff:.4f}"
+            )
 
         # Test acceptance gate: median |Δstructural_stability| ≤ 0.03
         all_median_diffs = [result["median_diff"] for result in reproducibility_results]
@@ -126,7 +132,9 @@ class TestVMMReproducibility:
         Test that regime confidence is reproducible across runs
         """
         for window_type, window in test_windows:
-            print("Testing regime confidence reproducibility on {window_type} window...")
+            print(
+                "Testing regime confidence reproducibility on {window_type} window..."
+            )
 
             # Run VMM 5 times on the same window
             confidence_scores = []
@@ -152,7 +160,9 @@ class TestVMMReproducibility:
             max_diff = np.max(differences)
             median_diff = np.median(differences)
 
-            print("  {window_type}: max_diff={max_diff:.4f}, median_diff={median_diff:.4f}")
+            print(
+                "  {window_type}: max_diff={max_diff:.4f}, median_diff={median_diff:.4f}"
+            )
 
             # Regime confidence should be reproducible
             assert median_diff <= 0.05, (
@@ -165,7 +175,9 @@ class TestVMMReproducibility:
         Test that environment quality is reproducible across runs
         """
         for window_type, window in test_windows:
-            print("Testing environment quality reproducibility on {window_type} window...")
+            print(
+                "Testing environment quality reproducibility on {window_type} window..."
+            )
 
             # Run VMM 5 times on the same window
             quality_scores = []
@@ -191,7 +203,9 @@ class TestVMMReproducibility:
             max_diff = np.max(differences)
             median_diff = np.median(differences)
 
-            print("  {window_type}: max_diff={max_diff:.4f}, median_diff={median_diff:.4f}")
+            print(
+                "  {window_type}: max_diff={max_diff:.4f}, median_diff={median_diff:.4f}"
+            )
 
             # Environment quality should be reproducible
             assert median_diff <= 0.05, (
@@ -224,7 +238,9 @@ class TestVMMReproducibility:
             print("  {window_type}: convergence statuses: {unique_statuses}")
 
             # Most runs should converge to the same status
-            most_common_status = max(set(convergence_statuses), key=convergence_statuses.count)
+            most_common_status = max(
+                set(convergence_statuses), key=convergence_statuses.count
+            )
             status_consistency = convergence_statuses.count(most_common_status) / len(
                 convergence_statuses
             )
@@ -315,9 +331,15 @@ class TestVMMReproducibility:
             )
 
         # Overall reproducibility assessment
-        overall_stability_diff = np.median([m["stability_median_diff"] for m in all_metrics])
-        overall_confidence_diff = np.median([m["confidence_median_diff"] for m in all_metrics])
-        overall_quality_diff = np.median([m["quality_median_diff"] for m in all_metrics])
+        overall_stability_diff = np.median(
+            [m["stability_median_diff"] for m in all_metrics]
+        )
+        overall_confidence_diff = np.median(
+            [m["confidence_median_diff"] for m in all_metrics]
+        )
+        overall_quality_diff = np.median(
+            [m["quality_median_diff"] for m in all_metrics]
+        )
 
         print("\nOVERALL REPRODUCIBILITY:")
         print("  Structural Stability: {overall_stability_diff:.4f} (gate: ≤0.03)")

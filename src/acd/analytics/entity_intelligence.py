@@ -290,7 +290,10 @@ class CounterpartyConcentrationAnalyzer:
             return {}
 
     def _determine_confidence_level(
-        self, coordination_percentage: float, timing_patterns: Dict, sizing_patterns: Dict
+        self,
+        coordination_percentage: float,
+        timing_patterns: Dict,
+        sizing_patterns: Dict,
     ) -> str:
         """Determine attribution confidence level."""
         try:
@@ -318,7 +321,10 @@ class CounterpartyConcentrationAnalyzer:
             return "Requires Verification"
 
     def _generate_attribution_notes(
-        self, confidence_level: str, coordination_percentage: float, timing_patterns: Dict
+        self,
+        confidence_level: str,
+        coordination_percentage: float,
+        timing_patterns: Dict,
     ) -> str:
         """Generate attribution notes based on confidence level."""
         try:
@@ -557,7 +563,9 @@ class NetworkAnalyzer:
             return nx.Graph()
 
     def _identify_top_entities(
-        self, degree_centrality: Dict[str, float], eigenvector_centrality: Dict[str, float]
+        self,
+        degree_centrality: Dict[str, float],
+        eigenvector_centrality: Dict[str, float],
     ) -> List[str]:
         """Identify top entities by centrality measures."""
         try:
@@ -718,7 +726,10 @@ class BehavioralPatternAnalyzer:
             return {}
 
     def _identify_strategic_patterns(
-        self, timing_coordination: Dict, sizing_coordination: Dict, cancellation_coordination: Dict
+        self,
+        timing_coordination: Dict,
+        sizing_coordination: Dict,
+        cancellation_coordination: Dict,
     ) -> Dict[str, str]:
         """Identify strategic coordination patterns."""
         try:
@@ -753,7 +764,10 @@ class BehavioralPatternAnalyzer:
             return {}
 
     def _calculate_coordination_strength(
-        self, timing_coordination: Dict, sizing_coordination: Dict, cancellation_coordination: Dict
+        self,
+        timing_coordination: Dict,
+        sizing_coordination: Dict,
+        cancellation_coordination: Dict,
     ) -> float:
         """Calculate overall coordination strength."""
         try:

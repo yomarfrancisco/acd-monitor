@@ -46,7 +46,10 @@ class SynchronousMoveDetector:
 
         try:
             result = subprocess.run(
-                ["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True, check=True
+                ["git", "rev-parse", "--short", "HEAD"],
+                capture_output=True,
+                text=True,
+                check=True,
             )
             return result.stdout.strip()
         except (subprocess.CalledProcessError, FileNotFoundError):
@@ -227,7 +230,11 @@ class SynchronousMoveDetector:
             for venue in self.venues:
                 if row[f"{venue}_jump"]:
                     jumping_venues.append(
-                        {"venue": venue, "sign": row[f"{venue}_sign"], "return": row[venue]}
+                        {
+                            "venue": venue,
+                            "sign": row[f"{venue}_sign"],
+                            "return": row[venue],
+                        }
                     )
 
             if len(jumping_venues) >= 3:

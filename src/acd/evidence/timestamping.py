@@ -168,7 +168,10 @@ class FreeTSAClient(TSAClient):
 
         try:
             # Create timestamp request
-            request_data = {"data": data.hex(), "hash": hashlib.sha256(data).hexdigest()}
+            request_data = {
+                "data": data.hex(),
+                "hash": hashlib.sha256(data).hexdigest(),
+            }
 
             response = requests.post(self.url, json=request_data, timeout=self.timeout)
             response.raise_for_status()

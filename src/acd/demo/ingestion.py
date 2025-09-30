@@ -36,7 +36,13 @@ class MockDataIngestion:
             },
             "regulatory_style": {
                 "format": "json",
-                "columns": ["disclosure_id", "firm_id", "disclosure_type", "timestamp", "content"],
+                "columns": [
+                    "disclosure_id",
+                    "firm_id",
+                    "disclosure_type",
+                    "timestamp",
+                    "content",
+                ],
                 "sample_size": 100,
                 "update_frequency": "1hour",
             },

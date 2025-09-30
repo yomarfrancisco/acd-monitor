@@ -78,14 +78,19 @@ class CryptoMomentCalculator:
     """Calculates crypto-specific moment conditions for VMM analysis"""
 
     def __init__(
-        self, config: CryptoMomentConfig, global_scaler: Optional[GlobalMomentScaler] = None
+        self,
+        config: CryptoMomentConfig,
+        global_scaler: Optional[GlobalMomentScaler] = None,
     ):
         self.config = config
         self.global_scaler = global_scaler
         self._fitted_scaler = None
 
     def calculate_moments(
-        self, data: pd.DataFrame, price_columns: List[str], environment_column: Optional[str] = None
+        self,
+        data: pd.DataFrame,
+        price_columns: List[str],
+        environment_column: Optional[str] = None,
     ) -> CryptoMoments:
         """
         Calculate all crypto moment conditions with normalization and environment invariance
@@ -354,7 +359,10 @@ class CryptoMomentCalculator:
         return coordination_scores, interaction_patterns
 
     def _calculate_arbitrage_timing_moments(
-        self, data: pd.DataFrame, price_columns: List[str], environment_column: Optional[str] = None
+        self,
+        data: pd.DataFrame,
+        price_columns: List[str],
+        environment_column: Optional[str] = None,
     ) -> Dict[str, np.ndarray]:
         """
         Calculate latency-adjusted arbitrage timing moments (optimized)
@@ -401,10 +409,16 @@ class CryptoMomentCalculator:
         else:
             arbitrage_invariance = np.array([0.0])
 
-        return {"arbitrage_timing": arbitrage_timing, "arbitrage_invariance": arbitrage_invariance}
+        return {
+            "arbitrage_timing": arbitrage_timing,
+            "arbitrage_invariance": arbitrage_invariance,
+        }
 
     def _calculate_depth_weighted_mirroring_moments(
-        self, data: pd.DataFrame, price_columns: List[str], environment_column: Optional[str] = None
+        self,
+        data: pd.DataFrame,
+        price_columns: List[str],
+        environment_column: Optional[str] = None,
     ) -> Dict[str, np.ndarray]:
         """
         Calculate depth-weighted order-book mirroring moments (optimized)
@@ -459,7 +473,10 @@ class CryptoMomentCalculator:
         }
 
     def _calculate_spread_floor_dwell_moments(
-        self, data: pd.DataFrame, price_columns: List[str], environment_column: Optional[str] = None
+        self,
+        data: pd.DataFrame,
+        price_columns: List[str],
+        environment_column: Optional[str] = None,
     ) -> Dict[str, np.ndarray]:
         """
         Calculate spread-floor dwell moments (optimized)
@@ -500,10 +517,16 @@ class CryptoMomentCalculator:
         else:
             dwell_invariance = np.array([0.0])
 
-        return {"dwell_probability": dwell_probability, "dwell_invariance": dwell_invariance}
+        return {
+            "dwell_probability": dwell_probability,
+            "dwell_invariance": dwell_invariance,
+        }
 
     def _calculate_undercut_asymmetry_moments(
-        self, data: pd.DataFrame, price_columns: List[str], environment_column: Optional[str] = None
+        self,
+        data: pd.DataFrame,
+        price_columns: List[str],
+        environment_column: Optional[str] = None,
     ) -> Dict[str, np.ndarray]:
         """
         Calculate undercut initiation asymmetry moments (optimized)
@@ -736,7 +759,9 @@ class CryptoMomentCalculator:
 
 
 def calculate_crypto_moments(
-    data: pd.DataFrame, price_columns: List[str], config: Optional[CryptoMomentConfig] = None
+    data: pd.DataFrame,
+    price_columns: List[str],
+    config: Optional[CryptoMomentConfig] = None,
 ) -> CryptoMoments:
     """
     Convenience function to calculate crypto moments

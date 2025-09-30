@@ -54,9 +54,11 @@ def generate_v1_4_coordinated_data():
                 else:  # Other venues with target similarity
                     # Create similar sizes to achieve target DWC
                     similarity_factor = target_dwc
-                    size = reference_sizes[level] * similarity_factor + np.random.exponential(
-                        0.1
-                    ) * (1 - similarity_factor)
+                    size = reference_sizes[
+                        level
+                    ] * similarity_factor + np.random.exponential(0.1) * (
+                        1 - similarity_factor
+                    )
 
                 order_book_data.append(
                     {
@@ -89,14 +91,18 @@ def generate_v1_4_coordinated_data():
             if np.random.random() < 0.1:  # 10% of timestamps have orders
                 if venue_idx == 0:  # Binance (reference)
                     # Use reference placements
-                    placement = list(reference_placements)[i % len(reference_placements)]
+                    placement = list(reference_placements)[
+                        i % len(reference_placements)
+                    ]
                     rounded_time, price_bucket, size_bucket, side = placement
                     price = price_bucket + np.random.uniform(-0.01, 0.01)
                     size = size_bucket + np.random.uniform(-0.001, 0.001)
                 else:  # Other venues with target Jaccard similarity
                     if np.random.random() < target_jaccard:
                         # Same placement (high overlap)
-                        placement = list(reference_placements)[i % len(reference_placements)]
+                        placement = list(reference_placements)[
+                            i % len(reference_placements)
+                        ]
                         rounded_time, price_bucket, size_bucket, side = placement
                         price = price_bucket + np.random.uniform(-0.01, 0.01)
                         size = size_bucket + np.random.uniform(-0.001, 0.001)
@@ -144,9 +150,15 @@ def generate_v1_4_coordinated_data():
                     + np.random.normal(0, 0.1)
                 )
 
-            price_data.append({"timestamp": timestamp, "venue": venue, "price": venue_price})
+            price_data.append(
+                {"timestamp": timestamp, "venue": venue, "price": venue_price}
+            )
 
-    return pd.DataFrame(order_book_data), pd.DataFrame(order_data), pd.DataFrame(price_data)
+    return (
+        pd.DataFrame(order_book_data),
+        pd.DataFrame(order_data),
+        pd.DataFrame(price_data),
+    )
 
 
 def calculate_depth_weighted_cosine_similarity(book1, book2, top_n=50):
@@ -193,13 +205,19 @@ def calculate_jaccard_index(orders1, orders2, time_window_ms=1000):
         orders1_copy = orders1.copy()
         orders2_copy = orders2.copy()
 
-        orders1_copy["timestamp_ms"] = orders1_copy["timestamp"].astype("int64") // 10**6
-        orders2_copy["timestamp_ms"] = orders2_copy["timestamp"].astype("int64") // 10**6
+        orders1_copy["timestamp_ms"] = (
+            orders1_copy["timestamp"].astype("int64") // 10**6
+        )
+        orders2_copy["timestamp_ms"] = (
+            orders2_copy["timestamp"].astype("int64") // 10**6
+        )
 
         def create_identifiers(orders):
             identifiers = set()
             for _, order in orders.iterrows():
-                rounded_time = (order["timestamp_ms"] // time_window_ms) * time_window_ms
+                rounded_time = (
+                    order["timestamp_ms"] // time_window_ms
+                ) * time_window_ms
                 price_bucket = round(order["price"], 2)
                 size_bucket = round(order["size"], 4)
                 identifier = (rounded_time, price_bucket, size_bucket, order["side"])
@@ -230,7 +248,9 @@ def calculate_price_correlation(prices1, prices2):
         if len(aligned_prices) < 2:
             return 0.0
 
-        correlation = np.corrcoef(aligned_prices["venue1"], aligned_prices["venue2"])[0, 1]
+        correlation = np.corrcoef(aligned_prices["venue1"], aligned_prices["venue2"])[
+            0, 1
+        ]
 
         if np.isnan(correlation):
             return 0.0
@@ -264,7 +284,11 @@ def calculate_metrics_parity():
     print("Calculating metrics...")
 
     venues = ["Binance", "Coinbase", "Kraken"]
-    venue_pairs = [("Binance", "Coinbase"), ("Binance", "Kraken"), ("Coinbase", "Kraken")]
+    venue_pairs = [
+        ("Binance", "Coinbase"),
+        ("Binance", "Kraken"),
+        ("Coinbase", "Kraken"),
+    ]
 
     results = {}
 
@@ -329,7 +353,9 @@ def create_metrics_plots(results, order_book_data, order_data, price_data):
 
     plt.figure(figsize=(12, 8))
 
-    timestamps = pd.date_range("2025-09-18 14:00:00", "2025-09-18 16:00:00", freq="5min")
+    timestamps = pd.date_range(
+        "2025-09-18 14:00:00", "2025-09-18 16:00:00", freq="5min"
+    )
 
     avg = results["average_metrics"]
     dwc_values = np.full(len(timestamps), avg["dwc"])
@@ -371,7 +397,9 @@ def create_metrics_plots(results, order_book_data, order_data, price_data):
 
     plt.tight_layout()
     plt.savefig(
-        "artifacts/v1_4_validation/metrics/metrics_timeseries.png", dpi=300, bbox_inches="tight"
+        "artifacts/v1_4_validation/metrics/metrics_timeseries.png",
+        dpi=300,
+        bbox_inches="tight",
     )
     plt.close()
 
@@ -390,7 +418,9 @@ def main():
     create_metrics_plots(results, order_book_data, order_data, price_data)
 
     # Save results
-    output_file = "artifacts/v1_4_validation/metrics/metrics_window_2025-09-18T14-16Z.json"
+    output_file = (
+        "artifacts/v1_4_validation/metrics/metrics_window_2025-09-18T14-16Z.json"
+    )
     with open(output_file, "w") as f:
         json.dump(results, f, indent=2, default=str)
 
@@ -425,5 +455,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-

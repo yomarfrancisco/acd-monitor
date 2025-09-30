@@ -61,7 +61,10 @@ class InfoShareAnalyzer:
 
         try:
             result = subprocess.run(
-                ["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True, check=True
+                ["git", "rev-parse", "--short", "HEAD"],
+                capture_output=True,
+                text=True,
+                check=True,
             )
             return result.stdout.strip()
         except (subprocess.CalledProcessError, FileNotFoundError):
@@ -368,7 +371,10 @@ class InfoShareAnalyzer:
             # Return equal bounds as fallback
             bounds = {}
             for venue in self.venues:
-                bounds[venue] = {"lower": 1 / len(self.venues), "upper": 1 / len(self.venues)}
+                bounds[venue] = {
+                    "lower": 1 / len(self.venues),
+                    "upper": 1 / len(self.venues),
+                }
             return bounds
 
     def compute_gonzalo_granger_weights(self, returns_df: pd.DataFrame) -> Dict[str, float]:
@@ -932,7 +938,11 @@ class InfoShareAnalyzer:
             ).dropna()
 
             # Mock environment labels (placeholder)
-            env_labels = {"volatility": "medium", "funding": "medium", "liquidity": "medium"}
+            env_labels = {
+                "volatility": "medium",
+                "funding": "medium",
+                "liquidity": "medium",
+            }
 
             # Check data quality first
             is_valid, reason = self.check_data_quality(aligned_returns, date_str)
@@ -985,7 +995,10 @@ class InfoShareAnalyzer:
 
         # Create result object
         result = InfoShareResult(
-            overall=overall, by_env=by_env, assignments=assignments, daily_results=daily_results
+            overall=overall,
+            by_env=by_env,
+            assignments=assignments,
+            daily_results=daily_results,
         )
 
         # Export results

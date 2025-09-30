@@ -59,8 +59,12 @@ def test_bundle_generation_basic():
     print(
         f"   Executive Summary Length: {len(response.bundle.executive_summary) if response.bundle else 0} chars"
     )
-    print(f"   Key Findings: {len(response.bundle.key_findings) if response.bundle else 0}")
-    print(f"   Recommendations: {len(response.bundle.recommendations) if response.bundle else 0}")
+    print(
+        f"   Key Findings: {len(response.bundle.key_findings) if response.bundle else 0}"
+    )
+    print(
+        f"   Recommendations: {len(response.bundle.recommendations) if response.bundle else 0}"
+    )
 
     if response.file_paths:
         print(f"   JSON Bundle: {response.file_paths.get('json', 'N/A')}")
@@ -113,7 +117,9 @@ def test_bundle_refinement():
 
     if refined_response.bundle:
         print(f"   Enhanced Key Findings: {len(refined_response.bundle.key_findings)}")
-        print(f"   Enhanced Recommendations: {len(refined_response.bundle.recommendations)}")
+        print(
+            f"   Enhanced Recommendations: {len(refined_response.bundle.recommendations)}"
+        )
         print(
             f"   Enhanced Alternative Explanations: {len(refined_response.bundle.alternative_explanations)}"
         )
@@ -143,8 +149,12 @@ def test_convenience_function():
 
     if response.bundle:
         print(f"   Risk Band: {response.bundle.attribution_table.risk_band}")
-        print(f"   Total Risk Score: {response.bundle.attribution_table.total_risk_score:.1f}/100")
-        print(f"   Confidence Level: {response.bundle.attribution_table.confidence_level:.1%}")
+        print(
+            f"   Total Risk Score: {response.bundle.attribution_table.total_risk_score:.1f}/100"
+        )
+        print(
+            f"   Confidence Level: {response.bundle.attribution_table.confidence_level:.1%}"
+        )
 
     return response
 
@@ -180,7 +190,13 @@ def test_offline_mock_bundle_queries():
             print(f"   ✅ Content Length: {len(response.content)} chars")
 
             # Check if bundle-related content is present
-            bundle_indicators = ["bundle", "regulatory", "compliance", "provenance", "attribution"]
+            bundle_indicators = [
+                "bundle",
+                "regulatory",
+                "compliance",
+                "provenance",
+                "attribution",
+            ]
             has_bundle_content = any(
                 indicator in response.content.lower() for indicator in bundle_indicators
             )
@@ -203,7 +219,9 @@ def test_offline_mock_bundle_queries():
 
     # Summary
     successful_queries = [r for r in results if r["success"]]
-    bundle_content_queries = [r for r in successful_queries if r.get("has_bundle_content", False)]
+    bundle_content_queries = [
+        r for r in successful_queries if r.get("has_bundle_content", False)
+    ]
 
     print(f"\n✅ Offline Mock Bundle Query Test Summary:")
     print(f"   Total Queries: {len(bundle_queries)}")
@@ -269,11 +287,17 @@ def test_compliance_officer_queries():
                 or "contribution" in response.content.lower()
             )
             has_provenance = (
-                "provenance" in response.content.lower() or "metadata" in response.content.lower()
+                "provenance" in response.content.lower()
+                or "metadata" in response.content.lower()
             )
 
             quality_score = sum(
-                [has_risk_assessment, has_recommendations, has_attribution, has_provenance]
+                [
+                    has_risk_assessment,
+                    has_recommendations,
+                    has_attribution,
+                    has_provenance,
+                ]
             )
 
             print(f"   ✅ Intent: {intent}")
@@ -304,7 +328,9 @@ def test_compliance_officer_queries():
 
     # Calculate metrics
     successful_queries = [r for r in results if r["success"]]
-    high_quality_queries = [r for r in successful_queries if r.get("quality_score", 0) >= 3]
+    high_quality_queries = [
+        r for r in successful_queries if r.get("quality_score", 0) >= 3
+    ]
 
     avg_quality_score = (
         np.mean([r.get("quality_score", 0) for r in successful_queries])
@@ -313,7 +339,9 @@ def test_compliance_officer_queries():
     )
     success_rate = len(successful_queries) / len(all_queries) * 100
     quality_rate = (
-        len(high_quality_queries) / len(successful_queries) * 100 if successful_queries else 0
+        len(high_quality_queries) / len(successful_queries) * 100
+        if successful_queries
+        else 0
     )
 
     print(f"\n✅ Compliance Officer Query Test Summary:")
@@ -357,7 +385,8 @@ def test_bundle_provenance_tracking():
     # Test multiple refinements to build audit trail
     refinement_requests = [
         BundleRefinementRequest(
-            bundle_id=response.bundle_id, refinement_instructions=["Enhance provenance metadata"]
+            bundle_id=response.bundle_id,
+            refinement_instructions=["Enhance provenance metadata"],
         ),
         BundleRefinementRequest(
             bundle_id=response.bundle_id,
@@ -377,12 +406,18 @@ def test_bundle_provenance_tracking():
     if refined_responses:
         final_response = refined_responses[-1]
         print(f"   Final Bundle ID: {final_response.bundle_id}")
-        print(f"   Refinement History: {len(final_response.refinement_history)} entries")
+        print(
+            f"   Refinement History: {len(final_response.refinement_history)} entries"
+        )
 
         if final_response.bundle:
             print(f"   Audit Trail Entries: {len(final_response.bundle.audit_trail)}")
-            print(f"   Provenance Hash: {final_response.bundle.provenance.content_hash[:16]}...")
-            print(f"   Provenance Signature: {final_response.bundle.provenance.signature}")
+            print(
+                f"   Provenance Hash: {final_response.bundle.provenance.content_hash[:16]}..."
+            )
+            print(
+                f"   Provenance Signature: {final_response.bundle.provenance.signature}"
+            )
 
     return refined_responses
 
@@ -431,14 +466,18 @@ def main():
         # Compliance query metrics
         compliance_successful = [r for r in compliance_results if r["success"]]
         compliance_success_rate = (
-            len(compliance_successful) / len(compliance_results) * 100 if compliance_results else 0
+            len(compliance_successful) / len(compliance_results) * 100
+            if compliance_results
+            else 0
         )
 
         print(f"\n📊 Overall Test Results:")
         print(f"   ✅ Tests Passed: {successful_tests}/{total_tests}")
         print(f"   ✅ Test Success Rate: {successful_tests/total_tests*100:.1f}%")
         print(f"   ✅ Compliance Query Success Rate: {compliance_success_rate:.1f}%")
-        print(f"   ✅ Target Met (≥90%): {'Yes' if compliance_success_rate >= 90.0 else 'No'}")
+        print(
+            f"   ✅ Target Met (≥90%): {'Yes' if compliance_success_rate >= 90.0 else 'No'}"
+        )
 
         print(f"\n📋 Bundle Generation Capabilities:")
         print(f"   ✅ Basic Bundle Generation: Working")

@@ -61,7 +61,9 @@ def prepare_data_for_analysis(df: pd.DataFrame) -> Dict[str, pd.DataFrame]:
 
         prepared_data[pair] = pivot_data
 
-        print(f"   {pair}: {len(pivot_data)} timestamps, {len(pivot_data.columns)} columns")
+        print(
+            f"   {pair}: {len(pivot_data)} timestamps, {len(pivot_data.columns)} columns"
+        )
 
     return prepared_data
 
@@ -168,7 +170,9 @@ def validate_crypto_moments(data: Dict[str, pd.DataFrame]) -> Dict[str, Any]:
 
             print(f"     Lead-lag betas: {np.mean(moments.lead_lag_betas):.3f}")
             print(f"     Mirroring ratios: {np.mean(moments.mirroring_ratios):.3f}")
-            print(f"     Spread floor frequency: {np.mean(moments.spread_floor_frequency):.3f}")
+            print(
+                f"     Spread floor frequency: {np.mean(moments.spread_floor_frequency):.3f}"
+            )
 
         except Exception as e:
             print(f"     Error analyzing {pair}: {e}")
@@ -194,14 +198,20 @@ def compare_with_synthetic_results(
             # Calculate consistency metrics
             consistency_metrics = {}
 
-            for metric in ["switching_entropy", "mirroring_ratio", "coordination_score"]:
+            for metric in [
+                "switching_entropy",
+                "mirroring_ratio",
+                "coordination_score",
+            ]:
                 if metric in real and metric in synthetic:
                     real_val = real[metric]
                     synthetic_val = synthetic[metric]
 
                     # Calculate relative difference
                     if synthetic_val != 0:
-                        relative_diff = abs(real_val - synthetic_val) / abs(synthetic_val)
+                        relative_diff = abs(real_val - synthetic_val) / abs(
+                            synthetic_val
+                        )
                         consistency_metrics[metric] = {
                             "real": real_val,
                             "synthetic": synthetic_val,
@@ -212,7 +222,9 @@ def compare_with_synthetic_results(
             comparison[pair] = consistency_metrics
 
             # Summary
-            consistent_metrics = sum(1 for m in consistency_metrics.values() if m["consistent"])
+            consistent_metrics = sum(
+                1 for m in consistency_metrics.values() if m["consistent"]
+            )
             total_metrics = len(consistency_metrics)
 
             print(f"   {pair}: {consistent_metrics}/{total_metrics} metrics consistent")

@@ -865,7 +865,7 @@ def generate_bundle_from_query(
         asset_pair=asset_pair,
         time_period=time_period,
         seed=seed,
-        refinement_instructions=refinement_instructions if refinement_instructions else None,
+        refinement_instructions=(refinement_instructions if refinement_instructions else None),
     )
 
     # Generate bundle

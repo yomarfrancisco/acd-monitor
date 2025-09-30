@@ -24,7 +24,14 @@ async def fetch_ohlcv(session: aiohttp.ClientSession, pair: str, tf: str, proxy_
         data = list(j["result"].values())[0]  # first key is pair
         # [ time, open, high, low, close, vwap, volume, count ]
         ohlcv = [
-            [_iso(c[0]), float(c[1]), float(c[2]), float(c[3]), float(c[4]), float(c[6])]
+            [
+                _iso(c[0]),
+                float(c[1]),
+                float(c[2]),
+                float(c[3]),
+                float(c[4]),
+                float(c[6]),
+            ]
             for c in data
         ]
         return ohlcv
@@ -45,4 +52,9 @@ async def fetch_ticker(session: aiohttp.ClientSession, pair: str, proxy_base: st
         bid = float(d["b"][0])
         ask = float(d["a"][0])
         mid = (bid + ask) / 2
-        return {"bid": bid, "ask": ask, "mid": mid, "ts": datetime.now(timezone.utc).isoformat()}
+        return {
+            "bid": bid,
+            "ask": ask,
+            "mid": mid,
+            "ts": datetime.now(timezone.utc).isoformat(),
+        }
