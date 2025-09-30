@@ -1,47 +1,73 @@
 {
   "symbol": "BTC-USD",
-  "timestamp": "2025-09-30T12:30:24.496047",
+  "timestamp": "2025-09-30T13:32:54.034885",
   "panel_observations": 9003,
   "variables": {
     "event_study": {
-      "events_identified": 1334,
-      "event_windows": 1334,
+      "events_identified": 285,
+      "event_windows": 284,
       "data_file": "data/derived/btc_usd/event_study_data.parquet"
     },
-    "granger_causality": {
-      "venues_available": 5,
-      "observations": 7477,
-      "max_lags": 5,
-      "data_file": "data/derived/btc_usd/granger_causality_data.parquet"
+    "environment": {
+      "columns_available": 19,
+      "session_labels": {
+        "Europe": 7201,
+        "US": 1802
+      },
+      "shock_events": {
+        "return_2sigma": 2668.0,
+        "vwap_dev_2sigma": 26375.0,
+        "vwap_reset_jumps": 0
+      },
+      "liquidity_proxies": {
+        "spread_columns": [
+          "spread_binance",
+          "spread_coinbase",
+          "spread_kraken",
+          "spread_okx",
+          "spread_bybit"
+        ],
+        "spread_stats": {
+          "spread_binance": {
+            "mean": 1.250567193629472,
+            "std": 0.4332082317890396
+          },
+          "spread_coinbase": {
+            "mean": 1.232983115765177,
+            "std": 0.6163391630924632
+          },
+          "spread_kraken": {
+            "mean": 1.2516768264552007,
+            "std": 0.43460224970987177
+          },
+          "spread_okx": {
+            "mean": 1.246065065281384,
+            "std": 0.4543455324496161
+          },
+          "spread_bybit": {
+            "mean": 1.2470748352717727,
+            "std": 0.43082650088533886
+          }
+        }
+      }
     },
-    "cointegration": {
-      "venues_available": 5,
-      "observations": 7478,
-      "price_series": [
-        "binance",
-        "coinbase",
-        "kraken",
-        "okx",
-        "bybit"
-      ],
-      "data_file": "data/derived/btc_usd/cointegration_data.parquet"
-    },
-    "markov_switching": {
-      "venues_available": 5,
-      "observations": 7476,
-      "window_size": 60,
-      "data_file": "data/derived/btc_usd/markov_switching_data.parquet"
-    },
-    "svar": {
-      "venues_available": 5,
-      "observations": 7477,
-      "max_lags": 3,
-      "exogenous_vars": [
-        "market_volatility",
-        "market_skewness",
-        "market_kurtosis"
-      ],
-      "data_file": "data/derived/btc_usd/svar_data.parquet"
+    "market_structure": {
+      "columns_available": 9,
+      "bos_events": {
+        "up": 163.0,
+        "down": 102.0
+      },
+      "choch_events": {
+        "up": 0.0,
+        "down": 0.0
+      },
+      "structure_states": {
+        "neutral": 1803
+      },
+      "swing_events": {
+        "high": 253.0,
+        "low": 260.0
+      }
     }
   }
 }
