@@ -14,6 +14,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 import os
 import hashlib
+import argparse
+import fsspec
 
 # Add src to path
 sys.path.append(str(Path(__file__).parent.parent.parent / 'src'))
@@ -25,43 +27,85 @@ from icp_vmm.vmm import VMMAnalyzer
 from icp_vmm.icp import ICPTester
 from icp_vmm.refined_export import RefinedICPVMMExporter
 
-def load_real_data(snapshot_path: str):
-    """Load real data from local snapshot."""
+def load_real_data(snapshot_path: str, use_s3: bool = False):
+    """Load real data from local snapshot or S3."""
     print(f"📂 Loading data from {snapshot_path}")
     
     venue_data = {}
-    snapshot_dir = Path(snapshot_path)
-    
-    # Load tick data for each venue
-    ticks_dir = snapshot_dir / 'ticks'
-    if not ticks_dir.exists():
-        raise FileNotFoundError(f"Ticks directory not found: {ticks_dir}")
-    
     observations = {}
     coverage = {}
     
-    for venue_dir in ticks_dir.iterdir():
-        if venue_dir.is_dir():
-            venue = venue_dir.name
-            parquet_files = list(venue_dir.glob('*.parquet'))
-            if parquet_files:
-                df = pd.read_parquet(parquet_files[0])
-                venue_data[venue] = df
-                observations[venue] = len(df)
-                coverage[venue] = df.notna().mean().mean()
-                print(f"   ✅ {venue}: {len(df)} observations, coverage: {coverage[venue]:.3f}")
-            else:
-                print(f"   ⚠️ {venue}: No parquet files found")
-    
-    # Load overlap metadata
-    overlap_file = snapshot_dir / 'OVERLAP.json'
-    if overlap_file.exists():
-        with open(overlap_file, 'r') as f:
-            overlap_data = json.load(f)
-        print(f"   ✅ OVERLAP.json loaded")
+    if use_s3:
+        # Load from S3
+        print("   🌐 Reading from S3...")
+        
+        # Load overlap metadata from S3
+        try:
+            with fsspec.open(f"{snapshot_path}/OVERLAP.json") as f:
+                overlap_data = json.load(f)
+            print(f"   ✅ OVERLAP.json loaded from S3")
+        except Exception as e:
+            overlap_data = {}
+            print(f"   ⚠️ OVERLAP.json not found in S3: {e}")
+        
+        # Load tick data for each venue from S3
+        try:
+            # List venues by checking S3 paths
+            fs = fsspec.filesystem('s3')
+            ticks_path = f"{snapshot_path}/ticks"
+            venue_dirs = fs.ls(ticks_path)
+            
+            for venue_path in venue_dirs:
+                venue = venue_path.split('/')[-1]
+                if venue == 'ticks':  # Skip the base path
+                    continue
+                    
+                # Look for parquet files in this venue directory
+                parquet_files = fs.glob(f"{venue_path}/*.parquet")
+                if parquet_files:
+                    # Read the first parquet file
+                    df = pd.read_parquet(f"s3://{parquet_files[0]}")
+                    venue_data[venue] = df
+                    observations[venue] = len(df)
+                    coverage[venue] = df.notna().mean().mean()
+                    print(f"   ✅ {venue}: {len(df)} observations, coverage: {coverage[venue]:.3f}")
+                else:
+                    print(f"   ⚠️ {venue}: No parquet files found in S3")
+                    
+        except Exception as e:
+            print(f"   ❌ Error reading from S3: {e}")
+            return {}, {}, {}, {}, {}
     else:
-        overlap_data = {}
-        print(f"   ⚠️ OVERLAP.json not found")
+        # Load from local filesystem
+        snapshot_dir = Path(snapshot_path)
+        
+        # Load tick data for each venue
+        ticks_dir = snapshot_dir / 'ticks'
+        if not ticks_dir.exists():
+            raise FileNotFoundError(f"Ticks directory not found: {ticks_dir}")
+        
+        for venue_dir in ticks_dir.iterdir():
+            if venue_dir.is_dir():
+                venue = venue_dir.name
+                parquet_files = list(venue_dir.glob('*.parquet'))
+                if parquet_files:
+                    df = pd.read_parquet(parquet_files[0])
+                    venue_data[venue] = df
+                    observations[venue] = len(df)
+                    coverage[venue] = df.notna().mean().mean()
+                    print(f"   ✅ {venue}: {len(df)} observations, coverage: {coverage[venue]:.3f}")
+                else:
+                    print(f"   ⚠️ {venue}: No parquet files found")
+        
+        # Load overlap metadata
+        overlap_file = snapshot_dir / 'OVERLAP.json'
+        if overlap_file.exists():
+            with open(overlap_file, 'r') as f:
+                overlap_data = json.load(f)
+            print(f"   ✅ OVERLAP.json loaded")
+        else:
+            overlap_data = {}
+            print(f"   ⚠️ OVERLAP.json not found")
     
     # Create mock continuous metrics (in real implementation, these would be calculated)
     if venue_data:
@@ -81,13 +125,27 @@ def load_real_data(snapshot_path: str):
 
 def main():
     """Run refined ICP-VMM test."""
+    parser = argparse.ArgumentParser(description='Refined ICP-VMM Test')
+    parser.add_argument("--s3", help="s3://bucket/prefix/window base")
+    parser.add_argument("--out", required=True, help="Output directory")
+    args = parser.parse_args()
+    
     print("🚀 Starting Refined ICP-VMM Test")
     print("=" * 60)
     
     try:
+        # Determine data source
+        if args.s3:
+            snapshot_path = args.s3
+            use_s3 = True
+            print(f"🌐 Using S3 data source: {snapshot_path}")
+        else:
+            snapshot_path = "snapshots/btc_window1"
+            use_s3 = False
+            print(f"📁 Using local data source: {snapshot_path}")
+        
         # Load real data
-        snapshot_path = "snapshots/btc_window1"
-        venue_data, continuous_metrics, overlap_data, observations, coverage = load_real_data(snapshot_path)
+        venue_data, continuous_metrics, overlap_data, observations, coverage = load_real_data(snapshot_path, use_s3)
         
         if not venue_data:
             print("❌ No venue data found")
@@ -231,9 +289,16 @@ def main():
         
         # Export refined results
         print("\n📁 Exporting refined results...")
-        output_dir = Path(f"/tmp/icp_vmm_output_{window_id}")
-        s3_inputs = [f"s3://acd-monitor-snapshots/snapshots/BTC-USD/20250928/1000-1030/ticks/{venue}.parquet" 
-                     for venue in venue_data.keys()]
+        output_dir = Path(args.out)
+        output_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Create S3 input paths
+        if use_s3:
+            s3_inputs = [f"{snapshot_path}/ticks/{venue}/part-00000.parquet" 
+                        for venue in venue_data.keys()]
+        else:
+            s3_inputs = [f"s3://acd-monitor-snapshots/snapshots/BTC-USD/20250928/1000-1030/ticks/{venue}.parquet" 
+                         for venue in venue_data.keys()]
         
         export_status = exporter.export_refined_results(
             results, window_id, 'BTC-USD', s3_inputs, str(output_dir)
