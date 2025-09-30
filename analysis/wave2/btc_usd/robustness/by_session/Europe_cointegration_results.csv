@@ -1,0 +1,11 @@
+,score,p_value,cointegrated
+mid_binance_mid_coinbase,-19.921569660632024,0.0,True
+mid_binance_mid_kraken,-13.27306549022137,8.055333795131721e-24,True
+mid_binance_mid_okx,-19.621811473630615,0.0,True
+mid_binance_mid_bybit,-17.6708472396914,2.530918725520007e-29,True
+mid_coinbase_mid_kraken,-5.310187690750617,4.2564446387472756e-05,True
+mid_coinbase_mid_okx,-5.312973990959996,4.203571145808393e-05,True
+mid_coinbase_mid_bybit,-5.310038296415611,4.2592975671121214e-05,True
+mid_kraken_mid_okx,-16.058231687229682,4.3987674687393615e-28,True
+mid_kraken_mid_bybit,-23.39200198491616,0.0,True
+mid_okx_mid_bybit,-12.347762847824148,6.555612577175503e-22,True
