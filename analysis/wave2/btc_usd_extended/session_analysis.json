@@ -1,0 +1,15 @@
+{
+  "total_observations": 63021,
+  "session_distribution": {
+    "Europe": 50407,
+    "US": 12614
+  },
+  "session_percentages": {
+    "Europe": 79.98444962790181,
+    "US": 20.01555037209819
+  },
+  "date_range": {
+    "start": "2025-09-29 10:00:00+00:00",
+    "end": "2025-10-05 14:00:00+00:00"
+  }
+}

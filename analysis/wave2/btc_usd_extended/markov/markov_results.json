@@ -1,0 +1,22 @@
+{
+  "regime_distribution": {
+    "0.0": 20797,
+    "1.0": 21427,
+    "2.0": 20797
+  },
+  "regime_percentages": {
+    "0.0": 33.00011107408641,
+    "1.0": 33.99977785182717,
+    "2.0": 33.00011107408641
+  },
+  "thresholds": {
+    "low": 1.09319502465275,
+    "high": 1.3746810102132354
+  },
+  "observations": 63021,
+  "regime_labels": [
+    "Low Spread",
+    "Medium Spread",
+    "High Spread"
+  ]
+}

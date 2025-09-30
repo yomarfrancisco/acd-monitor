@@ -1,0 +1,27 @@
+{
+  "binance": {
+    "observations": 63021,
+    "coverage_pct": 100.0,
+    "has_data": true
+  },
+  "coinbase": {
+    "observations": 63021,
+    "coverage_pct": 100.0,
+    "has_data": true
+  },
+  "kraken": {
+    "observations": 63021,
+    "coverage_pct": 100.0,
+    "has_data": true
+  },
+  "okx": {
+    "observations": 52346,
+    "coverage_pct": 83.06,
+    "has_data": true
+  },
+  "bybit": {
+    "observations": 63021,
+    "coverage_pct": 100.0,
+    "has_data": true
+  }
+}
