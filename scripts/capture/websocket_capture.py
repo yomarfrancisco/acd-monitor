@@ -93,6 +93,11 @@ class VenueWebSocket:
                     "product_ids": [self.symbol],
                     "channels": ["ticker", "level2"],
                 },
+                "fallback_subscription": {
+                    "type": "subscribe",
+                    "product_ids": [self.symbol],
+                    "channels": ["ticker"],
+                },
                 "symbol_mapping": {"BTC-USD": "BTC-USD", "ETH-USD": "ETH-USD"},
             },
             "kraken": {
@@ -120,8 +125,8 @@ class VenueWebSocket:
                 "subscription": {
                     "op": "subscribe",
                     "args": [
-                        f"tickers.{self.symbol.replace('-', '')}",
-                        f"orderbook.1.{self.symbol.replace('-', '')}",
+                        f"tickers.{{symbol}}",
+                        f"orderbook.1.{{symbol}}",
                     ],
                 },
                 "symbol_mapping": {"BTC-USD": "BTCUSDT", "ETH-USD": "ETHUSDT"},
@@ -139,8 +144,30 @@ class VenueWebSocket:
                 close_timeout=10,
             )
 
-            # Send subscription message
-            await self.connection.send(json.dumps(self.venue_config["subscription"]))
+            # Send subscription message with proper symbol mapping
+            subscription = self.venue_config["subscription"].copy()
+            if "symbol_mapping" in self.venue_config:
+                mapped_symbol = self.venue_config["symbol_mapping"].get(self.symbol, self.symbol)
+                # Replace {symbol} placeholder with mapped symbol
+                for i, arg in enumerate(subscription.get("args", [])):
+                    if isinstance(arg, str) and "{symbol}" in arg:
+                        subscription["args"][i] = arg.replace("{symbol}", mapped_symbol)
+            
+            await self.connection.send(json.dumps(subscription))
+            
+            # For Coinbase, check for subscription errors and try fallback
+            if self.venue == "coinbase":
+                try:
+                    # Wait for response and check for errors
+                    response = await asyncio.wait_for(self.connection.recv(), timeout=5.0)
+                    response_data = json.loads(response)
+                    if response_data.get("type") == "error":
+                        logger.warning(f"Coinbase subscription error: {response_data.get('message')}")
+                        logger.info("Trying Coinbase fallback subscription (ticker only)")
+                        fallback_subscription = self.venue_config["fallback_subscription"].copy()
+                        await self.connection.send(json.dumps(fallback_subscription))
+                except asyncio.TimeoutError:
+                    logger.info("No immediate response from Coinbase, continuing...")
 
             self.coverage_stats["start_time"] = datetime.utcnow()
             logger.info(f"Connected to {self.venue} WebSocket")
