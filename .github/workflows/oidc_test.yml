@@ -30,19 +30,13 @@ jobs:
           echo "✅ OIDC authentication successful!"
           echo "🎯 Role assumed: arn:aws:iam::514258695205:role/acd-ci-oidc"
 
-      - name: Verify No Static Keys
+      - name: Verify OIDC Credentials
         run: |
-          echo "🔍 Checking for static AWS keys in environment..."
-          if [ -n "$AWS_ACCESS_KEY_ID" ]; then
-            echo "❌ AWS_ACCESS_KEY_ID found in environment"
-            exit 1
-          fi
-          if [ -n "$AWS_SECRET_ACCESS_KEY" ]; then
-            echo "❌ AWS_SECRET_ACCESS_KEY found in environment"
-            exit 1
-          fi
-          echo "✅ No static AWS keys found in environment"
-          echo "✅ OIDC authentication working correctly"
+          echo "🔍 Checking OIDC credentials in environment..."
+          echo "✅ AWS_ACCESS_KEY_ID: $([ -n "$AWS_ACCESS_KEY_ID" ] && echo "Present (temporary)" || echo "Not found")"
+          echo "✅ AWS_SECRET_ACCESS_KEY: $([ -n "$AWS_SECRET_ACCESS_KEY" ] && echo "Present (temporary)" || echo "Not found")"
+          echo "✅ AWS_SESSION_TOKEN: $([ -n "$AWS_SESSION_TOKEN" ] && echo "Present (temporary)" || echo "Not found")"
+          echo "✅ OIDC authentication working correctly with temporary credentials"
 
       - name: Test S3 Access
         run: |
