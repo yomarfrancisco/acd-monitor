@@ -1,0 +1,195 @@
+{
+  "n_obs": 14359,
+  "n_venues": 5,
+  "gaussian_copula": {
+    "correlation_matrix": {
+      "u_ret_coinbase": {
+        "u_ret_coinbase": 1.0,
+        "u_ret_okx": 0.00768041983786602,
+        "u_ret_binance": 0.010906374577806282,
+        "u_ret_kraken": 0.006224250174568311,
+        "u_ret_bybit": 0.002013447632672495
+      },
+      "u_ret_okx": {
+        "u_ret_coinbase": 0.00768041983786602,
+        "u_ret_okx": 1.0,
+        "u_ret_binance": 0.0019440294130353489,
+        "u_ret_kraken": 0.001628502831433367,
+        "u_ret_bybit": -0.008775061467960855
+      },
+      "u_ret_binance": {
+        "u_ret_coinbase": 0.010906374577806282,
+        "u_ret_okx": 0.0019440294130353489,
+        "u_ret_binance": 1.0,
+        "u_ret_kraken": -0.009550871839344445,
+        "u_ret_bybit": 0.03223969600538047
+      },
+      "u_ret_kraken": {
+        "u_ret_coinbase": 0.006224250174568311,
+        "u_ret_okx": 0.001628502831433367,
+        "u_ret_binance": -0.009550871839344445,
+        "u_ret_kraken": 1.0,
+        "u_ret_bybit": 0.02895870819924514
+      },
+      "u_ret_bybit": {
+        "u_ret_coinbase": 0.002013447632672495,
+        "u_ret_okx": -0.008775061467960855,
+        "u_ret_binance": 0.03223969600538047,
+        "u_ret_kraken": 0.02895870819924514,
+        "u_ret_bybit": 1.0
+      }
+    },
+    "log_likelihood": -65958.75307505825,
+    "aic": 131937.5061501165,
+    "bic": 132013.22747213944,
+    "n_params": 10
+  },
+  "t_copula": {
+    "correlation_matrix": {
+      "u_ret_coinbase": {
+        "u_ret_coinbase": 1.0,
+        "u_ret_okx": 0.00768041983786602,
+        "u_ret_binance": 0.010906374577806282,
+        "u_ret_kraken": 0.006224250174568311,
+        "u_ret_bybit": 0.002013447632672495
+      },
+      "u_ret_okx": {
+        "u_ret_coinbase": 0.00768041983786602,
+        "u_ret_okx": 1.0,
+        "u_ret_binance": 0.0019440294130353489,
+        "u_ret_kraken": 0.001628502831433367,
+        "u_ret_bybit": -0.008775061467960855
+      },
+      "u_ret_binance": {
+        "u_ret_coinbase": 0.010906374577806282,
+        "u_ret_okx": 0.0019440294130353489,
+        "u_ret_binance": 1.0,
+        "u_ret_kraken": -0.009550871839344445,
+        "u_ret_bybit": 0.03223969600538047
+      },
+      "u_ret_kraken": {
+        "u_ret_coinbase": 0.006224250174568311,
+        "u_ret_okx": 0.001628502831433367,
+        "u_ret_binance": -0.009550871839344445,
+        "u_ret_kraken": 1.0,
+        "u_ret_bybit": 0.02895870819924514
+      },
+      "u_ret_bybit": {
+        "u_ret_coinbase": 0.002013447632672495,
+        "u_ret_okx": -0.008775061467960855,
+        "u_ret_binance": 0.03223969600538047,
+        "u_ret_kraken": 0.02895870819924514,
+        "u_ret_bybit": 1.0
+      }
+    },
+    "degrees_of_freedom": 10,
+    "log_likelihood": -99021.57242535976,
+    "aic": 198065.14485071952,
+    "bic": 198148.43830494475,
+    "n_params": 11
+  },
+  "kendall_tau": {
+    "u_ret_coinbase_u_ret_okx": {
+      "tau": 0.005148070127023561,
+      "p_value": 0.3552777857005909,
+      "significant": false
+    },
+    "u_ret_coinbase_u_ret_binance": {
+      "tau": 0.0072849234413194935,
+      "p_value": 0.19083190974893283,
+      "significant": false
+    },
+    "u_ret_coinbase_u_ret_kraken": {
+      "tau": 0.004173016959076086,
+      "p_value": 0.45367291561610257,
+      "significant": false
+    },
+    "u_ret_coinbase_u_ret_bybit": {
+      "tau": 0.0014156145507960764,
+      "p_value": 0.7993501159054213,
+      "significant": false
+    },
+    "u_ret_okx_u_ret_binance": {
+      "tau": 0.0012850581344452455,
+      "p_value": 0.8175190628605933,
+      "significant": false
+    },
+    "u_ret_okx_u_ret_kraken": {
+      "tau": 0.0010731249640709645,
+      "p_value": 0.8472116917342931,
+      "significant": false
+    },
+    "u_ret_okx_u_ret_bybit": {
+      "tau": -0.005897553717055049,
+      "p_value": 0.2896466805956416,
+      "significant": false
+    },
+    "u_ret_binance_u_ret_kraken": {
+      "tau": -0.00683456338744942,
+      "p_value": 0.21976523396236103,
+      "significant": false
+    },
+    "u_ret_binance_u_ret_bybit": {
+      "tau": 0.02328616117685686,
+      "p_value": 2.9014296697448464e-05,
+      "significant": true
+    },
+    "u_ret_kraken_u_ret_bybit": {
+      "tau": 0.020152219772111145,
+      "p_value": 0.00029660829061228675,
+      "significant": true
+    }
+  },
+  "tail_dependence": {
+    "u_ret_coinbase_u_ret_okx": {
+      "upper_tail": 0.06155950752393981,
+      "lower_tail": 0.07387140902872777,
+      "symmetric": true
+    },
+    "u_ret_coinbase_u_ret_binance": {
+      "upper_tail": 0.060191518467852256,
+      "lower_tail": 0.0506155950752394,
+      "symmetric": true
+    },
+    "u_ret_coinbase_u_ret_kraken": {
+      "upper_tail": 0.060191518467852256,
+      "lower_tail": 0.04103967168262654,
+      "symmetric": true
+    },
+    "u_ret_coinbase_u_ret_bybit": {
+      "upper_tail": 0.046511627906976744,
+      "lower_tail": 0.058823529411764705,
+      "symmetric": true
+    },
+    "u_ret_okx_u_ret_binance": {
+      "upper_tail": 0.07797537619699042,
+      "lower_tail": 0.06839945280437756,
+      "symmetric": true
+    },
+    "u_ret_okx_u_ret_kraken": {
+      "upper_tail": 0.09165526675786594,
+      "lower_tail": 0.08618331053351573,
+      "symmetric": true
+    },
+    "u_ret_okx_u_ret_bybit": {
+      "upper_tail": 0.06976744186046512,
+      "lower_tail": 0.06155950752393981,
+      "symmetric": true
+    },
+    "u_ret_binance_u_ret_kraken": {
+      "upper_tail": 0.15846994535519127,
+      "lower_tail": 0.1713091922005571,
+      "symmetric": true
+    },
+    "u_ret_binance_u_ret_bybit": {
+      "upper_tail": 0.11748633879781421,
+      "lower_tail": 0.12395543175487465,
+      "symmetric": true
+    },
+    "u_ret_kraken_u_ret_bybit": {
+      "upper_tail": 0.10302197802197802,
+      "lower_tail": 0.09439124487004104,
+      "symmetric": true
+    }
+  }
+}
