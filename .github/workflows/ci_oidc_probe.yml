@@ -22,7 +22,7 @@ jobs:
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::ACCOUNT_ID:role/acd-ci-oidc
+          role-to-assume: arn:aws:iam::514258695205:role/acd-ci-oidc
           aws-region: us-east-1
 
       - name: Test STS identity
