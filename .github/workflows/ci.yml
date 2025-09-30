@@ -20,8 +20,17 @@ permissions:
   contents: read
 
 jobs:
+  oidc-permissions-check:
+    name: OIDC Permissions Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check OIDC Permissions
+        run: python3 scripts/ops/check_oidc_permissions.py
+
   detect:
     runs-on: ubuntu-latest
+    needs: oidc-permissions-check
     outputs:
       ui: ${{ steps.filter.outputs.ui }}
       backend: ${{ steps.filter.outputs.backend }}

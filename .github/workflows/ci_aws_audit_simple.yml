@@ -77,7 +77,7 @@ jobs:
           echo "# CI AWS Audit Summary" > "$SUMMARY"
           echo "" >> "$SUMMARY"
           echo "- Commit: \`${{ steps.meta.outputs.shortsha }}\`" >> "$SUMMARY"
-          echo "- Region: \`${{ secrets.AWS_DEFAULT_REGION }}\`" >> "$SUMMARY"
+          echo "- Region: \`us-east-1\`" >> "$SUMMARY"
           echo "- Bucket: \`acd-monitor-snapshots\`" >> "$SUMMARY"
           echo "" >> "$SUMMARY"
           echo "## Artifacts" >> "$SUMMARY"
