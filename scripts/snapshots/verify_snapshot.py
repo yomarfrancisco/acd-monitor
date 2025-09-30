@@ -199,7 +199,12 @@ def verify_clock_skew(
 
 
 def verify_coverage(
-    s3_client, bucket: str, base_key: str, overlap_data: Dict
+    s3_client,
+    bucket: str,
+    base_key: str,
+    overlap_data: Dict,
+    *,
+    allow_missing_coverage_meta: bool,
 ) -> List[str]:
     """Verify data coverage matches OVERLAP.json claims."""
     issues = []
@@ -213,13 +218,13 @@ def verify_coverage(
         s3_client,
         bucket,
         coverage_key,
-        allow_missing=args.allow_missing_coverage_meta,
+        allow_missing=allow_missing_coverage_meta,
         log=logger,
     )
     if coverage_data is not None:
         claimed_coverage = coverage_data
         logger.info(f"Loaded coverage from meta/coverage.json: {claimed_coverage}")
-    elif args.allow_missing_coverage_meta:
+    elif allow_missing_coverage_meta:
         # Missing coverage.json is treated as quality warning, not critical
         issues.append("Missing meta/coverage.json (quality warning)")
 
@@ -419,7 +424,13 @@ def verify_single_window(
 
     if "coverage" in args.report:
         logger.info("Verifying coverage...")
-        coverage_issues = verify_coverage(s3_client, bucket, base_key, overlap_data)
+        coverage_issues = verify_coverage(
+            s3_client,
+            bucket,
+            base_key,
+            overlap_data,
+            allow_missing_coverage_meta=args.allow_missing_coverage_meta,
+        )
         if coverage_issues:
             # Missing parquet/coverage files are quality issues when --warn-on-quality is set
             if args.warn_on_quality:
