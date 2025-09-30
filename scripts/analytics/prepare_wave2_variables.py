@@ -8,6 +8,8 @@ Tests 6-10:
 8. Cointegration & Error Correction Models
 9. Markov Switching Regimes
 10. Variance Decomposition (Structural VAR)
+
+NOTE: index fix only — no change to economic content
 """
 
 import json
@@ -54,12 +56,12 @@ class Wave2VariablePreparer:
         
         print(f"📊 Loaded aligned panel: {len(self.panel_data)} observations")
         
-        # Prepare variables for each test (skip problematic methods for now)
+        # Prepare variables for each test
         self._prepare_event_study_variables()
-        # self._prepare_granger_causality_variables()  # Skip due to index issues
-        # self._prepare_cointegration_variables()      # Skip due to index issues  
-        # self._prepare_markov_switching_variables()   # Skip due to index issues
-        # self._prepare_svar_variables()               # Skip due to index issues
+        self._prepare_granger_causality_variables()
+        self._prepare_cointegration_variables()
+        self._prepare_markov_switching_variables()
+        self._prepare_svar_variables()
         
         # Prepare environment and market structure variables
         self._prepare_environment_variables()
@@ -71,75 +73,6 @@ class Wave2VariablePreparer:
         print(f"✅ Wave-2 variable preparation complete")
         print(f"📁 Results saved to {self.output_dir}")
     
-    def _prepare_environment_variables(self):
-        """Prepare environment and shock variables."""
-        print("\n🌍 Preparing Environment variables...")
-        
-        # Check for environment flags
-        env_columns = [col for col in self.panel_data.columns if any(x in col for x in [
-            'session_label', 'is_session_transition', 'is_ny_open', 'is_vwap_reset_window',
-            'is_return_2sigma_', 'is_vwap_dev_2sigma_', 'spread_'
-        ])]
-        
-        if env_columns:
-            self.variables['environment'] = {
-                'columns_available': len(env_columns),
-                'session_labels': self.panel_data['session_label'].value_counts().to_dict() if 'session_label' in self.panel_data.columns else {},
-                'shock_events': {
-                    'return_2sigma': sum([self.panel_data[col].sum() for col in self.panel_data.columns if 'is_return_2sigma_' in col]),
-                    'vwap_dev_2sigma': sum([self.panel_data[col].sum() for col in self.panel_data.columns if 'is_vwap_dev_2sigma_' in col]),
-                    'vwap_reset_jumps': self.panel_data['is_vwap_reset_jump'].sum() if 'is_vwap_reset_jump' in self.panel_data.columns else 0
-                },
-                'liquidity_proxies': {
-                    'spread_columns': [col for col in self.panel_data.columns if 'spread_' in col],
-                    'spread_stats': {col: {'mean': self.panel_data[col].mean(), 'std': self.panel_data[col].std()} 
-                                   for col in self.panel_data.columns if 'spread_' in col}
-                }
-            }
-            print(f"  ✅ Environment variables prepared")
-            print(f"    Columns: {len(env_columns)}")
-            print(f"    Shock events: {self.variables['environment']['shock_events']}")
-        else:
-            print("  ⚠️ No environment variables found")
-            self.variables['environment'] = {'columns_available': 0}
-    
-    def _prepare_market_structure_variables(self):
-        """Prepare market structure variables."""
-        print("\n🏗️ Preparing Market Structure variables...")
-        
-        # Check for market structure columns
-        structure_columns = [col for col in self.panel_data.columns if any(x in col for x in [
-            'swing_high', 'swing_low', 'bos_up', 'bos_dn', 'choch_up', 'choch_dn', 'structure_state'
-        ])]
-        
-        if structure_columns:
-            # Calculate structure statistics
-            bos_up_count = self.panel_data['bos_up'].sum() if 'bos_up' in self.panel_data.columns else 0
-            bos_dn_count = self.panel_data['bos_dn'].sum() if 'bos_dn' in self.panel_data.columns else 0
-            choch_up_count = self.panel_data['choch_up'].sum() if 'choch_up' in self.panel_data.columns else 0
-            choch_dn_count = self.panel_data['choch_dn'].sum() if 'choch_dn' in self.panel_data.columns else 0
-            
-            # Structure state transitions
-            structure_states = self.panel_data['structure_state'].value_counts().to_dict() if 'structure_state' in self.panel_data.columns else {}
-            
-            self.variables['market_structure'] = {
-                'columns_available': len(structure_columns),
-                'bos_events': {'up': bos_up_count, 'down': bos_dn_count},
-                'choch_events': {'up': choch_up_count, 'down': choch_dn_count},
-                'structure_states': structure_states,
-                'swing_events': {
-                    'high': self.panel_data['swing_high'].sum() if 'swing_high' in self.panel_data.columns else 0,
-                    'low': self.panel_data['swing_low'].sum() if 'swing_low' in self.panel_data.columns else 0
-                }
-            }
-            print(f"  ✅ Market structure variables prepared")
-            print(f"    Columns: {len(structure_columns)}")
-            print(f"    BOS events: {bos_up_count} up, {bos_dn_count} down")
-            print(f"    CHoCH events: {choch_up_count} up, {choch_dn_count} down")
-        else:
-            print("  ⚠️ No market structure variables found")
-            self.variables['market_structure'] = {'columns_available': 0}
-    
     def _load_aligned_panel(self):
         """Load aligned panel data and integrate environment/market structure data."""
         panel_file = f"{self.data_dir}/panel_1s_inner.parquet"
@@ -150,6 +83,13 @@ class Wave2VariablePreparer:
         
         self.panel_data = pd.read_parquet(panel_file)
         print(f"📥 Loaded panel from {panel_file}")
+        
+        # Ensure clean, unique index
+        self.panel_data = self.panel_data.sort_index().loc[~self.panel_data.index.duplicated(keep='last')]
+        if self.panel_data.index.tz is None:
+            self.panel_data.index = self.panel_data.index.tz_localize('UTC')
+        else:
+            self.panel_data.index = self.panel_data.index.tz_convert('UTC')
         
         # Load and integrate environment flags
         self._load_env_flags()
@@ -198,6 +138,336 @@ class Wave2VariablePreparer:
             print(f"  ✅ Market structure integrated")
         else:
             print(f"⚠️ Market structure not found: {market_structure_file}")
+    
+    def _prepare_granger_causality_variables(self):
+        """Test 7: Granger Causality Networks variables."""
+        print("\n🔗 Preparing Granger Causality variables...")
+        
+        # Get aligned returns for all venues
+        venue_returns = {}
+        for venue in self.venues:
+            mid_col = f"{venue}_mid_px"
+            if mid_col in self.panel_data.columns:
+                prices = self.panel_data[mid_col].dropna()
+                if len(prices) > 100:
+                    returns = prices.pct_change().dropna()
+                    if len(returns) > 50:
+                        venue_returns[venue] = returns
+        
+        if len(venue_returns) < 2:
+            print("  ❌ Insufficient venue data for Granger causality")
+            self.variables['granger_causality'] = {'venues_available': 0}
+            return
+        
+        # Align returns to common time index
+        common_idx = None
+        for venue, returns in venue_returns.items():
+            if common_idx is None:
+                common_idx = returns.index
+            else:
+                common_idx = common_idx.intersection(returns.index)
+        
+        if len(common_idx) < 100:
+            print("  ❌ Insufficient common observations")
+            self.variables['granger_causality'] = {'venues_available': 0}
+            return
+        
+        # Create aligned returns matrix with clean index
+        aligned_returns = {}
+        for venue, returns in venue_returns.items():
+            venue_returns_aligned = returns.loc[common_idx]
+            # Ensure unique index
+            venue_returns_aligned = venue_returns_aligned[~venue_returns_aligned.index.duplicated(keep='last')]
+            aligned_returns[venue] = venue_returns_aligned
+        
+        # Create DataFrame with flat column names
+        returns_df = pd.DataFrame(aligned_returns)
+        returns_df.columns = [f"mid_{venue}" for venue in aligned_returns.keys()]
+        returns_df = returns_df.dropna()
+        
+        if len(returns_df) < 100:
+            print("  ❌ Insufficient data after alignment")
+            self.variables['granger_causality'] = {'venues_available': 0}
+            return
+        
+        # Create lagged variables for Granger tests
+        max_lags = 5  # Test up to 5 lags
+        granger_data = returns_df.copy()
+        
+        for venue in returns_df.columns:
+            for lag in range(1, max_lags + 1):
+                granger_data[f"{venue}_lag_{lag}"] = returns_df[venue].shift(lag)
+        
+        # Save Granger causality data
+        granger_data.to_parquet(f"{self.data_dir}/granger_causality_data.parquet")
+        
+        self.variables['granger_causality'] = {
+            'venues_available': len(returns_df.columns),
+            'observations': len(granger_data),
+            'max_lags': max_lags,
+            'data_file': f"{self.data_dir}/granger_causality_data.parquet"
+        }
+        
+        print(f"  ✅ Granger causality variables prepared")
+        print(f"    Venues: {len(returns_df.columns)}")
+        print(f"    Observations: {len(granger_data)}")
+        print(f"    Max lags: {max_lags}")
+    
+    def _prepare_cointegration_variables(self):
+        """Test 8: Cointegration & Error Correction Models variables."""
+        print("\n🔗 Preparing Cointegration variables...")
+        
+        # Get aligned prices for all venues
+        venue_prices = {}
+        for venue in self.venues:
+            mid_col = f"{venue}_mid_px"
+            if mid_col in self.panel_data.columns:
+                prices = self.panel_data[mid_col].dropna()
+                if len(prices) > 100:
+                    venue_prices[venue] = prices
+        
+        if len(venue_prices) < 2:
+            print("  ❌ Insufficient venue data for cointegration")
+            self.variables['cointegration'] = {'venues_available': 0}
+            return
+        
+        # Align prices to common time index
+        common_idx = None
+        for venue, prices in venue_prices.items():
+            if common_idx is None:
+                common_idx = prices.index
+            else:
+                common_idx = common_idx.intersection(prices.index)
+        
+        if len(common_idx) < 100:
+            print("  ❌ Insufficient common observations")
+            self.variables['cointegration'] = {'venues_available': 0}
+            return
+        
+        # Create aligned price matrix
+        aligned_prices = {}
+        for venue, prices in venue_prices.items():
+            venue_prices_aligned = prices.loc[common_idx]
+            # Ensure unique index
+            venue_prices_aligned = venue_prices_aligned[~venue_prices_aligned.index.duplicated(keep='last')]
+            aligned_prices[venue] = venue_prices_aligned
+        
+        prices_df = pd.DataFrame(aligned_prices)
+        prices_df.columns = [f"mid_{venue}" for venue in aligned_prices.keys()]
+        prices_df = prices_df.dropna()
+        
+        if len(prices_df) < 100:
+            print("  ❌ Insufficient data after alignment")
+            self.variables['cointegration'] = {'venues_available': 0}
+            return
+        
+        # Create cointegration variables
+        cointegration_data = prices_df.copy()
+        
+        # Add first differences (for stationarity)
+        for venue in prices_df.columns:
+            cointegration_data[f"{venue}_diff"] = prices_df[venue].diff()
+        
+        # Add error correction terms (price differences)
+        for i, venue1 in enumerate(prices_df.columns):
+            for venue2 in prices_df.columns[i+1:]:
+                cointegration_data[f"ec_{venue1}_{venue2}"] = prices_df[venue1] - prices_df[venue2]
+        
+        # Save cointegration data
+        cointegration_data.to_parquet(f"{self.data_dir}/cointegration_data.parquet")
+        
+        self.variables['cointegration'] = {
+            'venues_available': len(prices_df.columns),
+            'observations': len(cointegration_data),
+            'price_series': list(prices_df.columns),
+            'data_file': f"{self.data_dir}/cointegration_data.parquet"
+        }
+        
+        print(f"  ✅ Cointegration variables prepared")
+        print(f"    Venues: {len(prices_df.columns)}")
+        print(f"    Observations: {len(cointegration_data)}")
+    
+    def _prepare_markov_switching_variables(self):
+        """Test 9: Markov Switching Regimes variables."""
+        print("\n🔄 Preparing Markov Switching variables...")
+        
+        # Get aligned spreads and returns for all venues
+        venue_data = {}
+        for venue in self.venues:
+            mid_col = f"{venue}_mid_px"
+            spread_col = f"{venue}_spread"
+            
+            if mid_col in self.panel_data.columns and spread_col in self.panel_data.columns:
+                prices = self.panel_data[mid_col].dropna()
+                spreads = self.panel_data[spread_col].dropna()
+                
+                if len(prices) > 100 and len(spreads) > 100:
+                    returns = prices.pct_change().dropna()
+                    if len(returns) > 50:
+                        venue_data[venue] = {
+                            'returns': returns,
+                            'spreads': spreads,
+                            'prices': prices
+                        }
+        
+        if len(venue_data) < 2:
+            print("  ❌ Insufficient venue data for Markov switching")
+            self.variables['markov_switching'] = {'venues_available': 0}
+            return
+        
+        # Align all series to common time index
+        common_idx = None
+        for venue, data in venue_data.items():
+            venue_idx = data['returns'].index.intersection(data['spreads'].index)
+            if common_idx is None:
+                common_idx = venue_idx
+            else:
+                common_idx = common_idx.intersection(venue_idx)
+        
+        if len(common_idx) < 100:
+            print("  ❌ Insufficient common observations")
+            self.variables['markov_switching'] = {'venues_available': 0}
+            return
+        
+        # Create aligned data matrix
+        markov_data = pd.DataFrame(index=common_idx)
+        
+        for venue, data in venue_data.items():
+            aligned_returns = data['returns'].loc[common_idx]
+            aligned_spreads = data['spreads'].loc[common_idx]
+            
+            # Ensure unique index
+            aligned_returns = aligned_returns[~aligned_returns.index.duplicated(keep='last')]
+            aligned_spreads = aligned_spreads[~aligned_spreads.index.duplicated(keep='last')]
+            
+            markov_data[f"{venue}_returns"] = aligned_returns
+            markov_data[f"{venue}_spreads"] = aligned_spreads
+            markov_data[f"{venue}_spread_changes"] = aligned_spreads.pct_change()
+        
+        markov_data = markov_data.dropna()
+        
+        if len(markov_data) < 100:
+            print("  ❌ Insufficient data after alignment")
+            self.variables['markov_switching'] = {'venues_available': 0}
+            return
+        
+        # Add regime indicators (rolling statistics)
+        window_size = 60  # 1-minute windows
+        for venue in venue_data.keys():
+            returns_col = f"{venue}_returns"
+            spreads_col = f"{venue}_spreads"
+            
+            if returns_col in markov_data.columns and spreads_col in markov_data.columns:
+                # Rolling volatility
+                markov_data[f"{venue}_volatility"] = markov_data[returns_col].rolling(window_size).std()
+                
+                # Rolling spread volatility
+                markov_data[f"{venue}_spread_volatility"] = markov_data[f"{venue}_spread_changes"].rolling(window_size).std()
+                
+                # Rolling correlation between returns and spread changes
+                markov_data[f"{venue}_return_spread_corr"] = markov_data[returns_col].rolling(window_size).corr(markov_data[f"{venue}_spread_changes"])
+        
+        # Save Markov switching data
+        markov_data.to_parquet(f"{self.data_dir}/markov_switching_data.parquet")
+        
+        self.variables['markov_switching'] = {
+            'venues_available': len(venue_data),
+            'observations': len(markov_data),
+            'window_size': window_size,
+            'data_file': f"{self.data_dir}/markov_switching_data.parquet"
+        }
+        
+        print(f"  ✅ Markov switching variables prepared")
+        print(f"    Venues: {len(venue_data)}")
+        print(f"    Observations: {len(markov_data)}")
+        print(f"    Window size: {window_size}")
+    
+    def _prepare_svar_variables(self):
+        """Test 10: Variance Decomposition (Structural VAR) variables."""
+        print("\n📊 Preparing SVAR variables...")
+        
+        # Get aligned returns for all venues
+        venue_returns = {}
+        for venue in self.venues:
+            mid_col = f"{venue}_mid_px"
+            if mid_col in self.panel_data.columns:
+                prices = self.panel_data[mid_col].dropna()
+                if len(prices) > 100:
+                    returns = prices.pct_change().dropna()
+                    if len(returns) > 50:
+                        venue_returns[venue] = returns
+        
+        if len(venue_returns) < 3:
+            print("  ❌ Need at least 3 venues for SVAR")
+            self.variables['svar'] = {'venues_available': 0}
+            return
+        
+        # Align returns to common time index
+        common_idx = None
+        for venue, returns in venue_returns.items():
+            if common_idx is None:
+                common_idx = returns.index
+            else:
+                common_idx = common_idx.intersection(returns.index)
+        
+        if len(common_idx) < 100:
+            print("  ❌ Insufficient common observations")
+            self.variables['svar'] = {'venues_available': 0}
+            return
+        
+        # Create aligned returns matrix
+        aligned_returns = {}
+        for venue, returns in venue_returns.items():
+            venue_returns_aligned = returns.loc[common_idx]
+            # Ensure unique index
+            venue_returns_aligned = venue_returns_aligned[~venue_returns_aligned.index.duplicated(keep='last')]
+            aligned_returns[venue] = venue_returns_aligned
+        
+        # Create DataFrame with flat column names
+        returns_df = pd.DataFrame(aligned_returns)
+        returns_df.columns = [f"mid_{venue}" for venue in aligned_returns.keys()]
+        returns_df = returns_df.dropna()
+        
+        if len(returns_df) < 100:
+            print("  ❌ Insufficient data after alignment")
+            self.variables['svar'] = {'venues_available': 0}
+            return
+        
+        # Create SVAR variables
+        svar_data = returns_df.copy()
+        
+        # Add exogenous variables (market-wide indicators)
+        svar_data['market_volatility'] = returns_df.std(axis=1)
+        svar_data['market_skewness'] = returns_df.skew(axis=1)
+        svar_data['market_kurtosis'] = returns_df.kurtosis(axis=1)
+        
+        # Add lagged variables
+        max_lags = 3
+        for venue in returns_df.columns:
+            for lag in range(1, max_lags + 1):
+                svar_data[f"{venue}_lag_{lag}"] = returns_df[venue].shift(lag)
+        
+        # Add cross-venue indicators
+        for venue in returns_df.columns:
+            other_venues = [v for v in returns_df.columns if v != venue]
+            svar_data[f"{venue}_others_mean"] = returns_df[other_venues].mean(axis=1)
+            svar_data[f"{venue}_others_std"] = returns_df[other_venues].std(axis=1)
+        
+        # Save SVAR data
+        svar_data.to_parquet(f"{self.data_dir}/svar_data.parquet")
+        
+        self.variables['svar'] = {
+            'venues_available': len(returns_df.columns),
+            'observations': len(svar_data),
+            'max_lags': max_lags,
+            'exogenous_vars': ['market_volatility', 'market_skewness', 'market_kurtosis'],
+            'data_file': f"{self.data_dir}/svar_data.parquet"
+        }
+        
+        print(f"  ✅ SVAR variables prepared")
+        print(f"    Venues: {len(returns_df.columns)}")
+        print(f"    Observations: {len(svar_data)}")
+        print(f"    Max lags: {max_lags}")
     
     def _prepare_event_study_variables(self):
         """Test 6: Event Studies on Exogenous Shocks variables."""
@@ -316,325 +586,74 @@ class Wave2VariablePreparer:
         
         return window_data
     
-    def _prepare_granger_causality_variables(self):
-        """Test 7: Granger Causality Networks variables."""
-        print("\n🔗 Preparing Granger Causality variables...")
+    def _prepare_environment_variables(self):
+        """Prepare environment and shock variables."""
+        print("\n🌍 Preparing Environment variables...")
         
-        # Get aligned returns for all venues
-        venue_returns = {}
-        for venue in self.venues:
-            mid_col = f"{venue}_mid_px"
-            if mid_col in self.panel_data.columns:
-                prices = self.panel_data[mid_col].dropna()
-                if len(prices) > 100:
-                    returns = prices.pct_change().dropna()
-                    if len(returns) > 50:
-                        venue_returns[venue] = returns
+        # Check for environment flags
+        env_columns = [col for col in self.panel_data.columns if any(x in col for x in [
+            'session_label', 'is_session_transition', 'is_ny_open', 'is_vwap_reset_window',
+            'is_return_2sigma_', 'is_vwap_dev_2sigma_', 'spread_'
+        ])]
         
-        if len(venue_returns) < 2:
-            print("  ❌ Insufficient venue data for Granger causality")
-            self.variables['granger_causality'] = {'venues_available': 0}
-            return
-        
-        # Align returns to common time index
-        common_idx = None
-        for venue, returns in venue_returns.items():
-            if common_idx is None:
-                common_idx = returns.index
-            else:
-                common_idx = common_idx.intersection(returns.index)
-        
-        if len(common_idx) < 100:
-            print("  ❌ Insufficient common observations")
-            self.variables['granger_causality'] = {'venues_available': 0}
-            return
-        
-        # Create aligned returns matrix
-        aligned_returns = {}
-        for venue, returns in venue_returns.items():
-            aligned_returns[venue] = returns.loc[common_idx]
-        
-        # Ensure unique index before creating DataFrame
-        for venue in aligned_returns:
-            aligned_returns[venue] = aligned_returns[venue].drop_duplicates()
-        
-        returns_df = pd.DataFrame(aligned_returns)
-        returns_df = returns_df.dropna()
-        
-        if len(returns_df) < 100:
-            print("  ❌ Insufficient data after alignment")
-            self.variables['granger_causality'] = {'venues_available': 0}
-            return
-        
-        # Create lagged variables for Granger tests
-        max_lags = 5  # Test up to 5 lags
-        granger_data = returns_df.copy()
-        
-        for venue in returns_df.columns:
-            for lag in range(1, max_lags + 1):
-                granger_data[f"{venue}_lag_{lag}"] = returns_df[venue].shift(lag)
-        
-        # Save Granger causality data
-        granger_data.to_parquet(f"{self.data_dir}/granger_causality_data.parquet")
-        
-        self.variables['granger_causality'] = {
-            'venues_available': len(returns_df.columns),
-            'observations': len(granger_data),
-            'max_lags': max_lags,
-            'data_file': f"{self.data_dir}/granger_causality_data.parquet"
-        }
-        
-        print(f"  ✅ Granger causality variables prepared")
-        print(f"    Venues: {len(returns_df.columns)}")
-        print(f"    Observations: {len(granger_data)}")
-        print(f"    Max lags: {max_lags}")
+        if env_columns:
+            self.variables['environment'] = {
+                'columns_available': len(env_columns),
+                'session_labels': self.panel_data['session_label'].value_counts().to_dict() if 'session_label' in self.panel_data.columns else {},
+                'shock_events': {
+                    'return_2sigma': sum([self.panel_data[col].sum() for col in self.panel_data.columns if 'is_return_2sigma_' in col]),
+                    'vwap_dev_2sigma': sum([self.panel_data[col].sum() for col in self.panel_data.columns if 'is_vwap_dev_2sigma_' in col]),
+                    'vwap_reset_jumps': self.panel_data['is_vwap_reset_jump'].sum() if 'is_vwap_reset_jump' in self.panel_data.columns else 0
+                },
+                'liquidity_proxies': {
+                    'spread_columns': [col for col in self.panel_data.columns if 'spread_' in col],
+                    'spread_stats': {col: {'mean': self.panel_data[col].mean(), 'std': self.panel_data[col].std()} 
+                                   for col in self.panel_data.columns if 'spread_' in col}
+                }
+            }
+            print(f"  ✅ Environment variables prepared")
+            print(f"    Columns: {len(env_columns)}")
+            print(f"    Shock events: {self.variables['environment']['shock_events']}")
+        else:
+            print("  ⚠️ No environment variables found")
+            self.variables['environment'] = {'columns_available': 0}
     
-    def _prepare_cointegration_variables(self):
-        """Test 8: Cointegration & Error Correction Models variables."""
-        print("\n🔗 Preparing Cointegration variables...")
+    def _prepare_market_structure_variables(self):
+        """Prepare market structure variables."""
+        print("\n🏗️ Preparing Market Structure variables...")
         
-        # Get aligned prices for all venues
-        venue_prices = {}
-        for venue in self.venues:
-            mid_col = f"{venue}_mid_px"
-            if mid_col in self.panel_data.columns:
-                prices = self.panel_data[mid_col].dropna()
-                if len(prices) > 100:
-                    venue_prices[venue] = prices
+        # Check for market structure columns
+        structure_columns = [col for col in self.panel_data.columns if any(x in col for x in [
+            'swing_high', 'swing_low', 'bos_up', 'bos_dn', 'choch_up', 'choch_dn', 'structure_state'
+        ])]
         
-        if len(venue_prices) < 2:
-            print("  ❌ Insufficient venue data for cointegration")
-            self.variables['cointegration'] = {'venues_available': 0}
-            return
-        
-        # Align prices to common time index
-        common_idx = None
-        for venue, prices in venue_prices.items():
-            if common_idx is None:
-                common_idx = prices.index
-            else:
-                common_idx = common_idx.intersection(prices.index)
-        
-        if len(common_idx) < 100:
-            print("  ❌ Insufficient common observations")
-            self.variables['cointegration'] = {'venues_available': 0}
-            return
-        
-        # Create aligned price matrix
-        aligned_prices = {}
-        for venue, prices in venue_prices.items():
-            aligned_prices[venue] = prices.loc[common_idx]
-        
-        prices_df = pd.DataFrame(aligned_prices)
-        prices_df = prices_df.dropna()
-        
-        if len(prices_df) < 100:
-            print("  ❌ Insufficient data after alignment")
-            self.variables['cointegration'] = {'venues_available': 0}
-            return
-        
-        # Create cointegration variables
-        cointegration_data = prices_df.copy()
-        
-        # Add first differences (for stationarity)
-        for venue in prices_df.columns:
-            cointegration_data[f"{venue}_diff"] = prices_df[venue].diff()
-        
-        # Add error correction terms (price differences)
-        for i, venue1 in enumerate(prices_df.columns):
-            for venue2 in prices_df.columns[i+1:]:
-                cointegration_data[f"ec_{venue1}_{venue2}"] = prices_df[venue1] - prices_df[venue2]
-        
-        # Save cointegration data
-        cointegration_data.to_parquet(f"{self.data_dir}/cointegration_data.parquet")
-        
-        self.variables['cointegration'] = {
-            'venues_available': len(prices_df.columns),
-            'observations': len(cointegration_data),
-            'price_series': list(prices_df.columns),
-            'data_file': f"{self.data_dir}/cointegration_data.parquet"
-        }
-        
-        print(f"  ✅ Cointegration variables prepared")
-        print(f"    Venues: {len(prices_df.columns)}")
-        print(f"    Observations: {len(cointegration_data)}")
-    
-    def _prepare_markov_switching_variables(self):
-        """Test 9: Markov Switching Regimes variables."""
-        print("\n🔄 Preparing Markov Switching variables...")
-        
-        # Get aligned spreads and returns for all venues
-        venue_data = {}
-        for venue in self.venues:
-            mid_col = f"{venue}_mid_px"
-            spread_col = f"{venue}_spread"
+        if structure_columns:
+            # Calculate structure statistics
+            bos_up_count = self.panel_data['bos_up'].sum() if 'bos_up' in self.panel_data.columns else 0
+            bos_dn_count = self.panel_data['bos_dn'].sum() if 'bos_dn' in self.panel_data.columns else 0
+            choch_up_count = self.panel_data['choch_up'].sum() if 'choch_up' in self.panel_data.columns else 0
+            choch_dn_count = self.panel_data['choch_dn'].sum() if 'choch_dn' in self.panel_data.columns else 0
             
-            if mid_col in self.panel_data.columns and spread_col in self.panel_data.columns:
-                prices = self.panel_data[mid_col].dropna()
-                spreads = self.panel_data[spread_col].dropna()
-                
-                if len(prices) > 100 and len(spreads) > 100:
-                    returns = prices.pct_change().dropna()
-                    if len(returns) > 50:
-                        venue_data[venue] = {
-                            'returns': returns,
-                            'spreads': spreads,
-                            'prices': prices
-                        }
-        
-        if len(venue_data) < 2:
-            print("  ❌ Insufficient venue data for Markov switching")
-            self.variables['markov_switching'] = {'venues_available': 0}
-            return
-        
-        # Align all series to common time index
-        common_idx = None
-        for venue, data in venue_data.items():
-            venue_idx = data['returns'].index.intersection(data['spreads'].index)
-            if common_idx is None:
-                common_idx = venue_idx
-            else:
-                common_idx = common_idx.intersection(venue_idx)
-        
-        if len(common_idx) < 100:
-            print("  ❌ Insufficient common observations")
-            self.variables['markov_switching'] = {'venues_available': 0}
-            return
-        
-        # Create aligned data matrix
-        markov_data = pd.DataFrame(index=common_idx)
-        
-        for venue, data in venue_data.items():
-            aligned_returns = data['returns'].loc[common_idx]
-            aligned_spreads = data['spreads'].loc[common_idx]
+            # Structure state transitions
+            structure_states = self.panel_data['structure_state'].value_counts().to_dict() if 'structure_state' in self.panel_data.columns else {}
             
-            markov_data[f"{venue}_returns"] = aligned_returns
-            markov_data[f"{venue}_spreads"] = aligned_spreads
-            markov_data[f"{venue}_spread_changes"] = aligned_spreads.pct_change()
-        
-        markov_data = markov_data.dropna()
-        
-        if len(markov_data) < 100:
-            print("  ❌ Insufficient data after alignment")
-            self.variables['markov_switching'] = {'venues_available': 0}
-            return
-        
-        # Add regime indicators (rolling statistics)
-        window_size = 60  # 1-minute windows
-        for venue in venue_data.keys():
-            returns_col = f"{venue}_returns"
-            spreads_col = f"{venue}_spreads"
-            
-            if returns_col in markov_data.columns and spreads_col in markov_data.columns:
-                # Rolling volatility
-                markov_data[f"{venue}_volatility"] = markov_data[returns_col].rolling(window_size).std()
-                
-                # Rolling spread volatility
-                markov_data[f"{venue}_spread_volatility"] = markov_data[f"{venue}_spread_changes"].rolling(window_size).std()
-                
-                # Rolling correlation between returns and spread changes
-                markov_data[f"{venue}_return_spread_corr"] = markov_data[returns_col].rolling(window_size).corr(markov_data[f"{venue}_spread_changes"])
-        
-        # Save Markov switching data
-        markov_data.to_parquet(f"{self.data_dir}/markov_switching_data.parquet")
-        
-        self.variables['markov_switching'] = {
-            'venues_available': len(venue_data),
-            'observations': len(markov_data),
-            'window_size': window_size,
-            'data_file': f"{self.data_dir}/markov_switching_data.parquet"
-        }
-        
-        print(f"  ✅ Markov switching variables prepared")
-        print(f"    Venues: {len(venue_data)}")
-        print(f"    Observations: {len(markov_data)}")
-        print(f"    Window size: {window_size}")
-    
-    def _prepare_svar_variables(self):
-        """Test 10: Variance Decomposition (Structural VAR) variables."""
-        print("\n📊 Preparing SVAR variables...")
-        
-        # Get aligned returns for all venues
-        venue_returns = {}
-        for venue in self.venues:
-            mid_col = f"{venue}_mid_px"
-            if mid_col in self.panel_data.columns:
-                prices = self.panel_data[mid_col].dropna()
-                if len(prices) > 100:
-                    returns = prices.pct_change().dropna()
-                    if len(returns) > 50:
-                        venue_returns[venue] = returns
-        
-        if len(venue_returns) < 3:
-            print("  ❌ Need at least 3 venues for SVAR")
-            self.variables['svar'] = {'venues_available': 0}
-            return
-        
-        # Align returns to common time index
-        common_idx = None
-        for venue, returns in venue_returns.items():
-            if common_idx is None:
-                common_idx = returns.index
-            else:
-                common_idx = common_idx.intersection(returns.index)
-        
-        if len(common_idx) < 100:
-            print("  ❌ Insufficient common observations")
-            self.variables['svar'] = {'venues_available': 0}
-            return
-        
-        # Create aligned returns matrix
-        aligned_returns = {}
-        for venue, returns in venue_returns.items():
-            aligned_returns[venue] = returns.loc[common_idx]
-        
-        # Ensure unique index before creating DataFrame
-        for venue in aligned_returns:
-            aligned_returns[venue] = aligned_returns[venue].drop_duplicates()
-        
-        returns_df = pd.DataFrame(aligned_returns)
-        returns_df = returns_df.dropna()
-        
-        if len(returns_df) < 100:
-            print("  ❌ Insufficient data after alignment")
-            self.variables['svar'] = {'venues_available': 0}
-            return
-        
-        # Create SVAR variables
-        svar_data = returns_df.copy()
-        
-        # Add exogenous variables (market-wide indicators)
-        svar_data['market_volatility'] = returns_df.std(axis=1)
-        svar_data['market_skewness'] = returns_df.skew(axis=1)
-        svar_data['market_kurtosis'] = returns_df.kurtosis(axis=1)
-        
-        # Add lagged variables
-        max_lags = 3
-        for venue in returns_df.columns:
-            for lag in range(1, max_lags + 1):
-                svar_data[f"{venue}_lag_{lag}"] = returns_df[venue].shift(lag)
-        
-        # Add cross-venue indicators
-        for venue in returns_df.columns:
-            other_venues = [v for v in returns_df.columns if v != venue]
-            svar_data[f"{venue}_others_mean"] = returns_df[other_venues].mean(axis=1)
-            svar_data[f"{venue}_others_std"] = returns_df[other_venues].std(axis=1)
-        
-        # Save SVAR data
-        svar_data.to_parquet(f"{self.data_dir}/svar_data.parquet")
-        
-        self.variables['svar'] = {
-            'venues_available': len(returns_df.columns),
-            'observations': len(svar_data),
-            'max_lags': max_lags,
-            'exogenous_vars': ['market_volatility', 'market_skewness', 'market_kurtosis'],
-            'data_file': f"{self.data_dir}/svar_data.parquet"
-        }
-        
-        print(f"  ✅ SVAR variables prepared")
-        print(f"    Venues: {len(returns_df.columns)}")
-        print(f"    Observations: {len(svar_data)}")
-        print(f"    Max lags: {max_lags}")
+            self.variables['market_structure'] = {
+                'columns_available': len(structure_columns),
+                'bos_events': {'up': bos_up_count, 'down': bos_dn_count},
+                'choch_events': {'up': choch_up_count, 'down': choch_dn_count},
+                'structure_states': structure_states,
+                'swing_events': {
+                    'high': self.panel_data['swing_high'].sum() if 'swing_high' in self.panel_data.columns else 0,
+                    'low': self.panel_data['swing_low'].sum() if 'swing_low' in self.panel_data.columns else 0
+                }
+            }
+            print(f"  ✅ Market structure variables prepared")
+            print(f"    Columns: {len(structure_columns)}")
+            print(f"    BOS events: {bos_up_count} up, {bos_dn_count} down")
+            print(f"    CHoCH events: {choch_up_count} up, {choch_dn_count} down")
+        else:
+            print("  ⚠️ No market structure variables found")
+            self.variables['market_structure'] = {'columns_available': 0}
     
     def _save_variables(self):
         """Save all prepared variables."""

@@ -3,7 +3,7 @@
 ## Overview
 Successfully prepared variables for Wave-2 econometric deepening tests.
 
-**Analysis Date**: 2025-09-30 13:32:54 UTC
+**Analysis Date**: 2025-09-30 13:56:49 UTC
 **Symbol**: BTC-USD
 **Panel Observations**: 9003
 
@@ -15,25 +15,25 @@ Successfully prepared variables for Wave-2 econometric deepening tests.
 - **Data File**: data/derived/btc_usd/event_study_data.parquet
 
 ### 7. Granger Causality Networks
-- **Venues Available**: 0
-- **Observations**: 0
-- **Max Lags**: 0
+- **Venues Available**: 5
+- **Observations**: 1498
+- **Max Lags**: 5
 
 ### 8. Cointegration & Error Correction Models
-- **Venues Available**: 0
-- **Observations**: 0
-- **Price Series**: []
+- **Venues Available**: 5
+- **Observations**: 1499
+- **Price Series**: ['mid_binance', 'mid_coinbase', 'mid_kraken', 'mid_okx', 'mid_bybit']
 
 ### 9. Markov Switching Regimes
-- **Venues Available**: 0
-- **Observations**: 0
-- **Window Size**: 0
+- **Venues Available**: 5
+- **Observations**: 1497
+- **Window Size**: 60
 
 ### 10. Variance Decomposition (Structural VAR)
-- **Venues Available**: 0
-- **Observations**: 0
-- **Max Lags**: 0
-- **Exogenous Variables**: []
+- **Venues Available**: 5
+- **Observations**: 1498
+- **Max Lags**: 3
+- **Exogenous Variables**: ['market_volatility', 'market_skewness', 'market_kurtosis']
 
 ## Data Files Generated
 - `data/derived/btc_usd/event_study_data.parquet` - Event study data

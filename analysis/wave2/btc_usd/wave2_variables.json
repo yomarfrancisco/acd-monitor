@@ -1,12 +1,47 @@
 {
   "symbol": "BTC-USD",
-  "timestamp": "2025-09-30T13:32:54.034885",
+  "timestamp": "2025-09-30T13:56:49.691088",
   "panel_observations": 9003,
   "variables": {
     "event_study": {
       "events_identified": 285,
       "event_windows": 284,
       "data_file": "data/derived/btc_usd/event_study_data.parquet"
+    },
+    "granger_causality": {
+      "venues_available": 5,
+      "observations": 1498,
+      "max_lags": 5,
+      "data_file": "data/derived/btc_usd/granger_causality_data.parquet"
+    },
+    "cointegration": {
+      "venues_available": 5,
+      "observations": 1499,
+      "price_series": [
+        "mid_binance",
+        "mid_coinbase",
+        "mid_kraken",
+        "mid_okx",
+        "mid_bybit"
+      ],
+      "data_file": "data/derived/btc_usd/cointegration_data.parquet"
+    },
+    "markov_switching": {
+      "venues_available": 5,
+      "observations": 1497,
+      "window_size": 60,
+      "data_file": "data/derived/btc_usd/markov_switching_data.parquet"
+    },
+    "svar": {
+      "venues_available": 5,
+      "observations": 1498,
+      "max_lags": 3,
+      "exogenous_vars": [
+        "market_volatility",
+        "market_skewness",
+        "market_kurtosis"
+      ],
+      "data_file": "data/derived/btc_usd/svar_data.parquet"
     },
     "environment": {
       "columns_available": 19,
