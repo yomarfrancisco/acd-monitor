@@ -34,12 +34,15 @@ env:
 
 jobs:
   capture-windows-diagnostic:
-    # 10-minute timeout for 5-minute capture + writes
-    timeout-minutes: 10
-
     runs-on: ubuntu-latest
+    timeout-minutes: 15   # ← cushion above ~6 min/symbol
 
-    # Only run on main branch
+    strategy:
+      fail-fast: false
+      matrix:
+        symbol: ${{ fromJson(format('["{0}"]', join(split(github.event.inputs.symbols, ','), '","'))) }}
+        # converts "BTC-USD,ETH-USD" → ["BTC-USD","ETH-USD"]
+
     if: ${{ github.ref == 'refs/heads/main' }}
     
     steps:
@@ -70,92 +73,70 @@ jobs:
           aws sts get-caller-identity
           aws s3 ls s3://${{ env.ACD_S3_BUCKET }}/${{ env.ACD_S3_PREFIX }}/ || echo "Bucket empty or doesn't exist yet"
       
-      - name: Diagnostic 5-minute capture
+      - name: Diagnostic 5-minute capture (${{ matrix.symbol }})
         run: |
           set -euxo pipefail
-          
-          # Calculate 5-minute diagnostic window
           CURRENT_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-          # start = floor to prior minute to avoid future start
-          START_EPOCH=$(date -u +%s)
-          START_EPOCH=$(( START_EPOCH - (START_EPOCH % 60) ))         # floor to minute
-          WINDOW_START=$(date -u -d "@${START_EPOCH}" +"%Y-%m-%dT%H:%M:%SZ")
-          WINDOW_END=$(date -u -d "@$((START_EPOCH + 300))" +"%Y-%m-%dT%H:%M:%SZ")   # +300s = 5m
-          
-          echo "Diagnostic window: ${WINDOW_START} → ${WINDOW_END}"
-          
-          # Set up log capture
-          LOG="${{ runner.temp }}/capture.log"
-          : > "$LOG"
-          echo "Starting diagnostic capture and tee-ing logs to $LOG"
-          
-          # Capture each symbol
-          IFS=',' read -ra SYMBOLS <<< "${{ github.event.inputs.symbols }}"
-          for symbol in "${SYMBOLS[@]}"; do
-            echo "=== DIAGNOSTIC CAPTURE: $symbol ==="
-            python scripts/capture/capture_window_enhanced.py \
-              --symbol "$symbol" \
-              --start "$WINDOW_START" \
-              --end "$WINDOW_END" \
-              --venues "${{ github.event.inputs.venues }}" \
-              --bucket "${{ env.ACD_S3_BUCKET }}" \
-              --prefix "${{ env.ACD_S3_PREFIX }}" \
-              --canary \
-              --verbose | tee -a "$LOG"
-            echo "=== COMPLETED: $symbol ==="
-          done
-      
-      - name: Verify diagnostic completion
-        run: |
-          set -euo pipefail
-          LOG="${{ runner.temp }}/capture.log"
-          echo "🔍 Checking diagnostic markers in $LOG"
-          grep -q "S3_WRITE_COMPLETE" "$LOG" && echo "::notice title=Marker Found::S3_WRITE_COMPLETE"
-          grep -q "CAPTURE_COMPLETE" "$LOG" && echo "::notice title=Marker Found::CAPTURE_COMPLETE"
-          grep -q "WINDOW_CAPTURE_COMPLETE" "$LOG" && echo "::notice title=Marker Found::WINDOW_CAPTURE_COMPLETE"
-
-          # Fail clearly if any are missing
-          for m in S3_WRITE_COMPLETE CAPTURE_COMPLETE WINDOW_CAPTURE_COMPLETE; do
-            if ! grep -q "$m" "$LOG"; then
-              echo "::error title=Missing Marker::$m not found in logs"
-              exit 1
-            fi
-          done
-      
-      - name: Verify S3 diagnostic output
-        run: |
-          set -euo pipefail
-          # Calculate the same window as the capture step
           START_EPOCH=$(date -u +%s)
           START_EPOCH=$(( START_EPOCH - (START_EPOCH % 60) ))
           WINDOW_START=$(date -u -d "@${START_EPOCH}" +"%Y-%m-%dT%H:%M:%SZ")
           WINDOW_END=$(date -u -d "@$((START_EPOCH + 300))" +"%Y-%m-%dT%H:%M:%SZ")
-          
-          DATE_UTC=$(date -u +%Y%m%d)
-          START_HM=$(date -u -d "$WINDOW_START" +%H%M)
-          END_HM=$(date -u -d "$WINDOW_END" +%H%M)
-          PREFIX="snapshots/BTC-USD/$DATE_UTC/${START_HM}-${END_HM}"
-          echo "🔍 Checking s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/"
-          aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/" || (echo "::error::S3 window folder missing" && exit 1)
+
+          echo "Diagnostic window: ${WINDOW_START} → ${WINDOW_END}"
+
+          LOG="${{ runner.temp }}/capture_${{ matrix.symbol }}.log"
+          : > "$LOG"
+
+          python scripts/capture/capture_window_enhanced.py \
+            --symbol "${{ matrix.symbol }}" \
+            --start "$WINDOW_START" \
+            --end "$WINDOW_END" \
+            --venues "${{ github.event.inputs.venues }}" \
+            --bucket "${{ env.ACD_S3_BUCKET }}" \
+            --prefix "${{ env.ACD_S3_PREFIX }}" \
+            --canary \
+            --verbose | tee -a "$LOG"
       
-      - name: Upload diagnostic logs
+      - name: Verify diagnostic completion (${{ matrix.symbol }})
+        run: |
+          set -euo pipefail
+          LOG="${{ runner.temp }}/capture_${{ matrix.symbol }}.log"
+          echo "🔍 Checking diagnostic markers in $LOG"
+          for m in S3_WRITE_COMPLETE CAPTURE_COMPLETE WINDOW_CAPTURE_COMPLETE; do
+            if ! grep -q "$m" "$LOG"; then
+              echo "::error title=Missing Marker::$m not found in logs for ${{ matrix.symbol }}"
+              exit 1
+            fi
+          done
+          echo "::notice title=Markers OK::${{ matrix.symbol }}"
+      
+      - name: Verify S3 diagnostic output (${{ matrix.symbol }})
+        run: |
+          set -euo pipefail
+          DATE_UTC=$(date -u +%Y%m%d)
+          START_EPOCH=$(date -u +%s); START_EPOCH=$(( START_EPOCH - (START_EPOCH % 60) ))
+          START_HM=$(date -u -d "@${START_EPOCH}" +%H%M)
+          END_HM=$(date -u -d "@$((START_EPOCH + 300))" +%H%M)
+          PREFIX="${{ env.ACD_S3_PREFIX }}/${{ matrix.symbol }}/$DATE_UTC/${START_HM}-${END_HM}"
+          echo "🔍 Checking s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/"
+          aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/" || (echo "::error::S3 window folder missing for ${{ matrix.symbol }}" && exit 1)
+      
+      - name: Upload diagnostic logs (${{ matrix.symbol }})
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: diagnostic-capture-logs-${{ github.run_id }}
-          path: |
-            **/logs/**
-            **/reports/**
+          name: diagnostic-capture-logs-${{ github.run_id }}-${{ matrix.symbol }}
+          path: ${{ runner.temp }}/capture_${{ matrix.symbol }}.log
           retention-days: 3
       
-      - name: Diagnostic summary
+      - name: Diagnostic summary (${{ matrix.symbol }})
         if: always()
         run: |
           echo "=== DIAGNOSTIC SUMMARY ==="
           echo "Workflow: ${{ github.workflow }}"
           echo "Run ID: ${{ github.run_id }}"
           echo "Run Number: ${{ github.run_number }}"
-          echo "Symbols: ${{ github.event.inputs.symbols }}"
+          echo "Symbol: ${{ matrix.symbol }}"
           echo "Venues: ${{ github.event.inputs.venues }}"
           echo "Canary Mode: ${{ github.event.inputs.canary }}"
           echo "Status: ${{ job.status }}"
