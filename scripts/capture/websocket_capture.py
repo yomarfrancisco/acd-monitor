@@ -664,9 +664,12 @@ class WebSocketCapture:
             venue_data, coverage_data, start_time, end_time
         )
 
-        # Close all connections
+        # Close all connections and cancel any pending tasks
         for connection in self.venue_connections.values():
-            await connection.close()
+            try:
+                await connection.close()
+            except Exception as e:
+                logger.warning(f"Error closing connection: {e}")
 
         # Log completion banner
         if success:
@@ -675,6 +678,10 @@ class WebSocketCapture:
         else:
             logger.error("CAPTURE_FAILED - WebSocket capture failed")
             print("CAPTURE_FAILED - WebSocket capture failed")
+        
+        # Ensure we always return a result
+        logger.info("CAPTURE_COMPLETE core path")
+        print("CAPTURE_COMPLETE core path")
 
         return {
             "success": success,

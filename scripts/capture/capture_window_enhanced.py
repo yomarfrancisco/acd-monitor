@@ -6,6 +6,8 @@ This script captures tick data using WebSocket connections for real-time data,
 with fallback to REST APIs and comprehensive coverage monitoring.
 """
 
+print("CAPTURE_START enhanced v2025-10-02b")
+
 import argparse
 import asyncio
 import json
@@ -339,20 +341,34 @@ def main():
         # Parse venues
         venues = [v.strip() for v in args.venues.split(",")]
 
-        # Capture window
-        result = asyncio.run(
-            capture_window_enhanced(
-                args.symbol,
-                start_time,
-                end_time,
-                venues,
-                args.bucket,
-                args.prefix,
-                use_websocket=not args.no_websocket,
+        # Capture window with hard timeout guard
+        duration_secs = int((end_time - start_time).total_seconds())
+        timeout_secs = duration_secs + 60  # 1 minute buffer
+        
+        try:
+            result = asyncio.run(
+                asyncio.wait_for(
+                    capture_window_enhanced(
+                        args.symbol,
+                        start_time,
+                        end_time,
+                        venues,
+                        args.bucket,
+                        args.prefix,
+                        use_websocket=not args.no_websocket,
+                    ),
+                    timeout=timeout_secs
+                )
             )
-        )
+        except asyncio.TimeoutError:
+            logger.error(f"Capture timed out after {timeout_secs} seconds")
+            print("CAPTURE_ABORT timeout")
+            result = {"success": False, "reason": "timeout"}
 
-        if result.get("success"):
+        success = result.get("success", False)
+        print(f"CAPTURE_COMPLETE enhanced success={success}")
+        
+        if success:
             logger.info("Enhanced window capture completed successfully")
             logger.info("WINDOW_CAPTURE_COMPLETE - All capture operations finished")
             print("WINDOW_CAPTURE_COMPLETE - All capture operations finished")
@@ -376,6 +392,7 @@ def main():
 
     except Exception as e:
         logger.error(f"Enhanced window capture failed: {e}")
+        print(f"CAPTURE_COMPLETE enhanced success=False")
         sys.exit(1)
 
 

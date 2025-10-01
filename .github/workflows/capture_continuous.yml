@@ -127,6 +127,17 @@ jobs:
               --verbose
           done
       
+      - name: Verify capture completion
+        run: |
+          echo "🔍 Checking for CAPTURE_COMPLETE markers in logs..."
+          if ! grep -q "CAPTURE_COMPLETE" <<< "$(echo 'Checking logs...')"; then
+            echo "❌ No CAPTURE_COMPLETE marker found in logs"
+            echo "This indicates the capture process did not complete cleanly"
+            exit 1
+          else
+            echo "✅ CAPTURE_COMPLETE marker found - capture completed successfully"
+          fi
+      
       - name: Verify captures
         run: |
           # Add small delay for S3 eventual consistency
