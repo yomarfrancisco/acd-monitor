@@ -70,6 +70,9 @@ class Wave2VariablePreparer:
         # Save all variables
         self._save_variables()
         
+        # Create environment flags summary
+        self._create_env_flags_summary()
+        
         print(f"✅ Wave-2 variable preparation complete")
         print(f"📁 Results saved to {self.output_dir}")
     
@@ -105,14 +108,31 @@ class Wave2VariablePreparer:
             env_flags = pd.read_parquet(env_flags_file)
             print(f"📥 Loaded environment flags from {env_flags_file}")
             
+            # Convert timestamp column for merging
+            if 'timestamp' in env_flags.columns:
+                env_flags['timestamp'] = pd.to_datetime(env_flags['timestamp'], utc=True)
+                env_flags = env_flags.set_index('timestamp')
+            elif 'ts' in env_flags.columns:
+                env_flags['ts'] = pd.to_datetime(env_flags['ts'], utc=True)
+                env_flags = env_flags.set_index('ts')
+            
             # Merge environment flags with panel data
             self.panel_data = self.panel_data.merge(
                 env_flags, 
                 left_index=True, 
-                right_on='ts', 
+                right_index=True, 
                 how='left'
             )
             print(f"  ✅ Environment flags integrated")
+            
+            # Log detected environment columns
+            env_columns = [col for col in env_flags.columns if any(
+                keyword in col.lower() for keyword in [
+                    'session', 'transition', 'ny_open', 'sigma', 'vwap', 'coverage'
+                ]
+            )]
+            if env_columns:
+                print(f"  📊 Detected environment columns: {env_columns}")
         else:
             print(f"⚠️ Environment flags not found: {env_flags_file}")
     
@@ -723,6 +743,61 @@ All variables prepared and ready for econometric deepening tests.
         
         with open(f'{self.output_dir}/wave2_preparation_summary.md', 'w') as f:
             f.write(report)
+    
+    def _create_env_flags_summary(self):
+        """Create summary of environment flags integration."""
+        if self.panel_data is None:
+            return
+        
+        # Identify environment flag columns
+        env_columns = [col for col in self.panel_data.columns if any(
+            keyword in col.lower() for keyword in [
+                'session', 'transition', 'ny_open', 'sigma', 'vwap', 'coverage'
+            ]
+        )]
+        
+        if not env_columns:
+            return
+        
+        # Create summary statistics
+        summary = {
+            "timestamp": datetime.now().isoformat(),
+            "symbol": self.symbol,
+            "env_columns_detected": env_columns,
+            "total_observations": len(self.panel_data),
+            "env_flags_stats": {}
+        }
+        
+        # Calculate statistics for each environment flag
+        for col in env_columns:
+            if col in self.panel_data.columns:
+                non_null_pct = (self.panel_data[col].notna().sum() / len(self.panel_data)) * 100
+                summary["env_flags_stats"][col] = {
+                    "non_null_percentage": non_null_pct,
+                    "unique_values": self.panel_data[col].nunique(),
+                    "data_type": str(self.panel_data[col].dtype)
+                }
+        
+        # Session-specific statistics
+        if 'session_label' in self.panel_data.columns:
+            session_counts = self.panel_data['session_label'].value_counts()
+            summary["session_distribution"] = session_counts.to_dict()
+        
+        # Shock counts
+        shock_columns = [col for col in env_columns if '2sigma' in col.lower()]
+        for col in shock_columns:
+            if col in self.panel_data.columns:
+                shock_count = self.panel_data[col].sum() if self.panel_data[col].dtype in ['int64', 'bool'] else 0
+                summary["env_flags_stats"][col]["shock_count"] = int(shock_count)
+        
+        # Save summary
+        summary_file = f"{self.output_dir}/_checks/summary.json"
+        os.makedirs(os.path.dirname(summary_file), exist_ok=True)
+        
+        with open(summary_file, 'w') as f:
+            json.dump(summary, f, indent=2)
+        
+        print(f"  📊 Environment flags summary: {len(env_columns)} columns detected")
 
 def main():
     """Main function to prepare Wave-2 variables for both symbols."""
