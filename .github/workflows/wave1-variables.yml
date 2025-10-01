@@ -1,0 +1,331 @@
+name: Wave-1 Variables Computation
+
+on:
+  workflow_dispatch:
+    inputs:
+      date:
+        description: 'Date to compute Wave-1 variables (YYYYMMDD format)'
+        required: true
+        default: '20251001'
+  push:
+    branches: [main]
+    paths:
+      - 'analytics/wave1/**'
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
+  ACD_S3_BUCKET: acd-monitor-snapshots
+
+jobs:
+  wave1-computation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas pyarrow boto3 numpy scikit-learn
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::514258695205:role/acd-ci-oidc
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Sanity check AWS connectivity
+        run: |
+          aws sts get-caller-identity
+          aws s3 ls s3://${{ env.ACD_S3_BUCKET }}/canonical/ || echo "Canonical prefix empty or doesn't exist yet"
+      
+      - name: Set computation date
+        id: computation_date
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "date=${{ github.event.inputs.date }}" >> $GITHUB_OUTPUT
+          else
+            echo "date=20251001" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Run Wave-1 computation
+        run: |
+          set -euo pipefail
+          echo "🔍 Computing Wave-1 variables for ${{ steps.computation_date.outputs.date }}"
+          python analytics/wave1/compute_wave1.py --date ${{ steps.computation_date.outputs.date }}
+      
+      - name: Validate outputs exist
+        run: |
+          set -euo pipefail
+          echo "🔍 Validating Wave-1 outputs..."
+          
+          DATE="${{ steps.computation_date.outputs.date }}"
+          PREFIX="analysis/$DATE/wave1"
+          
+          # Check if manifest exists
+          if ! aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/_checks/manifest.json" >/dev/null 2>&1; then
+            echo "❌ Manifest not found"
+            exit 1
+          fi
+          
+          # Check BTC outputs
+          for artifact in variance_ratios autocorr xcorr pca rolling; do
+            if ! aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/btc_usd/$artifact.parquet" >/dev/null 2>&1; then
+              echo "❌ BTC $artifact not found"
+              exit 1
+            fi
+          done
+          
+          # Check ETH outputs
+          for artifact in variance_ratios autocorr xcorr pca rolling; do
+            if ! aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/eth_usd/$artifact.parquet" >/dev/null 2>&1; then
+              echo "❌ ETH $artifact not found"
+              exit 1
+            fi
+          done
+          
+          echo "✅ All Wave-1 outputs found"
+      
+      - name: Validate row counts
+        run: |
+          set -euo pipefail
+          echo "🔍 Validating row counts..."
+          
+          DATE="${{ steps.computation_date.outputs.date }}"
+          PREFIX="analysis/$DATE/wave1"
+          
+          # Download and validate manifest
+          aws s3 cp "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/_checks/manifest.json" manifest.json
+          
+          # Check row counts for each artifact
+          python3 -c "
+          import json
+          with open('manifest.json', 'r') as f:
+              manifest = json.load(f)
+          
+          for symbol, artifacts in manifest['artifacts'].items():
+              for artifact_name, artifact_info in artifacts.items():
+                  rows = artifact_info['rows']
+                  if rows == 0:
+                      print(f'❌ {symbol} {artifact_name} has 0 rows')
+                      exit(1)
+                  print(f'✅ {symbol} {artifact_name}: {rows} rows')
+          
+          print('✅ All artifacts have non-zero row counts')
+          "
+      
+      - name: Validate data quality
+        run: |
+          set -euo pipefail
+          echo "🔍 Validating data quality..."
+          
+          DATE="${{ steps.computation_date.outputs.date }}"
+          PREFIX="analysis/$DATE/wave1"
+          
+          # Download and validate key artifacts
+          for symbol in btc_usd eth_usd; do
+            for artifact in variance_ratios autocorr xcorr pca rolling; do
+              echo "Validating $symbol/$artifact..."
+              
+              # Download artifact
+              aws s3 cp "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/$symbol/$artifact.parquet" "$artifact.parquet"
+              
+              # Validate with Python
+              python3 -c "
+          import pandas as pd
+          import numpy as np
+          
+          df = pd.read_parquet('$artifact.parquet')
+          print(f'  Rows: {len(df)}, Columns: {len(df.columns)}')
+          
+          # Check for required columns
+          required_cols = ['symbol', 'venue']
+          for col in required_cols:
+              if col not in df.columns:
+                  print(f'❌ Missing required column: {col}')
+                  exit(1)
+          
+          # Check for null values in key columns
+          if 'ts_exchange_ms' in df.columns:
+              null_ts = df['ts_exchange_ms'].isnull().sum()
+              if null_ts > 0:
+                  print(f'❌ Found {null_ts} null timestamps')
+                  exit(1)
+          
+          if 'last_px' in df.columns:
+              null_px = df['last_px'].isnull().sum()
+              if null_px > 0:
+                  print(f'❌ Found {null_px} null prices')
+                  exit(1)
+          
+          # Check price sanity
+          if 'last_px' in df.columns:
+              min_px = df['last_px'].min()
+              max_px = df['last_px'].max()
+              if min_px < 0:
+                  print(f'❌ Negative prices found: min={min_px}')
+                  exit(1)
+              if max_px > 1000000:  # Sanity check for extreme values
+                  print(f'❌ Extreme prices found: max={max_px}')
+                  exit(1)
+          
+          print(f'  ✅ Data quality checks passed')
+          "
+              
+              # Clean up
+              rm -f "$artifact.parquet"
+            done
+          done
+          
+          echo "✅ All data quality checks passed"
+      
+      - name: Validate uniqueness
+        run: |
+          set -euo pipefail
+          echo "🔍 Validating uniqueness constraints..."
+          
+          DATE="${{ steps.computation_date.outputs.date }}"
+          PREFIX="analysis/$DATE/wave1"
+          
+          # Check uniqueness for time-aligned frames
+          for symbol in btc_usd eth_usd; do
+            echo "Checking uniqueness for $symbol..."
+            
+            # Download key artifacts
+            aws s3 cp "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/$symbol/variance_ratios.parquet" "variance_ratios.parquet"
+            aws s3 cp "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/$symbol/autocorr.parquet" "autocorr.parquet"
+            
+            python3 -c "
+          import pandas as pd
+          
+          # Check variance_ratios uniqueness
+          df_vr = pd.read_parquet('variance_ratios.parquet')
+          if 'venue' in df_vr.columns:
+              unique_venues = df_vr['venue'].nunique()
+              total_rows = len(df_vr)
+              if unique_venues != total_rows:
+                  print(f'❌ Duplicate venues in variance_ratios: {unique_venues} unique, {total_rows} total')
+                  exit(1)
+              print(f'  ✅ variance_ratios: {unique_venues} unique venues')
+          
+          # Check autocorr uniqueness
+          df_ac = pd.read_parquet('autocorr.parquet')
+          if 'venue' in df_ac.columns:
+              unique_venues = df_ac['venue'].nunique()
+              total_rows = len(df_ac)
+              if unique_venues != total_rows:
+                  print(f'❌ Duplicate venues in autocorr: {unique_venues} unique, {total_rows} total')
+                  exit(1)
+              print(f'  ✅ autocorr: {unique_venues} unique venues')
+          "
+            
+            # Clean up
+            rm -f "variance_ratios.parquet" "autocorr.parquet"
+          done
+          
+          echo "✅ All uniqueness checks passed"
+      
+      - name: Validate PCA explained variance
+        run: |
+          set -euo pipefail
+          echo "🔍 Validating PCA explained variance..."
+          
+          DATE="${{ steps.computation_date.outputs.date }}"
+          PREFIX="analysis/$DATE/wave1"
+          
+          for symbol in btc_usd eth_usd; do
+            echo "Checking PCA for $symbol..."
+            
+            aws s3 cp "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/$symbol/pca.parquet" "pca.parquet"
+            
+            python3 -c "
+          import pandas as pd
+          import numpy as np
+          
+          df = pd.read_parquet('pca.parquet')
+          if len(df) > 0 and 'explained_variance_ratio' in df.columns:
+              # Get top 3 components
+              top3_ratios = df['explained_variance_ratio'].nlargest(3).values
+              print(f'  Top 3 explained variance ratios: {top3_ratios}')
+              
+              # Check if ratios are reasonable
+              if np.any(top3_ratios > 1.0) or np.any(top3_ratios < 0.0):
+                  print(f'❌ Invalid explained variance ratios: {top3_ratios}')
+                  exit(1)
+              
+              # Check if first component is dominant (potential coordination)
+              if len(top3_ratios) > 0 and top3_ratios[0] > 0.8:
+                  print(f'⚠️ High first component dominance: {top3_ratios[0]:.3f}')
+              else:
+                  print(f'✅ Balanced PCA components')
+          else:
+              print(f'  No PCA data available for $symbol')
+          "
+            
+            rm -f "pca.parquet"
+          done
+          
+          echo "✅ PCA validation completed"
+      
+      - name: Upload validation artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wave1-validation-artifacts-${{ github.run_id }}
+          path: |
+            manifest.json
+            *.parquet
+          retention-days: 7
+      
+      - name: Final validation summary
+        run: |
+          set -euo pipefail
+          echo "🔍 Final validation summary..."
+          
+          DATE="${{ steps.computation_date.outputs.date }}"
+          PREFIX="analysis/$DATE/wave1"
+          
+          # Download manifest for final summary
+          aws s3 cp "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/_checks/manifest.json" manifest.json
+          
+          python3 -c "
+          import json
+          with open('manifest.json', 'r') as f:
+              manifest = json.load(f)
+          
+          print('📊 Wave-1 Variables Summary:')
+          print(f'  Date: {manifest[\"date\"]}')
+          print(f'  Symbols: {manifest[\"symbols\"]}')
+          print(f'  Stage: {manifest[\"stage\"]}')
+          
+          total_artifacts = 0
+          for symbol, artifacts in manifest['artifacts'].items():
+              print(f'  {symbol}:')
+              for artifact_name, artifact_info in artifacts.items():
+                  rows = artifact_info['rows']
+                  venues = artifact_info.get('venues', [])
+                  print(f'    {artifact_name}: {rows} rows, venues: {venues}')
+                  total_artifacts += 1
+          
+          print(f'  Total artifacts: {total_artifacts}')
+          print('✅ Wave-1 computation and validation completed successfully')
+          "
+      
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "❌ Wave-1 computation failed for ${{ steps.computation_date.outputs.date }}"
+          echo "Check artifacts for detailed validation results"
