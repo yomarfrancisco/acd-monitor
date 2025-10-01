@@ -71,60 +71,29 @@ jobs:
       - name: DIAGNOSTIC: List S3 contents after computation
         run: |
           set -euxo pipefail
-          echo "🔍 DIAGNOSTIC: Listing S3 contents at s3://${{ env.ACD_S3_BUCKET }}/${{ env.WAVE1_PREFIX }}/ --recursive"
-          aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/${{ env.WAVE1_PREFIX }}/" --recursive || echo "S3 path not found or empty."
-          echo "🔍 DIAGNOSTIC: S3 listing complete."
-      
+          echo "🔎 DIAG: Listing s3://${{ env.ACD_S3_BUCKET }}/${{ env.WAVE1_PREFIX }}/ (recursive)"
+          aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/${{ env.WAVE1_PREFIX }}/" --recursive || echo "DIAG: path not found or empty"
+
       - name: DIAGNOSTIC: Check canonical data availability
         run: |
           set -euxo pipefail
-          echo "🔍 DIAGNOSTIC: Checking canonical data for 2025-10-01..."
-          python3 -c "
-          import boto3
-          import time
-          
+          python - <<'PY'
+          import boto3, time, json
           athena = boto3.client('athena')
-          
-          # Check BTC data
-          btc_query = \"SELECT count(*) as btc_count FROM acd_derived.btc_ticks_enriched_v5 WHERE vdate_ymd = '20251001'\"
-          btc_result = athena.start_query_execution(QueryString=btc_query, WorkGroup='primary')
-          btc_id = btc_result['QueryExecutionId']
-          print(f'BTC query started: {btc_id}')
-          
-          # Check ETH data  
-          eth_query = \"SELECT count(*) as eth_count FROM acd_derived.eth_ticks_enriched_v5 WHERE vdate_ymd = '20251001'\"
-          eth_result = athena.start_query_execution(QueryString=eth_query, WorkGroup='primary')
-          eth_id = eth_result['QueryExecutionId']
-          print(f'ETH query started: {eth_id}')
-          
-          # Wait for BTC query
-          while True:
-              status = athena.get_query_execution(QueryExecutionId=btc_id)['QueryExecution']['Status']
-              if status['State'] in ['SUCCEEDED', 'FAILED', 'CANCELLED']:
-                  break
-              time.sleep(2)
-          
-          if status['State'] == 'SUCCEEDED':
-              result = athena.get_query_results(QueryExecutionId=btc_id)
-              btc_count = result['ResultSet']['Rows'][1]['Data'][0]['VarCharValue']
-              print(f'BTC-USD records for 20251001: {btc_count}')
-          else:
-              print(f'BTC query failed: {status}')
-          
-          # Wait for ETH query
-          while True:
-              status = athena.get_query_execution(QueryExecutionId=eth_id)['QueryExecution']['Status']
-              if status['State'] in ['SUCCEEDED', 'FAILED', 'CANCELLED']:
-                  break
-              time.sleep(2)
-          
-          if status['State'] == 'SUCCEEDED':
-              result = athena.get_query_results(QueryExecutionId=eth_id)
-              eth_count = result['ResultSet']['Rows'][1]['Data'][0]['VarCharValue']
-              print(f'ETH-USD records for 20251001: {eth_count}')
-          else:
-              print(f'ETH query failed: {status}')
-          "
+          wg = 'primary'
+          q1 = "SELECT count(*) FROM acd_derived.btc_ticks_enriched_v5 WHERE vdate_ymd='20251001'"
+          q2 = "SELECT count(*) FROM acd_derived.eth_ticks_enriched_v5 WHERE vdate_ymd='20251001'"
+          def run(q):
+              qid = athena.start_query_execution(QueryString=q, WorkGroup=wg)['QueryExecutionId']
+              while True:
+                  s = athena.get_query_execution(QueryExecutionId=qid)['QueryExecution']['Status']['State']
+                  if s in ('SUCCEEDED','FAILED','CANCELLED'): break
+                  time.sleep(1)
+              if s != 'SUCCEEDED': raise SystemExit(f"Athena query failed: {s}")
+              out = athena.get_query_results(QueryExecutionId=qid)
+              return int(out['ResultSet']['Rows'][1]['Data'][0]['VarCharValue'])
+          print(json.dumps({"btc_rows": run(q1), "eth_rows": run(q2)}))
+          PY
       
       - name: Validate outputs exist
         run: |
