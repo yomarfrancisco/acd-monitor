@@ -14,6 +14,11 @@ on:
         description: 'Venues to capture (comma-separated)'
         required: false
         default: 'binance,coinbase,kraken,okx,bybit'
+      canary_mode:
+        description: 'Enable canary mode (writes to ticks_canary/)'
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   id-token: write
@@ -28,6 +33,8 @@ env:
   AWS_REGION: us-east-1
   ACD_S3_BUCKET: acd-monitor-snapshots
   ACD_S3_PREFIX: snapshots
+  BTC_CANARY_ENABLED: false
+  BTC_SANITY_MIN_2025: "80000"
 
 jobs:
   capture-windows:
@@ -77,11 +84,19 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "symbols=${{ github.event.inputs.symbols }}" >> $GITHUB_OUTPUT
             echo "venues=${{ github.event.inputs.venues }}" >> $GITHUB_OUTPUT
+            echo "canary_mode=${{ github.event.inputs.canary_mode }}" >> $GITHUB_OUTPUT
           else
             echo "symbols=BTC-USD,ETH-USD" >> $GITHUB_OUTPUT
             echo "venues=binance,coinbase,kraken,okx,bybit" >> $GITHUB_OUTPUT
+            echo "canary_mode=false" >> $GITHUB_OUTPUT
           fi
       
+      - name: Workflow guards
+        run: |
+          echo "==== HEAD COMMIT ====" && git rev-parse HEAD
+          echo "==== Grep parser version banner ===="
+          grep -n 'CAPTURE_PARSER_VERSION' scripts/capture/websocket_capture.py || true
+
       - name: Capture windows
         run: |
           set -euxo pipefail
@@ -97,6 +112,10 @@ jobs:
           IFS=',' read -ra SYMBOLS <<< "${{ steps.capture_params.outputs.symbols }}"
           for symbol in "${SYMBOLS[@]}"; do
             echo "Capturing $symbol"
+            CANARY_FLAG=""
+            if [ "${{ steps.capture_params.outputs.canary_mode }}" = "true" ]; then
+              CANARY_FLAG="--canary"
+            fi
             python scripts/capture/capture_window_enhanced.py \
               --symbol "$symbol" \
               --start "$WINDOW_START" \
@@ -104,6 +123,7 @@ jobs:
               --venues "${{ steps.capture_params.outputs.venues }}" \
               --bucket "${{ env.ACD_S3_BUCKET }}" \
               --prefix "${{ env.ACD_S3_PREFIX }}" \
+              $CANARY_FLAG \
               --verbose
           done
       

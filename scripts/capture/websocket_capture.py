@@ -46,6 +46,9 @@ class PandasJSONEncoder(json.JSONEncoder):
 
 logger = logging.getLogger(__name__)
 
+# Version banner for GHA logs
+print("CAPTURE_PARSER_VERSION=v2025-10-01c")  # visible in GHA logs
+
 
 def setup_logging(verbose: bool = False):
     """Setup logging configuration."""
@@ -68,8 +71,17 @@ class VenueWebSocket:
             "connection_drops": 0,
             "start_time": None,
             "end_time": None,
+            "parsed_ok": 0,
+            "parsed_err": 0,
         }
         self.venue_config = self._get_venue_config()
+
+    def _log_one_sample(self, venue: str, msg):
+        """Log first raw payload sample per venue for debugging."""
+        key = f"_sample_logged_{venue}"
+        if not getattr(self, key, False):
+            print(f"SAMPLE_RAW_{venue}={str(msg)[:500]}")
+            setattr(self, key, True)
 
     def _get_venue_config(self) -> Dict:
         """Get WebSocket configuration for venue."""
@@ -214,6 +226,9 @@ class VenueWebSocket:
             self.coverage_stats["messages_received"] += 1
             self.coverage_stats["last_message_time"] = timestamp
 
+            # Log first sample per venue for debugging
+            self._log_one_sample(self.venue, data)
+
             # Parse message based on venue
             tick_data = self._parse_venue_message(data)
             if tick_data:
@@ -221,6 +236,12 @@ class VenueWebSocket:
                 if self._is_duplicate(tick_data):
                     return
                 self.ring_buffer.append(tick_data)
+                self.coverage_stats["parsed_ok"] += 1
+            else:
+                self.coverage_stats["parsed_err"] += 1
+                # Log parsing failure with truncated sample
+                sample = str(data)[:100] + "..." if len(str(data)) > 100 else str(data)
+                logger.warning(f"Failed to parse {self.venue} message: {sample}")
 
         except Exception as e:
             logger.error(f"Error processing message from {self.venue}: {e}")
@@ -241,16 +262,48 @@ class VenueWebSocket:
     def _parse_venue_message(self, data: Dict) -> Optional[Dict]:
         """Parse venue-specific message format."""
         try:
+            # Import new venue parsers
+            from writer.parsers.venues import parse_bybit, parse_kraken
+            
             if self.venue == "binance":
                 return self._parse_binance_message(data)
             elif self.venue == "coinbase":
                 return self._parse_coinbase_message(data)
             elif self.venue == "kraken":
-                return self._parse_kraken_message(data)
+                # Use new Kraken parser for array format
+                result = parse_kraken(data)
+                if result:
+                    # Convert to expected format
+                    return {
+                        "ts_exchange": result["ts_exchange"],
+                        "last_px": result["last_px"],
+                        "trade_sz": result["trade_sz"],
+                        "best_bid": result["best_bid"],
+                        "best_ask": result["best_ask"],
+                        "bid_sz": result["bid_sz"],
+                        "ask_sz": result["ask_sz"],
+                        "venue_id": result["venue"],
+                        "symbol_alias": result.get("symbol_alias")
+                    }
+                return None
             elif self.venue == "okx":
                 return self._parse_okx_message(data)
             elif self.venue == "bybit":
-                return self._parse_bybit_message(data)
+                # Use new Bybit parser
+                result = parse_bybit(data)
+                if result:
+                    # Convert to expected format
+                    return {
+                        "ts_exchange": result["ts_exchange"],
+                        "last_px": result["last_px"],
+                        "trade_sz": result["trade_sz"],
+                        "best_bid": result["best_bid"],
+                        "best_ask": result["best_ask"],
+                        "bid_sz": result["bid_sz"],
+                        "ask_sz": result["ask_sz"],
+                        "venue_id": result["venue"]
+                    }
+                return None
         except Exception as e:
             logger.error(f"Error parsing {self.venue} message: {e}")
         return None
@@ -288,68 +341,37 @@ class VenueWebSocket:
             }
         return None
 
-    def _parse_kraken_message(self, data: Dict) -> Optional[Dict]:
-        """Parse Kraken WebSocket message with robust timestamp handling."""
-        try:
-            # Import KrakenTimestamp normalizer
-            from kraken_timestamp import KrakenTimestamp
+    def _parse_kraken_message(self, data) -> dict | None:
+        def _f(x):
+            try: return float(x)
+            except Exception: return None
 
-            # Check if Kraken timestamp flexibility is enabled
-            if not KrakenTimestamp.is_enabled():
-                # Fallback to original parsing
-                if isinstance(data, list) and len(data) > 1:
-                    return {
-                        "ts_exchange": pd.to_datetime(data[2], unit="s"),
-                        "last_px": float(data[0]),
-                        "last_sz": float(data[1]),
-                        "venue_id": self.venue,
-                    }
-                return None
-
-            # Enhanced parsing with format detection
-            if isinstance(data, list) and len(data) > 1:
-                # Handle nested array format (data[1] contains the actual payload)
-                if len(data) > 1 and isinstance(data[1], list) and len(data[1]) > 2:
-                    # Nested format: data[1] is the trade array
-                    trade_data = data[1]
-                    price = float(trade_data[0]) if isinstance(trade_data[0], (int, float, str)) and trade_data[0] else 0
-                    volume = float(trade_data[1]) if isinstance(trade_data[1], (int, float, str)) and trade_data[1] else 0
-                    timestamp = KrakenTimestamp.normalize(trade_data[2])
-                else:
-                    # Standard format: data is the trade array
-                    if len(data) > 2:
-                        # Check if data[0] and data[1] are not lists
-                        if isinstance(data[0], list) or isinstance(data[1], list):
-                            logger.warning(f"Kraken message contains lists where numbers expected: {data}")
-                            return None
-                        price = float(data[0]) if data[0] else 0
-                        volume = float(data[1]) if data[1] else 0
-                        timestamp = KrakenTimestamp.normalize(data[2])
-                    else:
-                        return None
-
-                # Validate parsed data
-                if timestamp is None:
-                    logger.warning(
-                        f"[KRAKEN:TS_PARSE_FAIL] raw_timestamp={data[2] if len(data) > 2 else 'N/A'}"
-                    )
-                    return None
-
-                if price <= 0 or volume <= 0:
-                    return None
-
-                return {
-                    "ts_exchange": timestamp,
-                    "last_px": price,
-                    "last_sz": volume,
-                    "venue_id": self.venue,
-                }
-
+        # Format: [channelId, [[price, volume, time, side, orderType, misc], ...], "XBT/USD", "trade"]
+        if not isinstance(data, list) or len(data) < 4:
             return None
 
-        except Exception as e:
-            logger.error(f"Error parsing Kraken message: {e}")
+        trades = data[1]
+        if not isinstance(trades, list) or not trades:
             return None
+
+        rec = trades[0]
+        if not isinstance(rec, (list, tuple)) or len(rec) < 3:
+            return None
+
+        px = _f(rec[0])
+        vol = _f(rec[1])
+        t  = _f(rec[2])  # seconds (float)
+        if px is None or t is None:
+            return None
+
+        return {
+            "ts_exchange": t * 1000.0,  # numeric; unit detector will normalize
+            "last_px": px,
+            "best_bid": None,
+            "best_ask": None,
+            "trade_sz": vol,
+            "venue_id": self.venue,
+        }
 
     def _parse_okx_message(self, data: Dict) -> Optional[Dict]:
         """Parse OKX WebSocket message."""
@@ -364,17 +386,44 @@ class VenueWebSocket:
                 }
         return None
 
-    def _parse_bybit_message(self, data: Dict) -> Optional[Dict]:
-        """Parse Bybit WebSocket message."""
-        if "data" in data:
-            item = data["data"]
-            return {
-                "ts_exchange": pd.to_datetime(item["ts"], unit="ms"),
-                "best_bid": float(item.get("bid1Price", 0)),
-                "best_ask": float(item.get("ask1Price", 0)),
-                "last_px": float(item.get("lastPrice", 0)),
-                "venue_id": self.venue,
-            }
+    def _parse_bybit_message(self, data) -> dict | None:
+        def _f(x):
+            try: return float(x)
+            except Exception: return None
+
+        if isinstance(data, dict) and "data" in data:
+            items = data["data"]
+            if isinstance(items, dict):
+                items = [items]
+            for it in items:
+                ts = it.get("T") or it.get("ts") or it.get("time") or data.get("ts") or data.get("timestamp")
+                px = it.get("p") or it.get("lastPrice") or it.get("price")
+                bid = it.get("bid1Price") or it.get("bp")
+                ask = it.get("ask1Price") or it.get("ap")
+                if ts is not None and px is not None:
+                    return {
+                        "ts_exchange": _f(ts),    # unit detection happens downstream
+                        "last_px": _f(px),
+                        "best_bid": _f(bid),
+                        "best_ask": _f(ask),
+                        "trade_sz": _f(it.get("v") or it.get("size")),
+                        "venue_id": self.venue,
+                    }
+
+        if isinstance(data, dict):
+            ts = data.get("T") or data.get("ts") or data.get("time") or data.get("timestamp")
+            px = data.get("lastPrice") or data.get("price")
+            bid = data.get("bid1Price") or data.get("bp")
+            ask = data.get("ask1Price") or data.get("ap")
+            if ts is not None and px is not None:
+                return {
+                    "ts_exchange": _f(ts),
+                    "last_px": _f(px),
+                    "best_bid": _f(bid),
+                    "best_ask": _f(ask),
+                    "trade_sz": _f(data.get("v") or data.get("size")),
+                    "venue_id": self.venue,
+                }
         return None
 
     def get_coverage_percentage(self) -> float:
@@ -403,11 +452,12 @@ class VenueWebSocket:
 class WebSocketCapture:
     """Main WebSocket capture coordinator."""
 
-    def __init__(self, symbol: str, venues: List[str], bucket: str, prefix: str):
+    def __init__(self, symbol: str, venues: List[str], bucket: str, prefix: str, canary_mode: bool = False):
         self.symbol = symbol
         self.venues = venues
         self.bucket = bucket
         self.prefix = prefix
+        self.canary_mode = canary_mode
         self.venue_connections = {}
         self.s3_client = boto3.client("s3")
 
@@ -486,6 +536,8 @@ class WebSocketCapture:
                 "coverage_percentage": coverage,
                 "messages_received": connection.coverage_stats["messages_received"],
                 "connection_drops": connection.coverage_stats["connection_drops"],
+                "parsed_ok": connection.coverage_stats["parsed_ok"],
+                "parsed_err": connection.coverage_stats["parsed_err"],
                 "start_time": (
                     connection.coverage_stats["start_time"].isoformat()
                     if connection.coverage_stats["start_time"]
@@ -497,6 +549,14 @@ class WebSocketCapture:
                     else None
                 ),
             }
+            
+            # Log parsing summary for this venue
+            total_parsed = connection.coverage_stats["parsed_ok"] + connection.coverage_stats["parsed_err"]
+            if total_parsed > 0:
+                success_rate = connection.coverage_stats["parsed_ok"] / total_parsed
+                logger.info(f"{venue} parsing summary: {connection.coverage_stats['parsed_ok']}/{total_parsed} ({success_rate:.1%})")
+            else:
+                logger.warning(f"{venue} parsing summary: No messages parsed")
 
         # Check if we have ≥3 venues with ≥95% coverage
         high_coverage_venues = [
@@ -564,12 +624,13 @@ class WebSocketCapture:
             )
 
             # Write tick data for each venue
+            ticks_prefix = "ticks_canary" if self.canary_mode else "ticks"
             for venue, df in venue_data.items():
                 if len(df) > 0:
                     parquet_data = df.to_parquet(compression="snappy")
                     self.s3_client.put_object(
                         Bucket=self.bucket,
-                        Key=f"{s3_path}/ticks/{venue}/part-0000.parquet",
+                        Key=f"{s3_path}/{ticks_prefix}/{venue}/part-0000.parquet",
                         Body=parquet_data,
                         ContentType="application/octet-stream",
                     )
