@@ -1,0 +1,219 @@
+name: Reader Sanity Check
+
+on:
+  workflow_dispatch:
+    inputs:
+      date:
+        description: 'Date to validate (YYYYMMDD format)'
+        required: true
+        default: '20251001'
+  push:
+    branches: [main]
+    paths:
+      - 'analytics/reader_checks/**'
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
+  ACD_S3_BUCKET: acd-monitor-snapshots
+
+jobs:
+  reader-sanity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas pyarrow boto3
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::514258695205:role/acd-ci-oidc
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Sanity check AWS connectivity
+        run: |
+          aws sts get-caller-identity
+          aws s3 ls s3://${{ env.ACD_S3_BUCKET }}/canonical/ || echo "Canonical prefix empty or doesn't exist yet"
+      
+      - name: Set validation date
+        id: validation_date
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "date=${{ github.event.inputs.date }}" >> $GITHUB_OUTPUT
+          else
+            echo "date=20251001" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Run reader validation
+        run: |
+          set -euo pipefail
+          echo "🔍 Running reader validation for ${{ steps.validation_date.outputs.date }}"
+          python analytics/reader_checks/reader_validate.py --date ${{ steps.validation_date.outputs.date }}
+      
+      - name: Validate row counts
+        run: |
+          set -euo pipefail
+          echo "🔍 Validating row counts match expected values..."
+          
+          # Check if artifacts were created
+          if [ ! -d "artifacts/_checks_reader" ]; then
+            echo "❌ Validation artifacts not found"
+            exit 1
+          fi
+          
+          # Check if validation results exist
+          if [ ! -f "artifacts/_checks_reader/rowcount_reader.json" ]; then
+            echo "❌ Rowcount validation results not found"
+            exit 1
+          fi
+          
+          # Parse validation results
+          ROWCOUNT_PASSED=$(python -c "
+          import json
+          with open('artifacts/_checks_reader/rowcount_reader.json', 'r') as f:
+              data = json.load(f)
+          print(data['validation_passed'])
+          ")
+          
+          if [ "$ROWCOUNT_PASSED" != "True" ]; then
+            echo "❌ Rowcount validation failed"
+            exit 1
+          fi
+          
+          echo "✅ Rowcount validation passed"
+      
+      - name: Validate price ranges
+        run: |
+          set -euo pipefail
+          echo "🔍 Validating price ranges..."
+          
+          # Check range validation results
+          if [ ! -f "artifacts/_checks_reader/range_reader.json" ]; then
+            echo "❌ Range validation results not found"
+            exit 1
+          fi
+          
+          # Parse validation results
+          RANGE_PASSED=$(python -c "
+          import json
+          with open('artifacts/_checks_reader/range_reader.json', 'r') as f:
+              data = json.load(f)
+          print(data['validation_passed'])
+          ")
+          
+          if [ "$RANGE_PASSED" != "True" ]; then
+            echo "❌ Range validation failed"
+            exit 1
+          fi
+          
+          echo "✅ Range validation passed"
+      
+      - name: Validate uniqueness
+        run: |
+          set -euo pipefail
+          echo "🔍 Validating uniqueness constraints..."
+          
+          # Check uniqueness validation results
+          if [ ! -f "artifacts/_checks_reader/uniqueness_reader.json" ]; then
+            echo "❌ Uniqueness validation results not found"
+            exit 1
+          fi
+          
+          # Parse validation results
+          UNIQUENESS_PASSED=$(python -c "
+          import json
+          with open('artifacts/_checks_reader/uniqueness_reader.json', 'r') as f:
+              data = json.load(f)
+          print(data['validation_passed'])
+          ")
+          
+          if [ "$UNIQUENESS_PASSED" != "True" ]; then
+            echo "❌ Uniqueness validation failed"
+            exit 1
+          fi
+          
+          echo "✅ Uniqueness validation passed"
+      
+      - name: Validate venues
+        run: |
+          set -euo pipefail
+          echo "🔍 Validating venue coverage..."
+          
+          # Check venue validation results
+          if [ ! -f "artifacts/_checks_reader/venues_reader.json" ]; then
+            echo "❌ Venue validation results not found"
+            exit 1
+          fi
+          
+          # Parse validation results
+          VENUES_PASSED=$(python -c "
+          import json
+          with open('artifacts/_checks_reader/venues_reader.json', 'r') as f:
+              data = json.load(f)
+          print(data['validation_passed'])
+          ")
+          
+          if [ "$VENUES_PASSED" != "True" ]; then
+            echo "❌ Venue validation failed"
+            exit 1
+          fi
+          
+          echo "✅ Venue validation passed"
+      
+      - name: Upload validation artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reader-sanity-artifacts-${{ github.run_id }}
+          path: artifacts/_checks_reader/
+          retention-days: 7
+      
+      - name: Final validation summary
+        run: |
+          set -euo pipefail
+          echo "🔍 Final validation summary..."
+          
+          # Check final summary
+          if [ ! -f "artifacts/_checks_reader/final_summary.json" ]; then
+            echo "❌ Final summary not found"
+            exit 1
+          fi
+          
+          # Parse final summary
+          READY_FOR_WAVE1=$(python -c "
+          import json
+          with open('artifacts/_checks_reader/final_summary.json', 'r') as f:
+              data = json.load(f)
+          print(data['ready_for_wave1'])
+          ")
+          
+          if [ "$READY_FOR_WAVE1" != "True" ]; then
+            echo "❌ Data not ready for Wave-1 analysis"
+            exit 1
+          fi
+          
+          echo "✅ All validations passed - ready for Wave-1 analysis"
+          echo "📊 Canonical data validated successfully"
+      
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "❌ Reader sanity check failed for ${{ steps.validation_date.outputs.date }}"
+          echo "Check artifacts for detailed validation results"
