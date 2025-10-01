@@ -68,13 +68,13 @@ jobs:
           echo "🔍 Computing Wave-1 variables for ${{ steps.computation_date.outputs.date }}"
           python analytics/wave1/compute_wave1.py --date ${{ steps.computation_date.outputs.date }}
       
-      - name: DIAGNOSTIC: List S3 contents after computation
+      - name: "DIAGNOSTIC: List S3 contents after computation"
         run: |
           set -euxo pipefail
           echo "🔎 DIAG: Listing s3://${{ env.ACD_S3_BUCKET }}/${{ env.WAVE1_PREFIX }}/ (recursive)"
           aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/${{ env.WAVE1_PREFIX }}/" --recursive || echo "DIAG: path not found or empty"
 
-      - name: DIAGNOSTIC: Check canonical data availability
+      - name: "DIAGNOSTIC: Check canonical data availability"
         run: |
           set -euxo pipefail
           python - <<'PY'
@@ -125,11 +125,12 @@ jobs:
             fi
           done
           
-          # Check PCA files exist (required)
+          # Check PCA files exist (optional - status checked from manifest later)
           for symbol in btc_usd eth_usd; do
-            if ! aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/$symbol/pca.parquet" >/dev/null 2>&1; then
-              echo "❌ $symbol pca not found"
-              exit 1
+            if aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/$symbol/pca.parquet" >/dev/null 2>&1; then
+              echo "✅ $symbol pca found"
+            else
+              echo "ℹ️ $symbol pca absent (optional)"
             fi
           done
           
