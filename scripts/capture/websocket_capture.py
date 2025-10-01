@@ -49,6 +49,21 @@ logger = logging.getLogger(__name__)
 # Version banner for GHA logs
 print("CAPTURE_PARSER_VERSION=v2025-10-01c")  # visible in GHA logs
 
+# Helper function for timestamp conversion
+def _to_ms(x):
+    """Convert timestamp to milliseconds, handling various units."""
+    try:
+        v = float(x)
+    except Exception:
+        return None
+    if v > 1e15:  # microseconds
+        return v / 1e3
+    if v > 1e12:  # nanoseconds (defensive)
+        return v / 1e6
+    if v > 1e11:  # milliseconds
+        return v
+    return v * 1e3  # seconds
+
 
 def setup_logging(verbose: bool = False):
     """Setup logging configuration."""
@@ -80,7 +95,7 @@ class VenueWebSocket:
         """Log first raw payload sample per venue for debugging."""
         key = f"_sample_logged_{venue}"
         if not getattr(self, key, False):
-            print(f"SAMPLE_RAW_{venue}={str(msg)[:500]}")
+            logger.info(f"SAMPLE_RAW_{venue}={str(msg)[:500]}")
             setattr(self, key, True)
 
     def _get_venue_config(self) -> Dict:
@@ -262,48 +277,16 @@ class VenueWebSocket:
     def _parse_venue_message(self, data: Dict) -> Optional[Dict]:
         """Parse venue-specific message format."""
         try:
-            # Import new venue parsers
-            from writer.parsers.venues import parse_bybit, parse_kraken
-            
             if self.venue == "binance":
                 return self._parse_binance_message(data)
             elif self.venue == "coinbase":
                 return self._parse_coinbase_message(data)
             elif self.venue == "kraken":
-                # Use new Kraken parser for array format
-                result = parse_kraken(data)
-                if result:
-                    # Convert to expected format
-                    return {
-                        "ts_exchange": result["ts_exchange"],
-                        "last_px": result["last_px"],
-                        "trade_sz": result["trade_sz"],
-                        "best_bid": result["best_bid"],
-                        "best_ask": result["best_ask"],
-                        "bid_sz": result["bid_sz"],
-                        "ask_sz": result["ask_sz"],
-                        "venue_id": result["venue"],
-                        "symbol_alias": result.get("symbol_alias")
-                    }
-                return None
+                return self._parse_kraken_message(data)
             elif self.venue == "okx":
                 return self._parse_okx_message(data)
             elif self.venue == "bybit":
-                # Use new Bybit parser
-                result = parse_bybit(data)
-                if result:
-                    # Convert to expected format
-                    return {
-                        "ts_exchange": result["ts_exchange"],
-                        "last_px": result["last_px"],
-                        "trade_sz": result["trade_sz"],
-                        "best_bid": result["best_bid"],
-                        "best_ask": result["best_ask"],
-                        "bid_sz": result["bid_sz"],
-                        "ask_sz": result["ask_sz"],
-                        "venue_id": result["venue"]
-                    }
-                return None
+                return self._parse_bybit_message(data)
         except Exception as e:
             logger.error(f"Error parsing {self.venue} message: {e}")
         return None
@@ -342,30 +325,24 @@ class VenueWebSocket:
         return None
 
     def _parse_kraken_message(self, data) -> dict | None:
-        def _f(x):
+        """Parse Kraken WebSocket message - array shape: [chanId, [[price, volume, time, side, orderType, misc], ...], "XBT/USD", "trade"]."""
+        def f(x):
             try: return float(x)
             except Exception: return None
 
-        # Format: [channelId, [[price, volume, time, side, orderType, misc], ...], "XBT/USD", "trade"]
-        if not isinstance(data, list) or len(data) < 4:
+        if isinstance(data, dict):
+            return None  # systemStatus, subscriptionStatus, heartbeat, etc.
+
+        if not (isinstance(data, list) and len(data) >= 4 and isinstance(data[1], list) and data[1]):
             return None
 
-        trades = data[1]
-        if not isinstance(trades, list) or not trades:
-            return None
-
-        rec = trades[0]
-        if not isinstance(rec, (list, tuple)) or len(rec) < 3:
-            return None
-
-        px = _f(rec[0])
-        vol = _f(rec[1])
-        t  = _f(rec[2])  # seconds (float)
-        if px is None or t is None:
+        price, volume, t = data[1][0][0], data[1][0][1], data[1][0][2]
+        px = f(price); vol = f(volume); ts_ms = _to_ms(t)
+        if px is None or ts_ms is None:
             return None
 
         return {
-            "ts_exchange": t * 1000.0,  # numeric; unit detector will normalize
+            "ts_exchange": ts_ms,
             "last_px": px,
             "best_bid": None,
             "best_ask": None,
@@ -387,7 +364,8 @@ class VenueWebSocket:
         return None
 
     def _parse_bybit_message(self, data) -> dict | None:
-        def _f(x):
+        """Parse Bybit WebSocket message - accepts both snapshot/update + 'T'/'ts'/'time'."""
+        def f(x):
             try: return float(x)
             except Exception: return None
 
@@ -397,33 +375,18 @@ class VenueWebSocket:
                 items = [items]
             for it in items:
                 ts = it.get("T") or it.get("ts") or it.get("time") or data.get("ts") or data.get("timestamp")
-                px = it.get("p") or it.get("lastPrice") or it.get("price")
+                px  = it.get("p") or it.get("lastPrice") or it.get("price")
                 bid = it.get("bid1Price") or it.get("bp")
                 ask = it.get("ask1Price") or it.get("ap")
                 if ts is not None and px is not None:
                     return {
-                        "ts_exchange": _f(ts),    # unit detection happens downstream
-                        "last_px": _f(px),
-                        "best_bid": _f(bid),
-                        "best_ask": _f(ask),
-                        "trade_sz": _f(it.get("v") or it.get("size")),
+                        "ts_exchange": _to_ms(ts),
+                        "last_px": f(px),
+                        "best_bid": f(bid),
+                        "best_ask": f(ask),
+                        "trade_sz": f(it.get("v") or it.get("size")),
                         "venue_id": self.venue,
                     }
-
-        if isinstance(data, dict):
-            ts = data.get("T") or data.get("ts") or data.get("time") or data.get("timestamp")
-            px = data.get("lastPrice") or data.get("price")
-            bid = data.get("bid1Price") or data.get("bp")
-            ask = data.get("ask1Price") or data.get("ap")
-            if ts is not None and px is not None:
-                return {
-                    "ts_exchange": _f(ts),
-                    "last_px": _f(px),
-                    "best_bid": _f(bid),
-                    "best_ask": _f(ask),
-                    "trade_sz": _f(data.get("v") or data.get("size")),
-                    "venue_id": self.venue,
-                }
         return None
 
     def get_coverage_percentage(self) -> float:
