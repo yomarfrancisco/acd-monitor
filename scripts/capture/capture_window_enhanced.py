@@ -10,6 +10,7 @@ import argparse
 import asyncio
 import json
 import logging
+import os
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -67,7 +68,8 @@ async def capture_window_websocket(
         logger.info(f"Starting WebSocket capture for {symbol}")
 
         # Create WebSocket capture instance
-        capture = WebSocketCapture(symbol, venues, bucket, prefix)
+        canary_mode = os.getenv("BTC_CANARY_ENABLED", "false").lower() == "true"
+        capture = WebSocketCapture(symbol, venues, bucket, prefix, canary_mode)
 
         # Capture window
         result = await capture.capture_window(start_time, end_time)
@@ -155,6 +157,10 @@ def capture_window_fallback(
             venue_data, coverage_data, symbol, start_time, end_time, bucket, prefix
         )
 
+        if success:
+            logger.info("FALLBACK_CAPTURE_COMPLETE - Fallback capture finished successfully")
+            print("FALLBACK_CAPTURE_COMPLETE - Fallback capture finished successfully")
+
         return {
             "success": success,
             "coverage_data": coverage_data,
@@ -208,12 +214,14 @@ def write_snapshot_to_s3(
         )
 
         # Write tick data for each venue
+        canary_mode = os.getenv("BTC_CANARY_ENABLED", "false").lower() == "true"
+        ticks_prefix = "ticks_canary" if canary_mode else "ticks"
         for venue, df in venue_data.items():
             if len(df) > 0:
                 parquet_data = df.to_parquet(compression="snappy")
                 s3_client.put_object(
                     Bucket=bucket,
-                    Key=f"{s3_path}/ticks/{venue}/part-0000.parquet",
+                    Key=f"{s3_path}/{ticks_prefix}/{venue}/part-0000.parquet",
                     Body=parquet_data,
                     ContentType="application/octet-stream",
                 )
@@ -312,9 +320,14 @@ def main():
     parser.add_argument(
         "--no-websocket", action="store_true", help="Skip WebSocket, use fallback only"
     )
+    parser.add_argument("--canary", action="store_true", help="Enable canary mode (writes to ticks_canary/)")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
 
     args = parser.parse_args()
+
+    # Set canary mode environment variable
+    if args.canary:
+        os.environ["BTC_CANARY_ENABLED"] = "true"
 
     setup_logging(args.verbose)
 
@@ -341,6 +354,8 @@ def main():
 
         if result.get("success"):
             logger.info("Enhanced window capture completed successfully")
+            logger.info("WINDOW_CAPTURE_COMPLETE - All capture operations finished")
+            print("WINDOW_CAPTURE_COMPLETE - All capture operations finished")
 
             # Print coverage summary
             if "coverage_data" in result:

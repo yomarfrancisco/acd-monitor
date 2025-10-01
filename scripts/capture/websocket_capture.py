@@ -668,6 +668,14 @@ class WebSocketCapture:
         for connection in self.venue_connections.values():
             await connection.close()
 
+        # Log completion banner
+        if success:
+            logger.info("CAPTURE_COMPLETE - WebSocket capture finished successfully")
+            print("CAPTURE_COMPLETE - WebSocket capture finished successfully")
+        else:
+            logger.error("CAPTURE_FAILED - WebSocket capture failed")
+            print("CAPTURE_FAILED - WebSocket capture failed")
+
         return {
             "success": success,
             "coverage_data": coverage_data,
@@ -746,6 +754,8 @@ class WebSocketCapture:
             logger.info(
                 f"Successfully wrote WebSocket capture to s3://{self.bucket}/{s3_path}"
             )
+            logger.info("S3_WRITE_COMPLETE - All data persisted successfully")
+            print("S3_WRITE_COMPLETE - All data persisted successfully")
             return True
 
         except Exception as e:
