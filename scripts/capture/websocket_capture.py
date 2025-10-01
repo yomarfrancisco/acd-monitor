@@ -285,6 +285,8 @@ class VenueWebSocket:
         # OKX system messages
         if data.get("event") == "subscribe":
             return True
+        if isinstance(data.get("arg"), dict) and data["arg"].get("channel") == "books":
+            return True
         
         # Bybit system messages
         if data.get("op") == "subscribe" and data.get("success"):
@@ -428,6 +430,10 @@ class VenueWebSocket:
         """Parse OKX WebSocket message."""
         # Skip subscription confirmation messages
         if data.get("event") == "subscribe":
+            return None
+        
+        # Skip books/orderbook messages (not needed for price data)
+        if isinstance(data.get("arg"), dict) and data["arg"].get("channel") == "books":
             return None
         
         # Handle ticker data
