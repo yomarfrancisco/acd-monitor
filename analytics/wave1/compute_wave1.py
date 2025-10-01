@@ -375,11 +375,16 @@ def save_results(s3_client, date_ymd: str, symbol: str, results: Dict[str, pd.Da
             
             # Save to S3
             s3_key = f"{ANALYSIS_PREFIX}/{date_ymd}/{WAVE1_PREFIX}/{symbol_lower}/{result_type}.parquet"
-            s3_client.put_object(
-                Bucket=S3_BUCKET,
-                Key=s3_key,
-                Body=parquet_buffer.getvalue()
-            )
+            try:
+                s3_client.put_object(
+                    Bucket=S3_BUCKET,
+                    Key=s3_key,
+                    Body=parquet_buffer.getvalue()
+                )
+                print(f"  ✅ Successfully saved s3://{S3_BUCKET}/{s3_key}")
+            except Exception as e:
+                print(f"  ❌ ERROR: Failed to save s3://{S3_BUCKET}/{s3_key}. Reason: {e}", file=sys.stderr)
+                raise
             
             print(f"  Saved {result_type}.parquet ({len(df)} rows)")
         else:
@@ -440,11 +445,17 @@ def create_manifest(s3_client, date_ymd: str, all_results: Dict[str, Dict[str, p
     
     # Save manifest
     manifest_json = json.dumps(manifest, indent=2)
-    s3_client.put_object(
-        Bucket=S3_BUCKET,
-        Key=f"{ANALYSIS_PREFIX}/{date_ymd}/{WAVE1_PREFIX}/_checks/manifest.json",
-        Body=manifest_json
-    )
+    manifest_key = f"{ANALYSIS_PREFIX}/{date_ymd}/{WAVE1_PREFIX}/_checks/manifest.json"
+    try:
+        s3_client.put_object(
+            Bucket=S3_BUCKET,
+            Key=manifest_key,
+            Body=manifest_json
+        )
+        print(f"  ✅ Successfully saved manifest s3://{S3_BUCKET}/{manifest_key}")
+    except Exception as e:
+        print(f"  ❌ ERROR: Failed to save manifest s3://{S3_BUCKET}/{manifest_key}. Reason: {e}", file=sys.stderr)
+        raise
     
     print("  Manifest saved")
 
@@ -468,6 +479,11 @@ def main():
         try:
             # Load canonical data
             df = load_canonical_data(s3_client, args.date, symbol)
+            print(f"  📊 Loaded {len(df)} rows for {symbol}")
+            
+            if len(df) == 0:
+                print(f"  ⚠️ No data available for {symbol} - skipping")
+                continue
             
             # Prepare midprices
             df = prepare_midprices(df)
