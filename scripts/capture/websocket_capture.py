@@ -47,7 +47,7 @@ class PandasJSONEncoder(json.JSONEncoder):
 logger = logging.getLogger(__name__)
 
 # Version banner for GHA logs
-print("CAPTURE_PARSER_VERSION=v2025-10-01c")  # visible in GHA logs
+print("CAPTURE_PARSER_VERSION=v2025-10-02a")  # visible in GHA logs
 
 # Helper function for timestamp conversion
 def _to_ms(x):
@@ -57,12 +57,12 @@ def _to_ms(x):
     except Exception:
         return None
     if v > 1e15:  # microseconds
-        return v / 1e3
+        return int(v / 1e3)
     if v > 1e12:  # nanoseconds (defensive)
-        return v / 1e6
+        return int(v / 1e6)
     if v > 1e11:  # milliseconds
-        return v
-    return v * 1e3  # seconds
+        return int(v)
+    return int(v * 1e3)  # seconds
 
 
 def setup_logging(verbose: bool = False):
@@ -88,7 +88,9 @@ class VenueWebSocket:
             "end_time": None,
             "parsed_ok": 0,
             "parsed_err": 0,
+            "skipped_non_trade": 0,
         }
+        self.error_count = 0  # For rate limiting error logs
         self.venue_config = self._get_venue_config()
 
     def _log_one_sample(self, venue: str, msg):
@@ -253,24 +255,55 @@ class VenueWebSocket:
                 self.ring_buffer.append(tick_data)
                 self.coverage_stats["parsed_ok"] += 1
             else:
-                self.coverage_stats["parsed_err"] += 1
-                # Log parsing failure with truncated sample
-                sample = str(data)[:100] + "..." if len(str(data)) > 100 else str(data)
-                logger.warning(f"Failed to parse {self.venue} message: {sample}")
+                # Check if this is a system message that should be skipped
+                if self._is_system_message(data):
+                    self.coverage_stats["skipped_non_trade"] += 1
+                else:
+                    self.coverage_stats["parsed_err"] += 1
+                    self.error_count += 1
+                    # Rate limit error logging (every 500th error)
+                    if self.error_count % 500 == 0:
+                        sample = str(data)[:100] + "..." if len(str(data)) > 100 else str(data)
+                        logger.warning(f"Failed to parse {self.venue} message (error #{self.error_count}): {sample}")
 
         except Exception as e:
             logger.error(f"Error processing message from {self.venue}: {e}")
+
+    def _is_system_message(self, data: Dict) -> bool:
+        """Check if message is a system message that should be skipped."""
+        if not isinstance(data, dict):
+            return False
+        
+        # Coinbase system messages
+        if data.get("type") in ["subscriptions", "heartbeat"]:
+            return True
+        
+        # Kraken system messages
+        if data.get("event") in ["systemStatus", "subscriptionStatus", "heartbeat"]:
+            return True
+        
+        # OKX system messages
+        if data.get("event") == "subscribe":
+            return True
+        
+        # Bybit system messages
+        if data.get("op") == "subscribe" and data.get("success"):
+            return True
+        if data.get("topic", "").startswith("orderbook"):
+            return True
+        
+        return False
 
     def _is_duplicate(self, parsed: Dict) -> bool:
         """Check if message is a duplicate based on timestamp, price, and size."""
         if not self.ring_buffer:
             return False
             
-        # Check last few messages for duplicates
+        # Check last few messages for duplicates using new timestamp field
         for recent in list(self.ring_buffer)[-10:]:  # Check last 10 messages
-            if (recent.get("ts_exchange") == parsed.get("ts_exchange") and
+            if (recent.get("ts_exchange_ms") == parsed.get("ts_exchange_ms") and
                 recent.get("last_px") == parsed.get("last_px") and
-                recent.get("last_sz") == parsed.get("last_sz")):
+                recent.get("trade_sz") == parsed.get("trade_sz")):
                 return True
         return False
 
@@ -314,61 +347,120 @@ class VenueWebSocket:
 
     def _parse_coinbase_message(self, data: Dict) -> Optional[Dict]:
         """Parse Coinbase WebSocket message."""
+        # Skip system messages
+        if data.get("type") in ["subscriptions", "heartbeat"]:
+            return None
+        
+        # Handle ticker messages
         if data.get("type") == "ticker":
+            time_ms = pd.to_datetime(data["time"], utc=True).value // 1_000_000
             return {
-                "ts_exchange": pd.to_datetime(data["time"]),
-                "best_bid": float(data["best_bid"]),
-                "best_ask": float(data["best_ask"]),
+                "ts_exchange_ms": int(time_ms),
+                "ts_exchange": pd.to_datetime(time_ms, unit="ms", utc=True),
                 "last_px": float(data["price"]),
+                "best_bid": float(data.get("best_bid", 0)),
+                "best_ask": float(data.get("best_ask", 0)),
+                "trade_sz": float(data.get("last_size", 0)),
                 "venue_id": self.venue,
             }
+        
+        # Handle trade messages
+        if data.get("type") == "match":
+            time_ms = pd.to_datetime(data["time"], utc=True).value // 1_000_000
+            return {
+                "ts_exchange_ms": int(time_ms),
+                "ts_exchange": pd.to_datetime(time_ms, unit="ms", utc=True),
+                "last_px": float(data["price"]),
+                "trade_sz": float(data["size"]),
+                "venue_id": self.venue,
+            }
+        
         return None
 
     def _parse_kraken_message(self, data) -> dict | None:
-        """Parse Kraken WebSocket message - array shape: [chanId, [[price, volume, time, side, orderType, misc], ...], "XBT/USD", "trade"]."""
+        """Parse Kraken WebSocket message - handle both dict system messages and array trade messages."""
         def f(x):
             try: return float(x)
             except Exception: return None
 
+        # Handle dict system messages (skip)
         if isinstance(data, dict):
-            return None  # systemStatus, subscriptionStatus, heartbeat, etc.
-
-        if not (isinstance(data, list) and len(data) >= 4 and isinstance(data[1], list) and data[1]):
+            event_type = data.get("event")
+            if event_type in ["systemStatus", "subscriptionStatus", "heartbeat"]:
+                return None
+            
+            # Handle dict trade data format
+            if "data" in data and isinstance(data["data"], list):
+                trades = data["data"]
+                if trades and isinstance(trades[0], list):
+                    price, volume, t = trades[0][0], trades[0][1], trades[0][2]
+                    px = f(price); vol = f(volume); ts_ms = _to_ms(t)
+                    if px is not None and ts_ms is not None:
+                        return {
+                            "ts_exchange_ms": ts_ms,
+                            "ts_exchange": pd.to_datetime(ts_ms, unit="ms", utc=True),
+                            "last_px": px,
+                            "best_bid": None,
+                            "best_ask": None,
+                            "trade_sz": vol,
+                            "venue_id": self.venue,
+                        }
             return None
 
-        price, volume, t = data[1][0][0], data[1][0][1], data[1][0][2]
-        px = f(price); vol = f(volume); ts_ms = _to_ms(t)
-        if px is None or ts_ms is None:
-            return None
-
-        return {
-            "ts_exchange": ts_ms,
-            "last_px": px,
-            "best_bid": None,
-            "best_ask": None,
-            "trade_sz": vol,
-            "venue_id": self.venue,
-        }
+        # Handle array format: [chanId, [[price, volume, time, ...], ...], "XBT/USD", "trade"]
+        if isinstance(data, list) and len(data) >= 4 and isinstance(data[1], list) and data[1]:
+            price, volume, t = data[1][0][0], data[1][0][1], data[1][0][2]
+            px = f(price); vol = f(volume); ts_ms = _to_ms(t)
+            if px is not None and ts_ms is not None:
+                return {
+                    "ts_exchange_ms": ts_ms,
+                    "ts_exchange": pd.to_datetime(ts_ms, unit="ms", utc=True),
+                    "last_px": px,
+                    "best_bid": None,
+                    "best_ask": None,
+                    "trade_sz": vol,
+                    "venue_id": self.venue,
+                }
+        
+        return None
 
     def _parse_okx_message(self, data: Dict) -> Optional[Dict]:
         """Parse OKX WebSocket message."""
-        if "data" in data:
+        # Skip subscription confirmation messages
+        if data.get("event") == "subscribe":
+            return None
+        
+        # Handle ticker data
+        if "data" in data and isinstance(data["data"], list):
             for item in data["data"]:
-                return {
-                    "ts_exchange": pd.to_datetime(item["ts"], unit="ms"),
-                    "best_bid": float(item.get("bidPx", 0)),
-                    "best_ask": float(item.get("askPx", 0)),
-                    "last_px": float(item.get("last", 0)),
-                    "venue_id": self.venue,
-                }
+                if item.get("instId") == "BTC-USD":
+                    ts_ms = int(item["ts"])
+                    return {
+                        "ts_exchange_ms": ts_ms,
+                        "ts_exchange": pd.to_datetime(ts_ms, unit="ms", utc=True),
+                        "last_px": float(item.get("last", 0)),
+                        "best_bid": float(item.get("bidPx", 0)),
+                        "best_ask": float(item.get("askPx", 0)),
+                        "trade_sz": float(item.get("lastSz", 0)),
+                        "venue_id": self.venue,
+                    }
         return None
 
     def _parse_bybit_message(self, data) -> dict | None:
-        """Parse Bybit WebSocket message - accepts both snapshot/update + 'T'/'ts'/'time'."""
+        """Parse Bybit WebSocket message - handle orderbook, trade, and ticker formats."""
         def f(x):
             try: return float(x)
             except Exception: return None
 
+        # Skip subscription confirmations
+        if isinstance(data, dict) and data.get("op") == "subscribe" and data.get("success"):
+            return None
+        
+        # Skip orderbook messages (not a bug, just noise)
+        if isinstance(data, dict) and data.get("topic", "").startswith("orderbook"):
+            return None
+        
+        # Handle trade/ticker messages with data array
         if isinstance(data, dict) and "data" in data:
             items = data["data"]
             if isinstance(items, dict):
@@ -379,14 +471,37 @@ class VenueWebSocket:
                 bid = it.get("bid1Price") or it.get("bp")
                 ask = it.get("ask1Price") or it.get("ap")
                 if ts is not None and px is not None:
+                    ts_ms = _to_ms(ts)
+                    if ts_ms is not None:
+                        return {
+                            "ts_exchange_ms": ts_ms,
+                            "ts_exchange": pd.to_datetime(ts_ms, unit="ms", utc=True),
+                            "last_px": f(px),
+                            "best_bid": f(bid),
+                            "best_ask": f(ask),
+                            "trade_sz": f(it.get("v") or it.get("size")),
+                            "venue_id": self.venue,
+                        }
+        
+        # Handle direct trade/ticker messages
+        if isinstance(data, dict):
+            ts = data.get("T") or data.get("ts") or data.get("time") or data.get("timestamp")
+            px = data.get("p") or data.get("lastPrice") or data.get("price")
+            bid = data.get("bid1Price") or data.get("bp")
+            ask = data.get("ask1Price") or data.get("ap")
+            if ts is not None and px is not None:
+                ts_ms = _to_ms(ts)
+                if ts_ms is not None:
                     return {
-                        "ts_exchange": _to_ms(ts),
+                        "ts_exchange_ms": ts_ms,
+                        "ts_exchange": pd.to_datetime(ts_ms, unit="ms", utc=True),
                         "last_px": f(px),
                         "best_bid": f(bid),
                         "best_ask": f(ask),
-                        "trade_sz": f(it.get("v") or it.get("size")),
+                        "trade_sz": f(data.get("v") or data.get("size")),
                         "venue_id": self.venue,
                     }
+        
         return None
 
     def get_coverage_percentage(self) -> float:
