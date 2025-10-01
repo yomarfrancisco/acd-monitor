@@ -125,6 +125,12 @@ jobs:
       - name: Verify S3 diagnostic output
         run: |
           set -euo pipefail
+          # Calculate the same window as the capture step
+          START_EPOCH=$(date -u +%s)
+          START_EPOCH=$(( START_EPOCH - (START_EPOCH % 60) ))
+          WINDOW_START=$(date -u -d "@${START_EPOCH}" +"%Y-%m-%dT%H:%M:%SZ")
+          WINDOW_END=$(date -u -d "@$((START_EPOCH + 300))" +"%Y-%m-%dT%H:%M:%SZ")
+          
           DATE_UTC=$(date -u +%Y%m%d)
           START_HM=$(date -u -d "$WINDOW_START" +%H%M)
           END_HM=$(date -u -d "$WINDOW_END" +%H%M)
