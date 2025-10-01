@@ -22,7 +22,7 @@ permissions:
 
 # Diagnostic concurrency - do NOT auto-cancel
 concurrency:
-  group: capture_diag_5m-${{ github.ref }}
+  group: capture-diagnostic-${{ github.ref }}
   cancel-in-progress: false
 
 env:
@@ -34,8 +34,8 @@ env:
 
 jobs:
   capture-windows-diagnostic:
-    # 15-minute timeout for 5-minute capture + writes
-    timeout-minutes: 15
+    # 10-minute timeout for 5-minute capture + writes
+    timeout-minutes: 10
 
     runs-on: ubuntu-latest
 
@@ -84,6 +84,11 @@ jobs:
           
           echo "Diagnostic window: ${WINDOW_START} → ${WINDOW_END}"
           
+          # Set up log capture
+          LOG="${{ runner.temp }}/capture.log"
+          : > "$LOG"
+          echo "Starting diagnostic capture and tee-ing logs to $LOG"
+          
           # Capture each symbol
           IFS=',' read -ra SYMBOLS <<< "${{ github.event.inputs.symbols }}"
           for symbol in "${SYMBOLS[@]}"; do
@@ -96,39 +101,36 @@ jobs:
               --bucket "${{ env.ACD_S3_BUCKET }}" \
               --prefix "${{ env.ACD_S3_PREFIX }}" \
               --canary \
-              --verbose
+              --verbose | tee -a "$LOG"
             echo "=== COMPLETED: $symbol ==="
           done
       
       - name: Verify diagnostic completion
         run: |
-          echo "🔍 Checking for CAPTURE_COMPLETE markers in logs..."
-          if ! grep -q "CAPTURE_COMPLETE" <<< "$(echo 'Checking logs...')"; then
-            echo "❌ No CAPTURE_COMPLETE marker found in logs"
-            echo "This indicates the capture process did not complete cleanly"
-            exit 1
-          else
-            echo "✅ CAPTURE_COMPLETE marker found - diagnostic capture completed successfully"
-          fi
+          set -euo pipefail
+          LOG="${{ runner.temp }}/capture.log"
+          echo "🔍 Checking diagnostic markers in $LOG"
+          grep -q "S3_WRITE_COMPLETE" "$LOG" && echo "::notice title=Marker Found::S3_WRITE_COMPLETE"
+          grep -q "CAPTURE_COMPLETE" "$LOG" && echo "::notice title=Marker Found::CAPTURE_COMPLETE"
+          grep -q "WINDOW_CAPTURE_COMPLETE" "$LOG" && echo "::notice title=Marker Found::WINDOW_CAPTURE_COMPLETE"
+
+          # Fail clearly if any are missing
+          for m in S3_WRITE_COMPLETE CAPTURE_COMPLETE WINDOW_CAPTURE_COMPLETE; do
+            if ! grep -q "$m" "$LOG"; then
+              echo "::error title=Missing Marker::$m not found in logs"
+              exit 1
+            fi
+          done
       
       - name: Verify S3 diagnostic output
         run: |
-          echo "🔍 Checking S3 diagnostic output..."
-          # Check for canary files in the diagnostic window
-          START_EPOCH=$(date -u +%s)
-          START_EPOCH=$(( START_EPOCH - (START_EPOCH % 60) ))
-          WINDOW_START=$(date -u -d "@${START_EPOCH}" +"%Y%m%d")
-          WINDOW_TIME=$(date -u -d "@${START_EPOCH}" +"%H%M")
-          WINDOW_END_TIME=$(date -u -d "@$((START_EPOCH + 300))" +"%H%M")
-          WINDOW_LABEL="${WINDOW_TIME}-${WINDOW_END_TIME}"
-          
-          echo "Looking for diagnostic files in: ${WINDOW_START}/${WINDOW_LABEL}"
-          
-          IFS=',' read -ra SYMBOLS <<< "${{ github.event.inputs.symbols }}"
-          for symbol in "${SYMBOLS[@]}"; do
-            echo "=== S3 CHECK: $symbol ==="
-            aws s3 ls s3://${{ env.ACD_S3_BUCKET }}/${{ env.ACD_S3_PREFIX }}/$symbol/${WINDOW_START}/${WINDOW_LABEL}/ --recursive || echo "No files found for $symbol"
-          done
+          set -euo pipefail
+          DATE_UTC=$(date -u +%Y%m%d)
+          START_HM=$(date -u -d "$WINDOW_START" +%H%M)
+          END_HM=$(date -u -d "$WINDOW_END" +%H%M)
+          PREFIX="snapshots/BTC-USD/$DATE_UTC/${START_HM}-${END_HM}"
+          echo "🔍 Checking s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/"
+          aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/" || (echo "::error::S3 window folder missing" && exit 1)
       
       - name: Upload diagnostic logs
         if: always()
