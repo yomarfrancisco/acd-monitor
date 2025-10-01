@@ -238,7 +238,7 @@ def compute_pca_analysis(df: pd.DataFrame, symbol: str) -> pd.DataFrame:
     
     if len(venue_returns) < 2:
         print(f"  Insufficient venues for PCA: {len(venue_returns)}")
-        return pd.DataFrame()
+        return create_pca_placeholder(symbol, venues, len(venue_returns), "insufficient_venues")
     
     # Align all venues to common timestamps
     common_ts = None
@@ -248,9 +248,10 @@ def compute_pca_analysis(df: pd.DataFrame, symbol: str) -> pd.DataFrame:
         else:
             common_ts = common_ts.intersection(set(data['ts_exchange']))
     
-    if len(common_ts) < 10:
-        print(f"  Insufficient common timestamps: {len(common_ts)}")
-        return pd.DataFrame()
+    MIN_COMMON = 120  # Minimum common timestamps required
+    if len(common_ts) < MIN_COMMON:
+        print(f"  Insufficient common timestamps: {len(common_ts)} < {MIN_COMMON}")
+        return create_pca_placeholder(symbol, venues, len(common_ts), "insufficient_common_timestamps")
     
     # Create aligned returns matrix
     aligned_data = []
@@ -263,7 +264,7 @@ def compute_pca_analysis(df: pd.DataFrame, symbol: str) -> pd.DataFrame:
     
     if len(aligned_data) < 2:
         print(f"  Insufficient aligned data: {len(aligned_data)}")
-        return pd.DataFrame()
+        return create_pca_placeholder(symbol, venues, len(common_ts), "insufficient_aligned_data")
     
     # Stack returns matrix
     returns_matrix = np.column_stack(aligned_data)
@@ -294,6 +295,24 @@ def compute_pca_analysis(df: pd.DataFrame, symbol: str) -> pd.DataFrame:
     print(f"  PCA computed for {len(result_df)} venues")
     print(f"  Explained variance (top 3): {pca.explained_variance_ratio_[:3]}")
     return result_df
+
+def create_pca_placeholder(symbol: str, venues: list, n_common: int, reason: str) -> pd.DataFrame:
+    """Create PCA placeholder artifact when PCA is skipped."""
+    print(f"  Creating PCA placeholder: {reason}")
+    
+    placeholder_data = {
+        'symbol': [symbol],
+        'venues': [venues],
+        'n_common': [n_common],
+        'window_sec': [60],  # 60-second window
+        'status': ['skipped'],
+        'reason': [reason],
+        'ts_created_utc': [datetime.now(timezone.utc).isoformat()],
+        'explained_var_ratio': [None],
+        'n_components': [None]
+    }
+    
+    return pd.DataFrame(placeholder_data)
 
 def compute_rolling_volatility(df: pd.DataFrame, symbol: str) -> pd.DataFrame:
     """Compute 60s rolling volatility and spread convergence."""
@@ -392,13 +411,31 @@ def create_manifest(s3_client, date_ymd: str, all_results: Dict[str, Dict[str, p
                 content = parquet_buffer.getvalue()
                 sha256_hash = hashlib.sha256(content).hexdigest()
                 
+                # Special handling for PCA status
+                pca_info = {}
+                if result_type == 'pca':
+                    if 'status' in df.columns and df['status'].iloc[0] == 'skipped':
+                        pca_info = {
+                            'status': 'skipped',
+                            'n_common': int(df['n_common'].iloc[0]) if 'n_common' in df.columns else 0,
+                            'reason': str(df['reason'].iloc[0]) if 'reason' in df.columns else 'unknown'
+                        }
+                    else:
+                        pca_info = {
+                            'status': 'ok',
+                            'n_common': int(df['n_obs'].iloc[0]) if 'n_obs' in df.columns else 0,
+                            'n_components': int(len(df['explained_variance_ratio'].dropna())) if 'explained_variance_ratio' in df.columns else 0,
+                            'explained_var_ratio': [float(x) for x in df['explained_variance_ratio'].dropna().tolist()] if 'explained_variance_ratio' in df.columns else []
+                        }
+                
                 manifest['artifacts'][symbol][result_type] = {
                     'rows': len(df),
                     'columns': len(df.columns),
                     'sha256': sha256_hash,
                     'venues': df['venue'].unique().tolist() if 'venue' in df.columns else [],
                     'non_null_ts': df['ts_exchange_ms'].notna().sum() if 'ts_exchange_ms' in df.columns else 0,
-                    'non_null_px': df['last_px'].notna().sum() if 'last_px' in df.columns else 0
+                    'non_null_px': df['last_px'].notna().sum() if 'last_px' in df.columns else 0,
+                    **pca_info
                 }
     
     # Save manifest

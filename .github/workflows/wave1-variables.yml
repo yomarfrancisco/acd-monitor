@@ -82,7 +82,7 @@ jobs:
           fi
           
           # Check BTC outputs
-          for artifact in variance_ratios autocorr xcorr pca rolling; do
+          for artifact in variance_ratios autocorr xcorr rolling; do
             if ! aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/btc_usd/$artifact.parquet" >/dev/null 2>&1; then
               echo "❌ BTC $artifact not found"
               exit 1
@@ -90,9 +90,17 @@ jobs:
           done
           
           # Check ETH outputs
-          for artifact in variance_ratios autocorr xcorr pca rolling; do
+          for artifact in variance_ratios autocorr xcorr rolling; do
             if ! aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/eth_usd/$artifact.parquet" >/dev/null 2>&1; then
               echo "❌ ETH $artifact not found"
+              exit 1
+            fi
+          done
+          
+          # Check PCA files exist (required)
+          for symbol in btc_usd eth_usd; do
+            if ! aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/$symbol/pca.parquet" >/dev/null 2>&1; then
+              echo "❌ $symbol pca not found"
               exit 1
             fi
           done
@@ -238,20 +246,60 @@ jobs:
           
           echo "✅ All uniqueness checks passed"
       
-      - name: Validate PCA explained variance
+      - name: Validate PCA status
         run: |
           set -euo pipefail
-          echo "🔍 Validating PCA explained variance..."
+          echo "🔍 Validating PCA status..."
           
           DATE="${{ steps.computation_date.outputs.date }}"
           PREFIX="analysis/$DATE/wave1"
           
+          # Download manifest to check PCA status
+          aws s3 cp "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/_checks/manifest.json" manifest.json
+          
           for symbol in btc_usd eth_usd; do
-            echo "Checking PCA for $symbol..."
+            echo "Checking PCA status for $symbol..."
             
-            aws s3 cp "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/$symbol/pca.parquet" "pca.parquet"
+            # Check PCA status from manifest
+            PCA_STATUS=$(python3 -c "
+          import json
+          with open('manifest.json', 'r') as f:
+              manifest = json.load(f)
+          symbol_key = '$symbol'.upper().replace('_', '-')
+          if symbol_key in manifest['artifacts'] and 'pca' in manifest['artifacts'][symbol_key]:
+              pca_info = manifest['artifacts'][symbol_key]['pca']
+              if 'status' in pca_info:
+                  print(pca_info['status'])
+              else:
+                  print('unknown')
+          else:
+              print('missing')
+          ")
             
-            python3 -c "
+            if [ "$PCA_STATUS" = "skipped" ]; then
+              # Get skip reason from manifest
+              REASON=$(python3 -c "
+          import json
+          with open('manifest.json', 'r') as f:
+              manifest = json.load(f)
+          symbol_key = '$symbol'.upper().replace('_', '-')
+          pca_info = manifest['artifacts'][symbol_key]['pca']
+          print(pca_info.get('reason', 'unknown'))
+          ")
+              N_COMMON=$(python3 -c "
+          import json
+          with open('manifest.json', 'r') as f:
+              manifest = json.load(f)
+          symbol_key = '$symbol'.upper().replace('_', '-')
+          pca_info = manifest['artifacts'][symbol_key]['pca']
+          print(pca_info.get('n_common', 0))
+          ")
+              echo "  ✅ PCA skipped: $REASON (n_common: $N_COMMON)"
+            elif [ "$PCA_STATUS" = "ok" ]; then
+              # Validate PCA data
+              aws s3 cp "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/$symbol/pca.parquet" "pca.parquet"
+              
+              python3 -c "
           import pandas as pd
           import numpy as np
           
@@ -274,11 +322,16 @@ jobs:
           else:
               print(f'  No PCA data available for $symbol')
           "
-            
-            rm -f "pca.parquet"
+              
+              rm -f "pca.parquet"
+            else
+              echo "❌ Invalid PCA status: $PCA_STATUS"
+              exit 1
+            fi
           done
           
-          echo "✅ PCA validation completed"
+          rm -f manifest.json
+          echo "✅ PCA status validation completed"
       
       - name: Upload validation artifacts
         if: always()
