@@ -83,6 +83,10 @@ jobs:
 
           echo "Diagnostic window: ${WINDOW_START} → ${WINDOW_END}"
 
+          # Write window values to environment for verification step
+          echo "WINDOW_START=${WINDOW_START}" >> $GITHUB_ENV
+          echo "WINDOW_END=${WINDOW_END}" >> $GITHUB_ENV
+
           LOG="${{ runner.temp }}/capture_${{ matrix.symbol }}.log"
           : > "$LOG"
 
@@ -112,10 +116,10 @@ jobs:
       - name: Verify S3 diagnostic output (${{ matrix.symbol }})
         run: |
           set -euo pipefail
-          DATE_UTC=$(date -u +%Y%m%d)
-          START_EPOCH=$(date -u +%s); START_EPOCH=$(( START_EPOCH - (START_EPOCH % 60) ))
-          START_HM=$(date -u -d "@${START_EPOCH}" +%H%M)
-          END_HM=$(date -u -d "@$((START_EPOCH + 300))" +%H%M)
+          # Use the exact window values from the capture step
+          START_HM=$(date -u -d "${{ env.WINDOW_START }}" +%H%M)
+          END_HM=$(date -u -d "${{ env.WINDOW_END }}" +%H%M)
+          DATE_UTC=$(date -u -d "${{ env.WINDOW_START }}" +%Y%m%d)
           PREFIX="${{ env.ACD_S3_PREFIX }}/${{ matrix.symbol }}/$DATE_UTC/${START_HM}-${END_HM}"
           echo "🔍 Checking s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/"
           aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/" || (echo "::error::S3 window folder missing for ${{ matrix.symbol }}" && exit 1)
