@@ -60,6 +60,7 @@ jobs:
           else
             echo "date=20251001" >> $GITHUB_OUTPUT
           fi
+          echo "WAVE1_PREFIX=analysis/${{ steps.computation_date.outputs.date }}/wave1" >> $GITHUB_ENV
       
       - name: Run Wave-1 computation
         run: |
@@ -135,70 +136,10 @@ jobs:
           print('✅ All artifacts have non-zero row counts')
           "
       
-      - name: Validate data quality
+      - name: Validate data quality (schema-aware)
         run: |
-          set -euo pipefail
-          echo "🔍 Validating data quality..."
-          
-          DATE="${{ steps.computation_date.outputs.date }}"
-          PREFIX="analysis/$DATE/wave1"
-          
-          # Download and validate key artifacts
-          for symbol in btc_usd eth_usd; do
-            for artifact in variance_ratios autocorr xcorr pca rolling; do
-              echo "Validating $symbol/$artifact..."
-              
-              # Download artifact
-              aws s3 cp "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/$symbol/$artifact.parquet" "$artifact.parquet"
-              
-              # Validate with Python
-              python3 -c "
-          import pandas as pd
-          import numpy as np
-          
-          df = pd.read_parquet('$artifact.parquet')
-          print(f'  Rows: {len(df)}, Columns: {len(df.columns)}')
-          
-          # Check for required columns
-          required_cols = ['symbol', 'venue']
-          for col in required_cols:
-              if col not in df.columns:
-                  print(f'❌ Missing required column: {col}')
-                  exit(1)
-          
-          # Check for null values in key columns
-          if 'ts_exchange_ms' in df.columns:
-              null_ts = df['ts_exchange_ms'].isnull().sum()
-              if null_ts > 0:
-                  print(f'❌ Found {null_ts} null timestamps')
-                  exit(1)
-          
-          if 'last_px' in df.columns:
-              null_px = df['last_px'].isnull().sum()
-              if null_px > 0:
-                  print(f'❌ Found {null_px} null prices')
-                  exit(1)
-          
-          # Check price sanity
-          if 'last_px' in df.columns:
-              min_px = df['last_px'].min()
-              max_px = df['last_px'].max()
-              if min_px < 0:
-                  print(f'❌ Negative prices found: min={min_px}')
-                  exit(1)
-              if max_px > 1000000:  # Sanity check for extreme values
-                  print(f'❌ Extreme prices found: max={max_px}')
-                  exit(1)
-          
-          print(f'  ✅ Data quality checks passed')
-          "
-              
-              # Clean up
-              rm -f "$artifact.parquet"
-            done
-          done
-          
-          echo "✅ All data quality checks passed"
+          set -euxo pipefail
+          python analytics/wave1/validate_wave1_ci.py
       
       - name: Validate uniqueness
         run: |
@@ -338,10 +279,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: wave1-validation-artifacts-${{ github.run_id }}
-          path: |
-            manifest.json
-            *.parquet
-          retention-days: 7
+          path: artifacts_wave1_ci/**
+          retention-days: 3
       
       - name: Final validation summary
         run: |

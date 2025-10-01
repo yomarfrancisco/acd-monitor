@@ -71,6 +71,8 @@ Wave-1 variables are designed to detect abnormal comovement and coordination pat
 | `n_aligned` | INTEGER | Number of aligned observations |
 | `cross_corr` | DOUBLE | Cross-correlation coefficient |
 
+**Note**: This artifact has a pairwise schema (venue1/venue2) rather than per-venue schema.
+
 **Interpretation**:
 - `cross_corr ≈ 0`: Independent venues (competitive)
 - `cross_corr > 0.5`: High comovement (potential coordination)
@@ -79,6 +81,8 @@ Wave-1 variables are designed to detect abnormal comovement and coordination pat
 ### 4. PCA Analysis (`pca.parquet`)
 
 **Purpose**: Detect common factors and systematic risk
+
+**Note**: This artifact is optional and may be skipped if insufficient common timestamps exist.
 
 | Column | Type | Description |
 |--------|------|-------------|
@@ -89,6 +93,8 @@ Wave-1 variables are designed to detect abnormal comovement and coordination pat
 | `component_1` | DOUBLE | Loading on first principal component |
 | `component_2` | DOUBLE | Loading on second principal component |
 | `component_3` | DOUBLE | Loading on third principal component |
+
+**When skipped**: Contains metadata with `status: "skipped"`, `reason`, and `n_common` fields.
 
 **Interpretation**:
 - High `explained_variance_ratio` on first component: Common factor dominance
