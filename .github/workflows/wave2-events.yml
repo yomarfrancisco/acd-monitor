@@ -50,25 +50,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install pandas numpy boto3 pyarrow
         
-    - name: Diagnostic — assert OIDC token envs exist
-      run: |
-        test -n "${ACTIONS_ID_TOKEN_REQUEST_TOKEN:-}" && test -n "${ACTIONS_ID_TOKEN_REQUEST_URL:-}" \
-          && echo "✅ OIDC request envs present" || (echo "❌ OIDC envs missing"; exit 1)
-
-    - name: Debug OIDC JWT (print sub)
-      shell: bash
-      run: |
-        set -euo pipefail
-        export TOK=$(curl -sS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-          "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=sts.amazonaws.com" | jq -r .value)
-        python - <<'PY'
-        import os, json, base64
-        tok = os.environ['TOK']
-        payload = base64.urlsafe_b64decode((tok.split('.')[1] + '==')).decode()
-        print("JWT payload:", payload)
-        print("SUB:", json.loads(payload).get("sub"))
-        PY
-
     - name: Configure AWS credentials (OIDC)
       uses: aws-actions/configure-aws-credentials@v4
       with:
@@ -83,6 +64,14 @@ jobs:
         aws sts get-caller-identity
         echo "🔎 List S3 analysis prefix (non-fatal if empty):"
         aws s3 ls s3://${{ env.ACD_S3_BUCKET }}/analysis/ || echo "empty/unknown OK"
+
+    - name: Run BTC event-studies (safe, no overwrite)
+      run: |
+        python3 analytics/wave2/events/runner.py \
+          --date "${{ env.DATE }}" \
+          --bucket "${{ env.ACD_S3_BUCKET }}" \
+          --symbol btc_usd \
+          --no-overwrite
         
     - name: Validate BTC events exist
       run: |
