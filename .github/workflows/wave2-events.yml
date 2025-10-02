@@ -107,58 +107,71 @@ jobs:
         check_symbol "btc_usd" "strict"
         check_symbol "eth_usd" "soft" || true
 
-    - name: Compute Wave-1 (BTC required if missing; ETH soft) — ENHANCED DIAGNOSTIC
+    - name: Compute Wave-1 (BTC required if missing; ETH soft) — ENHANCED DIAGNOSTIC + FAIL-FAST
       shell: bash
       run: |
         set -euo pipefail
+        set -x
         DATE="${{ env.DATE }}"
         BUCKET="${{ env.ACD_S3_BUCKET }}"
-        ALLOW_OVERWRITE="${ALLOW_OVERWRITE:-false}"
         REGION="${{ env.AWS_REGION }}"
+        ALLOW_OVERWRITE="${ALLOW_OVERWRITE:-false}"
+        required_artifacts=("variance_ratios" "autocorr" "xcorr" "rolling")
+
+        if [ "${ALLOW_OVERWRITE}" != "false" ]; then
+          echo "❌ ALLOW_OVERWRITE must be false in CI"; exit 1
+        fi
+
+        ls_key() { aws s3 ls "s3://${BUCKET}/$1" 2>&1; }
 
         ensure_symbol () {
           local sym="$1"
-          local strict="$2"  # "strict" or "soft"
+          local strict="$2"
+
+          echo "----- ENHANCED DIAGNOSTIC: ${sym} @ s3://${BUCKET}/analysis/${DATE}/wave1/${sym}/ -----"
+          echo "DIAG pre-list:"
+          aws s3 ls --recursive "s3://${BUCKET}/analysis/${DATE}/wave1/${sym}/" || echo "DIAG: none"
 
           need_compute="false"
-          echo "--- ENHANCED DIAGNOSTIC: checking Wave-1 artifacts for ${sym} @ s3://${BUCKET}/analysis/${DATE}/wave1/${sym}/ ---"
-          
-          # First, show what's actually in the directory
-          echo "DIAG: Current S3 directory contents for ${sym}:"
-          aws s3 ls "s3://${BUCKET}/analysis/${DATE}/wave1/${sym}/" || echo "DIAG: Directory does not exist or is empty"
-          
-          for art in variance_ratios autocorr xcorr rolling; do
+          for art in "${required_artifacts[@]}"; do
             key="analysis/${DATE}/wave1/${sym}/${art}.parquet"
-            echo "DIAG: Checking s3://${BUCKET}/${key}"
-            # Show the actual aws s3 ls output (not just success/failure)
-            if aws s3 ls "s3://${BUCKET}/${key}" 2>&1; then
-              echo "DIAG: ${art} = PRESENT (file exists)"
+            echo "DIAG: checking s3://${BUCKET}/${key}"
+            if ls_key "${key}" | grep -q '\.parquet'; then
+              echo "DIAG: ${art}=PRESENT"
             else
-              echo "DIAG: ${art} = MISSING (file does not exist)"
+              echo "DIAG: ${art}=MISSING"
               need_compute="true"
             fi
           done
 
           if [ "${need_compute}" = "true" ]; then
-            if [ "${ALLOW_OVERWRITE}" != "false" ]; then
-              echo "❌ ALLOW_OVERWRITE must be false in CI"; exit 1
+            echo "→ running compute_wave1.py for ${sym}"
+            python -u analytics/wave1/compute_wave1.py --date "${DATE}" --symbol "${sym}"
+            echo "→ compute finished; verifying…"
+            missing_after=0
+            for art in "${required_artifacts[@]}"; do
+              key="analysis/${DATE}/wave1/${sym}/${art}.parquet"
+              if ls_key "${key}" | grep -q '\.parquet'; then
+                echo "POST: PRESENT s3://${BUCKET}/${key}"
+              else
+                echo "POST: MISSING s3://${BUCKET}/${key}"
+                missing_after=$((missing_after+1))
+              fi
+            done
+            if [ "${missing_after}" -gt 0 ]; then
+              echo "❌ ${sym}: ${missing_after} artifact(s) still missing after compute"; exit 1
             fi
-            echo "DIAG: running compute_wave1.py for ${sym}"
-            python analytics/wave1/compute_wave1.py --date "${DATE}" --symbol "${sym}"
-            echo "DIAG: compute_wave1.py completed for ${sym}"
-
-            echo "DIAG: verifying outputs for ${sym} after compute (recursive list)"
-            aws s3 ls --recursive "s3://${BUCKET}/analysis/${DATE}/wave1/${sym}/" || echo "DIAG: No files found after compute"
           else
-            echo "DIAG: all required artifacts already present; skipping compute for ${sym}"
-            echo "DIAG: verifying existing outputs for ${sym} (recursive list)"
-            aws s3 ls --recursive "s3://${BUCKET}/analysis/${DATE}/wave1/${sym}/" || echo "DIAG: No files found in existing directory"
+            echo "✅ ${sym}: all artifacts present; compute skipped"
           fi
-          echo "--- ENHANCED DIAGNOSTIC DONE: ${sym} ---"
+
+          echo "DIAG post-list:"
+          aws s3 ls --recursive "s3://${BUCKET}/analysis/${DATE}/wave1/${sym}/" || echo "DIAG: none"
+          echo "----- DONE ${sym} -----"
         }
 
         ensure_symbol "btc_usd" "strict"
-        ensure_symbol "eth_usd" "soft" || true
+        ( ensure_symbol "eth_usd" "soft" ) || true
 
     - name: Export WAVE1_PREFIX for Wave-1 checks
       shell: bash
@@ -168,6 +181,13 @@ jobs:
       run: |
         set -euo pipefail
         echo "WAVE1_PREFIX=s3://${BUCKET}/analysis/${DATE}/wave1" >> "$GITHUB_ENV"
+
+    - name: Pre-validation S3 listing (Wave-1)
+      shell: bash
+      run: |
+        set -e
+        echo "listing s3://${{ env.ACD_S3_BUCKET }}/analysis/${{ env.DATE }}/wave1/"
+        aws s3 ls --recursive "s3://${{ env.ACD_S3_BUCKET }}/analysis/${{ env.DATE }}/wave1/" || true
 
     - name: Validate Wave-1 data quality (schema-aware)
       shell: bash
