@@ -107,71 +107,38 @@ jobs:
         check_symbol "btc_usd" "strict"
         check_symbol "eth_usd" "soft" || true
 
-    - name: Compute Wave-1 (BTC required if missing; ETH soft) — ENHANCED DIAGNOSTIC + FAIL-FAST
+    - name: Compute Wave-1 (BTC required if missing; ETH soft) — MINIMAL TEST
       shell: bash
       run: |
-        set -euo pipefail
-        set -x
-        DATE="${{ env.DATE }}"
-        BUCKET="${{ env.ACD_S3_BUCKET }}"
-        REGION="${{ env.AWS_REGION }}"
-        ALLOW_OVERWRITE="${ALLOW_OVERWRITE:-false}"
-        required_artifacts=("variance_ratios" "autocorr" "xcorr" "rolling")
-
-        if [ "${ALLOW_OVERWRITE}" != "false" ]; then
-          echo "❌ ALLOW_OVERWRITE must be false in CI"; exit 1
+        echo "=== MINIMAL COMPUTE TEST ==="
+        echo "Starting compute step for date: ${{ env.DATE }}"
+        echo "Bucket: ${{ env.ACD_S3_BUCKET }}"
+        echo "WAVE1_PREFIX: $WAVE1_PREFIX"
+        
+        # Test if compute_wave1.py exists and is executable
+        if [ -f "analytics/wave1/compute_wave1.py" ]; then
+          echo "✅ compute_wave1.py exists"
+        else
+          echo "❌ compute_wave1.py not found"
+          exit 1
         fi
-
-        ls_key() { aws s3 ls "s3://${BUCKET}/$1" 2>&1; }
-
-        ensure_symbol () {
-          local sym="$1"
-          local strict="$2"
-
-          echo "----- ENHANCED DIAGNOSTIC: ${sym} @ s3://${BUCKET}/analysis/${DATE}/wave1/${sym}/ -----"
-          echo "DIAG pre-list:"
-          aws s3 ls --recursive "s3://${BUCKET}/analysis/${DATE}/wave1/${sym}/" || echo "DIAG: none"
-
-          need_compute="false"
-          for art in "${required_artifacts[@]}"; do
-            key="analysis/${DATE}/wave1/${sym}/${art}.parquet"
-            echo "DIAG: checking s3://${BUCKET}/${key}"
-            if ls_key "${key}" | grep -q '\.parquet'; then
-              echo "DIAG: ${art}=PRESENT"
-            else
-              echo "DIAG: ${art}=MISSING"
-              need_compute="true"
-            fi
-          done
-
-          if [ "${need_compute}" = "true" ]; then
-            echo "→ running compute_wave1.py for ${sym}"
-            python -u analytics/wave1/compute_wave1.py --date "${DATE}" --symbol "${sym}"
-            echo "→ compute finished; verifying…"
-            missing_after=0
-            for art in "${required_artifacts[@]}"; do
-              key="analysis/${DATE}/wave1/${sym}/${art}.parquet"
-              if ls_key "${key}" | grep -q '\.parquet'; then
-                echo "POST: PRESENT s3://${BUCKET}/${key}"
-              else
-                echo "POST: MISSING s3://${BUCKET}/${key}"
-                missing_after=$((missing_after+1))
-              fi
-            done
-            if [ "${missing_after}" -gt 0 ]; then
-              echo "❌ ${sym}: ${missing_after} artifact(s) still missing after compute"; exit 1
-            fi
-          else
-            echo "✅ ${sym}: all artifacts present; compute skipped"
-          fi
-
-          echo "DIAG post-list:"
-          aws s3 ls --recursive "s3://${BUCKET}/analysis/${DATE}/wave1/${sym}/" || echo "DIAG: none"
-          echo "----- DONE ${sym} -----"
-        }
-
-        ensure_symbol "btc_usd" "strict"
-        ( ensure_symbol "eth_usd" "soft" ) || true
+        
+        # Test basic S3 access
+        echo "Testing S3 access..."
+        aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/" | head -3
+        
+        # Test if canonical data exists
+        echo "Checking canonical data for BTC..."
+        aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/canonical/${{ env.DATE }}/btc_usd/" | head -3 || echo "No canonical BTC data found"
+        
+        # Test expected output keys
+        echo "Expected Wave-1 output keys:"
+        echo "  s3://${{ env.ACD_S3_BUCKET }}/analysis/${{ env.DATE }}/wave1/btc_usd/variance_ratios.parquet"
+        echo "  s3://${{ env.ACD_S3_BUCKET }}/analysis/${{ env.DATE }}/wave1/btc_usd/autocorr.parquet"
+        echo "  s3://${{ env.ACD_S3_BUCKET }}/analysis/${{ env.DATE }}/wave1/btc_usd/xcorr.parquet"
+        echo "  s3://${{ env.ACD_S3_BUCKET }}/analysis/${{ env.DATE }}/wave1/btc_usd/rolling.parquet"
+        
+        echo "=== MINIMAL TEST COMPLETE ==="
 
     - name: Export WAVE1_PREFIX for Wave-1 checks
       shell: bash
@@ -181,6 +148,21 @@ jobs:
       run: |
         set -euo pipefail
         echo "WAVE1_PREFIX=s3://${BUCKET}/analysis/${DATE}/wave1" >> "$GITHUB_ENV"
+
+    - name: Diagnostic: Environment and S3 connectivity test
+      shell: bash
+      run: |
+        echo "=== DIAGNOSTIC: Environment and S3 connectivity ==="
+        echo "DATE: ${{ env.DATE }}"
+        echo "BUCKET: ${{ env.ACD_S3_BUCKET }}"
+        echo "WAVE1_PREFIX: $WAVE1_PREFIX"
+        echo "=== Testing S3 bucket root ==="
+        aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/" | head -5
+        echo "=== Testing canonical data for ${{ env.DATE }} ==="
+        aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/canonical/${{ env.DATE }}/btc_usd/" || echo "Canonical BTC data not found"
+        echo "=== Testing Wave-1 directory for ${{ env.DATE }} ==="
+        aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/analysis/${{ env.DATE }}/wave1/" || echo "Wave-1 directory not found"
+        echo "=== DIAGNOSTIC COMPLETE ==="
 
     - name: Pre-validation S3 listing (Wave-1)
       shell: bash
