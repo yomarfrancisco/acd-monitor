@@ -4,10 +4,7 @@ Score Event Studies for Stage I1 - Wave-2
 """
 
 import json
-import os
-import sys
 import io
-import hashlib
 from datetime import datetime, timezone
 from typing import Dict, List, Any
 import pandas as pd
@@ -159,7 +156,8 @@ def save_scorecard(symbol: str, scorecard: Dict[str, Any]) -> str:
         s3.head_object(Bucket=S3_BUCKET, Key=key)
         print(f"  ⚠️ Scorecard exists: {key} - reusing")
         return key
-    except:
+    except Exception as e:
+        pass
         pass
     
     # Save scorecard
@@ -182,11 +180,12 @@ def create_readme(symbol: str, scorecard: Dict[str, Any]) -> str:
         s3.head_object(Bucket=S3_BUCKET, Key=key)
         print(f"  ⚠️ README exists: {key} - reusing")
         return key
-    except:
+    except Exception as e:
+        pass
         pass
     
     # Create README content
-    readme_content = f"""Event Studies Analysis for {symbol} - {DATE}
+    readme_content = """Event Studies Analysis for {symbol} - {DATE}
 
 SUMMARY
 =======
@@ -210,7 +209,7 @@ VENUE SUMMARY
 """
     
     for venue, stats in scorecard['venue_summary'].items():
-        readme_content += f"""
+        readme_content += """
 {venue.upper()}:
   Combinations: {stats['combinations']}
   Avg CAR(300s): {stats['avg_car_300s']:.4f}
@@ -220,13 +219,13 @@ VENUE SUMMARY
   Over-reaction Rate: {stats['overreaction_rate']:.2%}
 """
     
-    readme_content += f"""
+    readme_content += """
 EVENT TYPE SUMMARY
 ==================
 """
     
     for event_type, stats in scorecard['event_type_summary'].items():
-        readme_content += f"""
+        readme_content += """
 {event_type.upper()}:
   Combinations: {stats['combinations']}
   Avg CAR(300s): {stats['avg_car_300s']:.4f}
@@ -237,19 +236,19 @@ EVENT TYPE SUMMARY
 """
     
     if scorecard['top_suspicious']:
-        readme_content += f"""
+        readme_content += """
 TOP SUSPICIOUS COMBINATIONS
 ===========================
 """
         for i, item in enumerate(scorecard['top_suspicious'], 1):
-            readme_content += f"""
+            readme_content += """
 {i}. {item['venue']}-{item['event_type']} (score: {item['suspicion_score']})
    CAR(300s): {item['car_300s']:.4f}
    ΔVol: {item['d_vol']:.4f}
    ΔSpread: {item['d_spread']:.4f}
 """
     
-    readme_content += f"""
+    readme_content += """
 
 INTERPRETATION
 =============
@@ -314,7 +313,7 @@ def main():
             results[symbol] = {"status": "failed", "error": str(e)}
     
     # Print summary
-    print(f"\n📊 Event Studies Scoring Summary:")
+    print("\n📊 Event Studies Scoring Summary:")
     for symbol, result in results.items():
         if result.get("status") == "success":
             print(f"  {symbol}: ✅ {result.get('summary')}")

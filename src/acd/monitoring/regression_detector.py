@@ -230,7 +230,7 @@ class RegressionDetector:
         timestamp: datetime,
     ) -> str:
         """Create a markdown regression report."""
-        report = f"""# ACD Monitor Regression Report - {timestamp.strftime('%Y-%m-%d %H:%M:%S')}
+        report = """# ACD Monitor Regression Report - {timestamp.strftime('%Y-%m-%d %H:%M:%S')}
 
 ## Run Information
 - **Run ID**: {current_metrics.run_id}
@@ -247,7 +247,7 @@ class RegressionDetector:
         else:
             report += "No regressions detected.\n"
 
-        report += f"""
+        report += """
 ## Detailed Trend Analysis
 
 ### Metric Trends (7-run comparison)
@@ -257,7 +257,7 @@ class RegressionDetector:
             if analysis.get("insufficient_data", False):
                 continue
 
-            report += f"""
+            report += """
 #### {metric_name.replace('_', ' ').title()}
 - **Current Value**: {analysis['current_value']:.3f}
 - **Historical Median**: {analysis['historical_median']:.3f}
@@ -265,7 +265,7 @@ class RegressionDetector:
 - **Regression Detected**: {'Yes' if analysis['regression_detected'] else 'No'}
 """
 
-        report += f"""
+        report += """
 ## Recommendations
 1. Review recent code changes that may have introduced regressions
 2. Investigate data quality changes or threshold adjustments

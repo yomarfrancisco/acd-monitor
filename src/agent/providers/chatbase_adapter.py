@@ -229,5 +229,3 @@ def check_provider_health(provider_type: Optional[str] = None) -> Health:
     """
     provider = create_provider(provider_type)
     return provider.healthcheck()
-
-

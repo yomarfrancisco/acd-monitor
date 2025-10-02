@@ -434,5 +434,3 @@ class ACDArtifactSelector:
             reasons.append("General query - loading default artifacts")
 
         return "; ".join(reasons)
-
-

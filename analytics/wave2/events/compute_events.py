@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Wave-2 Event Studies Engine - BTC Only"""
 
-import os
 import sys
 import json
 import argparse
@@ -51,7 +50,8 @@ class EventStudiesEngine:
             df = pd.read_parquet(obj['Body'])
             logger.info(f"Loaded {len(df)} env flags")
             return df
-        except:
+        except Exception as e:
+        pass
             logger.info("No env flags found")
             return None
     

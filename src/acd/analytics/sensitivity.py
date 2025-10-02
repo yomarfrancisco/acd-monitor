@@ -300,5 +300,3 @@ class PowerAnalyzer:
             f.write(report)
 
         logger.info(f"Power analysis report saved to {output_file}")
-
-

@@ -463,5 +463,3 @@ For more specific analysis, please ask about:
             confidence=0.0,
             answer_type="error",
         )
-
-

@@ -165,7 +165,8 @@ class GlobalMomentScaler:
 
         self.fitted = True
         logger.info(
-            f"GlobalMomentScaler fitted with {self.method} method for {len(moment_data)} moment types"
+            f"GlobalMomentScaler fitted with {self.method} method "
+            f"for {len(moment_data)} moment types"
         )
         return self
 
@@ -221,4 +222,3 @@ class GlobalMomentScaler:
             moment_vectors.append(scaled_data[moment_name].flatten())
 
         return np.concatenate(moment_vectors)
-

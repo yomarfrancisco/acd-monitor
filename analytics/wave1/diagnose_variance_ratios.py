@@ -287,10 +287,12 @@ def run_control_test() -> Dict[str, Any]:
             'test_date': test_date,
             'raw_vr': raw_vr,
             'canonical_vr': canonical_vr,
-            'vr_difference': abs(raw_vr - canonical_vr) if not np.isnan(raw_vr) and not np.isnan(canonical_vr) else np.nan,
+            'vr_difference': abs(raw_vr - canonical_vr) if not np.isnan(raw_vr)
+    not np.isnan(canonical_vr) else np.nan,
             'raw_obs': len(raw_df),
             'canonical_obs': len(canonical_venue_df),
-            'structural_artifact_suspected': abs(raw_vr - canonical_vr) > 0.1 if not np.isnan(raw_vr) and not np.isnan(canonical_vr) else False
+            'structural_artifact_suspected': abs(raw_vr - canonical_vr) > 0.1 if not np.isnan(raw_vr)
+    not np.isnan(canonical_vr) else False
         }
         
         print(f"  ✅ Control test: raw_vr={raw_vr:.3f}, canonical_vr={canonical_vr:.3f}")
@@ -359,7 +361,7 @@ def main():
     print(f"  ✅ {control_key}")
     
     # Create README
-    readme_content = f"""Variance Ratio Diagnostic Analysis for 20251001
+    readme_content = """Variance Ratio Diagnostic Analysis for 20251001
 Generated: {datetime.now(timezone.utc).isoformat()}
 
 This diagnostic analysis investigates the extremely low variance ratios (<0.3) 
@@ -423,7 +425,7 @@ Next Steps:
     # Control test summary
     if control_results['results'].get('status') == 'SUCCESS':
         results = control_results['results']
-        print(f"\nControl Test:")
+        print("\nControl Test:")
         print(f"  Raw VR: {results['raw_vr']:.3f}")
         print(f"  Canonical VR: {results['canonical_vr']:.3f}")
         print(f"  Difference: {results['vr_difference']:.3f}")

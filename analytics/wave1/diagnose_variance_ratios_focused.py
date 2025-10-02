@@ -10,7 +10,6 @@ Since historical data is not available, focus on:
 
 import json
 import os
-import sys
 import io
 from datetime import datetime, timezone
 from typing import Dict, List, Any
@@ -107,10 +106,12 @@ def load_wave1_variance_ratios() -> pd.DataFrame:
     """Load Wave-1 computed variance ratios."""
     try:
         return read_parquet_s3(f"analysis/{DATE}/wave1/btc_usd/variance_ratios.parquet")
-    except:
+    except Exception as e:
+        pass
         try:
             return read_parquet_s3(f"analysis/{DATE}/wave1/eth_usd/variance_ratios.parquet")
-        except:
+        except Exception as e:
+        pass
             raise Exception("Could not load Wave-1 variance ratios")
 
 # =============================================================================
@@ -273,7 +274,7 @@ def main():
     print(f"  ✅ {comparison_key}")
     
     # Create README
-    readme_content = f"""Focused Variance Ratio Diagnostic for 20251001
+    readme_content = """Focused Variance Ratio Diagnostic for 20251001
 Generated: {datetime.now(timezone.utc).isoformat()}
 
 This focused diagnostic analysis investigates the extremely low variance ratios (<0.3) 
@@ -329,7 +330,7 @@ Next Steps:
     
     if comparison_results['results'].get('status') == 'SUCCESS':
         summary = comparison_results['results']['summary']
-        print(f"\nWave-1 Comparison:")
+        print("\nWave-1 Comparison:")
         print(f"  Total venues: {summary['total_venues']}")
         print(f"  Significant differences: {summary['significant_differences']}")
         print(f"  Average difference: {summary['avg_difference']:.3f}")

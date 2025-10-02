@@ -93,7 +93,7 @@ def timestamp_bundle(bundle: EvidenceBundle, output_path: Path) -> None:
         # Display timestamp information
         latest_timestamp = timestamp_chain.get_latest_timestamp()
         if latest_timestamp:
-            print(f"✅ Bundle timestamped successfully!")
+            print("✅ Bundle timestamped successfully!")
             print(f"   Timestamp: {latest_timestamp.isoformat()}")
             print(
                 f"   Provider: {timestamp_chain.timestamp_responses[0].provider_name}"

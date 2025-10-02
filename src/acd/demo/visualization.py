@@ -283,7 +283,8 @@ class DemoVisualization:
                 avg_confidence = sum(regime_confidences) / len(regime_confidences)
                 if avg_confidence < 0.5:
                     recommendations.append(
-                        "Low average regime confidence - review feature engineering and data quality"
+                        "Low average regime confidence - review feature engineering "
+                        "and data quality"
                     )
 
         # Data quality recommendations

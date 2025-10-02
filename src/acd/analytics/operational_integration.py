@@ -710,5 +710,3 @@ if __name__ == "__main__":
         print(f"    Responsible: {phase.responsible_party}")
         print(f"    Objectives: {len(phase.objectives)} objectives")
         print(f"    Deliverables: {len(phase.deliverables)} deliverables")
-
-

@@ -513,7 +513,7 @@ class HealthChecker:
         print(f"\n{result.summary}")
 
         if result.recommendations:
-            print(f"\nRecommendations:")
+            print("\nRecommendations:")
             for i, rec in enumerate(result.recommendations, 1):
                 print(f"  {i}. {rec}")
 

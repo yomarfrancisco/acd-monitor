@@ -472,5 +472,3 @@ if __name__ == "__main__":
     print(f"Confidence Interval: {metrics.confidence_interval}")
     print(f"Statistical Significance: {metrics.statistical_significance:.3f}")
     print(f"Economic Interpretation: {metrics.economic_interpretation}")
-
-

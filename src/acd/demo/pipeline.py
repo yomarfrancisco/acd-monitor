@@ -466,7 +466,7 @@ class DemoPipeline:
         if not results["success"]:
             return f"❌ Pipeline failed after {results['execution_time']:.2f}s: {results['errors']}"
 
-        summary = f"""
+        summary = """
 🎯 ACD Monitor Demo Pipeline - Execution Summary
 {'='*50}
 ⏱️  Execution Time: {results['execution_time']:.2f}s

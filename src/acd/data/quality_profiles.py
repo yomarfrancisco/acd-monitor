@@ -136,7 +136,8 @@ class QualityProfileManager:
             source_type=DataSourceType.CDS_LIVE,
             thresholds=cds_thresholds,
             description="Credit Default Swap live market data",
-            rationale="CDS data requires high accuracy and timeliness for real-time trading decisions",
+            rationale="CDS data requires high accuracy and "
+            "timeliness for real-time trading decisions",
             validation_rules=[
                 "Price changes must be within 3-sigma bounds",
                 "Spread calculations must match reference rates",
@@ -200,7 +201,8 @@ class QualityProfileManager:
             source_type=DataSourceType.REGULATORY_DISCLOSURE,
             thresholds=regulatory_thresholds,
             description="Regulatory filings and disclosure documents",
-            rationale="Regulatory data prioritizes completeness and accuracy over timeliness for compliance",
+            rationale="Regulatory data prioritizes completeness and "
+            "accuracy over timeliness for compliance",
             validation_rules=[
                 "All required fields must be present",
                 "Document checksums must validate",

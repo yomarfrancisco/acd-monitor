@@ -367,5 +367,3 @@ class ACDArtifactLoader:
         except Exception as e:
             logger.warning(f"Error searching in file {file_path}: {e}")
             return False
-
-
