@@ -149,7 +149,7 @@ jobs:
         set -euo pipefail
         echo "WAVE1_PREFIX=s3://${BUCKET}/analysis/${DATE}/wave1" >> "$GITHUB_ENV"
 
-    - name: Diagnostic: Environment and S3 connectivity test
+    - name: "Diagnostic: Environment and S3 connectivity test"
       shell: bash
       run: |
         echo "=== DIAGNOSTIC: Environment and S3 connectivity ==="
