@@ -187,7 +187,7 @@ jobs:
         [ "$ok" -eq 1 ] || { echo "❌ BTC required artifacts missing"; exit 1; }
         echo "=== WAVE-1 VALIDATION OK ==="
 
-    - name: Run Wave-2 event studies (tri-state: skip/run/stop)
+    - name: "Run Wave-2 event studies (tri-state: skip/run/stop)"
       shell: bash
       env:
         DATE:   ${{ env.DATE }}
