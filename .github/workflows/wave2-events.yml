@@ -107,39 +107,6 @@ jobs:
         check_symbol "btc_usd" "strict"
         check_symbol "eth_usd" "soft" || true
 
-    - name: Compute Wave-1 (BTC required if missing; ETH soft) — MINIMAL TEST
-      shell: bash
-      run: |
-        echo "=== MINIMAL COMPUTE TEST ==="
-        echo "Starting compute step for date: ${{ env.DATE }}"
-        echo "Bucket: ${{ env.ACD_S3_BUCKET }}"
-        echo "WAVE1_PREFIX: $WAVE1_PREFIX"
-        
-        # Test if compute_wave1.py exists and is executable
-        if [ -f "analytics/wave1/compute_wave1.py" ]; then
-          echo "✅ compute_wave1.py exists"
-        else
-          echo "❌ compute_wave1.py not found"
-          exit 1
-        fi
-        
-        # Test basic S3 access
-        echo "Testing S3 access..."
-        aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/" | head -3
-        
-        # Test if canonical data exists
-        echo "Checking canonical data for BTC..."
-        aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/canonical/${{ env.DATE }}/btc_usd/" | head -3 || echo "No canonical BTC data found"
-        
-        # Test expected output keys
-        echo "Expected Wave-1 output keys:"
-        echo "  s3://${{ env.ACD_S3_BUCKET }}/analysis/${{ env.DATE }}/wave1/btc_usd/variance_ratios.parquet"
-        echo "  s3://${{ env.ACD_S3_BUCKET }}/analysis/${{ env.DATE }}/wave1/btc_usd/autocorr.parquet"
-        echo "  s3://${{ env.ACD_S3_BUCKET }}/analysis/${{ env.DATE }}/wave1/btc_usd/xcorr.parquet"
-        echo "  s3://${{ env.ACD_S3_BUCKET }}/analysis/${{ env.DATE }}/wave1/btc_usd/rolling.parquet"
-        
-        echo "=== MINIMAL TEST COMPLETE ==="
-
     - name: Export WAVE1_PREFIX for Wave-1 checks
       shell: bash
       env:
@@ -148,6 +115,65 @@ jobs:
       run: |
         set -euo pipefail
         echo "WAVE1_PREFIX=s3://${BUCKET}/analysis/${DATE}/wave1" >> "$GITHUB_ENV"
+
+    - name: "Compute Wave-1 (BTC required if missing; ETH soft) — run-if-missing"
+      shell: bash
+      run: |
+        set -euo pipefail
+        DATE="${{ env.DATE }}"
+        BUCKET="${{ env.ACD_S3_BUCKET }}"
+        ALLOW_OVERWRITE="${ALLOW_OVERWRITE:-false}"
+
+        echo "Wave-1 prefix: ${WAVE1_PREFIX:-<unset>}"
+        echo "Repo files under analytics/wave1:"
+        ls -la analytics/wave1 || true
+
+        ensure_symbol () {
+          local sym="$1"
+          local strict="$2"  # strict|soft
+          local need_compute="false"
+
+          echo "--- DIAG: listing pre-state for ${sym} ---"
+          aws s3 ls --recursive "s3://${BUCKET}/analysis/${DATE}/wave1/${sym}/" || echo "(none)"
+
+          for art in variance_ratios autocorr xcorr rolling; do
+            key="analysis/${DATE}/wave1/${sym}/${art}.parquet"
+            if aws s3 ls "s3://${BUCKET}/${key}" > /dev/null 2>&1; then
+              echo "PRESENT: s3://${BUCKET}/${key}"
+            else
+              echo "MISSING: s3://${BUCKET}/${key}"
+              need_compute="true"
+            fi
+          done
+
+          if [ "${need_compute}" = "true" ]; then
+            if [ "${ALLOW_OVERWRITE}" != "false" ]; then
+              echo "❌ ALLOW_OVERWRITE must be false in CI"; exit 1
+            fi
+            [ -f analytics/wave1/compute_wave1.py ] || { echo "❌ analytics/wave1/compute_wave1.py not found"; exit 1; }
+
+            # Optional: hard-stop if canonical inputs are absent
+            aws s3 ls "s3://${BUCKET}/canonical/${DATE}/${sym}/" > /dev/null 2>&1 \
+              || { echo "❌ canonical inputs missing for ${sym}"; exit 1; }
+
+            echo "→ Running compute_wave1.py for ${sym}"
+            python analytics/wave1/compute_wave1.py --date "${DATE}" --symbol "${sym}"
+            echo "→ Post-compute listing:"
+            aws s3 ls --recursive "s3://${BUCKET}/analysis/${DATE}/wave1/${sym}/" || echo "(still empty)"
+          else
+            echo "✅ ${sym}: all required artifacts present; skipping compute"
+          fi
+
+          if [ "${strict}" = "strict" ]; then
+            for art in variance_ratios autocorr xcorr rolling; do
+              aws s3 ls "s3://${BUCKET}/analysis/${DATE}/wave1/${sym}/${art}.parquet" > /dev/null 2>&1 \
+                || { echo "❌ ${sym}/${art}.parquet still missing after compute"; exit 1; }
+            done
+          fi
+        }
+
+        ensure_symbol "btc_usd" "strict"
+        ensure_symbol "eth_usd" "soft" || true
 
     - name: "Diagnostic: Environment and S3 connectivity test"
       shell: bash
