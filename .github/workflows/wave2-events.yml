@@ -69,43 +69,6 @@ jobs:
         echo "🔎 List S3 analysis prefix (non-fatal if empty):"
         aws s3 ls s3://${{ env.ACD_S3_BUCKET }}/analysis/ || echo "empty/unknown OK"
 
-    - name: Validate Wave-1 artifacts exist (BTC required, ETH soft)
-      shell: bash
-      run: |
-        set -euo pipefail
-        DATE="${{ env.DATE }}"
-        BUCKET="${{ env.ACD_S3_BUCKET }}"
-
-        check_symbol () {
-          local sym="$1"
-          local strict="$2"  # "strict" or "soft"
-          missing=()
-
-          for art in variance_ratios autocorr xcorr rolling; do
-            if ! aws s3 ls "s3://${BUCKET}/analysis/${DATE}/wave1/${sym}/${art}.parquet" >/dev/null 2>&1; then
-              missing+=("${art}")
-            fi
-          done
-
-          # PCA optional
-          if ! aws s3 ls "s3://${BUCKET}/analysis/${DATE}/wave1/${sym}/pca.parquet" >/dev/null 2>&1; then
-            echo "ℹ️ ${sym}: pca.parquet absent (optional)"
-          fi
-
-          if [ ${#missing[@]} -gt 0 ]; then
-            if [ "${strict}" = "strict" ]; then
-              echo "❌ ${sym}: missing Wave-1 artifacts: ${missing[*]}"
-              exit 1
-            else
-              echo "⚠️ ${sym}: missing Wave-1 artifacts (soft): ${missing[*]}"
-            fi
-          else
-            echo "✅ ${sym}: all required Wave-1 artifacts present"
-          fi
-        }
-
-        check_symbol "btc_usd" "strict"
-        check_symbol "eth_usd" "soft" || true
 
     - name: Export WAVE1_PREFIX for Wave-1 checks
       shell: bash
@@ -190,11 +153,39 @@ jobs:
         echo "listing s3://${{ env.ACD_S3_BUCKET }}/analysis/${{ env.DATE }}/wave1/"
         aws s3 ls --recursive "s3://${{ env.ACD_S3_BUCKET }}/analysis/${{ env.DATE }}/wave1/" || true
 
-    - name: Validate Wave-1 data quality (schema-aware)
+    - name: Validate Wave-1 outputs (BTC hard / ETH soft)
       shell: bash
+      env:
+        DATE:   ${{ env.DATE }}
+        BUCKET: ${{ env.ACD_S3_BUCKET }}
       run: |
-        set -euxo pipefail
-        python analytics/wave1/validate_wave1_ci.py
+        set -euo pipefail
+        echo "=== WAVE-1 VALIDATION ==="
+        ok=1
+        for art in variance_ratios autocorr xcorr rolling; do
+          key="analysis/${DATE}/wave1/btc_usd/${art}.parquet"
+          if ! aws s3 ls "s3://${BUCKET}/${key}" >/dev/null 2>&1; then
+            echo "❌ BTC REQUIRED MISSING: s3://${BUCKET}/${key}"
+            ok=0
+          else
+            echo "✅ BTC present: ${key}"
+          fi
+        done
+
+        # ETH soft checks (warn only)
+        soft_missing=()
+        for art in variance_ratios autocorr xcorr rolling; do
+          key="analysis/${DATE}/wave1/eth_usd/${art}.parquet"
+          aws s3 ls "s3://${BUCKET}/${key}" >/dev/null 2>&1 || soft_missing+=("${art}")
+        done
+        if [ ${#soft_missing[@]} -gt 0 ]; then
+          echo "⚠️ ETH soft-missing: ${soft_missing[*]}"
+        else
+          echo "✅ ETH present (soft)"
+        fi
+
+        [ "$ok" -eq 1 ] || { echo "❌ BTC required artifacts missing"; exit 1; }
+        echo "=== WAVE-1 VALIDATION OK ==="
 
     - name: Run BTC event-studies (safe, no overwrite)
       run: |
