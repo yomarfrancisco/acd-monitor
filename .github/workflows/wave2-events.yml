@@ -75,6 +75,14 @@ jobs:
         role-to-assume: arn:aws:iam::514258695205:role/acd-ci-oidc
         role-session-name: gha-wave2-events-${{ github.run_id }}
         aws-region: ${{ env.AWS_REGION }}
+
+    - name: Sanity check AWS connectivity
+      run: |
+        set -euo pipefail
+        echo "🔎 STS caller identity:"
+        aws sts get-caller-identity
+        echo "🔎 List S3 analysis prefix (non-fatal if empty):"
+        aws s3 ls s3://${{ env.ACD_S3_BUCKET }}/analysis/ || echo "empty/unknown OK"
         
     - name: Validate BTC events exist
       run: |
@@ -191,6 +199,7 @@ jobs:
       with:
         name: wave2-events-ci-${{ github.run_id }}
         path: artifacts_wave2_events/**
+        if-no-files-found: ignore
         retention-days: 3
         
     - name: Report results
