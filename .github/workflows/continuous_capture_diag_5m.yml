@@ -1,0 +1,145 @@
+name: Continuous Snapshot Capture - 5min Diagnostic
+
+on:
+  workflow_dispatch:
+    inputs:
+      symbols:
+        description: "Symbols (comma-separated)"
+        required: true
+        default: "BTC-USD,ETH-USD"
+      venues:
+        description: "Venues (comma-separated) — exclude binance"
+        required: true
+        default: "coinbase,kraken,okx,bybit"
+      canary:
+        description: "Enable canary mode"
+        type: boolean
+        default: true
+
+permissions:
+  id-token: write
+  contents: read
+
+# Diagnostic concurrency - do NOT auto-cancel
+concurrency:
+  group: capture-diagnostic-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: us-east-1
+  ACD_S3_BUCKET: acd-monitor-snapshots
+  ACD_S3_PREFIX: snapshots
+  BTC_CANARY_ENABLED: true  # Always enable canary for diagnostic
+  BTC_SANITY_MIN_2025: "80000"
+
+jobs:
+  capture-windows-diagnostic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15   # ← cushion above ~6 min/symbol
+
+    strategy:
+      fail-fast: false
+      matrix:
+        symbol: ["BTC-USD", "ETH-USD"]
+
+    if: ${{ github.ref == 'refs/heads/main' }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for commit SHA
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install boto3 pandas pyarrow requests
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::514258695205:role/acd-ci-oidc
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Sanity check AWS connectivity
+        run: |
+          aws sts get-caller-identity
+          aws s3 ls s3://${{ env.ACD_S3_BUCKET }}/${{ env.ACD_S3_PREFIX }}/ || echo "Bucket empty or doesn't exist yet"
+      
+      - name: Diagnostic 5-minute capture (${{ matrix.symbol }})
+        run: |
+          set -euxo pipefail
+          CURRENT_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          START_EPOCH=$(date -u +%s)
+          START_EPOCH=$(( START_EPOCH - (START_EPOCH % 60) ))
+          WINDOW_START=$(date -u -d "@${START_EPOCH}" +"%Y-%m-%dT%H:%M:%SZ")
+          WINDOW_END=$(date -u -d "@$((START_EPOCH + 300))" +"%Y-%m-%dT%H:%M:%SZ")
+
+          echo "Diagnostic window: ${WINDOW_START} → ${WINDOW_END}"
+
+          # Write window values to environment for verification step
+          echo "WINDOW_START=${WINDOW_START}" >> $GITHUB_ENV
+          echo "WINDOW_END=${WINDOW_END}" >> $GITHUB_ENV
+
+          LOG="${{ runner.temp }}/capture_${{ matrix.symbol }}.log"
+          : > "$LOG"
+
+          python scripts/capture/capture_window_enhanced.py \
+            --symbol "${{ matrix.symbol }}" \
+            --start "$WINDOW_START" \
+            --end "$WINDOW_END" \
+            --venues "${{ github.event.inputs.venues }}" \
+            --bucket "${{ env.ACD_S3_BUCKET }}" \
+            --prefix "${{ env.ACD_S3_PREFIX }}" \
+            --canary \
+            --verbose | tee -a "$LOG"
+      
+      - name: Verify diagnostic completion (${{ matrix.symbol }})
+        run: |
+          set -euo pipefail
+          LOG="${{ runner.temp }}/capture_${{ matrix.symbol }}.log"
+          echo "🔍 Checking diagnostic markers in $LOG"
+          for m in S3_WRITE_COMPLETE CAPTURE_COMPLETE WINDOW_CAPTURE_COMPLETE; do
+            if ! grep -q "$m" "$LOG"; then
+              echo "::error title=Missing Marker::$m not found in logs for ${{ matrix.symbol }}"
+              exit 1
+            fi
+          done
+          echo "::notice title=Markers OK::${{ matrix.symbol }}"
+      
+      - name: Verify S3 diagnostic output (${{ matrix.symbol }})
+        run: |
+          set -euo pipefail
+          # Use the exact window values from the capture step
+          START_HM=$(date -u -d "${{ env.WINDOW_START }}" +%H%M)
+          END_HM=$(date -u -d "${{ env.WINDOW_END }}" +%H%M)
+          DATE_UTC=$(date -u -d "${{ env.WINDOW_START }}" +%Y%m%d)
+          PREFIX="${{ env.ACD_S3_PREFIX }}/${{ matrix.symbol }}/$DATE_UTC/${START_HM}-${END_HM}"
+          echo "🔍 Checking s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/"
+          aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/" || (echo "::error::S3 window folder missing for ${{ matrix.symbol }}" && exit 1)
+      
+      - name: Upload diagnostic logs (${{ matrix.symbol }})
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: diagnostic-capture-logs-${{ github.run_id }}-${{ matrix.symbol }}
+          path: ${{ runner.temp }}/capture_${{ matrix.symbol }}.log
+          retention-days: 3
+      
+      - name: Diagnostic summary (${{ matrix.symbol }})
+        if: always()
+        run: |
+          echo "=== DIAGNOSTIC SUMMARY ==="
+          echo "Workflow: ${{ github.workflow }}"
+          echo "Run ID: ${{ github.run_id }}"
+          echo "Run Number: ${{ github.run_number }}"
+          echo "Symbol: ${{ matrix.symbol }}"
+          echo "Venues: ${{ github.event.inputs.venues }}"
+          echo "Canary Mode: ${{ github.event.inputs.canary }}"
+          echo "Status: ${{ job.status }}"

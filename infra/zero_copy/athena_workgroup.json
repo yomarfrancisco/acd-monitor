@@ -1,0 +1,30 @@
+{
+  "Name": "acd-analytics",
+  "Description": "ACD Monitor analytics workgroup for zero-copy processing",
+  "WorkGroupConfiguration": {
+    "ResultConfiguration": {
+      "OutputLocation": "s3://acd-monitor-derived/athena-results/",
+      "EncryptionConfiguration": {
+        "EncryptionOption": "SSE_S3"
+      }
+    },
+    "EnforceWorkGroupConfiguration": true,
+    "PublishCloudWatchMetricsEnabled": true,
+    "RequesterPaysEnabled": false,
+    "EngineVersion": {
+      "SelectedEngineVersion": "Athena engine version 3"
+    }
+  },
+  "Tags": [
+    {
+      "Key": "Project",
+      "Value": "ACD-Monitor"
+    },
+    {
+      "Key": "Environment", 
+      "Value": "Analytics"
+    }
+  ]
+}
+
+

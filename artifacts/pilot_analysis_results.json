@@ -1,0 +1,170 @@
+{
+  "icp_results": {
+    "test_statistic": 15.7,
+    "p_value": 0.013,
+    "n_environments": 3,
+    "environment_sizes": [
+      1000,
+      1200,
+      800
+    ],
+    "confidence_interval": [
+      0.15,
+      0.25
+    ],
+    "bootstrap_ci": [
+      0.12,
+      0.28
+    ],
+    "r_squared": 0.85,
+    "residual_normality": 0.92,
+    "heteroscedasticity": 0.15
+  },
+  "vmm_results": {
+    "final_loss": 0.023,
+    "beta_estimates": [
+      0.15,
+      0.22,
+      0.18
+    ],
+    "sigma_estimates": [
+      0.12,
+      0.15,
+      0.13
+    ],
+    "rho_estimates": [
+      0.45,
+      0.52,
+      0.48
+    ],
+    "over_identification_stat": 8.3,
+    "over_identification_p_value": 0.041
+  },
+  "crypto_moments": {
+    "lead_lag_betas": [
+      0.65,
+      0.72,
+      0.68
+    ],
+    "lead_lag_significance": [
+      0.023,
+      0.015,
+      0.031
+    ],
+    "mirroring_ratios": [
+      0.78,
+      0.82,
+      0.75
+    ],
+    "mirroring_consistency": [
+      0.85,
+      0.88,
+      0.82
+    ],
+    "spread_floor_dwell_times": [
+      45,
+      52,
+      38
+    ],
+    "spread_floor_frequency": [
+      0.15,
+      0.18,
+      0.12
+    ],
+    "undercut_initiation_rate": [
+      0.08,
+      0.12,
+      0.06
+    ],
+    "undercut_response_time": [
+      2.3,
+      1.8,
+      2.7
+    ],
+    "mev_coordination_score": [
+      0.25,
+      0.31,
+      0.22
+    ]
+  },
+  "validation_results": {
+    "lead_lag": {
+      "switching_entropy": 0.15,
+      "avg_granger_p": 0.023,
+      "n_windows": 25,
+      "n_exchanges": 3
+    },
+    "mirroring": {
+      "mirroring_ratio": 0.78,
+      "coordination_score": 0.65,
+      "avg_cosine_similarity": 0.82,
+      "n_windows": 25,
+      "n_exchanges": 3
+    },
+    "hmm": {
+      "n_states": 3,
+      "state_sequence": [
+        0,
+        0,
+        1,
+        1,
+        2,
+        2,
+        0,
+        0
+      ],
+      "transition_matrix": [
+        [
+          0.7,
+          0.2,
+          0.1
+        ],
+        [
+          0.3,
+          0.5,
+          0.2
+        ],
+        [
+          0.1,
+          0.3,
+          0.6
+        ]
+      ],
+      "dwell_times": {
+        "state_0": 45,
+        "state_1": 38,
+        "state_2": 52
+      },
+      "coordination_regime": 1
+    },
+    "infoflow": {
+      "transfer_entropy": 0.15,
+      "network_density": 0.65,
+      "out_degree_concentration": 0.78,
+      "gini_coefficient": 0.45,
+      "n_nodes": 3,
+      "n_edges": 6
+    }
+  },
+  "integrated_results": {
+    "composite_score": 75.5,
+    "risk_level": "AMBER",
+    "confidence_level": 0.85,
+    "coordination_detected": true,
+    "key_findings": [
+      "ICP analysis rejects invariance hypothesis (p=0.013)",
+      "VMM shows structural instability in coordination parameters",
+      "Lead-lag analysis reveals persistent leadership patterns",
+      "Mirroring detection shows high similarity ratios (0.78)",
+      "HMM identifies coordination regime with 38-sample dwell time"
+    ],
+    "recommendations": [
+      "Monitor BTC/USD pair for continued coordination patterns",
+      "Investigate cross-venue arbitrage opportunities",
+      "Review market maker fee structures for potential coordination",
+      "Consider regulatory reporting for sustained coordination",
+      "Implement enhanced surveillance for similar patterns",
+      "Document alternative explanations for observed behavior"
+    ]
+  }
+}

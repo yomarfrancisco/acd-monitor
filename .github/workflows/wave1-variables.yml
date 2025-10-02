@@ -1,0 +1,351 @@
+name: Wave-1 Variables Computation
+
+on:
+  workflow_dispatch:
+    inputs:
+      date:
+        description: 'Date to compute Wave-1 variables (YYYYMMDD format)'
+        required: true
+        default: '20251001'
+  push:
+    branches: [main]
+    paths:
+      - 'analytics/wave1/**'
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
+  ACD_S3_BUCKET: acd-monitor-snapshots
+
+jobs:
+  wave1-computation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas pyarrow boto3 numpy scikit-learn
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::514258695205:role/acd-ci-oidc
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Sanity check AWS connectivity
+        run: |
+          aws sts get-caller-identity
+          aws s3 ls s3://${{ env.ACD_S3_BUCKET }}/canonical/ || echo "Canonical prefix empty or doesn't exist yet"
+      
+      - name: Set computation date
+        id: computation_date
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "date=${{ github.event.inputs.date }}" >> $GITHUB_OUTPUT
+          else
+            echo "date=20251001" >> $GITHUB_OUTPUT
+          fi
+          echo "WAVE1_PREFIX=analysis/${{ steps.computation_date.outputs.date }}/wave1" >> $GITHUB_ENV
+      
+      - name: Run Wave-1 computation
+        run: |
+          set -euo pipefail
+          echo "🔍 Computing Wave-1 variables for ${{ steps.computation_date.outputs.date }}"
+          python analytics/wave1/compute_wave1.py --date ${{ steps.computation_date.outputs.date }}
+      
+      - name: "DIAGNOSTIC: List S3 contents after computation"
+        run: |
+          set -euxo pipefail
+          echo "🔎 DIAG: Listing s3://${{ env.ACD_S3_BUCKET }}/${{ env.WAVE1_PREFIX }}/ (recursive)"
+          aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/${{ env.WAVE1_PREFIX }}/" --recursive || echo "DIAG: path not found or empty"
+
+      - name: "DIAGNOSTIC: Check canonical data availability"
+        run: |
+          set -euxo pipefail
+          python - <<'PY'
+          import boto3, time, json
+          athena = boto3.client('athena')
+          wg = 'primary'
+          q1 = "SELECT count(*) FROM acd_derived.btc_ticks_enriched_v5 WHERE vdate_ymd='20251001'"
+          q2 = "SELECT count(*) FROM acd_derived.eth_ticks_enriched_v5 WHERE vdate_ymd='20251001'"
+          def run(q):
+              qid = athena.start_query_execution(QueryString=q, WorkGroup=wg)['QueryExecutionId']
+              while True:
+                  s = athena.get_query_execution(QueryExecutionId=qid)['QueryExecution']['Status']['State']
+                  if s in ('SUCCEEDED','FAILED','CANCELLED'): break
+                  time.sleep(1)
+              if s != 'SUCCEEDED': raise SystemExit(f"Athena query failed: {s}")
+              out = athena.get_query_results(QueryExecutionId=qid)
+              return int(out['ResultSet']['Rows'][1]['Data'][0]['VarCharValue'])
+          print(json.dumps({"btc_rows": run(q1), "eth_rows": run(q2)}))
+          PY
+      
+      - name: Validate outputs exist
+        run: |
+          set -euo pipefail
+          echo "🔍 Validating Wave-1 outputs..."
+          
+          DATE="${{ steps.computation_date.outputs.date }}"
+          PREFIX="analysis/$DATE/wave1"
+          
+          # Check if manifest exists
+          if ! aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/_checks/manifest.json" >/dev/null 2>&1; then
+            echo "❌ Manifest not found"
+            exit 1
+          fi
+          
+          # Check BTC outputs
+          for artifact in variance_ratios autocorr xcorr rolling; do
+            if ! aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/btc_usd/$artifact.parquet" >/dev/null 2>&1; then
+              echo "❌ BTC $artifact not found"
+              exit 1
+            fi
+          done
+          
+          # Check ETH outputs
+          for artifact in variance_ratios autocorr xcorr rolling; do
+            if ! aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/eth_usd/$artifact.parquet" >/dev/null 2>&1; then
+              echo "❌ ETH $artifact not found"
+              exit 1
+            fi
+          done
+          
+          # Check PCA files exist (optional - status checked from manifest later)
+          for symbol in btc_usd eth_usd; do
+            if aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/$symbol/pca.parquet" >/dev/null 2>&1; then
+              echo "✅ $symbol pca found"
+            else
+              echo "ℹ️ $symbol pca absent (optional)"
+            fi
+          done
+          
+          echo "✅ All Wave-1 outputs found"
+      
+      - name: Validate row counts
+        run: |
+          set -euo pipefail
+          echo "🔍 Validating row counts..."
+          
+          DATE="${{ steps.computation_date.outputs.date }}"
+          PREFIX="analysis/$DATE/wave1"
+          
+          # Download and validate manifest
+          aws s3 cp "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/_checks/manifest.json" manifest.json
+          
+          # Check row counts for each artifact
+          python3 -c "
+          import json
+          with open('manifest.json', 'r') as f:
+              manifest = json.load(f)
+          
+          for symbol, artifacts in manifest['artifacts'].items():
+              for artifact_name, artifact_info in artifacts.items():
+                  rows = artifact_info['rows']
+                  if rows == 0:
+                      print(f'❌ {symbol} {artifact_name} has 0 rows')
+                      exit(1)
+                  print(f'✅ {symbol} {artifact_name}: {rows} rows')
+          
+          print('✅ All artifacts have non-zero row counts')
+          "
+      
+      - name: Validate data quality (schema-aware)
+        run: |
+          set -euxo pipefail
+          python analytics/wave1/validate_wave1_ci.py
+      
+      - name: Validate uniqueness
+        run: |
+          set -euo pipefail
+          echo "🔍 Validating uniqueness constraints..."
+          
+          DATE="${{ steps.computation_date.outputs.date }}"
+          PREFIX="analysis/$DATE/wave1"
+          
+          # Check uniqueness for time-aligned frames
+          for symbol in btc_usd eth_usd; do
+            echo "Checking uniqueness for $symbol..."
+            
+            # Download key artifacts
+            aws s3 cp "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/$symbol/variance_ratios.parquet" "variance_ratios.parquet"
+            aws s3 cp "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/$symbol/autocorr.parquet" "autocorr.parquet"
+            
+            python3 -c "
+          import pandas as pd
+          
+          # Check variance_ratios uniqueness
+          df_vr = pd.read_parquet('variance_ratios.parquet')
+          if 'venue' in df_vr.columns:
+              unique_venues = df_vr['venue'].nunique()
+              total_rows = len(df_vr)
+              if unique_venues != total_rows:
+                  print(f'❌ Duplicate venues in variance_ratios: {unique_venues} unique, {total_rows} total')
+                  exit(1)
+              print(f'  ✅ variance_ratios: {unique_venues} unique venues')
+          
+          # Check autocorr uniqueness
+          df_ac = pd.read_parquet('autocorr.parquet')
+          if 'venue' in df_ac.columns:
+              unique_venues = df_ac['venue'].nunique()
+              total_rows = len(df_ac)
+              if unique_venues != total_rows:
+                  print(f'❌ Duplicate venues in autocorr: {unique_venues} unique, {total_rows} total')
+                  exit(1)
+              print(f'  ✅ autocorr: {unique_venues} unique venues')
+          "
+            
+            # Clean up
+            rm -f "variance_ratios.parquet" "autocorr.parquet"
+          done
+          
+          echo "✅ All uniqueness checks passed"
+      
+      - name: Validate PCA status
+        run: |
+          set -euo pipefail
+          echo "🔍 Validating PCA status..."
+          
+          DATE="${{ steps.computation_date.outputs.date }}"
+          PREFIX="analysis/$DATE/wave1"
+          
+          # Download manifest to check PCA status
+          aws s3 cp "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/_checks/manifest.json" manifest.json
+          
+          for symbol in btc_usd eth_usd; do
+            echo "Checking PCA status for $symbol..."
+            
+            # Check PCA status from manifest
+            PCA_STATUS=$(python3 -c "
+          import json
+          with open('manifest.json', 'r') as f:
+              manifest = json.load(f)
+          symbol_key = '$symbol'.upper().replace('_', '-')
+          if symbol_key in manifest['artifacts'] and 'pca' in manifest['artifacts'][symbol_key]:
+              pca_info = manifest['artifacts'][symbol_key]['pca']
+              if 'status' in pca_info:
+                  print(pca_info['status'])
+              else:
+                  print('unknown')
+          else:
+              print('missing')
+          ")
+            
+            if [ "$PCA_STATUS" = "skipped" ]; then
+              # Get skip reason from manifest
+              REASON=$(python3 -c "
+          import json
+          with open('manifest.json', 'r') as f:
+              manifest = json.load(f)
+          symbol_key = '$symbol'.upper().replace('_', '-')
+          pca_info = manifest['artifacts'][symbol_key]['pca']
+          print(pca_info.get('reason', 'unknown'))
+          ")
+              N_COMMON=$(python3 -c "
+          import json
+          with open('manifest.json', 'r') as f:
+              manifest = json.load(f)
+          symbol_key = '$symbol'.upper().replace('_', '-')
+          pca_info = manifest['artifacts'][symbol_key]['pca']
+          print(pca_info.get('n_common', 0))
+          ")
+              echo "  ✅ PCA skipped: $REASON (n_common: $N_COMMON)"
+            elif [ "$PCA_STATUS" = "ok" ]; then
+              # Validate PCA data
+              aws s3 cp "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/$symbol/pca.parquet" "pca.parquet"
+              
+              python3 -c "
+          import pandas as pd
+          import numpy as np
+          
+          df = pd.read_parquet('pca.parquet')
+          if len(df) > 0 and 'explained_variance_ratio' in df.columns:
+              # Get top 3 components
+              top3_ratios = df['explained_variance_ratio'].nlargest(3).values
+              print(f'  Top 3 explained variance ratios: {top3_ratios}')
+              
+              # Check if ratios are reasonable
+              if np.any(top3_ratios > 1.0) or np.any(top3_ratios < 0.0):
+                  print(f'❌ Invalid explained variance ratios: {top3_ratios}')
+                  exit(1)
+              
+              # Check if first component is dominant (potential coordination)
+              if len(top3_ratios) > 0 and top3_ratios[0] > 0.8:
+                  print(f'⚠️ High first component dominance: {top3_ratios[0]:.3f}')
+              else:
+                  print(f'✅ Balanced PCA components')
+          else:
+              print(f'  No PCA data available for $symbol')
+          "
+              
+              rm -f "pca.parquet"
+            else
+              echo "❌ Invalid PCA status: $PCA_STATUS"
+              exit 1
+            fi
+          done
+          
+          rm -f manifest.json
+          echo "✅ PCA status validation completed"
+      
+      - name: Upload validation artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wave1-validation-artifacts-${{ github.run_id }}
+          path: artifacts_wave1_ci/**
+          retention-days: 3
+      
+      - name: Final validation summary
+        run: |
+          set -euo pipefail
+          echo "🔍 Final validation summary..."
+          
+          DATE="${{ steps.computation_date.outputs.date }}"
+          PREFIX="analysis/$DATE/wave1"
+          
+          # Download manifest for final summary
+          aws s3 cp "s3://${{ env.ACD_S3_BUCKET }}/$PREFIX/_checks/manifest.json" manifest.json
+          
+          python3 -c "
+          import json
+          with open('manifest.json', 'r') as f:
+              manifest = json.load(f)
+          
+          print('📊 Wave-1 Variables Summary:')
+          print(f'  Date: {manifest[\"date\"]}')
+          print(f'  Symbols: {manifest[\"symbols\"]}')
+          print(f'  Stage: {manifest[\"stage\"]}')
+          
+          total_artifacts = 0
+          for symbol, artifacts in manifest['artifacts'].items():
+              print(f'  {symbol}:')
+              for artifact_name, artifact_info in artifacts.items():
+                  rows = artifact_info['rows']
+                  venues = artifact_info.get('venues', [])
+                  print(f'    {artifact_name}: {rows} rows, venues: {venues}')
+                  total_artifacts += 1
+          
+          print(f'  Total artifacts: {total_artifacts}')
+          print('✅ Wave-1 computation and validation completed successfully')
+          "
+      
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "❌ Wave-1 computation failed for ${{ steps.computation_date.outputs.date }}"
+          echo "Check artifacts for detailed validation results"

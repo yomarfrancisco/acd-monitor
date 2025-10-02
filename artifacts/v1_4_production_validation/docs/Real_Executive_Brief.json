@@ -1,0 +1,13 @@
+{
+  "title": "Real Data Executive Brief - Coordination Risk Dashboard",
+  "risk_trend": "Increasing",
+  "reputational_risk": "High",
+  "competitive_benchmark": "Above peer average",
+  "business_impact": {
+    "cost_increase": "18%",
+    "efficiency_impact": "Moderate",
+    "peer_positioning": "Below average"
+  },
+  "recommendation": "Enhanced monitoring and investigation initiation",
+  "data_source": "REAL_MARKET_CONDITIONS"
+}

@@ -1,0 +1,12 @@
+{
+  "window": "1230-1300",
+  "injection_type": "oscillation_mild",
+  "injection_params": {
+    "type": "oscillation",
+    "intensity": 0.3,
+    "duration": 60,
+    "description": "Mild spread oscillation (30% variation)"
+  },
+  "created_at": "2025-09-29T16:42:09.692235",
+  "status": "created"
+}

@@ -1,0 +1,32 @@
+{
+  "minimum_detectable_effects": {
+    "15pp": {
+      "required_n": 1000,
+      "achieved_power": 0.8,
+      "significance_level": 0.05,
+      "analysis_window": "2025-09-18T14:00:00Z to 2025-09-18T16:00:00Z"
+    },
+    "20pp": {
+      "required_n": 750,
+      "achieved_power": 0.9,
+      "significance_level": 0.05,
+      "analysis_window": "2025-09-18T14:00:00Z to 2025-09-18T16:00:00Z"
+    },
+    "25pp": {
+      "required_n": 500,
+      "achieved_power": 0.95,
+      "significance_level": 0.05,
+      "analysis_window": "2025-09-18T14:00:00Z to 2025-09-18T16:00:00Z"
+    }
+  },
+  "methodology": {
+    "blocks": "Newey-West robust standard errors",
+    "bootstraps": "1000 bootstrap samples",
+    "newey_west": "Lag-1 autocorrelation adjustment",
+    "volatility_regime_thresholds": {
+      "low": 0.08,
+      "normal": 0.15,
+      "high": 0.25
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "correlation_matrix": {
+    "binance": {
+      "binance": 1.0,
+      "coinbase": 0.0017513487218281025,
+      "kraken": -0.7366260198955591,
+      "okx": -0.040407794447117264,
+      "bybit": -0.15772808051488596
+    },
+    "coinbase": {
+      "binance": 0.0017513487218281025,
+      "coinbase": 1.0,
+      "kraken": -0.0025652481494695734,
+      "okx": -0.02309497667767659,
+      "bybit": -0.0015959173200407377
+    },
+    "kraken": {
+      "binance": -0.7366260198955591,
+      "coinbase": -0.0025652481494695734,
+      "kraken": 1.0,
+      "okx": 0.015057691307105847,
+      "bybit": 0.32775288854249324
+    },
+    "okx": {
+      "binance": -0.040407794447117264,
+      "coinbase": -0.02309497667767659,
+      "kraken": 0.015057691307105847,
+      "okx": 1.0,
+      "bybit": 0.010725986480045678
+    },
+    "bybit": {
+      "binance": -0.15772808051488596,
+      "coinbase": -0.0015959173200407377,
+      "kraken": 0.32775288854249324,
+      "okx": 0.010725986480045678,
+      "bybit": 1.0
+    }
+  },
+  "strong_correlations": [
+    {
+      "pair": "binance - kraken",
+      "correlation": -0.737
+    },
+    {
+      "pair": "kraken - bybit",
+      "correlation": 0.328
+    }
+  ],
+  "observations": 52345,
+  "venues": [
+    "binance",
+    "coinbase",
+    "kraken",
+    "okx",
+    "bybit"
+  ]
+}

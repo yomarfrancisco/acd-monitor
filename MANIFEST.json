@@ -1,0 +1,51 @@
+{
+  "commit": "e5462d1bee7f9548c562b8ba996208dde45878f6",
+  "tz": "UTC",
+  "sampleWindow": {
+    "start": "N/A - No temporal overlap found",
+    "end": "N/A - No temporal overlap found"
+  },
+  "runs": {
+    "spread": "aborted - insufficient overlap",
+    "infoShare": "aborted - insufficient overlap",
+    "invariance": "aborted - insufficient overlap"
+  },
+  "seeds": {
+    "numpy": 42,
+    "random": 42
+  },
+  "data_sources": {
+    "binance": "data/cache/binance/btc_usd/1s.parquet",
+    "coinbase": "data/cache/coinbase/btc_usd/1s.parquet",
+    "kraken": "data/cache/kraken/btc_usd/1s.parquet",
+    "bybit": "data/cache/bybit/btc_usd/1s.parquet",
+    "okx": "data/cache/okx/btc_usd/1s.parquet"
+  },
+  "overlap_policy": "REAL_DATA_ONLY",
+  "venues_used": [],
+  "excluded": [
+    "binance",
+    "coinbase",
+    "kraken",
+    "okx",
+    "bybit"
+  ],
+  "dropReasons": {
+    "notEnoughData": 0,
+    "notCointegrated": 0,
+    "modelFail": 0,
+    "noTemporalOverlap": 5
+  },
+  "realDataLimitations": {
+    "temporalOverlap": false,
+    "reason": "No simultaneous data across venues",
+    "captureAttempts": 2,
+    "venuesChecked": 5,
+    "policy": "REAL_DATA_ONLY - No synthetic fallbacks allowed"
+  },
+  "courtReadyStatus": {
+    "evidenceGenerated": false,
+    "reason": "Insufficient real data overlap for multi-venue analysis",
+    "recommendation": "Single-venue analysis or extended data collection required"
+  }
+}

@@ -71,3 +71,4 @@ os.makedirs("artifacts_wave1_ci", exist_ok=True)
 with open("artifacts_wave1_ci/summary.json","w") as f: json.dump(results,f,indent=2)
 print(json.dumps(results, indent=2))
 sys.exit(0 if results["status"]=="ok" else 1)
+

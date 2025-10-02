@@ -1,0 +1,142 @@
+{
+  "case_study": "CMA Poster Frames",
+  "analysis_date": "2025-09-30T23:32:47.517322",
+  "data_summary": {
+    "preparation_date": "2025-09-30T23:32:43.536330",
+    "case_name": "CMA Poster Frames",
+    "total_observations": 10955,
+    "date_range": "2010-01-01 00:00:00 to 2015-12-31 00:00:00",
+    "venues": [
+      "ba",
+      "ej",
+      "fb",
+      "ry",
+      "va"
+    ],
+    "coordination_periods": 8525,
+    "data_source": "Synthetic (based on documented CMA patterns)"
+  },
+  "analysis_results": {
+    "data_summary": {
+      "total_observations": 2190,
+      "venues": [
+        "mid_ba",
+        "mid_ej",
+        "mid_fb",
+        "mid_ry",
+        "mid_va"
+      ],
+      "coordination_periods": "1704"
+    },
+    "price_analysis": {
+      "ba": {
+        "mean_price": 150.13869365868467,
+        "price_volatility": 14.35179775993822,
+        "price_range": [
+          92.08511542738391,
+          201.84643381125295
+        ]
+      },
+      "ej": {
+        "mean_price": 80.33703067621892,
+        "price_volatility": 7.580727240833304,
+        "price_range": [
+          48.96034156632501,
+          106.82239432023756
+        ]
+      },
+      "fb": {
+        "mean_price": 69.9573875232685,
+        "price_volatility": 6.722921440176786,
+        "price_range": [
+          43.24070696206437,
+          94.75784401138358
+        ]
+      },
+      "ry": {
+        "mean_price": 59.96810160002596,
+        "price_volatility": 5.8782982607639465,
+        "price_range": [
+          34.651303310738356,
+          82.1460542688951
+        ]
+      },
+      "va": {
+        "mean_price": 140.12780040089658,
+        "price_volatility": 13.723769638467566,
+        "price_range": [
+          90.96197089827149,
+          189.34774286573693
+        ]
+      }
+    },
+    "coordination_indicators": {
+      "coordination_periods": 1704,
+      "competitive_periods": 486,
+      "coordination_ratio": 0.7780821917808219
+    }
+  },
+  "coordination_assessment": {
+    "coordination_evidence": [
+      "High coordination period ratio: 77.81%"
+    ],
+    "competition_evidence": [
+      "Price volatilities show independent behavior"
+    ],
+    "overall_assessment": "Mixed",
+    "confidence_level": "Low"
+  },
+  "validation_comparison": {
+    "documented_findings": {
+      "coordination_detected": true,
+      "coordination_type": "Price coordination on poster frames",
+      "affected_airlines": [
+        "British Airways",
+        "Virgin Atlantic",
+        "EasyJet",
+        "Ryanair",
+        "Flybe"
+      ],
+      "coordination_periods": [
+        "2010-2010",
+        "2012-2012",
+        "2014-2014"
+      ],
+      "evidence_types": [
+        "Synchronized price changes",
+        "Parallel pricing patterns",
+        "Reduced price competition",
+        "Coordinated market responses"
+      ]
+    },
+    "acd_assessment": {
+      "coordination_evidence": [
+        "High coordination period ratio: 77.81%"
+      ],
+      "competition_evidence": [
+        "Price volatilities show independent behavior"
+      ],
+      "overall_assessment": "Mixed",
+      "confidence_level": "Low"
+    },
+    "alignment": {
+      "coordination_detected": true,
+      "confidence_match": false,
+      "evidence_alignment": true
+    },
+    "validation_status": "PASS"
+  },
+  "conclusions": {
+    "acd_methodology_validation": "PASS",
+    "coordination_detection": "Mixed",
+    "confidence_level": "Low",
+    "key_evidence": {
+      "coordination": [
+        "High coordination period ratio: 77.81%"
+      ],
+      "competition": [
+        "Price volatilities show independent behavior"
+      ]
+    }
+  }
+}

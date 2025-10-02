@@ -1,0 +1,13 @@
+{
+  "checks": [
+    {
+      "ok": true,
+      "msg": "btc_usd/pca: present"
+    },
+    {
+      "ok": true,
+      "msg": "eth_usd/pca: present"
+    }
+  ],
+  "status": "ok"
+}

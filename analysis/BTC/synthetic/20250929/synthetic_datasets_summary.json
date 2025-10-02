@@ -1,0 +1,66 @@
+{
+  "total_datasets": 6,
+  "base_windows": [
+    "snapshots/BTC-USD/20250929/1200-1230",
+    "snapshots/BTC-USD/20250929/1230-1300"
+  ],
+  "injection_types": [
+    "lead_lag",
+    "synchronization",
+    "dominance_spike"
+  ],
+  "datasets": [
+    {
+      "injection_type": "lead_lag",
+      "base_window": "snapshots/BTC-USD/20250929/1200-1230",
+      "injection_timestamp": "2025-09-29T14:34:27.262160",
+      "parameters": {
+        "venue": "coinbase",
+        "delay_ms": 50
+      }
+    },
+    {
+      "injection_type": "synchronization",
+      "base_window": "snapshots/BTC-USD/20250929/1200-1230",
+      "injection_timestamp": "2025-09-29T14:34:27.262492",
+      "parameters": {
+        "interval_minutes": 5
+      }
+    },
+    {
+      "injection_type": "dominance_spike",
+      "base_window": "snapshots/BTC-USD/20250929/1200-1230",
+      "injection_timestamp": "2025-09-29T14:34:27.262597",
+      "parameters": {
+        "venue": "binance",
+        "block_duration_minutes": 10
+      }
+    },
+    {
+      "injection_type": "lead_lag",
+      "base_window": "snapshots/BTC-USD/20250929/1230-1300",
+      "injection_timestamp": "2025-09-29T14:34:27.262687",
+      "parameters": {
+        "venue": "coinbase",
+        "delay_ms": 50
+      }
+    },
+    {
+      "injection_type": "synchronization",
+      "base_window": "snapshots/BTC-USD/20250929/1230-1300",
+      "injection_timestamp": "2025-09-29T14:34:27.262774",
+      "parameters": {
+        "interval_minutes": 5
+      }
+    },
+    {
+      "injection_type": "dominance_spike",
+      "base_window": "snapshots/BTC-USD/20250929/1230-1300",
+      "injection_timestamp": "2025-09-29T14:34:27.262866",
+      "parameters": {
+        "venue": "binance",
+        "block_duration_minutes": 10
+      }
+    }
+  ]
+}

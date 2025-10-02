@@ -461,3 +461,4 @@ Overall Ratings: {', '.join([f"{sc['symbol']}={sc['overall_rating']}" for sc in 
 
 if __name__ == "__main__":
     main()
+

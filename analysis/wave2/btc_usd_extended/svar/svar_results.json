@@ -1,0 +1,32 @@
+{
+  "variance_decomposition": {
+    "r_binance": {
+      "variance": 0.0003569089789729172,
+      "std": 0.01889203480234242
+    },
+    "r_coinbase": {
+      "variance": 0.00011454324460560218,
+      "std": 0.010702487776475252
+    },
+    "r_kraken": {
+      "variance": 0.00015186756739332026,
+      "std": 0.012323455984151535
+    },
+    "r_okx": {
+      "variance": 0.00016397390692058514,
+      "std": 0.012805229670747226
+    },
+    "r_bybit": {
+      "variance": 0.000343475148406547,
+      "std": 0.018533082539247136
+    }
+  },
+  "observations": 21604,
+  "venues": [
+    "r_binance",
+    "r_coinbase",
+    "r_kraken",
+    "r_okx",
+    "r_bybit"
+  ]
+}

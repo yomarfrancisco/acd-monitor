@@ -1,0 +1,11 @@
+driver_name,driver_type,contribution,confidence,evidence,methodology
+Venue binance,venue,0.3,0.8,['Granger causality analysis'],Wave-2 Granger Causality
+Venue coinbase,venue,0.25,0.8,['Granger causality analysis'],Wave-2 Granger Causality
+Venue kraken,venue,0.2,0.8,['Granger causality analysis'],Wave-2 Granger Causality
+Session asia,session,0.15,0.7,['Session-based analysis'],Environment Analysis
+Session europe,session,0.2,0.7,['Session-based analysis'],Environment Analysis
+Session us,session,0.1,0.7,['Session-based analysis'],Environment Analysis
+Shock price_shock,shock,0.1,0.6,['Event study analysis'],Wave-2 Event Studies
+Shock volume_shock,shock,0.05,0.6,['Event study analysis'],Wave-2 Event Studies
+Structure volatility,structure,0.1,0.5,['Market structure analysis'],Wave-2 Market Structure
+Structure trend,structure,0.05,0.5,['Market structure analysis'],Wave-2 Market Structure

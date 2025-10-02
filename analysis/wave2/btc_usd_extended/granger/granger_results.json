@@ -1,0 +1,53 @@
+{
+  "correlation_matrix": {
+    "r_binance": {
+      "r_binance": 1.0,
+      "r_coinbase": 0.014230704142641833,
+      "r_kraken": 0.30496636628838586,
+      "r_okx": 0.009638989881426611,
+      "r_bybit": 0.09349744286155226
+    },
+    "r_coinbase": {
+      "r_binance": 0.014230704142641833,
+      "r_coinbase": 1.0,
+      "r_kraken": 0.01592317068631383,
+      "r_okx": 0.012257434728834666,
+      "r_bybit": -0.027275791240676202
+    },
+    "r_kraken": {
+      "r_binance": 0.30496636628838586,
+      "r_coinbase": 0.01592317068631383,
+      "r_kraken": 1.0,
+      "r_okx": -0.0042807922089731915,
+      "r_bybit": 0.18190440338284422
+    },
+    "r_okx": {
+      "r_binance": 0.009638989881426611,
+      "r_coinbase": 0.012257434728834666,
+      "r_kraken": -0.0042807922089731915,
+      "r_okx": 1.0,
+      "r_bybit": -0.005838901537801906
+    },
+    "r_bybit": {
+      "r_binance": 0.09349744286155226,
+      "r_coinbase": -0.027275791240676202,
+      "r_kraken": 0.18190440338284422,
+      "r_okx": -0.005838901537801906,
+      "r_bybit": 1.0
+    }
+  },
+  "strong_correlations": [
+    {
+      "pair": "r_binance - r_kraken",
+      "correlation": 0.305
+    }
+  ],
+  "observations": 21604,
+  "venues": [
+    "r_binance",
+    "r_coinbase",
+    "r_kraken",
+    "r_okx",
+    "r_bybit"
+  ]
+}

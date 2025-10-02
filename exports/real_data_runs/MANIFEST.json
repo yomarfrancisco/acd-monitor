@@ -1,0 +1,46 @@
+{
+  "commit": "00995f3",
+  "codeVersion": "00995f3",
+  "tz": "UTC",
+  "sampleWindow": {
+    "start": "2025-07-31",
+    "end": "2025-09-27"
+  },
+  "specVersion": "1.0.0",
+  "runs": {
+    "spread_convergence": {
+      "generated": "2025-09-26T19:32:32.310518Z",
+      "total_episodes": 99,
+      "min_duration": 3,
+      "compression_threshold": 0.1,
+      "venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "bybit",
+        "okx"
+      ],
+      "notes": "Cross-venue spread compression analysis"
+    },
+    "infoShare": {
+      "generated": "2025-09-26T19:33:24.869618Z",
+      "keptDays": 58,
+      "droppedDays": 1,
+      "dropReasons": {
+        "notEnoughData": 0,
+        "notCointegrated": 1,
+        "modelFail": 0
+      },
+      "max_lag": 5,
+      "bootstrap_samples": 500,
+      "venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "bybit",
+        "okx"
+      ],
+      "notes": "Hasbrouck information share bounds analysis"
+    }
+  }
+}

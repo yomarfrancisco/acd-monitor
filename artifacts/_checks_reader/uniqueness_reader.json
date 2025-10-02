@@ -1,0 +1,12 @@
+{
+  "timestamp": "2025-10-01T19:10:00.092250+00:00",
+  "stage": "E",
+  "validation": "uniqueness_reader",
+  "btc_unique_keys": 27974,
+  "btc_total_records": 27974,
+  "eth_unique_keys": 5368,
+  "eth_total_records": 5368,
+  "btc_unique": true,
+  "eth_unique": true,
+  "validation_passed": true
+}

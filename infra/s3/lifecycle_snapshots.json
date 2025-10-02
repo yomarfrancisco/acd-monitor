@@ -1,0 +1,54 @@
+{
+  "Rules": [
+    {
+      "ID": "acd-snapshots-lifecycle",
+      "Status": "Enabled",
+      "Filter": {
+        "Prefix": "snapshots/"
+      },
+      "Transitions": [
+        {
+          "Days": 45,
+          "StorageClass": "STANDARD_IA"
+        },
+        {
+          "Days": 60,
+          "StorageClass": "GLACIER"
+        },
+        {
+          "Days": 90,
+          "StorageClass": "DEEP_ARCHIVE"
+        }
+      ],
+      "Expiration": {
+        "Days": 365
+      }
+    },
+    {
+      "ID": "acd-derived-lifecycle",
+      "Status": "Enabled",
+      "Filter": {
+        "Prefix": "derived/"
+      },
+      "Transitions": [
+        {
+          "Days": 30,
+          "StorageClass": "STANDARD_IA"
+        }
+      ],
+      "Expiration": {
+        "Days": 180
+      }
+    },
+    {
+      "ID": "acd-multipart-cleanup",
+      "Status": "Enabled",
+      "Filter": {
+        "Prefix": ""
+      },
+      "AbortIncompleteMultipartUpload": {
+        "DaysAfterInitiation": 7
+      }
+    }
+  ]
+}

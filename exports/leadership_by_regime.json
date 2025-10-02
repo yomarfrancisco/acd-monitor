@@ -1,0 +1,143 @@
+{
+  "summary": {
+    "method": "consensus-proximity",
+    "pair": "BTC-USD",
+    "keptDays": 257,
+    "regimes": [
+      {
+        "regime": "low",
+        "days": 85,
+        "sharesPct": [
+          {
+            "venue": "okx",
+            "pct": 23.53
+          },
+          {
+            "venue": "bybit",
+            "pct": 21.18
+          },
+          {
+            "venue": "kraken",
+            "pct": 21.18
+          },
+          {
+            "venue": "coinbase",
+            "pct": 18.82
+          },
+          {
+            "venue": "binance",
+            "pct": 15.29
+          }
+        ],
+        "isTie": false
+      },
+      {
+        "regime": "medium",
+        "days": 87,
+        "sharesPct": [
+          {
+            "venue": "binance",
+            "pct": 25.29
+          },
+          {
+            "venue": "coinbase",
+            "pct": 21.84
+          },
+          {
+            "venue": "okx",
+            "pct": 20.69
+          },
+          {
+            "venue": "kraken",
+            "pct": 19.54
+          },
+          {
+            "venue": "bybit",
+            "pct": 12.64
+          }
+        ],
+        "isTie": false
+      },
+      {
+        "regime": "high",
+        "days": 85,
+        "sharesPct": [
+          {
+            "venue": "okx",
+            "pct": 24.71
+          },
+          {
+            "venue": "binance",
+            "pct": 21.18
+          },
+          {
+            "venue": "coinbase",
+            "pct": 20.0
+          },
+          {
+            "venue": "bybit",
+            "pct": 17.65
+          },
+          {
+            "venue": "kraken",
+            "pct": 16.47
+          }
+        ],
+        "isTie": false
+      }
+    ]
+  },
+  "table": [
+    {
+      "venue": "okx",
+      "wins": 59,
+      "pct": 22.96
+    },
+    {
+      "venue": "binance",
+      "wins": 53,
+      "pct": 20.62
+    },
+    {
+      "venue": "coinbase",
+      "wins": 52,
+      "pct": 20.23
+    },
+    {
+      "venue": "kraken",
+      "wins": 49,
+      "pct": 19.07
+    },
+    {
+      "venue": "bybit",
+      "wins": 44,
+      "pct": 17.12
+    }
+  ],
+  "ties": {
+    "byRegime": [
+      {
+        "regime": "low",
+        "tieDays": 0
+      },
+      {
+        "regime": "medium",
+        "tieDays": 0
+      },
+      {
+        "regime": "high",
+        "tieDays": 0
+      }
+    ]
+  },
+  "dropped": {
+    "dropped": 0,
+    "drop": {
+      "missing": 0,
+      "notEnoughOthers": 0,
+      "tooTight": 0,
+      "outlier": 0,
+      "nan": 0
+    }
+  }
+}

@@ -170,3 +170,4 @@ python analytics/reader_checks/reader_validate.py --date 20251001
 - `analytics/reader_checks/EXPECTED_COUNTS_20251001.json` - Expected counts
 - `sql/athena/reader_views/` - Planned Athena DDL files
 - `artifacts/_checks_reader/` - Validation artifacts
+

@@ -1,0 +1,43 @@
+{
+  "base_windows": [
+    "snapshots/BTC-USD/20250929/1200-1230",
+    "snapshots/BTC-USD/20250929/1230-1300"
+  ],
+  "injection_types": {
+    "lead_lag": {
+      "description": "Add +50ms systematic delay to coinbase venue",
+      "target_venue": "coinbase",
+      "delay_ms": 50,
+      "expected_threshold": 0.12
+    },
+    "synchronization": {
+      "description": "All venues jump together at 5-minute intervals",
+      "target_venues": [
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit"
+      ],
+      "interval_minutes": 5,
+      "expected_dominance": 0.7
+    },
+    "dominance_spike": {
+      "description": "binance venue >70% info share for 10-minute blocks",
+      "target_venue": "binance",
+      "block_duration_minutes": 10,
+      "expected_dominance": 0.7
+    }
+  },
+  "validation_strategy": {
+    "detectors": [
+      "leadlag_v2",
+      "infoshare_v2"
+    ],
+    "comparison": "null_vs_injected",
+    "success_criteria": {
+      "lead_lag": "\u03c1 \u2265 0.12 in injected data",
+      "infoshare": "\u226570% dominance in injected data"
+    }
+  }
+}

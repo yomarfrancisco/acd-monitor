@@ -1,0 +1,123 @@
+{
+  "bundle_id": "ACD_BUNDLE_ACD_BUNDLE_2601354b_20250921_183712_20250921_183712",
+  "created_at": "2025-09-21T18:37:12.139193",
+  "expires_at": null,
+  "executive_summary": "# Executive Summary: Refinement Test - ETH/USD\n\n## Risk Assessment\n**Overall Risk Level:** AMBER\n**Confidence Level:** 85.0%\n**Composite Risk Score:** 75.5/100\n\n## Key Findings\n- **MEDIUM RISK**: Borderline coordination patterns detected requiring enhanced monitoring\n\n## Top Risk Drivers\n- **Regime Analysis**: 72.5/100\n- **ICP Analysis**: 68.5/100\n- **Mirroring Behavior**: 66.5/100\n\n## Statistical Significance\n- **ICP p-value**: 0.0130\n- **VMM p-value**: 0.0450\n- **Lead-Lag Significance**: 0.750\n- **Mirroring Significance**: 0.700",
+  "key_findings": [
+    "ICP analysis rejected invariance hypothesis (p=0.0130), indicating coordination patterns",
+    "VMM analysis detected high structural instability (0.750), consistent with coordination",
+    "Mirroring analysis detected high price similarity (ratio=0.650)"
+  ],
+  "risk_assessment": "# Risk Assessment\n\n## Overall Risk Classification: AMBER\n\n**Risk Score:** 75.5/100\n**Confidence Level:** 85.0%\n\n## Risk Attribution Breakdown\n\n### Component Contributions\n- **ICP Analysis**: 68.5/100\n- **VMM Analysis**: 57.5/100\n- **Crypto Moments**: 25.5/100\n- **Validation Layers**: 13.6/100\n\n### Driver Analysis\n- **Lead-Lag Patterns**: 28.0/100\n- **Mirroring Behavior**: 66.5/100\n- **Regime Analysis**: 72.5/100\n- **Information Flow**: 63.0/100\n\n## Data Quality Assessment\n- **Completeness**: 95.0%\n- **Consistency**: 90.0%\n- **Sample Size Adequacy**: 85.0%",
+  "recommendations": [
+    "**ENHANCED MONITORING**: Medium coordination risk detected - recommend enhanced monitoring",
+    "Continue surveillance and consider additional data sources",
+    "Prepare for potential escalation if patterns persist",
+    "Validate findings with additional data sources and time periods",
+    "Consider alternative explanations for observed patterns",
+    "Implement ongoing monitoring system for early detection"
+  ],
+  "methodology": "# Methodology\n\n## Analysis Framework\nThis analysis uses the Algorithmic Coordination Diagnostic (ACD) framework version 2.0.0.\n\n## Components\n1. **ICP (Invariant Causal Prediction)**: Tests for environment-invariant relationships\n2. **VMM (Variational Method of Moments)**: Analyzes structural stability and regime changes\n3. **Validation Layers**: Lead-lag, mirroring, HMM regime detection, information flow\n4. **Crypto Moments**: Market microstructure analysis specific to crypto markets\n\n## Configuration\n- **Analysis ID**: ACD_BUNDLE_2601354b_20250921_183712\n- **Timestamp**: 2025-09-21T18:37:12.139083\n- **Seed**: 42\n\n## Data Sources\n- mock_data.csv\n\n## Provenance\n- **Content Hash**: 68f7db742f1f1899738befbb329995d0fdc37e998f8ef8732a1927d4ffc78bd6\n- **Signature**: ACD_SIG_68f7db742f1f1899",
+  "attribution_table": {
+    "total_risk_score": 75.5,
+    "risk_band": "AMBER",
+    "confidence_level": 0.85,
+    "icp_contribution": 68.5,
+    "vmm_contribution": 57.5,
+    "crypto_moments_contribution": 25.5,
+    "validation_contribution": 13.5625,
+    "lead_lag_driver": 28.0,
+    "mirroring_driver": 66.5,
+    "regime_driver": 72.5,
+    "infoflow_driver": 63.0,
+    "icp_p_value": 0.013,
+    "vmm_p_value": 0.045,
+    "lead_lag_significance": 0.75,
+    "mirroring_significance": 0.7,
+    "data_completeness": 0.95,
+    "data_consistency": 0.9,
+    "sample_size_adequacy": 0.85
+  },
+  "statistical_results": {
+    "icp_results": {
+      "reject_invariance": true,
+      "p_value": 0.013,
+      "effect_size": 0.25,
+      "power": 0.85,
+      "n_environments": 3
+    },
+    "vmm_results": {
+      "structural_stability": 0.75,
+      "regime_confidence": 0.8,
+      "convergence_status": "converged",
+      "iterations": 150
+    },
+    "validation_results": {
+      "lead_lag": {
+        "persistence_score": null,
+        "switching_entropy": 0.3,
+        "avg_granger_p": 0.25,
+        "n_windows": 50
+      },
+      "mirroring": {
+        "mirroring_ratio": 0.65,
+        "coordination_score": 0.7,
+        "avg_cosine_similarity": 0.65,
+        "avg_pearson_correlation": 0.7
+      },
+      "hmm": {
+        "regime_stability": 0.75,
+        "coordination_regime_score": 0.7,
+        "n_states": null,
+        "log_likelihood": -150.0
+      },
+      "infoflow": {
+        "information_hub_score": 0.65,
+        "coordination_network_score": 0.6,
+        "avg_transfer_entropy": 0.25,
+        "network_density": 0.4
+      }
+    }
+  },
+  "alternative_explanations": [
+    "High mirroring may reflect arbitrage constraints rather than coordination",
+    "Lead-lag patterns may reflect natural market structure and information flow",
+    "Market microstructure effects may explain observed patterns",
+    "Cross-venue arbitrage constraints could create apparent coordination",
+    "Regulatory announcements may trigger synchronized responses",
+    "Liquidity provider algorithms may exhibit similar risk management patterns"
+  ],
+  "provenance": {
+    "analysis_id": "ACD_BUNDLE_2601354b_20250921_183712",
+    "timestamp": "2025-09-21 18:37:12.139083",
+    "version": "2.0.0",
+    "seed": 42,
+    "data_file_paths": [
+      "mock_data.csv"
+    ],
+    "config_files": [],
+    "icp_config": {
+      "significance_level": 0.05
+    },
+    "vmm_config": {},
+    "validation_configs": {},
+    "result_file_paths": {
+      "integrated": "mock_results.json"
+    },
+    "intermediate_artifacts": [],
+    "content_hash": "68f7db742f1f1899738befbb329995d0fdc37e998f8ef8732a1927d4ffc78bd6",
+    "signature": "ACD_SIG_68f7db742f1f1899"
+  },
+  "audit_trail": [
+    "Analysis initiated: 2025-09-21T18:37:12.139083",
+    "Analysis ID: ACD_BUNDLE_2601354b_20250921_183712",
+    "Version: 2.0.0",
+    "Seed: 42",
+    "Data files: 1 files",
+    "Content hash: 68f7db742f1f1899738befbb329995d0fdc37e998f8ef8732a1927d4ffc78bd6",
+    "Signature: ACD_SIG_68f7db742f1f1899",
+    "Bundle generated: 2025-09-21T18:37:12.139189",
+    "Enhanced alternative explanations at 2025-09-21T18:37:12.139197",
+    "Enhanced attribution tables with detailed breakdowns at 2025-09-21T18:37:12.139199"
+  ]
+}

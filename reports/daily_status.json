@@ -1,0 +1,179 @@
+{
+  "generated_at": "2025-09-29T07:09:55.997842Z",
+  "symbols": [
+    "BTC-USD"
+  ],
+  "days_back": 1,
+  "storage_usage": {
+    "total_size_gb": 0.01,
+    "object_count": 73,
+    "by_storage_class": {
+      "STANDARD": {
+        "size_gb": 0.01,
+        "count": 73
+      }
+    }
+  },
+  "cost_estimate": {
+    "daily_costs_by_class": {
+      "STANDARD": 0.0
+    },
+    "total_daily_cost": 0.0,
+    "total_monthly_cost": 0.0
+  },
+  "coverage_summary": {
+    "total_windows": 4,
+    "venues_ok_windows": 4,
+    "venues_ok_rate": 1.0,
+    "coverage_data": [
+      {
+        "window": "BTC-USD/20250929/1200-1230",
+        "venues_ok": true,
+        "high_coverage_venues": 5,
+        "coverage_data": {
+          "binance": {
+            "coverage_percentage": 95.32566368922707,
+            "messages_received": 1801,
+            "connection_drops": 0
+          },
+          "coinbase": {
+            "coverage_percentage": 97.06724770481449,
+            "messages_received": 1801,
+            "connection_drops": 0
+          },
+          "kraken": {
+            "coverage_percentage": 98.27679874279906,
+            "messages_received": 1801,
+            "connection_drops": 0
+          },
+          "okx": {
+            "coverage_percentage": 97.32347628274627,
+            "messages_received": 1801,
+            "connection_drops": 0
+          },
+          "bybit": {
+            "coverage_percentage": 96.14861751634344,
+            "messages_received": 1801,
+            "connection_drops": 0
+          }
+        }
+      },
+      {
+        "window": "BTC-USD/20250929/1230-1300",
+        "venues_ok": true,
+        "high_coverage_venues": 5,
+        "coverage_data": {
+          "binance": {
+            "coverage_percentage": 96.85379098759023,
+            "messages_received": 1801,
+            "connection_drops": 0
+          },
+          "coinbase": {
+            "coverage_percentage": 98.64382041462832,
+            "messages_received": 1801,
+            "connection_drops": 0
+          },
+          "kraken": {
+            "coverage_percentage": 95.29642812680906,
+            "messages_received": 1801,
+            "connection_drops": 0
+          },
+          "okx": {
+            "coverage_percentage": 95.50088918556686,
+            "messages_received": 1801,
+            "connection_drops": 0
+          },
+          "bybit": {
+            "coverage_percentage": 95.2974465375388,
+            "messages_received": 1801,
+            "connection_drops": 0
+          }
+        }
+      },
+      {
+        "window": "BTC-USD/20250929/1300-1330",
+        "venues_ok": true,
+        "high_coverage_venues": 5,
+        "coverage_data": {
+          "binance": {
+            "coverage_percentage": 98.88495128117302,
+            "messages_received": 1801,
+            "connection_drops": 0
+          },
+          "coinbase": {
+            "coverage_percentage": 96.17977255339628,
+            "messages_received": 1801,
+            "connection_drops": 0
+          },
+          "kraken": {
+            "coverage_percentage": 98.30297932906332,
+            "messages_received": 1801,
+            "connection_drops": 0
+          },
+          "okx": {
+            "coverage_percentage": 97.66602596362179,
+            "messages_received": 1801,
+            "connection_drops": 0
+          },
+          "bybit": {
+            "coverage_percentage": 99.87033766409651,
+            "messages_received": 1801,
+            "connection_drops": 0
+          }
+        }
+      },
+      {
+        "window": "BTC-USD/20250929/1330-1400",
+        "venues_ok": true,
+        "high_coverage_venues": 5,
+        "coverage_data": {
+          "binance": {
+            "coverage_percentage": 98.17912587542705,
+            "messages_received": 1801,
+            "connection_drops": 0
+          },
+          "coinbase": {
+            "coverage_percentage": 96.87427837296012,
+            "messages_received": 1801,
+            "connection_drops": 0
+          },
+          "kraken": {
+            "coverage_percentage": 97.27641632008445,
+            "messages_received": 1801,
+            "connection_drops": 0
+          },
+          "okx": {
+            "coverage_percentage": 96.21019805702987,
+            "messages_received": 1801,
+            "connection_drops": 0
+          },
+          "bybit": {
+            "coverage_percentage": 96.57924882312102,
+            "messages_received": 1801,
+            "connection_drops": 0
+          }
+        }
+      }
+    ]
+  },
+  "detector_results": {
+    "detector_results": {
+      "spread_v2": {
+        "passes": 0,
+        "fails": 0,
+        "total": 0
+      },
+      "leadlag_v2": {
+        "passes": 0,
+        "fails": 0,
+        "total": 0
+      },
+      "infoshare_v2": {
+        "passes": 0,
+        "fails": 0,
+        "total": 0
+      }
+    },
+    "note": "Detector results parsing not yet implemented"
+  }
+}

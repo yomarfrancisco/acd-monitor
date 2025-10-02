@@ -1,0 +1,14 @@
+{
+  "gates": {
+    "gate1_episode_control": true,
+    "gate2_leadlag": false,
+    "gate3_infoshare": false
+  },
+  "significant_episodes": 3,
+  "total_episodes": 21,
+  "gate1_criteria": {
+    "delta_z_threshold": -0.75,
+    "p_value_threshold": 0.1,
+    "min_duration": 10
+  }
+}

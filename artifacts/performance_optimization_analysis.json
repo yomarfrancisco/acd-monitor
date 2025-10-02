@@ -1,0 +1,223 @@
+{
+  "test_metadata": {
+    "test_date": "2025-09-21 20:23:59",
+    "test_type": "Performance Optimization Analysis",
+    "bundle_tests": 5,
+    "attribution_tests": 5,
+    "memory_tests": 4
+  },
+  "performance_analysis": {
+    "bundle_analysis": {
+      "avg_execution_time": 0.0031299591064453125,
+      "max_execution_time": 0.00434112548828125,
+      "min_execution_time": 0.0025358200073242188,
+      "avg_memory_usage": 0.11875,
+      "max_memory_usage": 0.484375,
+      "min_memory_usage": 0.015625
+    },
+    "attribution_analysis": {
+      "avg_execution_time": 0.002363920211791992,
+      "max_execution_time": 0.004957914352416992,
+      "min_execution_time": 0.001699686050415039,
+      "avg_memory_usage": 0.0,
+      "max_memory_usage": 0.0,
+      "min_memory_usage": 0.0
+    },
+    "memory_analysis": {
+      "single_query_memory": 0.0,
+      "concurrent_query_memory": 0.0,
+      "sequential_query_memory": 0.0,
+      "large_bundle_memory": 0.0
+    },
+    "optimization_opportunities": []
+  },
+  "bundle_generation_results": [
+    {
+      "query_id": 1,
+      "query": "Generate a regulatory bundle for BTC/USD coordination analysis",
+      "status": "SUCCESS",
+      "execution_time": 0.00434112548828125,
+      "memory_delta_mb": 0.484375,
+      "peak_memory_mb": 0.16390037536621094,
+      "bundle_id": "ACD_BUNDLE_c78c39fa_20250921_202359",
+      "files_generated": 4,
+      "cpu_profile": "         4903 function calls (4239 primitive calls) in 0.004 seconds\n\n   Ordered by: cumulative time\n   List reduced from 235 to 10 due to restriction <10>\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    0.000    0.000    0.004    0.004 /Users/ygorfrancisco/Desktop/acd-monitor/src/agent/bundle_generator.py:95(generate_bundle)\n        1    0.000    0.000    0.002    0.002 /Users/ygorfrancisco/Desktop/acd-monitor/src/acd/analytics/report_v2.py:795(save_bundle)\n        1    0.000    0.000    0.002    0.002 /Users/ygorfrancisco/Desktop/acd-monitor/src/acd/analytics/report_v2.py:387(generate_regulatory_bundle)\n        1    0.000    0.000    0.001    0.001 /Users/ygorfrancisco/Desktop/acd-monitor/src/acd/analytics/report_v2.py:733(_generate_data_tables)\n        1    0.000    0.000    0.001    0.001 /opt/homebrew/lib/python3.10/site-packages/pandas/core/frame.py:665(__init__)\n        1    0.000    0.000    0.001    0.001 /Users/ygorfrancisco/Desktop/acd-monitor/src/acd/analytics/report_v2.py:842(_save_bundle_json)\n        1    0.000    0.000    0.001    0.001 /opt/homebrew/lib/python3.10/site-packages/pandas/core/internals/construction.py:506(nested_data_to_arrays)\n        1    0.000    0.000    0.001    0.001 /opt/homebrew/lib/python3.10/site-packages/pandas/core/internals/construction.py:793(to_arrays)\n        3    0.000    0.000    0.001    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/json/__init__.py:120(dump)\n        1    0.000    0.000    0.001    0.001 /opt/homebrew/lib/python3.10/site-packages/pandas/core/internals/construction.py:891(_list_of_dict_to_arrays)\n\n\n",
+      "error": null
+    },
+    {
+      "query_id": 2,
+      "query": "Generate a comprehensive regulatory bundle for ETH/USD with attribution tables",
+      "status": "SUCCESS",
+      "execution_time": 0.003284931182861328,
+      "memory_delta_mb": 0.046875,
+      "peak_memory_mb": 0.0925436019897461,
+      "bundle_id": "ACD_BUNDLE_c78c39fa_20250921_202359",
+      "files_generated": 4,
+      "cpu_profile": "         4864 function calls (4220 primitive calls) in 0.003 seconds\n\n   Ordered by: cumulative time\n   List reduced from 227 to 10 due to restriction <10>\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    0.000    0.000    0.003    0.003 /Users/ygorfrancisco/Desktop/acd-monitor/src/agent/bundle_generator.py:95(generate_bundle)\n        1    0.000    0.000    0.002    0.002 /Users/ygorfrancisco/Desktop/acd-monitor/src/acd/analytics/report_v2.py:795(save_bundle)\n        1    0.000    0.000    0.002    0.002 /Users/ygorfrancisco/Desktop/acd-monitor/src/acd/analytics/report_v2.py:842(_save_bundle_json)\n        4    0.001    0.000    0.001    0.000 {method '__exit__' of '_io._IOBase' objects}\n        3    0.000    0.000    0.001    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/json/__init__.py:120(dump)\n        1    0.000    0.000    0.001    0.001 /Users/ygorfrancisco/Desktop/acd-monitor/src/acd/analytics/report_v2.py:387(generate_regulatory_bundle)\n  519/511    0.000    0.000    0.000    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/json/encoder.py:413(_iterencode)\n        5    0.000    0.000    0.000    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/dataclasses.py:1217(asdict)\n     86/5    0.000    0.000    0.000    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/dataclasses.py:1241(_asdict_inner)\n        1    0.000    0.000    0.000    0.000 /Users/ygorfrancisco/Desktop/acd-monitor/src/acd/analytics/report_v2.py:733(_generate_data_tables)\n\n\n",
+      "error": null
+    },
+    {
+      "query_id": 3,
+      "query": "Generate a regulatory bundle for ADA/USD with provenance tracking",
+      "status": "SUCCESS",
+      "execution_time": 0.0029036998748779297,
+      "memory_delta_mb": 0.03125,
+      "peak_memory_mb": 0.08742713928222656,
+      "bundle_id": "ACD_BUNDLE_c78c39fa_20250921_202359",
+      "files_generated": 4,
+      "cpu_profile": "         4864 function calls (4220 primitive calls) in 0.003 seconds\n\n   Ordered by: cumulative time\n   List reduced from 227 to 10 due to restriction <10>\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    0.000    0.000    0.003    0.003 /Users/ygorfrancisco/Desktop/acd-monitor/src/agent/bundle_generator.py:95(generate_bundle)\n        1    0.000    0.000    0.002    0.002 /Users/ygorfrancisco/Desktop/acd-monitor/src/acd/analytics/report_v2.py:795(save_bundle)\n        1    0.000    0.000    0.001    0.001 /Users/ygorfrancisco/Desktop/acd-monitor/src/acd/analytics/report_v2.py:842(_save_bundle_json)\n        3    0.000    0.000    0.001    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/json/__init__.py:120(dump)\n        1    0.000    0.000    0.001    0.001 /Users/ygorfrancisco/Desktop/acd-monitor/src/acd/analytics/report_v2.py:387(generate_regulatory_bundle)\n        1    0.000    0.000    0.001    0.001 /Users/ygorfrancisco/Desktop/acd-monitor/src/acd/analytics/report_v2.py:891(_save_provenance)\n        4    0.001    0.000    0.001    0.000 {method '__exit__' of '_io._IOBase' objects}\n  519/511    0.000    0.000    0.000    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/json/encoder.py:413(_iterencode)\n        5    0.000    0.000    0.000    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/dataclasses.py:1217(asdict)\n     86/5    0.000    0.000    0.000    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/dataclasses.py:1241(_asdict_inner)\n\n\n",
+      "error": null
+    },
+    {
+      "query_id": 4,
+      "query": "Generate a regulatory bundle for SOL/USD with alternative explanations",
+      "status": "SUCCESS",
+      "execution_time": 0.002584218978881836,
+      "memory_delta_mb": 0.015625,
+      "peak_memory_mb": 0.08698463439941406,
+      "bundle_id": "ACD_BUNDLE_c78c39fa_20250921_202359",
+      "files_generated": 4,
+      "cpu_profile": "         4864 function calls (4220 primitive calls) in 0.003 seconds\n\n   Ordered by: cumulative time\n   List reduced from 227 to 10 due to restriction <10>\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    0.000    0.000    0.003    0.003 /Users/ygorfrancisco/Desktop/acd-monitor/src/agent/bundle_generator.py:95(generate_bundle)\n        1    0.000    0.000    0.002    0.002 /Users/ygorfrancisco/Desktop/acd-monitor/src/acd/analytics/report_v2.py:795(save_bundle)\n        1    0.000    0.000    0.001    0.001 /Users/ygorfrancisco/Desktop/acd-monitor/src/acd/analytics/report_v2.py:842(_save_bundle_json)\n        3    0.000    0.000    0.001    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/json/__init__.py:120(dump)\n        1    0.000    0.000    0.001    0.001 /Users/ygorfrancisco/Desktop/acd-monitor/src/acd/analytics/report_v2.py:387(generate_regulatory_bundle)\n  519/511    0.000    0.000    0.000    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/json/encoder.py:413(_iterencode)\n        5    0.000    0.000    0.000    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/dataclasses.py:1217(asdict)\n     86/5    0.000    0.000    0.000    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/dataclasses.py:1241(_asdict_inner)\n 1059/511    0.000    0.000    0.000    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/json/encoder.py:333(_iterencode_dict)\n        1    0.000    0.000    0.000    0.000 /Users/ygorfrancisco/Desktop/acd-monitor/src/acd/analytics/report_v2.py:733(_generate_data_tables)\n\n\n",
+      "error": null
+    },
+    {
+      "query_id": 5,
+      "query": "Generate a regulatory bundle for DOT/USD with MEV analysis",
+      "status": "SUCCESS",
+      "execution_time": 0.0025358200073242188,
+      "memory_delta_mb": 0.015625,
+      "peak_memory_mb": 0.08703422546386719,
+      "bundle_id": "ACD_BUNDLE_c78c39fa_20250921_202359",
+      "files_generated": 4,
+      "cpu_profile": "         4864 function calls (4220 primitive calls) in 0.002 seconds\n\n   Ordered by: cumulative time\n   List reduced from 227 to 10 due to restriction <10>\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    0.000    0.000    0.002    0.002 /Users/ygorfrancisco/Desktop/acd-monitor/src/agent/bundle_generator.py:95(generate_bundle)\n        1    0.000    0.000    0.002    0.002 /Users/ygorfrancisco/Desktop/acd-monitor/src/acd/analytics/report_v2.py:795(save_bundle)\n        1    0.000    0.000    0.001    0.001 /Users/ygorfrancisco/Desktop/acd-monitor/src/acd/analytics/report_v2.py:842(_save_bundle_json)\n        3    0.000    0.000    0.001    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/json/__init__.py:120(dump)\n        1    0.000    0.000    0.000    0.000 /Users/ygorfrancisco/Desktop/acd-monitor/src/acd/analytics/report_v2.py:387(generate_regulatory_bundle)\n  519/511    0.000    0.000    0.000    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/json/encoder.py:413(_iterencode)\n        5    0.000    0.000    0.000    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/dataclasses.py:1217(asdict)\n     86/5    0.000    0.000    0.000    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/dataclasses.py:1241(_asdict_inner)\n 1059/511    0.000    0.000    0.000    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/json/encoder.py:333(_iterencode_dict)\n        1    0.000    0.000    0.000    0.000 /Users/ygorfrancisco/Desktop/acd-monitor/src/acd/analytics/report_v2.py:733(_generate_data_tables)\n\n\n",
+      "error": null
+    }
+  ],
+  "attribution_calculation_results": [
+    {
+      "query_id": 1,
+      "query": "Calculate attribution tables for BTC/USD coordination analysis",
+      "status": "SUCCESS",
+      "execution_time": 0.004957914352416992,
+      "memory_delta_mb": 0.0,
+      "peak_memory_mb": 0.04657459259033203,
+      "response_length": 1225,
+      "cpu_profile": "         1472 function calls (1370 primitive calls) in 0.005 seconds\n\n   Ordered by: cumulative time\n   List reduced from 92 to 10 due to restriction <10>\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    0.000    0.000    0.005    0.005 /Users/ygorfrancisco/Desktop/acd-monitor/src/agent/providers/offline_mock.py:46(generate)\n        1    0.000    0.000    0.005    0.005 /Users/ygorfrancisco/Desktop/acd-monitor/src/agent/providers/offline_mock.py:554(_load_relevant_artifacts)\n        1    0.000    0.000    0.005    0.005 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/pathlib.py:1023(glob)\n        1    0.000    0.000    0.005    0.005 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/pathlib.py:487(_select_from)\n       32    0.003    0.000    0.004    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/pathlib.py:438(_select_from)\n   123/33    0.000    0.000    0.001    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/pathlib.py:468(_iterate_directories)\n       64    0.001    0.000    0.001    0.000 {built-in method posix.scandir}\n      2/1    0.000    0.000    0.000    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/pathlib.py:368(_make_selector)\n        1    0.000    0.000    0.000    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/pathlib.py:465(__init__)\n      2/1    0.000    0.000    0.000    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/pathlib.py:389(__init__)\n\n\n",
+      "error": null
+    },
+    {
+      "query_id": 2,
+      "query": "Generate risk decomposition for ETH/USD with driver analysis",
+      "status": "SUCCESS",
+      "execution_time": 0.0017528533935546875,
+      "memory_delta_mb": 0.0,
+      "peak_memory_mb": 0.02675628662109375,
+      "response_length": 1223,
+      "cpu_profile": "         1018 function calls (928 primitive calls) in 0.002 seconds\n\n   Ordered by: cumulative time\n   List reduced from 44 to 10 due to restriction <10>\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    0.000    0.000    0.002    0.002 /Users/ygorfrancisco/Desktop/acd-monitor/src/agent/providers/offline_mock.py:46(generate)\n        1    0.000    0.000    0.002    0.002 /Users/ygorfrancisco/Desktop/acd-monitor/src/agent/providers/offline_mock.py:554(_load_relevant_artifacts)\n        1    0.000    0.000    0.002    0.002 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/pathlib.py:1023(glob)\n        1    0.000    0.000    0.002    0.002 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/pathlib.py:487(_select_from)\n       32    0.000    0.000    0.001    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/pathlib.py:438(_select_from)\n   123/33    0.000    0.000    0.001    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/pathlib.py:468(_iterate_directories)\n       64    0.001    0.000    0.001    0.000 {built-in method posix.scandir}\n       65    0.000    0.000    0.000    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/pathlib.py:631(__fspath__)\n       65    0.000    0.000    0.000    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/pathlib.py:621(__str__)\n      150    0.000    0.000    0.000    0.000 {method 'fullmatch' of 're.Pattern' objects}\n\n\n",
+      "error": null
+    },
+    {
+      "query_id": 3,
+      "query": "Create attribution breakdown for ADA/USD with component contributions",
+      "status": "SUCCESS",
+      "execution_time": 0.0017011165618896484,
+      "memory_delta_mb": 0.0,
+      "peak_memory_mb": 0.0252685546875,
+      "response_length": 1232,
+      "cpu_profile": "         1018 function calls (928 primitive calls) in 0.002 seconds\n\n   Ordered by: cumulative time\n   List reduced from 44 to 10 due to restriction <10>\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    0.000    0.000    0.002    0.002 /Users/ygorfrancisco/Desktop/acd-monitor/src/agent/providers/offline_mock.py:46(generate)\n        1    0.000    0.000    0.002    0.002 /Users/ygorfrancisco/Desktop/acd-monitor/src/agent/providers/offline_mock.py:554(_load_relevant_artifacts)\n        1    0.000    0.000    0.002    0.002 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/pathlib.py:1023(glob)\n        1    0.000    0.000    0.002    0.002 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/pathlib.py:487(_select_from)\n       32    0.000    0.000    0.001    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/pathlib.py:438(_select_from)\n   123/33    0.000    0.000    0.001    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/pathlib.py:468(_iterate_directories)\n       64    0.000    0.000    0.001    0.000 {built-in method posix.scandir}\n       65    0.000    0.000    0.000    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/pathlib.py:631(__fspath__)\n       65    0.000    0.000    0.000    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/pathlib.py:621(__str__)\n      150    0.000    0.000    0.000    0.000 {method 'fullmatch' of 're.Pattern' objects}\n\n\n",
+      "error": null
+    },
+    {
+      "query_id": 4,
+      "query": "Analyze risk attribution for SOL/USD with statistical significance",
+      "status": "SUCCESS",
+      "execution_time": 0.0017080307006835938,
+      "memory_delta_mb": 0.0,
+      "peak_memory_mb": 0.02474212646484375,
+      "response_length": 1229,
+      "cpu_profile": "         1018 function calls (928 primitive calls) in 0.002 seconds\n\n   Ordered by: cumulative time\n   List reduced from 44 to 10 due to restriction <10>\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    0.000    0.000    0.002    0.002 /Users/ygorfrancisco/Desktop/acd-monitor/src/agent/providers/offline_mock.py:46(generate)\n        1    0.000    0.000    0.002    0.002 /Users/ygorfrancisco/Desktop/acd-monitor/src/agent/providers/offline_mock.py:554(_load_relevant_artifacts)\n        1    0.000    0.000    0.002    0.002 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/pathlib.py:1023(glob)\n        1    0.000    0.000    0.002    0.002 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/pathlib.py:487(_select_from)\n   123/33    0.000    0.000    0.001    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/pathlib.py:468(_iterate_directories)\n       32    0.000    0.000    0.001    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/pathlib.py:438(_select_from)\n       64    0.000    0.000    0.001    0.000 {built-in method posix.scandir}\n       65    0.000    0.000    0.000    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/pathlib.py:631(__fspath__)\n       65    0.000    0.000    0.000    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/pathlib.py:621(__str__)\n      150    0.000    0.000    0.000    0.000 {method 'fullmatch' of 're.Pattern' objects}\n\n\n",
+      "error": null
+    },
+    {
+      "query_id": 5,
+      "query": "Generate comprehensive attribution for DOT/USD with confidence intervals",
+      "status": "SUCCESS",
+      "execution_time": 0.001699686050415039,
+      "memory_delta_mb": 0.0,
+      "peak_memory_mb": 0.02474212646484375,
+      "response_length": 1235,
+      "cpu_profile": "         1018 function calls (928 primitive calls) in 0.002 seconds\n\n   Ordered by: cumulative time\n   List reduced from 44 to 10 due to restriction <10>\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    0.000    0.000    0.002    0.002 /Users/ygorfrancisco/Desktop/acd-monitor/src/agent/providers/offline_mock.py:46(generate)\n        1    0.000    0.000    0.002    0.002 /Users/ygorfrancisco/Desktop/acd-monitor/src/agent/providers/offline_mock.py:554(_load_relevant_artifacts)\n        1    0.000    0.000    0.002    0.002 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/pathlib.py:1023(glob)\n        1    0.000    0.000    0.002    0.002 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/pathlib.py:487(_select_from)\n   123/33    0.000    0.000    0.001    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/pathlib.py:468(_iterate_directories)\n       32    0.000    0.000    0.001    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/pathlib.py:438(_select_from)\n       64    0.000    0.000    0.001    0.000 {built-in method posix.scandir}\n       65    0.000    0.000    0.000    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/pathlib.py:631(__fspath__)\n       65    0.000    0.000    0.000    0.000 /opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/lib/python3.10/pathlib.py:621(__str__)\n      150    0.000    0.000    0.000    0.000 {method 'fullmatch' of 're.Pattern' objects}\n\n\n",
+      "error": null
+    }
+  ],
+  "memory_efficiency_results": [
+    {
+      "test_id": 1,
+      "test_name": "Single Query",
+      "description": "Memory usage for single query execution",
+      "query_count": 1,
+      "status": "SUCCESS",
+      "execution_time": 0.0031969547271728516,
+      "memory_delta_mb": 0.0,
+      "peak_memory_mb": 0.023118972778320312,
+      "memory_per_query_mb": 0.0,
+      "error": null
+    },
+    {
+      "test_id": 2,
+      "test_name": "Concurrent Queries",
+      "description": "Memory usage for 5 concurrent queries",
+      "query_count": 5,
+      "status": "SUCCESS",
+      "execution_time": 0.014302968978881836,
+      "memory_delta_mb": 0.0,
+      "peak_memory_mb": 0.01905059814453125,
+      "memory_per_query_mb": 0.0,
+      "error": null
+    },
+    {
+      "test_id": 3,
+      "test_name": "Sequential Queries",
+      "description": "Memory usage for 10 sequential queries",
+      "query_count": 10,
+      "status": "SUCCESS",
+      "execution_time": 0.028262853622436523,
+      "memory_delta_mb": 0.0,
+      "peak_memory_mb": 0.018578529357910156,
+      "memory_per_query_mb": 0.0,
+      "error": null
+    },
+    {
+      "test_id": 4,
+      "test_name": "Large Bundle Generation",
+      "description": "Memory usage for large bundle generation",
+      "query_count": 1,
+      "status": "SUCCESS",
+      "execution_time": 0.001455068588256836,
+      "memory_delta_mb": 0.0,
+      "peak_memory_mb": 0.0167388916015625,
+      "memory_per_query_mb": 0.0,
+      "error": null
+    }
+  ],
+  "recommendations": {
+    "immediate_optimizations": [
+      "Implement response caching for frequently requested bundles",
+      "Add memory pooling for bundle generation components",
+      "Optimize statistical calculations in attribution tables",
+      "Implement parallel processing for concurrent requests"
+    ],
+    "medium_term_optimizations": [
+      "Add database connection pooling",
+      "Implement lazy loading for large datasets",
+      "Add compression for bundle outputs",
+      "Implement request queuing and throttling"
+    ],
+    "long_term_optimizations": [
+      "Migrate to microservices architecture",
+      "Implement distributed caching",
+      "Add horizontal scaling capabilities",
+      "Implement advanced monitoring and alerting"
+    ]
+  }
+}

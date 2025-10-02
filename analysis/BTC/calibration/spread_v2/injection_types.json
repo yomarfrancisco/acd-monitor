@@ -1,0 +1,56 @@
+{
+  "compression_mild": {
+    "type": "compression",
+    "intensity": 0.3,
+    "duration": 30,
+    "description": "Mild spread compression (30% reduction)"
+  },
+  "compression_moderate": {
+    "type": "compression",
+    "intensity": 0.6,
+    "duration": 60,
+    "description": "Moderate spread compression (60% reduction)"
+  },
+  "compression_severe": {
+    "type": "compression",
+    "intensity": 0.9,
+    "duration": 120,
+    "description": "Severe spread compression (90% reduction)"
+  },
+  "expansion_mild": {
+    "type": "expansion",
+    "intensity": 0.3,
+    "duration": 30,
+    "description": "Mild spread expansion (30% increase)"
+  },
+  "expansion_moderate": {
+    "type": "expansion",
+    "intensity": 0.6,
+    "duration": 60,
+    "description": "Moderate spread expansion (60% increase)"
+  },
+  "expansion_severe": {
+    "type": "expansion",
+    "intensity": 0.9,
+    "duration": 120,
+    "description": "Severe spread expansion (90% increase)"
+  },
+  "oscillation_mild": {
+    "type": "oscillation",
+    "intensity": 0.3,
+    "duration": 60,
+    "description": "Mild spread oscillation (30% variation)"
+  },
+  "oscillation_moderate": {
+    "type": "oscillation",
+    "intensity": 0.6,
+    "duration": 120,
+    "description": "Moderate spread oscillation (60% variation)"
+  },
+  "oscillation_severe": {
+    "type": "oscillation",
+    "intensity": 0.9,
+    "duration": 180,
+    "description": "Severe spread oscillation (90% variation)"
+  }
+}

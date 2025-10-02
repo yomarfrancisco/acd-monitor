@@ -1,0 +1,12 @@
+{
+  "window": "1300-1330",
+  "injection_type": "compression_severe",
+  "injection_params": {
+    "type": "compression",
+    "intensity": 0.9,
+    "duration": 120,
+    "description": "Severe spread compression (90% reduction)"
+  },
+  "created_at": "2025-09-29T16:42:09.692783",
+  "status": "created"
+}

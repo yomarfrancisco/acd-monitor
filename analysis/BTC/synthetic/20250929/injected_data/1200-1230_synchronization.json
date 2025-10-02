@@ -1,0 +1,8 @@
+{
+  "injection_type": "synchronization",
+  "base_window": "snapshots/BTC-USD/20250929/1200-1230",
+  "injection_timestamp": "2025-09-29T14:34:27.262492",
+  "parameters": {
+    "interval_minutes": 5
+  }
+}

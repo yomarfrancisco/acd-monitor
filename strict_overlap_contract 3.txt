@@ -1,0 +1,4 @@
+2025-09-26 20:11:00
+2025-09-26 20:21:00
+10.0
+binance,coinbase,kraken,okx,bybit

@@ -1,0 +1,146 @@
+{
+  "episode_metrics": [
+    {
+      "episode_volume": 816.6037575834212,
+      "pre_volume": 799.9670580460757,
+      "post_volume": 793.0289786888385,
+      "volume_change": 2.079673077786558,
+      "episode_volatility": 0.00024671499711689934,
+      "pre_volatility": 0.00020554542877575062,
+      "post_volatility": 0.00024778154259879595,
+      "volatility_change": 20.029425410411136,
+      "episode_spread": 2.3362272229107477,
+      "pre_spread": 1.8407024556659963,
+      "post_spread": 1.846617135973136,
+      "spread_change": 26.920416481188557
+    },
+    {
+      "episode_volume": 790.0220630380857,
+      "pre_volume": 800.5868876430314,
+      "post_volume": 792.9291610338121,
+      "volume_change": -1.319634978790268,
+      "episode_volatility": 0.003807633994436993,
+      "pre_volatility": 0.003626219399833511,
+      "post_volatility": 0.003816335274183491,
+      "volatility_change": 5.002857648707399,
+      "episode_spread": 2.1046067150619137,
+      "pre_spread": 1.905575407786371,
+      "post_spread": 1.9032232691798316,
+      "spread_change": 10.44468282190676
+    },
+    {
+      "episode_volume": 796.0283624833173,
+      "pre_volume": 798.2476423972432,
+      "post_volume": 797.1850416803416,
+      "volume_change": -0.27801897507158446,
+      "episode_volatility": 0.003972283140083098,
+      "pre_volatility": 0.0038907990648018136,
+      "post_volatility": 0.004085033722490024,
+      "volatility_change": 2.0942761094612057,
+      "episode_spread": 2.406916036733901,
+      "pre_spread": 1.9695290608500098,
+      "post_spread": 2.020261791764726,
+      "spread_change": 22.20769343180566
+    },
+    {
+      "episode_volume": 799.1994586832232,
+      "pre_volume": 790.4800195911869,
+      "post_volume": 793.2002662859152,
+      "volume_change": 1.1030562286122958,
+      "episode_volatility": 0.003906928338772881,
+      "pre_volatility": 0.0034812926117523983,
+      "post_volatility": 0.004037905778945951,
+      "volatility_change": 12.226370331054358,
+      "episode_spread": 1.9720706468021718,
+      "pre_spread": 1.9647138539632238,
+      "post_spread": 2.012086908806714,
+      "spread_change": 0.37444602042724107
+    },
+    {
+      "episode_volume": 803.9794648786361,
+      "pre_volume": 801.9646527773875,
+      "post_volume": 809.933884470812,
+      "volume_change": 0.2512345268922811,
+      "episode_volatility": 0.0040221934201566285,
+      "pre_volatility": 0.0038163077460921365,
+      "post_volatility": 0.0039588187195694615,
+      "volatility_change": 5.394891810685786,
+      "episode_spread": 1.9642655653128713,
+      "pre_spread": 1.870905586131687,
+      "post_spread": 1.8035566514651122,
+      "spread_change": 4.990095698747517
+    }
+  ],
+  "control_metrics": [
+    {
+      "control_volume": 809.6923633802692,
+      "pre_volume": 798.7896413889162,
+      "post_volume": 798.812147666277,
+      "volume_change": 1.3649052799928187,
+      "control_volatility": 0.0002508604322685505,
+      "pre_volatility": 0.0002476434347026847,
+      "post_volatility": 0.0002506549043975573,
+      "volatility_change": 1.2990441558558001,
+      "control_spread": 1.9909289714705665,
+      "pre_spread": 1.8741171393261076,
+      "post_spread": 1.9149800775239982,
+      "spread_change": 6.232899197883753
+    },
+    {
+      "control_volume": 794.9869872499288,
+      "pre_volume": 800.2013162355753,
+      "post_volume": 800.8323545319876,
+      "volume_change": -0.6516271443011994,
+      "control_volatility": 0.003926955559465492,
+      "pre_volatility": 0.0039501449982943925,
+      "post_volatility": 0.003930155180229995,
+      "volatility_change": -0.5870528509437746,
+      "control_spread": 2.0506973142607876,
+      "pre_spread": 1.9103239655611506,
+      "post_spread": 1.9308459587678692,
+      "spread_change": 7.348143625387794
+    },
+    {
+      "control_volume": 802.4224215212338,
+      "pre_volume": 799.3690527242585,
+      "post_volume": 799.9958920371566,
+      "volume_change": 0.3819723551430191,
+      "control_volatility": 0.00025808469803767584,
+      "pre_volatility": 0.00025598398720997744,
+      "post_volatility": 0.00024963899820535653,
+      "volatility_change": 0.8206414981634148,
+      "control_spread": 1.9090920559890947,
+      "pre_spread": 1.9867676541467085,
+      "post_spread": 1.9324311924897286,
+      "spread_change": -3.909646807239496
+    }
+  ],
+  "contrasts": {
+    "volume": {
+      "episode_mean": 801.1666213333367,
+      "control_mean": 802.3672573838106,
+      "difference_pct": -0.14963672051981505,
+      "t_statistic": -0.17852794269296487,
+      "p_value": 0.8641838945700482,
+      "significant": false
+    },
+    "volatility": {
+      "episode_mean": 0.0031911507781132997,
+      "control_mean": 0.0014786335632572395,
+      "difference_pct": 115.81755327422741,
+      "t_statistic": 1.2890907856018974,
+      "p_value": 0.24483138450937386,
+      "significant": false
+    },
+    "spread": {
+      "episode_mean": 2.1568172373643213,
+      "control_mean": 1.9835727805734829,
+      "difference_pct": 8.733960179709195,
+      "t_statistic": 1.3742908358388042,
+      "p_value": 0.21847530881175678,
+      "significant": false
+    }
+  },
+  "episode_count": 5,
+  "control_count": 3
+}

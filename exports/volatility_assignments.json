@@ -1,0 +1,24 @@
+{
+  "keptDays": 257,
+  "droppedDays": 10,
+  "dropReasons": {
+    "missing": 0,
+    "nan": 0,
+    "tooFewBars": 0,
+    "notEnoughOthers": 0
+  },
+  "byRegime": [
+    {
+      "regime": "low",
+      "days": 85
+    },
+    {
+      "regime": "medium",
+      "days": 87
+    },
+    {
+      "regime": "high",
+      "days": 85
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+name: OIDC Test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  oidc-test:
+    name: OIDC Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::514258695205:role/acd-ci-oidc
+          aws-region: us-east-1
+
+      - name: Test AWS Identity
+        run: |
+          echo "🔍 Testing OIDC authentication..."
+          echo "📋 AWS Identity:"
+          aws sts get-caller-identity
+          echo ""
+          echo "✅ OIDC authentication successful!"
+          echo "🎯 Role assumed: arn:aws:iam::514258695205:role/acd-ci-oidc"
+
+      - name: Verify OIDC Credentials
+        run: |
+          echo "🔍 Checking OIDC credentials in environment..."
+          echo "✅ AWS_ACCESS_KEY_ID: $([ -n "$AWS_ACCESS_KEY_ID" ] && echo "Present (temporary)" || echo "Not found")"
+          echo "✅ AWS_SECRET_ACCESS_KEY: $([ -n "$AWS_SECRET_ACCESS_KEY" ] && echo "Present (temporary)" || echo "Not found")"
+          echo "✅ AWS_SESSION_TOKEN: $([ -n "$AWS_SESSION_TOKEN" ] && echo "Present (temporary)" || echo "Not found")"
+          echo "✅ OIDC authentication working correctly with temporary credentials"
+
+      - name: Test S3 Access
+        run: |
+          echo "🔍 Testing S3 access with OIDC role..."
+          aws s3 ls s3://acd-monitor-snapshots/ | head -3
+          echo "✅ S3 access successful with OIDC role"

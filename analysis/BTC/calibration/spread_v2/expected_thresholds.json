@@ -1,0 +1,56 @@
+{
+  "compression_mild": {
+    "min_delta_z": -0.5,
+    "max_delta_z": -0.2,
+    "expected_detection": true,
+    "confidence": 0.7
+  },
+  "compression_moderate": {
+    "min_delta_z": -1.0,
+    "max_delta_z": -0.5,
+    "expected_detection": true,
+    "confidence": 0.8
+  },
+  "compression_severe": {
+    "min_delta_z": -2.0,
+    "max_delta_z": -1.0,
+    "expected_detection": true,
+    "confidence": 0.9
+  },
+  "expansion_mild": {
+    "min_delta_z": 0.2,
+    "max_delta_z": 0.5,
+    "expected_detection": true,
+    "confidence": 0.7
+  },
+  "expansion_moderate": {
+    "min_delta_z": 0.5,
+    "max_delta_z": 1.0,
+    "expected_detection": true,
+    "confidence": 0.8
+  },
+  "expansion_severe": {
+    "min_delta_z": 1.0,
+    "max_delta_z": 2.0,
+    "expected_detection": true,
+    "confidence": 0.9
+  },
+  "oscillation_mild": {
+    "min_delta_z": -0.3,
+    "max_delta_z": 0.3,
+    "expected_detection": true,
+    "confidence": 0.6
+  },
+  "oscillation_moderate": {
+    "min_delta_z": -0.6,
+    "max_delta_z": 0.6,
+    "expected_detection": true,
+    "confidence": 0.7
+  },
+  "oscillation_severe": {
+    "min_delta_z": -1.0,
+    "max_delta_z": 1.0,
+    "expected_detection": true,
+    "confidence": 0.8
+  }
+}

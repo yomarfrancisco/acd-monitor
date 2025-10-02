@@ -1,0 +1,37 @@
+{
+  "analysis": "lead_lag_v2",
+  "window": {
+    "start": "2025-09-26T20:48:05+00:00",
+    "end": "2025-09-26T20:57:52+00:00",
+    "freq": "1s"
+  },
+  "horizons": [
+    1,
+    2
+  ],
+  "methods": [
+    "xcorr"
+  ],
+  "edges": [
+    {
+      "from": "binance",
+      "to": "okx",
+      "best_lag_s": 2,
+      "score": 0.1619837349075741,
+      "p": 0.342,
+      "per_horizon": {
+        "xcorr_1s": {
+          "score": 0.03925481416349144,
+          "lag": 0,
+          "p": 0.595
+        },
+        "xcorr_2s": {
+          "score": -0.1619837349075741,
+          "lag": 2,
+          "p": 0.342
+        }
+      },
+      "status": "real"
+    }
+  ]
+}

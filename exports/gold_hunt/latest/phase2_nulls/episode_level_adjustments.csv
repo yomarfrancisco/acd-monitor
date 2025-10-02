@@ -1,0 +1,7 @@
+episode_id,start,end,duration,lift,raw_p,leader,bh_fdr_10_q,bh_fdr_05_q,null_type,seed,family_size
+0,0,10,10,0.905,0.041,coinbase,0.047,0.047,shuffle,42,6
+1,100,110,10,0.8,0.02,binance,0.047,0.047,shuffle,42,6
+2,200,210,10,0.89,0.038,okx,0.047,0.047,shuffle,42,6
+3,300,310,10,0.9299999999999999,0.046,coinbase,0.047,0.047,shuffle,42,6
+4,400,410,10,0.755,0.011,coinbase,0.047,0.047,shuffle,42,6
+5,500,510,10,0.685,0.047,kraken,0.047,0.047,shuffle,42,6

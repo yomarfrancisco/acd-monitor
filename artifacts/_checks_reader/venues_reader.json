@@ -1,0 +1,28 @@
+{
+  "timestamp": "2025-10-01T19:10:00.095331+00:00",
+  "stage": "E",
+  "validation": "venues_reader",
+  "btc_venues": [
+    "coinbase",
+    "kraken",
+    "okx"
+  ],
+  "eth_venues": [
+    "coinbase",
+    "kraken"
+  ],
+  "expected_btc_venues": [
+    "coinbase",
+    "kraken",
+    "okx"
+  ],
+  "expected_eth_venues": [
+    "coinbase",
+    "kraken"
+  ],
+  "btc_venues_ok": true,
+  "eth_venues_ok": true,
+  "no_bybit_btc": true,
+  "no_bybit_eth": true,
+  "validation_passed": true
+}

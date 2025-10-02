@@ -1,0 +1,19 @@
+{
+  "case_name": "CMA Poster Frames",
+  "industry": "Airlines",
+  "coordination_type": "Price coordination on poster frames",
+  "period": "2010-2015",
+  "venues": [
+    "British Airways",
+    "Virgin Atlantic",
+    "EasyJet",
+    "Ryanair",
+    "Flybe"
+  ],
+  "coordination_indicators": [
+    "Synchronized price changes",
+    "Parallel pricing patterns",
+    "Reduced price competition",
+    "Coordinated market responses"
+  ]
+}

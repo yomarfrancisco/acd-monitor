@@ -1,0 +1,72 @@
+{
+  "price_differences": {
+    "binance_minus_coinbase": {
+      "mean_diff": -0.03703288514485363,
+      "std_diff": 0.1865432228230715,
+      "max_diff": 0.1792347902474507,
+      "min_diff": -0.9273016158693483
+    },
+    "binance_minus_kraken": {
+      "mean_diff": 0.021824308143372318,
+      "std_diff": 0.06670253283591616,
+      "max_diff": 0.2319381955763884,
+      "min_diff": -0.21885272620853335
+    },
+    "binance_minus_okx": {
+      "mean_diff": -0.017860866715653942,
+      "std_diff": 0.08367479943336498,
+      "max_diff": 0.2921263379131389,
+      "min_diff": -0.2858832166664538
+    },
+    "binance_minus_bybit": {
+      "mean_diff": -0.06561656554495955,
+      "std_diff": 0.10178170212348735,
+      "max_diff": 0.19990570532124785,
+      "min_diff": -0.33727877297958386
+    },
+    "coinbase_minus_kraken": {
+      "mean_diff": 0.05885719328822596,
+      "std_diff": 0.1859722187417932,
+      "max_diff": 1.0286028063320938,
+      "min_diff": -0.17826374819746427
+    },
+    "coinbase_minus_okx": {
+      "mean_diff": 0.019172018429199692,
+      "std_diff": 0.19297174699848593,
+      "max_diff": 0.9903813728712443,
+      "min_diff": -0.3026069703933967
+    },
+    "coinbase_minus_bybit": {
+      "mean_diff": -0.02858368040010591,
+      "std_diff": 0.21610006119631808,
+      "max_diff": 0.942513725305032,
+      "min_diff": -0.34160111409842386
+    },
+    "kraken_minus_okx": {
+      "mean_diff": -0.03968517485902626,
+      "std_diff": 0.09303399032639334,
+      "max_diff": 0.2789300192138775,
+      "min_diff": -0.33080875394544407
+    },
+    "kraken_minus_bybit": {
+      "mean_diff": -0.08744087368833185,
+      "std_diff": 0.11461196604940747,
+      "max_diff": 0.19462250129194203,
+      "min_diff": -0.41038411336280944
+    },
+    "okx_minus_bybit": {
+      "mean_diff": -0.0477556988293056,
+      "std_diff": 0.09713675609735652,
+      "max_diff": 0.18732435216108811,
+      "min_diff": -0.4072290548304771
+    }
+  },
+  "observations": 52346,
+  "venues": [
+    "binance",
+    "coinbase",
+    "kraken",
+    "okx",
+    "bybit"
+  ]
+}

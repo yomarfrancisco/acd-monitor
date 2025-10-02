@@ -1,0 +1,21 @@
+{
+  "startUTC": "2025-09-28T10:00:00Z",
+  "endUTC": "2025-09-28T10:30:00Z",
+  "cadences": [
+    "1s"
+  ],
+  "venues": [
+    "binance",
+    "coinbase",
+    "kraken",
+    "okx",
+    "bybit"
+  ],
+  "coverage": {
+    "binance": 1.0,
+    "coinbase": 1.0,
+    "kraken": 1.0,
+    "okx": 1.0,
+    "bybit": 1.0
+  }
+}

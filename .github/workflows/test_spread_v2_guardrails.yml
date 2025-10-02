@@ -1,0 +1,115 @@
+name: Test Spread v2 Guardrails
+on: [push]
+
+jobs:
+  test-demo-guardrails:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: ${{ github.workspace }}   # allow `import acdlib` without install
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          # IMPORTANT: skip editable install to avoid "__init__-0.0.0" packaging error
+          # pip install -e .
+
+      - name: Locate acdlib and set PYTHONPATH
+        shell: bash
+        run: |
+          set -euxo pipefail
+          ROOT="$GITHUB_WORKSPACE"
+          FOUND=""
+          for base in "$ROOT" "$ROOT/src" "$ROOT/python" "$ROOT/lib" "$ROOT/backend" ; do
+            if [ -d "$base/acdlib" ]; then
+              echo "Found acdlib at: $base/acdlib"
+              echo "PYTHONPATH=$base:${PYTHONPATH:-}" >> "$GITHUB_ENV"
+              FOUND="$base"
+              break
+            fi
+          done
+          if [ -z "$FOUND" ]; then
+            echo "ERROR: acdlib directory not found under ., src, python, lib, backend"
+            echo "Repo root:"
+            ls -la "$ROOT"
+            exit 1
+          fi
+
+      - name: Ensure acdlib is a package (CI guard)
+        shell: bash
+        run: |
+          set -euxo pipefail
+          BASE="$(echo "${PYTHONPATH}" | cut -d: -f1)"
+          if [ ! -f "$BASE/acdlib/__init__.py" ]; then
+            echo "CI guard: creating temporary acdlib/__init__.py at $BASE/acdlib/__init__.py"
+            printf "# CI guard to make acdlib importable\n" > "$BASE/acdlib/__init__.py"
+          fi
+
+      - name: Sanity import (verify PYTHONPATH)
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python - <<'PY'
+          import os, sys
+          print("PYTHONPATH:", os.environ.get("PYTHONPATH"))
+          print("sys.path[:5]:", sys.path[:5])
+          import acdlib
+          print("acdlib loaded from:", getattr(acdlib, "__file__", "<package>"))
+          PY
+
+      - name: Test demo data rejection (should fail)
+        id: test_rejection
+        continue-on-error: true
+        run: |
+          python scripts/gold_hunt_control_v2.py \
+            --snapshot-dir demos/spread_v2_demo/demo_snapshot \
+            --export-dir /tmp/test_output \
+            --detector zscore \
+            --verbose
+
+      - name: Assert demo rejection behaved as expected
+        if: ${{ steps.test_rejection.outcome == 'failure' }}
+        run: echo "✅ Demo data was rejected (non-zero exit) as expected."
+
+      - name: Assert demo rejection failed (should not happen)
+        if: ${{ steps.test_rejection.outcome != 'failure' }}
+        run: |
+          echo "ERROR: Demo data should be rejected without --allow-demo (expected non-zero exit)." >&2
+          exit 1
+
+      - name: Test demo data with --allow-demo (should succeed)
+        id: test_allow
+        run: |
+          set -euxo pipefail
+          rm -rf /tmp/test_output && mkdir -p /tmp/test_output
+          python scripts/gold_hunt_control_v2.py \
+            --snapshot-dir demos/spread_v2_demo/demo_snapshot \
+            --export-dir /tmp/test_output \
+            --detector zscore \
+            --allow-demo \
+            --verbose
+          echo "RESULTS=/tmp/test_output/control_v2_results.json" >> $GITHUB_ENV
+
+      - name: Show what the script produced (debug)
+        run: |
+          set -euxo pipefail
+          echo "Tree under /tmp/test_output:"
+          find /tmp/test_output -maxdepth 2 -type f -printf "%p\t%k KB\n" || true
+          echo "Scanning for *results*.json under /tmp:"
+          find /tmp -maxdepth 3 -name "*results*.json" -printf "%p\n" || true
+
+      - name: Assert demo provenance tagging
+        env:
+          RESULTS: ${{ env.RESULTS }}
+        run: |
+          set -euxo pipefail
+          test -f "$RESULTS"
+          jq -e '.provenance=="DEMO"' "$RESULTS" > /dev/null
+          echo "✅ Output tagged with provenance: DEMO"

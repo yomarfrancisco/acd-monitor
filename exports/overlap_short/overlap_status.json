@@ -1,0 +1,12 @@
+{
+  "quorum": 4,
+  "minutes_max": 0,
+  "venues_ready": [],
+  "venues_missing": [
+    "binance",
+    "coinbase",
+    "kraken",
+    "okx",
+    "bybit"
+  ]
+}

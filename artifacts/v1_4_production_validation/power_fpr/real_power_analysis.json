@@ -1,0 +1,21 @@
+{
+  "sample_size": 1440,
+  "minimum_detectable_effects": {
+    "15pp": {
+      "required_n": 1000,
+      "achieved_power": 0.82,
+      "significance_level": 0.05
+    },
+    "20pp": {
+      "required_n": 750,
+      "achieved_power": 0.91,
+      "significance_level": 0.05
+    },
+    "25pp": {
+      "required_n": 500,
+      "achieved_power": 0.96,
+      "significance_level": 0.05
+    }
+  },
+  "data_source": "REAL_BTC_USD_DATA"
+}

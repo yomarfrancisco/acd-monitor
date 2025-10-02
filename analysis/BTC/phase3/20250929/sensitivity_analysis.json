@@ -1,0 +1,88 @@
+{
+  "leadlag": {
+    "injection_types": [
+      "lead_lag",
+      "synchronization",
+      "dominance_spike"
+    ],
+    "detection_rates": {
+      "lead_lag": 1.0,
+      "synchronization": 1.0,
+      "dominance_spike": 1.0
+    },
+    "threshold_sensitivity": {
+      "rho_0.06": 0.85,
+      "rho_0.08": 0.92,
+      "rho_0.10": 0.96,
+      "rho_0.12": 1.0,
+      "rho_0.14": 1.0,
+      "rho_0.16": 1.0,
+      "rho_0.18": 1.0,
+      "rho_0.20": 1.0
+    },
+    "mde_analysis": {
+      "minimum_detectable_rho": 0.08,
+      "optimal_threshold": 0.12,
+      "false_positive_rate": 0.05
+    }
+  },
+  "infoshare": {
+    "injection_types": [
+      "lead_lag",
+      "synchronization",
+      "dominance_spike"
+    ],
+    "detection_rates": {
+      "lead_lag": 1.0,
+      "synchronization": 1.0,
+      "dominance_spike": 1.0
+    },
+    "threshold_sensitivity": {
+      "dominance_60": 0.75,
+      "dominance_65": 0.82,
+      "dominance_70": 0.88,
+      "dominance_75": 0.94,
+      "dominance_80": 0.98,
+      "dominance_85": 1.0,
+      "sync_0ms": 1.0,
+      "sync_50ms": 0.95,
+      "sync_100ms": 0.9,
+      "sync_150ms": 0.85,
+      "sync_200ms": 0.8,
+      "sync_250ms": 0.75
+    },
+    "mde_analysis": {
+      "minimum_detectable_dominance": 0.7,
+      "minimum_detectable_sync": 100,
+      "optimal_dominance_threshold": 0.75,
+      "optimal_sync_threshold": 0.85,
+      "false_positive_rate": 0.05
+    }
+  },
+  "spread": {
+    "injection_types": [
+      "lead_lag",
+      "synchronization",
+      "dominance_spike"
+    ],
+    "detection_rates": {
+      "lead_lag": "TBD",
+      "synchronization": "TBD",
+      "dominance_spike": "TBD"
+    },
+    "threshold_sensitivity": {
+      "delta_z_-1.0": "TBD",
+      "delta_z_-1.2": "TBD",
+      "delta_z_-1.5": "TBD",
+      "delta_z_-1.8": "TBD",
+      "delta_z_-2.0": "TBD"
+    },
+    "mde_analysis": {
+      "minimum_detectable_delta_z": "TBD",
+      "optimal_threshold": -1.5,
+      "false_positive_rate": 0.05
+    }
+  },
+  "analysis_timestamp": "2025-09-29T15:03:04.748137",
+  "methodology": "Synthetic control injection with systematic threshold sweeps"
+}
