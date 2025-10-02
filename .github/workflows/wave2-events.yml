@@ -187,66 +187,137 @@ jobs:
         [ "$ok" -eq 1 ] || { echo "❌ BTC required artifacts missing"; exit 1; }
         echo "=== WAVE-1 VALIDATION OK ==="
 
-    - name: Run BTC event-studies (safe, no overwrite)
+    - name: Run Wave-2 event studies (tri-state: skip/run/stop)
+      shell: bash
+      env:
+        DATE:   ${{ env.DATE }}
+        BUCKET: ${{ env.ACD_S3_BUCKET }}
       run: |
-        python3 analytics/wave2/events/runner.py \
-          --date "${{ env.DATE }}" \
-          --bucket "${{ env.ACD_S3_BUCKET }}" \
-          --symbol btc_usd \
-          --no-overwrite
+        set -euo pipefail
+        echo "=== WAVE-2 EVENT STUDIES (tri-state) ==="
         
-    - name: Validate BTC events exist
+        # Check BTC Wave-2 artifacts
+        btc_key="analysis/${DATE}/wave2/events/btc_usd/events.parquet"
+        btc_present=false
+        if aws s3 ls "s3://${BUCKET}/${btc_key}" >/dev/null 2>&1; then
+          echo "PRESENT: s3://${BUCKET}/${btc_key}"
+          btc_present=true
+        else
+          echo "MISSING: s3://${BUCKET}/${btc_key}"
+        fi
+        
+        # Check ETH Wave-2 artifacts (soft)
+        eth_key="analysis/${DATE}/wave2/events/eth_usd/events.parquet"
+        eth_present=false
+        if aws s3 ls "s3://${BUCKET}/${eth_key}" >/dev/null 2>&1; then
+          echo "PRESENT: s3://${BUCKET}/${eth_key}"
+          eth_present=true
+        else
+          echo "MISSING: s3://${BUCKET}/${eth_key}"
+        fi
+        
+        if [ "$btc_present" = "true" ]; then
+          echo "✅ BTC Wave-2 artifacts already present; skipping compute."
+        else
+          echo "--- run Wave-2 compute for BTC ---"
+          python3 analytics/wave2/events/runner.py \
+            --date "${DATE}" \
+            --bucket "${BUCKET}" \
+            --symbol btc_usd \
+            --no-overwrite
+          
+          echo "--- verify BTC Wave-2 outputs after compute ---"
+          if ! aws s3 ls "s3://${BUCKET}/${btc_key}" >/dev/null 2>&1; then
+            echo "❌ MISSING after compute: s3://${BUCKET}/${btc_key}"
+            exit 1
+          else
+            echo "✅ PRESENT: s3://${BUCKET}/${btc_key}"
+          fi
+        fi
+        
+        # ETH soft check (warn only)
+        if [ "$eth_present" = "false" ]; then
+          echo "⚠️ ETH Wave-2 artifacts missing (soft - optional)"
+        else
+          echo "✅ ETH Wave-2 present (soft)"
+        fi
+        
+        echo "=== WAVE-2 EVENT STUDIES DONE ==="
+        
+    - name: Validate Wave-2 outputs (BTC hard / ETH soft)
+      shell: bash
+      env:
+        DATE:   ${{ env.DATE }}
+        BUCKET: ${{ env.ACD_S3_BUCKET }}
       run: |
-        echo "🔍 Checking BTC-USD event studies..."
+        set -euo pipefail
+        echo "=== WAVE-2 VALIDATION ==="
+        
+        # BTC hard validation
+        btc_key="analysis/${DATE}/wave2/events/btc_usd/events.parquet"
+        if ! aws s3 ls "s3://${BUCKET}/${btc_key}" >/dev/null 2>&1; then
+          echo "❌ BTC REQUIRED MISSING: s3://${BUCKET}/${btc_key}"
+          exit 1
+        else
+          echo "✅ BTC present: ${btc_key}"
+        fi
+        
+        # BTC schema and quality validation
+        echo "--- validating BTC Wave-2 schema and quality ---"
         python3 -c "
         import boto3
         import pandas as pd
         import io
         
         s3 = boto3.client('s3')
-        bucket = '${{ env.ACD_S3_BUCKET }}'
-        date = '${{ env.DATE }}'
+        bucket = '${BUCKET}'
+        date = '${DATE}'
         
-        # Check BTC events file
-        btc_key = f'analysis/{date}/wave2/events/btc_usd/events.parquet'
         try:
-            response = s3.get_object(Bucket=bucket, Key=btc_key)
-            df = pd.read_parquet(io.BytesIO(response['Body'].read()))
-            print(f'✅ BTC events: {len(df)} rows')
-            print(f'   Columns: {list(df.columns)}')
-            print(f'   Venues: {df[\"venue\"].unique().tolist()}')
-            print(f'   Event types: {df[\"event_type\"].unique().tolist()}')
-            print(f'   Status: {df[\"status\"].value_counts().to_dict()}')
+            # Load BTC events
+            events_key = f'analysis/{date}/wave2/events/btc_usd/events.parquet'
+            obj = s3.get_object(Bucket=bucket, Key=events_key)
+            df = pd.read_parquet(io.BytesIO(obj['Body'].read()))
+            
+            print(f'📊 BTC events shape: {df.shape}')
+            
+            # Required columns
+            required_cols = ['symbol', 'venue', 'event_type', 'n_events', 'n_used', 'car_60s', 'car_300s', 'd_spread', 'd_vol', 'hit_60s', 'status']
+            missing_cols = [col for col in required_cols if col not in df.columns]
+            if missing_cols:
+                print(f'❌ BTC missing required columns: {missing_cols}')
+                exit(1)
+            
+            # Min-sample rule (n_used >= 5)
+            if 'n_used' in df.columns:
+                min_samples = df['n_used'].min()
+                if min_samples < 5:
+                    print(f'❌ BTC min-sample rule violated: min n_used = {min_samples} < 5')
+                    exit(1)
+                print(f'✅ BTC min-sample rule passed: min n_used = {min_samples}')
+            
+            # Data sanity checks
+            if len(df) == 0:
+                print('❌ BTC events table is empty')
+                exit(1)
+            
+            print('✅ BTC Wave-2 validation passed')
+            
         except Exception as e:
-            print(f'❌ BTC events missing: {e}')
+            print(f'❌ BTC Wave-2 validation failed: {e}')
             exit(1)
         "
         
-    - name: Validate ETH events (soft check)
-      run: |
-        echo "🔍 Checking ETH-USD event studies..."
-        python3 -c "
-        import boto3
-        import pandas as pd
-        import io
+        # ETH soft validation (warn only)
+        eth_key="analysis/${DATE}/wave2/events/eth_usd/events.parquet"
+        if aws s3 ls "s3://${BUCKET}/${eth_key}" >/dev/null 2>&1; then
+          echo "✅ ETH present (soft): ${eth_key}"
+        else
+          echo "⚠️ ETH Wave-2 missing (soft - optional)"
+        fi
         
-        s3 = boto3.client('s3')
-        bucket = '${{ env.ACD_S3_BUCKET }}'
-        date = '${{ env.DATE }}'
+        echo "=== WAVE-2 VALIDATION OK ==="
         
-        # Check ETH events file (soft check)
-        eth_key = f'analysis/{date}/wave2/events/eth_usd/events.parquet'
-        try:
-            response = s3.get_object(Bucket=bucket, Key=eth_key)
-            df = pd.read_parquet(io.BytesIO(response['Body'].read()))
-            print(f'✅ ETH events: {len(df)} rows')
-            print(f'   Columns: {list(df.columns)}')
-            print(f'   Venues: {df[\"venue\"].unique().tolist()}')
-            print(f'   Event types: {df[\"event_type\"].unique().tolist()}')
-            print(f'   Status: {df[\"status\"].value_counts().to_dict()}')
-        except Exception as e:
-            print(f'⚠️ ETH events missing (expected for exploratory): {e}')
-        "
         
     - name: Validate schema and data quality
       run: |
