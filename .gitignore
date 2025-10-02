@@ -61,13 +61,3 @@ yarn-error.log*
 dist/
 build/
 *.tsbuildinfo
-.vercel
-.vercel
-.vercel
-.vercel
-
-# Allow UI library code
-!ui/cursor-dashboard/lib/
-!ui/cursor-dashboard/lib/**
-!ui/cursor-dashboard/utils/
-!ui/cursor-dashboard/utils/**

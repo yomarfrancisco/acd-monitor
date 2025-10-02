@@ -1,24 +1,9 @@
 """
-VMM (Variational Method of Moments) Module
-
-Implements VMM methodology for continuous monitoring and crypto-specific
-moment condition evaluation.
+VMM - Variational Method of Moments
+Continuous monitoring engine for coordination detection
 """
 
-from .crypto_moments import (
-    CryptoMomentCalculator,
-    CryptoMomentConfig,
-    CryptoMoments,
-    calculate_crypto_moments,
-)
-from .engine import VMMConfig, VMMEngine, VMMOutput
+from .engine import VMMConfig, VMMOutput, VMMState, run_vmm
+from .profiles import get_default_config
 
-__all__ = [
-    "VMMEngine",
-    "VMMConfig",
-    "VMMOutput",
-    "CryptoMomentCalculator",
-    "CryptoMomentConfig",
-    "CryptoMoments",
-    "calculate_crypto_moments",
-]
+__all__ = ["run_vmm", "VMMConfig", "VMMState", "VMMOutput", "get_default_config"]

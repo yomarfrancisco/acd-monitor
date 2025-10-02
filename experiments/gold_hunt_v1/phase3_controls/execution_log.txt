@@ -1,3 +1,0 @@
-Random seed: 42
-Command: python scripts/gold_hunt_phase3_economic_controls.py --seed 42
-Execution time: 2025-09-28 11:33:28.210333

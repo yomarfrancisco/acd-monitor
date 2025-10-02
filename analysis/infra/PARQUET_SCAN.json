@@ -1,8 +1,0 @@
-{
-  "timestamp": "2025-09-30T18:35:00Z",
-  "test_method": "duckdb_httpfs",
-  "success": false,
-  "error": "duckdb not available: No module named 'duckdb'",
-  "row_count": null,
-  "sample_data": null
-}

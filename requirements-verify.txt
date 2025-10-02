@@ -1,5 +1,0 @@
-# CI-only deps used by snapshot verification
-pyarrow>=15,<19
-pandas>=2.0,<3
-boto3>=1.28,<2
-python-dateutil>=2.8

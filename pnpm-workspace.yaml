@@ -1,4 +1,0 @@
-packages:
-  - "ui/*"
-  - "ui/cursor-dashboard"
-  - "backend/*"

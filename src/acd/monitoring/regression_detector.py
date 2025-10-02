@@ -1,10 +1,10 @@
 """Regression detection for ACD Monitor metrics."""
 
 import logging
+import os
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List
-
+from typing import Dict, List, Optional, Tuple, Any
 import pandas as pd
 
 from .metrics import RunMetrics
@@ -43,11 +43,7 @@ class RegressionDetector:
         """
         if not self.metrics_log_path.exists():
             logger.info("No historical metrics available for regression detection")
-            return {
-                "regressions_detected": False,
-                "regression_notes": [],
-                "trend_analysis": {},
-            }
+            return {"regressions_detected": False, "regression_notes": [], "trend_analysis": {}}
 
         try:
             # Load historical metrics
@@ -58,11 +54,7 @@ class RegressionDetector:
 
             if len(recent_metrics) < 3:  # Need at least 3 runs for meaningful analysis
                 logger.info("Insufficient historical data for regression detection")
-                return {
-                    "regressions_detected": False,
-                    "regression_notes": [],
-                    "trend_analysis": {},
-                }
+                return {"regressions_detected": False, "regression_notes": [], "trend_analysis": {}}
 
             # Analyze each metric for regressions
             regression_notes = []
@@ -130,7 +122,7 @@ class RegressionDetector:
                         metrics_dict[col] = float(value)
                     else:
                         metrics_dict[col] = value
-                except BaseException:
+                except:
                     metrics_dict[col] = value
             recent_metrics.append(metrics_dict)
 

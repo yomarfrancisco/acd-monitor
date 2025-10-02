@@ -1,6 +1,8 @@
 """Unit tests for demo pipeline ingestion module."""
 
-# from unittest.mock import patch, MagicMock  # noqa: F401
+import pytest
+import pandas as pd
+from unittest.mock import patch, MagicMock
 
 from acd.demo.ingestion import MockDataIngestion
 
@@ -175,15 +177,8 @@ class TestMockDataIngestion:
         assert "content" in window_data.columns
 
         # Check disclosure types
-        expected_types = [
-            "price_change",
-            "volume_alert",
-            "coordination_suspicion",
-            "market_abuse",
-        ]
-        assert all(
-            dt in expected_types for dt in window_data["disclosure_type"].unique()
-        )
+        expected_types = ["price_change", "volume_alert", "coordination_suspicion", "market_abuse"]
+        assert all(dt in expected_types for dt in window_data["disclosure_type"].unique())
 
     def test_synthetic_golden_data_generation(self):
         """Test synthetic golden data generation."""

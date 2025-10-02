@@ -164,9 +164,7 @@ def generate_leader_follower_data(
                 if t >= 2:  # 2-period delay for followers
                     # Followers copy leader's move with some variation
                     follower_response = base_prices[t - 2, 0] - base_prices[t - 3, 0]
-                    base_prices[t, i] += follower_response * 0.7 + np.random.normal(
-                        0, 0.5
-                    )
+                    base_prices[t, i] += follower_response * 0.7 + np.random.normal(0, 0.5)
 
         # Add noise
         noise = np.random.normal(0, 1, (window_size, n_firms))
@@ -330,9 +328,7 @@ def generate_sa_bank_competition_data(
                 if t > 0:
                     # Follow leader with competitive pressure
                     leader_change = base_rates[t, 0] - base_rates[t - 1, 0]
-                    competitive_adjustment = leader_change * 0.8 + np.random.normal(
-                        0, 0.1
-                    )
+                    competitive_adjustment = leader_change * 0.8 + np.random.normal(0, 0.1)
                     base_rates[t, i] += competitive_adjustment
 
         # Add noise
@@ -400,9 +396,7 @@ def save_golden_datasets(
         print(f"Saved {len(windows)} {dataset_type} windows to {dataset_dir}/")
 
 
-def generate_validation_metrics(
-    datasets: Dict[str, List[pd.DataFrame]],
-) -> Dict[str, float]:
+def generate_validation_metrics(datasets: Dict[str, List[pd.DataFrame]]) -> Dict[str, float]:
     """
     Generate validation metrics for golden datasets.
 
@@ -419,9 +413,7 @@ def generate_validation_metrics(
         all_prices = []
         for window in windows:
             price_cols = [
-                col
-                for col in window.columns
-                if "price" in col or "cds" in col or "rate" in col
+                col for col in window.columns if "price" in col or "cds" in col or "rate" in col
             ]
             all_prices.extend(window[price_cols].values.flatten())
 
@@ -447,7 +439,5 @@ if __name__ == "__main__":
     with open("golden_datasets/validation_metrics.json", "w") as f:
         json.dump(metrics, f, indent=2)
 
-    print(
-        f"Generated {sum(len(windows) for windows in datasets.values())} total windows"
-    )
+    print(f"Generated {sum(len(windows) for windows in datasets.values())} total windows")
     print("Validation metrics saved to golden_datasets/validation_metrics.json")

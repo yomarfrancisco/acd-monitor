@@ -1,6 +1,0 @@
-venue,point_estimate,raw_p,bonferroni_p,bh_fdr_10_q,bh_fdr_05_q,effect_size,n_tests,family
-binance,0.20800000000000002,0.5,1.0,0.5,0.5,0.20800000000000002,5,venues
-coinbase,0.265,0.5,1.0,0.5,0.5,0.265,5,venues
-kraken,0.226,0.5,1.0,0.5,0.5,0.226,5,venues
-okx,0.27,0.5,1.0,0.5,0.5,0.27,5,venues
-bybit,0.252,0.5,1.0,0.5,0.5,0.252,5,venues

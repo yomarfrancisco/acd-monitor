@@ -9,14 +9,14 @@ and coordinated behavior patterns.
 import pickle
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple, List
 
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.isotonic import IsotonicRegression
 
 # Import adaptive threshold framework
-from .adaptive_thresholds import AdaptiveThresholdConfig, AdaptiveThresholdManager
+from .adaptive_thresholds import AdaptiveThresholdManager, AdaptiveThresholdConfig
 
 
 @dataclass
@@ -533,14 +533,7 @@ def plot_reliability_diagram(
     plt.figure(figsize=(8, 6))
 
     # Plot reliability diagram
-    plt.plot(
-        bin_confidences,
-        bin_accuracies,
-        "o-",
-        label="Reliability",
-        linewidth=2,
-        markersize=8,
-    )
+    plt.plot(bin_confidences, bin_accuracies, "o-", label="Reliability", linewidth=2, markersize=8)
     plt.plot([0, 1], [0, 1], "--", color="gray", label="Perfect Calibration", alpha=0.7)
 
     # Add confidence intervals (simplified)

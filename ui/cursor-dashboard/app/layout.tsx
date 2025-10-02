@@ -1,10 +1,9 @@
 import type React from "react"
-import type { Metadata, Viewport } from "next"
+import type { Metadata } from "next"
 import { Inter } from "next/font/google"
+import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
-import "./globals.css"
-import 'katex/dist/katex.min.css'
-import { ExchangeDataProvider } from "@/contexts/ExchangeDataContext"
+import "../styles/globals.css"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -12,14 +11,8 @@ const inter = Inter({
   variable: "--font-inter",
 })
 
-
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-}
-
 export const metadata: Metadata = {
-  title: `NinjaA — v3 ${process.env.VERCEL_GIT_COMMIT_SHA?.slice(0,7) || 'no-sha'}`,
+  title: "Cursor Dashboard",
   description: "Recreation of Cursor AI Dashboard",
   generator: "v0.app",
 }
@@ -30,19 +23,10 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="h-full dark" data-build-sha={process.env.VERCEL_GIT_COMMIT_SHA} data-env={process.env.VERCEL_ENV}>
-      <body className={`min-h-full antialiased ${inter.variable}`} data-probe="root-layout">
-        {/* beacon TEMP off */}
-        {/* <div
-          data-ssr-beacon="v3"
-          style={{position:'fixed',top:0,left:0,right:0,zIndex:99999,background:'#ff0000',color:'#fff',padding:'8px',fontWeight:700,textAlign:'center'}}
-        >
-          BEACON v3 — root app/layout.tsx — {process.env.VERCEL_GIT_COMMIT_SHA?.slice(0,7) ?? 'no-sha'}
-        </div> */}
-        
-        <ExchangeDataProvider>
-          <Suspense fallback={null}>{children}</Suspense>
-        </ExchangeDataProvider>
+    <html lang="en" className="h-full dark">
+      <body className={`min-h-full antialiased ${inter.variable}`}>
+        <Suspense fallback={null}>{children}</Suspense>
+        <Analytics />
       </body>
     </html>
   )

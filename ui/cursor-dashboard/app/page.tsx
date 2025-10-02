@@ -1,860 +1,108 @@
 "use client"
 
-import {
-  Bot,
-  ChevronDown,
-  FileText,
-  Zap,
-  Send,
-  Settings,
-  Database,
-  Activity,
-  CreditCard,
-  BarChart3,
-  TrendingUp,
-  Clock,
-  Download,
-  User,
-  SquareChevronRight,
-  SquarePlus,
-  ShieldCheck,
-  Upload,
-  Cloud,
-  Brain,
-  Target,
-  Shield,
-  Link,
-  Gauge,
-  Moon,
-  Scale,
-  Search,
-} from "lucide-react"
-
-import { Separator } from "@/components/ui/separator"
-import Image from "next/image"
-
-import { useState, useEffect, useRef, useMemo } from "react"
-import * as React from "react"
-import { Card, CardContent } from "@/components/ui/card"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { AssistantBubble } from "@/components/AssistantBubble"
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, ReferenceLine, ReferenceArea, Label } from "recharts"
-import { CalendarIcon, Copy, RefreshCw, ImageUp, Camera, FolderClosed, Github, AlertTriangle, Factory } from "lucide-react"
-import { VENUES, VenueKey, VENUE_LABEL, VENUE_COLOR } from "../src/shared/venues";
-import { normalizeOverview, NormalizedOverview } from "../src/shared/series";
-import { buildAxis, alignOnAxis } from "../src/shared/align";
-import { latestCommonIndex } from "../src/shared/leader";
-
-// Timestamp normalization helpers
-const DAY_MS = 86_400_000;
-
-const toNum = (x: any) => {
-  const n = typeof x === 'string' ? parseFloat(x) : (typeof x === 'number' ? x : NaN);
-  return Number.isFinite(n) ? n : null;
-};
-
-const toMidnightMs = (t: any) => {
-  const ms =
-    t == null ? NaN :
-    typeof t === 'string' ? Date.parse(t) :
-    typeof t === 'number' ? (t < 10_000_000_000 ? t * 1000 : t) :
-    NaN;
-  if (!Number.isFinite(ms)) return null;
-  const d = new Date(ms);
-  return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
-};
-
-function getBarTs(bar: any) {
-  // array: [ts, o, h, l, c, v], objects: { time|t|timestamp, ... }
-  const raw =
-    Array.isArray(bar) ? bar[0] :
-    bar?.time ?? bar?.t ?? bar?.timestamp ?? bar?.date ?? null;
-  return toMidnightMs(raw);
-}
-
-function getBarClose(bar: any) {
-  // array close at [4], objects: close|c|price
-  const raw =
-    Array.isArray(bar) ? bar[4] :
-    bar?.close ?? bar?.c ?? bar?.price ?? null;
-  return toNum(raw);
-}
-
-// Robust OHLCV picker (tolerant to different nesting used by Coinbase)
-const pickOhlcv = (ex: any): any[] => {
-  const cand = [
-    ex?.data?.ohlcv,            // standard (binance/okx/…)
-    ex?.ohlcv,                  // simple fallback
-    ex?.data?.ohlcv?.data,      // object wrapping an array
-    ex?.data?.data,             // sometimes providers nest like this
-    ex?.overview?.ohlcv,      // if wrapped in overview
-    ex?.payload?.ohlcv,         // alt wrapper
-    ex?.data?.candles,          // possible alt key (coinbase-style)
-    ex?.data?.bars,             // possible alt key
-  ];
-  for (const c of cand) if (Array.isArray(c)) return c;
-  return [];
-};
-
-// Converts either an array bar or an object bar into { ts, close }
-const readBar = (bar: any): { ts: number | string | null; close: number | null } => {
-  if (!bar) return { ts: null, close: null };
-
-  // Array-shaped: [ts, open, high, low, close, ...]
-  if (Array.isArray(bar)) {
-    const ts = bar[0];
-    const close = toNum(bar[4]);
-    return { ts, close };
-  }
-
-  // Object-shaped: try common key variants
-  // Coinbase often uses { t: <sec>, c: <close> }
-  const tsObj =
-    (bar.ts ?? bar.t ?? bar.time ?? bar.timestamp ?? bar.date ?? bar[0]) ?? null;
-
-  const closeObj =
-    toNum(bar.c ?? bar.close ?? bar.closing ?? bar.price ?? bar.last ?? bar.vwap);
-
-  return { ts: tsObj, close: closeObj };
-};
-
-  const buildYtdAxis = (): number[] => {
-    const startMs = Date.UTC(2025, 0, 1); // 2025-01-01T00:00:00Z
-    const now = new Date();
-    const endMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()); // today 00:00Z
-    const axis: number[] = [];
-    for (let t = startMs; t < endMs; t += DAY_MS) axis.push(t);
-    return axis;
-  };
-
-  // Robust lead-lag leadership with fallbacks
-  function computeLeadLagLeader(
-    aligned: Array<{ts:number; [venue:string]: number|null}>,
-    opts = { minPairs: 60, eps: 0.0 }
-  ) {
-    const venues = Object.keys(aligned[0] || {}).filter(v => v !== 'ts');
-    // build per-venue return arrays
-    const series: Record<string, number[]> = {};
-    const mask: number[] = [];
-    for (let i = 1; i < aligned.length; i++) {
-      const prev = aligned[i-1], cur = aligned[i];
-      const row: Record<string, number> = {};
-      let any = false;
-      for (const v of venues) {
-        const a = Number(prev[v]), b = Number(cur[v]);
-        if (Number.isFinite(a) && Number.isFinite(b) && a > 0 && b > 0) {
-          row[v] = Math.log(b/a);
-          any = true;
-        }
-      }
-      if (!any) continue;
-      mask.push(i);
-      for (const v of venues) {
-        (series[v] ||= []).push(row[v]);
-      }
-    }
-    // winsorize
-    const wins = (xs:number[]) => {
-      const x = xs.filter(Number.isFinite);
-      if (x.length < opts.minPairs) return null;
-      const m = x.reduce((a,b)=>a+b,0)/x.length;
-      const s = Math.sqrt(x.reduce((a,b)=>a+(b-m)*(b-m),0)/x.length) || 1;
-      const hi = m + 3*s, lo = m - 3*s;
-      return xs.map(v => Number.isFinite(v) ? Math.max(lo, Math.min(hi, v)) : NaN);
-    };
-    for (const v of venues) {
-      const w = wins(series[v] || []);
-      if (!w) return null;         // not enough data for at least one venue
-      series[v] = w;
-    }
-    // pairwise lag-1 net lead score
-    const corr = (x:number[], y:number[]) => {
-      const n = Math.min(x.length-1, y.length-1);
-      if (n < opts.minPairs) return null;
-      // ρ(x_t, y_{t+1})
-      const X = x.slice(0, n), Yf = y.slice(1, n+1);
-      const Yb = y.slice(0, n), Xf = x.slice(1, n+1);
-      const c = (a:number[], b:number[]) => {
-        const n = a.length;
-        const ma = a.reduce((s,v)=>s+v,0)/n, mb = b.reduce((s,v)=>s+v,0)/n;
-        let num=0, da=0, db=0;
-        for (let i=0;i<n;i++){ const pa=a[i]-ma, pb=b[i]-mb; num+=pa*pb; da+=pa*pa; db+=pb*pb; }
-        const den = Math.sqrt(da*db);
-        return den ? (num/den) : 0;
-      };
-      return { fwd: c(X, Yf), rev: c(Yb, Xf), n };
-    };
-
-    const leadScore: Record<string, number> = Object.fromEntries(venues.map(v=>[v,0]));
-    let pairCount = 0;
-    for (let i=0;i<venues.length;i++){
-      for (let j=i+1;j<venues.length;j++){
-        const vi = venues[i], vj = venues[j];
-        const cc = corr(series[vi], series[vj]);
-        if (!cc) continue;
-        pairCount++;
-        const net = (cc.fwd - cc.rev); // >0 means vi leads vj
-        if (Math.abs(net) >= (opts.eps || 0)) {
-          leadScore[vi] += net;
-          leadScore[vj] -= net;
-        }
-      }
-    }
-    if (pairCount === 0) return null;
-
-    const ranked = Object.entries(leadScore).sort((a,b)=> b[1]-a[1]);
-    return { venue: ranked[0][0], score: ranked[0][1], totalPairs: pairCount };
-  }
-
-  // Consensus fallback: smallest average relative distance to the (leave-one-out) median.
-  function computeConsensusLeader(aligned: Array<{ts:number; [v:string]: number|null}>, minBars=60) {
-    const venues = Object.keys(aligned[0] || {}).filter(v => v !== 'ts');
-    const eps = 1e-9;
-
-    // Diagnostic logging for day filtering
-    const drop = { missing: 0, notEnoughOthers: 0, tooTight: 0, outlier: 0, nan: 0, other: 0 };
-    let kept = 0;
-
-    const MIN_OTHERS = 3;          // current requirement for leave-one-out
-    const MIN_SPREAD_BPS = 1;      // minimum spread in basis points
-
-    // per-venue distances and daily winners tracking
-    const dist: Record<string, number[]> = Object.fromEntries(venues.map(v => [v, []]));
-    const dayWinners: string[][] = [];
-
-    for (const row of aligned) {
-      // Diagnostic checks - mirror the actual filtering logic
-      if (!row) { drop.other++; continue; }
-
-      const vals = venues
-        .map(v => ({ v, x: Number(row[v]) }))
-        .filter(({x}) => Number.isFinite(x) && x > 0);
-
-      if (vals.length < 2) { drop.nan++; continue; }
-
-      // "not enough others" for leave-one-out median
-      if (vals.length - 1 < MIN_OTHERS) { drop.notEnoughOthers++; continue; }
-
-      // optional "spread too tight" filter
-      const prices = vals.map(({x}) => x);
-      const min = Math.min(...prices), max = Math.max(...prices);
-      const mid = (min + max) / 2;
-      const bps = mid ? ((max - min) / mid) * 1e4 : 0;
-      if (bps < MIN_SPREAD_BPS) { drop.tooTight++; continue; }
-
-      // Pre-sort once for median; cheaper than recomputing from scratch each time
-      const sorted = [...vals].sort((a,b) => a.x - b.x);
-      const getMedian = (arr: {v:string; x:number}[]) => {
-        const n = arr.length, m = Math.floor(n / 2);
-        return n % 2 ? arr[m].x : (arr[m-1].x + arr[m].x) / 2;
-      };
-
-      // Compute distances and find daily winners
-      const dayDistances: Record<string, number> = {};
-      let minDistance = Infinity;
-      
-      for (const { v, x } of vals) {
-        // Leave-one-out median
-        const others = sorted.filter(o => o.v !== v);
-        if (others.length === 0) continue;
-        const med = getMedian(others);
-        if (!Number.isFinite(med) || med <= 0) continue;
-
-        const distance = Math.abs(x - med) / med;
-        dayDistances[v] = distance;
-        dist[v].push(distance);
-        
-        if (distance < minDistance) {
-          minDistance = distance;
-        }
-      }
-      
-      // Find winners for this day (all venues within tolerance of minimum)
-      const relEps = 1e-6; // relative tolerance for near-ties
-      const absEps = 1e-9; // absolute tolerance for near-ties
-      const winners = Object.entries(dayDistances)
-        .filter(([_, distance]) => 
-          distance <= minDistance * (1 + relEps) || 
-          distance <= absEps
-        )
-        .map(([venue, _]) => venue);
-      
-      dayWinners.push(winners);
-      kept++;
-    }
-
-    const avg = (xs:number[]) => xs.length ? xs.reduce((a,b)=>a+b,0) / xs.length : Infinity;
-    const scored = venues
-      .map(v => ({ v, n: dist[v].length, s: avg(dist[v]) }))
-      .filter(x => x.n >= minBars)
-      .sort((a,b) => a.s - b.s);
-
-    if (!scored.length) return null;
-
-    // Tie handling + percent as advantage over #2
-    const best = scored[0];
-    const second = scored[1];
-    const isTie = second && Math.abs(best.s - second.s) < 1e-6;
-
-    // pct expresses separation from #2; 0 when tied/equal, ~1 when huge separation
-    const pct = (!second || isTie) ? 0 : Math.max(0, 1 - (best.s / (second.s + eps)));
-
-    // Count wins only for daily winners
-    const wins = new Map<string, number>();
-    for (const winners of dayWinners) {
-      for (const v of winners) {
-        wins.set(v, (wins.get(v) ?? 0) + 1);
-      }
-    }
-
-    const keptDays = dayWinners.length;
-    const ranking = Array.from(wins.entries())
-      .map(([venue, winCount]) => ({
-        venue,
-        wins: winCount,
-        pct: keptDays ? winCount / keptDays : 0,
-      }))
-      .sort((a, b) => b.wins - a.wins || b.pct - a.pct);
-
-    // top-1 stays our leader
-    const leader = ranking[0]?.venue ?? null;
-    const leaderPct = ranking[0]?.pct ?? null;
-    const venueCount = ranking.length;
-
-    // At the end, log a concise summary
-    if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
-      console.log('[LEADER:consensus:keep-vs-drop]', { kept, dropped: aligned.length - kept, drop });
-      console.log('[LEADER:consensus:ranking]', {
-        keptDays,
-        venues: venueCount,
-        table: ranking.map(r => ({
-          venue: r.venue,
-          wins: r.wins,
-          pct: Number((r.pct * 100).toFixed(2)),
-        })),
-      });
-      console.log('[LEADER:consensus]', { topTwo: scored.slice(0,2), isTie, pct });
-    }
-
-    return isTie
-      ? { venue: null, score: pct, tie: [best.v, second.v], ranking: { table: ranking } }   // optional: signal tie
-      : { venue: best.v, score: pct, ranking: { table: ranking } };
-  }
-
-  function computeDataQualityLeader(aligned:any[]){
-    const venues = Object.keys(aligned[0]||{}).filter(v=>v!=='ts');
-    const counts = venues.map(v=>{
-      let ok=0;
-      for (const r of aligned){ const x = Number(r[v]); if (Number.isFinite(x)) ok++; }
-      return { v, ok };
-    }).sort((a,b)=> b.ok - a.ok);
-    if (!counts.length || counts[0].ok===0) return null;
-    return { venue: counts[0].v, score: counts[0].ok/Math.max(1, aligned.length) };
-  }
-
-  function computePriceLeader(aligned:any[]){
-    const lag = computeLeadLagLeader(aligned, { minPairs: 60, eps: 0.0 });
-    if (lag) return { venue: lag.venue, pct: lag.score, venues: lag.totalPairs, method:'lead-lag' as const, ranking: undefined };
-
-    const cons = computeConsensusLeader(aligned, 60);
-    if (cons) return { venue: cons.venue, pct: cons.score, venues: 0, method:'consensus-proximity' as const, ranking: cons.ranking };
-
-    const qual = computeDataQualityLeader(aligned);
-    if (qual) return { venue: qual.venue, pct: qual.score, venues: 0, method:'data-quality' as const, ranking: undefined };
-
-    return { leader: null, pct: null, venues: 0, method:'none' as const, ranking: undefined };
-  }
-
-  // Temporal Price Leadership calculation with robust fallbacks
-  const computeLeadershipFromAligned = (rows: any[], venues: string[]) => {
-    if (!rows.length || venues.length < 2) return { venue: null, score: null, ranking: undefined };
-    
-    const result = computePriceLeader(rows);
-    
-    if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
-      console.log('[LEADER] lead-lag =>', result.method === 'lead-lag' ? result : 'null');
-      console.log('[LEADER] consensus =>', result.method === 'consensus-proximity' ? result : 'null');
-      console.log('[LEADER] data-quality =>', result.method === 'data-quality' ? result : 'null');
-      console.log('[LEADER] final result =>', result);
-    }
-    
-    if (result.leader === null) return { venue: null, score: null, ranking: undefined };
-    return { venue: result.venue, score: result.pct, ranking: result.ranking };
-  };
-import { RiskSummarySchema, MetricsOverviewSchema, HealthRunSchema, EventsResponseSchema, DataSourcesSchema, EvidenceExportSchema, BinanceOverviewSchema } from "@/types/api.schemas"
-import { fetchTyped } from "@/lib/backendAdapter"
-import { safe } from "@/lib/safe"
-import { resilientFetch } from "@/lib/resilient-api"
-import { DegradedModeBanner } from "@/components/DegradedModeBanner"
-import { EventsTable } from "@/components/EventsTable"
-import { SelftestIndicator } from "@/components/SelftestIndicator"
-import { useExchangeData } from "../contexts/ExchangeDataContext"
-import { getAvailableUiVenues, uiKeyToDataKey, venueMetadata, type UiVenue } from "../lib/venueMapping"
-import { computePriceLeadership, type DataKey } from "../lib/leadership"
-import { normalizeEvents, pickEventsInDomain, SEED_EVENTS_YTD } from "../utils/events"
-import { toMsTs } from "../lib/time"
-import type { RiskSummary, HealthRun, EventsResponse, DataSources, EvidenceExport } from "@/types/api"
-import type { MetricsOverview } from "@/types/api.schemas"
-import { z } from "zod"
+import { Card, CardContent } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts"
+import { CalendarIcon } from "lucide-react"
 import {
   MessageSquare,
+  BarChart3,
+  Settings,
+  Users,
+  Zap,
+  FileText,
+  Search,
+  Github,
+  Slack,
+  Link,
+  User,
+  TrendingUp,
   GitBranch,
+  Activity,
+  Database,
+  Cpu,
   ClipboardList,
-  CloudUpload,
+  CreditCard,
+  Bot,
+  Clock,
+  ShieldCheck,
+  Moon,
+  Scale,
   CalendarCheck2,
-  ScaleIcon,
-  SquarePen,
+  Download,
+  ChevronDown,
+  Cloud,
+  Send,
+  CloudUpload,
+  Package,
 } from "lucide-react"
-
-// Helper function to synthesize timestamp from date label
-function synthTsFromLabel(lbl: string): number | null {
-  // handles "Feb '25", "Jun '25", "Jul '25" (with apostrophe)
-  const m = lbl?.match(/^([A-Za-z]{3})\s+'(\d{2})$/);
-  if (m) {
-    const [ , monStr, yy ] = m;
-    const year = 2000 + Number(yy);
-    const mon = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].indexOf(monStr);
-    return Date.UTC(year, Math.max(0, mon), 1);
-  }
-  // handles "Jan 25", "Feb 25", "Mar 25" (without apostrophe)
-  const m2 = lbl?.match(/^([A-Za-z]{3})\s+(\d{2})$/);
-  if (m2) {
-    const [ , monStr, yy ] = m2;
-    const year = 2000 + Number(yy);
-    const mon = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].indexOf(monStr);
-    return Date.UTC(year, Math.max(0, mon), 1);
-  }
-  // Also accept ISO or "Feb 03, 2025" etc.
-  return toMsTs(lbl);
-}
 
 // Different data sets for different time periods
 const analyticsData30d = [
-  { date: "Aug 6", ts: synthTsFromLabel("Aug 6"), fnb: 100, absa: 95, standard: 105, nedbank: 98, coinbase: 102 },
-  { date: "Aug 13", ts: synthTsFromLabel("Aug 13"), fnb: 150, absa: 145, standard: 155, nedbank: 148, coinbase: 152 },
-  { date: "Aug 20", ts: synthTsFromLabel("Aug 20"), fnb: 200, absa: 190, standard: 210, nedbank: 195, coinbase: 205 },
-  { date: "Aug 27", ts: synthTsFromLabel("Aug 27"), fnb: 250, absa: 240, standard: 260, nedbank: 245, coinbase: 255 },
-  { date: "Sep 3", ts: synthTsFromLabel("Sep 3"), fnb: 300, absa: 290, standard: 310, nedbank: 295, coinbase: 305 },
-  { date: "Sep 10", ts: synthTsFromLabel("Sep 10"), fnb: 350, absa: 330, standard: 370, nedbank: 340, coinbase: 360 },
-].filter(row => row.ts !== null) as Array<{ date: string; ts: number; fnb: number; absa: number; standard: number; nedbank: number; coinbase: number }>
+  { date: "Aug 06", fnb: 100, absa: 95, standard: 105, nedbank: 98 },
+  { date: "Aug 13", fnb: 150, absa: 145, standard: 155, nedbank: 148 },
+  { date: "Aug 20", fnb: 200, absa: 190, standard: 210, nedbank: 195 },
+  { date: "Aug 27", fnb: 250, absa: 240, standard: 260, nedbank: 245 },
+  { date: "Sep 03", fnb: 300, absa: 290, standard: 310, nedbank: 295 },
+  { date: "Sep 10", fnb: 350, absa: 330, standard: 370, nedbank: 340 },
+]
 
 const analyticsData6m = [
-  { date: "Mar '25", ts: synthTsFromLabel("Mar '25"), fnb: 80, absa: 75, standard: 85, nedbank: 78, coinbase: 82 },
-  { date: "Apr '25", ts: synthTsFromLabel("Apr '25"), fnb: 120, absa: 115, standard: 125, nedbank: 118, coinbase: 122 },
-  { date: "May '25", ts: synthTsFromLabel("May '25"), fnb: 180, absa: 175, standard: 185, nedbank: 178, coinbase: 182 },
-  { date: "Jun '25", ts: synthTsFromLabel("Jun '25"), fnb: 220, absa: 210, standard: 230, nedbank: 215, coinbase: 225 },
-  { date: "Jul '25", ts: synthTsFromLabel("Jul '25"), fnb: 280, absa: 270, standard: 290, nedbank: 275, coinbase: 285 },
-  { date: "Aug '25", ts: synthTsFromLabel("Aug '25"), fnb: 320, absa: 310, standard: 330, nedbank: 315, coinbase: 325 },
-  { date: "Sep '25", ts: synthTsFromLabel("Sep '25"), fnb: 350, absa: 330, standard: 370, nedbank: 340, coinbase: 360 },
-].filter(row => row.ts !== null) as Array<{ date: string; ts: number; fnb: number; absa: number; standard: number; nedbank: number; coinbase: number }>
+  { date: "Mar '25", fnb: 80, absa: 75, standard: 85, nedbank: 78 },
+  { date: "Apr '25", fnb: 120, absa: 115, standard: 125, nedbank: 118 },
+  { date: "May '25", fnb: 180, absa: 175, standard: 185, nedbank: 178 },
+  { date: "Jun '25", fnb: 220, absa: 210, standard: 230, nedbank: 215 },
+  { date: "Jul '25", fnb: 280, absa: 270, standard: 290, nedbank: 275 },
+  { date: "Aug '25", fnb: 320, absa: 310, standard: 330, nedbank: 315 },
+  { date: "Sep '25", fnb: 350, absa: 330, standard: 370, nedbank: 340 },
+]
 
 const analyticsData1y = [
-  { date: "Sep '24", ts: synthTsFromLabel("Sep '24"), fnb: 60, absa: 55, standard: 65, nedbank: 58, coinbase: 62 },
-  { date: "Oct '24", ts: synthTsFromLabel("Oct '24"), fnb: 80, absa: 75, standard: 85, nedbank: 78, coinbase: 82 },
-  { date: "Nov '24", ts: synthTsFromLabel("Nov '24"), fnb: 100, absa: 95, standard: 105, nedbank: 98, coinbase: 102 },
-  { date: "Dec '24", ts: synthTsFromLabel("Dec '24"), fnb: 120, absa: 115, standard: 125, nedbank: 118, coinbase: 122 },
-  { date: "Jan '25", ts: synthTsFromLabel("Jan '25"), fnb: 140, absa: 135, standard: 145, nedbank: 138, coinbase: 142 },
-  { date: "Feb '25", ts: synthTsFromLabel("Feb '25"), fnb: 180, absa: 175, standard: 185, nedbank: 178, coinbase: 182 },
-  { date: "Mar '25", ts: synthTsFromLabel("Mar '25"), fnb: 220, absa: 210, standard: 230, nedbank: 215, coinbase: 225 },
-  { date: "Apr '25", ts: synthTsFromLabel("Apr '25"), fnb: 260, absa: 250, standard: 270, nedbank: 255, coinbase: 265 },
-  { date: "May '25", ts: synthTsFromLabel("May '25"), fnb: 300, absa: 290, standard: 310, nedbank: 295, coinbase: 305 },
-  { date: "Jun '25", ts: synthTsFromLabel("Jun '25"), fnb: 320, absa: 310, standard: 330, nedbank: 315, coinbase: 325 },
-  { date: "Jul '25", ts: synthTsFromLabel("Jul '25"), fnb: 340, absa: 330, standard: 350, nedbank: 335, coinbase: 345 },
-  { date: "Aug '25", ts: synthTsFromLabel("Aug '25"), fnb: 360, absa: 350, standard: 370, nedbank: 355, coinbase: 365 },
-  { date: "Sep '25", ts: synthTsFromLabel("Sep '25"), fnb: 350, absa: 330, standard: 370, nedbank: 340, coinbase: 360 },
-].filter(row => row.ts !== null) as Array<{ date: string; ts: number; fnb: number; absa: number; standard: number; nedbank: number; coinbase: number }>
+  { date: "Sep '24", fnb: 60, absa: 55, standard: 65, nedbank: 58 },
+  { date: "Oct '24", fnb: 80, absa: 75, standard: 85, nedbank: 78 },
+  { date: "Nov '24", fnb: 100, absa: 95, standard: 105, nedbank: 98 },
+  { date: "Dec '24", fnb: 120, absa: 115, standard: 125, nedbank: 118 },
+  { date: "Jan '25", fnb: 140, absa: 135, standard: 145, nedbank: 138 },
+  { date: "Feb '25", fnb: 180, absa: 175, standard: 185, nedbank: 178 },
+  { date: "Mar '25", fnb: 220, absa: 210, standard: 230, nedbank: 215 },
+  { date: "Apr '25", fnb: 260, absa: 250, standard: 270, nedbank: 255 },
+  { date: "May '25", fnb: 300, absa: 290, standard: 310, nedbank: 295 },
+  { date: "Jun '25", fnb: 320, absa: 310, standard: 330, nedbank: 315 },
+  { date: "Jul '25", fnb: 340, absa: 330, standard: 350, nedbank: 335 },
+  { date: "Aug '25", fnb: 360, absa: 350, standard: 370, nedbank: 355 },
+  { date: "Sep '25", fnb: 350, absa: 330, standard: 370, nedbank: 340 },
+]
 
 const analyticsDataYTD = [
-  { date: "Jan '25", ts: synthTsFromLabel("Jan '25"), fnb: 100, absa: 95, standard: 105, nedbank: 98, coinbase: 102 },
-  { date: "Feb '25", ts: synthTsFromLabel("Feb '25"), fnb: 150, absa: 145, standard: 155, nedbank: 148, coinbase: 152 },
-  { date: "Mar '25", ts: synthTsFromLabel("Mar '25"), fnb: 200, absa: 190, standard: 210, nedbank: 195, coinbase: 205 },
-  { date: "Apr '25", ts: synthTsFromLabel("Apr '25"), fnb: 180, absa: 175, standard: 185, nedbank: 178, coinbase: 182 },
-  { date: "May '25", ts: synthTsFromLabel("May '25"), fnb: 250, absa: 240, standard: 260, nedbank: 245, coinbase: 255 },
-  { date: "Jun '25", ts: synthTsFromLabel("Jun '25"), fnb: 300, absa: 290, standard: 310, nedbank: 295, coinbase: 305 },
-  { date: "Jul '25", ts: synthTsFromLabel("Jul '25"), fnb: 280, absa: 270, standard: 290, nedbank: 275, coinbase: 285 },
-  { date: "Aug '25", ts: synthTsFromLabel("Aug '25"), fnb: 400, absa: 380, standard: 420, nedbank: 390, coinbase: 410 },
-  { date: "Sep '25", ts: synthTsFromLabel("Sep '25"), fnb: 350, absa: 330, standard: 370, nedbank: 340, coinbase: 360 },
-].filter(row => row.ts !== null) as Array<{ date: string; ts: number; fnb: number; absa: number; standard: number; nedbank: number; coinbase: number }>
-
-// Financial Compliance Dashboard - Main Component (CI Test)
-// Dashboard button styling - keep original sizing, only change colors
-const dashboardBtnClass = "border-[#AFC8FF] text-black bg-[#AFC8FF] hover:bg-[#9FBCFF] text-[9px] h-5 px-2 font-normal"
-
-// Dashboard CTA button styling - pastel blue bg + black text for the 13 specific CTA buttons
-const dashboardCtaBtnClass = "bg-[#AFC8FF] text-black hover:bg-[#9FBCFF] active:bg-[#95B4FF] ring-1 ring-inset ring-[#8FB3FF]/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6FA0FF] shadow-sm text-[9px] h-5 px-2 font-normal rounded-full disabled:bg-[#AFC8FF]/60 disabled:text-black/60 disabled:ring-[#8FB3FF]/50 disabled:cursor-not-allowed disabled:opacity-100"
-
-// Custom hook for auto-resizing textarea
-function useAutosizeTextarea(
-  ref: React.RefObject<HTMLTextAreaElement>,
-  value: string,
-  opts: { minPx?: number; maxVh?: number } = {}
-) {
-  const { minPx = 112, maxVh = 40 } = opts;
-
-  React.useLayoutEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    // apply min/max every run (cheap & avoids CSS drift)
-    el.style.minHeight = `${minPx}px`;
-    el.style.maxHeight = `${maxVh}vh`;
-
-    // measure -> grow to content, clamped by CSS max-height
-    el.style.height = "auto";
-    const next = el.scrollHeight;
-    el.style.height = next + "px";
-
-    // show scrollbar only when clamped
-    const computed = getComputedStyle(el);
-    const maxPx = parseFloat(computed.maxHeight);
-    el.style.overflowY = el.scrollHeight > maxPx ? "auto" : "hidden";
-  }, [ref, value, minPx, maxVh]);
-
-  // keep height sensible on viewport changes
-  React.useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const onResize = () => {
-      el.style.height = "auto";
-      el.style.height = el.scrollHeight + "px";
-    };
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, [ref]);
-}
-
-// Permissive overview parser for leadership calculation (independent from chart)
-const OverviewLoose = z.object({
-  venue: z.string().optional(),
-  symbol: z.string().optional(),
-  asOf: z.string().optional(),
-  ticker: z.object({
-    bid: z.union([z.number(), z.string()]).optional(),
-    ask: z.union([z.number(), z.string()]).optional(),
-    mid: z.union([z.number(), z.string()]).optional(),
-    ts:  z.string().optional(),
-  }).optional(),
-  ohlcv: z.array(z.array(z.any())).default([]),
-  error: z.string().optional(),
-});
-
-// Hard-en timestamp normalization to UTC midnight
-function toMsUtcMidnight(ts: number | string): number {
-  const n = typeof ts === 'string' ? Number(ts) : ts;
-  const ms = n < 1e12 ? n * 1000 : n;        // s → ms
-  const d = new Date(ms);
-  // clamp to 00:00:00Z
-  const utc = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
-  return utc;
-}
-
-
-// NormalizedOverview and normalizeOverview now imported from shared/series
-
-async function fetchOverviewLoose(venue: string, url: string): Promise<NormalizedOverview | null> {
-  try {
-    const res = await fetch(url, { cache: "no-store" });
-    if (!res.ok) return null;
-    const json = await res.json();
-    const parsed = OverviewLoose.safeParse(json);
-    const data = parsed.success ? parsed.data : json as any;
-    const norm = normalizeOverview({ venue: data.venue || venue, ohlcv: data.ohlcv || [] });
-    return norm.ohlcv.length > 0 ? norm : null;
-  } catch {
-    return null;
-  }
-}
-
-// VenueKey now imported from shared/venues
-
-function computeLeadershipFromOverviews(aligned: Record<string, Array<[number, number | null]>>) {
-  const lc = latestCommonIndex(aligned, VENUES);
-  
-  if (!lc.values) {
-    return { leader: null as VenueKey | null, pct: null as number | null, venues: 0 };
-  }
-  
-  // Find highest price (leader)
-  const entries = Object.entries(lc.values) as [VenueKey, number][];
-  const [leader, highestPrice] = entries.reduce((max, [venue, price]) => 
-    price > max[1] ? [venue, price] : max, ['binance' as VenueKey, 0]);
-  
-  // Calculate spread percentage
-  const prices = Object.values(lc.values);
-  const minPrice = Math.min(...prices);
-  const maxPrice = Math.max(...prices);
-  const spread = ((maxPrice - minPrice) / minPrice) * 100;
-  
-  // Debug logging
-  if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
-    console.log(`[leader] date=${lc.ts ? new Date(lc.ts).toISOString() : null} leader=${leader} spread=${spread.toFixed(1)}%`);
-  }
-  
-  return { 
-    leader, 
-    pct: Number(spread.toFixed(1)), 
-    venues: entries.length 
-  };
-}
+  { date: "Jan '25", fnb: 100, absa: 95, standard: 105, nedbank: 98 },
+  { date: "Feb '25", fnb: 150, absa: 145, standard: 155, nedbank: 148 },
+  { date: "Mar '25", fnb: 200, absa: 190, standard: 210, nedbank: 195 },
+  { date: "Apr '25", fnb: 180, absa: 175, standard: 185, nedbank: 178 },
+  { date: "May '25", fnb: 250, absa: 240, standard: 260, nedbank: 245 },
+  { date: "Jun '25", fnb: 300, absa: 290, standard: 310, nedbank: 295 },
+  { date: "Jul '25", fnb: 280, absa: 270, standard: 290, nedbank: 275 },
+  { date: "Aug '25", fnb: 400, absa: 380, standard: 420, nedbank: 390 },
+  { date: "Sep '25", fnb: 350, absa: 330, standard: 370, nedbank: 340 },
+]
 
 export default function CursorDashboard() {
   const [activeTab, setActiveTab] = useState<"agents" | "dashboard">("agents")
-  const [selectedTimeframe, setSelectedTimeframe] = useState<"30d" | "6m" | "1y" | "ytd">("ytd")
+  const [selectedTimeframe, setSelectedTimeframe] = useState<"30d" | "6m" | "1y" | "YTD">("YTD")
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
-  const [isDesktop, setIsDesktop] = useState(false)
-  const [isInputFocused, setIsInputFocused] = useState(false)
-  const [activeAgent, setActiveAgent] = useState<string | null>(null)
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
-  
-  // Console banner for debugging
-  React.useEffect(() => {
-    console.log('🚀 ACD Monitor Dashboard Loaded');
-    console.log(`[env] PROXY_HOST=${process.env.NEXT_PUBLIC_CRYPTO_PROXY_BASE || 'undefined'}`);
-    console.log(`[env] PREVIEW_URL=${window.location.origin}`);
-    console.log(`[env] DEBUG_MODE=${process.env.NEXT_PUBLIC_UI_DEBUG || 'false'}`);
-    console.log(`[env] DATA_MODE=${process.env.NEXT_PUBLIC_DATA_MODE || 'undefined'}`);
-    console.log(`[env] ENABLE_COINBASE=${process.env.NEXT_PUBLIC_ENABLE_COINBASE || 'false'}`);
-    console.log("[DEPLOY_PROOF] preview pipeline ok");
-  }, []);
-  
-  // Leadership state (independent from chart)
-  const [leadership, setLeadership] = React.useState<{leader: VenueKey|null; pct: number|null; venues: number; ranking?: {table: Array<{venue: VenueKey; wins: number; pct: number}>}}>({ leader: null, pct: null, venues: 0 });
-  
-  
-  // Helper function to truncate text to specified length
-  const truncateText = (text: string, maxLength: number = 40) => {
-    return text.length > maxLength ? text.slice(0, maxLength - 1).trimEnd() + "…" : text;
-  };
-
-  // Series adapter: convert exchange data to chart format
-  // Types for the new chart series function
-  type Venue = 'binance'|'okx'|'bybit'|'kraken'|'coinbase';
-  type OhlcvBar = [number|string, number, number, number, number, number?];
-
-  // Series adapter: convert exchange data to chart format with proper timestamp alignment
-  const createChartSeries = (successfulExchanges: Array<{ venue: string; data: any }>) => {
-    const ytdAxis = buildYtdAxis();
-    const startMs = ytdAxis[0];
-    const endMs = ytdAxis[ytdAxis.length - 1] + DAY_MS;
-
-    // Map<venue, Map<dayMs, close>>
-    const venueMap: Record<string, Map<number, number>> = {};
-
-    for (const ex of successfulExchanges) {
-      const venue = ex.venue;
-      const ohlcvData = pickOhlcv(ex);
-
-      if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
-        const isArr = Array.isArray(ohlcvData);
-        console.log(`[${venue}] picked OHLCV isArray=${isArr} len=${isArr ? ohlcvData.length : 0}`);
-        // dump minimal shape so we don't blow logs
-        if (!isArr) {
-          const skim = JSON.stringify(ex?.data ?? ex, null, 2);
-          console.log(`[${venue}] non-array OHLCV shape (first 800 chars):`, skim.slice(0, 800));
-        }
-
-        // Add targeted debug for Coinbase bar shapes
-        if (venue === 'coinbase' && ohlcvData.length > 0) {
-          const first = ohlcvData[0];
-          const second = ohlcvData[1];
-          console.log('[coinbase first two bars]', {
-            type0: first && (Array.isArray(first) ? 'array' : typeof first),
-            keys0: first && !Array.isArray(first) ? Object.keys(first).slice(0, 8) : undefined,
-            sample0: first,
-            type1: second && (Array.isArray(second) ? 'array' : typeof second),
-            keys1: second && !Array.isArray(second) ? Object.keys(second).slice(0, 8) : undefined,
-          });
-        }
-      }
-
-      const m = new Map<number, number>();
-
-      for (const bar of ohlcvData) {
-        const { ts, close } = readBar(bar);
-        if (ts == null || close == null) continue;
-
-        const dayKey = toMidnightMs(ts); // your existing normalizer (sec|ms|ISO → UTC midnight ms)
-        if (dayKey == null) continue;
-
-        if (dayKey >= startMs && dayKey < endMs) {
-          m.set(dayKey, close);
-        }
-      }
-      venueMap[venue] = m;
-    }
-
-    if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
-      const jan20 = Date.UTC(2025, 0, 20);
-      console.log('[axis]', new Date(startMs).toISOString(), '→', new Date(endMs).toISOString(), 'days=', ytdAxis.length);
-      
-      // Coinbase sample probe
-      const cb = successfulExchanges.find(e => e.venue === 'coinbase');
-      const sample = cb?.data?.ohlcv?.[0];
-      console.log('[coinbase sample]', sample, 'isArray=', Array.isArray(sample));
-      
-      for (const v of ['binance','okx','bybit','kraken','coinbase']) {
-        const m = venueMap[v];
-        const size = m?.size ?? 0;
-        const keys = m ? Array.from(m.keys()).sort((a,b)=>a-b) : [];
-        console.log(`[${v}] size=${size} hasJan20=${m?.has(jan20) ?? false}`,
-          size ? `first=${new Date(keys[0]).toISOString()} last=${new Date(keys.at(-1)!).toISOString()}` : '');
-      }
-    }
-
-    // Build chart rows with numeric ts + venue keys
-    const rows = ytdAxis.map((ts) => {
-      const row: any = {
-        ts,
-        date: new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-      };
-      for (const v of Object.keys(venueMap)) {
-        row[v] = venueMap[v].get(ts) ?? null;
-      }
-      return row;
-    });
-
-    // Coinbase sanity check after chartData is built
-    if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
-      const firstWithCb = rows.find(p => p.coinbase != null);
-      console.log('[coinbase sanity]', !!firstWithCb, firstWithCb?.ts, firstWithCb?.coinbase);
-    }
-
-    return { rows, venueMap, axis: ytdAxis };
-  };
-  
-  // Risk summary state
-  const [riskSummary, setRiskSummary] = useState<RiskSummary | null>(null)
-  const [riskSummaryLoading, setRiskSummaryLoading] = useState(false)
-  const [riskSummaryError, setRiskSummaryError] = useState<string | null>(null)
-  
-  // Metrics overview state
-  const [metricsOverview, setMetricsOverview] = useState<MetricsOverview | null>(null)
-  const [metricsLoading, setMetricsLoading] = useState(false)
-  const [metricsError, setMetricsError] = useState<string | null>(null)
-  
-  // Exchange data state for live chart (using context)
-  const { exchangeData, setExchangeData, exchangeDataLoading, setExchangeDataLoading, exchangeDataError, setExchangeDataError, availableUiVenues, setAvailableUiVenues } = useExchangeData()
-  
-  // Health run state
-  const [healthRun, setHealthRun] = useState<HealthRun | null>(null)
-  const [healthLoading, setHealthLoading] = useState(false)
-  const [healthError, setHealthError] = useState<string | null>(null)
-  
-  // Events state
-  const [events, setEvents] = useState<EventsResponse | null>(null)
-  const [eventsLoading, setEventsLoading] = useState(false)
-  const [eventsError, setEventsError] = useState<string | null>(null)
-  
-  // Data sources state
-  const [dataSources, setDataSources] = useState<DataSources | null>(null)
-  const [dataSourcesLoading, setDataSourcesLoading] = useState(false)
-  const [dataSourcesError, setDataSourcesError] = useState<string | null>(null)
-  
-  // Evidence export state
-  const [evidenceExport, setEvidenceExport] = useState<EvidenceExport | null>(null)
-  const [evidenceLoading, setEvidenceLoading] = useState(false)
-  const [evidenceError, setEvidenceError] = useState<string | null>(null)
-  
-  // Degraded mode state
-  const [isDegradedMode, setIsDegradedMode] = useState(false)
-  const [lastHeartbeat, setLastHeartbeat] = useState<number | null>(null)
-
-  // Evidence export handler
-  const handleEvidenceExport = async () => {
-    setEvidenceLoading(true)
-    setEvidenceError(null)
-    
-    try {
-      // Use resilient fetch for evidence export with longer timeout
-      const response = await fetch('/api/evidence/export', { 
-        method: 'GET',
-        signal: AbortSignal.timeout(30000) // 30 second timeout for file generation
-      })
-      
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`)
-      }
-
-      // Try to read filename from header; fallback if absent
-      const cd = response.headers.get('content-disposition') || ''
-      const match = cd.match(/filename="?(.+?)"?$/)
-      const fname = match?.[1] ?? 'acd-evidence.zip'
-
-      const blob = await response.blob()
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = fname
-      document.body.appendChild(a)
-      a.click()
-      a.remove()
-      URL.revokeObjectURL(url)
-      
-      setEvidenceExport({
-        requestedAt: new Date().toISOString(),
-        status: 'READY',
-        bundleId: fname.replace('.zip', ''),
-        url: url
-      })
-      
-      console.log('Evidence package downloaded successfully')
-    } catch (error) {
-      console.error('Evidence export failed', error)
-      const errorMessage = error instanceof Error ? error.message : 'Failed to export evidence'
-      setEvidenceError(errorMessage)
-      console.error(`Evidence export failed: ${errorMessage}`)
-    } finally {
-      setEvidenceLoading(false)
-    }
-  }
-  const [selectedDate, setSelectedDate] = useState<{ from: Date | undefined; to?: Date | undefined } | undefined>({
+  const [selectedDate, setSelectedDate] = useState<{from: Date | undefined, to?: Date | undefined} | undefined>({
     from: new Date(),
-    to: new Date(),
+    to: new Date()
   })
   const [isClient, setIsClient] = useState(false)
   const [inputValue, setInputValue] = useState("")
-  const [activeSidebarItem, setActiveSidebarItem] = useState<
-    | "overview"
-    | "configuration"
-    | "data-sources"
-    | "ai-economists"
-    | "health-checks"
-    | "events-log"
-    | "billing"
-    | "compliance"
-    | "contact"
-  >("overview")
+  const [activeSidebarItem, setActiveSidebarItem] = useState<"overview" | "configuration" | "data-sources" | "ai-economists" | "health-checks" | "events-log" | "billing" | "compliance" | "contact">("overview")
 
-  // Add state for selected agent type
-  const [selectedAgent, setSelectedAgent] = useState("Europe")
-  const [selectedIndustry, setSelectedIndustry] = useState("Crypto")
-  const [uploadedFiles, setUploadedFiles] = useState<string[]>([])
-
-  // Helper function to map region names to acronyms
-  const getRegionAcronym = (regionName: string): string => {
-    const mapping: Record<string, string> = {
-      "Europe": "EU",
-      "South Africa": "SA", 
-      "United States": "USA",
-      "Australia": "AUS"
-    }
-    return mapping[regionName] || "EU"
-  }
-
-  // Helper function to map industry names to acronyms
-  const getIndustryAcronym = (industryName: string): string => {
-    const mapping: Record<string, string> = {
-      "All": "All",
-      "Travel & Hospitality": "Travel",
-      "E-commerce": "E-com",
-      "Shipping & Logistics": "Logistics",
-      "Media & Advertising": "Media",
-      "Real-Estate": "Real",
-      "Telecommunications": "Telecom",
-      "Financial services": "Finance"
-    }
-    return mapping[industryName] || "Crypto"
-  }
+  // Configuration toggle states
+  const [autoDetectMarketChanges, setAutoDetectMarketChanges] = useState(true)
+  const [enableLiveMonitoring, setEnableLiveMonitoring] = useState(true)
+  const [checkDataQuality, setCheckDataQuality] = useState(true)
 
   // Configuration input field states
   const [changeThreshold, setChangeThreshold] = useState("5%")
@@ -862,1010 +110,16 @@ export default function CursorDashboard() {
   const [updateFrequency, setUpdateFrequency] = useState("5m")
   const [sensitivityLevel, setSensitivityLevel] = useState("Medium")
   const [maxDataAge, setMaxDataAge] = useState("10m")
-  const [autoDetectMarketChanges, setAutoDetectMarketChanges] = useState(true)
-  const [enableLiveMonitoring, setEnableLiveMonitoring] = useState(true)
-  const [checkDataQuality, setCheckDataQuality] = useState(true)
-  const [bloombergDataFeed, setBloombergDataFeed] = useState(false)
-  const [showEventModal, setShowEventModal] = useState(false)
-  const [initialAgentMessage, setInitialAgentMessage] = useState("")
-  const [messages, setMessages] = useState<
-    Array<{ id: string; type: "user" | "agent"; content: string; timestamp: Date }>
-  >([])
-  const [hasEngaged, setHasEngaged] = useState<boolean>(false)
-  const [isAssistantTyping, setIsAssistantTyping] = useState<boolean>(false)
-  
-  // track whether at least one user message has been sent in this session
-  const [hasStartedChat, setHasStartedChat] = useState(false)
-
-  // if you already have `messages` state, you can also derive it:
-  const chatStartedFromHistory = useMemo(
-    () => messages?.some(m => m.type === 'user') ?? false,
-    [messages]
-  )
-
-  // prefer explicit flip on first send; keep derived as safety net
-  const chatStarted = hasStartedChat || chatStartedFromHistory
-  
-  // Upload menu state
-  const [isUploadMenuOpen, setIsUploadMenuOpen] = useState<boolean>(false)
-  const [uploadMenuAnchorRef, setUploadMenuAnchorRef] = useState<HTMLButtonElement | null>(null)
-  const [uploadMenuFocusIndex, setUploadMenuFocusIndex] = useState<number>(-1)
-  const [isGitHubModalOpen, setIsGitHubModalOpen] = useState<boolean>(false)
-  const [gitHubRepoUrl, setGitHubRepoUrl] = useState<string>("")
-  
-  // Role dropdown state
-  const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState<boolean>(false)
-  const [roleDropdownFocusIndex, setRoleDropdownFocusIndex] = useState<number>(-1)
-
-  // Industry dropdown state
-  const [isIndustryDropdownOpen, setIsIndustryDropdownOpen] = useState<boolean>(false)
-  const [industryDropdownFocusIndex, setIndustryDropdownFocusIndex] = useState<number>(-1)
-  
-  // Dual-trigger dropdown refs and state
-  const triggerClusterRef = useRef<HTMLDivElement | null>(null)
-  const triggerIconRef = useRef<HTMLButtonElement | null>(null)
-  const triggerTextRef = useRef<HTMLButtonElement | null>(null)
-  const firstOptionRef = useRef<HTMLButtonElement | null>(null)
-  const lastTriggerUsed = useRef<'icon' | 'text'>('text')
-
-  // Industry dropdown refs
-  const industryTriggerRef = useRef<HTMLButtonElement | null>(null)
-  
-  // Messages scroll ref
-  const scrollRef = useRef<HTMLDivElement | null>(null)
-
-  // Activate auto-resize for textarea
-  useAutosizeTextarea(textareaRef, inputValue, { minPx: 112, maxVh: 40 })
-
-  // Scroll to bottom helper
-  function scrollToBottom(behavior: ScrollBehavior = 'auto') {
-    const el = scrollRef.current;
-    if (!el) return;
-    el.scrollTo({ top: el.scrollHeight, behavior });
-  }
 
   useEffect(() => {
     setIsClient(true)
   }, [])
 
-  // Detect desktop for autoFocus (avoid mobile zoom)
-  useEffect(() => {
-    const checkDesktop = () => {
-      setIsDesktop(window.innerWidth >= 1024)
-    }
-    checkDesktop()
-    window.addEventListener('resize', checkDesktop)
-    return () => window.removeEventListener('resize', checkDesktop)
-  }, [])
-
-  // Manual focus for desktop (after isDesktop is determined)
-  useEffect(() => {
-    if (isDesktop && textareaRef.current) {
-      textareaRef.current.focus()
-    }
-  }, [isDesktop])
-
-  // Restore focus after assistant finishes typing (desktop only)
-  useEffect(() => {
-    if (isDesktop && !isAssistantTyping && textareaRef.current) {
-      // Small delay to ensure the UI has updated
-      setTimeout(() => {
-        if (textareaRef.current) {
-          textareaRef.current.focus()
-        }
-      }, 100)
-    }
-  }, [isAssistantTyping, isDesktop])
-
-  // Auto-scroll to bottom when messages change
-  useEffect(() => {
-    if (!scrollRef.current) return;
-    scrollToBottom('smooth');
-  }, [messages.length])
-
-  // Handle click outside to close upload menu and role dropdown
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (isUploadMenuOpen && uploadMenuAnchorRef && !uploadMenuAnchorRef.contains(event.target as Node)) {
-        handleUploadMenuClose()
-      }
-      if (isRoleDropdownOpen) {
-        const target = event.target as Node
-        // Check if click is inside trigger cluster or dropdown
-        if (triggerClusterRef.current?.contains(target)) return
-        if (document.getElementById('role-dropdown')?.contains(target)) return
-        if (document.getElementById('industry-dropdown')?.contains(target)) return
-        closeRoleDropdown()
-        closeIndustryDropdown()
-        restoreFocusToTrigger(lastTriggerUsed.current)
-      }
-    }
-
-    if (isUploadMenuOpen || isRoleDropdownOpen || isIndustryDropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
-      return () => document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [isUploadMenuOpen, uploadMenuAnchorRef, isRoleDropdownOpen, isIndustryDropdownOpen])
-
-  // Focus first option when opening dropdown
-  useEffect(() => {
-    if (isRoleDropdownOpen) {
-      requestAnimationFrame(() => firstOptionRef.current?.focus())
-    }
-  }, [isRoleDropdownOpen])
-
-  // Heartbeat check for degraded mode
-  useEffect(() => {
-    const checkHeartbeat = async () => {
-      const result = await fetchTyped('/status', RiskSummarySchema)
-      setLastHeartbeat(0) // Mock always fresh
-      setIsDegradedMode(false)
-    }
-
-    if (isClient) {
-      checkHeartbeat()
-      const interval = setInterval(checkHeartbeat, 30000) // Check every 30s
-      return () => clearInterval(interval)
-    }
-  }, [isClient])
-
-  // Fetch risk summary data when timeframe changes
-  useEffect(() => {
-    const fetchRiskSummary = async () => {
-      if (!isClient) return
-      
-      setRiskSummaryLoading(true)
-      setRiskSummaryError(null)
-      
-      const result = await fetchTyped(`/risk/summary?timeframe=${selectedTimeframe}`, RiskSummarySchema)
-      
-      setRiskSummary(result as RiskSummary)
-      setRiskSummaryError(null)
-      setIsDegradedMode(false)
-      
-      setRiskSummaryLoading(false)
-    }
-
-    fetchRiskSummary()
-  }, [selectedTimeframe, isClient])
-
-  // Helper function to fetch exchange data with proper error handling
-  const fetchExchangeData = async (venue: string, url: string) => {
-    try {
-      const data = await fetchTyped(url, BinanceOverviewSchema)
-      const ohlcvLength = (data as any)?.ohlcv?.length ?? 0
-      console.log(`✅ [UI Frontend] ${venue} OHLCV length: ${ohlcvLength}`)
-      return { venue, ok: true, data }
-    } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : String(error)
-      console.log(`❌ [UI Frontend] ${venue} fetch failed: ${errorMsg}`)
-      return { venue, ok: false, error: errorMsg }
-    }
-  }
-
-  // Fetch metrics overview data when timeframe changes
-  // Fetch all exchange overview data (preview only)
-  const fetchExchangeOverview = async () => {
-    if (!isClient) return
-    
-    setExchangeDataLoading(true)
-    setExchangeDataError(null)
-    
-    try {
-      console.log(`🔍 [UI Frontend] Starting multi-exchange overview fetch for timeframe: ${selectedTimeframe}...`)
-      
-      // Fetch exchanges in parallel with robust error handling
-      const fetchPromises = [
-        fetchExchangeData('binance', `/exchanges/binance/overview?symbol=BTCUSDT&tf=${selectedTimeframe}`),
-        fetchExchangeData('okx', `/exchanges/okx/overview?symbol=BTCUSDT&tf=${selectedTimeframe}`),
-        fetchExchangeData('bybit', `/exchanges/bybit/overview?symbol=BTCUSDT&tf=${selectedTimeframe}`),
-        fetchExchangeData('kraken', `/exchanges/kraken/overview?symbol=BTCUSDT&tf=${selectedTimeframe}`)
-      ];
-      
-      // Add Coinbase only if enabled in Preview
-      if (process.env.NEXT_PUBLIC_ENABLE_COINBASE === 'true') {
-        fetchPromises.push(fetchExchangeData('coinbase', `/exchanges/coinbase/overview?symbol=BTC-USD&tf=${selectedTimeframe}`));
-      }
-      
-      const results = await Promise.allSettled(fetchPromises)
-      
-      // Extract successful results
-      const successfulExchanges = results
-        .map(result => result.status === 'fulfilled' ? result.value : null)
-        .filter((result): result is { venue: string; ok: true; data: any } => 
-          result !== null && result.ok === true
-        )
-      
-      
-      console.log('[UI Frontend] venues fetched:', VENUES)
-      
-      // Map fulfilled results to raw data
-      const raw: Partial<Record<VenueKey, any>> = {};
-      for (const r of results) {
-        if (r.status === 'fulfilled' && r.value.ok) {
-          raw[r.value.venue as VenueKey] = r.value.data;
-        }
-      }
-      
-      // Ensure all keys present (null if missing) and normalize
-      const normalized: Record<VenueKey, NormalizedOverview | null> = {
-        binance: raw.binance ? normalizeOverview({ venue: 'binance', ohlcv: raw.binance.ohlcv }) : null,
-        okx: raw.okx ? normalizeOverview({ venue: 'okx', ohlcv: raw.okx.ohlcv }) : null,
-        bybit: raw.bybit ? normalizeOverview({ venue: 'bybit', ohlcv: raw.bybit.ohlcv }) : null,
-        kraken: raw.kraken ? normalizeOverview({ venue: 'kraken', ohlcv: raw.kraken.ohlcv }) : null,
-        coinbase: raw.coinbase ? normalizeOverview({ venue: 'coinbase', ohlcv: raw.coinbase.ohlcv }) : null,
-      };
-      
-      // Build YTD axis (Jan 1 to yesterday UTC midnight)
-      const now = new Date();
-      const ytdStart = new Date('2025-01-01T00:00:00Z').getTime();
-      const ytdEnd = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0).getTime();
-      
-      const ytdAxis = buildAxis(ytdStart, ytdEnd);
-      
-      // Align all series to the common axis
-      const seriesData: Record<string, Array<[number, number | null]>> = {};
-      for (const venue of VENUES) {
-        seriesData[venue] = normalized[venue]?.ohlcv ?? [];
-      }
-      
-      const aligned = alignOnAxis(seriesData, ytdAxis);
-      
-      // Debug logging
-      if (process.env.NEXT_PUBLIC_DEBUG_MODE === 'true' || process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
-        console.log('[axis]', { days: ytdAxis.length, first: new Date(ytdAxis[0]).toISOString(), last: new Date(ytdAxis.at(-1)!).toISOString() });
-        for (const v of VENUES) {
-          const nonNull = aligned[v].reduce((a, [,x]) => a + (Number.isFinite(x as number) ? 1 : 0), 0);
-          console.log(`[${v}]`, { nonNull });
-        }
-        
-        // Sample logging for Jan 20, 2025
-        const jan20Ts = Date.UTC(2025, 0, 20);
-        const jan20Idx = ytdAxis.findIndex(ts => ts === jan20Ts);
-        if (jan20Idx >= 0) {
-          const sample: Record<string, number | null> = {};
-          for (const v of VENUES) {
-            sample[v] = aligned[v][jan20Idx]?.[1] ?? null;
-          }
-          console.log('[sample]', `ts=${new Date(jan20Ts).toISOString()}`, sample);
-        }
-        
-        // Chart counts
-        const counts: Record<string, number> = {};
-        for (const v of VENUES) {
-          counts[v] = aligned[v].filter(([,x]) => Number.isFinite(x as number)).length;
-        }
-        console.log('[chart] counts:', counts);
-      }
-      
-      // Use new createChartSeries with proper timestamp alignment
-      const { rows: chartData, venueMap, axis } = createChartSeries(successfulExchanges);
-      
-      // Update context with all venues
-      setAvailableUiVenues(successfulExchanges.map(x => x.venue) as any[])
-      setExchangeData(chartData)
-      
-      // Calculate leader from aligned data
-      const leader = computeLeadershipFromAligned(chartData, successfulExchanges.map(x => x.venue));
-            setLeadership({ 
-              leader: leader.venue as VenueKey | null, 
-              pct: leader.score ? (leader.score * 100) : null, 
-              venues: successfulExchanges.length,
-              ranking: leader.ranking ? {
-                table: leader.ranking.table.map(r => ({
-                  venue: r.venue as VenueKey,
-                  wins: r.wins,
-                  pct: r.pct
-                }))
-              } : undefined
-            })
-      
-      // Clear any previous errors
-      if (exchangeDataError) {
-        setExchangeDataError(null)
-      }
-      
-    } catch (error) {
-      console.error('❌ [UI Frontend] Exchange overview fetch failed:', error)
-      setExchangeDataError('Exchange data temporarily unavailable')
-      
-      // Fallback to demo data if demo mode is enabled
-      if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') {
-        console.log(`🔄 [UI Frontend] Error occurred, falling back to demo data`)
-        const demoData = getAnalyticsData()
-        setExchangeData(demoData)
-        setAvailableUiVenues(['binance', 'coinbase', 'bybit', 'kraken'] as UiVenue[])
-        setExchangeDataError(null)
-      }
-    }
-    
-    setExchangeDataLoading(false)
-  }
-
-  useEffect(() => {
-    const fetchMetricsOverview = async () => {
-      if (!isClient) return
-      
-      // Always fetch live exchange overviews to populate context + chart
-      await fetchExchangeOverview()
-      
-      // (Optional) If you still need legacy metrics for other widgets,
-      // compute them AFTER fetchExchangeOverview() so leadership can use live data.
-      // Do NOT return early; let the rest of the effect proceed.
-      
-      setMetricsLoading(true)
-      setMetricsError(null)
-      
-      const result = await fetchTyped(`/metrics/overview?timeframe=${selectedTimeframe}`, MetricsOverviewSchema)
-      
-      setMetricsOverview(result as MetricsOverview)
-      setMetricsError(null)
-      setIsDegradedMode(false)
-      
-      setMetricsLoading(false)
-    }
-
-    fetchMetricsOverview()
-  }, [selectedTimeframe, isClient])
-
-  // Fetch health run data
-  useEffect(() => {
-    const fetchHealthRun = async () => {
-      if (!isClient) return
-      
-      setHealthLoading(true)
-      setHealthError(null)
-      
-      const result = await fetchTyped('/health/run', HealthRunSchema)
-      
-      setHealthRun(result as HealthRun)
-      setHealthError(null)
-      setIsDegradedMode(false)
-      
-      setHealthLoading(false)
-    }
-
-    fetchHealthRun()
-  }, [isClient])
-
-  // Fetch events data when timeframe changes
-  useEffect(() => {
-    const fetchEvents = async () => {
-      if (!isClient) return
-      
-      setEventsLoading(true)
-      setEventsError(null)
-      
-      const result = await fetchTyped(`/events?timeframe=${selectedTimeframe}`, EventsResponseSchema)
-      
-      setEvents(result as EventsResponse)
-      setEventsError(null)
-      setIsDegradedMode(false)
-      
-      setEventsLoading(false)
-    }
-
-    fetchEvents()
-  }, [selectedTimeframe, isClient])
-
-  // Fetch data sources status
-  useEffect(() => {
-    const fetchDataSources = async () => {
-      if (!isClient) return
-      
-      setDataSourcesLoading(true)
-      setDataSourcesError(null)
-      
-      const result = await fetchTyped('/datasources/status', DataSourcesSchema)
-      
-      setDataSources(result as DataSources)
-      setDataSourcesError(null)
-      setIsDegradedMode(false)
-      
-      setDataSourcesLoading(false)
-    }
-
-    fetchDataSources()
-  }, [isClient])
-
-
-  // API events response state
-  const [apiEventsResponse, setApiEventsResponse] = React.useState<unknown>(null);
-
-  // Fetch environment events
-  useEffect(() => {
-    const loadEnvEvents = async () => {
-      try {
-        const res = await fetch(`/api/events?timeframe=${selectedTimeframe}`, { cache: "no-store" });
-        const json = await res.json().catch(() => ({}));
-        setApiEventsResponse(json);
-      } catch (error) {
-        setApiEventsResponse(null);
-      }
-    };
-
-    loadEnvEvents();
-  }, [selectedTimeframe]);
-
-  // Close calendar when switching to agents tab and reset sidebar when switching to dashboard
+  // Close calendar when switching to agents tab
   const handleTabChange = (tab: "agents" | "dashboard") => {
     setActiveTab(tab)
     if (tab === "agents") {
       setIsCalendarOpen(false)
-    } else if (tab === "dashboard") {
-      setActiveSidebarItem("overview")
-    }
-  }
-
-  const handleSendMessage = async (customMessage?: string) => {
-    const messageContent = customMessage || inputValue.trim()
-    if (!messageContent) return
-
-    // Remove focus from input during message sending (desktop only)
-    if (isDesktop && textareaRef.current) {
-      textareaRef.current.blur()
-    }
-
-    // Clear input immediately
-    setInputValue("")
-    
-    // Show typing loader immediately
-    setIsAssistantTyping(true)
-
-    // Add user message
-    const userMessage = {
-      id: Date.now().toString(),
-      type: "user" as const,
-      content: messageContent,
-      timestamp: new Date(),
-    }
-
-    setMessages((prev) => [...prev, userMessage])
-    setHasEngaged(true)
-    // once the first message is actually sent, lock this in
-    setHasStartedChat(true)
-    
-    // Scroll to bottom after adding user message
-    requestAnimationFrame(() => scrollToBottom('auto'))
-
-    // Check if we should use the API or local mock
-    const useApi = process.env.NEXT_PUBLIC_AGENT_CHAT_ENABLED === 'true'
-    const streamEnabled = process.env.NEXT_PUBLIC_AGENT_CHAT_STREAM === 'true'
-
-    if (useApi) {
-      // Use API route
-      try {
-        const messagesForApi = [
-          ...messages,
-          { role: 'user' as const, content: messageContent }
-        ]
-        
-        // Create AbortController for request cancellation
-        const abortController = new AbortController()
-        let res: Response | null = null
-        
-        if (streamEnabled) {
-          // Streaming mode
-          try {
-            res = await fetch('/api/agent/chat', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ 
-                messages: messagesForApi,
-                sessionId: `session_${Date.now()}`
-              }),
-              signal: abortController.signal,
-            })
-            
-            if (res.headers.get('content-type')?.includes('text/event-stream')) {
-              // Handle streaming response
-              const reader = res.body?.getReader()
-              if (!reader) throw new Error('No reader available')
-              
-              const decoder = new TextDecoder()
-              let buffer = ''
-              
-              // Create initial agent message
-              const agentMessageId = (Date.now() + 1).toString()
-              const agentResponse = {
-                id: agentMessageId,
-                type: "agent" as const,
-                content: '',
-                timestamp: new Date(),
-              }
-              setIsAssistantTyping(false) // Hide loader when streaming starts
-              setMessages((prev) => [...prev, agentResponse])
-              
-              // Read streaming chunks
-              while (true) {
-                const { done, value } = await reader.read()
-                if (done) break
-                
-                buffer += decoder.decode(value, { stream: true })
-                const lines = buffer.split('\n')
-                buffer = lines.pop() || ''
-                
-                for (const line of lines) {
-                  if (line.trim() === '') continue
-                  
-                  if (line.startsWith('data: ')) {
-                    const data = line.slice(6)
-                    if (data === '[DONE]') break
-                    
-                    try {
-                      const parsed = JSON.parse(data)
-                      if (parsed.text) {
-                        // Append text to existing agent message
-                        setMessages((prev) => prev.map(msg => 
-                          msg.id === agentMessageId 
-                            ? { ...msg, content: msg.content + parsed.text }
-                            : msg
-                        ))
-                      }
-                    } catch (e) {
-                      // Ignore malformed JSON
-                    }
-                  }
-                }
-              }
-              return // Exit early if streaming succeeded
-            } else {
-              // Fallback to non-streaming if response is not streamed
-              const data = await res.json()
-              
-              // Check if this is an error response
-              if (data.error) {
-                const agentResponse = {
-                  id: (Date.now() + 1).toString(),
-                  type: "agent" as const,
-                  content: `I encountered an error: ${data.error}. Please try again.`,
-                  timestamp: new Date(),
-                }
-                setIsAssistantTyping(false) // Hide loader
-                setMessages((prev) => [...prev, agentResponse])
-              } else {
-                const agentResponse = {
-                  id: (Date.now() + 1).toString(),
-                  type: "agent" as const,
-                  content: data.reply,
-                  timestamp: new Date(),
-                }
-                setIsAssistantTyping(false) // Hide loader
-                setMessages((prev) => [...prev, agentResponse])
-              }
-              return // Exit early if non-streaming fallback succeeded
-            }
-          } catch (streamError) {
-            console.error('Streaming failed, falling back to non-streaming:', streamError)
-            // Fall through to non-streaming implementation
-          }
-        }
-        
-        // Non-streaming mode (fallback or default)
-        if (!streamEnabled || !res) {
-          res = await fetch('/api/agent/chat', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-              messages: messagesForApi,
-              sessionId: `session_${Date.now()}`
-            }),
-            signal: abortController.signal,
-          })
-          
-          const data = await res.json()
-          
-          // Check if this is an error response
-          if (data.error) {
-            const agentResponse = {
-              id: (Date.now() + 1).toString(),
-              type: "agent" as const,
-              content: `I encountered an error: ${data.error}. Please try again.`,
-              timestamp: new Date(),
-            }
-            setIsAssistantTyping(false) // Hide loader
-            setMessages((prev) => [...prev, agentResponse])
-          } else {
-            const agentResponse = {
-              id: (Date.now() + 1).toString(),
-              type: "agent" as const,
-              content: data.reply,
-              timestamp: new Date(),
-            }
-            setIsAssistantTyping(false) // Hide loader
-            setMessages((prev) => [...prev, agentResponse])
-          }
-        }
-      } catch (error) {
-        console.error('API call failed:', error)
-        // Fallback to mock response on API error
-        const agentResponse = {
-          id: (Date.now() + 1).toString(),
-          type: "agent" as const,
-          content: `I apologize, but I'm experiencing technical difficulties. Please try again in a moment.`,
-          timestamp: new Date(),
-        }
-        setIsAssistantTyping(false) // Hide loader
-        setMessages((prev) => [...prev, agentResponse])
-      }
-    } else {
-      // Use local mock (original behavior)
-    setTimeout(() => {
-      let agentResponseContent = ""
-
-      if (messageContent === "Help me log a market event") {
-        agentResponseContent = `Sounds good, I'll help you log a market event for analysis. I need to understand what happened and its potential implications. Don't worry if you don't have all the details - we can work through this together. What caught your attention that made you want to log this event?
-
-It would also be helpful if you described:
-• What market behavior did you observe?
-• When did this occur?
-• Which companies or participants were involved?`
-      } else {
-        agentResponseContent = `Thank you for your message: "${messageContent}". I'm your AI economist assistant and I'm here to help you analyze market data, check compliance, and generate reports. How can I assist you today?`
-      }
-
-      const agentResponse = {
-        id: (Date.now() + 1).toString(),
-        type: "agent" as const,
-        content: agentResponseContent,
-        timestamp: new Date(),
-      }
-        setIsAssistantTyping(false) // Hide loader
-      setMessages((prev) => [...prev, agentResponse])
-    }, 1000)
-    }
-  }
-
-  // Helper function to copy message content to clipboard
-  const handleCopy = async (content: string) => {
-    try {
-      await navigator.clipboard.writeText(content)
-    } catch (error) {
-      console.error('Failed to copy to clipboard:', error)
-    }
-  }
-
-  // Helper function to regenerate assistant response
-  const handleRegenerate = async (messageIndex: number) => {
-    // Show typing loader immediately
-    setIsAssistantTyping(true)
-
-    try {
-      // Remove the current assistant message at the specified index
-      setMessages((prev) => prev.filter((_, idx) => idx !== messageIndex))
-
-      // Get all messages up to the point where we want to regenerate
-      const messagesUpToIndex = messages.slice(0, messageIndex)
-      
-      // Find the last user message to use as the query
-      const lastUserMessage = messagesUpToIndex.reverse().find(msg => msg.type === "user")
-      
-      if (!lastUserMessage) {
-        console.error('No user message found for regeneration')
-        setIsAssistantTyping(false)
-        return
-      }
-
-      // Check if we should use the API or local mock
-      if (process.env.NEXT_PUBLIC_AGENT_CHAT_ENABLED === 'true') {
-        const streamEnabled = process.env.NEXT_PUBLIC_AGENT_CHAT_STREAM === 'true'
-        let res: Response | null = null
-
-        if (streamEnabled) {
-          // Streaming mode
-          try {
-            res = await fetch('/api/agent/chat', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ 
-                messages: messagesUpToIndex.map(msg => ({ role: msg.type, content: msg.content })),
-                sessionId: `session_${Date.now()}`
-              }),
-            })
-
-            if (res.ok && res.headers.get('content-type')?.includes('text/event-stream')) {
-              const reader = res.body?.getReader()
-              if (!reader) throw new Error('No reader available')
-              
-              const decoder = new TextDecoder()
-              let buffer = ''
-              
-              // Create initial agent message
-              const agentMessageId = (Date.now() + 1).toString()
-              const agentResponse = {
-                id: agentMessageId,
-                type: "agent" as const,
-                content: '',
-                timestamp: new Date(),
-              }
-              setIsAssistantTyping(false) // Hide loader when streaming starts
-              setMessages((prev) => [...prev, agentResponse])
-              
-              // Read streaming chunks
-              while (true) {
-                const { done, value } = await reader.read()
-                if (done) break
-                
-                buffer += decoder.decode(value, { stream: true })
-                const lines = buffer.split('\n')
-                buffer = lines.pop() || ''
-                
-                for (const line of lines) {
-                  if (line.startsWith('data: ')) {
-                    const data = line.slice(6)
-                    if (data === '[DONE]') continue
-                    
-                    try {
-                      const parsed = JSON.parse(data)
-                      if (parsed.text) {
-                        // Append text to existing agent message
-                        setMessages((prev) => prev.map(msg => 
-                          msg.id === agentMessageId 
-                            ? { ...msg, content: msg.content + parsed.text }
-                            : msg
-                        ))
-                      }
-                    } catch (e) {
-                      // Ignore parsing errors for malformed chunks
-                    }
-                  }
-                }
-              }
-              return // Exit early if streaming succeeded
-            } else {
-              // Fallback to non-streaming if response is not streamed
-              const data = await res.json()
-              
-              // Check if this is an error response
-              if (data.error) {
-                const agentResponse = {
-                  id: (Date.now() + 1).toString(),
-                  type: "agent" as const,
-                  content: `I encountered an error: ${data.error}. Please try again.`,
-                  timestamp: new Date(),
-                }
-                setIsAssistantTyping(false) // Hide loader
-                setMessages((prev) => [...prev, agentResponse])
-              } else {
-                const agentResponse = {
-                  id: (Date.now() + 1).toString(),
-                  type: "agent" as const,
-                  content: data.reply,
-                  timestamp: new Date(),
-                }
-                setIsAssistantTyping(false) // Hide loader
-                setMessages((prev) => [...prev, agentResponse])
-              }
-              return // Exit early if non-streaming fallback succeeded
-            }
-          } catch (streamError) {
-            console.error('Streaming failed, falling back to non-streaming:', streamError)
-            // Fall through to non-streaming implementation
-          }
-        }
-        
-        // Non-streaming mode (fallback or default)
-        if (!streamEnabled || !res) {
-          res = await fetch('/api/agent/chat', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-              messages: messagesUpToIndex.map(msg => ({ role: msg.type, content: msg.content })),
-              sessionId: `session_${Date.now()}`
-            }),
-          })
-          
-          const data = await res.json()
-          
-          // Check if this is an error response
-          if (data.error) {
-            const agentResponse = {
-              id: (Date.now() + 1).toString(),
-              type: "agent" as const,
-              content: `I encountered an error: ${data.error}. Please try again.`,
-              timestamp: new Date(),
-            }
-            setIsAssistantTyping(false) // Hide loader
-            setMessages((prev) => [...prev, agentResponse])
-          } else {
-            const agentResponse = {
-              id: (Date.now() + 1).toString(),
-              type: "agent" as const,
-              content: data.reply,
-              timestamp: new Date(),
-            }
-            setIsAssistantTyping(false) // Hide loader
-            setMessages((prev) => [...prev, agentResponse])
-          }
-        }
-      } else {
-        // Use local mock (original behavior)
-        setTimeout(() => {
-          let agentResponseContent = ""
-
-          if (lastUserMessage.content === "Help me log a market event") {
-            agentResponseContent = `Sounds good, I'll help you log a market event for analysis. I need to understand what happened and its potential implications. Don't worry if you don't have all the details - we can work through this together. What caught your attention that made you want to log this event?
-
-It would also be helpful if you described:
-• What market behavior did you observe?
-• When did this occur?
-• Which companies or participants were involved?`
-          } else {
-            agentResponseContent = `Thank you for your message: "${lastUserMessage.content}". I'm your AI economist assistant and I'm here to help you analyze market data, check compliance, and generate reports. How can I assist you today?`
-          }
-
-          const agentResponse = {
-            id: (Date.now() + 1).toString(),
-            type: "agent" as const,
-            content: agentResponseContent,
-            timestamp: new Date(),
-          }
-          setIsAssistantTyping(false) // Hide loader
-          setMessages((prev) => [...prev, agentResponse])
-        }, 1000)
-      }
-    } catch (error) {
-      console.error('Regeneration failed:', error)
-      // Fallback to mock response on API error
-      const agentResponse = {
-        id: (Date.now() + 1).toString(),
-        type: "agent" as const,
-        content: `I apologize, but I'm experiencing technical difficulties. Please try again in a moment.`,
-        timestamp: new Date(),
-      }
-      setIsAssistantTyping(false) // Hide loader
-      setMessages((prev) => [...prev, agentResponse])
-    }
-  }
-
-  // Upload menu handlers
-  const handleFiles = (files: FileList) => {
-    console.info('Files selected:', Array.from(files).map(f => ({ name: f.name, size: f.size, type: f.type })))
-    // TODO: Wire real file ingestion later
-  }
-
-  const handleUploadMenuToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault()
-    event.stopPropagation()
-    setUploadMenuAnchorRef(event.currentTarget)
-    setIsUploadMenuOpen(!isUploadMenuOpen)
-    setUploadMenuFocusIndex(-1)
-  }
-
-  const handleUploadMenuClose = () => {
-    setIsUploadMenuOpen(false)
-    setUploadMenuFocusIndex(-1)
-    uploadMenuAnchorRef?.focus()
-  }
-
-  const handleUploadMenuKeyDown = (event: React.KeyboardEvent) => {
-    if (!isUploadMenuOpen) return
-
-    switch (event.key) {
-      case 'Escape':
-        handleUploadMenuClose()
-        break
-      case 'ArrowDown':
-        event.preventDefault()
-        setUploadMenuFocusIndex(prev => (prev + 1) % 4)
-        break
-      case 'ArrowUp':
-        event.preventDefault()
-        setUploadMenuFocusIndex(prev => (prev - 1 + 4) % 4)
-        break
-      case 'Enter':
-        event.preventDefault()
-        if (uploadMenuFocusIndex >= 0) {
-          handleUploadAction(uploadMenuFocusIndex)
-        }
-        break
-    }
-  }
-
-  const handleUploadAction = (index: number) => {
-    const actions = ['photoLibrary', 'takePhoto', 'chooseFiles', 'linkGitHub']
-    const action = actions[index]
-    
-    switch (action) {
-      case 'photoLibrary':
-        document.getElementById('photo-library-input')?.click()
-        break
-      case 'takePhoto':
-        document.getElementById('camera-input')?.click()
-        break
-      case 'chooseFiles':
-        document.getElementById('file-input')?.click()
-        break
-      case 'linkGitHub':
-        setIsGitHubModalOpen(true)
-        break
-    }
-    handleUploadMenuClose()
-  }
-
-  const handleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>, type: string) => {
-    if (event.target.files) {
-      console.info(`${type} files selected:`, Array.from(event.target.files).map(f => ({ name: f.name, size: f.size, type: f.type })))
-      handleFiles(event.target.files)
-    }
-  }
-
-  const handleGitHubConnect = () => {
-    console.info({ repoUrl: gitHubRepoUrl })
-    setGitHubRepoUrl("")
-    setIsGitHubModalOpen(false)
-  }
-
-  // Role dropdown handlers
-  const handleRoleDropdownToggle = () => {
-    setIsRoleDropdownOpen(!isRoleDropdownOpen)
-    setRoleDropdownFocusIndex(-1)
-  }
-
-  // Dual-trigger dropdown functions
-  const openRoleDropdown = () => setIsRoleDropdownOpen(true)
-  const closeRoleDropdown = () => setIsRoleDropdownOpen(false)
-  
-  const restoreFocusToTrigger = (lastTrigger: 'icon' | 'text') => {
-    // Both default and chat views now use unified button with triggerIconRef
-    triggerIconRef.current?.focus()
-  }
-
-  const handleRoleDropdownClose = () => {
-    setIsRoleDropdownOpen(false)
-    setRoleDropdownFocusIndex(-1)
-  }
-
-  const handleRoleSelect = (role: string) => {
-    setSelectedAgent(role)
-    handleRoleDropdownClose()
-  }
-
-  // Industry dropdown functions
-  const openIndustryDropdown = () => setIsIndustryDropdownOpen(true)
-  const closeIndustryDropdown = () => setIsIndustryDropdownOpen(false)
-  
-  const handleIndustrySelect = (industry: string) => {
-    setSelectedIndustry(industry)
-    setIsIndustryDropdownOpen(false)
-    setIndustryDropdownFocusIndex(-1)
-  }
-
-  const handleRoleDropdownKeyDown = (event: React.KeyboardEvent) => {
-    if (!isRoleDropdownOpen) return
-
-    const roles = ["Europe", "South Africa", "United States", "Australia"]
-
-    switch (event.key) {
-      case 'Escape':
-        handleRoleDropdownClose()
-        break
-      case 'ArrowDown':
-        event.preventDefault()
-        setRoleDropdownFocusIndex(prev => (prev + 1) % roles.length)
-        break
-      case 'ArrowUp':
-        event.preventDefault()
-        setRoleDropdownFocusIndex(prev => (prev - 1 + roles.length) % roles.length)
-        break
-      case 'Enter':
-        event.preventDefault()
-        if (roleDropdownFocusIndex >= 0) {
-          handleRoleSelect(roles[roleDropdownFocusIndex])
-        }
-        break
-    }
-  }
-
-  // Dual-trigger keyboard handler
-  const onTriggerKeyDown: React.KeyboardEventHandler<HTMLButtonElement> = (e) => {
-    if (e.key === 'Enter' || e.key === ' ') { 
-      e.preventDefault(); 
-      openRoleDropdown(); 
-    }
-    if (e.key === 'ArrowDown') { 
-      e.preventDefault(); 
-      openRoleDropdown(); 
     }
   }
 
@@ -1878,7 +132,7 @@ It would also be helpful if you described:
         return analyticsData6m
       case "1y":
         return analyticsData1y
-      case "ytd":
+      case "YTD":
         return analyticsDataYTD
       default:
         return analyticsDataYTD
@@ -1890,28 +144,28 @@ It would also be helpful if you described:
     return (
       <div className="space-y-3 max-w-2xl">
         {/* First shell tile with left and right containers */}
-        <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+        <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
           <CardContent className="p-4">
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-              <div className="rounded-lg bg-bg-tile shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
+            <div className="grid grid-cols-2 gap-6">
+              <div className="rounded-lg bg-[#1a1a1a] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
                 <div>
                   <h2 className="text-sm font-medium text-[#f9fafb] mb-1">Left Container</h2>
                   <p className="text-xs text-[#a1a1aa] mb-3 leading-relaxed">
                     Shell content for {pageTitle} - Left side
                   </p>
                 </div>
-                <button className="rounded-full px-3 py-1 text-xs border border-[#2a2a2a] bg-transparent hover:bg-bg-tile text-[#a1a1aa] hover:text-[#f9fafb] self-start">
+                <button className="rounded-full px-3 py-1 text-xs border border-[#2a2a2a] bg-transparent hover:bg-[#1a1a1a] text-[#a1a1aa] hover:text-[#f9fafb] self-start">
                   Action Button
                 </button>
               </div>
-              <div className="rounded-lg bg-bg-tile2 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
+              <div className="rounded-lg bg-[#1e1e1e] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
                 <div>
                   <h2 className="text-sm font-medium text-[#f9fafb] mb-1">Right Container</h2>
                   <p className="text-xs text-[#a1a1aa] mb-3 leading-relaxed">
                     Shell content for {pageTitle} - Right side
                   </p>
                 </div>
-                <button className="rounded-full px-3 py-1 text-xs border border-[#2a2a2a] bg-transparent hover:bg-bg-tile text-[#a1a1aa] hover:text-[#f9fafb] self-start">
+                <button className="rounded-full px-3 py-1 text-xs border border-[#2a2a2a] bg-transparent hover:bg-[#1a1a1a] text-[#a1a1aa] hover:text-[#f9fafb] self-start">
                   Action Button
                 </button>
               </div>
@@ -1920,13 +174,15 @@ It would also be helpful if you described:
         </Card>
 
         {/* Second shell tile */}
-        <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+        <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
           <CardContent className="p-4 text-center">
             <h3 className="text-[#f9fafb] font-medium mb-1.5 text-xs">Second Shell Tile</h3>
-            <p className="text-[10px] text-[#a1a1aa] mb-2.5">Additional shell content for {pageTitle} page.</p>
+            <p className="text-[10px] text-[#a1a1aa] mb-2.5">
+              Additional shell content for {pageTitle} page.
+            </p>
             <Button
               variant="outline"
-              className="border-blue-300 text-[#ffffff] bg-blue-300 hover:bg-blue-400 text-[9px] h-5 px-2 font-normal"
+              className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
             >
               Shell Action
             </Button>
@@ -1936,189 +192,28 @@ It would also be helpful if you described:
     )
   }
 
-  // --- Environment events (single source of truth) ---
-  type EnvEvent = {
-    ts: number;          // ms UTC
-    label: string;       // short title for the bar + tooltip
-    desc?: string;       // 1-line impact note for tooltip
-    color: string;       // used for pill + bar color mapping
-  };
-
-  const ENV_EVENTS = [
-    {
-      ts: Date.parse('2025-01-20T00:00:00Z'),
-      title: 'Inauguration Surge',
-      subtitle: 'U.S. admin change; risk-on bid',
-      color: '#fecaca',
-    },
-    {
-      ts: Date.parse('2025-03-06T00:00:00Z'),
-      title: 'Strategic BTC Reserve EO',
-      subtitle: 'Treasury acquisition directive',
-      color: '#fed7aa',
-    },
-    {
-      ts: Date.parse('2025-07-18T00:00:00Z'),
-      title: 'GENIUS Act Rollout',
-      subtitle: 'Regulatory framework in effect',
-      color: '#bbf7d0',
-    },
-  ] as const;
-
-  const envByTs: Record<number, typeof ENV_EVENTS[number]> =
-    Object.fromEntries(ENV_EVENTS.map(e => [e.ts, e]));
-
-  // Helper function to format date with year
-  const fmtDayYear = (ms: number) =>
-    new Date(ms).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
-
-  // helper: same calendar day in UTC
-  const sameUtcDay = (a: number, b: number) => {
-    const da = new Date(a), db = new Date(b);
-    return (
-      da.getUTCFullYear() === db.getUTCFullYear() &&
-      da.getUTCMonth() === db.getUTCMonth() &&
-      da.getUTCDate() === db.getUTCDate()
-    );
-  };
-
-  // --- Event band sizing (days -> ms) ---
-  const bandDaysByTf: Record<string, number> = { '30d': 7, '6m': 21, 'ytd': 28, '1y': 35 };
-  const dayMs = 24 * 60 * 60 * 1000;
-  const bandHalfMs = ((bandDaysByTf[selectedTimeframe] ?? 4) * dayMs) / 2;
-  const mkBand = (centerTs: number) => ({ x1: centerTs - bandHalfMs, x2: centerTs + bandHalfMs });
-
-  // --- Snap-to-event state ---
-  const [snapTs, setSnapTs] = useState<number | null>(null);
-  const SNAP_PX = 24; // tolerance in pixels
-
-  // Use live exchange data if available, otherwise fall back to static data
-  const currentData = exchangeData.length > 0 ? exchangeData : getAnalyticsData()
-
-  // Compute safe x-domain and guard rendering
-  const tsValues = currentData.map(r => r.ts).filter((n) => Number.isFinite(n));
-  const hasDomain = tsValues.length > 0;
-  const xMin = hasDomain ? Math.min(...tsValues) : undefined;
-  const xMax = hasDomain ? Math.max(...tsValues) : undefined;
-
-  // Build events for domain with proper UTC midnight ms keying
-  const toDayKey = toMidnightMs;
-  
-  function buildEventsForDomain(startMs: number, endMs: number, apiEvents: any[], seeded: any[], enableSeed: boolean) {
-    const all = [...apiEvents, ...(enableSeed ? seeded : [])]
-      .map(e => ({ ...e, day: toDayKey(e.date ?? e.ts ?? e.time) }))
-      .filter(e => e.day != null && e.day >= startMs && e.day < endMs);
-
-    const byTs: Record<number, any[]> = {};
-    for (const e of all) {
-      (byTs[e.day] ??= []).push(e);
-    }
-    return byTs;
-  }
-
-  // Fetch API events (already fetched JSON in `apiEventsResponse`)
-  const apiEvents = normalizeEvents(apiEventsResponse);
-  const enableSeed = process.env.NEXT_PUBLIC_SEED_EVENTS === 'true';
-  const sourceEvents = apiEvents.length > 0 ? apiEvents : SEED_EVENTS_YTD;
-
-  // Build events with proper keying
-  const byTs = Number.isFinite(xMin) && Number.isFinite(xMax)
-    ? buildEventsForDomain(xMin!, xMax!, apiEvents, SEED_EVENTS_YTD, enableSeed)
-    : {};
-
-  // Also build eventsByTs for tooltip lookup using ENV_EVENTS
-  const eventsByTs: Record<number, any[]> = {};
-  if (enableSeed) {
-    for (const event of ENV_EVENTS) {
-      const dayKey = toMidnightMs(event.ts);
-      if (dayKey != null) {
-        (eventsByTs[dayKey] ??= []).push(event);
-      }
-    }
-  }
-
-  // Filter to domain (prevents NaN / off-chart artifacts)
-  const validEvents = Number.isFinite(xMin) && Number.isFinite(xMax)
-    ? pickEventsInDomain(sourceEvents, xMin!, xMax!)
-    : [];
-
-  // Debug
-  if (process.env.NEXT_PUBLIC_UI_DEBUG === "true") {
-    const jan20 = Date.UTC(2025,0,20);
-    console.log("[ENV] domain", xMin, xMax, "api", apiEvents.length, "seed?", enableSeed, "render", validEvents.length);
-    console.log('[events] counts', Object.keys(byTs).length, 'hasJan20=', !!byTs[jan20]);
-    
-    // ENV_EVENTS debug
-    console.log('[ENV_EVENTS]', ENV_EVENTS.map(e => ({title: e.title, ts: e.ts, date: new Date(e.ts).toISOString()})));
-    console.log('[eventsByTs sample]', Object.keys(eventsByTs).slice(0,5));
-  }
-
-  // Leadership display (using independent state)
-  const leaderLabel = leadership.leader
-    ? (leadership.leader === "okx" ? "coinbase" : leadership.leader) // if UI uses Coinbase icon for OKX
-    : null;
-
-  const leadershipPctText =
-    leadership.pct != null ? `${Math.round(leadership.pct)}` : "N/A";
-
-  const leadershipCaption =
-    leadership.leader && leadership.venues >= 2
-      ? `Leader: ${leaderLabel}`
-      : "Requires multiple venues";
-
-  // Debug logging for leadership calculation
-  if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
-    console.log("LEADERSHIP_RESULT", leadership);
-  }
+  const currentData = getAnalyticsData()
 
   return (
     <div className="min-h-screen bg-[#0f0f10] text-[#f9fafb] font-sans p-4">
-      {/* Hidden file inputs for upload menu */}
-      <input
-        id="photo-library-input"
-        type="file"
-        accept="image/*"
-        multiple
-        style={{ display: 'none' }}
-        onChange={(e) => handleFileInputChange(e, 'Photo Library')}
-      />
-      <input
-        id="camera-input"
-        type="file"
-        accept="image/*,video/*"
-        capture="environment"
-        style={{ display: 'none' }}
-        onChange={(e) => handleFileInputChange(e, 'Camera')}
-      />
-      <input
-        id="file-input"
-        type="file"
-        multiple
-        style={{ display: 'none' }}
-        onChange={(e) => handleFileInputChange(e, 'Files')}
-      />
       {/* Header */}
       <header className="border-b border-[#1a1a1a] px-5 py-1.5 relative">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <button 
-              onClick={() => window.location.reload()}
-              className="cursor-pointer focus:outline-none"
-              aria-label="Refresh page"
-            >
-              <img 
-                src="/ninja-glow-positive.png" 
-                alt="Ninja Glow" 
-                className="h-14 sm:h-16 md:h-24 w-auto opacity-90 hover:opacity-100 transition-opacity -ml-3 sm:ml-0 flex-shrink-0 object-contain"
-              />
-            </button>
+          <div className="flex items-center gap-2">
+            <img 
+              src="/rbb-economics-logo.png" 
+              alt="RBB Economics" 
+              className="h-29 w-auto opacity-90 hover:opacity-100 transition-opacity"
+            />
           </div>
 
-          <nav className="flex gap-4 sm:gap-5 absolute left-1/2 transform -translate-x-1/2">
+          <nav className="flex gap-5 absolute left-1/2 transform -translate-x-1/2">
             <button
               onClick={() => handleTabChange("agents")}
               className={`px-2.5 py-1 text-xs font-medium ${
-                activeTab === "agents" ? "text-[#f9fafb]" : "text-[#a1a1aa] hover:text-[#f9fafb]"
+                activeTab === "agents"
+                  ? "text-[#f9fafb]"
+                  : "text-[#a1a1aa] hover:text-[#f9fafb]"
               }`}
             >
               Agents
@@ -2126,40 +221,36 @@ It would also be helpful if you described:
             <button
               onClick={() => handleTabChange("dashboard")}
               className={`px-2.5 py-1 text-xs font-medium ${
-                activeTab === "dashboard" ? "text-[#f9fafb]" : "text-[#a1a1aa] hover:text-[#f9fafb]"
+                activeTab === "dashboard"
+                  ? "text-[#f9fafb]"
+                  : "text-[#a1a1aa] hover:text-[#f9fafb]"
               }`}
             >
-              Diagnostic
+              Dashboard
             </button>
           </nav>
 
-          <div className="text-xs font-medium text-[#f9fafb] bg-bg-tile rounded-full w-7 h-7 flex items-center justify-center">
+          <div className="text-xs font-medium text-[#f9fafb] bg-[#1a1a1a] rounded-full w-7 h-7 flex items-center justify-center">
             YF
           </div>
         </div>
       </header>
 
-      {/* Degraded Mode Banner */}
-      <DegradedModeBanner isVisible={isDegradedMode} lastHeartbeat={lastHeartbeat || undefined} />
-
       {/* Extra spacing below header */}
       <div className="h-6"></div>
 
       <div className="flex justify-center">
-        <div className={`max-w-5xl w-full ${activeTab === "dashboard" ? "grid grid-cols-1 gap-6 lg:grid-cols-[18rem_1fr] lg:gap-8 px-4 sm:px-6 lg:px-8" : "flex"}`} data-root-grid={activeTab === "dashboard" ? "dash" : undefined}>
+        <div className="flex max-w-5xl w-full">
           {/* Sidebar - Only show on dashboard */}
           {activeTab === "dashboard" && (
-            <aside className="lg:sticky lg:top-16 lg:h-[calc(100dvh-4rem)] bg-[#0f0f10] p-3">
+            <aside className="w-64 bg-[#0f0f10] p-3 flex-shrink-0">
               <div className="space-y-3">
                 {/* User Info */}
                 <div>
                   <h3 className="text-xs font-semibold text-[#f9fafb] mb-1">Ygor Francisco</h3>
                   <p className="text-[10px] text-[#a1a1aa] mb-2.5">Ent Plan · ygor.francisco@gmail.com</p>
 
-                  <div
-                    className={`rounded-md p-1.5 mb-2.5 cursor-pointer ${activeSidebarItem === "overview" ? "bg-bg-tile" : "hover:bg-bg-tile"}`}
-                    onClick={() => setActiveSidebarItem("overview")}
-                  >
+                  <div className={`rounded-md p-1.5 mb-2.5 cursor-pointer ${activeSidebarItem === "overview" ? "bg-[#1a1a1a]" : "hover:bg-[#1a1a1a]"}`} onClick={() => setActiveSidebarItem("overview")}>
                     <div className="flex items-center gap-2 text-xs font-medium text-[#f9fafb]">
                       <User className="w-3.5 h-3.5" />
                       Overview
@@ -2167,78 +258,54 @@ It would also be helpful if you described:
                   </div>
 
                   <div className="space-y-1 text-xs">
-                    <div
-                      className={`flex items-center gap-2 px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "configuration" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
-                      onClick={() => setActiveSidebarItem("configuration")}
-                    >
+                    <div className={`flex items-center gap-2 px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "configuration" ? "bg-[#1a1a1a] text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-[#1a1a1a]"}`} onClick={() => setActiveSidebarItem("configuration")}>
                       <Settings className="w-3.5 h-3.5" />
-                      Settings
+                      Configuration
                     </div>
                   </div>
                 </div>
 
-                <Separator className="bg-bg-tile" />
+                <Separator className="bg-[#1a1a1a]" />
 
                 {/* Navigation */}
                 <nav className="space-y-0.5">
-                  <div
-                    className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "data-sources" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
-                    onClick={() => setActiveSidebarItem("data-sources")}
-                  >
+                  <div className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "data-sources" ? "bg-[#1a1a1a] text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-[#1a1a1a]"}`} onClick={() => setActiveSidebarItem("data-sources")}>
                     <Database className="w-3.5 h-3.5" />
-                    Data
+                    Data Sources
                   </div>
-                  <div
-                    className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "ai-economists" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
-                    onClick={() => setActiveSidebarItem("ai-economists")}
-                  >
+                  <div className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "ai-economists" ? "bg-[#1a1a1a] text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-[#1a1a1a]"}`} onClick={() => setActiveSidebarItem("ai-economists")}>
                     <Bot className="w-3.5 h-3.5" />
-                    Analysts
+                    AI Economists
                   </div>
-                  <div
-                    className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "health-checks" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
-                    onClick={() => setActiveSidebarItem("health-checks")}
-                  >
+                  <div className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "health-checks" ? "bg-[#1a1a1a] text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-[#1a1a1a]"}`} onClick={() => setActiveSidebarItem("health-checks")}>
                     <Zap className="w-3.5 h-3.5" />
-                    Health
+                    Health Checks
                   </div>
                 </nav>
 
-                <Separator className="bg-bg-tile" />
+                <Separator className="bg-[#1a1a1a]" />
 
                 <nav className="space-y-0.5">
-                  <div
-                    className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "events-log" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
-                    onClick={() => setActiveSidebarItem("events-log")}
-                  >
+                  <div className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "events-log" ? "bg-[#1a1a1a] text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-[#1a1a1a]"}`} onClick={() => setActiveSidebarItem("events-log")}>
                     <ClipboardList className="w-3.5 h-3.5" />
-                    Events
+                    Events Log
                   </div>
-                  <div
-                    className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "billing" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
-                    onClick={() => setActiveSidebarItem("billing")}
-                  >
+                  <div className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "billing" ? "bg-[#1a1a1a] text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-[#1a1a1a]"}`} onClick={() => setActiveSidebarItem("billing")}>
                     <CreditCard className="w-3.5 h-3.5" />
-                    Billing
+                    Billing & Invoices
                   </div>
                 </nav>
 
-                <Separator className="bg-bg-tile" />
+                <Separator className="bg-[#1a1a1a]" />
 
                 <nav className="space-y-0.5">
-                  <div
-                    className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "compliance" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
-                    onClick={() => setActiveSidebarItem("compliance")}
-                  >
+                  <div className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "compliance" ? "bg-[#1a1a1a] text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-[#1a1a1a]"}`} onClick={() => setActiveSidebarItem("compliance")}>
                     <FileText className="w-3.5 h-3.5" />
-                    Reports
+                    Compliance Reports
                   </div>
-                  <div
-                    className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "contact" ? "bg-bg-tile text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-bg-tile"}`}
-                    onClick={() => setActiveSidebarItem("contact")}
-                  >
+                  <div className={`flex items-center gap-2 text-xs px-1.5 py-0.5 rounded-md cursor-pointer ${activeSidebarItem === "contact" ? "bg-[#1a1a1a] text-[#f9fafb]" : "text-[#a1a1aa] hover:bg-[#1a1a1a]"}`} onClick={() => setActiveSidebarItem("contact")}>
                     <MessageSquare className="w-3.5 h-3.5" />
-                    Contact
+                    Contact Us
                   </div>
                 </nav>
               </div>
@@ -2246,1057 +313,261 @@ It would also be helpful if you described:
           )}
 
           {/* Main Content */}
-          <main className={`${activeTab === "dashboard" ? "min-w-0 p-5" : `flex-1 ${messages.length === 0 ? "pt-12" : "pt-6"} px-5 pb-5 max-w-5xl mx-auto`}`}>
+          <main className={`flex-1 p-5 max-w-3xl ${activeTab === "agents" ? "mx-auto" : ""}`}>
             {activeTab === "agents" && (
-              <div className="max-w-5xl mx-auto">
-                {/* <CHANGE> Added main headline for Agents tab - only show when no messages */}
-                {messages.length === 0 && (
-                  <div className="text-center mb-12 mt-8">
-                    <h1 className="font-headline text-6xl md:text-6xl lg:text-7xl text-blue-50 font-light leading-tight max-w-4xl mx-auto">
-                      Algorithmic Collusion? Detectable.
-                    </h1>
-                  </div>
-                )}
-                {/* Initial Agent Message */}
-                {initialAgentMessage && (
-                  <div className="mb-4 p-3 bg-bg-surface rounded-lg border border-[#2a2a2a]">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Bot className="w-4 h-4 text-[#86a789]" />
-                      <span className="text-xs font-medium text-[#f9fafb]">{selectedAgent}</span>
-                    </div>
-                    <AssistantBubble text={initialAgentMessage} />
-                  </div>
-                )}
-
-              {/* Chat Interface */}
-              <div className={`${hasEngaged ? "h-[calc(75vh+16px)]" : "min-h-[calc(50vh+16px)]"} flex flex-col mt-2`}>
-                  {/* Chat Messages Area */}
-                  {hasEngaged && (
-                    <div
-                      ref={scrollRef}
-                      className="flex-1 overflow-y-auto mb-4 space-y-4 messages-container pb-32 pt-6 chat-messages-container"
-                    >
-                      {messages.map((message, index) => (
-                        <div key={message.id} className="w-full">
-                          {message.type === "agent" ? (
-                            <div className="flex items-start gap-3">
-                              <div className="h-24 w-24 rounded-full flex items-center justify-center overflow-hidden bg-transparent mt-1 flex-shrink-0">
-                                <Image
-                                  src="/icons/icon-americas.png"
-                                  alt="Agent"
-                                  width={96}
-                                  height={96}
-                                  className="h-18 w-18 object-contain"
-                                />
-                              </div>
-                              <div className="flex-1">
-                                <AssistantBubble text={message.content} />
-                                {/* Control icons for assistant messages (left-aligned) */}
-                                <div className="flex gap-2 mt-1 text-gray-400 hover:text-gray-600 cursor-pointer justify-start">
-                                  <Copy 
-                                    className="w-3 h-3 lg:w-4 lg:h-4 hover:text-[#86a789]" 
-                                    onClick={() => handleCopy(message.content)}
-                                    aria-label="Copy"
-                                  />
-                                  <RefreshCw 
-                                    className="w-3 h-3 lg:w-4 lg:h-4 hover:text-[#86a789]" 
-                                    onClick={() => handleRegenerate(index)}
-                                    aria-label="Regenerate"
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="flex justify-end">
-                              <div className="max-w-[60%] bg-[#2a2a2a] rounded-lg px-6 py-4 text-xs lg:text-base lg:leading-5 text-[#f9fafb]">
-                                {message.content}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                      {/* Typing Loader */}
-                      {isAssistantTyping && (
-                        <div className="w-full">
-                          <div className="flex items-start gap-3">
-                            <div className="h-24 w-24 rounded-full flex items-center justify-center overflow-hidden bg-transparent mt-1 flex-shrink-0">
-                              <Image
-                                src="/icons/icon-americas.png"
-                                alt="Agent"
-                                width={96}
-                                height={96}
-                                className="h-18 w-18 object-contain animate-scalePulse"
-                              />
-                            </div>
-                            <div className="flex-1 text-xs lg:text-base lg:leading-5 text-[#f9fafb] leading-relaxed">
-                              <div className="flex items-center gap-2">
-                                <div className="inline-block w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                                <span className="text-gray-400 opacity-70">Thinking...</span>
-                              </div>
-                            </div>
-                          </div>
+              <div className="max-w-xl mx-auto">
+                <div className="flex flex-col items-center justify-center min-h-[45vh] space-y-5">
+                  <div className="w-full space-y-3">
+                    <div className="relative">
+                      <textarea
+                        placeholder="Is my pricing behaviour competitive or collusive?"
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        className="w-full h-28 bg-[#1a1a1a] rounded-lg text-[#f9fafb] placeholder-[#71717a] pr-16 px-4 py-4 text-xs resize-none focus:outline-none shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50"
+                        rows={5}
+                      />
+                      {/* Blinking cursor overlay - only shows when empty */}
+                      {inputValue === "" && (
+                        <div className="absolute left-4 top-4 text-[#f9fafb] text-xs" style={{
+                          animation: 'blink 1s infinite',
+                          display: 'inline-block'
+                        }}>
+                          |
                         </div>
                       )}
-                    </div>
-                  )}
-
-                  {/* Input Area */}
-                  {!hasEngaged && (
-                    <div className={`composer ${chatStarted ? 'composer--tight' : ''} flex flex-col items-center justify-center space-y-5`}>
-                  <div className="w-full space-y-3 mx-4 sm:mx-0">
-                    <div className="agents-no-zoom-wrapper" data-testid="agents-no-zoom-wrapper">
-                      <div className="relative">
-                      <textarea
-                          ref={textareaRef}
-                          placeholder="How can I help test your algorithm today?"
-                          value={inputValue}
-                          onChange={(e) => setInputValue(e.target.value.slice(0, 25000))}
-                          autoFocus={isDesktop}
-                          onFocus={() => setIsInputFocused(true)}
-                          onBlur={() => {
-                            setIsInputFocused(false)
-                            // Reset scroll position when keyboard dismisses on mobile
-                            if (!isDesktop) {
-                              setTimeout(() => {
-                                window.scrollTo(0, 0)
-                              }, 100)
-                            }
-                          }}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" && !e.shiftKey) {
-                              e.preventDefault()
-                              handleSendMessage()
-                            }
-                          }}
-                          className="w-full bg-bg-tile rounded-lg text-[#f9fafb]
-                            px-4 pt-4 pb-16 md:pb-[76px] pr-16
-                            text-xs md:text-base leading-5
-                            placeholder:text-xs md:placeholder:text-base placeholder:text-[#71717a]
-                            whitespace-pre-wrap break-words
-                            resize-none overflow-y-hidden focus:outline-none
-                            shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50
-                            min-h-[112px] max-h-[40vh]"
-                          style={{ caretColor: "rgba(249, 250, 251, 0.8)" }}
-                          rows={1}
-                        />
-                        {/* Blinking cursor overlay - only shows when empty, on mobile, and not focused */}
-                        {inputValue === "" && !isDesktop && !isInputFocused && (
-                          <span
-                            aria-hidden
-                            className="pointer-events-none absolute left-4 top-4 h-[1em] md:h-[1.2em] w-[1px] md:w-[2px] bg-white animate-[blink_1s_steps(1)_infinite]"
-                          />
-                        )}
-                        {/* Model selector - bottom left */}
-                        <div ref={triggerClusterRef} className="absolute left-3 bottom-3 flex items-center gap-1.5">
-                          {/* UNIFIED GLOBE + TEXT BUTTON */}
-                          <button
-                            ref={triggerIconRef}
-                            type="button"
-                            onClick={(e) => { e.stopPropagation(); lastTriggerUsed.current = 'icon'; openRoleDropdown(); }}
-                            onKeyDown={onTriggerKeyDown}
-                            aria-haspopup="listbox"
-                            aria-controls="role-dropdown"
-                            aria-expanded={isRoleDropdownOpen}
-                            aria-label="Select analysis mode"
-                            className="flex items-center gap-1.5 p-1.5 rounded-md bg-transparent border border-[#2a2a2a] hover:border-[#3a3a3a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]"
-                          >
-                            <Image
-                              src="/icons/icon-americas.png"
-                              alt="Select analysis mode"
-                              width={18}
-                              height={18}
-                              draggable={false}
-                              className="shrink-0"
-                            />
-                            <span className="text-xs text-[#71717a] font-medium">
-                              {getRegionAcronym(selectedAgent)}
-                            </span>
-                            <ChevronDown className="w-3 h-3 text-[#71717a]" aria-hidden="true" />
-                          </button>
-
-                          {/* INDUSTRY BUTTON */}
-                          <button
-                            ref={industryTriggerRef}
-                            type="button"
-                            onClick={(e) => { e.stopPropagation(); openIndustryDropdown(); }}
-                            aria-haspopup="listbox"
-                            aria-controls="industry-dropdown"
-                            aria-expanded={isIndustryDropdownOpen}
-                            aria-label="Select industry"
-                            className="flex items-center gap-1.5 p-1.5 rounded-md bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]"
-                          >
-                            <Factory className="w-4 h-4 text-[#71717a]" />
-                            <span className="text-[10px] text-[#71717a] font-medium">
-                              {getIndustryAcronym(selectedIndustry)}
-                            </span>
-                            <ChevronDown className="w-3 h-3 text-[#71717a]" aria-hidden="true" />
-                          </button>
+                      {/* Model selector - bottom left */}
+                      <div className="absolute left-3 bottom-3 flex items-center gap-1.5">
+                        <Package className="w-3.5 h-3.5 text-[#71717a]" />
+                        <span className="text-[10px] text-[#71717a] font-medium">VMM</span>
+                        <ChevronDown className="w-3 h-3 text-[#71717a]" />
+                      </div>
+                      
+                      {/* Action buttons - bottom right */}
+                      <div className="absolute right-3 bottom-3 flex gap-1.5">
+                        <div className="h-6 w-6 flex items-center justify-center">
+                          <CloudUpload className="w-4 h-4 text-[#71717a] hover:text-[#a1a1aa]" />
                         </div>
-
-                        {/* Role Dropdown Menu */}
-                        {isRoleDropdownOpen && (
-                          <div
-                            id="role-dropdown"
-                            className="absolute z-50 left-3 top-12 w-40 rounded-md border border-white/10 bg-neutral-900/90 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-neutral-900/80"
-                            role="listbox"
-                            aria-label="Analysis mode"
-                            aria-orientation="vertical"
-                          >
-                            <div className="py-1">
-                              {["Europe", "South Africa", "United States", "Australia"].map((role, index) => (
-                                <button
-                                  key={role}
-                                  ref={index === 0 ? firstOptionRef : null}
-                                  className={`flex items-center gap-2 px-3 py-2 text-sm text-gray-200 hover:text-white hover:bg-white/5 w-full text-left ${
-                                    roleDropdownFocusIndex === index ? 'bg-white/5 text-white' : ''
-                                  } ${selectedAgent === role ? 'bg-white/5' : ''}`}
-                                  onClick={() => {
-                                    setSelectedAgent(role)
-                                    closeRoleDropdown()
-                                    restoreFocusToTrigger(lastTriggerUsed.current)
-                                  }}
-                                  role="option"
-                                  aria-selected={selectedAgent === role}
-                                >
-                                  {role}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Industry Dropdown Menu */}
-                        {isIndustryDropdownOpen && (
-                          <div
-                            id="industry-dropdown"
-                            role="listbox"
-                            aria-label="Select industry"
-                            className="absolute z-50 left-3 top-12 w-40 rounded-md border border-white/10 bg-neutral-900/90 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-neutral-900/80"
-                            aria-orientation="vertical"
-                          >
-                            <div className="py-1">
-                              {["Crypto", "Travel & Hospitality", "E-commerce", "Shipping & Logistics", "Media & Advertising", "Real-Estate", "Telecommunications", "Financial services"].map((industry, index) => (
-                                <button
-                                  key={industry}
-                                  className={`flex items-center gap-2 px-3 py-2 text-sm text-gray-200 hover:text-white hover:bg-white/5 w-full text-left ${
-                                    industryDropdownFocusIndex === index ? 'bg-white/5 text-white' : ''
-                                  } ${selectedIndustry === industry ? 'bg-white/5' : ''}`}
-                                  onClick={() => {
-                                    setSelectedIndustry(industry)
-                                    closeIndustryDropdown()
-                                  }}
-                                  role="option"
-                                  aria-selected={selectedIndustry === industry}
-                                >
-                                  {industry}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Action buttons - bottom right */}
-                        <div className="absolute right-3 bottom-3 flex gap-1.5">
-                          <div className="relative">
-                            <button
-                              ref={setUploadMenuAnchorRef}
-                            className="h-6 w-6 flex items-center justify-center cursor-pointer mr-3"
-                              onClick={handleUploadMenuToggle}
-                              onKeyDown={handleUploadMenuKeyDown}
-                              aria-haspopup="menu"
-                              aria-expanded={isUploadMenuOpen}
-                              aria-label="Upload options"
-                          >
-                            <CloudUpload className="w-4 h-4 text-[#71717a] hover:text-[#a1a1aa]" />
-                            </button>
-                            
-                            {/* Upload Menu Popover */}
-                            {isUploadMenuOpen && (
-                              <div
-                                className="absolute right-0 top-full mt-2 z-50 origin-top-right w-[min(280px,calc(100vw-24px))] sm:w-56 max-w-[calc(100vw-24px)] max-h-[60vh] overflow-y-auto rounded-md border border-zinc-800 bg-zinc-900/95 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-zinc-900/80"
-                                role="menu"
-                                aria-orientation="vertical"
-                              >
-                                <div className="py-1">
-                                  <button
-                                    className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#a1a1aa] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
-                                      uploadMenuFocusIndex === 0 ? 'bg-zinc-800 text-[#a1a1aa]' : ''
-                                    }`}
-                                    onClick={() => handleUploadAction(0)}
-                                    role="menuitem"
-                                  >
-                                    <ImageUp className="w-4 h-4" />
-                                    Photo Library
-                                  </button>
-                                  <button
-                                    className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#a1a1aa] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
-                                      uploadMenuFocusIndex === 1 ? 'bg-zinc-800 text-[#a1a1aa]' : ''
-                                    }`}
-                                    onClick={() => handleUploadAction(1)}
-                                    role="menuitem"
-                                  >
-                                    <Camera className="w-4 h-4" />
-                                    Take Photo or Video
-                                  </button>
-                                  <button
-                                    className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#a1a1aa] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
-                                      uploadMenuFocusIndex === 2 ? 'bg-zinc-800 text-[#a1a1aa]' : ''
-                                    }`}
-                                    onClick={() => handleUploadAction(2)}
-                                    role="menuitem"
-                                  >
-                                    <FolderClosed className="w-4 h-4" />
-                                    Choose Files
-                                  </button>
-                                  <button
-                                    className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#a1a1aa] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
-                                      uploadMenuFocusIndex === 3 ? 'bg-zinc-800 text-[#a1a1aa]' : ''
-                                    }`}
-                                    onClick={() => handleUploadAction(3)}
-                                    role="menuitem"
-                                  >
-                                    <Github className="w-4 h-4" />
-                                    Link GitHub
-                                  </button>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                          <button
-                            type="button"
-                            aria-label="Send"
-                            className="
-                              h-6 w-6 flex items-center justify-center cursor-pointer
-                              text-[#f9fafb]
-                              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa]
-                              focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]
-                              disabled:text-[#a1a1aa]/50
-                              transition-colors motion-reduce:transition-none
-                            "
-                            onClick={(e) => {
-                              e.preventDefault();
-                              handleSendMessage();
-                            }}
-                          >
-                            <Send 
-                              className="w-6 h-6 opacity-85 hover:opacity-100 text-current transition-opacity duration-200"
-                              stroke="currentColor"
-                            />
-                          </button>
+                        <div className="h-6 w-6 flex items-center justify-center">
+                          <Send className="w-4 h-4 text-[#71717a] hover:text-[#a1a1aa]" />
                         </div>
                       </div>
                     </div>
 
-                      {/* Quick Action Buttons - only show when not engaged */}
-                      {!hasEngaged && (
-                        <div className="space-y-4 mt-6">
+                    <div className="space-y-4 mt-8">
                       <p className="text-[10px] text-[#a1a1aa] text-center">Try these examples to get started</p>
 
-                          <div className="flex flex-wrap gap-2 justify-center max-w-4xl mx-auto sm:flex-nowrap">
-                            <button 
-                              type="button"
-                              className="agents-quick-btn"
-                            >
-                              <Search className="w-2 h-2 md:w-2.5 md:h-2.5" />
-                              Audit my algorithm
-                            </button>
-                            <button 
-                              type="button"
-                              className="agents-quick-btn"
-                            >
-                              <BarChart3 className="w-2 h-2 md:w-2.5 md:h-2.5" />
-                              Calculate damages
-                            </button>
-                            <button 
-                              type="button"
-                              className="agents-quick-btn"
-                            >
-                              <Scale className="w-2 h-2 md:w-2.5 md:h-2.5" />
-                              Compliance risks
-                            </button>
-                            <button 
-                              type="button"
-                              className="agents-quick-btn"
-                            >
-                              <ClipboardList className="w-2 h-2 md:w-2.5 md:h-2.5" />
-                              Evidence bundle
-                            </button>
-                      </div>
-                    </div>
-                      )}
-                  </div>
-                </div>
-                  )}
-              </div>
-
-              {/* Fixed Input Area for Chat State */}
-              {hasEngaged && (
-                <div className="fixed bottom-0 left-0 right-0 bg-black md:bg-[#0f0f10] border-t border-[#2a2a2a] z-50 fixed-input-container">
-                  <div className="max-w-5xl mx-auto px-5 py-4 pb-8 md:pb-4">
-                    <div className="w-full space-y-3">
-                      <div className="agents-no-zoom-wrapper" data-testid="agents-no-zoom-wrapper">
-                        <div className="relative">
-                          <textarea
-                            ref={textareaRef}
-                            placeholder="How can I help test your algorithm today?"
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value.slice(0, 25000))}
-                            autoFocus={isDesktop}
-                            onFocus={() => setIsInputFocused(true)}
-                            onBlur={() => {
-                              setIsInputFocused(false)
-                              // Reset scroll position when keyboard dismisses on mobile
-                              if (!isDesktop) {
-                                setTimeout(() => {
-                                  window.scrollTo(0, 0)
-                                }, 100)
-                              }
-                            }}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter" && !e.shiftKey) {
-                                e.preventDefault()
-                                handleSendMessage()
-                              }
-                            }}
-                            className="w-full bg-bg-tile rounded-lg text-[#f9fafb]
-                              px-4 pt-4 pb-16 md:pb-[76px] pr-16
-                              text-xs md:text-base leading-5
-                              placeholder:text-xs md:placeholder:text-base placeholder:text-[#71717a]
-                              whitespace-pre-wrap break-words
-                              resize-none overflow-y-hidden focus:outline-none
-                              shadow-[0_1px_0_rgba(0,0,0,0.20)] border border-[#2a2a2a]/50
-                              min-h-[112px] max-h-[40vh]"
-                            style={{ caretColor: "rgba(249, 250, 251, 0.8)" }}
-                            rows={1}
-                          />
-                          {/* Blinking cursor overlay - only shows when empty, on mobile, and not focused */}
-                          {inputValue === "" && !isDesktop && !isInputFocused && (
-                            <span
-                              aria-hidden
-                              className="pointer-events-none absolute left-4 top-4 h-[1em] md:h-[1.2em] w-[1px] md:w-[2px] bg-white animate-[blink_1s_steps(1)_infinite]"
-                            />
-                          )}
-                          {/* Model selector - bottom left */}
-                          <div ref={triggerClusterRef} className="absolute left-3 bottom-3 flex items-center gap-1.5">
-                            {/* UNIFIED GLOBE + TEXT BUTTON */}
-                            <button
-                              ref={triggerIconRef}
-                              type="button"
-                              onClick={(e) => { e.stopPropagation(); lastTriggerUsed.current = 'icon'; openRoleDropdown(); }}
-                              onKeyDown={onTriggerKeyDown}
-                              aria-haspopup="listbox"
-                              aria-controls="role-dropdown"
-                              aria-expanded={isRoleDropdownOpen}
-                              aria-label="Select analysis mode"
-                              className="flex items-center gap-1.5 p-1.5 rounded-md bg-transparent border border-[#2a2a2a] hover:border-[#3a3a3a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]"
-                            >
-                              <Image
-                                src="/icons/icon-americas.png"
-                                alt="Select analysis mode"
-                                width={18}
-                                height={18}
-                                draggable={false}
-                                className="shrink-0"
-                              />
-                              <span className="text-xs text-[#71717a] font-medium">
-                                {getRegionAcronym(selectedAgent)}
-                              </span>
-                              <ChevronDown className="w-3 h-3 text-[#71717a]" aria-hidden="true" />
-                            </button>
-
-                            {/* INDUSTRY BUTTON */}
-                            <button
-                              ref={industryTriggerRef}
-                              type="button"
-                              onClick={(e) => { e.stopPropagation(); openIndustryDropdown(); }}
-                              aria-haspopup="listbox"
-                              aria-controls="industry-dropdown"
-                              aria-expanded={isIndustryDropdownOpen}
-                              aria-label="Select industry"
-                              className="flex items-center gap-1.5 p-1.5 rounded-md bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10]"
-                            >
-                              <Factory className="w-4 h-4 text-[#71717a]" />
-                              <span className="text-[10px] text-[#71717a] font-medium">
-                                {getIndustryAcronym(selectedIndustry)}
-                              </span>
-                              <ChevronDown className="w-3 h-3 text-[#71717a]" aria-hidden="true" />
-                            </button>
-
-                            {/* Role Dropdown */}
-                            {isRoleDropdownOpen && (
-                              <div
-                                id="role-dropdown"
-                                role="listbox"
-                                aria-label="Select analysis mode"
-                                className="absolute bottom-full mb-2 left-0 min-w-[200px] bg-zinc-800 border border-zinc-700 rounded-lg shadow-lg py-1 z-50"
-                              >
-                                {["Europe", "South Africa", "United States", "Australia"].map((role, index) => (
-                                  <div
-                                    key={role}
-                                    role="option"
-                                    aria-selected={selectedAgent === role}
-                                    tabIndex={index === 0 ? 0 : -1}
-                                    className={`px-3 py-2 text-sm cursor-pointer ${
-                                      roleDropdownFocusIndex === index ? 'bg-zinc-700 text-[#a1a1aa]' : 'text-zinc-300 hover:bg-zinc-700 hover:text-[#a1a1aa]'
-                                    }`}
-                                    onClick={() => handleRoleSelect(role)}
-                                  >
-                                    {role}
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-
-                            {/* Industry Dropdown */}
-                            {isIndustryDropdownOpen && (
-                              <div
-                                id="industry-dropdown"
-                                role="listbox"
-                                aria-label="Select industry"
-                                className="absolute bottom-full mb-2 left-0 min-w-[200px] bg-zinc-800 border border-zinc-700 rounded-lg shadow-lg py-1 z-50"
-                              >
-                                {["Crypto", "Travel & Hospitality", "E-commerce", "Shipping & Logistics", "Media & Advertising", "Real-Estate", "Telecommunications", "Financial services"].map((industry, index) => (
-                                  <div
-                                    key={industry}
-                                    role="option"
-                                    aria-selected={selectedIndustry === industry}
-                                    tabIndex={index === 0 ? 0 : -1}
-                                    className={`px-3 py-2 text-sm cursor-pointer ${
-                                      industryDropdownFocusIndex === index ? 'bg-zinc-700 text-[#a1a1aa]' : 'text-zinc-300 hover:bg-zinc-700 hover:text-[#a1a1aa]'
-                                    }`}
-                                    onClick={() => handleIndustrySelect(industry)}
-                                  >
-                                    {industry}
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-
-                          {/* Upload Button - bottom right before send */}
-                          <div className="absolute right-12 bottom-3 flex items-center gap-1.5">
-                            <button
-                              type="button"
-                              aria-label="Upload files"
-                              className="h-6 w-6 flex items-center justify-center cursor-pointer text-[#71717a] hover:text-[#a1a1aa] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10] transition-colors motion-reduce:transition-none"
-                              onClick={handleUploadMenuToggle}
-                            >
-                              <CloudUpload className="w-4 h-4" />
-                            </button>
-
-                            {/* Upload Menu */}
-                            {isUploadMenuOpen && (
-                              <div className="absolute bottom-full mb-2 right-0 min-w-[180px] bg-zinc-800 border border-zinc-700 rounded-lg shadow-lg py-1 z-50">
-                                <button
-                                  className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#a1a1aa] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
-                                    uploadMenuFocusIndex === 0 ? 'bg-zinc-800 text-[#a1a1aa]' : ''
-                                  }`}
-                                  onClick={() => handleUploadAction(0)}
-                                  role="menuitem"
-                                >
-                                  <FileText className="w-4 h-4" />
-                                  Upload Document
-                                </button>
-                                <button
-                                  className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#a1a1aa] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
-                                    uploadMenuFocusIndex === 1 ? 'bg-zinc-800 text-[#a1a1aa]' : ''
-                                  }`}
-                                  onClick={() => handleUploadAction(1)}
-                                  role="menuitem"
-                                >
-                                  <Camera className="w-4 h-4" />
-                                  Take Photo or Video
-                                </button>
-                                <button
-                                  className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#a1a1aa] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
-                                    uploadMenuFocusIndex === 2 ? 'bg-zinc-800 text-[#a1a1aa]' : ''
-                                  }`}
-                                  onClick={() => handleUploadAction(2)}
-                                  role="menuitem"
-                                >
-                                  <FolderClosed className="w-4 h-4" />
-                                  Choose Files
-                                </button>
-                                <button
-                                  className={`flex items-center gap-3 px-3 h-8 text-sm text-zinc-300 hover:text-[#a1a1aa] hover:bg-zinc-800 rounded cursor-pointer w-full text-left ${
-                                    uploadMenuFocusIndex === 3 ? 'bg-zinc-800 text-[#a1a1aa]' : ''
-                                  }`}
-                                  onClick={() => handleUploadAction(3)}
-                                  role="menuitem"
-                                >
-                                  <Github className="w-4 h-4" />
-                                  Link GitHub
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                          {/* Send Button - bottom right */}
-                          <div className="absolute right-3 bottom-3 flex items-center gap-1.5">
-                            <button
-                              type="button"
-                              aria-label="Send"
-                              className="h-6 w-6 flex items-center justify-center cursor-pointer text-[#f9fafb] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#60a5fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f10] disabled:text-[#a1a1aa]/50 transition-colors motion-reduce:transition-none"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                handleSendMessage();
-                              }}
-                            >
-                              <Send 
-                                className="w-6 h-6 opacity-85 hover:opacity-100 text-current transition-opacity duration-200"
-                                stroke="currentColor"
-                              />
-                            </button>
-                          </div>
-                        </div>
+                      <div className="flex flex-wrap gap-2 justify-center">
+                        <button className="rounded-full px-3 py-1 text-[10px] border border-[#2a2a2a] bg-[#1a1a1a] hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1.5">
+                          <Zap className="w-2.5 h-2.5" />
+                          Assess coordination risk
+                        </button>
+                        <button className="rounded-full px-3 py-1 text-[10px] border border-[#2a2a2a] bg-[#1a1a1a] hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1.5">
+                          <TrendingUp className="w-2.5 h-2.5" />
+                          Prove competitive behavior
+                        </button>
+                        <button className="rounded-full px-3 py-1 text-[10px] border border-[#2a2a2a] bg-[#1a1a1a] hover:bg-[#2a2a2a] text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1.5">
+                          <Database className="w-2.5 h-2.5" />
+                          Export evidence bundle
+                        </button>
                       </div>
                     </div>
                   </div>
                 </div>
-              )}
               </div>
             )}
+
             {activeTab === "dashboard" && (
               /* Dashboard View */
               <>
+                {/* Overview Page */}
                 {activeSidebarItem === "overview" && (
-              <div className="space-y-3 max-w-2xl" data-probe="dash-cards-section">
-                <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                  <div className="space-y-3 max-w-2xl">
+                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                   <CardContent className="p-4">
-                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                          <div className="rounded-lg bg-bg-tile shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
-                            <div>
-                        <h2 className="text-sm font-medium text-[#f9fafb] mb-1">Enterprise Plan</h2>
-                              <p className="text-xs text-[#a1a1aa] mb-3 leading-relaxed">
-                                Live monitoring with compliance tracking
-                        </p>
-                            </div>
-                            <button className="rounded-full px-3 py-1 text-xs border border-[#2a2a2a] bg-transparent hover:bg-bg-tile text-[#a1a1aa] hover:text-[#f9fafb] self-start">
+                    <div className="grid grid-cols-2 gap-6">
+                      <div className="rounded-lg bg-[#1a1a1a] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
+                        <div>
+                          <h2 className="text-sm font-medium text-[#f9fafb] mb-1">Enterprise Plan</h2>
+                          <p className="text-xs text-[#a1a1aa] mb-3 leading-relaxed">
+                            Live monitoring with compliance tracking
+                          </p>
+                        </div>
+                        <button className="rounded-full px-3 py-1 text-xs border border-[#2a2a2a] bg-transparent hover:bg-[#1a1a1a] text-[#a1a1aa] hover:text-[#f9fafb] self-start">
                           Manage Subscription
                         </button>
                       </div>
-                          <div className="rounded-lg bg-bg-tile2 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
-                            <div>
+                      <div className="rounded-lg bg-[#1e1e1e] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 flex flex-col justify-between">
+                        <div>
                           <div className="text-xs font-bold text-[#f9fafb] mb-1">$0 / $6k</div>
                           <p className="text-xs text-[#a1a1aa] mb-2">Usage-Based Spending this Month</p>
-                            </div>
-                            <button className="rounded-full px-3 py-1 text-xs border border-[#2a2a2a] bg-transparent hover:bg-bg-tile text-[#a1a1aa] hover:text-[#f9fafb] self-start">
-                            Edit Limit
-                          </button>
+                        </div>
+                        <button className="rounded-full px-3 py-1 text-xs border border-[#2a2a2a] bg-transparent hover:bg-[#1a1a1a] text-[#a1a1aa] hover:text-[#f9fafb] self-start">
+                          Edit Limit
+                        </button>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2 text-xs text-[#a1a1aa]">
-                        {isClient && activeTab === "dashboard" && (
-                              <>
-                          <button 
-                            onClick={() => setIsCalendarOpen(!isCalendarOpen)}
-                            className="rounded-full px-3 py-1 text-xs border border-[#3a3a3a] bg-transparent hover:bg-[#2a2a2a]/50 text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1"
-                          >
-                            <CalendarIcon className="h-3 w-3" />
-                                  {selectedTimeframe === "30d"
-                                    ? "Aug 06 - Sep 10"
-                                    : selectedTimeframe === "6m"
-                                      ? "Mar '25 - Sep '25"
-                                      : selectedTimeframe === "1y"
-                                        ? "Sep '24 - Sep '25"
-                                        : exchangeData.length > 0 
-                                          ? "Live Data"
-                                          : "Jan '25 - Sep '25"}
-                          </button>
+  {isClient && activeTab === "dashboard" && (
+    <>
+      <button
+        onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+        className="rounded-full px-3 py-1 text-xs border border-[#3a3a3a] bg-transparent hover:bg-[#2a2a2a]/50 text-[#a1a1aa] hover:text-[#f9fafb] flex items-center gap-1"
+      >
+        <CalendarIcon className="h-3 w-3" />
+        {selectedTimeframe === "30d" ? "Aug 06 - Sep 10" :
+         selectedTimeframe === "6m"  ? "Mar '25 - Sep '25" :
+         selectedTimeframe === "1y"  ? "Sep '24 - Sep '25" :
+                                       "Jan 01 - Sep 05"}
+      </button>
 
-                        <div className="flex gap-1">
-                          <button 
-                            onClick={() => setSelectedTimeframe("30d")}
-                                    className={`text-xs px-2 py-1 ${selectedTimeframe === "30d" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
-                          >
-                            30d
-                          </button>
-                          <button 
-                            onClick={() => setSelectedTimeframe("6m")}
-                                    className={`text-xs px-2 py-1 ${selectedTimeframe === "6m" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
-                          >
-                            6m
-                          </button>
-                          <button 
-                            onClick={() => setSelectedTimeframe("1y")}
-                                    className={`text-xs px-2 py-1 ${selectedTimeframe === "1y" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
-                          >
-                            1y
-                          </button>
-                          <button 
-                            onClick={() => setSelectedTimeframe("ytd")}
-                                    className={`text-xs px-2 py-1 ${selectedTimeframe === "ytd" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
-                          >
-                            YTD
-                          </button>
-                        </div>
-                              </>
-                      )}
-                          </div>
+      <div className="flex gap-1">
+        <button
+          onClick={() => setSelectedTimeframe("30d")}
+          className={`text-xs px-2 py-1 ${selectedTimeframe === "30d" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
+        >
+          30d
+        </button>
+        <button
+          onClick={() => setSelectedTimeframe("6m")}
+          className={`text-xs px-2 py-1 ${selectedTimeframe === "6m" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
+        >
+          6m
+        </button>
+        <button
+          onClick={() => setSelectedTimeframe("1y")}
+          className={`text-xs px-2 py-1 ${selectedTimeframe === "1y" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
+        >
+          1y
+        </button>
+        <button
+          onClick={() => setSelectedTimeframe("YTD")}
+          className={`text-xs px-2 py-1 ${selectedTimeframe === "YTD" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
+        >
+          YTD
+        </button>
+      </div>
+    </>
+  )}
+</div>
                     </div>
 
                     <div className="mb-4">
-                          <div className="flex items-center justify-between mb-3">
-                            <h3 className="text-xs font-medium text-[#f9fafb]">Collusion Risk Score</h3>
-                          </div>
-                          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 mb-10">
-                            <div className="rounded-lg bg-bg-surface shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 relative">
-                              {/* Live indicator - pulsing green dot with frame */}
-                              <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-bg-tile border border-[#2a2a2a] rounded-full px-2 py-1">
-                                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                <span className="text-[10px] text-[#a1a1aa]">LIVE</span>
-                              </div>
-                          {riskSummaryLoading ? (
-                            <div className="animate-pulse">
-                              <div className="h-6 bg-[#2a2a2a] rounded w-20 mb-1"></div>
-                              <div className="h-3 bg-[#2a2a2a] rounded w-16"></div>
-                            </div>
-                          ) : riskSummaryError ? (
-                            <div className="text-center">
-                              <div className="text-sm text-[#fca5a5] mb-1">Error</div>
-                              <div className="text-xs text-[#a1a1aa]">Retry</div>
-                            </div>
-                          ) : riskSummary ? (
-                            <>
-                              <div className="text-xl font-bold text-[#f9fafb]">{riskSummary.score} out of 100</div>
-                              <div className={`text-xs ${
-                                riskSummary.band === 'LOW' ? 'text-[#a7f3d0]' :
-                                riskSummary.band === 'AMBER' ? 'text-[#fbbf24]' :
-                                'text-[#fca5a5]'
-                              }`}>
-                                {riskSummary.band === 'LOW' ? 'Low Risk' :
-                                 riskSummary.band === 'AMBER' ? 'Amber Risk' :
-                                 'High Risk'}
-                              </div>
-                            </>
-                          ) : (
-                            <>
+                      <h3 className="text-xs font-medium text-[#f9fafb] mb-3">Your Coordination Risk</h3>
+                      <div className="grid grid-cols-2 gap-6 mb-10">
+                        <div className="rounded-lg bg-[#212121] shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
                           <div className="text-xl font-bold text-[#f9fafb]">14 out of 100</div>
-                              <div className="text-xs text-[#a7f3d0]">Low Risk</div>
-                            </>
-                          )}
+                          <div className="text-xs text-[#a7f3d0]">Low Risk</div>
                         </div>
-                            <div className="rounded-lg bg-bg-surface/40 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
-                              <div className="flex items-center justify-between">
-                        <div>
-                                  <div className="text-xl font-bold text-[#f9fafb]">
-                                    {leadershipPctText}%
-                        </div>
-                                  <div className="text-xs text-[#a1a1aa]">
-                                    {leadershipCaption}
-                                  </div>
-                                </div>
-                                {/* Venue Avatars (dynamic, in lockstep with series) */}
-                                {(() => {
-                                  const { availableUiVenues } = useExchangeData();
-
-                                  // optional: gradient opacity for visual hierarchy
-                                  const opacities = [1, 0.8, 0.6, 0.4];
-
-                                  // fallback if nothing is available (should be rare)
-                                  if (!availableUiVenues || availableUiVenues.length === 0) {
-                                    return (
-                                <div className="flex items-center -space-x-2">
-                                  <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white">
-                                          <img src={venueMetadata.binance.icon} alt={venueMetadata.binance.label} className="w-full h-full object-contain p-0.5" />
-                                  </div>
-                                      </div>
-                                    );
-                                  }
-
-                                  if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
-                                    // one parity log here is enough to diagnose avatar/series mismatches
-                                    // eslint-disable-next-line no-console
-                                    console.debug('[AVATAR] availableUiVenues', availableUiVenues);
-                                  }
-
-                                  // Derive ordered venues from leadership ranking
-                                  const defaultOrder: VenueKey[] = ['binance','kraken','coinbase','bybit','okx']; // fallback only
-                                  
-                                  const rankingTable = leadership?.ranking?.table ?? [];
-                                  // sort defensively in case backend didn't sort
-                                  const sorted = rankingTable.length
-                                    ? [...rankingTable].sort((a,b) => b.wins - a.wins || b.pct - a.pct || a.venue.localeCompare(b.venue))
-                                    : [];
-
-                                  const orderedVenues: VenueKey[] = sorted.length
-                                    ? sorted.map(r => r.venue)
-                                    : defaultOrder;
-
-                                  // Optional tiny log (dev only)
-                                  if (process.env.NEXT_PUBLIC_UI_DEBUG === 'true') {
-                                    console.log('[AVATARS] ordered', orderedVenues);
-                                  }
-
-                                  return (
-                                    <div className="flex items-center -space-x-2">
-                                      {orderedVenues.map((v, i) => (
-                                        <div
-                                          key={v}
-                                          className="w-8 h-8 rounded-full border-2 border-[#1a1a1a] overflow-hidden bg-white"
-                                          style={{ opacity: opacities[i] ?? 0.4 }}
-                                          title={v}
-                                          aria-label={`${v}${v === leadership?.leader ? ' (leader)' : ''}`}
-                                        >
-                                          <img
-                                            src={venueMetadata[v].icon}
-                                            alt={venueMetadata[v].label}
-                                          className="w-full h-full object-contain p-0.5"
-                                            loading="eager"
-                                        />
-                                      </div>
-                                    ))}
-                                  </div>
-                                );
-                                })()}
+                        <div className="rounded-lg bg-[#212121]/40 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
+                          <div className="text-xl font-bold text-[#f9fafb]">{21 + 21 + 26 + 16}%</div>
+                          <div className="text-xs text-[#a1a1aa]">Total Market Share</div>
                         </div>
                       </div>
 
-                            {/* Confidence Display */}
-                            {riskSummary && (
-                              <div className="mt-3 rounded-lg bg-bg-surface/40 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3 relative">
-                                {/* top-right time badge — mirror LIVE chip spacing */}
-                                <span className="absolute top-3 right-3 inline-flex items-center gap-1.5 bg-bg-tile border border-[#2a2a2a] rounded-full px-2 py-1">
-                                  <Clock className="h-3 w-3 text-[#a1a1aa] opacity-70" />
-                                  <span className="text-[10px] text-[#a1a1aa] opacity-70">
-                                    {riskSummary.source.freshnessSec < 60 
-                                      ? `${riskSummary.source.freshnessSec}s ago`
-                                      : `${Math.round(riskSummary.source.freshnessSec / 60)}m ago`
-                                    }
-                                  </span>
-                                </span>
-                                <div>
-                                  <div className="text-sm font-bold text-[#f9fafb]">{riskSummary.confidence}%</div>
-                                  <div className="text-xs text-[#a1a1aa]">Statistical Confidence</div>
-                                </div>
-                              </div>
-                            )}
-                      </div>
-
-                          <div className="h-80 relative focus:outline-none" style={{ outline: "none" }}>
-                            <ResponsiveContainer width="100%" height="100%" style={{ outline: "none" }}>
-                          <LineChart 
-                            data={currentData} 
-                            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                            onMouseMove={(e:any) => {
-                              if (!e || !e.activeCoordinate || !e.chartX || !e.chartWidth) { setSnapTs(null); return; }
-                              const { chartX, chartWidth } = e;
-                              // Build linear scale from domain to pixels
-                              const [dMin, dMax] = [currentData[0]?.ts, currentData[currentData.length-1]?.ts];
-                              if (!Number.isFinite(dMin) || !Number.isFinite(dMax) || dMin >= dMax) { setSnapTs(null); return; }
-                              const scale = (ts:number) => ((ts - dMin) / (dMax - dMin)) * chartWidth;
-                              // Find nearest event center by pixel distance
-                              const centers = [
-                                Date.parse('2025-01-20T00:00:00Z'),
-                                Date.parse('2025-03-06T00:00:00Z'),
-                                Date.parse('2025-07-18T00:00:00Z'),
-                              ];
-                              let best: {ts:number, dx:number} | null = null;
-                              for (const ts of centers) {
-                                const dx = Math.abs(scale(ts) - chartX);
-                                if (!best || dx < best.dx) best = { ts, dx };
-                              }
-                              setSnapTs(best && best.dx < SNAP_PX ? best.ts : null);
-                            }}
-                            onMouseLeave={() => setSnapTs(null)}
-                          >
+                      <div className="h-80">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart data={currentData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                             <XAxis
-                              dataKey="ts"
-                              type="number"
-                              domain={['dataMin', 'dataMax']}
-                              tickFormatter={(v) => new Date(v).toLocaleDateString('en-US', { month:'short', day:'2-digit' })}
-                              tick={{ fontSize: 10 }}
+                              dataKey="date"
+                              axisLine={false}
+                              tickLine={false}
+                              tick={{ fill: "#a1a1aa", fontSize: 10 }}
                             />
                             <YAxis
                               axisLine={false}
                               tickLine={false}
                               tick={{ fill: "#a1a1aa", fontSize: 10 }}
                               label={{
-                                    value: exchangeData.length > 0 ? "BTC Price ($)" : "Market Spread %",
+                                value: "SA Bank CDS Spread %",
                                 angle: -90,
                                 position: "insideLeft",
                                 style: { textAnchor: "middle", fill: "#a1a1aa", fontSize: 10 },
                               }}
                             />
-                                <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" opacity={0.75} />
-
+                            <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" opacity={0.75} />
                             <Tooltip
-                                  cursor={false}
-                              labelFormatter={(ms) => new Date(Number(ms)).toLocaleDateString('en-US', { month:'short', day:'2-digit', year:'numeric' })}
+                              cursor={false}
                               content={({ active, payload, label }) => {
-                                if (!active || !payload?.length) return null;
-                                const timestamp = Number(label);
-                                
-                                // Find matching event for this day
-                                const ev = eventsByTs[timestamp]?.[0] as any;
-
-                                return (
-                                  <div className="bg-black border border-[#1a1a1a] rounded-lg p-3 shadow-2xl shadow-black/50">
-                                    <p className="text-[#a1a1aa] text-[10px] mb-1.5">
-                                      {new Date(timestamp).toLocaleDateString('en-US', { month:'short', day:'2-digit', year:'numeric' })}
-                                    </p>
-                                    
-                                    {/* Event Information - only show if there's a matching event */}
-                                    {ev && (
-                                      <div className="mb-2 p-2 bg-bg-tile rounded border-l-2" style={{ borderLeftColor: ev.color }}>
-                                        <div className="flex items-center gap-2 mb-1">
-                                          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: ev.color }} />
-                                          <span className="text-[#f9fafb] font-semibold text-[10px]">{ev.title}</span>
-                                        </div>
-                                        <p className="text-[#a1a1aa] text-[9px]">{ev.subtitle}</p>
-                                      </div>
-                                    )}
-                                    
-                                    {payload.map((entry, i) => {
-                                      const value = entry.value as number | null | undefined;
-                                      const venue = String(entry.dataKey);
-                                      const fmt = (n: number | null | undefined) => Number.isFinite(Number(n)) ? `$${Number(n).toFixed(2)}` : '—';
-                                      return (
-                                        <div key={i} className="flex items-center gap-2 text-[9px]">
-                                          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
+                                if (active && payload && payload.length) {
+                                  // Market share data for each bank
+                                  const marketShare = {
+                                    "FNB": 21,
+                                    "ABSA": 21,
+                                    "Standard Bank": 26,
+                                    "Nedbank": 16
+                                  };
+                                  
+                                  return (
+                                    <div className="bg-black border border-[#1a1a1a] rounded-lg p-3 shadow-2xl shadow-black/50">
+                                      <p className="text-[#a1a1aa] text-[10px] mb-1.5">{label}</p>
+                                      {payload.map((entry, index) => (
+                                        <div key={index} className="flex items-center gap-2 text-[9px]">
+                                          <div
+                                            className="w-2 h-2 rounded-full"
+                                            style={{ backgroundColor: entry.color }}
+                                          />
                                           <span className="text-[#f9fafb] font-semibold">
-                                            {venue.charAt(0).toUpperCase() + venue.slice(1)}: <span className="font-bold">{fmt(value)}</span>
+                                            {entry.name}: <span className="font-bold">{entry.value} bps</span> | <span className="text-[#a1a1aa]">{marketShare[entry.name as keyof typeof marketShare]}% share</span>
                                           </span>
                                         </div>
-                                      );
-                                    })}
-                                  </div>
-                                );
+                                      ))}
+                                    </div>
+                                  );
+                                }
+                                return null;
                               }}
                             />
-                            {/* Conditional Line components - only mount when data exists */}
-            {availableUiVenues.map((venue) => {
-              const color: Record<string, string> = {
-                binance: '#f59e0b',
-                okx: '#60a5fa',
-                bybit: '#a1a1aa',
-                kraken: '#71717a',
-                coinbase: '#52525b'
-              };
-
-              const hasData = currentData.some(p => p[venue] != null);
-              if (!hasData) return null;
-              return (
-                <Line
-                  key={venue}
-                  type="monotone"
-                  dataKey={venue}
-                  stroke={color[venue]}
-                  strokeWidth={venue === 'binance' ? 2 : 1.5}
-                  dot={{ fill: color[venue], strokeWidth: venue === 'binance' ? 2 : 1.5, r: venue === 'binance' ? 3 : 2 }}
-                  activeDot={{ r: venue === 'binance' ? 4 : 3, fill: color[venue] }}
-                  connectNulls={false}
-                  name={venue.charAt(0).toUpperCase() + venue.slice(1)}
-                />
-              );
-            })}
-
-                            {/* Regime A → B */}
-                            {(() => { const {x1,x2} = mkBand(Date.parse('2025-01-20T00:00:00Z')); return (
-                              <ReferenceArea x1={x1} x2={x2} fill="#fecaca" fillOpacity={0.40} isFront />
-                            );})()}
-
-                            {/* Strategic Reserve EO */}
-                            {(() => { const {x1,x2} = mkBand(Date.parse('2025-03-06T00:00:00Z')); return (
-                              <ReferenceArea x1={x1} x2={x2} fill="#fed7aa" fillOpacity={0.40} isFront />
-                            );})()}
-
-                            {/* GENIUS Act Impl. */}
-                            {(() => { const {x1,x2} = mkBand(Date.parse('2025-07-18T00:00:00Z')); return (
-                              <ReferenceArea x1={x1} x2={x2} fill="#bbf7d0" fillOpacity={0.40} isFront />
-                            );})()}
-
-                            {/* Invisible hit targets for mobile interaction */}
-                            {(() => { const {x1,x2} = mkBand(Date.parse('2025-01-20T00:00:00Z')); return (
-                              <ReferenceArea
-                                x1={x1} x2={x2}
-                                isFront
-                                fillOpacity={0}
-                                // @ts-ignore recharts passes through to underlying <rect>
-                                pointerEvents="all"
-                                onMouseEnter={() => setSnapTs(Date.parse('2025-01-20T00:00:00Z'))}
-                                onMouseLeave={() => setSnapTs(null)}
-                                onClick={() => setSnapTs(Date.parse('2025-01-20T00:00:00Z'))}
-                              />
-                            );})()}
-
-                            {(() => { const {x1,x2} = mkBand(Date.parse('2025-03-06T00:00:00Z')); return (
-                              <ReferenceArea
-                                x1={x1} x2={x2}
-                                isFront
-                                fillOpacity={0}
-                                // @ts-ignore recharts passes through to underlying <rect>
-                                pointerEvents="all"
-                                onMouseEnter={() => setSnapTs(Date.parse('2025-03-06T00:00:00Z'))}
-                                onMouseLeave={() => setSnapTs(null)}
-                                onClick={() => setSnapTs(Date.parse('2025-03-06T00:00:00Z'))}
-                              />
-                            );})()}
-
-                            {(() => { const {x1,x2} = mkBand(Date.parse('2025-07-18T00:00:00Z')); return (
-                              <ReferenceArea
-                                x1={x1} x2={x2}
-                                isFront
-                                fillOpacity={0}
-                                // @ts-ignore recharts passes through to underlying <rect>
-                                pointerEvents="all"
-                                onMouseEnter={() => setSnapTs(Date.parse('2025-07-18T00:00:00Z'))}
-                                onMouseLeave={() => setSnapTs(null)}
-                                onClick={() => setSnapTs(Date.parse('2025-07-18T00:00:00Z'))}
-                              />
-                            );})()}
-
-                            {/* Keep thin ReferenceLines for precision */}
-                            {ENV_EVENTS.map((e) => (
-                              <ReferenceLine
-                                key={e.ts}
-                                x={e.ts}
-                                stroke={e.color}
-                                strokeWidth={2}
-                                strokeOpacity={0.60}
-                                isFront
-                              >
-                                <Label value={e.title} position="top" />
-                              </ReferenceLine>
-                            ))}
+                            <Line
+                              type="monotone"
+                              dataKey="fnb"
+                              stroke="#60a5fa"
+                              strokeWidth={2}
+                              dot={{ fill: "#60a5fa", strokeWidth: 2, r: 3 }}
+                              activeDot={{ r: 4, fill: "#60a5fa" }}
+                              name="FNB"
+                            />
+                            <Line
+                              type="monotone"
+                              dataKey="absa"
+                              stroke="#a1a1aa"
+                              strokeWidth={1.5}
+                              dot={{ fill: "#a1a1aa", strokeWidth: 1.5, r: 2 }}
+                              activeDot={{ r: 3, fill: "#a1a1aa" }}
+                              name="ABSA"
+                            />
+                            <Line
+                              type="monotone"
+                              dataKey="standard"
+                              stroke="#71717a"
+                              strokeWidth={1.5}
+                              dot={{ fill: "#71717a", strokeWidth: 1.5, r: 2 }}
+                              activeDot={{ r: 3, fill: "#71717a" }}
+                              name="Standard Bank"
+                            />
+                            <Line
+                              type="monotone"
+                              dataKey="nedbank"
+                              stroke="#52525b"
+                              strokeWidth={1.5}
+                              dot={{ fill: "#52525b", strokeWidth: 1.5, r: 2 }}
+                              activeDot={{ r: 3, fill: "#52525b" }}
+                              name="Nedbank"
+                            />
                           </LineChart>
                         </ResponsiveContainer>
-                      </div>
-                          {/* Data source indicator */}
-                          <div className="text-[9px] text-[#71717a] mt-2 text-center">
-                            {exchangeData.length > 0 ? (
-                              `Data source: Live Exchange Data • ${exchangeData.length} points • Quality 98%`
-                            ) : process.env.NEXT_PUBLIC_PREVIEW_BINANCE === 'true' ? (
-                              'Data source: Binance • 15s • Quality 98%'
-                            ) : dataSourcesLoading ? (
-                              <div className="animate-pulse">
-                                <div className="h-3 bg-[#2a2a2a] rounded w-32 mx-auto"></div>
-                              </div>
-                            ) : dataSourcesError ? (
-                              <div className="text-[#fca5a5]">Data source: Error</div>
-                            ) : dataSources ? (
-                              <>
-                                Data source: {dataSources.items[0]?.name || 'Exchange feeds'} • 
-                                {dataSources.items[0]?.freshnessSec < 60 
-                                  ? `${dataSources.items[0]?.freshnessSec}s` 
-                                  : `${Math.round((dataSources.items[0]?.freshnessSec || 0) / 60)}m`
-                                } • 
-                                Quality {Math.round((dataSources.items[0]?.quality || 0.96) * 100)}%
-                              </>
-                            ) : (
-                              'Data source: Exchange feeds'
-                            )}
                       </div>
                     </div>
                   </CardContent>
                 </Card>
+
                 {/* Metrics tile: Price Stability, Price Synchronization, Environmental Sensitivity */}
-                <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                   <CardContent className="p-0">
                     {/* Price Stability */}
                     <div className="p-3">
@@ -3305,58 +576,22 @@ It would also be helpful if you described:
                           <TrendingUp className="w-4 h-4 text-[#a1a1aa]" />
                           <div>
                             <div className="text-[#f9fafb] font-medium text-xs">Price Stability</div>
-                                <div className="text-[10px] text-[#a1a1aa]">
-                                  How steady your prices are vs competitors
-                                </div>
-                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">2m ago • 45s</div>
+                            <div className="text-[10px] text-[#a1a1aa]">How steady your prices are compared to competitors</div>
+                            <div className="text-[9px] text-[#a1a1aa] mt-0.5">2m ago • 45s</div>
                           </div>
                         </div>
                         <div className="text-right">
-                              {metricsLoading ? (
-                                <div className="animate-pulse">
-                                  <div className="h-4 bg-[#2a2a2a] rounded w-8 mb-1"></div>
-                                  <div className="h-3 bg-[#2a2a2a] rounded w-12"></div>
-                                </div>
-                              ) : metricsError ? (
-                                <div className="text-center">
-                                  <div className="text-xs text-[#fca5a5] mb-1">Error</div>
-                                  <div className="text-[10px] text-[#a1a1aa]">Retry</div>
-                                </div>
-                              ) : metricsOverview ? (
-                                <>
-                                  <div className="flex items-center gap-1.5">
-                                    <div className="text-[#f9fafb] font-bold text-sm">
-                                      {metricsOverview.items.find(m => m.key === 'stability')?.score || 65}
-                                    </div>
-                                    <div className={`text-xs ${
-                                      metricsOverview.items.find(m => m.key === 'stability')?.direction === 'UP' ? 'text-[#fca5a5]' :
-                                      metricsOverview.items.find(m => m.key === 'stability')?.direction === 'DOWN' ? 'text-[#a7f3d0]' :
-                                      'text-[#a1a1aa]'
-                                    }`}>
-                                      {metricsOverview.items.find(m => m.key === 'stability')?.direction === 'UP' ? '↑' :
-                                       metricsOverview.items.find(m => m.key === 'stability')?.direction === 'DOWN' ? '↓' : '→'}
-                                    </div>
-                                  </div>
+                          <div className="flex items-center gap-1.5">
+                            <div className="text-[#f9fafb] font-bold text-sm">25</div>
+                            <div className="text-[#fca5a5] text-xs">✗</div>
+                          </div>
                           <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
-                                </>
-                              ) : (
-                                <>
-                              <div className="flex items-center gap-1.5">
-                                <div className="text-[#f9fafb] font-bold text-sm">65</div>
-                                <div className="text-[#fca5a5] text-xs">✗</div>
-                              </div>
-                          <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
-                                </>
-                              )}
                         </div>
                       </div>
                     </div>
                     
                     {/* Separator line */}
-                        <div
-                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        ></div>
+                    <div className="border-t border-[#2a2a2a]"></div>
                     
                     {/* Price Synchronization */}
                     <div className="p-3">
@@ -3364,59 +599,23 @@ It would also be helpful if you described:
                         <div className="flex items-center gap-2.5">
                           <GitBranch className="w-4 h-4 text-[#a1a1aa]" />
                           <div>
-                            <div className="text-[#f9fafb] font-medium text-xs">Price Sync</div>
-                                <div className="text-[10px] text-[#a1a1aa]">
-                                  How closely prices move with others
-                                </div>
-                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">1m ago • 32s</div>
+                            <div className="text-[#f9fafb] font-medium text-xs">Price Synchronization</div>
+                            <div className="text-[10px] text-[#a1a1aa]">How much your prices move together with other banks</div>
+                            <div className="text-[9px] text-[#a1a1aa] mt-0.5">1m ago • 32s</div>
                           </div>
                         </div>
                         <div className="text-right">
-                              {metricsLoading ? (
-                                <div className="animate-pulse">
-                                  <div className="h-4 bg-[#2a2a2a] rounded w-8 mb-1"></div>
-                                  <div className="h-3 bg-[#2a2a2a] rounded w-12"></div>
-                                </div>
-                              ) : metricsError ? (
-                                <div className="text-center">
-                                  <div className="text-xs text-[#fca5a5] mb-1">Error</div>
-                                  <div className="text-[10px] text-[#a1a1aa]">Retry</div>
-                                </div>
-                              ) : metricsOverview ? (
-                                <>
-                                  <div className="flex items-center gap-1.5">
-                                    <div className="text-[#f9fafb] font-bold text-sm">
-                                      {metricsOverview.items.find(m => m.key === 'synchronization')?.score || 18}
-                                    </div>
-                                    <div className={`text-xs ${
-                                      metricsOverview.items.find(m => m.key === 'synchronization')?.direction === 'UP' ? 'text-[#fca5a5]' :
-                                      metricsOverview.items.find(m => m.key === 'synchronization')?.direction === 'DOWN' ? 'text-[#a7f3d0]' :
-                                      'text-[#a1a1aa]'
-                                    }`}>
-                                      {metricsOverview.items.find(m => m.key === 'synchronization')?.direction === 'UP' ? '↑' :
-                                       metricsOverview.items.find(m => m.key === 'synchronization')?.direction === 'DOWN' ? '↓' : '→'}
-                                    </div>
-                                  </div>
-                                  <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
-                                </>
-                              ) : (
-                                <>
-                              <div className="flex items-center gap-1.5">
-                          <div className="text-[#f9fafb] font-bold text-sm">18</div>
-                                <div className="text-[#a7f3d0] text-xs">✓</div>
-                              </div>
+                          <div className="flex items-center gap-1.5">
+                            <div className="text-[#f9fafb] font-bold text-sm">18</div>
+                            <div className="text-[#a7f3d0] text-xs">✓</div>
+                          </div>
                           <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
-                                </>
-                              )}
                         </div>
                       </div>
                     </div>
                     
                     {/* Separator line */}
-                        <div
-                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        ></div>
+                    <div className="border-t border-[#2a2a2a]"></div>
                     
                     {/* Environmental Sensitivity */}
                     <div className="p-3">
@@ -3425,49 +624,16 @@ It would also be helpful if you described:
                           <Activity className="w-4 h-4 text-[#a1a1aa]" />
                           <div>
                             <div className="text-[#f9fafb] font-medium text-xs">Environmental Sensitivity</div>
-                                <div className="text-[10px] text-[#a1a1aa]">
-                                  How well you react to shifts
-                                </div>
-                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">30s ago • 18s</div>
+                            <div className="text-[10px] text-[#a1a1aa]">How well you respond to market changes and economic events</div>
+                            <div className="text-[9px] text-[#a1a1aa] mt-0.5">30s ago • 18s</div>
                           </div>
                         </div>
                         <div className="text-right">
-                              {metricsLoading ? (
-                                <div className="animate-pulse">
-                                  <div className="h-4 bg-[#2a2a2a] rounded w-8 mb-1"></div>
-                                  <div className="h-3 bg-[#2a2a2a] rounded w-12"></div>
-                                </div>
-                              ) : metricsError ? (
-                                <div className="text-center">
-                                  <div className="text-xs text-[#fca5a5] mb-1">Error</div>
-                                  <div className="text-[10px] text-[#a1a1aa]">Retry</div>
-                                </div>
-                              ) : metricsOverview ? (
-                                <>
-                                  <div className="flex items-center gap-1.5">
-                                    <div className="text-[#f9fafb] font-bold text-sm">
-                                      {metricsOverview.items.find(m => m.key === 'environmentalSensitivity')?.score || 82}
-                                    </div>
-                                    <div className={`text-xs ${
-                                      metricsOverview.items.find(m => m.key === 'environmentalSensitivity')?.direction === 'UP' ? 'text-[#fca5a5]' :
-                                      metricsOverview.items.find(m => m.key === 'environmentalSensitivity')?.direction === 'DOWN' ? 'text-[#a7f3d0]' :
-                                      'text-[#a1a1aa]'
-                                    }`}>
-                                      {metricsOverview.items.find(m => m.key === 'environmentalSensitivity')?.direction === 'UP' ? '↑' :
-                                       metricsOverview.items.find(m => m.key === 'environmentalSensitivity')?.direction === 'DOWN' ? '↓' : '→'}
-                                    </div>
-                                  </div>
-                                  <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
-                                </>
-                              ) : (
-                                <>
-                              <div className="flex items-center gap-1.5">
-                          <div className="text-[#f9fafb] font-bold text-sm">82</div>
-                                <div className="text-[#a7f3d0] text-xs">✓</div>
-                              </div>
+                          <div className="flex items-center gap-1.5">
+                            <div className="text-[#f9fafb] font-bold text-sm">82</div>
+                            <div className="text-[#a7f3d0] text-xs">✓</div>
+                          </div>
                           <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
-                                </>
-                              )}
                         </div>
                       </div>
                     </div>
@@ -3475,43 +641,32 @@ It would also be helpful if you described:
                 </Card>
 
                 {/* Combined tile: Market Data Feed, Regulatory Notices */}
-                <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                   <CardContent className="p-0">
-                        {/* Bloomberg Data Feed */}
+                    {/* Market Data Feed */}
                     <div className="p-3">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2.5">
-                              <Database className="w-4 h-4 text-[#a1a1aa]" />
+                          <BarChart3 className="w-4 h-4 text-[#a1a1aa]" />
                           <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">Enable Exchange Data Feed</div>
-                                <div className="text-[10px] text-[#a1a1aa]">Real-time trading data and analytics</div>
-                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">
-                                  Live pricing • Depth • Order flow
+                            <div className="text-[#f9fafb] font-medium text-xs">Market Data Feed</div>
+                            <div className="text-[10px] text-[#a1a1aa]">
+                              Real-time market data and price information
                             </div>
                           </div>
                         </div>
-                            <div className="ml-4">
-                              <button
-                                onClick={() => setBloombergDataFeed(!bloombergDataFeed)}
-                                className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
-                                  bloombergDataFeed ? "bg-[#86a789]" : "bg-[#374151]"
-                                }`}
-                              >
-                                <div
-                                  className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-200 ${
-                                    bloombergDataFeed ? "right-0.5" : "left-0.5"
-                                  }`}
-                                ></div>
-                              </button>
-                            </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
+                        >
+                          Connect
+                        </Button>
                       </div>
                     </div>
                     
                     {/* Separator line */}
-                        <div
-                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        ></div>
+                    <div className="border-t border-[#2a2a2a]"></div>
                     
                     {/* Regulatory Notices */}
                     <div className="p-3">
@@ -3521,13 +676,14 @@ It would also be helpful if you described:
                           <div>
                             <div className="text-[#f9fafb] font-medium text-xs">Regulatory Notices</div>
                             <div className="text-[10px] text-[#a1a1aa]">
-                              Key compliance updates
+                              Important updates and compliance notifications
                             </div>
                           </div>
                         </div>
                         <Button
+                          variant="outline"
                           size="sm"
-                          className={dashboardCtaBtnClass}
+                          className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
                         >
                           Connect
                         </Button>
@@ -3537,1065 +693,176 @@ It would also be helpful if you described:
                 </Card>
 
                 {/* Sixth tile: Assign Reviewers */}
-                <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                   <CardContent className="p-4 text-center">
                     <h3 className="text-[#f9fafb] font-medium mb-1.5 text-xs">Assign Reviewers</h3>
                     <p className="text-[10px] text-[#a1a1aa] mb-2.5">
-                      Invite oversight to review monitoring outputs.
+                      Ensure independent oversight of monitoring outputs.
                     </p>
                     <Button
-                      className={dashboardCtaBtnClass}
+                      variant="outline"
+                      className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
                     >
                       Invite Your Team
                     </Button>
                   </CardContent>
                 </Card>
-              </div>
-            )}
-            
-            {/* Latest Experiments Panel */}
-            {activeSidebarItem === "overview" && (
-              <div className="space-y-3 max-w-2xl mt-6">
-                <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                  <CardContent className="p-4">
-                    <h3 className="text-sm font-medium text-[#f9fafb] mb-3">Latest Experiments</h3>
-                    <div className="space-y-2">
-                      <div className="text-xs text-[#a1a1aa]">
-                        Recent analysis runs and findings
-                      </div>
-                      <div className="text-xs text-[#a1a1aa]">
-                        <a href="/api/experiments" className="text-blue-400 hover:text-blue-300">
-                          View Experiments API
-                        </a>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            )}
-            
-            {/* Configuration Page */}
-            {activeSidebarItem === "configuration" && (
-              <div className="space-y-6 max-w-2xl">
-                {/* Pricing Analysis Settings Section */}
-                <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                  <CardContent className="p-0">
-                    {/* Section Header */}
-                    <div className="px-4 py-3 border-b border-[#2a2a2a]">
-                          <h2 className="text-sm font-medium text-[#f9fafb]">Coordination Analysis Settings</h2>
-                    </div>
-                    {/* Configuration Item 1 */}
-                    <div className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                              <div className="flex items-start gap-2">
-                                <Activity className="w-4 h-4 text-[#a1a1aa] self-center" />
-                                <div>
-                                  <div className="text-xs font-medium text-[#f9fafb]">
-                                    Automatically Detect Market Changes
-                          </div>
-                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    Auto-detect significant market shifts
-                                  </div>
-                                </div>
-                              </div>
-                        </div>
-                        <div className="ml-4">
-                          <button 
-                            onClick={() => setAutoDetectMarketChanges(!autoDetectMarketChanges)}
-                            className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
-                                  autoDetectMarketChanges ? "bg-[#86a789]" : "bg-[#374151]"
-                                }`}
-                              >
-                                <div
-                                  className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-200 ${
-                                    autoDetectMarketChanges ? "right-0.5" : "left-0.5"
-                                  }`}
-                                ></div>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Horizontal Divider */}
-                        <div
-                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        ></div>
-                    
-                    {/* Configuration Item 2 */}
-                    <div className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                              <div className="flex items-start gap-2">
-                                <TrendingUp className="w-4 h-4 text-[#a1a1aa] self-center" />
-                                <div>
-                                  <div className="text-xs font-medium text-[#f9fafb]">Price Change Threshold</div>
-                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    Trigger level for analysis
-                          </div>
-                        </div>
-                              </div>
-                            </div>
-                            <div className="ml-4 relative">
-                              <select
-                            value={changeThreshold}
-                            onChange={(e) => setChangeThreshold(e.target.value)}
-                                className="bg-bg-tile border border-[#2a2a2a] rounded-md px-3 py-1.5 text-xs text-[#f9fafb] cursor-pointer hover:bg-[#2a2a2a] focus:border-[#60a5fa] focus:outline-none focus:ring-1 focus:ring-[#60a5fa] transition-colors duration-200 appearance-none pr-8"
-                              >
-                                <option value="5%">5%</option>
-                                <option value="10%">10%</option>
-                                <option value="15%">15%</option>
-                                <option value="20%">20%</option>
-                                <option value="25%">25%</option>
-                              </select>
-                              <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-3 h-3 text-[#71717a] pointer-events-none" />
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Horizontal Divider */}
-                        <div
-                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        ></div>
-                    
-                    {/* Configuration Item 3 */}
-                    <div className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                              <div className="flex items-start gap-2">
-                                <BarChart3 className="w-4 h-4 text-[#a1a1aa] self-center" />
-                                <div>
-                            <div className="text-xs font-medium text-[#f9fafb]">Confidence Level</div>
-                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    Confidence required for alerts
-                          </div>
-                        </div>
-                              </div>
-                            </div>
-                            <div className="ml-4 relative">
-                              <select
-                            value={confidenceLevel}
-                            onChange={(e) => setConfidenceLevel(e.target.value)}
-                                className="w-20 h-8 bg-bg-tile border border-[#2a2a2a] rounded text-xs text-[#f9fafb] text-center appearance-none cursor-pointer hover:bg-[#2a2a2a] transition-colors duration-200 pr-6"
-                              >
-                                <option value="95%">95%</option>
-                                <option value="90%">90%</option>
-                                <option value="85%">85%</option>
-                                <option value="80%">80%</option>
-                                <option value="75%">75%</option>
-                                <option value="70%">70%</option>
-                              </select>
-                              <ChevronDown className="absolute right-1 top-1/2 transform -translate-y-1/2 w-3 h-3 text-[#a1a1aa] pointer-events-none" />
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Monitoring Engine Settings Section */}
-                <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                  <CardContent className="p-0">
-                    {/* Section Header */}
-                    <div className="px-4 py-3 border-b border-[#2a2a2a]">
-                      <h2 className="text-sm font-medium text-[#f9fafb]">Monitoring Engine Settings</h2>
-                    </div>
-                    {/* Configuration Item 1 */}
-                    <div className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                              <div className="flex items-start gap-2">
-                                <Zap className="w-4 h-4 text-[#a1a1aa] self-center" />
-                                <div>
-                            <div className="text-xs font-medium text-[#f9fafb]">Enable Live Monitoring</div>
-                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    Real-time risk analysis
-                          </div>
-                                </div>
-                              </div>
-                        </div>
-                        <div className="ml-4">
-                          <button 
-                            onClick={() => setEnableLiveMonitoring(!enableLiveMonitoring)}
-                            className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
-                                  enableLiveMonitoring ? "bg-[#86a789]" : "bg-[#374151]"
-                                }`}
-                              >
-                                <div
-                                  className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-200 ${
-                                    enableLiveMonitoring ? "right-0.5" : "left-0.5"
-                                  }`}
-                                ></div>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Horizontal Divider */}
-                        <div
-                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        ></div>
-                    
-                    {/* Configuration Item 2 */}
-                    <div className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                              <div className="flex items-start gap-2">
-                                <Clock className="w-4 h-4 text-[#a1a1aa] self-center" />
-                                <div>
-                            <div className="text-xs font-medium text-[#f9fafb]">Update Frequency</div>
-                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">Analysis interval</div>
-                          </div>
-                        </div>
-                            </div>
-                            <div className="ml-4 relative">
-                              <select
-                            value={updateFrequency}
-                            onChange={(e) => setUpdateFrequency(e.target.value)}
-                                className="w-20 h-8 bg-bg-tile border border-[#2a2a2a] rounded text-xs text-[#f9fafb] text-center appearance-none cursor-pointer hover:bg-[#2a2a2a] transition-colors duration-200 pr-6"
-                              >
-                                <option value="1m">1m</option>
-                                <option value="5m">5m</option>
-                                <option value="10m">10m</option>
-                                <option value="15m">15m</option>
-                                <option value="30m">30m</option>
-                                <option value="1h">1h</option>
-                              </select>
-                              <ChevronDown className="absolute right-1 top-1/2 transform -translate-y-1/2 w-3 h-3 text-[#a1a1aa] pointer-events-none" />
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Horizontal Divider */}
-                        <div
-                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        ></div>
-                    
-                    {/* Configuration Item 3 */}
-                    <div className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                              <div className="flex items-start gap-2">
-                                <Settings className="w-4 h-4 text-[#a1a1aa] self-center" />
-                                <div>
-                            <div className="text-xs font-medium text-[#f9fafb]">Sensitivity Level</div>
-                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    Detection sensitivity
-                          </div>
-                        </div>
-                              </div>
-                            </div>
-                            <div className="ml-4 relative">
-                              <select
-                            value={sensitivityLevel}
-                            onChange={(e) => setSensitivityLevel(e.target.value)}
-                                className="w-20 h-8 bg-bg-tile border border-[#2a2a2a] rounded text-xs text-[#f9fafb] text-center appearance-none cursor-pointer hover:bg-[#2a2a2a] transition-colors duration-200 pr-6"
-                              >
-                                <option value="Low">Low</option>
-                                <option value="Medium">Medium</option>
-                                <option value="High">High</option>
-                              </select>
-                              <ChevronDown className="absolute right-1 top-1/2 transform -translate-y-1/2 w-3 h-3 text-[#a1a1aa] pointer-events-none" />
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Data Quality Controls Section */}
-                <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                  <CardContent className="p-0">
-                    {/* Section Header */}
-                    <div className="px-4 py-3 border-b border-[#2a2a2a]">
-                      <h2 className="text-sm font-medium text-[#f9fafb]">Data Quality Controls</h2>
-                    </div>
-                    {/* Configuration Item 1 */}
-                    <div className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                              <div className="flex items-start gap-2">
-                                <ShieldCheck className="w-4 h-4 text-[#a1a1aa] self-center" />
-                                <div>
-                            <div className="text-xs font-medium text-[#f9fafb]">Check Data Quality</div>
-                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    Validate accuracy and consistency
-                          </div>
-                                </div>
-                              </div>
-                        </div>
-                        <div className="ml-4">
-                          <button 
-                            onClick={() => setCheckDataQuality(!checkDataQuality)}
-                            className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
-                                  checkDataQuality ? "bg-[#86a789]" : "bg-[#374151]"
-                                }`}
-                              >
-                                <div
-                                  className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-200 ${
-                                    checkDataQuality ? "right-0.5" : "left-0.5"
-                                  }`}
-                                ></div>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Horizontal Divider */}
-                        <div
-                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        ></div>
-                    
-                    {/* Configuration Item 2 */}
-                    <div className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                              <div className="flex items-start gap-2">
-                                <Clock className="w-4 h-4 text-[#a1a1aa] self-center" />
-                                <div>
-                            <div className="text-xs font-medium text-[#f9fafb]">Max Data Age</div>
-                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    Max age before backup
-                          </div>
-                        </div>
-                              </div>
-                            </div>
-                            <div className="ml-4 relative">
-                              <select
-                            value={maxDataAge}
-                            onChange={(e) => setMaxDataAge(e.target.value)}
-                                className="w-20 h-8 bg-bg-tile border border-[#2a2a2a] rounded text-xs text-[#f9fafb] text-center appearance-none cursor-pointer hover:bg-[#2a2a2a] transition-colors duration-200 pr-6"
-                              >
-                                <option value="10m">10m</option>
-                                <option value="30m">30m</option>
-                                <option value="1h">1h</option>
-                                <option value="24h">24h</option>
-                              </select>
-                              <ChevronDown className="absolute right-1 top-1/2 transform -translate-y-1/2 w-3 h-3 text-[#a1a1aa] pointer-events-none" />
-                            </div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
                   </div>
                 )}
-                {/* Data Sources Page */}
-                {activeSidebarItem === "data-sources" && (
-                  <div className="space-y-6">
-                    {/* Connect Your Data */}
-                    <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                      <CardContent className="p-0">
-                        {/* Section Header */}
-                        <div className="px-4 py-3 border-b border-[#2a2a2a]">
-                          <h2 className="text-sm font-medium text-[#f9fafb]">Connect Your Data</h2>
-                        </div>
-                        {/* Configuration Items */}
-                        <div className="p-4">
-                          <div className="flex items-center justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-start gap-2">
-                                <Upload className="w-4 h-4 text-[#a1a1aa] self-center" />
-                                <div>
-                                  <div className="text-xs font-medium text-[#f9fafb]">File Upload</div>
-                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    CSV, JSON, Parquet files • Up to 100MB
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <Button
-                              size="sm"
-                              className={dashboardCtaBtnClass}
-                            >
-                              Connect
-                            </Button>
-                          </div>
-                        </div>
-                        <div
-                          className="px-4 py-3 border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-start gap-2">
-                                <Zap className="w-4 h-4 text-[#a1a1aa] self-center" />
-                                <div>
-                                  <div className="text-xs font-medium text-[#f9fafb]">API Integration</div>
-                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    Real-time pricing feeds • REST/GraphQL
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <Button
-                              size="sm"
-                              className={dashboardCtaBtnClass}
-                            >
-                              Connect
-                            </Button>
-                          </div>
-                        </div>
-                        <div
-                          className="px-4 py-3 border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-start gap-2">
-                                <Database className="w-4 h-4 text-[#a1a1aa] self-center" />
-                                <div>
-                                  <div className="text-xs font-medium text-[#f9fafb]">Database Connection</div>
-                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    PostgreSQL, MongoDB • Direct connection
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <Button
-                              size="sm"
-                              className={dashboardCtaBtnClass}
-                            >
-                              Connect
-                            </Button>
-                          </div>
-                        </div>
-                        <div
-                          className="px-4 py-3 border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-start gap-2">
-                                <Cloud className="w-4 h-4 text-[#a1a1aa] self-center" />
-                                <div>
-                                  <div className="text-xs font-medium text-[#f9fafb]">Cloud Storage</div>
-                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    S3, Azure Blob • Automated sync
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <Button
-                              size="sm"
-                              className={dashboardCtaBtnClass}
-                            >
-                              Connect
-                            </Button>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
 
-                    {/* API Keys */}
-                    <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                      <CardContent className="p-4">
-                        <h3 className="text-xs font-medium text-[#f9fafb] mb-3">API Keys</h3>
-                        <div className="space-y-2">
-                          <button className="w-full text-left p-3 bg-bg-surface hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
-                            <div>
-                              <div className="font-medium">Generate new API key</div>
-                              <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                Create secure access tokens for data integration
-                              </div>
-                            </div>
-                            <SquarePlus className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
-                          </button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-                )}
-                {/* AI Economists Page */}
-                {activeSidebarItem === "ai-economists" && (
-                  <div className="space-y-6">
-                    {/* Quick Analysis */}
-                    <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                      <CardContent className="p-4">
-                        {/* Updated Quick Analysis header font size from text-xs to text-sm */}
-                        <h3 className="text-sm font-medium text-[#f9fafb] mb-3">Quick Analysis</h3>
-                        <div className="space-y-2">
-                          <button className="w-full text-left p-3 bg-bg-surface hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
-                            <div>
-                              <div className="font-medium">Analyze Pricing</div>
-                              <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                Identify trends and anomalies
-                              </div>
-                            </div>
-                            <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
-                          </button>
-                          <button className="w-full text-left p-3 bg-bg-surface hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
-                            <div>
-                              <div className="font-medium">Check Compliance</div>
-                              <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                Review regulatory gaps
-                              </div>
-                            </div>
-                            <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
-                          </button>
-                          <button className="w-full text-left p-3 bg-bg-surface hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between">
-                            <div>
-                              <div className="font-medium">Generate Report</div>
-                              <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                Comprehensive analysis doc
-                              </div>
-                            </div>
-                            <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
-                          </button>
-                          <button 
-                            onClick={handleEvidenceExport}
-                            disabled={evidenceLoading}
-                            className="w-full text-left p-3 bg-bg-surface hover:bg-[#2a2a2a] rounded-lg text-xs text-[#f9fafb] transition-colors flex items-center justify-between disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            <div>
-                              <div className="font-medium">
-                                {evidenceLoading ? 'Generating...' : 'Evidence Bundle'}
-                              </div>
-                              <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                Cryptographic timestamps
-                              </div>
-                            </div>
-                            <SquareChevronRight className="w-4 h-4 text-[#a1a1aa] flex-shrink-0" />
-                          </button>
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    {/* Available Agents */}
-                    <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                      <CardContent className="p-0">
-                        {/* Section Header */}
-                        <div className="px-4 py-3 border-b border-[#2a2a2a]">
-                          <h2 className="text-sm font-medium text-[#f9fafb]">Agent Type</h2>
-                        </div>
-                        {/* Configuration Items */}
-                        <div className="p-4">
-                          <div className="flex items-center justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-start gap-2">
-                                <Brain className="w-4 h-4 text-[#a1a1aa] self-center" />
-                                <div>
-                                  <div className="text-xs font-medium text-[#f9fafb]">General Analyst</div>
-                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    Accuracy: 94.2% • Response time: 1.2s
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <button 
-                              onClick={() => setActiveAgent(activeAgent === "general" ? null : "general")}
-                              className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
-                                activeAgent === "general" ? "bg-[#86a789]" : "bg-[#374151]"
-                              }`}
-                              aria-pressed={activeAgent === "general"}
-                            >
-                              <div
-                                className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-200 ${
-                                  activeAgent === "general" ? "right-0.5" : "left-0.5"
-                                }`}
-                              ></div>
-                            </button>
-                          </div>
-                        </div>
-                        <div
-                          className="px-4 py-3 border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-start gap-2">
-                                <ScaleIcon className="w-4 h-4 text-[#a1a1aa] self-center" />
-                                <div>
-                                  <div className="text-xs font-medium text-[#f9fafb]">Competition Lawyer</div>
-                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    Accuracy: 97.8% • Response time: 2.1s
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <button 
-                              onClick={() => setActiveAgent(activeAgent === "compliance" ? null : "compliance")}
-                              className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
-                                activeAgent === "compliance" ? "bg-[#86a789]" : "bg-[#374151]"
-                              }`}
-                              aria-pressed={activeAgent === "compliance"}
-                            >
-                              <div
-                                className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-200 ${
-                                  activeAgent === "compliance" ? "right-0.5" : "left-0.5"
-                                }`}
-                              ></div>
-                            </button>
-                          </div>
-                        </div>
-                        <div
-                          className="px-4 py-3 border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-start gap-2">
-                                <TrendingUp className="w-4 h-4 text-[#a1a1aa] self-center" />
-                                <div>
-                                  <div className="text-xs font-medium text-[#f9fafb]">Pricing Economist</div>
-                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    Accuracy: 96.1% • Response time: 1.8s
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <button 
-                              onClick={() => setActiveAgent(activeAgent === "pricing" ? null : "pricing")}
-                              className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
-                                activeAgent === "pricing" ? "bg-[#86a789]" : "bg-[#374151]"
-                              }`}
-                              aria-pressed={activeAgent === "pricing"}
-                            >
-                              <div
-                                className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-200 ${
-                                  activeAgent === "pricing" ? "right-0.5" : "left-0.5"
-                                }`}
-                              ></div>
-                            </button>
-                          </div>
-                        </div>
-                        <div
-                          className="px-4 py-3 border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-start gap-2">
-                                <BarChart3 className="w-4 h-4 text-[#a1a1aa] self-center" />
-                                <div>
-                                  <div className="text-xs font-medium text-[#f9fafb]">Data Scientist</div>
-                                  <div className="text-[10px] text-[#a1a1aa] mt-0.5">
-                                    Accuracy: 95.7% • Response time: 1.5s
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <button 
-                              onClick={() => setActiveAgent(activeAgent === "data" ? null : "data")}
-                              className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
-                                activeAgent === "data" ? "bg-[#86a789]" : "bg-[#374151]"
-                              }`}
-                              aria-pressed={activeAgent === "data"}
-                            >
-                              <div
-                                className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-200 ${
-                                  activeAgent === "data" ? "right-0.5" : "left-0.5"
-                                }`}
-                              ></div>
-                            </button>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-                )}
-                {/* Health Checks Page */}
-                {activeSidebarItem === "health-checks" && (
-                  <div className="space-y-3 max-w-2xl">
-                    {/* Top tile - Copy of 2nd tile from Overview (with graph) */}
-                    <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                      <CardContent className="p-6">
-                        <div className="flex items-center justify-between mb-4">
-                          <h3 className="text-xs font-medium text-[#f9fafb]">Your System Integrity</h3>
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => setSelectedTimeframe("30d")}
-                              className={`text-xs px-2 py-1 ${selectedTimeframe === "30d" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
-                            >
-                              30d
-                            </button>
-                            <button
-                              onClick={() => setSelectedTimeframe("6m")}
-                              className={`text-xs px-2 py-1 ${selectedTimeframe === "6m" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
-                            >
-                              6m
-                            </button>
-                            <button
-                              onClick={() => setSelectedTimeframe("1y")}
-                              className={`text-xs px-2 py-1 ${selectedTimeframe === "1y" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
-                            >
-                              1y
-                            </button>
-                            <button
-                              onClick={() => setSelectedTimeframe("ytd")}
-                              className={`text-xs px-2 py-1 ${selectedTimeframe === "ytd" ? "text-[#f9fafb] bg-[#3a3a3a] rounded" : "text-[#a1a1aa] hover:text-[#f9fafb]"}`}
-                            >
-                              YTD
-                            </button>
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 mb-10">
-                          <div className="rounded-lg bg-bg-surface shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
-                            <div className="text-xl font-bold text-[#f9fafb]">84 out of 100</div>
-                            <div className="text-xs text-[#a7f3d0]">Pass</div>
-                          </div>
-                          <div className="rounded-lg bg-bg-surface/40 shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
-                            <div className="text-xl font-bold text-[#f9fafb]">67%</div>
-                            <div className="text-xs text-[#a1a1aa]">Compliance Readiness</div>
-                          </div>
-                        </div>
-
-                        <div className="h-80">
-                          <ResponsiveContainer width="100%" height="100%">
-                            <LineChart
-                              data={[
-                                {
-                                  date: "Jan 25",
-                                  "Convergence Rate": 25,
-                                  "Data Integrity": 18,
-                                  "Evidence Chain": 82,
-                                  "Runtime Stability": 81,
-                                },
-                                {
-                                  date: "Feb 25",
-                                  "Convergence Rate": 28,
-                                  "Data Integrity": 22,
-                                  "Evidence Chain": 85,
-                                  "Runtime Stability": 79,
-                                },
-                                {
-                                  date: "Mar 25",
-                                  "Convergence Rate": 32,
-                                  "Data Integrity": 25,
-                                  "Evidence Chain": 88,
-                                  "Runtime Stability": 83,
-                                },
-                                {
-                                  date: "Apr 25",
-                                  "Convergence Rate": 29,
-                                  "Data Integrity": 19,
-                                  "Evidence Chain": 84,
-                                  "Runtime Stability": 77,
-                                },
-                                {
-                                  date: "May 25",
-                                  "Convergence Rate": 35,
-                                  "Data Integrity": 28,
-                                  "Evidence Chain": 90,
-                                  "Runtime Stability": 85,
-                                },
-                                {
-                                  date: "Jun 25",
-                                  "Convergence Rate": 31,
-                                  "Data Integrity": 24,
-                                  "Evidence Chain": 87,
-                                  "Runtime Stability": 82,
-                                },
-                                {
-                                  date: "Jul 25",
-                                  "Convergence Rate": 38,
-                                  "Data Integrity": 31,
-                                  "Evidence Chain": 92,
-                                  "Runtime Stability": 88,
-                                },
-                                {
-                                  date: "Aug 25",
-                                  "Convergence Rate": 42,
-                                  "Data Integrity": 35,
-                                  "Evidence Chain": 94,
-                                  "Runtime Stability": 91,
-                                },
-                              ]}
-                              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                            >
-                              <XAxis
-                                dataKey="date"
-                                axisLine={false}
-                                tickLine={false}
-                                tick={{ fill: "#a1a1aa", fontSize: 10 }}
-                              />
-                              <YAxis
-                                axisLine={false}
-                                tickLine={false}
-                                tick={{ fill: "#a1a1aa", fontSize: 10 }}
-                                label={{
-                                  value: "System Health Score",
-                                  angle: -90,
-                                  position: "insideLeft",
-                                  style: { textAnchor: "middle", fill: "#a1a1aa", fontSize: 10 },
-                                }}
-                              />
-                              <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" opacity={0.75} />
-
-                              <Tooltip
-                                cursor={false}
-                                content={({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string }) => {
-                                  if (active && payload && payload.length) {
-                                    return (
-                                      <div className="bg-black border border-[#1a1a1a] rounded-lg p-3 shadow-2xl shadow-black/50">
-                                        <p className="text-[#a1a1aa] text-[10px] mb-1.5">{label}</p>
-                                        {payload.map((entry: any, index: number) => (
-                                          <div key={index} className="flex items-center gap-2 text-[9px]">
-                                            <div
-                                              className="w-2 h-2 rounded-full"
-                                              style={{ backgroundColor: entry.color }}
-                                            />
-                                            <span className="text-[#f9fafb] font-semibold">
-                                              {entry.name}: <span className="font-bold">{entry.value}/100</span>
-                                            </span>
-                        </div>
-                                        ))}
-                      </div>
-                                    )
-                                  }
-                                  return null
-                                }}
-                              />
-                              <Line
-                                type="monotone"
-                                dataKey="Convergence Rate"
-                                stroke="#a8b2d1"
-                                strokeWidth={2}
-                                dot={{ fill: "#a8b2d1", strokeWidth: 0, r: 3 }}
-                                activeDot={{ r: 4, stroke: "#a8b2d1", strokeWidth: 2, fill: "#0f0f10" }}
-                              />
-                              <Line
-                                type="monotone"
-                                dataKey="Data Integrity"
-                                stroke="#b5c4a8"
-                                strokeWidth={2}
-                                dot={{ fill: "#b5c4a8", strokeWidth: 0, r: 3 }}
-                                activeDot={{ r: 4, stroke: "#b5c4a8", strokeWidth: 2, fill: "#0f0f10" }}
-                              />
-                              <Line
-                                type="monotone"
-                                dataKey="Evidence Chain"
-                                stroke="#d4a5a5"
-                                strokeWidth={2}
-                                dot={{ fill: "#d4a5a5", strokeWidth: 0, r: 3 }}
-                                activeDot={{ r: 4, stroke: "#d4a5a5", strokeWidth: 2, fill: "#0f0f10" }}
-                              />
-                              <Line
-                                type="monotone"
-                                dataKey="Runtime Stability"
-                                stroke="#a8a8b5"
-                                strokeWidth={2}
-                                dot={{ fill: "#a8a8b5", strokeWidth: 0, r: 3 }}
-                                activeDot={{ r: 4, stroke: "#a8a8b5", strokeWidth: 2, fill: "#0f0f10" }}
-                              />
-                            </LineChart>
-                          </ResponsiveContainer>
-                        </div>
-                        {/* Data source indicator */}
-                        <div className="text-[9px] text-[#71717a] mt-2 text-center">
-                          Data source: Internal Monitoring
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    {/* Bottom tile - Copy of 3rd tile from Overview (with 4 rows of content) */}
-                    <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                      <CardContent className="p-0">
-                        {/* Convergence Rate */}
-                        <div className="p-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2.5">
-                              <Target className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">Convergence Rate</div>
-                                <div className="text-[10px] text-[#a1a1aa]">
-                                  How often the model runs without errors
-                                </div>
-                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">2m ago • 45s</div>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <div className="flex items-center gap-1.5">
-                                <div className="text-[#f9fafb] font-bold text-sm">25</div>
-                                <div className="text-[#fca5a5] text-xs">✗</div>
-                              </div>
-                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Separator line */}
-                        <div
-                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        ></div>
-
-                        {/* Data Integrity */}
-                        <div className="p-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2.5">
-                              <Shield className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">Data Integrity</div>
-                                <div className="text-[10px] text-[#a1a1aa]">
-                                  Checks if market data is valid and clean
-                                </div>
-                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">5m ago • 1m 12s</div>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <div className="flex items-center gap-1.5">
-                                <div className="text-[#f9fafb] font-bold text-sm">18</div>
-                                <div className="text-[#a7f3d0] text-xs">✓</div>
-                              </div>
-                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Separator line */}
-                        <div
-                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        ></div>
-
-                        {/* Evidence Chain */}
-                        <div className="p-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2.5">
-                              <Link className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">Evidence Chain</div>
-                                <div className="text-[10px] text-[#a1a1aa]">
-                                  Ensures results are timestamped for audit
-                                </div>
-                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">30s ago • 18s</div>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <div className="flex items-center gap-1.5">
-                                <div className="text-[#f9fafb] font-bold text-sm">82</div>
-                                <div className="text-[#a7f3d0] text-xs">✓</div>
-                              </div>
-                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Separator line */}
-                        <div
-                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        ></div>
-
-                        {/* Runtime Stability */}
-                        <div className="p-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2.5">
-                              <Gauge className="w-4 h-4 text-[#a1a1aa]" />
-                              <div>
-                                <div className="text-[#f9fafb] font-medium text-xs">Runtime Stability</div>
-                                <div className="text-[10px] text-[#a1a1aa]">
-                                  Tracks run speed vs targets
-                                </div>
-                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">Updated just now</div>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <div className="flex items-center gap-1.5">
-                                <div className="text-[#f9fafb] font-bold text-sm">81</div>
-                                <div className="text-[#a7f3d0] text-xs">✓</div>
-                              </div>
-                              <div className="text-[10px] text-[#a1a1aa]">out of 100</div>
-                            </div>
-                          </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-                )}
                 {/* Events Log Page */}
                 {activeSidebarItem === "events-log" && (
                   <div className="space-y-3 max-w-2xl">
-                    {/* Simplified header with responsive layout */}
-                    <div className="bg-transparent overflow-x-hidden px-4">
-                      <div className="flex flex-wrap items-center gap-2 justify-between mb-4">
-                        {/* Right Container - Log Event Button */}
+                    {/* First shell tile with left and right containers */}
+                    <div className="bg-transparent">
+                      <div className="flex items-center justify-between mb-4">
+                        {/* Left Container - Date Range and Time Tabs */}
+                        <div className="flex items-center gap-4">
+                          {/* Date Range Button */}
+                          <Button variant="outline" size="sm" className="text-xs bg-transparent border-[#2a2a2a] text-[#f9fafb] hover:bg-[#1a1a1a]">
+                            Jan 01 - Sep 05
+                            <ChevronDown className="w-3 h-3 ml-1" />
+                          </Button>
+                          
+                          {/* Time Tabs */}
+                          <div className="flex gap-1">
+                            <Button variant="outline" size="sm" className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-[#1a1a1a] hover:text-[#f9fafb]">
+                              30d
+                            </Button>
+                            <Button variant="outline" size="sm" className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-[#1a1a1a] hover:text-[#f9fafb]">
+                              6m
+                            </Button>
+                            <Button variant="outline" size="sm" className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-[#1a1a1a] hover:text-[#f9fafb]">
+                              1y
+                            </Button>
+                            <Button variant="outline" size="sm" className="text-xs bg-[#1a1a1a] border-[#2a2a2a] text-[#f9fafb]">
+                              YTD
+                            </Button>
+                          </div>
+                        </div>
+                        
+                        {/* Right Container - Export CSV Button */}
                         <div className="flex justify-end">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="text-xs bg-transparent border-[#2a2a2a] text-[#f9fafb] hover:bg-bg-tile"
-                            onClick={() => {
-                              setActiveTab("agents")
-                              setInitialAgentMessage("")
-                              // Trigger the event logging flow
-                              setTimeout(() => {
-                                handleSendMessage("Help me log a market event")
-                              }, 100)
-                            }}
-                          >
-                            <SquarePen className="w-3 h-3 mr-1" />
-                            Log event
+                          <Button variant="outline" size="sm" className="text-xs bg-transparent border-[#2a2a2a] text-[#f9fafb] hover:bg-[#1a1a1a]">
+                            <Download className="w-3 h-3 mr-1" />
+                            Export CSV
                           </Button>
                         </div>
                       </div>
                     </div>
 
-                    <EventsTable 
-                      timeframe={selectedTimeframe}
-                      region="US"
-                      industry="CRYPTO"
-                      onLogEvent={() => {
-                        setActiveTab("agents")
-                        setInitialAgentMessage("")
-                        // Trigger the event logging flow
-                        setTimeout(() => {
-                          handleSendMessage("Help me log a market event")
-                        }, 100)
-                      }}
-                    />
-                  </div>
-                )}
-
-                {/* Billing Page */}
-                {activeSidebarItem === "billing" && (
-                  <div className="space-y-6 max-w-4xl">
-                    <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                      <CardContent className="p-6">
+                    {/* Option 3: Text Labels Metrics Tile */}
+                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                      <CardContent className="p-0">
                         {/* Title Section */}
-                        <div className="mb-4">
-                          <h3 className="text-xs font-medium text-[#f9fafb]">Your Invoice</h3>
+                        <div className="px-4 py-3 border-b border-[#2a2a2a]">
+                          <h2 className="text-sm font-medium text-[#f9fafb]">All Events</h2>
                         </div>
-
-                        {/* Left and Right Containers */}
-                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 mb-10">
-                          {/* Left Container - Pricing Info */}
-                          <div className="rounded-lg bg-bg-surface shadow-[0_1px_0_rgba(0,0,0,0.10)] p-3">
-                            <div className="text-xl font-bold text-[#f9fafb]">US$ 0.00</div>
-                            <div className="text-xs text-[#a1a1aa]">September 2025</div>
+                        
+                        {/* Event Status 1 */}
+                        <div className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2.5">
+                              <CalendarCheck2 className="w-4 h-4 text-[#a1a1aa]" />
+                              <div>
+                                <div className="text-[#f9fafb] font-medium text-xs">ZAR depreciates 1.9%</div>
+                                <div className="text-[10px] text-[#a1a1aa]">Broad CDS widening; sensitivity ↑ to 84</div>
+                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">2m ago • 45s</div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="flex items-center gap-1.5">
+                                <div className="text-[#f9fafb] font-bold text-sm">66 out of 100</div>
+                              </div>
+                              <div className="text-[10px] text-[#fca5a5]">High Risk</div>
+                            </div>
                           </div>
-                          {/* Right Container - Empty and Transparent */}
-                          <div className="rounded-lg bg-transparent p-3"></div>
                         </div>
-
-                        {/* General Content Area - Table Content */}
-                        <div className="overflow-hidden">
-                          <table className="w-full">
-                            <thead>
-                              <tr className="border-b border-[#2a2a2a]/70">
-                                <th className="text-left text-xs text-[#a1a1aa] font-medium pb-3">Type</th>
-                                <th className="text-right text-xs text-[#a1a1aa] font-medium pb-3">Cost</th>
-                                <th className="text-right text-xs text-[#a1a1aa] font-medium pb-3">Qty</th>
-                                <th className="text-right text-xs text-[#a1a1aa] font-medium pb-3">Total</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr className="border-b border-[#2a2a2a]/70">
-                                <td className="py-3 text-xs text-[#f9fafb]">Subtotal:</td>
-                                <td className="text-right text-xs text-[#f9fafb] py-3"></td>
-                                <td className="text-right text-xs text-[#f9fafb] py-3"></td>
-                                <td className="text-right text-xs text-[#f9fafb] py-3">US$0.00</td>
-                              </tr>
-                            </tbody>
-                          </table>
+                        
+                        {/* Separator line */}
+                        <div className="border-t border-[#2a2a2a]/70 border-opacity-70" style={{borderTopWidth: '0.5px'}}></div>
+                        
+                        {/* Event Status 2 */}
+                        <div className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2.5">
+                              <CalendarCheck2 className="w-4 h-4 text-[#a1a1aa]" />
+                              <div>
+                                <div className="text-[#f9fafb] font-medium text-xs">SARB guidance unchanged</div>
+                                <div className="text-[10px] text-[#a1a1aa]">No regime break detected</div>
+                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">1m ago • 32s</div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="flex items-center gap-1.5">
+                                <div className="text-[#f9fafb] font-bold text-sm">43 out of 100</div>
+                              </div>
+                              <div className="text-[10px] text-[#a7f3d0]">Low Risk</div>
+                            </div>
+                          </div>
                         </div>
-
-                        <div className="mt-6 text-center text-[10px] text-[#a1a1aa]">
-                          No invoices found for September 2025
+                        
+                        {/* Separator line */}
+                        <div className="border-t border-[#2a2a2a]/70 border-opacity-70" style={{borderTopWidth: '0.5px'}}></div>
+                        
+                        {/* Event Status 3 */}
+                        <div className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2.5">
+                              <CalendarCheck2 className="w-4 h-4 text-[#a1a1aa]" />
+                              <div>
+                                <div className="text-[#f9fafb] font-medium text-xs">Sovereign outlook stable</div>
+                                <div className="text-[10px] text-[#a1a1aa]">Idiosyncratic responses across banks</div>
+                                <div className="text-[9px] text-[#a1a1aa] mt-0.5">30s ago • 18s</div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="flex items-center gap-1.5">
+                                <div className="text-[#f9fafb] font-bold text-sm">18 out of 100</div>
+                              </div>
+                              <div className="text-[10px] text-[#fbbf24]">Medium Risk</div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Pagination Footer */}
+                        <div className="px-4 py-3 border-t border-[#2a2a2a]">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-4 text-[10px] text-[#a1a1aa]">
+                              <span>Showing 1 - 3 of 3 events</span>
+                              <div className="flex items-center gap-2">
+                                <span>Rows per page:</span>
+                                <select className="bg-transparent border border-[#2a2a2a] rounded px-2 py-1 text-[#f9fafb] text-[10px]">
+                                  <option value="100">100</option>
+                                </select>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2 text-[10px] text-[#a1a1aa]">
+                              <span>Page 1 of 1</span>
+                              <div className="flex gap-1">
+                                <button className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50" disabled>
+                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                                  </svg>
+                                </button>
+                                <button className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50" disabled>
+                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                                  </svg>
+                                </button>
+                                <button className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50" disabled>
+                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                  </svg>
+                                </button>
+                                <button className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50" disabled>
+                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                                  </svg>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
@@ -4605,77 +872,52 @@ It would also be helpful if you described:
                 {/* Compliance Reports Page */}
                 {activeSidebarItem === "compliance" && (
                   <div className="space-y-3 max-w-2xl">
-                    {/* Simplified header with mobile-responsive layout */}
+                    {/* First shell tile with left and right containers */}
                     <div className="bg-transparent">
                       <div className="flex items-center justify-between mb-4">
-                        {/* Date Range and Time Tabs - Hidden on mobile */}
-                        <div className="hidden md:flex items-center gap-4 report-filters">
+                        {/* Left Container - Date Range and Time Tabs */}
+                        <div className="flex items-center gap-4">
                           {/* Date Range Button */}
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="text-xs bg-transparent border-[#2a2a2a] text-[#f9fafb] hover:bg-bg-tile"
-                          >
+                          <Button variant="outline" size="sm" className="text-xs bg-transparent border-[#2a2a2a] text-[#f9fafb] hover:bg-[#1a1a1a]">
                             Jan 01 - Sep 05
                             <ChevronDown className="w-3 h-3 ml-1" />
                           </Button>
-
+                          
                           {/* Time Tabs */}
                           <div className="flex gap-1">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-bg-tile hover:text-[#f9fafb]"
-                            >
+                            <Button variant="outline" size="sm" className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-[#1a1a1a] hover:text-[#f9fafb]">
                               30d
                             </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-bg-tile hover:text-[#f9fafb]"
-                            >
+                            <Button variant="outline" size="sm" className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-[#1a1a1a] hover:text-[#f9fafb]">
                               6m
                             </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-bg-tile hover:text-[#f9fafb]"
-                            >
+                            <Button variant="outline" size="sm" className="text-xs bg-transparent border-[#2a2a2a] text-[#a1a1aa] hover:bg-[#1a1a1a] hover:text-[#f9fafb]">
                               1y
                             </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="text-xs bg-bg-tile border-[#2a2a2a] text-[#f9fafb]"
-                            >
+                            <Button variant="outline" size="sm" className="text-xs bg-[#1a1a1a] border-[#2a2a2a] text-[#f9fafb]">
                               YTD
                             </Button>
                           </div>
                         </div>
-
-                        {/* Export ZIP Button - Always visible, right-aligned */}
-                        <div className="flex justify-end ml-auto min-w-max">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="text-xs bg-transparent border-[#2a2a2a] text-[#f9fafb] hover:bg-bg-tile"
-                            onClick={handleEvidenceExport}
-                            disabled={evidenceLoading}
-                          >
+                        
+                        {/* Right Container - Export ZIP Button */}
+                        <div className="flex justify-end">
+                          <Button variant="outline" size="sm" className="text-xs bg-transparent border-[#2a2a2a] text-[#f9fafb] hover:bg-[#1a1a1a]">
                             <Download className="w-3 h-3 mr-1" />
-                            {evidenceLoading ? 'Generating...' : 'Export ZIP'}
+                            Export ZIP
                           </Button>
                         </div>
                       </div>
                     </div>
 
-                    <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                    {/* Option 3: Text Labels Metrics Tile */}
+                    <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
                       <CardContent className="p-0">
                         {/* Title Section */}
                         <div className="px-4 py-3 border-b border-[#2a2a2a]">
                           <h2 className="text-sm font-medium text-[#f9fafb]">All Reports</h2>
                         </div>
-
+                        
                         {/* Event Status 1 */}
                         <div className="p-3">
                           <div className="flex items-center justify-between">
@@ -4683,13 +925,7 @@ It would also be helpful if you described:
                               <ShieldCheck className="w-4 h-4 text-[#a1a1aa]" />
                               <div>
                                 <div className="text-[#f9fafb] font-medium text-xs">Monthly Compliance Report</div>
-                                <div 
-                                  className="text-[10px] text-[#a1a1aa]"
-                                  title="Healthy: 3 instances of competitive adaptation to regime breaks"
-                                  aria-label="Healthy: 3 instances of competitive adaptation to regime breaks"
-                                >
-                                  {truncateText("Healthy: 3 instances of competitive adaptation to regime breaks")}
-                                </div>
+                                <div className="text-[10px] text-[#a1a1aa]">Healthy: 3 instances of competitive adaptation to regime breaks</div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">2m ago • 45s</div>
                               </div>
                             </div>
@@ -4697,20 +933,17 @@ It would also be helpful if you described:
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className={dashboardCtaBtnClass}
+                                className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
                               >
                                 Download
                               </Button>
                             </div>
                           </div>
                         </div>
-
+                        
                         {/* Separator line */}
-                        <div
-                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        ></div>
-
+                        <div className="border-t border-[#2a2a2a]/70 border-opacity-70" style={{borderTopWidth: '0.5px'}}></div>
+                        
                         {/* Event Status 2 */}
                         <div className="p-3">
                           <div className="flex items-center justify-between">
@@ -4718,13 +951,7 @@ It would also be helpful if you described:
                               <Moon className="w-4 h-4 text-[#a1a1aa]" />
                               <div>
                                 <div className="text-[#f9fafb] font-medium text-xs">Nightly Competitive Assessment</div>
-                                <div 
-                                  className="text-[10px] text-[#a1a1aa]"
-                                  title="Spread Dispersion of 17 bps, ↑ +15% in 24 hrs"
-                                  aria-label="Spread Dispersion of 17 bps, ↑ +15% in 24 hrs"
-                                >
-                                  {truncateText("Spread Dispersion of 17 bps, ↑ +15% in 24 hrs")}
-                                </div>
+                                <div className="text-[10px] text-[#a1a1aa]">Spread Dispersion of 17 bps, ↑ +15% in 24 hrs</div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">1m ago • 32s</div>
                               </div>
                             </div>
@@ -4732,20 +959,17 @@ It would also be helpful if you described:
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className={dashboardCtaBtnClass}
+                                className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
                               >
                                 Download
                               </Button>
                             </div>
                           </div>
                         </div>
-
+                        
                         {/* Separator line */}
-                        <div
-                          className="border-t border-[#2a2a2a]/70 border-opacity-70"
-                          style={{ borderTopWidth: "0.5px" }}
-                        ></div>
-
+                        <div className="border-t border-[#2a2a2a]/70 border-opacity-70" style={{borderTopWidth: '0.5px'}}></div>
+                        
                         {/* Event Status 3 */}
                         <div className="p-3">
                           <div className="flex items-center justify-between">
@@ -4753,13 +977,7 @@ It would also be helpful if you described:
                               <Scale className="w-4 h-4 text-[#a1a1aa]" />
                               <div>
                                 <div className="text-[#f9fafb] font-medium text-xs">Quarterly Evidence Bundle</div>
-                                <div 
-                                  className="text-[10px] text-[#a1a1aa]"
-                                  title="96.8% statistical confidence over 18-month view"
-                                  aria-label="96.8% statistical confidence over 18-month view"
-                                >
-                                  {truncateText("96.8% statistical confidence over 18-month view")}
-                                </div>
+                                <div className="text-[10px] text-[#a1a1aa]">96.8% statistical confidence over 18-month view</div>
                                 <div className="text-[9px] text-[#a1a1aa] mt-0.5">30s ago • 18s</div>
                               </div>
                             </div>
@@ -4767,28 +985,49 @@ It would also be helpful if you described:
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className={dashboardCtaBtnClass}
+                                className="border-[#2563eb] text-[#ffffff] bg-[#2563eb] hover:bg-[#1d4ed8] text-[10px] h-6"
                               >
                                 Download
                               </Button>
                             </div>
                           </div>
                         </div>
-
-                        {/* Pagination Info */}
+                        
+                        {/* Pagination Footer */}
                         <div className="px-4 py-3 border-t border-[#2a2a2a]">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-4 text-[10px] text-[#a1a1aa]">
-                              <span>Showing 1 – 3 of 3 reports</span>
+                              <span>Showing 1 - 3 of 3 events</span>
                               <div className="flex items-center gap-2">
                                 <span>Rows per page:</span>
-                                <select 
-                                  className="bg-transparent border border-[#2a2a2a] rounded px-2 py-1 text-[#f9fafb] text-[10px]"
-                                  aria-label="Rows per page"
-                                >
-                                  <option value="50">50</option>
+                                <select className="bg-transparent border border-[#2a2a2a] rounded px-2 py-1 text-[#f9fafb] text-[10px]">
                                   <option value="100">100</option>
                                 </select>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2 text-[10px] text-[#a1a1aa]">
+                              <span>Page 1 of 1</span>
+                              <div className="flex gap-1">
+                                <button className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50" disabled>
+                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                                  </svg>
+                                </button>
+                                <button className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50" disabled>
+                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                                  </svg>
+                                </button>
+                                <button className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50" disabled>
+                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                  </svg>
+                                </button>
+                                <button className="p-1 text-[#a1a1aa] hover:text-[#f9fafb] disabled:opacity-50" disabled>
+                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                                  </svg>
+                                </button>
                               </div>
                             </div>
                           </div>
@@ -4798,77 +1037,257 @@ It would also be helpful if you described:
                   </div>
                 )}
 
-                {/* Contact Us Page */}
-                {activeSidebarItem === "contact" && (
-                  <div className="space-y-3 max-w-2xl">
-                    <Card className="bg-bg-tile border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
-                      <CardContent className="p-4">
-                        <h2 className="text-sm font-medium text-[#f9fafb] mb-2">Contact Us</h2>
-                        <p className="text-xs text-[#a1a1aa] leading-relaxed">
-                          For all support inquiries, including billing issues, receipts, and general assistance, please
-                          email{" "}
-                          <a href="mailto:hello@RBB.ai" className="text-[#60a5fa] hover:text-[#93c5fd] underline">
-                            hello@RBB.ai
-                          </a>
-                          .
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </div>
-                )}
+                {/* Data Sources Page */}
+                {activeSidebarItem === "data-sources" && renderShellTiles("Data Sources")}
+
+                {/* AI Economists Page */}
+                {activeSidebarItem === "ai-economists" && renderShellTiles("AI Economists")}
+
+                {/* Health Checks Page */}
+                {activeSidebarItem === "health-checks" && renderShellTiles("Health Checks")}
+
+                {/* Billing Page */}
+                {activeSidebarItem === "billing" && renderShellTiles("Billing & Invoices")}
+
+                {/* Contact Page */}
+                {activeSidebarItem === "contact" && renderShellTiles("Contact Us")}
+
+                {/* Configuration Page */}
+                {activeSidebarItem === "configuration" && (
+              <div className="space-y-6 max-w-2xl">
+                {/* Pricing Analysis Settings Section */}
+                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                  <CardContent className="p-0">
+                    {/* Section Header */}
+                    <div className="px-4 py-3 border-b border-[#2a2a2a]">
+                      <h2 className="text-sm font-medium text-[#f9fafb]">Pricing Analysis Settings</h2>
+                    </div>
+                    {/* Configuration Item 1 */}
+                    <div className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <Activity className="w-4 h-4 text-[#a1a1aa]" />
+                            <div className="text-xs font-medium text-[#f9fafb]">Automatically Detect Market Changes</div>
+                          </div>
+                          <div className="text-[10px] text-[#a1a1aa] mt-0.5 ml-6">Enable automatic detection of significant market changes</div>
+                        </div>
+                        <div className="ml-4">
+                          <button 
+                            onClick={() => setAutoDetectMarketChanges(!autoDetectMarketChanges)}
+                            className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
+                              autoDetectMarketChanges ? 'bg-[#22c55e]' : 'bg-[#374151]'
+                            }`}
+                          >
+                            <div className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-200 ${
+                              autoDetectMarketChanges ? 'right-0.5' : 'left-0.5'
+                            }`}></div>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Horizontal Divider */}
+                    <div className="border-t border-[#2a2a2a]/70 border-opacity-70" style={{borderTopWidth: '0.5px'}}></div>
+                    
+                    {/* Configuration Item 2 */}
+                    <div className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <TrendingUp className="w-4 h-4 text-[#a1a1aa]" />
+                            <div className="text-xs font-medium text-[#f9fafb]">Change Threshold</div>
+                          </div>
+                          <div className="text-[10px] text-[#a1a1aa] mt-0.5 ml-6">Minimum change required to trigger analysis</div>
+                        </div>
+                        <div className="ml-4">
+                          <input
+                            type="text"
+                            value={changeThreshold}
+                            onChange={(e) => setChangeThreshold(e.target.value)}
+                            className="w-20 h-8 bg-[#0f0f10] border border-[#2a2a2a] rounded text-xs text-[#f9fafb] text-center focus:border-[#60a5fa] focus:outline-none focus:ring-1 focus:ring-[#60a5fa] transition-colors duration-200"
+                            placeholder="5%"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Horizontal Divider */}
+                    <div className="border-t border-[#2a2a2a]/70 border-opacity-70" style={{borderTopWidth: '0.5px'}}></div>
+                    
+                    {/* Configuration Item 3 */}
+                    <div className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <BarChart3 className="w-4 h-4 text-[#a1a1aa]" />
+                            <div className="text-xs font-medium text-[#f9fafb]">Confidence Level</div>
+                          </div>
+                          <div className="text-[10px] text-[#a1a1aa] mt-0.5 ml-6">Statistical confidence required for alerts</div>
+                        </div>
+                        <div className="ml-4">
+                          <input
+                            type="text"
+                            value={confidenceLevel}
+                            onChange={(e) => setConfidenceLevel(e.target.value)}
+                            className="w-20 h-8 bg-[#0f0f10] border border-[#2a2a2a] rounded text-xs text-[#f9fafb] text-center focus:border-[#60a5fa] focus:outline-none focus:ring-1 focus:ring-[#60a5fa] transition-colors duration-200"
+                            placeholder="95%"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Monitoring Engine Settings Section */}
+                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                  <CardContent className="p-0">
+                    {/* Section Header */}
+                    <div className="px-4 py-3 border-b border-[#2a2a2a]">
+                      <h2 className="text-sm font-medium text-[#f9fafb]">Monitoring Engine Settings</h2>
+                    </div>
+                    {/* Configuration Item 1 */}
+                    <div className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <Zap className="w-4 h-4 text-[#a1a1aa]" />
+                            <div className="text-xs font-medium text-[#f9fafb]">Enable Live Monitoring</div>
+                          </div>
+                          <div className="text-[10px] text-[#a1a1aa] mt-0.5 ml-6">Real-time analysis and risk assessment</div>
+                        </div>
+                        <div className="ml-4">
+                          <button 
+                            onClick={() => setEnableLiveMonitoring(!enableLiveMonitoring)}
+                            className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
+                              enableLiveMonitoring ? 'bg-[#22c55e]' : 'bg-[#374151]'
+                            }`}
+                          >
+                            <div className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-200 ${
+                              enableLiveMonitoring ? 'right-0.5' : 'left-0.5'
+                            }`}></div>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Horizontal Divider */}
+                    <div className="border-t border-[#2a2a2a]/70 border-opacity-70" style={{borderTopWidth: '0.5px'}}></div>
+                    
+                    {/* Configuration Item 2 */}
+                    <div className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <Clock className="w-4 h-4 text-[#a1a1aa]" />
+                            <div className="text-xs font-medium text-[#f9fafb]">Update Frequency</div>
+                          </div>
+                          <div className="text-[10px] text-[#a1a1aa] mt-0.5 ml-6">How often to run analysis</div>
+                        </div>
+                        <div className="ml-4">
+                          <input
+                            type="text"
+                            value={updateFrequency}
+                            onChange={(e) => setUpdateFrequency(e.target.value)}
+                            className="w-20 h-8 bg-[#0f0f10] border border-[#2a2a2a] rounded text-xs text-[#f9fafb] text-center focus:border-[#60a5fa] focus:outline-none focus:ring-1 focus:ring-[#60a5fa] transition-colors duration-200"
+                            placeholder="5m"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Horizontal Divider */}
+                    <div className="border-t border-[#2a2a2a]/70 border-opacity-70" style={{borderTopWidth: '0.5px'}}></div>
+                    
+                    {/* Configuration Item 3 */}
+                    <div className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <Settings className="w-4 h-4 text-[#a1a1aa]" />
+                            <div className="text-xs font-medium text-[#f9fafb]">Sensitivity Level</div>
+                          </div>
+                          <div className="text-[10px] text-[#a1a1aa] mt-0.5 ml-6">How sensitive the detection should be</div>
+                        </div>
+                        <div className="ml-4">
+                          <input
+                            type="text"
+                            value={sensitivityLevel}
+                            onChange={(e) => setSensitivityLevel(e.target.value)}
+                            className="w-20 h-8 bg-[#0f0f10] border border-[#2a2a2a] rounded text-xs text-[#f9fafb] text-center focus:border-[#60a5fa] focus:outline-none focus:ring-1 focus:ring-[#60a5fa] transition-colors duration-200"
+                            placeholder="Medium"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Data Quality Controls Section */}
+                <Card className="bg-[#1a1a1a] border-0 shadow-[0_1px_0_rgba(0,0,0,0.20)] rounded-xl">
+                  <CardContent className="p-0">
+                    {/* Section Header */}
+                    <div className="px-4 py-3 border-b border-[#2a2a2a]">
+                      <h2 className="text-sm font-medium text-[#f9fafb]">Data Quality Controls</h2>
+                    </div>
+                    {/* Configuration Item 1 */}
+                    <div className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <ShieldCheck className="w-4 h-4 text-[#a1a1aa]" />
+                            <div className="text-xs font-medium text-[#f9fafb]">Check Data Quality</div>
+                          </div>
+                          <div className="text-[10px] text-[#a1a1aa] mt-0.5 ml-6">Validate data accuracy and consistency</div>
+                        </div>
+                        <div className="ml-4">
+                          <button 
+                            onClick={() => setCheckDataQuality(!checkDataQuality)}
+                            className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${
+                              checkDataQuality ? 'bg-[#22c55e]' : 'bg-[#374151]'
+                            }`}
+                          >
+                            <div className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-200 ${
+                              checkDataQuality ? 'right-0.5' : 'left-0.5'
+                            }`}></div>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Horizontal Divider */}
+                    <div className="border-t border-[#2a2a2a]/70 border-opacity-70" style={{borderTopWidth: '0.5px'}}></div>
+                    
+                    {/* Configuration Item 2 */}
+                    <div className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <Clock className="w-4 h-4 text-[#a1a1aa]" />
+                            <div className="text-xs font-medium text-[#f9fafb]">Max Data Age</div>
+                          </div>
+                          <div className="text-[10px] text-[#a1a1aa] mt-0.5 ml-6">Maximum age before switching to backup</div>
+                        </div>
+                        <div className="ml-4">
+                          <input
+                            type="text"
+                            value={maxDataAge}
+                            onChange={(e) => setMaxDataAge(e.target.value)}
+                            className="w-20 h-8 bg-[#0f0f10] border border-[#2a2a2a] rounded text-xs text-[#f9fafb] text-center focus:border-[#60a5fa] focus:outline-none focus:ring-1 focus:ring-[#60a5fa] transition-colors duration-200"
+                            placeholder="10m"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
               </>
             )}
           </main>
         </div>
       </div>
-
-      {/* GitHub Modal */}
-      {isGitHubModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 w-96 max-w-[90vw] shadow-xl">
-            <div className="flex items-center gap-3 mb-4">
-              <Github className="h-6 w-6 text-[#f9fafb]" />
-              <h3 className="text-lg font-medium text-[#f9fafb]">Link GitHub Repository</h3>
-            </div>
-            <p className="text-sm text-zinc-300 mb-4">
-              Enter the URL of the GitHub repository you want to connect:
-            </p>
-            <input
-              type="url"
-              value={gitHubRepoUrl}
-              onChange={(e) => setGitHubRepoUrl(e.target.value)}
-              placeholder="https://github.com/username/repository"
-              className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md text-[#f9fafb] placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#86a789] focus:border-transparent"
-              autoFocus
-            />
-            <div className="flex gap-3 mt-6 justify-end">
-              <button
-                onClick={() => {
-                  setGitHubRepoUrl("")
-                  setIsGitHubModalOpen(false)
-                }}
-                className="px-4 py-2 text-sm text-zinc-300 hover:text-[#f9fafb] border border-zinc-700 rounded-md hover:bg-zinc-800 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleGitHubConnect}
-                disabled={!gitHubRepoUrl.trim()}
-                className="px-4 py-2 text-sm bg-[#86a789] text-white rounded-md hover:bg-[#7a9a7a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                Connect
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* TEMP: preview proof */}
-      {process.env.NEXT_PUBLIC_UI_DEBUG === 'true' && (
-        <div className="fixed bottom-2 right-2 text-[10px] px-2 py-1 rounded bg-black/60 border border-zinc-700">
-          preview: {process.env.NEXT_PUBLIC_BUILD_MODE} · {process.env.NEXT_PUBLIC_DATA_MODE}
-        </div>
-      )}
 
       <style jsx>{`
         @keyframes blink {
@@ -4879,4 +1298,3 @@ It would also be helpful if you described:
     </div>
   )
 }
-

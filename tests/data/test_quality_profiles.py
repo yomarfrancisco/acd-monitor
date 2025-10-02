@@ -4,13 +4,14 @@ Unit tests for ACD Monitor quality profiles system.
 Tests quality profiles, thresholds, validation, and profile management.
 """
 
-# from unittest.mock import Mock  # noqa: F401, patch, MagicMock
+import pytest
+from unittest.mock import Mock, patch, MagicMock
 
 from acd.data.quality_profiles import (
     DataSourceType,
     QualityThresholds,
     QualityProfile,
-    # QualityProfileManager,  # noqa: F401
+    QualityProfileManager,
     create_quality_profile_manager,
 )
 

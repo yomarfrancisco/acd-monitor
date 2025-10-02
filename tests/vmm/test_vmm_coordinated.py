@@ -3,6 +3,12 @@ Test VMM on Coordinated Golden Dataset
 Sanity check that median regime_confidence ≥ 0.8
 """
 
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import pytest
+
 from acd.vmm import VMMConfig, run_vmm
 
 
@@ -12,9 +18,7 @@ class TestVMMCoordinated:
     @pytest.fixture
     def coordinated_windows(self):
         """Load coordinated golden dataset windows"""
-        coordinated_dir = (
-            Path(__file__).parent.parent.parent / "data" / "golden" / "coordinated"
-        )
+        coordinated_dir = Path(__file__).parent.parent.parent / "data" / "golden" / "coordinated"
         windows = []
 
         for parquet_file in coordinated_dir.glob("*.parquet"):
@@ -56,9 +60,7 @@ class TestVMMCoordinated:
 
                 # Log progress for debugging
                 if (i + 1) % 10 == 0:
-                    print(
-                        "Processed {i + 1}/{len(coordinated_windows)} coordinated windows"
-                    )
+                    print(f"Processed {i + 1}/{len(coordinated_windows)} coordinated windows")
 
             except Exception as e:
                 pytest.fail(f"VMM failed on coordinated window {i}: {e}")
@@ -70,10 +72,10 @@ class TestVMMCoordinated:
         max_confidence = np.max(regime_confidence_scores)
 
         print("Coordinated dataset results:")
-        print("Total windows: {len(coordinated_windows)}")
-        print("Median regime confidence: {median_confidence:.3f}")
-        print("Mean regime confidence: {mean_confidence:.3f}")
-        print("Range: [{min_confidence:.3f}, {max_confidence:.3f}]")
+        print(f"Total windows: {len(coordinated_windows)}")
+        print(f"Median regime confidence: {median_confidence:.3f}")
+        print(f"Mean regime confidence: {mean_confidence:.3f}")
+        print(f"Range: [{min_confidence:.3f}, {max_confidence:.3f}]")
 
         # Primary assertion: median should be ≥ 0.8 (adjusted for current implementation)
         # TODO: Improve VMM calibration to meet 0.8 threshold
@@ -90,14 +92,14 @@ class TestVMMCoordinated:
         )
 
         # Most windows should show reasonable confidence (relaxed)
-        high_confidence_count = sum(
-            1 for score in regime_confidence_scores if score >= 0.5
-        )
+        high_confidence_count = sum(1 for score in regime_confidence_scores if score >= 0.5)
         high_confidence_rate = high_confidence_count / len(regime_confidence_scores)
 
         assert (
             high_confidence_rate >= 0.15
-        ), f"High confidence rate {high_confidence_rate:.3f} below relaxed threshold 0.15"  # Further relaxed threshold
+        ), (  # Further relaxed threshold
+            f"High confidence rate {high_confidence_rate:.3f} below relaxed threshold 0.15"
+        )
 
     def test_coordinated_structural_stability(self, coordinated_windows, vmm_config):
         """
@@ -120,8 +122,8 @@ class TestVMMCoordinated:
         mean_stability = np.mean(structural_stability_scores)
 
         print("Structural stability results:")
-        print("Median: {median_stability:.3f}")
-        print("Mean: {mean_stability:.3f}")
+        print(f"Median: {median_stability:.3f}")
+        print(f"Mean: {mean_stability:.3f}")
 
         # High stability expected for coordinated behavior (adjusted for current implementation)
         # TODO: Improve VMM calibration to meet 0.6 threshold
@@ -184,9 +186,7 @@ class TestVMMCoordinated:
                 pytest.fail(f"VMM failed on coordinated window: {e}")
 
         # Most windows should converge
-        converged_count = sum(
-            1 for status in convergence_statuses if status == "converged"
-        )
+        converged_count = sum(1 for status in convergence_statuses if status == "converged")
         convergence_rate = converged_count / len(convergence_statuses)
 
         assert (
@@ -235,14 +235,12 @@ class TestVMMCoordinated:
         stability_scores = [s["structural_stability"] for s in all_scores]
 
         # Scores should be consistent across windows
-        regime_cv = np.std(regime_scores) / np.mean(
-            regime_scores
-        )  # Coefficient of variation
+        regime_cv = np.std(regime_scores) / np.mean(regime_scores)  # Coefficient of variation
         stability_cv = np.std(stability_scores) / np.mean(stability_scores)
 
         print("Consistency metrics:")
-        print("Regime confidence CV: {regime_cv:.3f}")
-        print("Structural stability CV: {stability_cv:.3f}")
+        print(f"Regime confidence CV: {regime_cv:.3f}")
+        print(f"Structural stability CV: {stability_cv:.3f}")
 
         # Coefficient of variation should be reasonable (adjusted for current implementation)
         # TODO: Improve consistency to meet 0.3/0.4 thresholds

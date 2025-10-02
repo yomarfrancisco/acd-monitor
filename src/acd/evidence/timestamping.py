@@ -5,18 +5,18 @@ Implements multi-service timestamping with fallback providers and circuit breake
 """
 
 import hashlib
+import json
 import logging
 import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, List, Optional
-
+from typing import Dict, List, Optional, Union
 import requests
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes, serialization
-from cryptography.hazmat.primitives.asymmetric import padding, rsa
+from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives.serialization import load_pem_private_key
 
 logger = logging.getLogger(__name__)
@@ -77,7 +77,7 @@ class TimestampChain:
         for i, response in enumerate(self.timestamp_responses):
             try:
                 # Verify TSA certificate
-                x509.load_der_x509_certificate(response.tsa_certificate)
+                cert = x509.load_der_x509_certificate(response.tsa_certificate)
 
                 # Verify signature
                 # Note: This is a simplified verification - in production,
@@ -153,6 +153,7 @@ class TSAClient(ABC):
     @abstractmethod
     def get_timestamp(self, data: bytes) -> TimestampResponse:
         """Get timestamp for the given data."""
+        pass
 
 
 class FreeTSAClient(TSAClient):
@@ -168,16 +169,13 @@ class FreeTSAClient(TSAClient):
 
         try:
             # Create timestamp request
-            request_data = {
-                "data": data.hex(),
-                "hash": hashlib.sha256(data).hexdigest(),
-            }
+            request_data = {"data": data.hex(), "hash": hashlib.sha256(data).hexdigest()}
 
             response = requests.post(self.url, json=request_data, timeout=self.timeout)
             response.raise_for_status()
 
             # Parse response (simplified for demo)
-            response.json()
+            response_data = response.json()
 
             # Create mock timestamp response for demo
             # In production, this would parse actual RFC3161 response

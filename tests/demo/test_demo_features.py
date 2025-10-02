@@ -1,6 +1,9 @@
 """Unit tests for demo pipeline feature engineering module."""
 
-# from unittest.mock import patch, MagicMock  # noqa: F401
+import pytest
+import numpy as np
+import pandas as pd
+from unittest.mock import patch, MagicMock
 
 from acd.demo.features import DemoFeatureEngineering
 
@@ -70,10 +73,7 @@ class TestDemoFeatureEngineering:
         feature_eng = DemoFeatureEngineering()
 
         test_data = pd.DataFrame(
-            {
-                "price": [100, 101, 102, 103, 104],
-                "volume": [1000, 1010, 1020, 1030, 1040],
-            }
+            {"price": [100, 101, 102, 103, 104], "volume": [1000, 1010, 1020, 1030, 1040]}
         )
 
         features = feature_eng.extract_vmm_features(test_data)
@@ -112,10 +112,7 @@ class TestDemoFeatureEngineering:
         feature_eng = DemoFeatureEngineering()
 
         test_data = pd.DataFrame(
-            {
-                "bid": [99.5, 100.5, 101.5, 102.5, 103.5],
-                "ask": [100.5, 101.5, 102.5, 103.5, 104.5],
-            }
+            {"bid": [99.5, 100.5, 101.5, 102.5, 103.5], "ask": [100.5, 101.5, 102.5, 103.5, 104.5]}
         )
 
         features = feature_eng.extract_vmm_features(test_data)
@@ -192,9 +189,7 @@ class TestDemoFeatureEngineering:
 
         features = {"price": np.array([100, 101, 102])}
 
-        with pytest.raises(
-            ValueError, match="Missing required columns for VMM analysis"
-        ):
+        with pytest.raises(ValueError, match="Missing required columns for VMM analysis"):
             feature_eng._reshape_for_vmm(test_data, features)
 
     def test_run_vmm_analysis_success(self):
@@ -202,10 +197,7 @@ class TestDemoFeatureEngineering:
         feature_eng = DemoFeatureEngineering()
 
         test_data = pd.DataFrame(
-            {
-                "firm_id": ["firm_1", "firm_2", "firm_1", "firm_2"],
-                "price": [100, 101, 102, 103],
-            }
+            {"firm_id": ["firm_1", "firm_2", "firm_1", "firm_2"], "price": [100, 101, 102, 103]}
         )
 
         # Mock successful VMM run
@@ -243,11 +235,7 @@ class TestDemoFeatureEngineering:
         feature_eng = DemoFeatureEngineering()
 
         test_data = pd.DataFrame(
-            {
-                "window_id": "test_window",
-                "firm_id": ["firm_1", "firm_2"],
-                "price": [100, 101],
-            }
+            {"window_id": "test_window", "firm_id": ["firm_1", "firm_2"], "price": [100, 101]}
         )
 
         result = feature_eng._create_dummy_vmm_result(test_data)
@@ -285,9 +273,7 @@ class TestDemoFeatureEngineering:
             "overall": 0.91,
         }
 
-        evidence_data = feature_eng.prepare_evidence_data(
-            test_data, vmm_result, quality_metrics
-        )
+        evidence_data = feature_eng.prepare_evidence_data(test_data, vmm_result, quality_metrics)
 
         # Check core identification
         assert "bundle_id" in evidence_data

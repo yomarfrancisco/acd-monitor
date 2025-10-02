@@ -4,12 +4,13 @@ Unit tests for ACD Monitor timestamping system.
 Tests TSA providers, circuit breakers, timestamp clients, and integration.
 """
 
+import pytest
 import time
+from unittest.mock import Mock, patch, MagicMock
+from datetime import datetime, timezone
+from pathlib import Path
 
-# from unittest.mock import Mock  # noqa: F401, patch, MagicMock
-from datetime import datetime, timezone  # noqa: F401
-
-from acd.evidence.timestamping import (  # noqa: F401
+from acd.evidence.timestamping import (
     TSAProvider,
     TimestampResponse,
     TimestampChain,
@@ -305,9 +306,7 @@ class TestCircuitBreaker:
 
     def test_circuit_breaker_half_open_recovery(self):
         """Test circuit breaker half-open recovery."""
-        cb = CircuitBreaker(
-            failure_threshold=3, timeout=0.1
-        )  # Short timeout for testing
+        cb = CircuitBreaker(failure_threshold=3, timeout=0.1)  # Short timeout for testing
 
         # Open circuit
         cb.state = "OPEN"
@@ -441,9 +440,7 @@ class TestTimestampClient:
 
     @patch("acd.evidence.timestamping.FreeTSAClient.get_timestamp")
     @patch("acd.evidence.timestamping.DigiCertTSAClient.get_timestamp")
-    def test_get_timestamp_fallback_to_second_provider(
-        self, mock_digicert, mock_freetsa
-    ):
+    def test_get_timestamp_fallback_to_second_provider(self, mock_digicert, mock_freetsa):
         """Test fallback to second provider when first fails."""
         # First provider fails
         mock_freetsa.side_effect = Exception("FreeTSA failed")
@@ -473,9 +470,7 @@ class TestTimestampClient:
     @patch("acd.evidence.timestamping.FreeTSAClient.get_timestamp")
     @patch("acd.evidence.timestamping.DigiCertTSAClient.get_timestamp")
     @patch("acd.evidence.timestamping.LocalTSAClient.get_timestamp")
-    def test_get_timestamp_fallback_to_local(
-        self, mock_local, mock_digicert, mock_freetsa
-    ):
+    def test_get_timestamp_fallback_to_local(self, mock_local, mock_digicert, mock_freetsa):
         """Test fallback to local TSA when external providers fail."""
         # External providers fail
         mock_freetsa.side_effect = Exception("FreeTSA failed")

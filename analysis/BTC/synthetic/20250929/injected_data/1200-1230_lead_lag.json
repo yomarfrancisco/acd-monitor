@@ -1,9 +1,0 @@
-{
-  "injection_type": "lead_lag",
-  "base_window": "snapshots/BTC-USD/20250929/1200-1230",
-  "injection_timestamp": "2025-09-29T14:34:27.262160",
-  "parameters": {
-    "venue": "coinbase",
-    "delay_ms": 50
-  }
-}

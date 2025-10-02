@@ -1,4 +1,0 @@
-test,real_episodes,real_avg_lift,shuffle_episodes_mean,shuffle_episodes_std,shuffle_lifts_mean,shuffle_lifts_std,episodes_percentile,lift_percentile,n_shuffles,block_size,real_leaders,shuffle_leaders,low_vol_episodes,low_vol_avg_lift,episodes_ratio,lift_ratio
-timestamp_shuffle,6,0.8275,3.0,1.6876018487783189,0.19965356309671717,0.05792853361080793,94.9,100.0,500.0,10.0,,,,,,
-venue_relabel,6,,3.074,1.8178349760085484,,,93.30000000000001,,500.0,,"{'coinbase': 3, 'binance': 1, 'okx': 1, 'kraken': 1}","{'coinbase': 298, 'bybit': 334, 'okx': 304, 'binance': 288, 'kraken': 313}",,,,
-low_activity,6,0.8275,,,,,,,,,,,4.0,0.5792499999999999,0.6666666666666666,0.7

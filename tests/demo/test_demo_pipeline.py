@@ -1,6 +1,10 @@
 """Unit tests for demo pipeline main module."""
 
-# from unittest.mock import patch, MagicMock  # noqa: F401
+import pytest
+import json
+from pathlib import Path
+from unittest.mock import patch, MagicMock
+import pandas as pd
 
 from acd.demo.pipeline import DemoPipeline
 
@@ -26,6 +30,7 @@ class TestDemoPipeline:
 
         # Clean up if exists
         if Path(test_dir).exists():
+            import shutil
 
             shutil.rmtree(test_dir)
 
@@ -35,6 +40,7 @@ class TestDemoPipeline:
         assert Path(test_dir).is_dir()
 
         # Clean up
+        import shutil
 
         shutil.rmtree(test_dir)
 
@@ -50,10 +56,7 @@ class TestDemoPipeline:
             "competitive": 100,
             "coordinated": 100,
         }
-        mock_ingestion_instance.generate_mock_feeds.return_value = [
-            MagicMock(),
-            MagicMock(),
-        ]
+        mock_ingestion_instance.generate_mock_feeds.return_value = [MagicMock(), MagicMock()]
         mock_ingestion_instance.validate_mock_data.return_value = {
             "completeness": 0.95,
             "accuracy": 0.90,
@@ -63,10 +66,7 @@ class TestDemoPipeline:
 
         # Mock feature engineering phase
         mock_feature_instance = MagicMock()
-        mock_feature_instance.prepare_vmm_windows.return_value = [
-            MagicMock(),
-            MagicMock(),
-        ]
+        mock_feature_instance.prepare_vmm_windows.return_value = [MagicMock(), MagicMock()]
         mock_feature_instance.run_vmm_analysis.return_value = MagicMock()
         mock_feature_instance.prepare_evidence_data.return_value = {
             "bundle_id": "test_bundle",
@@ -103,9 +103,7 @@ class TestDemoPipeline:
 
         # Mock ingestion failure on the instance
         with patch.object(
-            pipeline.ingestion,
-            "generate_mock_feeds",
-            side_effect=Exception("Ingestion failed"),
+            pipeline.ingestion, "generate_mock_feeds", side_effect=Exception("Ingestion failed")
         ):
             # Run pipeline
             results = pipeline.run_full_pipeline()
@@ -123,14 +121,10 @@ class TestDemoPipeline:
         # Mock ingestion methods
         with patch.object(pipeline.ingestion, "ingest_golden_datasets") as mock_golden:
             with patch.object(pipeline.ingestion, "generate_mock_feeds") as mock_feeds:
-                with patch.object(
-                    pipeline.ingestion, "validate_mock_data"
-                ) as mock_validate:
+                with patch.object(pipeline.ingestion, "validate_mock_data") as mock_validate:
 
                     # Setup mocks
-                    mock_golden.return_value = {
-                        "test_dataset": pd.DataFrame({"col": range(50)})
-                    }
+                    mock_golden.return_value = {"test_dataset": pd.DataFrame({"col": range(50)})}
                     mock_feeds.side_effect = [
                         [MagicMock(), MagicMock()],  # market_style
                         [MagicMock(), MagicMock()],  # regulatory_style
@@ -152,9 +146,7 @@ class TestDemoPipeline:
                     assert results["golden_datasets"]["test_dataset"] == 50
                     assert results["mock_feeds"]["market_style"] == 2
                     assert results["mock_feeds"]["regulatory_style"] == 2
-                    assert (
-                        len(results["quality_metrics"]) == 4
-                    )  # 2 market + 2 regulatory
+                    assert len(results["quality_metrics"]) == 4  # 2 market + 2 regulatory
 
     def test_run_feature_engineering_phase(self):
         """Test feature engineering phase execution."""
@@ -167,18 +159,12 @@ class TestDemoPipeline:
         }
 
         # Mock feature engineering methods
-        with patch.object(
-            pipeline.feature_engineering, "prepare_vmm_windows"
-        ) as mock_windows:
-            with patch.object(
-                pipeline.feature_engineering, "run_vmm_analysis"
-            ) as mock_vmm:
+        with patch.object(pipeline.feature_engineering, "prepare_vmm_windows") as mock_windows:
+            with patch.object(pipeline.feature_engineering, "run_vmm_analysis") as mock_vmm:
                 with patch.object(
                     pipeline.feature_engineering, "prepare_evidence_data"
                 ) as mock_evidence:
-                    with patch.object(
-                        pipeline.ingestion, "validate_mock_data"
-                    ) as mock_validate:
+                    with patch.object(pipeline.ingestion, "validate_mock_data") as mock_validate:
 
                         # Setup mocks
                         mock_windows.return_value = [MagicMock(), MagicMock()]
@@ -187,9 +173,7 @@ class TestDemoPipeline:
                         mock_validate.return_value = {"overall": 0.9}
 
                         # Run feature engineering phase
-                        results = pipeline._run_feature_engineering_phase(
-                            ingestion_results
-                        )
+                        results = pipeline._run_feature_engineering_phase(ingestion_results)
 
                         # Check results
                         assert "vmm_windows" in results
@@ -287,10 +271,7 @@ class TestDemoPipeline:
         mock_bundle.vmm_outputs.dynamic_validation_score = 0.6
         mock_bundle.data_quality.overall_quality_score = 0.9
         mock_bundle.data_quality.completeness_score = 0.95
-        mock_bundle.get_calibration_summary.return_value = {
-            "method": "test",
-            "score": 0.8,
-        }
+        mock_bundle.get_calibration_summary.return_value = {"method": "test", "score": 0.8}
 
         # Generate report
         report = pipeline._generate_calibration_report(mock_bundle)
@@ -353,11 +334,7 @@ class TestDemoPipeline:
         pipeline = DemoPipeline()
 
         # Mock failed results
-        results = {
-            "success": False,
-            "execution_time": 2.1,
-            "errors": ["Test error occurred"],
-        }
+        results = {"success": False, "execution_time": 2.1, "errors": ["Test error occurred"]}
 
         summary = pipeline.generate_pipeline_summary(results)
 

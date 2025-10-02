@@ -8,6 +8,10 @@ Tests feature engineering and windowing functionality:
 - Feature extraction
 """
 
+import numpy as np
+import pandas as pd
+import pytest
+
 from src.acd.data.features import (
     DataWindowing,
     FeatureEngineering,
@@ -40,16 +44,12 @@ class TestDataWindowing:
     @pytest.fixture
     def fixed_window_config(self):
         """Fixed window configuration for VMM"""
-        return create_window_config(
-            window_size=100, step_size=50, window_type="fixed", seed=42
-        )
+        return create_window_config(window_size=100, step_size=50, window_type="fixed", seed=42)
 
     @pytest.fixture
     def rolling_window_config(self):
         """Rolling window configuration for ICP"""
-        return create_window_config(
-            window_size=100, step_size=50, window_type="rolling", seed=42
-        )
+        return create_window_config(window_size=100, step_size=50, window_type="rolling", seed=42)
 
     def test_fixed_window_creation(self, fixed_window_config, sample_data):
         """Test fixed window creation for VMM"""
@@ -315,11 +315,7 @@ class TestWindowConfig:
     def test_config_with_seed(self):
         """Test configuration with seed"""
         config = WindowConfig(
-            window_size=100,
-            step_size=50,
-            min_data_points=50,
-            window_type="fixed",
-            seed=42,
+            window_size=100, step_size=50, min_data_points=50, window_type="fixed", seed=42
         )
 
         assert config.seed == 42
@@ -328,10 +324,7 @@ class TestWindowConfig:
         """Test invalid window type handling"""
         # This should not raise an error at config level
         config = WindowConfig(
-            window_size=100,
-            step_size=50,
-            min_data_points=50,
-            window_type="invalid_type",
+            window_size=100, step_size=50, min_data_points=50, window_type="invalid_type"
         )
 
         assert config.window_type == "invalid_type"

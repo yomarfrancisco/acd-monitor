@@ -3,7 +3,7 @@
 import json
 import logging
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Dict, List, Optional, Any
 
 import pandas as pd
 
@@ -357,11 +357,7 @@ class DemoVisualization:
         summary = {
             "total_bundles": len(evidence_bundles),
             "regime_confidence": {"values": regime_confidences, "mean": 0, "std": 0},
-            "structural_stability": {
-                "values": structural_stabilities,
-                "mean": 0,
-                "std": 0,
-            },
+            "structural_stability": {"values": structural_stabilities, "mean": 0, "std": 0},
         }
 
         if summary["regime_confidence"]["values"]:
@@ -524,8 +520,7 @@ class DemoVisualization:
 
         # Get timestamp information from first timestamped bundle
         timestamped_bundle = next(
-            (b for b in evidence_bundles if getattr(b, "timestamp_chain", None) is not None),
-            None,
+            (b for b in evidence_bundles if getattr(b, "timestamp_chain", None) is not None), None
         )
 
         if not timestamped_bundle:

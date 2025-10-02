@@ -11,6 +11,9 @@ Tests data quality assessment functionality:
 
 from datetime import datetime, timezone
 
+import numpy as np
+import pandas as pd
+import pytest
 
 from src.acd.data.quality import (
     DataQualityAssessment,
@@ -38,9 +41,7 @@ class TestDataQualityAssessment:
                 "firm_0_price": np.random.normal(100, 10, 100),
                 "firm_1_price": np.random.normal(100, 10, 100),
                 "firm_2_price": np.random.normal(100, 10, 100),
-                "volume": np.random.normal(
-                    1000, 200, 100
-                ),  # Use normal instead of exponential
+                "volume": np.random.normal(1000, 200, 100),  # Use normal instead of exponential
             }
         )
 
@@ -172,9 +173,7 @@ class TestDataQualityAssessment:
         """Test quality threshold configuration"""
         # Test with strict thresholds
         strict_config = create_quality_config(
-            staleness_threshold_hours=12.0,
-            completeness_threshold=0.99,
-            outlier_threshold_std=2.0,
+            staleness_threshold_hours=12.0, completeness_threshold=0.99, outlier_threshold_std=2.0
         )
 
         assessment_strict = DataQualityAssessment(strict_config)
@@ -191,9 +190,7 @@ class TestDataQualityAssessment:
 
         # Test with lenient thresholds
         lenient_config = create_quality_config(
-            staleness_threshold_hours=48.0,
-            completeness_threshold=0.8,
-            outlier_threshold_std=4.0,
+            staleness_threshold_hours=48.0, completeness_threshold=0.8, outlier_threshold_std=4.0
         )
 
         assessment_lenient = DataQualityAssessment(lenient_config)
@@ -245,9 +242,7 @@ class TestDataQualityConfig:
         # For now, just test that it doesn't crash
         try:
             config = DataQualityConfig(completeness_threshold=1.5)  # > 1.0
-            assert (
-                config.completeness_threshold == 1.5
-            )  # Current implementation allows this
+            assert config.completeness_threshold == 1.5  # Current implementation allows this
         except Exception:
             # If it does validate, that's fine too
             pass
@@ -259,9 +254,7 @@ class TestConvenienceFunctions:
     def test_create_quality_config(self):
         """Test quality config creation function"""
         config = create_quality_config(
-            staleness_threshold_hours=36.0,
-            completeness_threshold=0.85,
-            outlier_threshold_std=2.0,
+            staleness_threshold_hours=36.0, completeness_threshold=0.85, outlier_threshold_std=2.0
         )
 
         assert config.staleness_threshold_hours == 36.0

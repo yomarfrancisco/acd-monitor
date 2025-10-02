@@ -3,8 +3,7 @@
 import enum
 import logging
 from dataclasses import dataclass
-from typing import Dict, List, Optional
-
+from typing import Dict, List, Optional, Tuple
 import yaml
 
 from .metrics import RunMetrics
@@ -217,7 +216,7 @@ class HealthChecker:
     def _check_spurious_rate(self, spurious_rate: float, adaptive_threshold: float) -> HealthGate:
         """Check spurious regime rate against adaptive threshold."""
         warn_offset = self.thresholds["spurious_rate_warn_offset"]
-        self.thresholds["spurious_rate_fail_offset"]
+        fail_offset = self.thresholds["spurious_rate_fail_offset"]
 
         if spurious_rate <= adaptive_threshold:
             status = HealthStatus.PASS
@@ -340,7 +339,7 @@ class HealthChecker:
         # Get profile minimum from quality profiles
         profile_min = self._get_profile_minimum(profile_id)
         warn_offset = self.thresholds["quality_warn_offset"]
-        self.thresholds["quality_fail_offset"]
+        fail_offset = self.thresholds["quality_fail_offset"]
 
         if quality_score >= profile_min:
             status = HealthStatus.PASS

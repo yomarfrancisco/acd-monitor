@@ -4,17 +4,19 @@ import json
 import logging
 import time
 from pathlib import Path
-from typing import Dict
+from typing import Dict, List, Optional
+
 
 import pandas as pd
 
-from ..data.quality_profiles import create_quality_profile_manager
 from ..evidence.bundle import EvidenceBundle
+from ..evidence.export import export_evidence_bundle
+from ..vmm.adaptive_thresholds import AdaptiveThresholdManager, AdaptiveThresholdConfig
 from ..evidence.timestamping import create_timestamp_client
-from ..monitoring import HealthChecker, MetricsCollector, RegressionDetector
-from ..vmm.adaptive_thresholds import AdaptiveThresholdManager
-from .features import DemoFeatureEngineering
+from ..data.quality_profiles import create_quality_profile_manager
+from ..monitoring import MetricsCollector, HealthChecker, RegressionDetector
 from .ingestion import MockDataIngestion
+from .features import DemoFeatureEngineering
 
 logger = logging.getLogger(__name__)
 
@@ -55,8 +57,7 @@ class DemoPipeline:
         self.metrics_collector = MetricsCollector(self.output_dir)
         self.health_checker = HealthChecker()
         self.regression_detector = RegressionDetector(
-            self.output_dir / "artifacts" / "metrics" / "run_log.parquet",
-            Path("docs/regressions"),
+            self.output_dir / "artifacts" / "metrics" / "run_log.parquet", Path("docs/regressions")
         )
 
     def run_full_pipeline(self) -> Dict[str, any]:
@@ -328,7 +329,7 @@ class DemoPipeline:
                 )
 
                 # Validate bundle
-                bundle.validate_schema()
+                validation_result = bundle.validate_schema()
 
                 results["bundles"].append(bundle)
 
@@ -436,10 +437,7 @@ class DemoPipeline:
         report = {
             "timestamp": pd.Timestamp.now().isoformat(),
             "bundle_id": bundle.bundle_id,
-            "calibration_summary": {
-                "calibration_score": 0.8,
-                "method": "demo_calibration",
-            },
+            "calibration_summary": {"calibration_score": 0.8, "method": "demo_calibration"},
             "vmm_performance": {
                 "regime_confidence": bundle.vmm_outputs.regime_confidence,
                 "structural_stability": bundle.vmm_outputs.structural_stability,

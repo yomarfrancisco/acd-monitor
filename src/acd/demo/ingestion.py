@@ -1,13 +1,15 @@
 """Mock data ingestion for ACD Monitor demo pipeline."""
 
+import json
 import logging
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional, Tuple
 
 import pandas as pd
 
 from ..data.ingest import DataIngestion, DataIngestionConfig
 from ..data.quality import DataQualityAssessment, create_quality_config
+from ..vmm import VMMConfig, run_vmm
 
 logger = logging.getLogger(__name__)
 
@@ -36,13 +38,7 @@ class MockDataIngestion:
             },
             "regulatory_style": {
                 "format": "json",
-                "columns": [
-                    "disclosure_id",
-                    "firm_id",
-                    "disclosure_type",
-                    "timestamp",
-                    "content",
-                ],
+                "columns": ["disclosure_id", "firm_id", "disclosure_type", "timestamp", "content"],
                 "sample_size": 100,
                 "update_frequency": "1hour",
             },

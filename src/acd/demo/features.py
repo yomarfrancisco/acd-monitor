@@ -1,11 +1,12 @@
 """Feature engineering for ACD Monitor demo pipeline."""
 
 import logging
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 import numpy as np
 import pandas as pd
 
+from ..data.features import DataWindowing
 from ..vmm import VMMConfig, VMMOutput, run_vmm
 
 logger = logging.getLogger(__name__)
@@ -190,10 +191,7 @@ class DemoFeatureEngineering:
         return dummy_result
 
     def prepare_evidence_data(
-        self,
-        window_data: pd.DataFrame,
-        vmm_result: VMMOutput,
-        quality_metrics: Dict[str, float],
+        self, window_data: pd.DataFrame, vmm_result: VMMOutput, quality_metrics: Dict[str, float]
     ) -> Dict:
         """Prepare data for EvidenceBundle creation.
 
