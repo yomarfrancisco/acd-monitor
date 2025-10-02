@@ -265,46 +265,46 @@ jobs:
         # BTC schema and quality validation (diagnostic mode)
         echo "--- validating BTC Wave-2 schema and quality (diagnostic) ---"
         python3 - <<'EOF'
-import boto3, io, pandas as pd
+        import boto3, io, pandas as pd
 
-bucket = "${BUCKET}"
-date   = "${DATE}"
-key    = f"analysis/{date}/wave2/events/btc_usd/events.parquet"
+        bucket = "${BUCKET}"
+        date   = "${DATE}"
+        key    = f"analysis/{date}/wave2/events/btc_usd/events.parquet"
 
-s3 = boto3.client("s3")
-obj = s3.get_object(Bucket=bucket, Key=key)
-df = pd.read_parquet(io.BytesIO(obj["Body"].read()))
+        s3 = boto3.client("s3")
+        obj = s3.get_object(Bucket=bucket, Key=key)
+        df = pd.read_parquet(io.BytesIO(obj["Body"].read()))
 
-print("📊 BTC events shape:", df.shape)
+        print("📊 BTC events shape:", df.shape)
 
-required_cols = [
-    "symbol", "venue", "event_type", "n_events", "n_used",
-    "car_60s", "car_300s", "d_spread", "d_vol", "hit_60s", "status"
-]
-missing = [c for c in required_cols if c not in df.columns]
-if missing:
-    print("❌ Missing required columns:", missing)
-    exit(1)
+        required_cols = [
+            "symbol", "venue", "event_type", "n_events", "n_used",
+            "car_60s", "car_300s", "d_spread", "d_vol", "hit_60s", "status"
+        ]
+        missing = [c for c in required_cols if c not in df.columns]
+        if missing:
+            print("❌ Missing required columns:", missing)
+            exit(1)
 
-print("\n=== BTC event summary (n_events vs n_used) ===")
-print(df[["venue", "event_type", "n_events", "n_used"]])
+        print("\n=== BTC event summary (n_events vs n_used) ===")
+        print(df[["venue", "event_type", "n_events", "n_used"]])
 
-if "n_used" in df.columns:
-    min_val = df["n_used"].min()
-    if min_val < 5:
-        offenders = df[df["n_used"] < 5][["venue","event_type","n_events","n_used"]]
-        print("\n❌ Offending rows (n_used < 5):")
-        print(offenders.to_string(index=False))
-        exit(1)
-    else:
-        print(f"✅ Min-sample rule passed: min n_used = {min_val}")
+        if "n_used" in df.columns:
+            min_val = df["n_used"].min()
+            if min_val < 5:
+                offenders = df[df["n_used"] < 5][["venue","event_type","n_events","n_used"]]
+                print("\n❌ Offending rows (n_used < 5):")
+                print(offenders.to_string(index=False))
+                exit(1)
+            else:
+                print(f"✅ Min-sample rule passed: min n_used = {min_val}")
 
-if len(df) == 0:
-    print("❌ BTC events table is empty")
-    exit(1)
+        if len(df) == 0:
+            print("❌ BTC events table is empty")
+            exit(1)
 
-print("✅ BTC Wave-2 validation passed")
-EOF
+        print("✅ BTC Wave-2 validation passed")
+        EOF
         
         # ETH soft validation (warn only)
         eth_key="analysis/${DATE}/wave2/events/eth_usd/events.parquet"
