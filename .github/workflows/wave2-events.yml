@@ -116,6 +116,17 @@ jobs:
         set -euo pipefail
         echo "WAVE1_PREFIX=s3://${BUCKET}/analysis/${DATE}/wave1" >> "$GITHUB_ENV"
 
+    - name: "Diagnostic: Force check compute execution"
+      shell: bash
+      run: |
+        echo "=== FORCE DIAGNOSTIC CHECK ==="
+        ls -l analytics/wave1/
+        echo "--- About to run compute_wave1.py explicitly for btc_usd ---"
+        python analytics/wave1/compute_wave1.py --date "${{ env.DATE }}" --symbol "btc_usd" || { echo "❌ compute_wave1.py failed"; exit 1; }
+        echo "--- Post-run check: listing S3 directory ---"
+        aws s3 ls --recursive "s3://${{ env.ACD_S3_BUCKET }}/analysis/${{ env.DATE }}/wave1/btc_usd/" || echo "❌ No BTC outputs written"
+        echo "=== FORCE DIAGNOSTIC DONE ==="
+
     - name: "Compute Wave-1 (BTC required if missing; ETH soft) — run-if-missing"
       shell: bash
       run: |
