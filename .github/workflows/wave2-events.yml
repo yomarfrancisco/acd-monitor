@@ -35,6 +35,11 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    env:
+      AWS_REGION: us-east-1
+      ACD_S3_BUCKET: acd-monitor-snapshots
+      DATE: ${{ github.event.inputs.date || '20251001' }}
+      WAVE1_PREFIX: s3://${{ env.ACD_S3_BUCKET }}/analysis/${{ env.DATE }}/wave1/
     
     steps:
     - name: Checkout code
