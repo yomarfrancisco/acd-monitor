@@ -262,14 +262,17 @@ jobs:
           echo "✅ BTC present: ${btc_key}"
         fi
         
-        # BTC schema and quality validation (diagnostic mode)
-        echo "--- validating BTC Wave-2 schema and quality (diagnostic) ---"
+        # Read env vars inside Python; add diagnostics and strict exits as before
         python3 - <<'EOF'
-        import boto3, io, pandas as pd
+        import os, io
+        import boto3
+        import pandas as pd
 
-        bucket = "${BUCKET}"
-        date   = "${DATE}"
+        bucket = os.environ["BUCKET"]
+        date   = os.environ["DATE"]
         key    = f"analysis/{date}/wave2/events/btc_usd/events.parquet"
+
+        print(f"--- diag: bucket={bucket} date={date} key={key}")
 
         s3 = boto3.client("s3")
         obj = s3.get_object(Bucket=bucket, Key=key)
@@ -278,30 +281,27 @@ jobs:
         print("📊 BTC events shape:", df.shape)
 
         required_cols = [
-            "symbol", "venue", "event_type", "n_events", "n_used",
-            "car_60s", "car_300s", "d_spread", "d_vol", "hit_60s", "status"
+            "symbol","venue","event_type","n_events","n_used",
+            "car_60s","car_300s","d_spread","d_vol","hit_60s","status"
         ]
         missing = [c for c in required_cols if c not in df.columns]
         if missing:
             print("❌ Missing required columns:", missing)
-            exit(1)
+            raise SystemExit(1)
 
-        print("\n=== BTC event summary (n_events vs n_used) ===")
-        print(df[["venue", "event_type", "n_events", "n_used"]])
+        # Helpful diagnostics to understand reasonableness of the fail
+        print("\n=== n_used by (venue,event_type) ===")
+        print(df.groupby(["venue","event_type"])["n_used"].min().rename("min_n_used"))
 
-        if "n_used" in df.columns:
-            min_val = df["n_used"].min()
-            if min_val < 5:
-                offenders = df[df["n_used"] < 5][["venue","event_type","n_events","n_used"]]
-                print("\n❌ Offending rows (n_used < 5):")
-                print(offenders.to_string(index=False))
-                exit(1)
-            else:
-                print(f"✅ Min-sample rule passed: min n_used = {min_val}")
+        off = df[df["n_used"] < 5][["venue","event_type","n_events","n_used"]]
+        if not off.empty:
+            print("\n❌ Offending rows (n_used < 5):")
+            print(off.to_string(index=False))
+            raise SystemExit(1)
 
-        if len(df) == 0:
+        if df.empty:
             print("❌ BTC events table is empty")
-            exit(1)
+            raise SystemExit(1)
 
         print("✅ BTC Wave-2 validation passed")
         EOF
