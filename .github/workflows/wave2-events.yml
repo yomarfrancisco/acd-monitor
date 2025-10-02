@@ -262,51 +262,49 @@ jobs:
           echo "✅ BTC present: ${btc_key}"
         fi
         
-        # BTC schema and quality validation
-        echo "--- validating BTC Wave-2 schema and quality ---"
-        python3 -c "
-        import boto3
-        import pandas as pd
-        import io
-        
-        s3 = boto3.client('s3')
-        bucket = '${BUCKET}'
-        date = '${DATE}'
-        
-        try:
-            # Load BTC events
-            events_key = f'analysis/{date}/wave2/events/btc_usd/events.parquet'
-            obj = s3.get_object(Bucket=bucket, Key=events_key)
-            df = pd.read_parquet(io.BytesIO(obj['Body'].read()))
-            
-            print(f'📊 BTC events shape: {df.shape}')
-            
-            # Required columns
-            required_cols = ['symbol', 'venue', 'event_type', 'n_events', 'n_used', 'car_60s', 'car_300s', 'd_spread', 'd_vol', 'hit_60s', 'status']
-            missing_cols = [col for col in required_cols if col not in df.columns]
-            if missing_cols:
-                print(f'❌ BTC missing required columns: {missing_cols}')
-                exit(1)
-            
-            # Min-sample rule (n_used >= 5)
-            if 'n_used' in df.columns:
-                min_samples = df['n_used'].min()
-                if min_samples < 5:
-                    print(f'❌ BTC min-sample rule violated: min n_used = {min_samples} < 5')
-                    exit(1)
-                print(f'✅ BTC min-sample rule passed: min n_used = {min_samples}')
-            
-            # Data sanity checks
-            if len(df) == 0:
-                print('❌ BTC events table is empty')
-                exit(1)
-            
-            print('✅ BTC Wave-2 validation passed')
-            
-        except Exception as e:
-            print(f'❌ BTC Wave-2 validation failed: {e}')
-            exit(1)
-        "
+        # BTC schema and quality validation (diagnostic mode)
+        echo "--- validating BTC Wave-2 schema and quality (diagnostic) ---"
+        python3 - <<'EOF'
+import boto3, io, pandas as pd
+
+bucket = "${BUCKET}"
+date   = "${DATE}"
+key    = f"analysis/{date}/wave2/events/btc_usd/events.parquet"
+
+s3 = boto3.client("s3")
+obj = s3.get_object(Bucket=bucket, Key=key)
+df = pd.read_parquet(io.BytesIO(obj["Body"].read()))
+
+print("📊 BTC events shape:", df.shape)
+
+required_cols = [
+    "symbol", "venue", "event_type", "n_events", "n_used",
+    "car_60s", "car_300s", "d_spread", "d_vol", "hit_60s", "status"
+]
+missing = [c for c in required_cols if c not in df.columns]
+if missing:
+    print("❌ Missing required columns:", missing)
+    exit(1)
+
+print("\n=== BTC event summary (n_events vs n_used) ===")
+print(df[["venue", "event_type", "n_events", "n_used"]])
+
+if "n_used" in df.columns:
+    min_val = df["n_used"].min()
+    if min_val < 5:
+        offenders = df[df["n_used"] < 5][["venue","event_type","n_events","n_used"]]
+        print("\n❌ Offending rows (n_used < 5):")
+        print(offenders.to_string(index=False))
+        exit(1)
+    else:
+        print(f"✅ Min-sample rule passed: min n_used = {min_val}")
+
+if len(df) == 0:
+    print("❌ BTC events table is empty")
+    exit(1)
+
+print("✅ BTC Wave-2 validation passed")
+EOF
         
         # ETH soft validation (warn only)
         eth_key="analysis/${DATE}/wave2/events/eth_usd/events.parquet"
