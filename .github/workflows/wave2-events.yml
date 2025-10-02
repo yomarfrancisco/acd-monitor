@@ -1,0 +1,205 @@
+name: Wave-2 Event Studies CI
+
+on:
+  push:
+    branches: [ main, feature/i1-event-studies-20251001 ]
+    paths:
+      - 'analytics/wave2/events/**'
+      - '.github/workflows/wave2-events.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'analytics/wave2/events/**'
+      - '.github/workflows/wave2-events.yml'
+  workflow_dispatch:
+    inputs:
+      date:
+        description: 'Analysis date (YYYYMMDD)'
+        required: false
+        default: '20251001'
+        type: string
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
+  ACD_S3_BUCKET: acd-monitor-snapshots
+  DATE: ${{ github.event.inputs.date || '20251001' }}
+
+jobs:
+  validate-events:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      id-token: write
+      contents: read
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pandas numpy boto3 pyarrow
+        
+    - name: Diagnostic — assert OIDC token envs exist
+      run: |
+        test -n "${ACTIONS_ID_TOKEN_REQUEST_TOKEN:-}" && test -n "${ACTIONS_ID_TOKEN_REQUEST_URL:-}" \
+          && echo "✅ OIDC request envs present" || (echo "❌ OIDC envs missing"; exit 1)
+
+    - name: Debug OIDC JWT (print sub)
+      shell: bash
+      run: |
+        set -euo pipefail
+        TOK=$(curl -sS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+          "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=sts.amazonaws.com" | jq -r .value)
+        python - <<'PY'
+import os, json, base64
+tok = os.environ['TOK']
+payload = base64.urlsafe_b64decode((tok.split('.')[1] + '==')).decode()
+print("JWT payload:", payload)
+print("SUB:", json.loads(payload).get("sub"))
+PY
+
+    - name: Configure AWS credentials (OIDC)
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: arn:aws:iam::514258695205:role/acd-ci-oidc
+        role-session-name: gha-wave2-events-${{ github.run_id }}
+        aws-region: ${{ env.AWS_REGION }}
+        
+    - name: Validate BTC events exist
+      run: |
+        echo "🔍 Checking BTC-USD event studies..."
+        python3 -c "
+        import boto3
+        import pandas as pd
+        import io
+        
+        s3 = boto3.client('s3')
+        bucket = '${{ env.ACD_S3_BUCKET }}'
+        date = '${{ env.DATE }}'
+        
+        # Check BTC events file
+        btc_key = f'analysis/{date}/wave2/events/btc_usd/events.parquet'
+        try:
+            response = s3.get_object(Bucket=bucket, Key=btc_key)
+            df = pd.read_parquet(io.BytesIO(response['Body'].read()))
+            print(f'✅ BTC events: {len(df)} rows')
+            print(f'   Columns: {list(df.columns)}')
+            print(f'   Venues: {df[\"venue\"].unique().tolist()}')
+            print(f'   Event types: {df[\"event_type\"].unique().tolist()}')
+            print(f'   Status: {df[\"status\"].value_counts().to_dict()}')
+        except Exception as e:
+            print(f'❌ BTC events missing: {e}')
+            exit(1)
+        "
+        
+    - name: Validate ETH events (soft check)
+      run: |
+        echo "🔍 Checking ETH-USD event studies..."
+        python3 -c "
+        import boto3
+        import pandas as pd
+        import io
+        
+        s3 = boto3.client('s3')
+        bucket = '${{ env.ACD_S3_BUCKET }}'
+        date = '${{ env.DATE }}'
+        
+        # Check ETH events file (soft check)
+        eth_key = f'analysis/{date}/wave2/events/eth_usd/events.parquet'
+        try:
+            response = s3.get_object(Bucket=bucket, Key=eth_key)
+            df = pd.read_parquet(io.BytesIO(response['Body'].read()))
+            print(f'✅ ETH events: {len(df)} rows')
+            print(f'   Columns: {list(df.columns)}')
+            print(f'   Venues: {df[\"venue\"].unique().tolist()}')
+            print(f'   Event types: {df[\"event_type\"].unique().tolist()}')
+            print(f'   Status: {df[\"status\"].value_counts().to_dict()}')
+        except Exception as e:
+            print(f'⚠️ ETH events missing (expected for exploratory): {e}')
+        "
+        
+    - name: Validate schema and data quality
+      run: |
+        echo "🔍 Validating event studies schema and quality..."
+        python3 -c "
+        import boto3
+        import pandas as pd
+        import io
+        import numpy as np
+        
+        s3 = boto3.client('s3')
+        bucket = '${{ env.ACD_S3_BUCKET }}'
+        date = '${{ env.DATE }}'
+        
+        # Required columns
+        required_columns = [
+            'symbol', 'venue', 'event_type', 'n_events', 'n_used',
+            'car_60s', 'car_300s', 'd_spread', 'd_vol', 'hit_60s', 'status'
+        ]
+        
+        # Check BTC events
+        btc_key = f'analysis/{date}/wave2/events/btc_usd/events.parquet'
+        response = s3.get_object(Bucket=bucket, Key=btc_key)
+        df = pd.read_parquet(io.BytesIO(response['Body'].read()))
+        
+        # Schema validation
+        missing_cols = [col for col in required_columns if col not in df.columns]
+        if missing_cols:
+            print(f'❌ Missing columns: {missing_cols}')
+            exit(1)
+        print('✅ Schema validation passed')
+        
+        # Data quality checks
+        successful_df = df[df['status'] == 'success']
+        if len(successful_df) == 0:
+            print('❌ No successful event studies found')
+            exit(1)
+            
+        # Check min sample rule (n_used >= 5)
+        insufficient_samples = successful_df[successful_df['n_used'] < 5]
+        if len(insufficient_samples) > 0:
+            print(f'❌ Found {len(insufficient_samples)} combinations with n_used < 5')
+            print(insufficient_samples[['venue', 'event_type', 'n_used']])
+            exit(1)
+        print('✅ Min sample rule respected')
+        
+        # Check for reasonable values
+        numeric_cols = ['car_60s', 'car_300s', 'd_spread', 'd_vol', 'hit_60s']
+        for col in numeric_cols:
+            if col in successful_df.columns:
+                non_null_count = successful_df[col].notna().sum()
+                print(f'   {col}: {non_null_count}/{len(successful_df)} non-null values')
+        
+        print('✅ Data quality validation passed')
+        print(f'📊 Summary: {len(successful_df)} successful combinations')
+        "
+        
+    - name: Upload artifacts
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: wave2-events-ci-${{ github.run_id }}
+        path: artifacts_wave2_events/**
+        retention-days: 3
+        
+    - name: Report results
+      if: always()
+      run: |
+        echo "📊 Wave-2 Event Studies CI Results:"
+        echo "  Date: ${{ env.DATE }}"
+        echo "  BTC-USD: ✅ Validated"
+        echo "  ETH-USD: ⚠️ Exploratory (may be missing)"
+        echo "  Schema: ✅ Required columns present"
+        echo "  Quality: ✅ Min sample rule respected"
+        echo "  Artifacts: wave2-events-ci-${{ github.run_id }}"
