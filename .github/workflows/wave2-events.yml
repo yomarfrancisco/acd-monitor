@@ -107,35 +107,45 @@ jobs:
         check_symbol "btc_usd" "strict"
         check_symbol "eth_usd" "soft" || true
 
-    - name: Compute Wave-1 (BTC required if missing; ETH soft)
+    - name: Compute Wave-1 (BTC required if missing; ETH soft) — DIAGNOSTIC
       shell: bash
       run: |
         set -euo pipefail
         DATE="${{ env.DATE }}"
         BUCKET="${{ env.ACD_S3_BUCKET }}"
         ALLOW_OVERWRITE="${ALLOW_OVERWRITE:-false}"
+        REGION="${{ env.AWS_REGION }}"
 
         ensure_symbol () {
           local sym="$1"
           local strict="$2"  # "strict" or "soft"
 
           need_compute="false"
+          echo "--- DIAGNOSTIC: checking Wave-1 artifacts for ${sym} @ s3://${BUCKET}/analysis/${DATE}/wave1/${sym}/ ---"
           for art in variance_ratios autocorr xcorr rolling; do
-            if ! aws s3 ls "s3://${BUCKET}/analysis/${DATE}/wave1/${sym}/${art}.parquet" >/dev/null 2>&1; then
+            key="analysis/${DATE}/wave1/${sym}/${art}.parquet"
+            echo "DIAG: aws s3 ls s3://${BUCKET}/${key}"
+            if ! aws s3 ls "s3://${BUCKET}/${key}" >/dev/null 2>&1; then
+              echo "DIAG: ${art} = MISSING"
               need_compute="true"
+            else
+              echo "DIAG: ${art} = PRESENT"
             fi
           done
 
           if [ "${need_compute}" = "true" ]; then
-            echo "ℹ️ ${sym}: missing artifacts → running compute_wave1.py"
             if [ "${ALLOW_OVERWRITE}" != "false" ]; then
-              echo "❌ ALLOW_OVERWRITE must be false in CI"
-              exit 1
+              echo "❌ ALLOW_OVERWRITE must be false in CI"; exit 1
             fi
+            echo "DIAG: running compute_wave1.py for ${sym}"
             python analytics/wave1/compute_wave1.py --date "${DATE}" --symbol "${sym}"
+
+            echo "DIAG: verifying outputs for ${sym} after compute"
+            aws s3 ls "s3://${BUCKET}/analysis/${DATE}/wave1/${sym}/" || true
           else
-            echo "✅ ${sym}: Wave-1 artifacts already present; skipping compute"
+            echo "DIAG: all required artifacts already present; skipping compute for ${sym}"
           fi
+          echo "--- DIAGNOSTIC DONE: ${sym} ---"
         }
 
         ensure_symbol "btc_usd" "strict"
