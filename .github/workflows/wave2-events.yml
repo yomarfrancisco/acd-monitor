@@ -39,7 +39,6 @@ jobs:
       AWS_REGION: us-east-1
       ACD_S3_BUCKET: acd-monitor-snapshots
       DATE: ${{ github.event.inputs.date || '20251001' }}
-      WAVE1_PREFIX: s3://${{ env.ACD_S3_BUCKET }}/analysis/${{ env.DATE }}/wave1/
     
     steps:
     - name: Checkout code
@@ -141,6 +140,15 @@ jobs:
 
         ensure_symbol "btc_usd" "strict"
         ensure_symbol "eth_usd" "soft" || true
+
+    - name: Export WAVE1_PREFIX for Wave-1 checks
+      shell: bash
+      env:
+        BUCKET: ${{ env.ACD_S3_BUCKET }}
+        DATE:   ${{ env.DATE }}
+      run: |
+        set -euo pipefail
+        echo "WAVE1_PREFIX=s3://${BUCKET}/analysis/${DATE}/wave1" >> "$GITHUB_ENV"
 
     - name: Validate Wave-1 data quality (schema-aware)
       shell: bash
