@@ -107,7 +107,7 @@ jobs:
         check_symbol "btc_usd" "strict"
         check_symbol "eth_usd" "soft" || true
 
-    - name: Compute Wave-1 (BTC required if missing; ETH soft) — DIAGNOSTIC
+    - name: Compute Wave-1 (BTC required if missing; ETH soft) — ENHANCED DIAGNOSTIC
       shell: bash
       run: |
         set -euo pipefail
@@ -121,15 +121,21 @@ jobs:
           local strict="$2"  # "strict" or "soft"
 
           need_compute="false"
-          echo "--- DIAGNOSTIC: checking Wave-1 artifacts for ${sym} @ s3://${BUCKET}/analysis/${DATE}/wave1/${sym}/ ---"
+          echo "--- ENHANCED DIAGNOSTIC: checking Wave-1 artifacts for ${sym} @ s3://${BUCKET}/analysis/${DATE}/wave1/${sym}/ ---"
+          
+          # First, show what's actually in the directory
+          echo "DIAG: Current S3 directory contents for ${sym}:"
+          aws s3 ls "s3://${BUCKET}/analysis/${DATE}/wave1/${sym}/" || echo "DIAG: Directory does not exist or is empty"
+          
           for art in variance_ratios autocorr xcorr rolling; do
             key="analysis/${DATE}/wave1/${sym}/${art}.parquet"
-            echo "DIAG: aws s3 ls s3://${BUCKET}/${key}"
-            if ! aws s3 ls "s3://${BUCKET}/${key}" >/dev/null 2>&1; then
-              echo "DIAG: ${art} = MISSING"
-              need_compute="true"
+            echo "DIAG: Checking s3://${BUCKET}/${key}"
+            # Show the actual aws s3 ls output (not just success/failure)
+            if aws s3 ls "s3://${BUCKET}/${key}" 2>&1; then
+              echo "DIAG: ${art} = PRESENT (file exists)"
             else
-              echo "DIAG: ${art} = PRESENT"
+              echo "DIAG: ${art} = MISSING (file does not exist)"
+              need_compute="true"
             fi
           done
 
@@ -139,13 +145,16 @@ jobs:
             fi
             echo "DIAG: running compute_wave1.py for ${sym}"
             python analytics/wave1/compute_wave1.py --date "${DATE}" --symbol "${sym}"
+            echo "DIAG: compute_wave1.py completed for ${sym}"
 
-            echo "DIAG: verifying outputs for ${sym} after compute"
-            aws s3 ls "s3://${BUCKET}/analysis/${DATE}/wave1/${sym}/" || true
+            echo "DIAG: verifying outputs for ${sym} after compute (recursive list)"
+            aws s3 ls --recursive "s3://${BUCKET}/analysis/${DATE}/wave1/${sym}/" || echo "DIAG: No files found after compute"
           else
             echo "DIAG: all required artifacts already present; skipping compute for ${sym}"
+            echo "DIAG: verifying existing outputs for ${sym} (recursive list)"
+            aws s3 ls --recursive "s3://${BUCKET}/analysis/${DATE}/wave1/${sym}/" || echo "DIAG: No files found in existing directory"
           fi
-          echo "--- DIAGNOSTIC DONE: ${sym} ---"
+          echo "--- ENHANCED DIAGNOSTIC DONE: ${sym} ---"
         }
 
         ensure_symbol "btc_usd" "strict"
