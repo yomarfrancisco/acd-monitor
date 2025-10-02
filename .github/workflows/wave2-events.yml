@@ -116,75 +116,49 @@ jobs:
         set -euo pipefail
         echo "WAVE1_PREFIX=s3://${BUCKET}/analysis/${DATE}/wave1" >> "$GITHUB_ENV"
 
-    - name: "Diagnostic: Force check compute execution"
+    - name: "Run Wave-1 compute (date-only; script handles symbols)"
       shell: bash
-      run: |
-        echo "=== FORCE DIAGNOSTIC CHECK ==="
-        ls -l analytics/wave1/
-        echo "--- About to run compute_wave1.py explicitly for btc_usd ---"
-        python analytics/wave1/compute_wave1.py --date "${{ env.DATE }}" --symbol "btc_usd" || { echo "❌ compute_wave1.py failed"; exit 1; }
-        echo "--- Post-run check: listing S3 directory ---"
-        aws s3 ls --recursive "s3://${{ env.ACD_S3_BUCKET }}/analysis/${{ env.DATE }}/wave1/btc_usd/" || echo "❌ No BTC outputs written"
-        echo "=== FORCE DIAGNOSTIC DONE ==="
-
-    - name: "Compute Wave-1 (BTC required if missing; ETH soft) — run-if-missing"
-      shell: bash
+      env:
+        DATE:   ${{ env.DATE }}
+        BUCKET: ${{ env.ACD_S3_BUCKET }}
       run: |
         set -euo pipefail
-        DATE="${{ env.DATE }}"
-        BUCKET="${{ env.ACD_S3_BUCKET }}"
-        ALLOW_OVERWRITE="${ALLOW_OVERWRITE:-false}"
+        echo "=== WAVE-1 COMPUTE ==="
+        echo "date=${DATE}  bucket=${BUCKET}"
+        ls -l analytics/wave1/ | sed 's/^/repo: /'
 
-        echo "Wave-1 prefix: ${WAVE1_PREFIX:-<unset>}"
-        echo "Repo files under analytics/wave1:"
-        ls -la analytics/wave1 || true
+        echo "--- pre: list S3 BTC outputs (should be empty if missing) ---"
+        aws s3 ls --recursive "s3://${BUCKET}/analysis/${DATE}/wave1/btc_usd/" || true
 
-        ensure_symbol () {
-          local sym="$1"
-          local strict="$2"  # strict|soft
-          local need_compute="false"
+        # Guardrail: fail if BTC artifacts already exist (we don't overwrite in CI)
+        for art in variance_ratios autocorr xcorr rolling; do
+          key="analysis/${DATE}/wave1/btc_usd/${art}.parquet"
+          if aws s3 ls "s3://${BUCKET}/${key}" >/dev/null 2>&1; then
+            echo "❌ Refusing to overwrite existing artifact: s3://${BUCKET}/${key}"
+            exit 1
+          fi
+        done
 
-          echo "--- DIAG: listing pre-state for ${sym} ---"
-          aws s3 ls --recursive "s3://${BUCKET}/analysis/${DATE}/wave1/${sym}/" || echo "(none)"
+        echo "--- run compute (date-only) ---"
+        python analytics/wave1/compute_wave1.py --date "${DATE}"
 
-          for art in variance_ratios autocorr xcorr rolling; do
-            key="analysis/${DATE}/wave1/${sym}/${art}.parquet"
-            if aws s3 ls "s3://${BUCKET}/${key}" > /dev/null 2>&1; then
-              echo "PRESENT: s3://${BUCKET}/${key}"
-            else
-              echo "MISSING: s3://${BUCKET}/${key}"
-              need_compute="true"
-            fi
-          done
-
-          if [ "${need_compute}" = "true" ]; then
-            if [ "${ALLOW_OVERWRITE}" != "false" ]; then
-              echo "❌ ALLOW_OVERWRITE must be false in CI"; exit 1
-            fi
-            [ -f analytics/wave1/compute_wave1.py ] || { echo "❌ analytics/wave1/compute_wave1.py not found"; exit 1; }
-
-            # Optional: hard-stop if canonical inputs are absent
-            aws s3 ls "s3://${BUCKET}/canonical/${DATE}/${sym}/" > /dev/null 2>&1 \
-              || { echo "❌ canonical inputs missing for ${sym}"; exit 1; }
-
-            echo "→ Running compute_wave1.py for ${sym}"
-            python analytics/wave1/compute_wave1.py --date "${DATE}" --symbol "${sym}"
-            echo "→ Post-compute listing:"
-            aws s3 ls --recursive "s3://${BUCKET}/analysis/${DATE}/wave1/${sym}/" || echo "(still empty)"
+        echo "--- post: verify BTC outputs exist ---"
+        missing=0
+        for art in variance_ratios autocorr xcorr rolling; do
+          key="analysis/${DATE}/wave1/btc_usd/${art}.parquet"
+          if ! aws s3 ls "s3://${BUCKET}/${key}" >/dev/null 2>&1; then
+            echo "❌ MISSING after compute: s3://${BUCKET}/${key}"
+            missing=1
           else
-            echo "✅ ${sym}: all required artifacts present; skipping compute"
+            echo "✅ PRESENT: s3://${BUCKET}/${key}"
           fi
+        done
+        if [ $missing -ne 0 ]; then
+          echo "❌ BTC Wave-1 outputs missing after compute; stopping."
+          exit 1
+        fi
 
-          if [ "${strict}" = "strict" ]; then
-            for art in variance_ratios autocorr xcorr rolling; do
-              aws s3 ls "s3://${BUCKET}/analysis/${DATE}/wave1/${sym}/${art}.parquet" > /dev/null 2>&1 \
-                || { echo "❌ ${sym}/${art}.parquet still missing after compute"; exit 1; }
-            done
-          fi
-        }
-
-        ensure_symbol "btc_usd" "strict"
-        ensure_symbol "eth_usd" "soft" || true
+        echo "=== WAVE-1 COMPUTE DONE ==="
 
     - name: "Diagnostic: Environment and S3 connectivity test"
       shell: bash
