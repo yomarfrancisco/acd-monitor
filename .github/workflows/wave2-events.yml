@@ -25,13 +25,16 @@ permissions:
 
 env:
   AWS_REGION: us-east-1
-  S3_BUCKET: acd-monitor-snapshots
+  ACD_S3_BUCKET: acd-monitor-snapshots
   DATE: ${{ github.event.inputs.date || '20251001' }}
 
 jobs:
   validate-events:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
+    permissions:
+      id-token: write
+      contents: read
     
     steps:
     - name: Checkout code
@@ -47,11 +50,16 @@ jobs:
         python -m pip install --upgrade pip
         pip install pandas numpy boto3 pyarrow
         
-    - name: Configure AWS credentials
+    - name: Diagnostic — assert OIDC token envs exist
+      run: |
+        set -euo pipefail
+        test -n "${ACTIONS_ID_TOKEN_REQUEST_TOKEN:-}" && test -n "${ACTIONS_ID_TOKEN_REQUEST_URL:-}" && echo "OIDC envs OK"
+
+    - name: Configure AWS credentials (OIDC)
       uses: aws-actions/configure-aws-credentials@v4
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        role-to-assume: arn:aws:iam::514258695205:role/acd-ci-oidc
+        role-session-name: gha-wave2-events-${{ github.run_id }}
         aws-region: ${{ env.AWS_REGION }}
         
     - name: Validate BTC events exist
@@ -63,7 +71,7 @@ jobs:
         import io
         
         s3 = boto3.client('s3')
-        bucket = '${{ env.S3_BUCKET }}'
+        bucket = '${{ env.ACD_S3_BUCKET }}'
         date = '${{ env.DATE }}'
         
         # Check BTC events file
@@ -90,7 +98,7 @@ jobs:
         import io
         
         s3 = boto3.client('s3')
-        bucket = '${{ env.S3_BUCKET }}'
+        bucket = '${{ env.ACD_S3_BUCKET }}'
         date = '${{ env.DATE }}'
         
         # Check ETH events file (soft check)
@@ -117,7 +125,7 @@ jobs:
         import numpy as np
         
         s3 = boto3.client('s3')
-        bucket = '${{ env.S3_BUCKET }}'
+        bucket = '${{ env.ACD_S3_BUCKET }}'
         date = '${{ env.DATE }}'
         
         # Required columns
@@ -168,9 +176,8 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: wave2-events-ci-${{ github.run_id }}
-        path: |
-          analytics/wave2/events/
-        retention-days: 7
+        path: artifacts_wave2_events/**
+        retention-days: 3
         
     - name: Report results
       if: always()
