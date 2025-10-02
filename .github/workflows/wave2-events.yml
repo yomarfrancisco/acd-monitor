@@ -116,49 +116,57 @@ jobs:
         set -euo pipefail
         echo "WAVE1_PREFIX=s3://${BUCKET}/analysis/${DATE}/wave1" >> "$GITHUB_ENV"
 
-    - name: "Run Wave-1 compute (date-only; script handles symbols)"
+    - name: "Run Wave-1 compute (date-only; tri-state: skip/run/stop)"
       shell: bash
       env:
         DATE:   ${{ env.DATE }}
         BUCKET: ${{ env.ACD_S3_BUCKET }}
       run: |
         set -euo pipefail
-        echo "=== WAVE-1 COMPUTE ==="
-        echo "date=${DATE}  bucket=${BUCKET}"
-        ls -l analytics/wave1/ | sed 's/^/repo: /'
+        echo "=== WAVE-1 COMPUTE (tri-state) ==="
+        req=(variance_ratios autocorr xcorr rolling)
 
-        echo "--- pre: list S3 BTC outputs (should be empty if missing) ---"
-        aws s3 ls --recursive "s3://${BUCKET}/analysis/${DATE}/wave1/btc_usd/" || true
-
-        # Guardrail: fail if BTC artifacts already exist (we don't overwrite in CI)
-        for art in variance_ratios autocorr xcorr rolling; do
+        present=0
+        for art in "${req[@]}"; do
           key="analysis/${DATE}/wave1/btc_usd/${art}.parquet"
           if aws s3 ls "s3://${BUCKET}/${key}" >/dev/null 2>&1; then
-            echo "❌ Refusing to overwrite existing artifact: s3://${BUCKET}/${key}"
+            echo "PRESENT: s3://${BUCKET}/${key}"
+            present=$((present+1))
+          else
+            echo "MISSING: s3://${BUCKET}/${key}"
+          fi
+        done
+
+        if [ "$present" -eq 0 ]; then
+          echo "--- run compute (no outputs present) ---"
+          python analytics/wave1/compute_wave1.py --date "${DATE}"
+
+          echo "--- verify BTC outputs after compute ---"
+          missing=0
+          for art in "${req[@]}"; do
+            key="analysis/${DATE}/wave1/btc_usd/${art}.parquet"
+            if ! aws s3 ls "s3://${BUCKET}/${key}" >/dev/null 2>&1; then
+              echo "❌ MISSING after compute: s3://${BUCKET}/${key}"
+              missing=1
+            else
+              echo "✅ PRESENT: s3://${BUCKET}/${key}"
+            fi
+          done
+          if [ $missing -ne 0 ]; then
+            echo "❌ BTC Wave-1 outputs missing after compute; stopping."
             exit 1
           fi
-        done
+          echo "=== WAVE-1 COMPUTE DONE ==="
 
-        echo "--- run compute (date-only) ---"
-        python analytics/wave1/compute_wave1.py --date "${DATE}"
+        elif [ "$present" -eq ${#req[@]} ]; then
+          echo "✅ All BTC artifacts already present; skipping compute."
+          exit 0
 
-        echo "--- post: verify BTC outputs exist ---"
-        missing=0
-        for art in variance_ratios autocorr xcorr rolling; do
-          key="analysis/${DATE}/wave1/btc_usd/${art}.parquet"
-          if ! aws s3 ls "s3://${BUCKET}/${key}" >/dev/null 2>&1; then
-            echo "❌ MISSING after compute: s3://${BUCKET}/${key}"
-            missing=1
-          else
-            echo "✅ PRESENT: s3://${BUCKET}/${key}"
-          fi
-        done
-        if [ $missing -ne 0 ]; then
-          echo "❌ BTC Wave-1 outputs missing after compute; stopping."
+        else
+          echo "❌ Partial BTC outputs detected ($present/${#req[@]} present)."
+          echo "   Refusing to compute to avoid overwrites in CI. Manual cleanup or explicit approval needed."
           exit 1
         fi
-
-        echo "=== WAVE-1 COMPUTE DONE ==="
 
     - name: "Diagnostic: Environment and S3 connectivity test"
       shell: bash
