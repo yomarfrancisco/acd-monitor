@@ -285,3 +285,4 @@ jobs:
         echo "  Schema: ✅ Required columns present"
         echo "  Quality: ✅ Min sample rule respected"
         echo "  Artifacts: wave2-events-ci-${{ github.run_id }}"
+# Trigger workflow
