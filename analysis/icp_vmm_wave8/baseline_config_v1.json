@@ -1,0 +1,28 @@
+{
+  "setup_timestamp": "2025-10-04T01:16:11.294169",
+  "random_seed": 1729,
+  "data_source": "analysis/icp_vmm_wave7/design/design_matrix_v1.parquet",
+  "wave7_edges_count": 50,
+  "venues": [
+    "BINANCE",
+    "COINBASE",
+    "BYBITSPOT",
+    "BITGET"
+  ],
+  "lags": [
+    1,
+    2,
+    3,
+    5,
+    10
+  ],
+  "scales": [
+    1,
+    5,
+    30
+  ],
+  "total_observations": 604790,
+  "time_span_hours": 167.99972222222223,
+  "commit_sha": "2f3abd1902551a821fc3252607f83cad9d76e2dc",
+  "data_hash": "0b440013815db27b"
+}
