@@ -98,4 +98,22 @@ jobs:
 
       - name: Lint with flake8
         run: |
-          xargs -a lint-allowlist.txt -I {} flake8 {}
+          set -euo pipefail
+          shopt -s nullglob
+          EXISTING=()
+          while IFS= read -r pat; do
+            # skip blanks/comments
+            [[ -z "$pat" || "$pat" =~ ^# ]] && continue
+            matches=($pat)
+            if (( ${#matches[@]} )); then
+              EXISTING+=("${matches[@]}")
+            fi
+          done < lint-allowlist.txt
+          shopt -u nullglob
+
+          if (( ${#EXISTING[@]} == 0 )); then
+            echo "No matching allowlisted paths; skipping flake8."
+            exit 0
+          fi
+          echo "Linting ${#EXISTING[@]} path(s): ${EXISTING[*]}"
+          flake8 "${EXISTING[@]}"
