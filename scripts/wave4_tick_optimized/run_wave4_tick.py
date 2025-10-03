@@ -3,15 +3,16 @@
 Wave 4 — Optimized Tick-Level Coordination Diagnostics.
 Vectorized, chunked, and checkpointed analysis for large-trade sync, OFI spikes, and impact spillovers.
 """
-import pandas as pd
-import numpy as np
+import gzip
 import json
 import logging
-from pathlib import Path
-from typing import Dict, List, Tuple, Any
 import time
-import gzip
 from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, List, Tuple
+
+import numpy as np
+import pandas as pd
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -106,7 +107,7 @@ def aggregate_by_bins(df: pd.DataFrame) -> pd.DataFrame:
 
     # Calculate price changes
     bin50_agg["dpx"] = bin50_agg["price"].diff()
-    
+
     # Add 100ms bins for OFI analysis
     bin50_agg["bin100"] = bin50_agg["bin50"] // 2  # 100ms = 2 * 50ms
 
