@@ -6,11 +6,10 @@ Tests quality profiles, thresholds, validation, and profile management.
 
 # from unittest.mock import Mock  # noqa: F401, patch, MagicMock
 
-from acd.data.quality_profiles import (
+from acd.data.quality_profiles import (  # QualityProfileManager,  # noqa: F401
     DataSourceType,
-    QualityThresholds,
     QualityProfile,
-    # QualityProfileManager,  # noqa: F401
+    QualityThresholds,
     create_quality_profile_manager,
 )
 

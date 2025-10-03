@@ -9,13 +9,14 @@ variables are properly resolved, and distinguishes between different error types
 - Network/API errors (other connectivity issues)
 """
 
-import sys
-import os
-from pathlib import Path
 import json
-import requests
+import os
+import sys
 import time
-from typing import Dict, Any, Optional
+from pathlib import Path
+from typing import Any, Dict, Optional
+
+import requests
 
 # Add src to path for backend components
 sys.path.append(str(Path(__file__).parent.parent / "src"))
@@ -107,9 +108,7 @@ def test_frontend_chatbase_endpoint():
 
                     # Check if it's a mock response
                     if "[mock]" in response_data["reply"]:
-                        print(
-                            f"   ℹ️ Mock response detected (expected for unpaid account)"
-                        )
+                        print(f"   ℹ️ Mock response detected (expected for unpaid account)")
                     else:
                         print(f"   ℹ️ Live response detected")
 
@@ -169,9 +168,7 @@ def test_backend_error_handling():
 
         for query in test_queries:
             try:
-                response = mock_provider.generate(
-                    prompt=query, session_id="fallback_test"
-                )
+                response = mock_provider.generate(prompt=query, session_id="fallback_test")
 
                 if response and response.content:
                     successful_responses += 1
@@ -260,9 +257,7 @@ def test_error_type_distinction():
         try:
             # Simulate the error response
             error_response = {
-                k: v
-                for k, v in scenario.items()
-                if k != "name" and k != "expected_type"
+                k: v for k, v in scenario.items() if k != "name" and k != "expected_type"
             }
 
             # Determine error type
@@ -280,9 +275,7 @@ def test_error_type_distinction():
             # Check if detection is correct
             if detected_type == scenario["expected_type"]:
                 results[f'{scenario["expected_type"]}_detection'] = True
-                print(
-                    f"   ✅ {scenario['name']}: Correctly detected as {detected_type}"
-                )
+                print(f"   ✅ {scenario['name']}: Correctly detected as {detected_type}")
             else:
                 print(
                     f"   ❌ {scenario['name']}: Expected {scenario['expected_type']}, got {detected_type}"
@@ -319,9 +312,7 @@ def test_compliance_query_consistency():
 
         for query in compliance_queries:
             try:
-                response = mock_provider.generate(
-                    prompt=query, session_id="consistency_test"
-                )
+                response = mock_provider.generate(prompt=query, session_id="consistency_test")
 
                 # Check response consistency
                 has_content = len(response.content) > 0
@@ -345,9 +336,7 @@ def test_compliance_query_consistency():
             results["bundle_generation_consistency"] = True
             print(f"   ✅ All {len(compliance_queries)} queries consistent")
         else:
-            print(
-                f"   ⚠️ Only {consistent_responses}/{len(compliance_queries)} queries consistent"
-            )
+            print(f"   ⚠️ Only {consistent_responses}/{len(compliance_queries)} queries consistent")
 
     except Exception as e:
         print(f"   ❌ Compliance query consistency test failed: {e}")
@@ -393,9 +382,7 @@ def main():
             passed_subtests = sum(1 for v in result.values() if v is True)
             total_subtests = sum(1 for v in result.values() if isinstance(v, bool))
             status = "✅ PASS" if passed_subtests >= total_subtests * 0.5 else "❌ FAIL"
-            print(
-                f"   {test_name}: {status} ({passed_subtests}/{total_subtests} subtests)"
-            )
+            print(f"   {test_name}: {status} ({passed_subtests}/{total_subtests} subtests)")
         else:
             status = "✅ PASS" if result else "❌ FAIL"
             print(f"   {test_name}: {status}")
@@ -411,9 +398,7 @@ def main():
             "   💡 Action: Set CHATBASE_API_KEY, CHATBASE_ASSISTANT_ID, CHATBASE_SIGNING_SECRET in Vercel"
         )
     elif error_type == "unpaid_account":
-        print(
-            "   ⚠️ Unpaid Account: Environment variables set but account needs payment"
-        )
+        print("   ⚠️ Unpaid Account: Environment variables set but account needs payment")
         print("   💡 Action: Activate paid Chatbase account")
     elif error_type == "connection_error":
         print("   ❌ Connection Error: Frontend not running on localhost:3000")
@@ -453,6 +438,3 @@ def main():
 if __name__ == "__main__":
     success = main()
     sys.exit(0 if success else 1)
-
-
-

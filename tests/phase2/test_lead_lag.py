@@ -2,7 +2,7 @@
 Unit tests for lead-lag validation layer
 """
 
-from src.acd.validation.lead_lag import LeadLagValidator, LeadLagConfig
+from src.acd.validation.lead_lag import LeadLagConfig, LeadLagValidator
 
 
 class TestLeadLagValidator:
@@ -44,8 +44,7 @@ class TestLeadLagValidator:
                 "Exchange_0": prices[:, 0],
                 "Exchange_1": prices[:, 1],
                 "Exchange_2": prices[:, 2],
-                "environment": ["low"] * (n_points // 2)
-                + ["high"] * (n_points - n_points // 2),
+                "environment": ["low"] * (n_points // 2) + ["high"] * (n_points - n_points // 2),
             }
         )
 
@@ -74,9 +73,7 @@ class TestLeadLagValidator:
                     lag_change = prices[t - 1, 0] - prices[t - 2, 0]
                     follow_strength = 0.8 if i == 1 else 0.6
                     noise = np.random.normal(0, 20)
-                    prices[t, i] = (
-                        prices[t - 1, i] + follow_strength * lag_change + noise
-                    )
+                    prices[t, i] = prices[t - 1, i] + follow_strength * lag_change + noise
             else:
                 for i in range(1, n_exchanges):
                     prices[t, i] = prices[t - 1, i] + np.random.normal(0, 50)
@@ -88,8 +85,7 @@ class TestLeadLagValidator:
                 "Exchange_0": prices[:, 0],
                 "Exchange_1": prices[:, 1],
                 "Exchange_2": prices[:, 2],
-                "environment": ["low"] * (n_points // 2)
-                + ["high"] * (n_points - n_points // 2),
+                "environment": ["low"] * (n_points // 2) + ["high"] * (n_points - n_points // 2),
             }
         )
 
@@ -211,18 +207,14 @@ class TestLeadLagValidator:
         """Test persistence metrics calculation"""
         # Test with persistent betas
         persistent_betas = np.array([0.5, 0.6, 0.7, 0.8, 0.9])
-        persistence = validator._calculate_persistence_metrics(
-            {"test_pair": persistent_betas}
-        )
+        persistence = validator._calculate_persistence_metrics({"test_pair": persistent_betas})
 
         assert "test_pair" in persistence
         assert persistence["test_pair"] > 0.0  # Should be positive for persistent data
 
         # Test with switching betas
         switching_betas = np.array([0.5, -0.5, 0.5, -0.5, 0.5])
-        persistence = validator._calculate_persistence_metrics(
-            {"test_pair": switching_betas}
-        )
+        persistence = validator._calculate_persistence_metrics({"test_pair": switching_betas})
 
         assert persistence["test_pair"] < 0.0  # Should be negative for switching data
 

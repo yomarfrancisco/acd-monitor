@@ -5,22 +5,23 @@ ICP-VMM Dry Run Test
 Tests the ICP-VMM pipeline on mock data to validate the full flow.
 """
 
-import sys
 import json
-import pandas as pd
-import numpy as np
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
+
+import numpy as np
+import pandas as pd
 
 # Add src to path
 sys.path.append(str(Path(__file__).parent.parent.parent / "src"))
 
 from icp_vmm.environments import EnvironmentLabeler
-from icp_vmm.transforms import DataTransformer
-from icp_vmm.tests import PreconditionTester
-from icp_vmm.vmm import VMMAnalyzer
-from icp_vmm.icp import ICPTester
 from icp_vmm.export import ICPVMMExporter
+from icp_vmm.icp import ICPTester
+from icp_vmm.tests import PreconditionTester
+from icp_vmm.transforms import DataTransformer
+from icp_vmm.vmm import VMMAnalyzer
 
 
 def create_mock_data():
@@ -87,9 +88,7 @@ def main():
         transformer = DataTransformer()
         tester = PreconditionTester()
         vmm_analyzer = VMMAnalyzer()
-        icp_tester = ICPTester(
-            fdr_alpha=0.05, bootstrap_samples=100
-        )  # Reduced for speed
+        icp_tester = ICPTester(fdr_alpha=0.05, bootstrap_samples=100)  # Reduced for speed
         exporter = ICPVMMExporter("acd-monitor-snapshots", "analysis")
 
         # Prepare data
@@ -103,9 +102,7 @@ def main():
         print("\n🏷️ Labeling environments...")
         labeled_data = {}
         for venue, data in prepared_data.items():
-            labeled_data[venue] = env_labeler.label_all_environments(
-                data, processed_metrics
-            )
+            labeled_data[venue] = env_labeler.label_all_environments(data, processed_metrics)
 
         # Get environment counts
         env_counts = {}

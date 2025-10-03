@@ -6,12 +6,13 @@ for ACD analysis. The ATP case involved coordinated fare increases by
 major airlines, providing a real-world test of coordination detection.
 """
 
-import numpy as np
-import pandas as pd
-from typing import Dict, List, Tuple, Optional
+import warnings
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-import warnings
+from typing import Dict, List, Optional, Tuple
+
+import numpy as np
+import pandas as pd
 
 warnings.filterwarnings("ignore")
 
@@ -123,9 +124,7 @@ class ATPDataGenerator:
 
         return data
 
-    def _add_coordination_patterns(
-        self, data: pd.DataFrame, airlines: List[str]
-    ) -> pd.DataFrame:
+    def _add_coordination_patterns(self, data: pd.DataFrame, airlines: List[str]) -> pd.DataFrame:
         """Add coordination patterns based on ATP case characteristics"""
         n_days = len(data)
 
@@ -158,9 +157,7 @@ class ATPDataGenerator:
 
             # Add coordination premium during coordination periods
             coordination_mask = data["coordination_period"]
-            coordination_premium = (
-                self.config.coordination_strength * 0.1
-            )  # 10% premium
+            coordination_premium = self.config.coordination_strength * 0.1  # 10% premium
 
             data.loc[coordination_mask, airline] = base_prices[coordination_mask] * (
                 1 + coordination_premium
@@ -175,16 +172,15 @@ class ATPDataGenerator:
                     if coordination_mask.iloc[i]:
                         # Follow the leader with some noise
                         lead_change = (
-                            data[lead_airline].iloc[i]
-                            - data[lead_airline].iloc[i - lag_days]
+                            data[lead_airline].iloc[i] - data[lead_airline].iloc[i - lag_days]
                         ) / data[lead_airline].iloc[i - lag_days]
                         follow_change = lead_change * 0.8 + np.random.normal(
                             0, 0.01
                         )  # 80% follow with noise
 
-                        data.iloc[i, data.columns.get_loc(airline)] = data[
-                            airline
-                        ].iloc[i - lag_days] * (1 + follow_change)
+                        data.iloc[i, data.columns.get_loc(airline)] = data[airline].iloc[
+                            i - lag_days
+                        ] * (1 + follow_change)
 
         return data
 
@@ -209,9 +205,7 @@ class ATPDataGenerator:
         data["capacity_utilization"] = np.clip(capacity_utilization, 0.5, 1.0)
 
         # Competitive intensity (number of competitors)
-        data["competitive_intensity"] = np.random.choice(
-            [3, 4, 5], n_days, p=[0.2, 0.6, 0.2]
-        )
+        data["competitive_intensity"] = np.random.choice([3, 4, 5], n_days, p=[0.2, 0.6, 0.2])
 
         return data
 
@@ -243,9 +237,4 @@ if __name__ == "__main__":
     print(f"Data shape: {atp_data.shape}")
     print(f"Date range: {atp_data['date'].min()} to {atp_data['date'].max()}")
     print(f"Coordination periods: {atp_data['coordination_period'].sum()} days")
-    print(
-        f"Airline columns: {[col for col in atp_data.columns if col.startswith('Airline_')]}"
-    )
-
-
-
+    print(f"Airline columns: {[col for col in atp_data.columns if col.startswith('Airline_')]}")

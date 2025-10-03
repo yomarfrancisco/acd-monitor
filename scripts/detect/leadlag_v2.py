@@ -15,7 +15,7 @@ import logging
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
@@ -478,23 +478,13 @@ def generate_leadlag_report(results: Dict, export_dir: str) -> str:
 def main():
     """Main function for Lead-Lag v2 analysis."""
     parser = argparse.ArgumentParser(description="Lead-Lag v2 Analysis")
-    parser.add_argument(
-        "--snapshot", required=True, help="Path to snapshot OVERLAP.json"
-    )
-    parser.add_argument(
-        "--horizons", nargs="+", type=int, default=[1], help="Return horizons"
-    )
-    parser.add_argument(
-        "--rho-min", type=float, default=0.12, help="Minimum correlation threshold"
-    )
+    parser.add_argument("--snapshot", required=True, help="Path to snapshot OVERLAP.json")
+    parser.add_argument("--horizons", nargs="+", type=int, default=[1], help="Return horizons")
+    parser.add_argument("--rho-min", type=float, default=0.12, help="Minimum correlation threshold")
     parser.add_argument("--alpha", type=float, default=0.10, help="Significance level")
-    parser.add_argument(
-        "--tau-max", type=int, default=30, help="Maximum lag in seconds"
-    )
+    parser.add_argument("--tau-max", type=int, default=30, help="Maximum lag in seconds")
     parser.add_argument("--bootstrap", type=int, default=1000, help="Bootstrap samples")
-    parser.add_argument(
-        "--block", type=int, default=10, help="Block size for bootstrap"
-    )
+    parser.add_argument("--block", type=int, default=10, help="Block size for bootstrap")
     parser.add_argument("--seed", type=int, default=42, help="Random seed")
     parser.add_argument(
         "--placebo-shifts",
@@ -535,9 +525,7 @@ def main():
 
         # Write artifacts
         edges_file = export_path / "edges.json"
-        edges_file.write_text(
-            json.dumps(results["edges"], cls=PandasJSONEncoder, indent=2)
-        )
+        edges_file.write_text(json.dumps(results["edges"], cls=PandasJSONEncoder, indent=2))
 
         placebo_file = export_path / "placebo.json"
         placebo_file.write_text(

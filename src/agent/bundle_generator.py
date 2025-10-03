@@ -6,8 +6,6 @@ using Reporting v2 outputs. It provides conversational bundle drafting,
 refinement, and finalization capabilities.
 """
 
-import pandas as pd
-import numpy as np
 import hashlib
 import json
 import logging
@@ -15,6 +13,9 @@ from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+
+import numpy as np
+import pandas as pd
 
 from acd.analytics.integrated_engine import IntegratedResult
 from acd.analytics.report_v2 import RegulatoryBundle, ReportV2Generator

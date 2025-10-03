@@ -5,14 +5,15 @@ Thin service layer for aggregating exchange data.
 """
 
 import asyncio
-import aiohttp
-from datetime import datetime, timezone, timedelta
-from typing import Dict
 import logging
 import os
+from datetime import datetime, timedelta, timezone
+from typing import Dict
 
+import aiohttp
+
+from . import bybit, kraken, okx
 from .binance import get_binance_api
-from . import kraken, okx, bybit
 
 logger = logging.getLogger(__name__)
 

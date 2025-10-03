@@ -104,9 +104,7 @@ def main():
     parser = argparse.ArgumentParser(description="Configure S3 lifecycle policy")
     parser.add_argument("--bucket", default="acd-monitor-snapshots", help="S3 bucket")
     parser.add_argument("--prefix", default="snapshots", help="S3 prefix")
-    parser.add_argument(
-        "--estimate-costs", action="store_true", help="Estimate daily costs"
-    )
+    parser.add_argument("--estimate-costs", action="store_true", help="Estimate daily costs")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
 
     args = parser.parse_args()
@@ -130,12 +128,8 @@ def main():
                 print(f"Cost Estimation:")
                 print(f"  Total size: {costs['total_size_gb']} GB")
                 print(f"  Object count: {costs['object_count']}")
-                print(
-                    f"  Estimated daily cost: ${costs['estimated_daily_cost_standard']}"
-                )
-                print(
-                    f"  Estimated monthly cost: ${costs['estimated_monthly_cost_standard']}"
-                )
+                print(f"  Estimated daily cost: ${costs['estimated_daily_cost_standard']}")
+                print(f"  Estimated monthly cost: ${costs['estimated_monthly_cost_standard']}")
 
         logger.info("S3 lifecycle configuration completed successfully")
         sys.exit(0)

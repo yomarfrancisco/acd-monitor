@@ -262,9 +262,7 @@ def upload_to_s3(normalized_fees: Dict, bucket: str, key: str) -> bool:
         json_data = json.dumps(normalized_fees, cls=PandasJSONEncoder, indent=2)
 
         # Upload to S3
-        s3_client.put_object(
-            Bucket=bucket, Key=key, Body=json_data, ContentType="application/json"
-        )
+        s3_client.put_object(Bucket=bucket, Key=key, Body=json_data, ContentType="application/json")
 
         logger.info(f"Successfully uploaded fees to s3://{bucket}/{key}")
         return True
@@ -277,12 +275,8 @@ def upload_to_s3(normalized_fees: Dict, bucket: str, key: str) -> bool:
 def main():
     """Main function for fee schedule collection."""
     parser = argparse.ArgumentParser(description="Fetch and normalize fee schedules")
-    parser.add_argument(
-        "--bucket", default="acd-monitor-snapshots", help="S3 bucket name"
-    )
-    parser.add_argument(
-        "--key", default="fee_schedules/normalized_fees.json", help="S3 key"
-    )
+    parser.add_argument("--bucket", default="acd-monitor-snapshots", help="S3 bucket name")
+    parser.add_argument("--key", default="fee_schedules/normalized_fees.json", help="S3 key")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
 
     args = parser.parse_args()

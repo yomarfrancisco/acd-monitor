@@ -3,10 +3,10 @@ Base adapter interface for market data access.
 """
 
 from abc import ABC, abstractmethod
+from datetime import datetime
 
 # from typing import Dict, Any, Optional  # Unused for now
 import pandas as pd
-from datetime import datetime
 
 
 class BaseBarsAdapter(ABC):

@@ -7,12 +7,13 @@ and can be used interchangeably.
 
 import os
 
+# Import providers
+from src.agent.providers.chatbase_adapter import AgentMessage, ChatbaseAdapter, Health
+from src.agent.providers.offline_mock import OfflineMockProvider
+
 # from unittest.mock import patch, MagicMock  # noqa: F401
 # from typing import Dict  # noqa: F401, Any
 
-# Import providers
-from src.agent.providers.chatbase_adapter import ChatbaseAdapter, AgentMessage, Health
-from src.agent.providers.offline_mock import OfflineMockProvider
 
 
 class TestProviderContract:
@@ -263,6 +264,3 @@ class TestProviderFactory:
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
-
-
-

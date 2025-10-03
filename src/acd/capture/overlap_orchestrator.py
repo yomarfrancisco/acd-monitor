@@ -4,21 +4,22 @@ Continuously captures data from all 5 venues and monitors for strict overlap win
 """
 
 import asyncio
-import websockets
-import aiohttp
-import pandas as pd
-from datetime import datetime, timedelta
+import csv
 import json
 import logging
 import os
-import time
-import subprocess
-import signal
 import shutil
-from typing import List, Dict, Optional
+import signal
+import subprocess
 import sys
+import time
+from datetime import datetime, timedelta
 from pathlib import Path
-import csv
+from typing import Dict, List, Optional
+
+import aiohttp
+import pandas as pd
+import websockets
 
 logger = logging.getLogger(__name__)
 

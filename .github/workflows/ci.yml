@@ -9,6 +9,10 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   detect:
     runs-on: ubuntu-latest
@@ -85,8 +89,14 @@ jobs:
           pip install -r requirements.txt
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
 
+      - name: Install lint tools
+        run: |
+          pip install "black==24.8.0" "flake8==7.1.0" "isort==5.13.2"
+
       - name: Lint with flake8
         run: flake8
 
       - name: Format check with black
-        run: black --check src
+        run: |
+          black --version
+          black --check --diff .

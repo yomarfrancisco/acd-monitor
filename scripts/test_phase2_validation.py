@@ -6,17 +6,18 @@ Tests the first two validation layers (lead-lag and mirroring) on synthetic data
 to demonstrate their ability to distinguish competitive vs coordinated scenarios.
 """
 
+import os
+import sys
+
 import numpy as np
 import pandas as pd
-import sys
-import os
 
 # Add src to path
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "src"))
 
-from acd.data.synthetic_crypto import SyntheticCryptoGenerator, CryptoMarketConfig
-from acd.validation.lead_lag import LeadLagValidator, LeadLagConfig
-from acd.validation.mirroring import MirroringValidator, MirroringConfig
+from acd.data.synthetic_crypto import CryptoMarketConfig, SyntheticCryptoGenerator
+from acd.validation.lead_lag import LeadLagConfig, LeadLagValidator
+from acd.validation.mirroring import MirroringConfig, MirroringValidator
 
 
 def generate_test_data(seed: int = 42, scenario: str = "competitive"):
@@ -152,12 +153,8 @@ def main():
 
     # Lead-lag comparison
     print("\nLead-Lag Analysis Comparison:")
-    comp_avg_persistence = np.mean(
-        list(competitive_lead_lag.persistence_metrics.values())
-    )
-    coord_avg_persistence = np.mean(
-        list(coordinated_lead_lag.persistence_metrics.values())
-    )
+    comp_avg_persistence = np.mean(list(competitive_lead_lag.persistence_metrics.values()))
+    coord_avg_persistence = np.mean(list(coordinated_lead_lag.persistence_metrics.values()))
 
     comp_avg_entropy = np.mean(list(competitive_lead_lag.switching_entropy.values()))
     coord_avg_entropy = np.mean(list(coordinated_lead_lag.switching_entropy.values()))
@@ -171,19 +168,11 @@ def main():
 
     # Mirroring comparison
     print("\nMirroring Analysis Comparison:")
-    comp_avg_mirroring = np.mean(
-        list(competitive_mirroring.median_mirroring_ratio.values())
-    )
-    coord_avg_mirroring = np.mean(
-        list(coordinated_mirroring.median_mirroring_ratio.values())
-    )
+    comp_avg_mirroring = np.mean(list(competitive_mirroring.median_mirroring_ratio.values()))
+    coord_avg_mirroring = np.mean(list(coordinated_mirroring.median_mirroring_ratio.values()))
 
-    comp_avg_high_mirroring = np.mean(
-        list(competitive_mirroring.high_mirroring_fraction.values())
-    )
-    coord_avg_high_mirroring = np.mean(
-        list(coordinated_mirroring.high_mirroring_fraction.values())
-    )
+    comp_avg_high_mirroring = np.mean(list(competitive_mirroring.high_mirroring_fraction.values()))
+    coord_avg_high_mirroring = np.mean(list(coordinated_mirroring.high_mirroring_fraction.values()))
 
     print(
         f"  Average Mirroring Ratio - Competitive: {comp_avg_mirroring:.3f}, Coordinated: {coord_avg_mirroring:.3f}"
@@ -197,12 +186,8 @@ def main():
     print(
         f"  Lead-lag persistence higher for coordinated: {coord_avg_persistence > comp_avg_persistence}"
     )
-    print(
-        f"  Lead-lag entropy lower for coordinated: {coord_avg_entropy < comp_avg_entropy}"
-    )
-    print(
-        f"  Mirroring ratio higher for coordinated: {coord_avg_mirroring > comp_avg_mirroring}"
-    )
+    print(f"  Lead-lag entropy lower for coordinated: {coord_avg_entropy < comp_avg_entropy}")
+    print(f"  Mirroring ratio higher for coordinated: {coord_avg_mirroring > comp_avg_mirroring}")
     print(
         f"  High mirroring fraction higher for coordinated: {coord_avg_high_mirroring > comp_avg_high_mirroring}"
     )
@@ -216,9 +201,7 @@ def main():
     ]
 
     overall_success = all(success_criteria)
-    print(
-        f"\nOverall Success: {overall_success} ({sum(success_criteria)}/4 criteria met)"
-    )
+    print(f"\nOverall Success: {overall_success} ({sum(success_criteria)}/4 criteria met)")
 
     return overall_success
 
@@ -226,6 +209,3 @@ def main():
 if __name__ == "__main__":
     success = main()
     sys.exit(0 if success else 1)
-
-
-

@@ -24,8 +24,8 @@ import pandas as pd
 
 # Import WebSocket capture
 sys.path.append(str(Path(__file__).parent))
-from websocket_capture import WebSocketCapture
 from coverage_monitor import check_window_coverage
+from websocket_capture import WebSocketCapture
 
 
 # Import custom JSON encoder
@@ -123,9 +123,7 @@ def capture_window_fallback(
             for i, ts in enumerate(timestamps):
                 mid_px = (bids[i] + asks[i]) / 2
                 spread_bps = (asks[i] - bids[i]) / mid_px * 10000
-                imbalance = (bid_sizes[i] - ask_sizes[i]) / (
-                    bid_sizes[i] + ask_sizes[i]
-                )
+                imbalance = (bid_sizes[i] - ask_sizes[i]) / (bid_sizes[i] + ask_sizes[i])
 
                 data.append(
                     {
@@ -167,9 +165,7 @@ def capture_window_fallback(
             "success": success,
             "coverage_data": coverage_data,
             "high_coverage_venues": [
-                v
-                for v, data in coverage_data.items()
-                if data["coverage_percentage"] >= 95.0
+                v for v, data in coverage_data.items() if data["coverage_percentage"] >= 95.0
             ],
         }
 
@@ -203,8 +199,7 @@ def write_snapshot_to_s3(
             "cadences": ["1s"],
             "venues": list(venue_data.keys()),
             "coverage": {
-                venue: data["coverage_percentage"] / 100.0
-                for venue, data in coverage_data.items()
+                venue: data["coverage_percentage"] / 100.0 for venue, data in coverage_data.items()
             },
         }
 
@@ -288,9 +283,7 @@ async def capture_window_enhanced(
                 logger.info("Falling back to synthetic data capture")
 
         # Fallback to synthetic data
-        result = capture_window_fallback(
-            symbol, start_time, end_time, venues, bucket, prefix
-        )
+        result = capture_window_fallback(symbol, start_time, end_time, venues, bucket, prefix)
 
         if result.get("success"):
             logger.info("Fallback capture successful")
@@ -307,9 +300,7 @@ async def capture_window_enhanced(
 def main():
     """Main function for enhanced window capture."""
     parser = argparse.ArgumentParser(description="Enhanced 30-minute window capture")
-    parser.add_argument(
-        "--symbol", required=True, help="Trading symbol (e.g., BTC-USD)"
-    )
+    parser.add_argument("--symbol", required=True, help="Trading symbol (e.g., BTC-USD)")
     parser.add_argument("--start", required=True, help="Start time (ISO format)")
     parser.add_argument("--end", required=True, help="End time (ISO format)")
     parser.add_argument(
@@ -322,7 +313,9 @@ def main():
     parser.add_argument(
         "--no-websocket", action="store_true", help="Skip WebSocket, use fallback only"
     )
-    parser.add_argument("--canary", action="store_true", help="Enable canary mode (writes to ticks_canary/)")
+    parser.add_argument(
+        "--canary", action="store_true", help="Enable canary mode (writes to ticks_canary/)"
+    )
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
 
     args = parser.parse_args()
@@ -344,7 +337,7 @@ def main():
         # Capture window with hard timeout guard
         duration_secs = int((end_time - start_time).total_seconds())
         timeout_secs = duration_secs + 60  # 1 minute buffer
-        
+
         try:
             result = asyncio.run(
                 asyncio.wait_for(
@@ -357,7 +350,7 @@ def main():
                         args.prefix,
                         use_websocket=not args.no_websocket,
                     ),
-                    timeout=timeout_secs
+                    timeout=timeout_secs,
                 )
             )
         except asyncio.TimeoutError:
@@ -367,7 +360,7 @@ def main():
 
         success = result.get("success", False)
         print(f"CAPTURE_COMPLETE enhanced success={success}")
-        
+
         if success:
             logger.info("Enhanced window capture completed successfully")
             logger.info("WINDOW_CAPTURE_COMPLETE - All capture operations finished")

@@ -12,7 +12,7 @@ import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 
 # Add src to path
 sys.path.append(str(Path(__file__).parent.parent / "src"))
@@ -21,9 +21,7 @@ sys.path.append(str(Path(__file__).parent.parent / "src"))
 def setup_logging(verbose: bool = False):
     """Setup logging configuration."""
     level = logging.DEBUG if verbose else logging.INFO
-    logging.basicConfig(
-        level=level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    )
+    logging.basicConfig(level=level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
 
 def find_best_30s_snapshots(
@@ -89,9 +87,7 @@ def find_best_30s_snapshots(
             }
 
             best_snapshots.append(snapshot_info)
-            logger.info(
-                f"Found valid 30s snapshot: {duration_minutes:.1f}m, {len(venues)} venues"
-            )
+            logger.info(f"Found valid 30s snapshot: {duration_minutes:.1f}m, {len(venues)} venues")
 
         except Exception as e:
             logger.warning(f"Error processing snapshot {snapshot_dir}: {e}")
@@ -224,9 +220,7 @@ def create_promotion_index(snapshots: List[Dict], export_dir: Path) -> None:
         json.dump(promotion_data, f, indent=2)
 
     logger.info(f"Created promotion index: {promotion_file}")
-    print(
-        f"[PROMOTE:30s] created_index={promotion_file}, entries={len(promotion_data)}"
-    )
+    print(f"[PROMOTE:30s] created_index={promotion_file}, entries={len(promotion_data)}")
 
 
 def main():
@@ -237,9 +231,7 @@ def main():
         default="exports/sweep_continuous/snapshots",
         help="Snapshots directory",
     )
-    parser.add_argument(
-        "--export-dir", default="exports/sweep", help="Export directory"
-    )
+    parser.add_argument("--export-dir", default="exports/sweep", help="Export directory")
     parser.add_argument(
         "--min-duration", type=float, default=8.0, help="Minimum duration in minutes"
     )
@@ -266,9 +258,7 @@ def main():
         logger.error(f"Snapshots directory not found: {snapshots_dir}")
         sys.exit(1)
 
-    best_snapshots = find_best_30s_snapshots(
-        snapshots_dir, args.min_duration, args.min_coverage
-    )
+    best_snapshots = find_best_30s_snapshots(snapshots_dir, args.min_duration, args.min_coverage)
 
     if not best_snapshots:
         logger.error("No valid 30s snapshots found")
@@ -279,9 +269,7 @@ def main():
     # Process each snapshot
     promoted_snapshots = []
     for i, snapshot in enumerate(best_snapshots):
-        logger.info(
-            f"Processing snapshot {i+1}/{len(best_snapshots)}: {snapshot['snapshot']}"
-        )
+        logger.info(f"Processing snapshot {i+1}/{len(best_snapshots)}: {snapshot['snapshot']}")
 
         # Clean snapshot
         if not clean_snapshot(snapshot["snapshot"], args.verbose):

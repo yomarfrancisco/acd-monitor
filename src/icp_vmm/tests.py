@@ -5,12 +5,13 @@ Precondition Tests for ICP-VMM Analysis
 Validates data quality and stationarity requirements.
 """
 
-import pandas as pd
-import numpy as np
+import logging
 from typing import Dict, List, Tuple
+
+import numpy as np
+import pandas as pd
 from scipy import stats  # noqa: F401
 from statsmodels.tsa.stattools import adfuller, kpss
-import logging
 
 logger = logging.getLogger(__name__)
 

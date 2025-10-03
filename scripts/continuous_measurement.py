@@ -4,37 +4,32 @@ Continuous Variable Measurement System
 Captures all fully measurable variables from S3 tick data and stores to S3
 """
 
+import argparse
 import json
-import boto3
-import pandas as pd
-import numpy as np
+import logging
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
-import argparse
-import sys
-from typing import Dict, List, Any
-import logging
+from typing import Any, Dict, List
+
+import boto3
+import numpy as np
+import pandas as pd
 from schema_validator import SchemaValidator
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 
 class ContinuousMeasurement:
-    def __init__(
-        self, bucket: str = "acd-monitor-snapshots", prefix: str = "snapshots"
-    ):
+    def __init__(self, bucket: str = "acd-monitor-snapshots", prefix: str = "snapshots"):
         self.s3 = boto3.client("s3")
         self.bucket = bucket
         self.prefix = prefix
         self.schema_validator = SchemaValidator()
 
-    def load_tick_data(
-        self, symbol: str, date: str, time_range: str
-    ) -> Dict[str, pd.DataFrame]:
+    def load_tick_data(self, symbol: str, date: str, time_range: str) -> Dict[str, pd.DataFrame]:
         """Load tick data for all venues from S3"""
         venues = ["binance", "coinbase", "kraken", "okx", "bybit"]
         data = {}
@@ -46,9 +41,7 @@ class ContinuousMeasurement:
                 # Download to local temp file first
                 import tempfile
 
-                with tempfile.NamedTemporaryFile(
-                    suffix=".parquet", delete=False
-                ) as tmp_file:
+                with tempfile.NamedTemporaryFile(suffix=".parquet", delete=False) as tmp_file:
                     self.s3.download_file(self.bucket, key, tmp_file.name)
                     df = pd.read_parquet(tmp_file.name)
                     df["ts_exchange"] = pd.to_datetime(df["ts_exchange"])
@@ -167,9 +160,7 @@ class ContinuousMeasurement:
                         corr = aligned.corr().iloc[0, 1]
                         lead_lag[f"{venue1}_vs_{venue2}"] = corr
                 except Exception as e:
-                    logger.warning(
-                        f"Failed to calculate lead-lag for {venue1} vs {venue2}: {e}"
-                    )
+                    logger.warning(f"Failed to calculate lead-lag for {venue1} vs {venue2}: {e}")
                     continue
 
         return lead_lag
@@ -190,9 +181,7 @@ class ContinuousMeasurement:
                 price_data[venue] = df
 
             # Align all data
-            aligned = pd.concat(
-                price_data.values(), axis=1, keys=price_data.keys(), join="inner"
-            )
+            aligned = pd.concat(price_data.values(), axis=1, keys=price_data.keys(), join="inner")
 
             if len(aligned) > 50:  # Minimum data requirement
                 # Calculate information share (simplified version)
@@ -201,9 +190,7 @@ class ContinuousMeasurement:
                     venue_returns = aligned[venue].pct_change().dropna()
                     total_variance = aligned.pct_change().var().sum()
                     venue_variance = venue_returns.var()
-                    infoshare[venue] = (
-                        venue_variance / total_variance if total_variance > 0 else 0
-                    )
+                    infoshare[venue] = venue_variance / total_variance if total_variance > 0 else 0
 
         except Exception as e:
             logger.warning(f"Failed to calculate information share: {e}")
@@ -241,9 +228,7 @@ class ContinuousMeasurement:
             size_changes = df["last_sz"].diff().abs()
             spread_changes = df["spread_bps"].diff().abs()
             if size_changes.sum() > 0:
-                market_impact = (
-                    size_changes * spread_changes
-                ).sum() / size_changes.sum()
+                market_impact = (size_changes * spread_changes).sum() / size_changes.sum()
             else:
                 market_impact = 0
         else:
@@ -262,9 +247,7 @@ class ContinuousMeasurement:
             "liquidity_ratio": liquidity_ratio,
         }
 
-    def calculate_leadership_shares(
-        self, data: Dict[str, pd.DataFrame]
-    ) -> Dict[str, Any]:
+    def calculate_leadership_shares(self, data: Dict[str, pd.DataFrame]) -> Dict[str, Any]:
         """Calculate advanced leadership shares with multiple weighting schemes"""
         if len(data) == 0:
             return {}
@@ -319,9 +302,7 @@ class ContinuousMeasurement:
                 df = data[venue]
                 if len(df) > 1:
                     price_returns = df["last_px"].pct_change().dropna()
-                    info_leadership[venue] = (
-                        price_returns.var() if len(price_returns) > 0 else 0
-                    )
+                    info_leadership[venue] = price_returns.var() if len(price_returns) > 0 else 0
                 else:
                     info_leadership[venue] = 0
             else:
@@ -404,9 +385,7 @@ class ContinuousMeasurement:
             return {}
 
         # Validate schema for enhanced metrics
-        enhanced_metrics_available, schema_result = (
-            self.schema_validator.validate_schema(data)
-        )
+        enhanced_metrics_available, schema_result = self.schema_validator.validate_schema(data)
 
         # Initialize results
         results = {
@@ -437,9 +416,7 @@ class ContinuousMeasurement:
 
             # Enhanced metrics (only if schema is complete)
             if enhanced_metrics_available:
-                venue_metrics["liquidity_metrics"] = self.calculate_liquidity_metrics(
-                    df
-                )
+                venue_metrics["liquidity_metrics"] = self.calculate_liquidity_metrics(df)
             else:
                 # Create stub for incomplete schema
                 venue_metrics["liquidity_metrics"] = {
@@ -500,13 +477,9 @@ class ContinuousMeasurement:
 
 def main():
     parser = argparse.ArgumentParser(description="Continuous Variable Measurement")
-    parser.add_argument(
-        "--symbol", required=True, help="Trading symbol (e.g., BTC-USD)"
-    )
+    parser.add_argument("--symbol", required=True, help="Trading symbol (e.g., BTC-USD)")
     parser.add_argument("--date", required=True, help="Date (YYYYMMDD)")
-    parser.add_argument(
-        "--time-range", required=True, help="Time range (e.g., 1300-1400)"
-    )
+    parser.add_argument("--time-range", required=True, help="Time range (e.g., 1300-1400)")
     parser.add_argument("--output-path", required=True, help="S3 output path")
     parser.add_argument("--bucket", default="acd-monitor-snapshots", help="S3 bucket")
     parser.add_argument("--prefix", default="snapshots", help="S3 prefix")

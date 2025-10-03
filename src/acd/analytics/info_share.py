@@ -5,16 +5,17 @@ This module implements Hasbrouck information share bounds to determine
 which venue embeds fundamental information first using minute-level data.
 """
 
-import os
 import json
 import logging
-import numpy as np
-import pandas as pd
-from typing import Dict, List, Any, Tuple, Optional
+import os
 from dataclasses import dataclass
 from datetime import datetime
-from statsmodels.tsa.vector_ar.vecm import VECM, coint_johansen
+from typing import Any, Dict, List, Optional, Tuple
+
+import numpy as np
+import pandas as pd
 from sklearn.utils import resample
+from statsmodels.tsa.vector_ar.vecm import VECM, coint_johansen
 
 
 @dataclass

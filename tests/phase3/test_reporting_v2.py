@@ -4,23 +4,24 @@ Tests for ACD Reporting v2 - Attribution Tables and Provenance-Tracked Outputs
 
 from datetime import datetime
 
-# from unittest.mock import Mock  # noqa: F401, patch, mock_open
-
+from src.acd.analytics.integrated_engine import IntegratedResult
 from src.acd.analytics.report_v2 import (
-    ReportV2Generator,
     AttributionTable,
     ProvenanceInfo,
     RegulatoryBundle,
+    ReportV2Generator,
     generate_regulatory_bundle,
 )
 from src.acd.icp.engine import ICPResult
-from src.acd.vmm.engine import VMMOutput
-from src.acd.vmm.crypto_moments import CryptoMoments
-from src.acd.validation.lead_lag import LeadLagResult
-from src.acd.validation.mirroring import MirroringResult
 from src.acd.validation.hmm import HMMResult
 from src.acd.validation.infoflow import InfoFlowResult
-from src.acd.analytics.integrated_engine import IntegratedResult
+from src.acd.validation.lead_lag import LeadLagResult
+from src.acd.validation.mirroring import MirroringResult
+from src.acd.vmm.crypto_moments import CryptoMoments
+from src.acd.vmm.engine import VMMOutput
+
+# from unittest.mock import Mock  # noqa: F401, patch, mock_open
+
 
 
 class TestAttributionTable:
@@ -201,9 +202,7 @@ class TestReportV2Generator:
             state_probabilities=np.array([[0.8, 0.1, 0.1], [0.2, 0.6, 0.2]]),
             transition_matrix=np.array([[0.7, 0.2, 0.1], [0.3, 0.5, 0.2]]),
             emission_means=np.array([[1.0, 2.0], [1.5, 2.5]]),
-            emission_covariances=np.array(
-                [[[1.0, 0.0], [0.0, 1.0]], [[1.5, 0.0], [0.0, 1.5]]]
-            ),
+            emission_covariances=np.array([[[1.0, 0.0], [0.0, 1.0]], [[1.5, 0.0], [0.0, 1.5]]]),
             dwell_times={0: 5.0, 1: 3.0, 2: 2.0},
             state_frequencies={0: 0.5, 1: 0.3, 2: 0.2},
             regime_stability=0.75,
@@ -416,9 +415,7 @@ class TestReportV2Generator:
             heteroscedasticity=0.10,
         )
 
-        contribution_no_reject = generator._calculate_icp_contribution(
-            icp_result_no_reject
-        )
+        contribution_no_reject = generator._calculate_icp_contribution(icp_result_no_reject)
         assert contribution_no_reject == 5.0  # Should be low due to no rejection
 
     def test_vmm_contribution_calculation(self, generator):

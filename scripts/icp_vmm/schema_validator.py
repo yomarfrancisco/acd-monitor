@@ -8,7 +8,8 @@ Validates MANIFEST.json against v1.0.0 schema specification.
 import json
 import sys
 from pathlib import Path
-from typing import Dict, Any
+from typing import Any, Dict
+
 import jsonschema
 
 

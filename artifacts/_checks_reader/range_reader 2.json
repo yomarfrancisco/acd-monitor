@@ -1,0 +1,14 @@
+{
+  "timestamp": "2025-10-01T19:10:00.054323+00:00",
+  "stage": "E",
+  "validation": "range_reader",
+  "btc_min": 114239.1,
+  "btc_max": 118131.0,
+  "btc_min_ok": true,
+  "btc_max_ok": true,
+  "eth_min": 4293.01,
+  "eth_max": 4340.81,
+  "eth_min_ok": true,
+  "eth_max_ok": true,
+  "validation_passed": true
+}

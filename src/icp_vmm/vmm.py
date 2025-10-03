@@ -5,14 +5,14 @@ Variance-Movement Mapping (VMM) Core
 Implements Johansen cointegration, VECM, and information share analysis.
 """
 
-import pandas as pd
-import numpy as np
-from typing import Dict, Optional
-from statsmodels.tsa.vector_ar.vecm import VECM, coint_johansen
-from statsmodels.tsa.vector_ar.var_model import VAR
-
 # from statsmodels.tsa.vector_ar.impulse_response import irf  # noqa: F401
 import logging
+from typing import Dict, Optional
+
+import numpy as np
+import pandas as pd
+from statsmodels.tsa.vector_ar.var_model import VAR
+from statsmodels.tsa.vector_ar.vecm import VECM, coint_johansen
 
 logger = logging.getLogger(__name__)
 

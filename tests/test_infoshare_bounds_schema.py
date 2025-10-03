@@ -2,10 +2,11 @@
 Test InfoShare bounds schema: bounds present & in [0,1].
 """
 
-import pytest
 import json
 import sys
 from pathlib import Path
+
+import pytest
 
 # Add scripts to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
@@ -48,15 +49,9 @@ def test_infoshare_bounds_in_range_0_1():
 
     for venue, bound in bounds.items():
         # Each bound should be in [0, 1]
-        assert (
-            0 <= bound["lower"] <= 1
-        ), f"{venue} lower bound {bound['lower']} not in [0,1]"
-        assert (
-            0 <= bound["upper"] <= 1
-        ), f"{venue} upper bound {bound['upper']} not in [0,1]"
-        assert (
-            0 <= bound["point"] <= 1
-        ), f"{venue} point bound {bound['point']} not in [0,1]"
+        assert 0 <= bound["lower"] <= 1, f"{venue} lower bound {bound['lower']} not in [0,1]"
+        assert 0 <= bound["upper"] <= 1, f"{venue} upper bound {bound['upper']} not in [0,1]"
+        assert 0 <= bound["point"] <= 1, f"{venue} point bound {bound['point']} not in [0,1]"
 
         # Bounds should be ordered: lower <= point <= upper
         assert bound["lower"] <= bound["point"], f"{venue} lower > point"

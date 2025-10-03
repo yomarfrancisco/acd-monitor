@@ -8,9 +8,9 @@ to ensure only real data is used for analysis.
 
 import argparse
 import logging
+import os
 import sys
 from pathlib import Path
-import os
 
 # Add src to path
 sys.path.append(str(Path(__file__).parent.parent / "src"))
@@ -19,9 +19,7 @@ sys.path.append(str(Path(__file__).parent.parent / "src"))
 def setup_logging(verbose: bool = False):
     """Setup logging configuration."""
     level = logging.DEBUG if verbose else logging.INFO
-    logging.basicConfig(
-        level=level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    )
+    logging.basicConfig(level=level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
 
 def clean_snapshot(snapshot_dir: str, verbose: bool = False):
@@ -86,15 +84,11 @@ def clean_snapshot(snapshot_dir: str, verbose: bool = False):
     for venue, files in venue_files.items():
         if not files:
             empty_venues.append(venue)
-            logger.error(
-                f"[ABORT:snapshot:empty] {venue} - no valid parquet files found"
-            )
+            logger.error(f"[ABORT:snapshot:empty] {venue} - no valid parquet files found")
             print(f"[ABORT:snapshot:empty] {venue} - no valid parquet files found")
 
     if empty_venues:
-        logger.error(
-            f"Aborting: {len(empty_venues)} venues have no valid parquet files"
-        )
+        logger.error(f"Aborting: {len(empty_venues)} venues have no valid parquet files")
         sys.exit(1)
 
     # Summary
@@ -115,9 +109,7 @@ def clean_snapshot(snapshot_dir: str, verbose: bool = False):
 
 def main():
     """Main entry point."""
-    parser = argparse.ArgumentParser(
-        description="Clean snapshot directory of mock/demo files"
-    )
+    parser = argparse.ArgumentParser(description="Clean snapshot directory of mock/demo files")
     parser.add_argument("--snapshot", required=True, help="Path to snapshot directory")
     parser.add_argument(
         "--abort-on-any-removal",

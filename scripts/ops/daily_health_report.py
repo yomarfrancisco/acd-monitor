@@ -104,9 +104,7 @@ def estimate_daily_costs(storage_usage: Dict) -> Dict:
         return {"error": str(e)}
 
 
-def get_coverage_summary(
-    symbols: List[str], days_back: int, bucket: str, prefix: str
-) -> Dict:
+def get_coverage_summary(symbols: List[str], days_back: int, bucket: str, prefix: str) -> Dict:
     """Get coverage summary for recent windows."""
     try:
         s3_client = boto3.client("s3")
@@ -135,14 +133,14 @@ def get_coverage_summary(
                             time_range = time_obj["Prefix"].split("/")[-2]
                             if time_range and "-" in time_range:
                                 # Check if coverage.json exists
-                                coverage_key = f"{prefix}/{symbol}/{date_path}/{time_range}/meta/coverage.json"
+                                coverage_key = (
+                                    f"{prefix}/{symbol}/{date_path}/{time_range}/meta/coverage.json"
+                                )
                                 try:
                                     coverage_response = s3_client.get_object(
                                         Bucket=bucket, Key=coverage_key
                                     )
-                                    coverage_json = json.loads(
-                                        coverage_response["Body"].read()
-                                    )
+                                    coverage_json = json.loads(coverage_response["Body"].read())
 
                                     # Calculate venues_ok
                                     high_coverage_venues = [
@@ -156,9 +154,7 @@ def get_coverage_summary(
                                         {
                                             "window": f"{symbol}/{date_path}/{time_range}",
                                             "venues_ok": venues_ok,
-                                            "high_coverage_venues": len(
-                                                high_coverage_venues
-                                            ),
+                                            "high_coverage_venues": len(high_coverage_venues),
                                             "coverage_data": coverage_json,
                                         }
                                     )
@@ -209,9 +205,7 @@ def get_detector_results(symbols: List[str], days_back: int) -> Dict:
         return {"error": str(e)}
 
 
-def generate_daily_report(
-    symbols: List[str], days_back: int, bucket: str, prefix: str
-) -> Dict:
+def generate_daily_report(symbols: List[str], days_back: int, bucket: str, prefix: str) -> Dict:
     """Generate comprehensive daily health report."""
     try:
         logger.info("Generating daily health report...")
@@ -309,14 +303,10 @@ def main():
     parser.add_argument(
         "--symbols", default="BTC-USD,ETH-USD", help="Comma-separated list of symbols"
     )
-    parser.add_argument(
-        "--days-back", type=int, default=1, help="Number of days to look back"
-    )
+    parser.add_argument("--days-back", type=int, default=1, help="Number of days to look back")
     parser.add_argument("--bucket", default="acd-monitor-snapshots", help="S3 bucket")
     parser.add_argument("--prefix", default="snapshots", help="S3 prefix")
-    parser.add_argument(
-        "--output", default="reports/daily_status.json", help="Output file path"
-    )
+    parser.add_argument("--output", default="reports/daily_status.json", help="Output file path")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
 
     args = parser.parse_args()
@@ -328,9 +318,7 @@ def main():
         symbols = [s.strip() for s in args.symbols.split(",")]
 
         # Generate report
-        report = generate_daily_report(
-            symbols, args.days_back, args.bucket, args.prefix
-        )
+        report = generate_daily_report(symbols, args.days_back, args.bucket, args.prefix)
 
         if "error" in report:
             logger.error(f"Daily report generation failed: {report['error']}")
@@ -341,21 +329,11 @@ def main():
 
         # Print summary
         print(f"Daily Health Report Summary:")
-        print(
-            f"  Storage: {report.get('storage_usage', {}).get('total_size_gb', 0)} GB"
-        )
-        print(
-            f"  Daily Cost: ${report.get('cost_estimate', {}).get('total_daily_cost', 0)}"
-        )
-        print(
-            f"  Windows: {report.get('coverage_summary', {}).get('total_windows', 0)}"
-        )
-        print(
-            f"  Venues OK: {report.get('coverage_summary', {}).get('venues_ok_windows', 0)}"
-        )
-        print(
-            f"  Success Rate: {report.get('coverage_summary', {}).get('venues_ok_rate', 0):.1%}"
-        )
+        print(f"  Storage: {report.get('storage_usage', {}).get('total_size_gb', 0)} GB")
+        print(f"  Daily Cost: ${report.get('cost_estimate', {}).get('total_daily_cost', 0)}")
+        print(f"  Windows: {report.get('coverage_summary', {}).get('total_windows', 0)}")
+        print(f"  Venues OK: {report.get('coverage_summary', {}).get('venues_ok_windows', 0)}")
+        print(f"  Success Rate: {report.get('coverage_summary', {}).get('venues_ok_rate', 0):.1%}")
 
         # Budget alert
         daily_cost = report.get("cost_estimate", {}).get("total_daily_cost", 0)

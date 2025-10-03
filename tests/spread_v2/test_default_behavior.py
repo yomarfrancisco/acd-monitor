@@ -3,11 +3,11 @@
 Smoke test for default behavior of spread v2 detector.
 """
 
-import unittest
+import json
 import subprocess
 import sys
-import json
 import tempfile
+import unittest
 from pathlib import Path
 
 # Add src to path
@@ -105,18 +105,10 @@ class TestDefaultBehavior(unittest.TestCase):
                 json.dump(overlap_data, f)
 
             # Create minimal tick data
-            import pandas as pd
             import numpy as np
+            import pandas as pd
 
-            ticks_dir = (
-                snapshot_dir
-                / "ticks"
-                / "binance"
-                / "BTC-USD"
-                / "1s"
-                / "2025-01-01"
-                / "00"
-            )
+            ticks_dir = snapshot_dir / "ticks" / "binance" / "BTC-USD" / "1s" / "2025-01-01" / "00"
             ticks_dir.mkdir(parents=True)
 
             # Create minimal tick data

@@ -8,8 +8,8 @@ to validate that the ACD pipeline can detect injected coordination.
 
 import json
 import sys
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 # Add src to sys.path for acdlib imports
 sys.path.append(str(Path(__file__).parent.parent.parent.parent / "src"))
@@ -23,9 +23,7 @@ def test_detector_sensitivity():
     print(f"Test timestamp: {datetime.now().isoformat()}")
 
     # Load synthetic datasets summary
-    with open(
-        "analysis/BTC/synthetic/20250929/synthetic_datasets_summary.json", "r"
-    ) as f:
+    with open("analysis/BTC/synthetic/20250929/synthetic_datasets_summary.json", "r") as f:
         datasets = json.load(f)
 
     print(f"Total synthetic datasets: {datasets['total_datasets']}")
@@ -55,9 +53,7 @@ def test_detector_sensitivity():
     sensitivity_results["overall_assessment"] = overall_sensitivity
 
     # Save results
-    with open(
-        "analysis/BTC/synthetic/20250929/synthetic_detection_results.json", "w"
-    ) as f:
+    with open("analysis/BTC/synthetic/20250929/synthetic_detection_results.json", "w") as f:
         json.dump(sensitivity_results, f, indent=2)
 
     print(f"\nSensitivity test results saved to: synthetic_detection_results.json")
@@ -98,27 +94,17 @@ def test_lead_lag_sensitivity(datasets):
         print(
             f"    Result: ρ = {mock_result['max_correlation']:.3f} (threshold: {results['expected_threshold']})"
         )
-        print(
-            f"    Detection: {'SUCCESS' if mock_result['detection_success'] else 'FAILED'}"
-        )
+        print(f"    Detection: {'SUCCESS' if mock_result['detection_success'] else 'FAILED'}")
 
     # Overall assessment
-    successful_detections = sum(
-        1 for r in results["test_results"] if r["detection_success"]
-    )
+    successful_detections = sum(1 for r in results["test_results"] if r["detection_success"])
     results["success_rate"] = (
-        successful_detections / len(results["test_results"])
-        if results["test_results"]
-        else 0
+        successful_detections / len(results["test_results"]) if results["test_results"] else 0
     )
-    results["sensitivity_confirmed"] = (
-        results["success_rate"] >= 0.8
-    )  # 80% success rate required
+    results["sensitivity_confirmed"] = results["success_rate"] >= 0.8  # 80% success rate required
 
     print(f"  Lead-Lag v2 Sensitivity: {results['success_rate']:.1%} success rate")
-    print(
-        f"  Sensitivity Confirmed: {'YES' if results['sensitivity_confirmed'] else 'NO'}"
-    )
+    print(f"  Sensitivity Confirmed: {'YES' if results['sensitivity_confirmed'] else 'NO'}")
 
     return results
 
@@ -130,9 +116,7 @@ def test_infoshare_sensitivity(datasets):
     print("Testing InfoShare v2 on synthetic coordination signals...")
 
     # Filter for dominance and synchronization injection datasets
-    dominance_datasets = [
-        d for d in datasets if d["injection_type"] == "dominance_spike"
-    ]
+    dominance_datasets = [d for d in datasets if d["injection_type"] == "dominance_spike"]
     sync_datasets = [d for d in datasets if d["injection_type"] == "synchronization"]
 
     results = {
@@ -159,9 +143,7 @@ def test_infoshare_sensitivity(datasets):
         print(
             f"    Result: {mock_result['dominant_venue']} dominance = {mock_result['max_dominance']:.1%}"
         )
-        print(
-            f"    Detection: {'SUCCESS' if mock_result['detection_success'] else 'FAILED'}"
-        )
+        print(f"    Detection: {'SUCCESS' if mock_result['detection_success'] else 'FAILED'}")
 
     # Test synchronization detection
     for dataset in sync_datasets:
@@ -178,22 +160,16 @@ def test_infoshare_sensitivity(datasets):
 
         results["synchronization_tests"].append(mock_result)
         print(f"    Result: Sync score = {mock_result['synchronization_score']:.1%}")
-        print(
-            f"    Detection: {'SUCCESS' if mock_result['detection_success'] else 'FAILED'}"
-        )
+        print(f"    Detection: {'SUCCESS' if mock_result['detection_success'] else 'FAILED'}")
 
     # Overall assessment
     all_tests = results["dominance_tests"] + results["synchronization_tests"]
     successful_detections = sum(1 for r in all_tests if r["detection_success"])
     results["success_rate"] = successful_detections / len(all_tests) if all_tests else 0
-    results["sensitivity_confirmed"] = (
-        results["success_rate"] >= 0.8
-    )  # 80% success rate required
+    results["sensitivity_confirmed"] = results["success_rate"] >= 0.8  # 80% success rate required
 
     print(f"  InfoShare v2 Sensitivity: {results['success_rate']:.1%} success rate")
-    print(
-        f"  Sensitivity Confirmed: {'YES' if results['sensitivity_confirmed'] else 'NO'}"
-    )
+    print(f"  Sensitivity Confirmed: {'YES' if results['sensitivity_confirmed'] else 'NO'}")
 
     return results
 
@@ -204,9 +180,7 @@ def assess_overall_sensitivity(sensitivity_results):
     """
     print("Assessing overall detector sensitivity...")
 
-    lead_lag_success = sensitivity_results["detector_tests"]["lead_lag_v2"][
-        "sensitivity_confirmed"
-    ]
+    lead_lag_success = sensitivity_results["detector_tests"]["lead_lag_v2"]["sensitivity_confirmed"]
     infoshare_success = sensitivity_results["detector_tests"]["infoshare_v2"][
         "sensitivity_confirmed"
     ]
@@ -222,12 +196,8 @@ def assess_overall_sensitivity(sensitivity_results):
     }
 
     if overall_success:
-        assessment["next_steps"].append(
-            "Proceed to Spread v2 and Leadership Rotation deployment"
-        )
-        assessment["next_steps"].append(
-            "Continue with Phase 2 detector suite completion"
-        )
+        assessment["next_steps"].append("Proceed to Spread v2 and Leadership Rotation deployment")
+        assessment["next_steps"].append("Continue with Phase 2 detector suite completion")
         print("✅ Overall sensitivity confirmed - detectors are ready")
     else:
         assessment["next_steps"].append("Diagnose detector sensitivity issues")

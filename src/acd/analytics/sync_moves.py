@@ -5,14 +5,15 @@ This module detects abnormal simultaneity in venue price movements
 to identify potential coordinated algorithmic behavior.
 """
 
-import os
 import json
 import logging
-import numpy as np
-import pandas as pd
-from typing import Dict, List, Any, Tuple
+import os
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Any, Dict, List, Tuple
+
+import numpy as np
+import pandas as pd
 
 
 @dataclass

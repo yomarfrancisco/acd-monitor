@@ -5,10 +5,10 @@ Export Module for ICP-VMM Results
 Handles S3 export, manifest generation, and evidence bundle creation.
 """
 
-from typing import Dict
-from datetime import datetime, timezone
-import subprocess
 import logging
+import subprocess
+from datetime import datetime, timezone
+from typing import Dict
 
 logger = logging.getLogger(__name__)
 

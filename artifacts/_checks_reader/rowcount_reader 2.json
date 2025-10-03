@@ -1,0 +1,32 @@
+{
+  "timestamp": "2025-10-01T19:10:00.047186+00:00",
+  "stage": "E",
+  "validation": "rowcount_reader",
+  "btc_counts": {
+    "coinbase": 9737,
+    "kraken": 3753,
+    "okx": 14484
+  },
+  "eth_counts": {
+    "coinbase": 4170,
+    "kraken": 1198
+  },
+  "btc_total": 27974,
+  "eth_total": 5368,
+  "expected_btc": {
+    "coinbase": 9737,
+    "kraken": 3753,
+    "okx": 14484,
+    "total": 27974
+  },
+  "expected_eth": {
+    "coinbase": 4170,
+    "kraken": 1198,
+    "total": 5368
+  },
+  "btc_match": true,
+  "eth_match": true,
+  "btc_total_match": true,
+  "eth_total_match": true,
+  "validation_passed": true
+}

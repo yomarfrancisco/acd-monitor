@@ -13,11 +13,7 @@ import numpy as np
 import pandas as pd
 
 from ..icp.engine import ICPConfig, ICPEngine, ICPResult
-from ..vmm.crypto_moments import (
-    CryptoMomentCalculator,
-    CryptoMomentConfig,
-    CryptoMoments,
-)
+from ..vmm.crypto_moments import CryptoMomentCalculator, CryptoMomentConfig, CryptoMoments
 from ..vmm.engine import VMMConfig, VMMEngine, VMMOutput
 
 logger = logging.getLogger(__name__)

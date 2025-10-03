@@ -5,10 +5,10 @@ Run court diagnostics on overlap windows with substantive flag detection.
 
 import argparse
 import json
+import logging
 import subprocess
 import sys
 from pathlib import Path
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -72,12 +72,7 @@ def check_substantive_flags(overlap_file, out_dir):
     spread_top = spread_episodes[0].get("leader") if spread_episodes else None
     leadlag_top = leadlag_data.get("top_leader")
 
-    if (
-        infoshare_top
-        and spread_top
-        and leadlag_top
-        and infoshare_top == spread_top == leadlag_top
-    ):
+    if infoshare_top and spread_top and leadlag_top and infoshare_top == spread_top == leadlag_top:
         flags.append("cross_test_coherence")
 
     return flags
@@ -88,12 +83,8 @@ def main():
     parser.add_argument("--overlap-json", required=True, help="OVERLAP.json file")
     parser.add_argument("--out-dir", required=True, help="Output directory")
     parser.add_argument("--strict", action="store_true", help="Strict court mode")
-    parser.add_argument(
-        "--permutes", type=int, default=5000, help="Number of permutations"
-    )
-    parser.add_argument(
-        "--no-stitch", action="store_true", help="No micro-gap stitching"
-    )
+    parser.add_argument("--permutes", type=int, default=5000, help="Number of permutations")
+    parser.add_argument("--no-stitch", action="store_true", help="No micro-gap stitching")
     parser.add_argument("--all5", action="store_true", help="Require all 5 venues")
     parser.add_argument("--real-only", action="store_true", help="Real data only")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")

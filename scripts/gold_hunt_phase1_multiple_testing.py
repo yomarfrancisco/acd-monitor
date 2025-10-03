@@ -4,12 +4,13 @@ Gold Hunt Phase 1 - Section A: Multiple Testing Corrections
 Analyzes 9.8-minute window with proper statistical corrections
 """
 
+import argparse
 import json
-import pandas as pd
-import numpy as np
 from pathlib import Path
 from typing import Dict, List, Tuple
-import argparse
+
+import numpy as np
+import pandas as pd
 from scipy import stats
 from statsmodels.stats.multitest import multipletests
 
@@ -17,9 +18,7 @@ from statsmodels.stats.multitest import multipletests
 def load_analysis_results(window_path: str) -> Dict:
     """Load existing analysis results from the 9.8-minute window"""
     overlap_file = Path(window_path) / "OVERLAP.json"
-    info_share_file = Path(
-        "exports/cross_window_analysis/window_9_8m/info_share_results.json"
-    )
+    info_share_file = Path("exports/cross_window_analysis/window_9_8m/info_share_results.json")
     spread_file = Path("exports/cross_window_analysis/window_9_8m/spread_results.json")
 
     results = {}
@@ -240,9 +239,7 @@ def generate_summary_report(
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Gold Hunt Phase 1 - Multiple Testing Corrections"
-    )
+    parser = argparse.ArgumentParser(description="Gold Hunt Phase 1 - Multiple Testing Corrections")
     parser.add_argument(
         "--window-path",
         default="real_data_runs/20250926T204804__20250926T205752",
@@ -258,9 +255,7 @@ def main():
         default="exports/gold_hunt/latest/phase1",
         help="Export directory for UI",
     )
-    parser.add_argument(
-        "--seed", type=int, default=42, help="Random seed for reproducibility"
-    )
+    parser.add_argument("--seed", type=int, default=42, help="Random seed for reproducibility")
     parser.add_argument("--verbose", action="store_true", help="Verbose output")
 
     args = parser.parse_args()
@@ -331,14 +326,10 @@ def main():
         print("   Diagnosis: Sample size too small or signals too weak")
         print("   Recommendation: Wait for 30-minute windows or relax constraints")
     elif total_kept_bonferroni < total_signals * 0.5:
-        print(
-            f"\n⚠️  CAUTION: {total_kept_bonferroni}/{total_signals} signals kept by Bonferroni"
-        )
+        print(f"\n⚠️  CAUTION: {total_kept_bonferroni}/{total_signals} signals kept by Bonferroni")
         print("   Consider using BH-FDR as working correction")
     else:
-        print(
-            f"\n✅ GOOD: {total_kept_bonferroni}/{total_signals} signals survive Bonferroni"
-        )
+        print(f"\n✅ GOOD: {total_kept_bonferroni}/{total_signals} signals survive Bonferroni")
         print("   Proceed to Section B (Null Baselines)")
 
 

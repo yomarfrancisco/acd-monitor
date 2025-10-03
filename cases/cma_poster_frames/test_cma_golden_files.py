@@ -5,15 +5,16 @@ This module contains golden file tests to ensure the CMA Poster Frames
 analysis produces consistent, reproducible results.
 """
 
-import pytest
 import json
-from pathlib import Path
-import pandas as pd
-import numpy as np
-from typing import Dict, Any
 
 # Add src to path for imports
 import sys
+from pathlib import Path
+from typing import Any, Dict
+
+import numpy as np
+import pandas as pd
+import pytest
 
 sys.path.append(str(Path(__file__).parent.parent.parent))
 
@@ -215,10 +216,7 @@ class TestCMAPosterFramesGoldenFiles:
         if coordination_analysis["coordination_detected"]:
             assert coordination_analysis["n_periods"] > 0
             assert coordination_analysis["total_coordination_days"] > 0
-            assert (
-                len(coordination_analysis["periods"])
-                == coordination_analysis["n_periods"]
-            )
+            assert len(coordination_analysis["periods"]) == coordination_analysis["n_periods"]
 
             # Check period structure
             for period in coordination_analysis["periods"]:

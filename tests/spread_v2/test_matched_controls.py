@@ -3,16 +3,17 @@
 Unit tests for matched control sampling.
 """
 
+import sys
 import unittest
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
-import sys
-from pathlib import Path
 
 # Add src to path
 sys.path.append(str(Path(__file__).parent.parent.parent / "src"))
 
-from scripts.gold_hunt_control_v2 import MatchedControlSampler, EpisodeControlAnalyzer
+from scripts.gold_hunt_control_v2 import EpisodeControlAnalyzer, MatchedControlSampler
 
 
 class TestMatchedControls(unittest.TestCase):

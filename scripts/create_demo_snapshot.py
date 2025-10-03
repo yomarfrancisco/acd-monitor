@@ -4,11 +4,12 @@ Create a demo snapshot with synthetic tick data for control v2 analysis.
 """
 
 import json
-import numpy as np
-import pandas as pd
+import sys
 from datetime import datetime, timedelta
 from pathlib import Path
-import sys
+
+import numpy as np
+import pandas as pd
 
 
 def create_synthetic_tick_data(
@@ -99,9 +100,7 @@ def create_demo_snapshot():
 
     for venue, base_price in zip(venues, base_prices):
         # Create venue directory
-        venue_dir = (
-            snapshot_dir / "ticks" / venue / "BTC-USD" / "1s" / "2025-09-27" / "01"
-        )
+        venue_dir = snapshot_dir / "ticks" / venue / "BTC-USD" / "1s" / "2025-09-27" / "01"
         venue_dir.mkdir(parents=True, exist_ok=True)
 
         # Generate tick data

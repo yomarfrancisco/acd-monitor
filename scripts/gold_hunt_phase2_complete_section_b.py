@@ -4,12 +4,13 @@ Gold Hunt Phase 2 - Complete Section B
 Episode-level adjustments + duration sensitivity testing
 """
 
+import argparse
 import json
-import pandas as pd
-import numpy as np
 from pathlib import Path
 from typing import Dict, List, Tuple
-import argparse
+
+import numpy as np
+import pandas as pd
 from scipy import stats
 from statsmodels.stats.multitest import multipletests
 
@@ -94,12 +95,8 @@ def duration_sensitivity_test(episodes: List[Dict]) -> pd.DataFrame:
                 simulated_p = max(0.001, min(0.5, simulated_p))
 
                 # Apply FDR correction
-                all_p_values = [simulated_p] + [0.1] * (
-                    len(episodes) - 1
-                )  # Other episodes
-                bh_fdr_10 = multipletests(all_p_values, method="fdr_bh", alpha=0.10)[1][
-                    0
-                ]
+                all_p_values = [simulated_p] + [0.1] * (len(episodes) - 1)  # Other episodes
+                bh_fdr_10 = multipletests(all_p_values, method="fdr_bh", alpha=0.10)[1][0]
 
                 episode_results[f"duration_{threshold}s"] = (
                     "SURVIVE" if bh_fdr_10 < 0.10 else "FAIL"
@@ -117,9 +114,7 @@ def duration_sensitivity_test(episodes: List[Dict]) -> pd.DataFrame:
     return pd.DataFrame(sensitivity_results)
 
 
-def generate_section_b_report(
-    episode_df: pd.DataFrame, sensitivity_df: pd.DataFrame
-) -> str:
+def generate_section_b_report(episode_df: pd.DataFrame, sensitivity_df: pd.DataFrame) -> str:
     """Generate comprehensive Section B completion report"""
     report = []
     report.append("# Gold Hunt Phase 2 - Section B Completion")
@@ -147,9 +142,7 @@ def generate_section_b_report(
         col = f"duration_{threshold}s"
         survived = (sensitivity_df[col] == "SURVIVE").sum()
         survival_counts[threshold] = survived
-        report.append(
-            f"- **{threshold}s threshold**: {survived}/{total_episodes} episodes survive"
-        )
+        report.append(f"- **{threshold}s threshold**: {survived}/{total_episodes} episodes survive")
 
     # Check if any episode survives across multiple thresholds
     multi_threshold_survivors = 0
@@ -161,19 +154,13 @@ def generate_section_b_report(
             multi_threshold_survivors += 1
 
     report.append("")
-    report.append(
-        f"- **Multi-threshold survivors**: {multi_threshold_survivors}/{total_episodes}"
-    )
+    report.append(f"- **Multi-threshold survivors**: {multi_threshold_survivors}/{total_episodes}")
     report.append("")
 
     # Interpretation
     if multi_threshold_survivors > 0:
-        report.append(
-            "**✅ GOOD**: Episodes survive across multiple duration thresholds"
-        )
-        report.append(
-            "**Interpretation**: Signal is robust to duration threshold choice"
-        )
+        report.append("**✅ GOOD**: Episodes survive across multiple duration thresholds")
+        report.append("**Interpretation**: Signal is robust to duration threshold choice")
     else:
         report.append("**⚠️ WARNING**: No episodes survive across multiple thresholds")
         report.append("**Interpretation**: Signal may be fragile to duration threshold")
@@ -184,9 +171,7 @@ def generate_section_b_report(
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Gold Hunt Phase 2 - Complete Section B"
-    )
+    parser = argparse.ArgumentParser(description="Gold Hunt Phase 2 - Complete Section B")
     parser.add_argument(
         "--output-dir",
         default="experiments/gold_hunt_v1/phase2_nulls",
@@ -197,9 +182,7 @@ def main():
         default="exports/gold_hunt/latest/phase2_nulls",
         help="Export directory for UI",
     )
-    parser.add_argument(
-        "--seed", type=int, default=42, help="Random seed for reproducibility"
-    )
+    parser.add_argument("--seed", type=int, default=42, help="Random seed for reproducibility")
     parser.add_argument("--verbose", action="store_true", help="Verbose output")
 
     args = parser.parse_args()
@@ -260,14 +243,10 @@ def main():
             multi_threshold_survivors += 1
 
     if multi_threshold_survivors > 0:
-        print(
-            "\n✅ ACCEPTANCE CRITERIA MET: Episodes survive across multiple thresholds"
-        )
+        print("\n✅ ACCEPTANCE CRITERIA MET: Episodes survive across multiple thresholds")
         print("   Signal is robust to duration threshold choice")
     else:
-        print(
-            "\n⚠️ ACCEPTANCE CRITERIA FAILED: No episodes survive across multiple thresholds"
-        )
+        print("\n⚠️ ACCEPTANCE CRITERIA FAILED: No episodes survive across multiple thresholds")
         print("   Signal may be fragile to duration threshold")
 
 

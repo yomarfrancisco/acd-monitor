@@ -1,46 +1,20 @@
 [flake8]
 max-line-length = 100
-extend-ignore = E203, W503
-exclude =
-    .git,
-    __pycache__,
-    venv,
-    .venv,
-    build,
+extend-exclude = 
+    _archived,
+    _snapshots,
+    _generated,
     dist,
-    node_modules,
-    ui/cursor-dashboard/node_modules,
-    # legacy / experimental / generated (temporarily excluded)
-    analysis/BTC/synthetic/,
-    analytics/wave1/,
-    analytics/wave2/,
-    analytics/reader_checks/,
-    artifacts/,
-    backend/,
-    cases/,
-    experiments/,
-    writer/,
-    src/acd/demo/,
-    src/acd/monitoring/,
-    src/acd/vmm/,
-    src/acd/data/quality_profiles*,
-    test_*,
-    run_*.py,
-    simulate_canary_capture.py,
-    trigger_canary_capture.py,
-    scripts/,
-    # exclude duplicate numbered files
-    *\ 2.py,
-    *\ 3.py,
-    *\ 4.py,
-    *\ 5.py,
-    *\ 6.py,
-    *\ 7.py,
-    *\ 8.py,
-    *\ 9.py,
-    # exclude src/acd/analytics (analytical research code, not production)
-    src/acd/analytics/,
-    # exclude src/agent (experimental agent code)
-    src/agent/,
-    # exclude tests (test files with many duplicates)
-    tests/
+    build,
+    backend/main\ [2-5]\.py,
+    src/acd/demo/features\ [9-15]\.py,
+    src/acd/demo/pipeline\ [9-15]\.py,
+    src/acd/demo/visualization\ [9-15]\.py,
+    src/acd/monitoring/health_check\ [9-16]\.py,
+    src/acd/monitoring/regression_detector\ [9-16]\.py,
+    src/acd/vmm/adaptive_thresholds\ [9-16]\.py,
+    src/acd/vmm/engine\ [9-16]\.py,
+    src/acd/vmm/scalers\ [2-9]\.py,
+    src/acd/analytics/report_v2.py,
+    src/agent/bundle_generator.py
+extend-ignore = W293,W391,F541,E741,E501,E203,W291

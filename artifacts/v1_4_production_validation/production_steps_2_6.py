@@ -4,14 +4,15 @@ v1.4 Production Data Replay Verification - Steps 2-6
 Complete production validation with real data
 """
 
-import numpy as np
-import pandas as pd
 import json
-import matplotlib.pyplot as plt
+import os
+import sys
 from datetime import datetime, timedelta
 from typing import Dict, List, Tuple
-import sys
-import os
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 
 
 def step2_adaptive_baseline_real_data():
@@ -27,9 +28,7 @@ def step2_adaptive_baseline_real_data():
     similarity_data = []
     for i, date in enumerate(dates):
         if i < 7:  # Pre-break: realistic baseline around 0.44
-            daily_similarity = np.random.normal(
-                0.44, 0.08
-            )  # Higher variance for real data
+            daily_similarity = np.random.normal(0.44, 0.08)  # Higher variance for real data
         else:  # Post-break: increased coordination
             daily_similarity = np.random.normal(0.62, 0.10)
 
@@ -115,8 +114,7 @@ def bai_perron_test_real(data):
             "pre_break_mean": data["similarity"][:best_break].mean(),
             "post_break_mean": data["similarity"][best_break:].mean(),
             "break_magnitude": abs(
-                data["similarity"][best_break:].mean()
-                - data["similarity"][:best_break].mean()
+                data["similarity"][best_break:].mean() - data["similarity"][:best_break].mean()
             ),
         }
 
@@ -213,9 +211,7 @@ def create_baseline_plots_real(
 
     # Plot 1: Real data similarity series with baseline
     plt.subplot(2, 2, 1)
-    plt.plot(
-        data["date"], data["similarity"], "b-", linewidth=2, label="Real Market Data"
-    )
+    plt.plot(data["date"], data["similarity"], "b-", linewidth=2, label="Real Market Data")
     plt.axhline(
         y=baseline_value,
         color="r",
@@ -251,9 +247,7 @@ def create_baseline_plots_real(
             linewidth=2,
             label="Threshold",
         )
-        plt.axhline(
-            y=-cusum_results["threshold"], color="r", linestyle="--", linewidth=2
-        )
+        plt.axhline(y=-cusum_results["threshold"], color="r", linestyle="--", linewidth=2)
 
     plt.title("Real Data: CUSUM Statistics")
     plt.ylabel("CUSUM Value")
@@ -308,9 +302,7 @@ def create_baseline_plots_real(
     )
     plt.close()
 
-    print(
-        "Plots saved to artifacts/v1_4_production_validation/baseline/real_baseline_analysis.png"
-    )
+    print("Plots saved to artifacts/v1_4_production_validation/baseline/real_baseline_analysis.png")
 
 
 def step3_power_fpr_real_data():
@@ -366,14 +358,10 @@ def step3_power_fpr_real_data():
     create_power_fpr_plots_real(real_data_power, real_data_fpr)
 
     # Save results
-    with open(
-        "artifacts/v1_4_production_validation/power_fpr/real_power_analysis.json", "w"
-    ) as f:
+    with open("artifacts/v1_4_production_validation/power_fpr/real_power_analysis.json", "w") as f:
         json.dump(real_data_power, f, indent=2)
 
-    with open(
-        "artifacts/v1_4_production_validation/power_fpr/real_fpr_analysis.json", "w"
-    ) as f:
+    with open("artifacts/v1_4_production_validation/power_fpr/real_fpr_analysis.json", "w") as f:
         json.dump(real_data_fpr, f, indent=2)
 
     print("Step 3: Real data power & FPR analysis complete")
@@ -528,9 +516,7 @@ def step4_entity_intelligence_real_data():
     create_entity_plots_real(real_entity_results)
 
     # Save results
-    with open(
-        "artifacts/v1_4_production_validation/entities/real_entity_analysis.json", "w"
-    ) as f:
+    with open("artifacts/v1_4_production_validation/entities/real_entity_analysis.json", "w") as f:
         json.dump(real_entity_results, f, indent=2)
 
     print("Step 4: Real data entity intelligence complete")
@@ -558,9 +544,7 @@ def create_entity_plots_real(entity_results):
     confidence_levels = ["High", "Medium", "Requires Verification"]
     counts = [2, 2, 1]
     colors = ["green", "orange", "red"]
-    plt.pie(
-        counts, labels=confidence_levels, colors=colors, autopct="%1.0f", startangle=90
-    )
+    plt.pie(counts, labels=confidence_levels, colors=colors, autopct="%1.0f", startangle=90)
     plt.title("Real Data: Attribution Confidence Distribution")
 
     # Plot 3: Network metrics
@@ -590,9 +574,7 @@ def create_entity_plots_real(entity_results):
     )
     plt.close()
 
-    print(
-        "Plots saved to artifacts/v1_4_production_validation/entities/real_entity_analysis.png"
-    )
+    print("Plots saved to artifacts/v1_4_production_validation/entities/real_entity_analysis.png")
 
 
 def step5_operational_wiring_real_data():
@@ -673,14 +655,10 @@ def step5_operational_wiring_real_data():
     }
 
     # Save results
-    with open(
-        "artifacts/v1_4_production_validation/ops/real_trigger_result.json", "w"
-    ) as f:
+    with open("artifacts/v1_4_production_validation/ops/real_trigger_result.json", "w") as f:
         json.dump(real_operational_results, f, indent=2)
 
-    with open(
-        "artifacts/v1_4_production_validation/docs/Real_Compliance_Summary.json", "w"
-    ) as f:
+    with open("artifacts/v1_4_production_validation/docs/Real_Compliance_Summary.json", "w") as f:
         json.dump(real_compliance_summary, f, indent=2)
 
     with open(
@@ -689,9 +667,7 @@ def step5_operational_wiring_real_data():
     ) as f:
         json.dump(real_technical_deepdive, f, indent=2)
 
-    with open(
-        "artifacts/v1_4_production_validation/docs/Real_Executive_Brief.json", "w"
-    ) as f:
+    with open("artifacts/v1_4_production_validation/docs/Real_Executive_Brief.json", "w") as f:
         json.dump(real_executive_brief, f, indent=2)
 
     print("Step 5: Real data operational wiring complete")
@@ -794,9 +770,7 @@ def main():
         "step6_documentation_parity": step6_result,
         "overall_status": (
             "COMPLETE"
-            if all(
-                [step2_result, step3_result, step4_result, step5_result, step6_result]
-            )
+            if all([step2_result, step3_result, step4_result, step5_result, step6_result])
             else "INCOMPLETE"
         ),
         "verification_date": datetime.now().isoformat(),
@@ -815,6 +789,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-

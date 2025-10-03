@@ -1,5 +1,6 @@
-import aiohttp
 from datetime import datetime, timezone
+
+import aiohttp
 
 OKX_BARS = {
     "1m": "1m",

@@ -6,29 +6,31 @@ This script tests the core integration components without requiring
 full ICP analysis that needs large datasets.
 """
 
-import sys
 import os
+import sys
 from pathlib import Path
 
 # Add src to path
 sys.path.append(str(Path(__file__).parent.parent / "src"))
 
 import json
-import pandas as pd
-import numpy as np
 from datetime import datetime
-from typing import List, Dict, Any, Tuple
+from typing import Any, Dict, List, Tuple
+
+import numpy as np
+import pandas as pd
+
+from acd.analytics.integrated_engine import IntegratedResult
 
 # Import ACD components
 from acd.analytics.report_v2 import ReportV2Generator, generate_regulatory_bundle
-from acd.analytics.integrated_engine import IntegratedResult
 from acd.icp.engine import ICPResult
-from acd.vmm.engine import VMMOutput
-from acd.vmm.crypto_moments import CryptoMoments
-from acd.validation.lead_lag import LeadLagResult
-from acd.validation.mirroring import MirroringResult
 from acd.validation.hmm import HMMResult
 from acd.validation.infoflow import InfoFlowResult
+from acd.validation.lead_lag import LeadLagResult
+from acd.validation.mirroring import MirroringResult
+from acd.vmm.crypto_moments import CryptoMoments
+from acd.vmm.engine import VMMOutput
 from agent.bundle_generator import (
     ACDBundleGenerator,
     BundleGenerationRequest,
@@ -142,9 +144,7 @@ def create_mock_analysis_results():
             state_probabilities=np.array([[0.8, 0.1, 0.1], [0.2, 0.6, 0.2]]),
             transition_matrix=np.array([[0.7, 0.2, 0.1], [0.3, 0.5, 0.2]]),
             emission_means=np.array([[1.0, 2.0], [1.5, 2.5]]),
-            emission_covariances=np.array(
-                [[[1.0, 0.0], [0.0, 1.0]], [[1.5, 0.0], [0.0, 1.5]]]
-            ),
+            emission_covariances=np.array([[[1.0, 0.0], [0.0, 1.0]], [[1.5, 0.0], [0.0, 1.5]]]),
             dwell_times={0: 5.0, 1: 3.0, 2: 2.0},
             state_frequencies={0: 0.5, 1: 0.3, 2: 0.2},
             regime_stability=0.75,
@@ -277,9 +277,7 @@ def test_bundle_generation_integration():
             return False
 
         print(f"   ✅ Bundle Refined: {refined_response.bundle_id}")
-        print(
-            f"   ✅ Refinement History: {len(refined_response.refinement_history)} entries"
-        )
+        print(f"   ✅ Refinement History: {len(refined_response.refinement_history)} entries")
 
         return True
 
@@ -413,9 +411,7 @@ def test_seed_consistency():
 
             # Check if results are consistent (same risk band)
             consistent_bands = len(set(risk_bands)) == 1
-            print(
-                f"     Consistent Risk Bands: {'✅ Yes' if consistent_bands else '❌ No'}"
-            )
+            print(f"     Consistent Risk Bands: {'✅ Yes' if consistent_bands else '❌ No'}")
 
         return len(successful_results) == len(seeds)
 
@@ -511,9 +507,7 @@ def test_edge_cases():
                     print(f"     ❌ Failed: {response.error_message}")
 
             except Exception as e:
-                results.append(
-                    {"name": test_case["name"], "success": False, "error": str(e)}
-                )
+                results.append({"name": test_case["name"], "success": False, "error": str(e)})
                 print(f"     ❌ Exception: {e}")
 
         # Summary
@@ -573,21 +567,13 @@ def main():
         print(f"   ✅ Test Success Rate: {successful_tests/total_tests*100:.1f}%")
 
         print(f"\n📋 Integration Test Summary:")
-        print(
-            f"   ✅ Reporting v2 Integration: {'Passed' if reporting_success else 'Failed'}"
-        )
+        print(f"   ✅ Reporting v2 Integration: {'Passed' if reporting_success else 'Failed'}")
         print(
             f"   ✅ Bundle Generation Integration: {'Passed' if bundle_generation_success else 'Failed'}"
         )
-        print(
-            f"   ✅ Provenance Tracking: {'Passed' if provenance_success else 'Failed'}"
-        )
-        print(
-            f"   ✅ Seed Consistency: {'Passed' if seed_consistency_success else 'Failed'}"
-        )
-        print(
-            f"   ✅ Edge Case Handling: {'Passed' if edge_case_success else 'Failed'}"
-        )
+        print(f"   ✅ Provenance Tracking: {'Passed' if provenance_success else 'Failed'}")
+        print(f"   ✅ Seed Consistency: {'Passed' if seed_consistency_success else 'Failed'}")
+        print(f"   ✅ Edge Case Handling: {'Passed' if edge_case_success else 'Failed'}")
 
         print(f"\n🔍 Key Integration Features Verified:")
         print(f"   ✅ Reporting v2 System Integration")

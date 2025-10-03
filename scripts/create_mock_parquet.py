@@ -3,11 +3,12 @@
 Create mock parquet data for baseline testing.
 """
 
-import pandas as pd
-import numpy as np
+import json
 from datetime import datetime, timedelta
 from pathlib import Path
-import json
+
+import numpy as np
+import pandas as pd
 
 
 def create_mock_tick_data(start_time: str, end_time: str, venue: str) -> pd.DataFrame:
@@ -49,9 +50,7 @@ def main():
     start_time = overlap_data["start"]
     end_time = overlap_data["end"]
 
-    print(
-        f"Creating mock data for {len(venues)} venues from {start_time} to {end_time}"
-    )
+    print(f"Creating mock data for {len(venues)} venues from {start_time} to {end_time}")
 
     for venue in venues:
         venue_dir = Path(f"baselines/2s/ticks/{venue}")

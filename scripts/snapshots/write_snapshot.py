@@ -13,17 +13,16 @@ import argparse
 import json
 import logging
 import os
-import sys
-from pathlib import Path
-from typing import Dict, List, Any
-from datetime import datetime, timezone
-import boto3
-import pandas as pd
-import numpy as np
 
 # Import config from same directory
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
+from typing import Any, Dict, List
+
+import boto3
+import numpy as np
+import pandas as pd
 
 sys.path.append(str(Path(__file__).parent))
 try:
@@ -206,12 +205,8 @@ def main():
 
     # Parse date and times
     date_obj = datetime.strptime(args.date, "%Y-%m-%d")
-    start_time = datetime.combine(
-        date_obj, datetime.strptime(args.start_time, "%H%M").time()
-    )
-    end_time = datetime.combine(
-        date_obj, datetime.strptime(args.end_time, "%H%M").time()
-    )
+    start_time = datetime.combine(date_obj, datetime.strptime(args.start_time, "%H%M").time())
+    end_time = datetime.combine(date_obj, datetime.strptime(args.end_time, "%H%M").time())
 
     # Add timezone
     start_time = start_time.replace(tzinfo=timezone.utc)

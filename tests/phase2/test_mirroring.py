@@ -2,7 +2,7 @@
 Unit tests for mirroring validation layer
 """
 
-from src.acd.validation.mirroring import MirroringValidator, MirroringConfig
+from src.acd.validation.mirroring import MirroringConfig, MirroringValidator
 
 
 class TestMirroringValidator:
@@ -50,8 +50,7 @@ class TestMirroringValidator:
                 "Exchange_0": prices[:, 0],
                 "Exchange_1": prices[:, 1],
                 "Exchange_2": prices[:, 2],
-                "environment": ["low"] * (n_points // 2)
-                + ["high"] * (n_points - n_points // 2),
+                "environment": ["low"] * (n_points // 2) + ["high"] * (n_points - n_points // 2),
             }
         )
 
@@ -84,8 +83,7 @@ class TestMirroringValidator:
                 "Exchange_0": prices[:, 0],
                 "Exchange_1": prices[:, 1],
                 "Exchange_2": prices[:, 2],
-                "environment": ["low"] * (n_points // 2)
-                + ["high"] * (n_points - n_points // 2),
+                "environment": ["low"] * (n_points // 2) + ["high"] * (n_points - n_points // 2),
             }
         )
 
@@ -111,9 +109,7 @@ class TestMirroringValidator:
 
         # Should have low high mirroring fraction for competitive data
         for pair_name in result.high_mirroring_fraction:
-            assert (
-                result.high_mirroring_fraction[pair_name] < 0.5
-            )  # Should be low for competitive
+            assert result.high_mirroring_fraction[pair_name] < 0.5  # Should be low for competitive
 
     def test_coordinated_mirroring_analysis(self, validator, coordinated_data):
         """Test mirroring analysis on coordinated data"""
@@ -234,18 +230,14 @@ class TestMirroringValidator:
         """Test median mirroring ratio calculation"""
         # Test with known ratios
         ratios = np.array([0.1, 0.5, 0.8, 0.9, 0.2])
-        median_ratios = validator._calculate_median_mirroring_ratio(
-            {"test_pair": ratios}
-        )
+        median_ratios = validator._calculate_median_mirroring_ratio({"test_pair": ratios})
 
         assert "test_pair" in median_ratios
         assert median_ratios["test_pair"] == 0.5  # Should be the median
 
         # Test with NaN values
         ratios_with_nan = np.array([0.1, np.nan, 0.8, 0.9, np.nan])
-        median_ratios = validator._calculate_median_mirroring_ratio(
-            {"test_pair": ratios_with_nan}
-        )
+        median_ratios = validator._calculate_median_mirroring_ratio({"test_pair": ratios_with_nan})
 
         assert median_ratios["test_pair"] == 0.8  # Should be median of valid values
 
@@ -253,9 +245,7 @@ class TestMirroringValidator:
         """Test high mirroring fraction calculation"""
         # Test with ratios above and below threshold
         ratios = np.array([0.1, 0.5, 0.8, 0.9, 0.2])
-        high_fractions = validator._calculate_high_mirroring_fraction(
-            {"test_pair": ratios}
-        )
+        high_fractions = validator._calculate_high_mirroring_fraction({"test_pair": ratios})
 
         assert "test_pair" in high_fractions
         # Should have 2 out of 5 ratios above 0.8 threshold
@@ -263,8 +253,6 @@ class TestMirroringValidator:
 
         # Test with all ratios below threshold
         low_ratios = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
-        high_fractions = validator._calculate_high_mirroring_fraction(
-            {"test_pair": low_ratios}
-        )
+        high_fractions = validator._calculate_high_mirroring_fraction({"test_pair": low_ratios})
 
         assert high_fractions["test_pair"] == 0.0  # Should be 0

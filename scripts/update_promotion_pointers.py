@@ -4,13 +4,13 @@ Update promotion pointers for reproducible E2E runs.
 Creates/updates REAL_2s_PROMOTED.json and MANIFEST.json with stable schema.
 """
 
-import json
-import sys
 import hashlib
+import json
 import subprocess
-from pathlib import Path
+import sys
 from datetime import datetime
-from typing import Dict, Any
+from pathlib import Path
+from typing import Any, Dict
 
 
 def get_git_sha() -> str:
@@ -72,9 +72,7 @@ def update_baseline_manifest(baseline_dir: str) -> None:
                 "info_share_results.json": get_file_sha256(
                     Path(baseline_dir) / "evidence" / "info_share_results.json"
                 ),
-                "EVIDENCE.md": get_file_sha256(
-                    Path(baseline_dir) / "evidence" / "EVIDENCE.md"
-                ),
+                "EVIDENCE.md": get_file_sha256(Path(baseline_dir) / "evidence" / "EVIDENCE.md"),
             },
         }
     )

@@ -12,11 +12,12 @@ Each adapter standardizes data to schema: [timestamp, price, volume, venue]
 """
 
 import logging
-import pandas as pd
+from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
 from typing import Dict, List
+
+import pandas as pd
 import requests
-from abc import ABC, abstractmethod
 
 logger = logging.getLogger(__name__)
 

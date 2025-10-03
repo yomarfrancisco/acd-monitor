@@ -2,14 +2,14 @@
 """
 Generate provenance.json for auditability and reproducibility.
 """
-import json
-import sys
 import hashlib
-import subprocess
+import json
 import platform
-from pathlib import Path
+import subprocess
+import sys
 from datetime import datetime
-from typing import Dict, Any
+from pathlib import Path
+from typing import Any, Dict
 
 
 def get_git_sha() -> str:
@@ -31,9 +31,7 @@ def get_python_version() -> str:
 def get_pip_freeze_hash() -> str:
     """Get hash of pip freeze output for dependency fingerprinting."""
     try:
-        result = subprocess.run(
-            ["pip", "freeze"], capture_output=True, text=True, check=True
-        )
+        result = subprocess.run(["pip", "freeze"], capture_output=True, text=True, check=True)
         return hashlib.sha256(result.stdout.encode()).hexdigest()[:16]
     except subprocess.CalledSubprocessError:
         return "unknown"
@@ -119,13 +117,9 @@ def main():
     parser = argparse.ArgumentParser(description="Generate provenance.json")
     parser.add_argument("--snapshot", required=True, help="Snapshot directory path")
     parser.add_argument("--output", help="Output path for provenance.json")
-    parser.add_argument(
-        "--permutes", type=int, default=1000, help="Number of permutations"
-    )
+    parser.add_argument("--permutes", type=int, default=1000, help="Number of permutations")
     parser.add_argument("--alpha", type=float, default=0.05, help="Alpha level")
-    parser.add_argument(
-        "--gg-blend-alpha", type=float, default=0.7, help="GG blend alpha"
-    )
+    parser.add_argument("--gg-blend-alpha", type=float, default=0.7, help="GG blend alpha")
 
     args = parser.parse_args()
 
@@ -141,9 +135,7 @@ def main():
         output_path=args.output,
     )
 
-    print(
-        f"[PROVENANCE:done] Generated provenance with {len(provenance['artifacts'])} artifacts"
-    )
+    print(f"[PROVENANCE:done] Generated provenance with {len(provenance['artifacts'])} artifacts")
 
 
 if __name__ == "__main__":

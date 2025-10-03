@@ -6,14 +6,14 @@ Implements reviewer-ready outputs with canonical S3 paths, 9-block evidence bund
 and deterministic manifests following the JSON schema specification.
 """
 
-import json
 import hashlib
-import subprocess
+import json
+import logging
 import os
+import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List
-import logging
 
 logger = logging.getLogger(__name__)
 

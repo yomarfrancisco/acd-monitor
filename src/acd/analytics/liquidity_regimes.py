@@ -5,13 +5,14 @@ This module implements liquidity regime analysis using a composite metric
 combining volume, true range, and volatility-adjusted returns.
 """
 
-import os
 import json
 import logging
+import os
+from dataclasses import dataclass
+from typing import Any, Dict, List, Tuple
+
 import numpy as np
 import pandas as pd
-from typing import Dict, List, Any, Tuple
-from dataclasses import dataclass
 import scipy.stats as stats
 
 

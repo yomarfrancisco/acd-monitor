@@ -14,12 +14,7 @@ import pandas as pd
 from scipy import stats
 from sklearn.linear_model import LinearRegression
 
-from .statistics import (
-    EnhancedStatistics,
-    FDRConfig,
-    PowerAnalysisConfig,
-    StatisticalResults,
-)
+from .statistics import EnhancedStatistics, FDRConfig, PowerAnalysisConfig, StatisticalResults
 
 logger = logging.getLogger(__name__)
 

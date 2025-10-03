@@ -14,10 +14,10 @@ import logging
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Optional, Tuple
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 
 # Import custom JSON encoder
@@ -209,15 +209,11 @@ def run_replication_analysis(
     logger.info(f"New window: {len(new_episodes)} episodes")
 
     # Find matches
-    matches = find_matches(
-        base_episodes, new_episodes, min_intersection, start_tolerance
-    )
+    matches = find_matches(base_episodes, new_episodes, min_intersection, start_tolerance)
 
     # Calculate metrics
     replication_rate = len(matches) / len(base_episodes) if base_episodes else 0.0
-    jaccard_similarity = calculate_jaccard_similarity(
-        base_episodes, new_episodes, matches
-    )
+    jaccard_similarity = calculate_jaccard_similarity(base_episodes, new_episodes, matches)
 
     # Determine replication flag
     replication_flag = (
@@ -254,12 +250,8 @@ def run_replication_analysis(
 def main():
     """Main function for replication analysis."""
     parser = argparse.ArgumentParser(description="Replication Suite Analysis")
-    parser.add_argument(
-        "--base-window", required=True, help="Path to base window episodes.json"
-    )
-    parser.add_argument(
-        "--new-window", required=True, help="Path to new window episodes.json"
-    )
+    parser.add_argument("--base-window", required=True, help="Path to base window episodes.json")
+    parser.add_argument("--new-window", required=True, help="Path to new window episodes.json")
     parser.add_argument(
         "--t-start-tol", type=float, default=5.0, help="Start time tolerance in seconds"
     )
@@ -269,9 +261,7 @@ def main():
         default=5.0,
         help="Minimum intersection duration in seconds",
     )
-    parser.add_argument(
-        "--export-dir", required=True, help="Export directory for results"
-    )
+    parser.add_argument("--export-dir", required=True, help="Export directory for results")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
 
     args = parser.parse_args()

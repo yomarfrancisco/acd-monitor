@@ -5,13 +5,14 @@ ICP-VMM Backfill Script
 Runs provisional analysis on the last 4 valid BTC windows.
 """
 
-import sys
 import json
 import subprocess
-from pathlib import Path
-from typing import List, Dict, Any
-import boto3
+import sys
 from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any, Dict, List
+
+import boto3
 
 
 def get_latest_btc_windows(bucket: str, count: int = 4) -> List[str]:

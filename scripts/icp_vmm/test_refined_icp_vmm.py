@@ -6,26 +6,27 @@ Implements reviewer-ready outputs with canonical S3 paths, 9-block evidence bund
 deterministic manifests, and strict status codes.
 """
 
-import sys
+import argparse
+import hashlib
 import json
-import pandas as pd
-import numpy as np
+import os
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
-import os
-import hashlib
-import argparse
+
 import fsspec
+import numpy as np
+import pandas as pd
 
 # Add src to path
 sys.path.append(str(Path(__file__).parent.parent.parent / "src"))
 
 from icp_vmm.environments import EnvironmentLabeler
-from icp_vmm.transforms import DataTransformer
-from icp_vmm.tests import PreconditionTester
-from icp_vmm.vmm import VMMAnalyzer
 from icp_vmm.icp import ICPTester
 from icp_vmm.refined_export import RefinedICPVMMExporter
+from icp_vmm.tests import PreconditionTester
+from icp_vmm.transforms import DataTransformer
+from icp_vmm.vmm import VMMAnalyzer
 
 
 def load_real_data(snapshot_path: str, use_s3: bool = False):
@@ -69,9 +70,7 @@ def load_real_data(snapshot_path: str, use_s3: bool = False):
                     venue_data[venue] = df
                     observations[venue] = len(df)
                     coverage[venue] = df.notna().mean().mean()
-                    print(
-                        f"   ✅ {venue}: {len(df)} observations, coverage: {coverage[venue]:.3f}"
-                    )
+                    print(f"   ✅ {venue}: {len(df)} observations, coverage: {coverage[venue]:.3f}")
                 else:
                     print(f"   ⚠️ {venue}: No parquet files found in S3")
 
@@ -96,9 +95,7 @@ def load_real_data(snapshot_path: str, use_s3: bool = False):
                     venue_data[venue] = df
                     observations[venue] = len(df)
                     coverage[venue] = df.notna().mean().mean()
-                    print(
-                        f"   ✅ {venue}: {len(df)} observations, coverage: {coverage[venue]:.3f}"
-                    )
+                    print(f"   ✅ {venue}: {len(df)} observations, coverage: {coverage[venue]:.3f}")
                 else:
                     print(f"   ⚠️ {venue}: No parquet files found")
 
@@ -151,8 +148,8 @@ def main():
             print(f"📁 Using local data source: {snapshot_path}")
 
         # Load real data
-        venue_data, continuous_metrics, overlap_data, observations, coverage = (
-            load_real_data(snapshot_path, use_s3)
+        venue_data, continuous_metrics, overlap_data, observations, coverage = load_real_data(
+            snapshot_path, use_s3
         )
 
         if not venue_data:
@@ -187,9 +184,7 @@ def main():
         print("\n🏷️ Labeling environments...")
         labeled_data = {}
         for venue, data in prepared_data.items():
-            labeled_data[venue] = env_labeler.label_all_environments(
-                data, processed_metrics
-            )
+            labeled_data[venue] = env_labeler.label_all_environments(data, processed_metrics)
 
         # Get environment counts
         env_counts = {}
@@ -311,8 +306,7 @@ def main():
         # Create S3 input paths
         if use_s3:
             s3_inputs = [
-                f"{snapshot_path}/ticks/{venue}/part-00000.parquet"
-                for venue in venue_data.keys()
+                f"{snapshot_path}/ticks/{venue}/part-00000.parquet" for venue in venue_data.keys()
             ]
         else:
             s3_inputs = [

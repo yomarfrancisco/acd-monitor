@@ -33,15 +33,15 @@ def get_next_window_start(current_time: datetime) -> datetime:
     return current_time.replace(minute=minute, second=0, microsecond=0)
 
 
-def check_existing_window(
-    symbol: str, start_time: datetime, bucket: str, prefix: str
-) -> bool:
+def check_existing_window(symbol: str, start_time: datetime, bucket: str, prefix: str) -> bool:
     """Check if a window already exists in S3."""
     try:
         s3_client = boto3.client("s3")
 
         date_str = start_time.strftime("%Y%m%d")
-        time_str = f"{start_time.strftime('%H%M')}-{(start_time + timedelta(minutes=30)).strftime('%H%M')}"
+        time_str = (
+            f"{start_time.strftime('%H%M')}-{(start_time + timedelta(minutes=30)).strftime('%H%M')}"
+        )
         s3_key = f"{prefix}/{symbol}/{date_str}/{time_str}/OVERLAP.json"
 
         s3_client.head_object(Bucket=bucket, Key=s3_key)
@@ -84,9 +84,7 @@ def capture_window_safe(
         return False
 
 
-def run_capture_cycle(
-    symbols: List[str], venues: List[str], bucket: str, prefix: str
-) -> Dict:
+def run_capture_cycle(symbols: List[str], venues: List[str], bucket: str, prefix: str) -> Dict:
     """Run one capture cycle for all symbols."""
     results = {}
     current_time = datetime.utcnow()
@@ -136,9 +134,7 @@ def run_daemon(
             # Log results
             successful = sum(1 for r in results.values() if r["success"])
             total = len(results)
-            logger.info(
-                f"Cycle {cycle_count + 1}: {successful}/{total} symbols successful"
-            )
+            logger.info(f"Cycle {cycle_count + 1}: {successful}/{total} symbols successful")
 
             # Check if we should stop
             cycle_count += 1
@@ -150,9 +146,7 @@ def run_daemon(
             cycle_duration = time.time() - cycle_start
             sleep_time = max(0, 900 - cycle_duration)  # 15 minutes = 900 seconds
 
-            logger.info(
-                f"Cycle completed in {cycle_duration:.1f}s, sleeping for {sleep_time:.1f}s"
-            )
+            logger.info(f"Cycle completed in {cycle_duration:.1f}s, sleeping for {sleep_time:.1f}s")
             time.sleep(sleep_time)
 
     except KeyboardInterrupt:
@@ -177,9 +171,7 @@ def main():
     )
     parser.add_argument("--bucket", default="acd-monitor-snapshots", help="S3 bucket")
     parser.add_argument("--prefix", default="snapshots", help="S3 prefix")
-    parser.add_argument(
-        "--max-cycles", type=int, help="Maximum number of cycles to run"
-    )
+    parser.add_argument("--max-cycles", type=int, help="Maximum number of cycles to run")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
 
     args = parser.parse_args()

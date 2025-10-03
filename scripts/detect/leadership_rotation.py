@@ -12,8 +12,9 @@ import logging
 import sys
 from datetime import datetime
 from pathlib import Path
-import pandas as pd
+
 import numpy as np
+import pandas as pd
 from scipy import stats
 
 # Add src to sys.path for acdlib imports
@@ -75,16 +76,12 @@ def compute_leadership_scores(tick_data, window_size=300):
 
         # Volume leadership (volume-weighted price changes)
         volume_leadership = (
-            (abs(price_changes) * venue_data["volume"])
-            .rolling(window=window_size)
-            .mean()
+            (abs(price_changes) * venue_data["volume"]).rolling(window=window_size).mean()
         )
 
         # Overall leadership score (weighted combination)
         leadership_score = (
-            0.4 * price_impact.mean()
-            + 0.3 * price_discovery
-            + 0.3 * volume_leadership.mean()
+            0.4 * price_impact.mean() + 0.3 * price_discovery + 0.3 * volume_leadership.mean()
         )
 
         leadership_scores[venue] = {
@@ -198,12 +195,8 @@ def main():
     Main function for Leadership Rotation detector
     """
     parser = argparse.ArgumentParser(description="Leadership Rotation Detector")
-    parser.add_argument(
-        "--snapshot", required=True, help="Path to snapshot OVERLAP.json"
-    )
-    parser.add_argument(
-        "--window-size", type=int, default=300, help="Analysis window size"
-    )
+    parser.add_argument("--snapshot", required=True, help="Path to snapshot OVERLAP.json")
+    parser.add_argument("--window-size", type=int, default=300, help="Analysis window size")
     parser.add_argument("--seed", type=int, default=42, help="Random seed")
     parser.add_argument("--export-dir", required=True, help="Export directory")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
@@ -220,9 +213,7 @@ def main():
 
     try:
         # Run analysis
-        results = run_leadership_rotation_analysis(
-            args.snapshot, args.window_size, args.seed
-        )
+        results = run_leadership_rotation_analysis(args.snapshot, args.window_size, args.seed)
 
         if results is None:
             logger.error("Analysis failed")
@@ -243,12 +234,8 @@ def main():
             f.write("## Summary\n\n")
             f.write(f"- **Venues Analyzed**: {results['summary']['venues_analyzed']}\n")
             f.write(f"- **Leader**: {results['summary']['leader']}\n")
-            f.write(
-                f"- **Rotation Entropy**: {results['summary']['rotation_entropy']:.3f}\n"
-            )
-            f.write(
-                f"- **Dominance Ratio**: {results['summary']['dominance_ratio']:.3f}\n\n"
-            )
+            f.write(f"- **Rotation Entropy**: {results['summary']['rotation_entropy']:.3f}\n")
+            f.write(f"- **Dominance Ratio**: {results['summary']['dominance_ratio']:.3f}\n\n")
             f.write("## Parameters\n\n")
             for key, value in results["parameters"].items():
                 f.write(f"- **{key}**: {value}\n")

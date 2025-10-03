@@ -4,12 +4,13 @@ Gold Hunt Phase 4 - ETH-USD Cross-Validation
 Quick sanity pass on ETH-USD with same 9.8-minute window spec
 """
 
+import argparse
 import json
-import pandas as pd
-import numpy as np
 from pathlib import Path
 from typing import Dict, List, Tuple
-import argparse
+
+import numpy as np
+import pandas as pd
 from scipy import stats
 from statsmodels.stats.multitest import multipletests
 
@@ -160,9 +161,7 @@ def generate_eth_report(results: Dict) -> str:
     report.append("## Results Summary")
     report.append("")
     report.append(f"- **Spread Episodes Detected**: {results['episode_count']}")
-    report.append(
-        f"- **Episodes Surviving FDR (q=0.10)**: {results['episodes_survived_fdr']}"
-    )
+    report.append(f"- **Episodes Surviving FDR (q=0.10)**: {results['episodes_survived_fdr']}")
     report.append("")
 
     if results["episodes"]:
@@ -204,9 +203,7 @@ def generate_eth_report(results: Dict) -> str:
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Gold Hunt Phase 4 - ETH-USD Validation"
-    )
+    parser = argparse.ArgumentParser(description="Gold Hunt Phase 4 - ETH-USD Validation")
     parser.add_argument(
         "--output-dir",
         default="experiments/gold_hunt_v1/eth_phase1",
@@ -217,9 +214,7 @@ def main():
         default="exports/gold_hunt/latest/eth_phase1",
         help="Export directory for UI",
     )
-    parser.add_argument(
-        "--seed", type=int, default=42, help="Random seed for reproducibility"
-    )
+    parser.add_argument("--seed", type=int, default=42, help="Random seed for reproducibility")
     parser.add_argument("--verbose", action="store_true", help="Verbose output")
 
     args = parser.parse_args()
@@ -281,9 +276,7 @@ def main():
             f"\n✅ ETH-USD Results: {results['episode_count']} episodes, {results['episodes_survived_fdr']} survived FDR"
         )
         if results["episode_count"] > 0:
-            print(
-                "   Pattern consistency: ETH-USD shows coordination under identical settings"
-            )
+            print("   Pattern consistency: ETH-USD shows coordination under identical settings")
         else:
             print("   Pattern inconsistency: ETH-USD shows no coordination")
     else:

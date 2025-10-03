@@ -5,23 +5,24 @@ ICP-VMM Real Data Test
 Tests the ICP-VMM pipeline on real BTC-USD data from local snapshots.
 """
 
-import sys
 import json
-import pandas as pd
-import numpy as np
+import os
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
-import os
+
+import numpy as np
+import pandas as pd
 
 # Add src to path
 sys.path.append(str(Path(__file__).parent.parent.parent / "src"))
 
 from icp_vmm.environments import EnvironmentLabeler
-from icp_vmm.transforms import DataTransformer
-from icp_vmm.tests import PreconditionTester
-from icp_vmm.vmm import VMMAnalyzer
-from icp_vmm.icp import ICPTester
 from icp_vmm.export import ICPVMMExporter
+from icp_vmm.icp import ICPTester
+from icp_vmm.tests import PreconditionTester
+from icp_vmm.transforms import DataTransformer
+from icp_vmm.vmm import VMMAnalyzer
 
 
 def load_real_data(snapshot_path: str):
@@ -113,9 +114,7 @@ def main():
         print("\n🏷️ Labeling environments...")
         labeled_data = {}
         for venue, data in prepared_data.items():
-            labeled_data[venue] = env_labeler.label_all_environments(
-                data, processed_metrics
-            )
+            labeled_data[venue] = env_labeler.label_all_environments(data, processed_metrics)
 
         # Get environment counts
         env_counts = {}
@@ -223,9 +222,7 @@ def main():
                 print("\n📄 Sample ICP.json:")
                 icp_sample = {
                     "overall": icp_tests.get("overall", {}),
-                    "parameter_tests": list(
-                        icp_tests.get("parameter_tests", {}).keys()
-                    ),
+                    "parameter_tests": list(icp_tests.get("parameter_tests", {}).keys()),
                     "leadership_tests": icp_tests.get("leadership_tests", {}),
                     "residual_tests": icp_tests.get("residual_tests", {}),
                 }

@@ -18,21 +18,18 @@ Optional:
     --print-evidence
 """
 
-import sys
-import os
-import json
 import argparse
+import json
 import logging
+import os
+import sys
 from datetime import datetime
-from typing import Dict, Any
+from typing import Any, Dict
 
 # Add src to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
-from acd.analytics.invariance_matrix import (
-    InvarianceMatrixAnalyzer,
-    create_invariance_analyzer,
-)
+from acd.analytics.invariance_matrix import InvarianceMatrixAnalyzer, create_invariance_analyzer
 
 # Configure logging
 logging.basicConfig(
@@ -208,9 +205,7 @@ def main():
     parser.add_argument("--export-dir", default="exports", help="Export directory")
     parser.add_argument("--start", default="2025-01-01", help="Start date (YYYY-MM-DD)")
     parser.add_argument("--end", default="2025-09-24", help="End date (YYYY-MM-DD)")
-    parser.add_argument(
-        "--print-evidence", action="store_true", help="Print evidence blocks"
-    )
+    parser.add_argument("--print-evidence", action="store_true", help="Print evidence blocks")
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose logging")
 
     args = parser.parse_args()

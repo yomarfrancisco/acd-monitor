@@ -7,7 +7,7 @@ Asserts all 9 blocks exist and none are zero-byte.
 
 import sys
 from pathlib import Path
-from typing import List, Dict
+from typing import Dict, List
 
 
 def check_evidence_integrity(output_dir: str) -> bool:
@@ -69,10 +69,7 @@ def check_evidence_integrity(output_dir: str) -> bool:
         return False
 
     # Check for power banner
-    if (
-        "PROVISIONAL" not in evidence_content
-        or "integration testing only" not in evidence_content
-    ):
+    if "PROVISIONAL" not in evidence_content or "integration testing only" not in evidence_content:
         print("❌ Missing power banner in EVIDENCE.md")
         return False
 

@@ -17,7 +17,7 @@ import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Any
+from typing import Any, Dict, List
 
 import numpy as np
 import pandas as pd
@@ -270,9 +270,7 @@ def generate_phase3_report(
 
     # Get current commit hash
     try:
-        commit_hash = (
-            subprocess.check_output(["git", "rev-parse", "HEAD"]).decode().strip()
-        )
+        commit_hash = subprocess.check_output(["git", "rev-parse", "HEAD"]).decode().strip()
     except:
         commit_hash = "unknown"
 
@@ -477,9 +475,7 @@ def main():
     # Generate reproducibility hash
     logger.info("Phase 3.5: Generating reproducibility hash")
     try:
-        commit_hash = (
-            subprocess.check_output(["git", "rev-parse", "HEAD"]).decode().strip()
-        )
+        commit_hash = subprocess.check_output(["git", "rev-parse", "HEAD"]).decode().strip()
         with open(output_dir / "reproducibility_hash.txt", "w") as f:
             f.write(f"Phase 3 Implementation Hash: {commit_hash}\n")
             f.write(f"Timestamp: {datetime.now().isoformat()}\n")
