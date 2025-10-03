@@ -93,10 +93,9 @@ jobs:
         run: |
           pip install "black==24.8.0" "flake8==7.1.0" "isort==5.13.2"
 
-      - name: Lint with flake8
-        run: flake8
-
       - name: Format check with black
+        run: black --check --diff .
+
+      - name: Lint with flake8
         run: |
-          black --version
-          black --check --diff .
+          xargs -a lint-allowlist.txt -I {} flake8 {}

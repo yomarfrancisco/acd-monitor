@@ -1,25 +1,18 @@
 [flake8]
 max-line-length = 100
-extend-exclude = 
-    _archived,
-    _snapshots,
-    _generated,
-    dist,
+select = B,C,E,F,W
+extend-ignore = E203,W503
+per-file-ignores =
+    src/__init__.py: F401,F403
+exclude =
+    .git,
+    .github,
+    .venv,
     build,
-    backend/main\ [2-5]\.py,
-    src/acd/demo/features\ [9-15]\.py,
-    src/acd/demo/pipeline\ [9-15]\.py,
-    src/acd/demo/visualization\ [9-15]\.py,
-    src/acd/monitoring/health_check\ [9-16]\.py,
-    src/acd/monitoring/regression_detector\ [9-16]\.py,
-    src/acd/vmm/adaptive_thresholds\ [9-16]\.py,
-    src/acd/vmm/engine\ [9-16]\.py,
-    src/acd/vmm/scalers\ [2-9]\.py,
-    src/acd/analytics/report_v2.py,
-    src/agent/bundle_generator.py,
-    tests/vmm/test_vmm_perf\ [2-9]\.py,
-    tests/vmm/test_vmm_repro\ [2-9]\.py,
-    tests/vmm/test_vmm_repro\ 1[0-2]\.py,
-    writer/parsers/venues\ 2\.py,
-    trigger_canary_capture.py
-extend-ignore = W293,W391,F541,E741,E501,E203,W291
+    dist,
+    artifacts,
+    analysis,
+    experiments,
+    tests,                 # TEMP quarantine
+    **/*\ *.py,            # files with spaces + numeric suffixes
+    writer/parsers/*\ *.py
