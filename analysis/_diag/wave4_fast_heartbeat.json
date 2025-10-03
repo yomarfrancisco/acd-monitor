@@ -1,0 +1,22 @@
+{
+  "ts": "2025-10-03T18:05:26.332978",
+  "rows": 0,
+  "pairs_done": 0,
+  "phase": "completed",
+  "meta": {
+    "job": "wave4-fast",
+    "args": {
+      "date": "20250925",
+      "venues": "BINANCE,COINBASE,BYBITSPOT,BITGET",
+      "limit_trades": 200000,
+      "bootstrap": 100,
+      "window_ms": 100,
+      "max_minutes": 15,
+      "out": "analysis/flatfiles_ticks/wave4/_fast"
+    }
+  },
+  "sync_pairs": 6,
+  "ofi_pairs": 6,
+  "impact_pairs": 12,
+  "elapsed": 0.3822352886199951
+}

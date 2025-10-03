@@ -1,0 +1,182 @@
+{
+  "sync": {
+    "BINANCE_COINBASE": {
+      "status": "SUCCESS",
+      "correlation": 1.0,
+      "lag": 0,
+      "p_value": 0.5,
+      "significant": false,
+      "null_mean": 1.0,
+      "z_score": 0.0
+    },
+    "BINANCE_BYBITSPOT": {
+      "status": "SUCCESS",
+      "correlation": 1.0,
+      "lag": 0,
+      "p_value": 0.5,
+      "significant": false,
+      "null_mean": 1.0,
+      "z_score": 0.0
+    },
+    "BINANCE_BITGET": {
+      "status": "SUCCESS",
+      "correlation": 1.0,
+      "lag": 0,
+      "p_value": 0.5,
+      "significant": false,
+      "null_mean": 1.0,
+      "z_score": 0.0
+    },
+    "COINBASE_BYBITSPOT": {
+      "status": "SUCCESS",
+      "correlation": 1.0,
+      "lag": 0,
+      "p_value": 0.5,
+      "significant": false,
+      "null_mean": 1.0,
+      "z_score": 0.0
+    },
+    "COINBASE_BITGET": {
+      "status": "SUCCESS",
+      "correlation": 1.0,
+      "lag": 0,
+      "p_value": 0.5,
+      "significant": false,
+      "null_mean": 1.0,
+      "z_score": 0.0
+    },
+    "BYBITSPOT_BITGET": {
+      "status": "SUCCESS",
+      "correlation": 1.0,
+      "lag": 0,
+      "p_value": 0.5,
+      "significant": false,
+      "null_mean": 1.0,
+      "z_score": 0.0
+    }
+  },
+  "ofi": {
+    "BINANCE_COINBASE": {
+      "status": "SUCCESS",
+      "correlation": -0.008774067979511397,
+      "p_value": 0.7748424671786175,
+      "significant": false,
+      "null_mean": -0.00030953119585122005,
+      "z_score": -0.7548898679382677
+    },
+    "BINANCE_BYBITSPOT": {
+      "status": "SUCCESS",
+      "correlation": 0.00036932301106836694,
+      "p_value": 0.448686707834007,
+      "significant": false,
+      "null_mean": -0.0009279688860631247,
+      "z_score": 0.12898007411770213
+    },
+    "BINANCE_BITGET": {
+      "status": "SUCCESS",
+      "correlation": -0.010977933991949193,
+      "p_value": 0.8547458085515253,
+      "significant": false,
+      "null_mean": -0.0008898659121195357,
+      "z_score": -1.0570070215699658
+    },
+    "COINBASE_BYBITSPOT": {
+      "status": "SUCCESS",
+      "correlation": -0.0011778475458290058,
+      "p_value": 0.5508387123082428,
+      "significant": false,
+      "null_mean": -4.300610612170834e-05,
+      "z_score": -0.12778063508646167
+    },
+    "COINBASE_BITGET": {
+      "status": "SUCCESS",
+      "correlation": -0.006914542005216458,
+      "p_value": 0.848132720583506,
+      "significant": false,
+      "null_mean": -0.0008201115161462835,
+      "z_score": -1.0284577423195578
+    },
+    "BYBITSPOT_BITGET": {
+      "status": "SUCCESS",
+      "correlation": 0.003488677974124673,
+      "p_value": 0.3481074764226081,
+      "significant": false,
+      "null_mean": 0.00016288686597501183,
+      "z_score": 0.39043494358582237
+    }
+  },
+  "impact": {
+    "BINANCE_COINBASE": {
+      "status": "SUCCESS",
+      "max_impact": 0.0,
+      "p_value": 1.0,
+      "significant": false
+    },
+    "BINANCE_BYBITSPOT": {
+      "status": "SUCCESS",
+      "max_impact": 0.0,
+      "p_value": 1.0,
+      "significant": false
+    },
+    "BINANCE_BITGET": {
+      "status": "SUCCESS",
+      "max_impact": 0.0,
+      "p_value": 1.0,
+      "significant": false
+    },
+    "COINBASE_BINANCE": {
+      "status": "SUCCESS",
+      "max_impact": 0.0,
+      "p_value": 1.0,
+      "significant": false
+    },
+    "COINBASE_BYBITSPOT": {
+      "status": "SUCCESS",
+      "max_impact": 0.0,
+      "p_value": 1.0,
+      "significant": false
+    },
+    "COINBASE_BITGET": {
+      "status": "SUCCESS",
+      "max_impact": 0.0,
+      "p_value": 1.0,
+      "significant": false
+    },
+    "BYBITSPOT_BINANCE": {
+      "status": "SUCCESS",
+      "max_impact": 0.0,
+      "p_value": 1.0,
+      "significant": false
+    },
+    "BYBITSPOT_COINBASE": {
+      "status": "SUCCESS",
+      "max_impact": 0.0,
+      "p_value": 1.0,
+      "significant": false
+    },
+    "BYBITSPOT_BITGET": {
+      "status": "SUCCESS",
+      "max_impact": 0.0,
+      "p_value": 1.0,
+      "significant": false
+    },
+    "BITGET_BINANCE": {
+      "status": "SUCCESS",
+      "max_impact": 0.0,
+      "p_value": 1.0,
+      "significant": false
+    },
+    "BITGET_COINBASE": {
+      "status": "SUCCESS",
+      "max_impact": 0.0,
+      "p_value": 1.0,
+      "significant": false
+    },
+    "BITGET_BYBITSPOT": {
+      "status": "SUCCESS",
+      "max_impact": 0.0,
+      "p_value": 1.0,
+      "significant": false
+    }
+  }
+}
