@@ -1,13 +1,12 @@
 [flake8]
-max-line-length = 120
-extend-ignore = E203,E266,W503
+max-line-length = 100
+extend-ignore = E203  # black-compatible slicing
 # E501 (long lines) temporarily tolerated across active code up to 120
 # Keep F401/F821/E999 etc. for active code paths
 exclude =
     .git,
-    .github,
-    venv,
-    env,
+    __pycache__,
+    .venv,
     build,
     dist,
     # Quarantine legacy/experimental & generated artifacts

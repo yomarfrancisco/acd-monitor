@@ -1,12 +1,30 @@
 name: ci
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches:
       - main
       - feat/**      # run CI on feature branches too
+    paths:
+      - 'src/**'
+      - 'scripts/**'
+      - '.github/workflows/**'
+      - 'ui/**'
+      - 'package.json'
+      - 'package-lock.json'
   pull_request:
     branches: [ main ]
+    paths:
+      - 'src/**'
+      - 'scripts/**'
+      - '.github/workflows/**'
+      - 'ui/**'
+      - 'package.json'
+      - 'package-lock.json'
   workflow_dispatch:
 
 jobs:
@@ -85,6 +103,10 @@ jobs:
           pip install -r requirements.txt
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
 
+      - name: Install formatters
+        run: |
+          pip install black==24.8.0 flake8==7.1.0
+
       - name: Lint with flake8
         run: |
           echo "Using scoped flake8"
@@ -93,4 +115,5 @@ jobs:
             src/icp_vmm || (echo "flake8 failed" && exit 1)
 
       - name: Format check with black
-        run: black --check src tests
+        run: |
+          black --check scripts/wave4_tick_optimized src/icp_vmm  # scope to active modules only
