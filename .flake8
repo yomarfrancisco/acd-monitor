@@ -1,38 +1,15 @@
 [flake8]
 max-line-length = 100
-extend-ignore = E203  # black-compatible slicing
-# E501 (long lines) temporarily tolerated across active code up to 120
-# Keep F401/F821/E999 etc. for active code paths
+# Black compatibility note: E203 conflicts with Black's slicing rules
+extend-ignore = E203
 exclude =
     .git,
-    __pycache__,
-    .venv,
+    .github,
+    venv,
+    env,
     build,
     dist,
-    # Quarantine legacy/experimental & generated artifacts
-    analysis/,
-    analytics/,
-    backend/,
-    experiments/,
-    tests/,
-    test_*.py,
-    run_*.py,
-    writer/,
-    # Duplicated demo/monitoring code copies with spaces/suffixes
-    src/acd/** *.*,        # any path containing spaces
-    src/acd/**[0-9].py,    # numbered duplicates like "engine 2.py"
-    # Bulk demo modules until we curate
-    src/acd/demo/,
-    src/acd/monitoring/,
-    src/acd/data/,
-    # Generated data
-    **/*.parquet,
-    **/*.csv,
-    **/*.csv.gz,
-    **/*.feather,
-    **/*.arrow
-
-# Narrow lint to the code we actually use now:
+    tests
 per-file-ignores =
-    # allow long lines in generated reports if any slip through
-    scripts/**: E501
+    scripts/**: E402
+    run_*.py: E402

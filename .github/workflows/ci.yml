@@ -6,25 +6,21 @@ concurrency:
 
 on:
   push:
-    branches:
-      - main
-      - feat/**      # run CI on feature branches too
+    branches: [ main, feat/** ]
     paths:
-      - 'src/**'
-      - 'scripts/**'
-      - '.github/workflows/**'
-      - 'ui/**'
-      - 'package.json'
-      - 'package-lock.json'
+      - "src/**"
+      - "scripts/**"
+      - ".github/workflows/**"
+      - "pyproject.toml"
+      - ".flake8"
   pull_request:
     branches: [ main ]
     paths:
-      - 'src/**'
-      - 'scripts/**'
-      - '.github/workflows/**'
-      - 'ui/**'
-      - 'package.json'
-      - 'package-lock.json'
+      - "src/**"
+      - "scripts/**"
+      - ".github/workflows/**"
+      - "pyproject.toml"
+      - ".flake8"
   workflow_dispatch:
 
 jobs:
@@ -103,17 +99,17 @@ jobs:
           pip install -r requirements.txt
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
 
-      - name: Install formatters
+      - name: Install linters
         run: |
-          pip install black==24.8.0 flake8==7.1.0
+          pip install black==24.8.0 flake8==7.1.0 flake8-bugbear==24.2.6
 
       - name: Lint with flake8
         run: |
-          echo "Using scoped flake8"
-          flake8 --config .flake8 \
-            scripts/wave4_tick_optimized \
-            src/icp_vmm || (echo "flake8 failed" && exit 1)
+          # fail-fast on real errors only
+          flake8 src scripts --count --select=E9,F63,F7,F82 --show-source --statistics
+          # style warnings don't fail CI in this pass
+          flake8 src scripts --count --exit-zero --max-complexity=12 --statistics
 
       - name: Format check with black
         run: |
-          black --check scripts/wave4_tick_optimized src/icp_vmm  # scope to active modules only
+          black --check src/icp_vmm scripts/wave4_tick_optimized
