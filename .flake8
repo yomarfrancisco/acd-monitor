@@ -4,56 +4,41 @@ extend-ignore = E203, W503
 exclude =
     .git,
     __pycache__,
-    .venv,
     venv,
+    .venv,
     build,
     dist,
     node_modules,
-    artifacts,
-    scripts,
-    tests,
-    cases,
-    notebooks,
-    tmp,
-    .mypy_cache,
-    .pytest_cache
-
-per-file-ignores =
-    backend/main.py:E501,W291
-    src/acd/analytics/adaptive_baseline.py:E501,F401,F841,E722
-    src/acd/analytics/diagnostic_layers.py:E501,F401
-    src/acd/analytics/integrated_engine.py:F401
-    src/acd/analytics/entity_intelligence.py:E501,F401,F841,E712
-    src/acd/analytics/operational_integration.py:E501,F401
-    src/acd/analytics/power_analysis.py:E501,F401,F841
-    src/acd/analytics/report_v2.py:E501,F541
-    src/acd/analytics/sensitivity.py:E501,F401
-    src/acd/analytics/similarity_metrics.py:E501,F401
-    src/acd/analytics/validation_qa.py:E501,F401,W293,E712
-    src/acd/data/quality_profiles.py:E501,F841
-    src/acd/data/synthetic_crypto.py:E501,F401
-    src/acd/demo/features.py:E501,F401
-    src/acd/demo/ingestion.py:E501,F401
-    src/acd/demo/pipeline.py:E501,F401,F841
-    src/acd/demo/visualization.py:E501,F401
-    src/acd/evidence/timestamping.py:F401,F841
-    src/acd/icp/engine.py:F401,F841
-    src/acd/icp/statistics.py:F401
-    src/acd/monitoring/health_check.py:F401,F841,E501,F541
-    src/acd/monitoring/metrics.py:F401
-    src/acd/monitoring/regression_detector.py:F401,E722,F541,E501
-    src/acd/validation/hmm.py:F401
-    src/acd/validation/infoflow.py:F401
-    src/acd/validation/lead_lag.py:F401,F841
-    src/acd/validation/mirroring.py:E501,F401
-    src/acd/vmm/adaptive_thresholds.py:W291,E501
-    src/acd/vmm/crypto_moments.py:F401,F841
-    src/acd/vmm/engine.py:F841,E501,F541,E741
-    src/acd/vmm/provenance.py:F401
-    src/acd/vmm/scalers.py:E501,F401
-    src/agent/bundle_generator.py:E501,F401,E402
-    src/agent/compose/answer.py:E501,F401
-    src/agent/providers/chatbase_adapter.py:F401
-    src/agent/providers/offline_mock.py:E501,F401,W291,F841
-    src/agent/retrieval/loader.py:F401
-    src/agent/retrieval/select.py:F401
+    ui/cursor-dashboard/node_modules,
+    # legacy / experimental / generated (temporarily excluded)
+    analysis/BTC/synthetic/,
+    analytics/wave1/,
+    analytics/wave2/,
+    analytics/reader_checks/,
+    artifacts/,
+    backend/,
+    cases/,
+    experiments/,
+    writer/,
+    src/acd/demo/,
+    src/acd/monitoring/,
+    src/acd/vmm/,
+    src/acd/data/quality_profiles*,
+    test_*,
+    run_*.py,
+    simulate_canary_capture.py,
+    trigger_canary_capture.py,
+    scripts/,
+    # exclude duplicate numbered files
+    *\ 2.py,
+    *\ 3.py,
+    *\ 4.py,
+    *\ 5.py,
+    *\ 6.py,
+    *\ 7.py,
+    *\ 8.py,
+    *\ 9.py,
+    # exclude src/acd/analytics (analytical research code, not production)
+    src/acd/analytics/,
+    # exclude src/agent (experimental agent code)
+    src/agent/
