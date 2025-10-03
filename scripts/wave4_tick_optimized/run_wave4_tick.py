@@ -106,6 +106,9 @@ def aggregate_by_bins(df: pd.DataFrame) -> pd.DataFrame:
 
     # Calculate price changes
     bin50_agg["dpx"] = bin50_agg["price"].diff()
+    
+    # Add 100ms bins for OFI analysis
+    bin50_agg["bin100"] = bin50_agg["bin50"] // 2  # 100ms = 2 * 50ms
 
     return bin50_agg
 

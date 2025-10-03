@@ -191,6 +191,6 @@ def analyze_large_trade_sync(
             if bootstrap_results["mean_correlation"] != 0
             else 0
         ),
-        "p_value": p_value,
-        "significant": p_value < 0.05,
+        "p_value": float(p_value),
+        "significant": bool(p_value < 0.05),
     }
