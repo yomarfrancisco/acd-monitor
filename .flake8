@@ -16,5 +16,10 @@ extend-exclude =
     src/acd/vmm/engine\ [9-16]\.py,
     src/acd/vmm/scalers\ [2-9]\.py,
     src/acd/analytics/report_v2.py,
-    src/agent/bundle_generator.py
+    src/agent/bundle_generator.py,
+    tests/vmm/test_vmm_perf\ [2-9]\.py,
+    tests/vmm/test_vmm_repro\ [2-9]\.py,
+    tests/vmm/test_vmm_repro\ 1[0-2]\.py,
+    writer/parsers/venues\ 2\.py,
+    trigger_canary_capture.py
 extend-ignore = W293,W391,F541,E741,E501,E203,W291
