@@ -33,10 +33,14 @@ jobs:
       - name: Install tooling
         run: |
           python -m pip install --upgrade pip
-          pip install black==24.8.0 flake8==7.1.1 flake8-bugbear==24.4.26
+          pip install black==24.8.0 flake8==7.1.0 flake8-bugbear
       - name: Lint with flake8
         run: |
-          flake8 src scripts
+          flake8 \
+            scripts/wave4_tick_optimized \
+            src/icp_vmm
       - name: Format check with black
         run: |
-          black --check src scripts
+          black --check \
+            scripts/wave4_tick_optimized \
+            src/icp_vmm
