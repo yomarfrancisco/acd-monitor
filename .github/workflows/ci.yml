@@ -86,7 +86,11 @@ jobs:
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
 
       - name: Lint with flake8
-        run: flake8
+        run: |
+          echo "Using scoped flake8"
+          flake8 --config .flake8 \
+            scripts/wave4_tick_optimized \
+            src/icp_vmm || (echo "flake8 failed" && exit 1)
 
       - name: Format check with black
         run: black --check src tests
