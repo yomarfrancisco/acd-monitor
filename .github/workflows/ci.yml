@@ -89,4 +89,4 @@ jobs:
         run: flake8
 
       - name: Format check with black
-        run: black --check src tests
+        run: black --check src

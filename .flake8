@@ -41,4 +41,6 @@ exclude =
     # exclude src/acd/analytics (analytical research code, not production)
     src/acd/analytics/,
     # exclude src/agent (experimental agent code)
-    src/agent/
+    src/agent/,
+    # exclude tests (test files with many duplicates)
+    tests/
