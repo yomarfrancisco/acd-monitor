@@ -1,0 +1,65 @@
+{
+  "venue_impact": {
+    "BINANCE": {
+      "impact_1_tick": 2.605487653569987,
+      "impact_3_tick": 2.3010783545718145,
+      "impact_5_tick": 2.065646478948622,
+      "volume_impact_correlation": 0.452529809430301,
+      "total_observations": 205525
+    },
+    "BITGET": {
+      "impact_1_tick": 2.888074978712983,
+      "impact_3_tick": 2.4812227017576363,
+      "impact_5_tick": 2.1835174313087338,
+      "volume_impact_correlation": 0.4021399958120376,
+      "total_observations": 205525
+    },
+    "BYBITSPOT": {
+      "impact_1_tick": 3.6455982149266917,
+      "impact_3_tick": 3.0447903231595688,
+      "impact_5_tick": 2.642123977027993,
+      "volume_impact_correlation": 0.5555004840381792,
+      "total_observations": 167164
+    },
+    "COINBASE": {
+      "impact_1_tick": 3.903008879698329,
+      "impact_3_tick": 2.8986127911069226,
+      "impact_5_tick": 2.4298930425601317,
+      "volume_impact_correlation": 0.42672699558451205,
+      "total_observations": 205525
+    }
+  },
+  "cross_venue_spillover": {
+    "BINANCE_BITGET": {
+      "spillover_fraction": 0.29802418977090794,
+      "avg_spillover_impact": 0.0011112217633162326,
+      "large_trade_threshold": 0.609425
+    },
+    "BINANCE_BYBITSPOT": {
+      "spillover_fraction": 0.21218886967914338,
+      "avg_spillover_impact": 0.0014806863159793732,
+      "large_trade_threshold": 0.609425
+    },
+    "BINANCE_COINBASE": {
+      "spillover_fraction": 0.28428236484791286,
+      "avg_spillover_impact": 0.0016787040007806991,
+      "large_trade_threshold": 0.609425
+    },
+    "BITGET_BYBITSPOT": {
+      "spillover_fraction": 0.35939538579567676,
+      "avg_spillover_impact": 0.002028035189373433,
+      "large_trade_threshold": 0.11807699999999999
+    },
+    "BITGET_COINBASE": {
+      "spillover_fraction": 0.2071410872710116,
+      "avg_spillover_impact": 0.0011906317410672778,
+      "large_trade_threshold": 0.11807699999999999
+    },
+    "BYBITSPOT_COINBASE": {
+      "spillover_fraction": 0.31639596381699114,
+      "avg_spillover_impact": 0.0016117560924274817,
+      "large_trade_threshold": 0.7718044000000001
+    }
+  },
+  "summary": {}
+}

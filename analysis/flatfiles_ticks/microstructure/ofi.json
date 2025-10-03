@@ -1,0 +1,59 @@
+{
+  "venue_ofi": {
+    "BINANCE": {
+      "ofi_1s_mean": -0.02198352135496239,
+      "ofi_1s_std": 1.5114631872476858,
+      "ofi_5s_mean": -0.1098394923756526,
+      "ofi_5s_std": 3.615796019266787,
+      "total_seconds": 205526
+    },
+    "BITGET": {
+      "ofi_1s_mean": -0.004003812179480942,
+      "ofi_1s_std": 0.3029254272035898,
+      "ofi_5s_mean": -0.020020658486032628,
+      "ofi_5s_std": 0.7130607361524223,
+      "total_seconds": 205526
+    },
+    "BYBITSPOT": {
+      "ofi_1s_mean": -0.011021338408159602,
+      "ofi_1s_std": 0.8802731685004279,
+      "ofi_5s_mean": -0.05510764987288677,
+      "ofi_5s_std": 2.0683573990529576,
+      "total_seconds": 167165
+    },
+    "COINBASE": {
+      "ofi_1s_mean": -0.006134031575664393,
+      "ofi_1s_std": 0.6088189432045893,
+      "ofi_5s_mean": -0.03066835508472079,
+      "ofi_5s_std": 1.4117835419135565,
+      "total_seconds": 205526
+    }
+  },
+  "cross_venue_correlations": {
+    "BINANCE_BITGET": {
+      "ofi_correlation": 0.41938207431069613,
+      "aligned_seconds": 205526
+    },
+    "BINANCE_BYBITSPOT": {
+      "ofi_correlation": 0.43891342859166294,
+      "aligned_seconds": 167165
+    },
+    "BINANCE_COINBASE": {
+      "ofi_correlation": 0.36791437820399736,
+      "aligned_seconds": 205526
+    },
+    "BITGET_BYBITSPOT": {
+      "ofi_correlation": 0.4505476747874056,
+      "aligned_seconds": 167165
+    },
+    "BITGET_COINBASE": {
+      "ofi_correlation": 0.3778846531649064,
+      "aligned_seconds": 205526
+    },
+    "BYBITSPOT_COINBASE": {
+      "ofi_correlation": 0.4235581004615228,
+      "aligned_seconds": 167165
+    }
+  },
+  "summary": {}
+}

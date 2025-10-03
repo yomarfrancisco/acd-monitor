@@ -1,0 +1,41 @@
+{
+  "pairwise_leadlag": {
+    "BINANCE_BITGET": {
+      "lead_fraction_1_to_2": 0.5422692010618583,
+      "lead_fraction_2_to_1": 0.4577307989381417,
+      "median_lag_ms": 110.05065289527866,
+      "aligned_seconds": 205526
+    },
+    "BINANCE_BYBITSPOT": {
+      "lead_fraction_1_to_2": 0.5145109329992827,
+      "lead_fraction_2_to_1": 0.48548906700071726,
+      "median_lag_ms": 107.423983721833,
+      "aligned_seconds": 167165
+    },
+    "BINANCE_COINBASE": {
+      "lead_fraction_1_to_2": 0.4791075165426671,
+      "lead_fraction_2_to_1": 0.520892483457333,
+      "median_lag_ms": 111.50671691531758,
+      "aligned_seconds": 205526
+    },
+    "BITGET_BYBITSPOT": {
+      "lead_fraction_1_to_2": 0.5086762327819165,
+      "lead_fraction_2_to_1": 0.49132376721808346,
+      "median_lag_ms": 103.43579958055776,
+      "aligned_seconds": 167165
+    },
+    "BITGET_COINBASE": {
+      "lead_fraction_1_to_2": 0.5370868523962443,
+      "lead_fraction_2_to_1": 0.4629131476037557,
+      "median_lag_ms": 123.63392023267886,
+      "aligned_seconds": 205526
+    },
+    "BYBITSPOT_COINBASE": {
+      "lead_fraction_1_to_2": 0.5271269602812914,
+      "lead_fraction_2_to_1": 0.47287303971870864,
+      "median_lag_ms": 134.29904546747207,
+      "aligned_seconds": 167165
+    }
+  },
+  "summary": {}
+}

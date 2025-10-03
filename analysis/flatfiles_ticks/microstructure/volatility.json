@@ -1,0 +1,71 @@
+{
+  "venue_volatility": {
+    "BINANCE": {
+      "variance": 3.580482511046871e-09,
+      "std_dev": 5.983713321213568e-05,
+      "total_returns": 205525,
+      "lag_1": 0.15690128384730154,
+      "lag_2": 0.07686053777702648,
+      "lag_3": 0.0432709514137329,
+      "lag_4": 0.03414604463248316,
+      "lag_5": 0.035370293027694066
+    },
+    "BITGET": {
+      "variance": 3.824906801326435e-09,
+      "std_dev": 6.184583091305699e-05,
+      "total_returns": 205525,
+      "lag_1": 0.1690745538608053,
+      "lag_2": 0.057463617819704604,
+      "lag_3": 0.031116217445523217,
+      "lag_4": 0.026698921849394826,
+      "lag_5": 0.023560573005784312
+    },
+    "BYBITSPOT": {
+      "variance": 4.62485133896101e-09,
+      "std_dev": 6.800625955719819e-05,
+      "total_returns": 167164,
+      "lag_1": 0.1806252670081843,
+      "lag_2": 0.07385645533003031,
+      "lag_3": 0.013521943154954712,
+      "lag_4": 0.0226573192473735,
+      "lag_5": 0.028727462351415135
+    },
+    "COINBASE": {
+      "variance": 4.744405392964389e-09,
+      "std_dev": 6.887964425695294e-05,
+      "total_returns": 205525,
+      "lag_1": 0.08680358056334869,
+      "lag_2": 0.036133647876615216,
+      "lag_3": 0.017528967102905073,
+      "lag_4": 0.01634352422248737,
+      "lag_5": 0.013442582966850013
+    }
+  },
+  "cross_venue_bursts": {
+    "BINANCE_BITGET": {
+      "volatility_burst_correlation": 0.786664727079452,
+      "aligned_seconds": 205525
+    },
+    "BINANCE_BYBITSPOT": {
+      "volatility_burst_correlation": 0.8227953795317263,
+      "aligned_seconds": 167163
+    },
+    "BINANCE_COINBASE": {
+      "volatility_burst_correlation": 0.7195628838581215,
+      "aligned_seconds": 205525
+    },
+    "BITGET_BYBITSPOT": {
+      "volatility_burst_correlation": 0.7942881589851095,
+      "aligned_seconds": 167163
+    },
+    "BITGET_COINBASE": {
+      "volatility_burst_correlation": 0.7093678303328061,
+      "aligned_seconds": 205525
+    },
+    "BYBITSPOT_COINBASE": {
+      "volatility_burst_correlation": 0.7482110811231896,
+      "aligned_seconds": 167163
+    }
+  },
+  "summary": {}
+}
