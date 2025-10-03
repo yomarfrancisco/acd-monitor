@@ -3,15 +3,15 @@
 Debug script to check synthetic data generation
 """
 
-import sys
 import os
+import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "src"))
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
-from acd.data.synthetic_crypto import SyntheticCryptoGenerator, CryptoMarketConfig
+from acd.data.synthetic_crypto import CryptoMarketConfig, SyntheticCryptoGenerator
 
 
 def debug_data():
@@ -30,9 +30,7 @@ def debug_data():
     print(f"Missing values: {competitive_data.isnull().sum()}")
 
     # Check specific columns
-    price_cols = [
-        col for col in competitive_data.columns if col.startswith("Exchange_")
-    ]
+    price_cols = [col for col in competitive_data.columns if col.startswith("Exchange_")]
     print(f"Price columns: {price_cols}")
 
     for col in price_cols:

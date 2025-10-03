@@ -1,0 +1,13 @@
+{
+  "btc": {
+    "coinbase": 9737,
+    "kraken": 3753,
+    "okx": 14484,
+    "total": 27974
+  },
+  "eth": {
+    "coinbase": 4170,
+    "kraken": 1198,
+    "total": 5368
+  }
+}

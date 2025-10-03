@@ -9,9 +9,10 @@ ensuring all analyses use the exact same window and venues from OVERLAP.json.
 import json
 import logging
 import sys
-import pandas as pd
 from pathlib import Path
 from typing import Dict, Optional
+
+import pandas as pd
 
 logger = logging.getLogger(__name__)
 

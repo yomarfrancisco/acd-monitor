@@ -1,0 +1,328 @@
+[
+  {
+    "venue": "coinbase",
+    "slice": "slice_00",
+    "start_time": "2025-10-02T00:00:00+00:00",
+    "end_time": "2025-10-02T00:15:00+00:00",
+    "provenance": "REAL",
+    "n_rows": 50,
+    "fields_present": [
+      "timestamp",
+      "price",
+      "volume",
+      "venue"
+    ],
+    "timestamp": "2025-10-02T15:45:43.430912+00:00",
+    "price_stats": {
+      "mean": 119668.76999999997,
+      "min": 119654.36,
+      "max": 119671.69,
+      "std": 4.0963886534345475,
+      "variance": 16.780399999987303,
+      "last_price": 119654.36,
+      "first_price": 119668.0,
+      "price_range": 17.330000000001746,
+      "price_change": -13.639999999999418
+    },
+    "volume_stats": {
+      "total_volume": 1.44782379,
+      "mean_volume": 0.0289564758,
+      "min_volume": 1.16e-06,
+      "max_volume": 0.25070641,
+      "std_volume": 0.0561297964145585,
+      "volume_per_trade": 0.0289564758
+    },
+    "time_stats": {
+      "duration_seconds": 2.210491,
+      "mean_interval_ms": -45.11206122448981,
+      "std_interval_ms": 97.62123877066252,
+      "min_interval_ms": -567.046,
+      "max_interval_ms": 0.0
+    },
+    "outliers": {
+      "count": 1,
+      "percentage": 2.0,
+      "outlier_indices": [
+        49
+      ],
+      "outlier_prices": [
+        119654.36
+      ]
+    },
+    "price_field_analysis": {
+      "field_name": "price",
+      "likely_meaning": "Last trade price (based on exchange API structure)",
+      "price_consistency": "Prices show realistic market behavior",
+      "price_trend": "Decreasing"
+    }
+  },
+  {
+    "venue": "coinbase",
+    "slice": "slice_01",
+    "start_time": "2025-10-02T12:00:00+00:00",
+    "end_time": "2025-10-02T12:15:00+00:00",
+    "provenance": "REAL",
+    "n_rows": 50,
+    "fields_present": [
+      "timestamp",
+      "price",
+      "volume",
+      "venue"
+    ],
+    "timestamp": "2025-10-02T15:45:47.387903+00:00",
+    "price_stats": {
+      "mean": 119670.48159999997,
+      "min": 119665.11,
+      "max": 119679.12,
+      "std": 3.8326833211218743,
+      "variance": 14.6894614400058,
+      "last_price": 119671.68,
+      "first_price": 119679.12,
+      "price_range": 14.009999999994761,
+      "price_change": -7.440000000002328
+    },
+    "volume_stats": {
+      "total_volume": 1.5646726000000002,
+      "mean_volume": 0.031293452000000006,
+      "min_volume": 1.16e-06,
+      "max_volume": 0.25067029,
+      "std_volume": 0.05748377735469593,
+      "volume_per_trade": 0.031293452000000006
+    },
+    "time_stats": {
+      "duration_seconds": 4.002001,
+      "mean_interval_ms": -81.67348979591837,
+      "std_interval_ms": 233.82375063841835,
+      "min_interval_ms": -1196.265,
+      "max_interval_ms": 0.0
+    },
+    "outliers": {
+      "count": 0,
+      "percentage": 0.0,
+      "outlier_indices": [],
+      "outlier_prices": []
+    },
+    "price_field_analysis": {
+      "field_name": "price",
+      "likely_meaning": "Last trade price (based on exchange API structure)",
+      "price_consistency": "Prices show realistic market behavior",
+      "price_trend": "Decreasing"
+    }
+  },
+  {
+    "venue": "kraken",
+    "slice": "slice_00",
+    "start_time": "2025-10-02T00:00:00+00:00",
+    "end_time": "2025-10-02T00:15:00+00:00",
+    "provenance": "REAL",
+    "n_rows": 50,
+    "fields_present": [
+      "timestamp",
+      "price",
+      "volume",
+      "venue"
+    ],
+    "timestamp": "2025-10-02T15:45:50.473398+00:00",
+    "price_stats": {
+      "mean": 118621.766,
+      "min": 118600.0,
+      "max": 118637.6,
+      "std": 18.1829217674177,
+      "variance": 330.6186440000324,
+      "last_price": 118637.5,
+      "first_price": 118600.0,
+      "price_range": 37.60000000000582,
+      "price_change": 37.5
+    },
+    "volume_stats": {
+      "total_volume": 0.21266646999999994,
+      "mean_volume": 0.0042533293999999985,
+      "min_volume": 3.12e-05,
+      "max_volume": 0.1096,
+      "std_volume": 0.015608777443560198,
+      "volume_per_trade": 0.0042533293999999985
+    },
+    "time_stats": {
+      "duration_seconds": 5.41451,
+      "mean_interval_ms": 110.5002213877551,
+      "std_interval_ms": 209.29912959272085,
+      "min_interval_ms": 0.0,
+      "max_interval_ms": 1066.500608
+    },
+    "outliers": {
+      "count": 0,
+      "percentage": 0.0,
+      "outlier_indices": [],
+      "outlier_prices": []
+    },
+    "price_field_analysis": {
+      "field_name": "price",
+      "likely_meaning": "Last trade price (based on exchange API structure)",
+      "price_consistency": "Prices show realistic market behavior",
+      "price_trend": "Increasing"
+    }
+  },
+  {
+    "venue": "kraken",
+    "slice": "slice_01",
+    "start_time": "2025-10-02T12:00:00+00:00",
+    "end_time": "2025-10-02T12:15:00+00:00",
+    "provenance": "REAL",
+    "n_rows": 50,
+    "fields_present": [
+      "timestamp",
+      "price",
+      "volume",
+      "venue"
+    ],
+    "timestamp": "2025-10-02T15:45:53.305708+00:00",
+    "price_stats": {
+      "mean": 118809.36600000001,
+      "min": 118800.1,
+      "max": 118812.3,
+      "std": 5.2070955435813815,
+      "variance": 27.11384399998508,
+      "last_price": 118812.3,
+      "first_price": 118800.1,
+      "price_range": 12.19999999999709,
+      "price_change": 12.19999999999709
+    },
+    "volume_stats": {
+      "total_volume": 0.10910448000000002,
+      "mean_volume": 0.0021820896000000005,
+      "min_volume": 4.123e-05,
+      "max_volume": 0.02851182,
+      "std_volume": 0.005046935087829032,
+      "volume_per_trade": 0.0021820896000000005
+    },
+    "time_stats": {
+      "duration_seconds": 87.671444,
+      "mean_interval_ms": 1789.2131631020407,
+      "std_interval_ms": 2802.257856542383,
+      "min_interval_ms": 0.0,
+      "max_interval_ms": 16751.808256
+    },
+    "outliers": {
+      "count": 0,
+      "percentage": 0.0,
+      "outlier_indices": [],
+      "outlier_prices": []
+    },
+    "price_field_analysis": {
+      "field_name": "price",
+      "likely_meaning": "Last trade price (based on exchange API structure)",
+      "price_consistency": "Prices show realistic market behavior",
+      "price_trend": "Increasing"
+    }
+  },
+  {
+    "venue": "binance",
+    "slice": "slice_00",
+    "start_time": "2025-10-02T00:00:00+00:00",
+    "end_time": "2025-10-02T00:15:00+00:00",
+    "provenance": "REAL",
+    "n_rows": 50,
+    "fields_present": [
+      "timestamp",
+      "price",
+      "volume",
+      "venue"
+    ],
+    "timestamp": "2025-10-02T15:46:01.938953+00:00",
+    "price_stats": {
+      "mean": 118596.1008,
+      "min": 118594.98,
+      "max": 118598.87,
+      "std": 0.8549803272587212,
+      "variance": 0.73099135999943,
+      "last_price": 118598.87,
+      "first_price": 118594.99,
+      "price_range": 3.889999999999418,
+      "price_change": 3.8799999999901047
+    },
+    "volume_stats": {
+      "total_volume": 0.26110999999999995,
+      "mean_volume": 0.005222199999999999,
+      "min_volume": 5e-05,
+      "max_volume": 0.07721,
+      "std_volume": 0.012513053230926493,
+      "volume_per_trade": 0.005222199999999999
+    },
+    "time_stats": {
+      "duration_seconds": 1.32,
+      "mean_interval_ms": 26.93877551020408,
+      "std_interval_ms": 46.825515529709584,
+      "min_interval_ms": 0.0,
+      "max_interval_ms": 217.0
+    },
+    "outliers": {
+      "count": 1,
+      "percentage": 2.0,
+      "outlier_indices": [
+        49
+      ],
+      "outlier_prices": [
+        118598.87
+      ]
+    },
+    "price_field_analysis": {
+      "field_name": "price",
+      "likely_meaning": "Last trade price (based on exchange API structure)",
+      "price_consistency": "Prices show realistic market behavior",
+      "price_trend": "Increasing"
+    }
+  },
+  {
+    "venue": "binance",
+    "slice": "slice_01",
+    "start_time": "2025-10-02T12:00:00+00:00",
+    "end_time": "2025-10-02T12:15:00+00:00",
+    "provenance": "REAL",
+    "n_rows": 50,
+    "fields_present": [
+      "timestamp",
+      "price",
+      "volume",
+      "venue"
+    ],
+    "timestamp": "2025-10-02T15:46:04.529660+00:00",
+    "price_stats": {
+      "mean": 118765.72179999998,
+      "min": 118765.72,
+      "max": 118765.73,
+      "std": 0.0038418745404470694,
+      "variance": 1.4759999984535382e-05,
+      "last_price": 118765.72,
+      "first_price": 118765.72,
+      "price_range": 0.00999999999476131,
+      "price_change": 0.0
+    },
+    "volume_stats": {
+      "total_volume": 0.18576999999999994,
+      "mean_volume": 0.003715399999999999,
+      "min_volume": 5e-05,
+      "max_volume": 0.05983,
+      "std_volume": 0.008921535340960098,
+      "volume_per_trade": 0.003715399999999999
+    },
+    "time_stats": {
+      "duration_seconds": 3.468,
+      "mean_interval_ms": 70.77551020408163,
+      "std_interval_ms": 103.15774829310185,
+      "min_interval_ms": 0.0,
+      "max_interval_ms": 405.0
+    },
+    "outliers": {
+      "count": 0,
+      "percentage": 0.0,
+      "outlier_indices": [],
+      "outlier_prices": []
+    },
+    "price_field_analysis": {
+      "field_name": "price",
+      "likely_meaning": "Last trade price (based on exchange API structure)",
+      "price_consistency": "Prices show realistic market behavior",
+      "price_trend": "Flat"
+    }
+  }
+]

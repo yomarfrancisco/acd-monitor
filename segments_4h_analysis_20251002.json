@@ -1,0 +1,286 @@
+{
+  "analysis_date": "20251002",
+  "venue_stats": {
+    "coinbase": {
+      "12:00-16:00": {
+        "segment": "12:00-16:00",
+        "venue": "coinbase",
+        "trades": 100,
+        "mean_price": 119669.6258,
+        "median_price": 119670.005,
+        "min_price": 119654.36,
+        "max_price": 119679.12,
+        "std_price": 4.057995115817272,
+        "variance_price": 16.467324359996834,
+        "first_price": 119654.36,
+        "last_price": 119679.12,
+        "price_drift": 24.75999999999476,
+        "total_volume": 3.0124963900000004,
+        "avg_volume_per_trade": 0.030124963900000003,
+        "time_span_hours": 0.0016050858333333333,
+        "start_time": "2025-10-02T15:45:40.492934+00:00",
+        "end_time": "2025-10-02T15:45:46.271243+00:00"
+      }
+    },
+    "kraken": {
+      "00:00-04:00": {
+        "segment": "00:00-04:00",
+        "venue": "kraken",
+        "trades": 50,
+        "mean_price": 118621.766,
+        "median_price": 118637.5,
+        "min_price": 118600.0,
+        "max_price": 118637.6,
+        "std_price": 18.1829217674177,
+        "variance_price": 330.6186440000324,
+        "first_price": 118600.0,
+        "last_price": 118637.5,
+        "price_drift": 37.5,
+        "total_volume": 0.21266646999999997,
+        "avg_volume_per_trade": 0.004253329399999999,
+        "time_span_hours": 0.0015040305555555555,
+        "start_time": "2025-10-02T00:00:00.094087168",
+        "end_time": "2025-10-02T00:00:05.508598016"
+      },
+      "12:00-16:00": {
+        "segment": "12:00-16:00",
+        "venue": "kraken",
+        "trades": 50,
+        "mean_price": 118809.36600000001,
+        "median_price": 118812.3,
+        "min_price": 118800.1,
+        "max_price": 118812.3,
+        "std_price": 5.2070955435813815,
+        "variance_price": 27.11384399998508,
+        "first_price": 118800.1,
+        "last_price": 118812.3,
+        "price_drift": 12.19999999999709,
+        "total_volume": 0.10910448000000002,
+        "avg_volume_per_trade": 0.0021820896000000005,
+        "time_span_hours": 0.024353178888888886,
+        "start_time": "2025-10-02T12:00:00.075388160",
+        "end_time": "2025-10-02T12:01:27.746833152"
+      }
+    },
+    "binance": {
+      "00:00-04:00": {
+        "segment": "00:00-04:00",
+        "venue": "binance",
+        "trades": 50,
+        "mean_price": 118596.1008,
+        "median_price": 118595.8,
+        "min_price": 118594.98,
+        "max_price": 118598.87,
+        "std_price": 0.8549803272587212,
+        "variance_price": 0.73099135999943,
+        "first_price": 118594.99,
+        "last_price": 118598.87,
+        "price_drift": 3.8799999999901047,
+        "total_volume": 0.26110999999999995,
+        "avg_volume_per_trade": 0.005222199999999999,
+        "time_span_hours": 0.00036666666666666667,
+        "start_time": "2025-10-02T00:00:00.089000",
+        "end_time": "2025-10-02T00:00:01.409000"
+      },
+      "12:00-16:00": {
+        "segment": "12:00-16:00",
+        "venue": "binance",
+        "trades": 50,
+        "mean_price": 118765.72179999998,
+        "median_price": 118765.72,
+        "min_price": 118765.72,
+        "max_price": 118765.73,
+        "std_price": 0.0038418745404470694,
+        "variance_price": 1.4759999984535382e-05,
+        "first_price": 118765.72,
+        "last_price": 118765.72,
+        "price_drift": 0.0,
+        "total_volume": 0.18576999999999994,
+        "avg_volume_per_trade": 0.003715399999999999,
+        "time_span_hours": 0.0009633333333333333,
+        "start_time": "2025-10-02T12:00:00.490000",
+        "end_time": "2025-10-02T12:00:03.958000"
+      }
+    }
+  },
+  "duplicate_stats": {
+    "coinbase": {
+      "12:00-16:00": {
+        "segment": "12:00-16:00",
+        "venue": "coinbase",
+        "exact_duplicates": 21,
+        "timestamp_duplicates": 53,
+        "price_duplicates": 62,
+        "duplicate_ratio": 0.21,
+        "outliers_3sigma": 1,
+        "outlier_ratio": 0.01,
+        "sanity_violations": 0,
+        "sanity_violation_ratio": 0.0
+      }
+    },
+    "kraken": {
+      "00:00-04:00": {
+        "segment": "00:00-04:00",
+        "venue": "kraken",
+        "exact_duplicates": 0,
+        "timestamp_duplicates": 11,
+        "price_duplicates": 44,
+        "duplicate_ratio": 0.0,
+        "outliers_3sigma": 0,
+        "outlier_ratio": 0.0,
+        "sanity_violations": 0,
+        "sanity_violation_ratio": 0.0
+      },
+      "12:00-16:00": {
+        "segment": "12:00-16:00",
+        "venue": "kraken",
+        "exact_duplicates": 1,
+        "timestamp_duplicates": 10,
+        "price_duplicates": 47,
+        "duplicate_ratio": 0.02,
+        "outliers_3sigma": 0,
+        "outlier_ratio": 0.0,
+        "sanity_violations": 0,
+        "sanity_violation_ratio": 0.0
+      }
+    },
+    "binance": {
+      "00:00-04:00": {
+        "segment": "00:00-04:00",
+        "venue": "binance",
+        "exact_duplicates": 2,
+        "timestamp_duplicates": 25,
+        "price_duplicates": 21,
+        "duplicate_ratio": 0.04,
+        "outliers_3sigma": 1,
+        "outlier_ratio": 0.02,
+        "sanity_violations": 0,
+        "sanity_violation_ratio": 0.0
+      },
+      "12:00-16:00": {
+        "segment": "12:00-16:00",
+        "venue": "binance",
+        "exact_duplicates": 22,
+        "timestamp_duplicates": 22,
+        "price_duplicates": 48,
+        "duplicate_ratio": 0.44,
+        "outliers_3sigma": 0,
+        "outlier_ratio": 0.0,
+        "sanity_violations": 0,
+        "sanity_violation_ratio": 0.0
+      }
+    }
+  },
+  "cross_venue_spreads": {
+    "00:00-04:00": {
+      "segment": "00:00-04:00",
+      "spread_absolute": 25.665200000003097,
+      "spread_percentage": 0.021640846391134554,
+      "arbitrage_anomaly": false,
+      "venue_means": {
+        "kraken": 118621.766,
+        "binance": 118596.1008
+      }
+    },
+    "12:00-16:00": {
+      "segment": "12:00-16:00",
+      "spread_absolute": 903.9040000000095,
+      "spread_percentage": 0.7610815530782298,
+      "arbitrage_anomaly": false,
+      "venue_means": {
+        "coinbase": 119669.6258,
+        "kraken": 118809.36600000001,
+        "binance": 118765.72179999998
+      }
+    }
+  },
+  "schema_validation": {
+    "coinbase": {
+      "12:00-16:00": {
+        "segment": "12:00-16:00",
+        "venue": "coinbase",
+        "fields_present": [
+          "timestamp",
+          "price",
+          "volume",
+          "venue",
+          "dt"
+        ],
+        "has_bid_ask": false,
+        "has_orderbook": false,
+        "data_type": "trade_prints_only",
+        "bid_ask_fields": [],
+        "orderbook_fields": []
+      }
+    },
+    "kraken": {
+      "00:00-04:00": {
+        "segment": "00:00-04:00",
+        "venue": "kraken",
+        "fields_present": [
+          "timestamp",
+          "price",
+          "volume",
+          "venue",
+          "dt"
+        ],
+        "has_bid_ask": false,
+        "has_orderbook": false,
+        "data_type": "trade_prints_only",
+        "bid_ask_fields": [],
+        "orderbook_fields": []
+      },
+      "12:00-16:00": {
+        "segment": "12:00-16:00",
+        "venue": "kraken",
+        "fields_present": [
+          "timestamp",
+          "price",
+          "volume",
+          "venue",
+          "dt"
+        ],
+        "has_bid_ask": false,
+        "has_orderbook": false,
+        "data_type": "trade_prints_only",
+        "bid_ask_fields": [],
+        "orderbook_fields": []
+      }
+    },
+    "binance": {
+      "00:00-04:00": {
+        "segment": "00:00-04:00",
+        "venue": "binance",
+        "fields_present": [
+          "timestamp",
+          "price",
+          "volume",
+          "venue",
+          "dt"
+        ],
+        "has_bid_ask": false,
+        "has_orderbook": false,
+        "data_type": "trade_prints_only",
+        "bid_ask_fields": [],
+        "orderbook_fields": []
+      },
+      "12:00-16:00": {
+        "segment": "12:00-16:00",
+        "venue": "binance",
+        "fields_present": [
+          "timestamp",
+          "price",
+          "volume",
+          "venue",
+          "dt"
+        ],
+        "has_bid_ask": false,
+        "has_orderbook": false,
+        "data_type": "trade_prints_only",
+        "bid_ask_fields": [],
+        "orderbook_fields": []
+      }
+    }
+  },
+  "generated_at": "2025-10-02T16:51:28.476393+00:00"
+}

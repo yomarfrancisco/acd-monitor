@@ -1,0 +1,12 @@
+{
+  "spread_mid_mean_pooled": 0.0003717273034920315,
+  "spread_mid_median_pooled": 0.0003632463254137626,
+  "spread_mid_p95_pooled": 0.0005415190194928232,
+  "spread_mid_max_pooled": 0.0007977935524622927,
+  "spread_log_mean_pooled": 0.00037172731020663265,
+  "spread_log_median_pooled": 0.0003632463307444313,
+  "spread_log_p95_pooled": 0.0005415190354377556,
+  "spread_log_max_pooled": 0.0007977936026280123,
+  "total_pairs": 7,
+  "coverage_weighted_avg": 0.5511689814814814
+}

@@ -106,12 +106,8 @@ def run_analysis(start_date: str, end_date: str, export_dir: str = "exports") ->
 def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(description="Run funding regime analysis")
-    parser.add_argument(
-        "--start-date", default="2025-01-01", help="Start date (YYYY-MM-DD)"
-    )
-    parser.add_argument(
-        "--end-date", default="2025-09-24", help="End date (YYYY-MM-DD)"
-    )
+    parser.add_argument("--start-date", default="2025-01-01", help="Start date (YYYY-MM-DD)")
+    parser.add_argument("--end-date", default="2025-09-24", help="End date (YYYY-MM-DD)")
     parser.add_argument("--export-dir", default="exports", help="Export directory")
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose logging")
 

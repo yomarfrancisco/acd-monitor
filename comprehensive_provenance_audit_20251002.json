@@ -1,0 +1,43 @@
+{
+  "audit_timestamp": "2025-10-02T17:12:06.796231+00:00",
+  "capture_scope": {
+    "binance": {
+      "earliest_date": null,
+      "latest_date": null,
+      "earliest_timestamp": null,
+      "latest_timestamp": null,
+      "total_dates": 0,
+      "available_dates": []
+    },
+    "coinbase": {
+      "earliest_date": null,
+      "latest_date": null,
+      "earliest_timestamp": null,
+      "latest_timestamp": null,
+      "total_dates": 0,
+      "available_dates": []
+    },
+    "kraken": {
+      "earliest_date": null,
+      "latest_date": null,
+      "earliest_timestamp": null,
+      "latest_timestamp": null,
+      "total_dates": 0,
+      "available_dates": []
+    }
+  },
+  "venue_results": {},
+  "consistency_results": {},
+  "switch_points": {
+    "earliest_real": null,
+    "first_synthetic": null,
+    "has_real_data": false,
+    "has_synthetic_data": false
+  },
+  "timeline_table": [],
+  "summary": {
+    "total_venues": 0,
+    "total_dates_analyzed": 0,
+    "total_slices_analyzed": 0
+  }
+}

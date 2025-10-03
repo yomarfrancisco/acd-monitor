@@ -1,0 +1,225 @@
+{
+  "audit_timestamp": "2025-10-02T17:18:10.985327+00:00",
+  "analysis_date": "20251002",
+  "venue_results": {
+    "binance": {
+      "20251002": {
+        "slice_00": {
+          "venue": "binance",
+          "date": "20251002",
+          "slice": "slice_00",
+          "verdict": "REAL",
+          "confidence": "HIGH",
+          "synthetic_score": 0,
+          "duplicate_ratio": 0.04,
+          "price_std": 0.8549803272587212,
+          "outlier_count": 1,
+          "api_traces": true,
+          "evidence_summary": "API traces present, 1 outliers",
+          "total_rows": 50,
+          "time_span_seconds": 1.32,
+          "price_mean": 118596.1008,
+          "price_min": 118594.98,
+          "price_max": 118598.87,
+          "first_timestamp": "2025-10-02T00:00:00.089000",
+          "last_timestamp": "2025-10-02T00:00:01.409000"
+        },
+        "slice_01": {
+          "venue": "binance",
+          "date": "20251002",
+          "slice": "slice_01",
+          "verdict": "INDETERMINATE",
+          "confidence": "LOW",
+          "synthetic_score": 35,
+          "duplicate_ratio": 0.44,
+          "price_std": 0.0038418745404470694,
+          "outlier_count": 0,
+          "api_traces": true,
+          "evidence_summary": "44.0% duplicates, API traces present",
+          "total_rows": 50,
+          "time_span_seconds": 3.468,
+          "price_mean": 118765.72179999998,
+          "price_min": 118765.72,
+          "price_max": 118765.73,
+          "first_timestamp": "2025-10-02T12:00:00.490000",
+          "last_timestamp": "2025-10-02T12:00:03.958000"
+        }
+      }
+    },
+    "coinbase": {
+      "20251002": {
+        "slice_00": {
+          "venue": "coinbase",
+          "date": "20251002",
+          "slice": "slice_00",
+          "verdict": "REAL",
+          "confidence": "HIGH",
+          "synthetic_score": 0,
+          "duplicate_ratio": 0.0,
+          "price_std": 4.0963886534345475,
+          "outlier_count": 1,
+          "api_traces": true,
+          "evidence_summary": "API traces present, 1 outliers",
+          "total_rows": 50,
+          "time_span_seconds": 2.210491,
+          "price_mean": 119668.76999999997,
+          "price_min": 119654.36,
+          "price_max": 119671.69,
+          "first_timestamp": "2025-10-02T15:45:40.492934+00:00",
+          "last_timestamp": "2025-10-02T15:45:42.703425+00:00"
+        },
+        "slice_01": {
+          "venue": "coinbase",
+          "date": "20251002",
+          "slice": "slice_01",
+          "verdict": "REAL",
+          "confidence": "HIGH",
+          "synthetic_score": 0,
+          "duplicate_ratio": 0.0,
+          "price_std": 3.8326833211218743,
+          "outlier_count": 0,
+          "api_traces": true,
+          "evidence_summary": "API traces present",
+          "total_rows": 50,
+          "time_span_seconds": 4.002001,
+          "price_mean": 119670.48159999997,
+          "price_min": 119665.11,
+          "price_max": 119679.12,
+          "first_timestamp": "2025-10-02T15:45:42.269242+00:00",
+          "last_timestamp": "2025-10-02T15:45:46.271243+00:00"
+        }
+      }
+    },
+    "kraken": {
+      "20251002": {
+        "slice_00": {
+          "venue": "kraken",
+          "date": "20251002",
+          "slice": "slice_00",
+          "verdict": "REAL",
+          "confidence": "HIGH",
+          "synthetic_score": 0,
+          "duplicate_ratio": 0.0,
+          "price_std": 18.1829217674177,
+          "outlier_count": 0,
+          "api_traces": true,
+          "evidence_summary": "API traces present",
+          "total_rows": 50,
+          "time_span_seconds": 5.41451,
+          "price_mean": 118621.766,
+          "price_min": 118600.0,
+          "price_max": 118637.6,
+          "first_timestamp": "2025-10-02T00:00:00.094087168",
+          "last_timestamp": "2025-10-02T00:00:05.508598016"
+        },
+        "slice_01": {
+          "venue": "kraken",
+          "date": "20251002",
+          "slice": "slice_01",
+          "verdict": "REAL",
+          "confidence": "HIGH",
+          "synthetic_score": 0,
+          "duplicate_ratio": 0.02,
+          "price_std": 5.2070955435813815,
+          "outlier_count": 0,
+          "api_traces": true,
+          "evidence_summary": "API traces present",
+          "total_rows": 50,
+          "time_span_seconds": 87.671444,
+          "price_mean": 118809.36600000001,
+          "price_min": 118800.1,
+          "price_max": 118812.3,
+          "first_timestamp": "2025-10-02T12:00:00.075388160",
+          "last_timestamp": "2025-10-02T12:01:27.746833152"
+        }
+      }
+    }
+  },
+  "consistency_results": {
+    "20251002_slice_00": {
+      "date": "20251002",
+      "slice": "slice_00",
+      "consistency_check": "completed",
+      "spread_analysis": {
+        "min_price": 118596.1008,
+        "max_price": 119668.76999999997,
+        "spread_absolute": 1072.6691999999748,
+        "spread_percentage": 0.9044725693038762,
+        "significant_spread": false
+      },
+      "volatility_analysis": {
+        "min_volatility": 0.8549803272587212,
+        "max_volatility": 18.1829217674177,
+        "volatility_ratio": 21.267064501608655,
+        "significant_volatility_diff": true
+      },
+      "anomalies": [
+        "Significant volatility difference: 21.3x"
+      ],
+      "venues_compared": [
+        "binance",
+        "coinbase",
+        "kraken"
+      ]
+    },
+    "20251002_slice_01": {
+      "date": "20251002",
+      "slice": "slice_01",
+      "consistency_check": "completed",
+      "spread_analysis": {
+        "min_price": 118765.72179999998,
+        "max_price": 119670.48159999997,
+        "spread_absolute": 904.7597999999853,
+        "spread_percentage": 0.7618021313621026,
+        "significant_spread": false
+      },
+      "volatility_analysis": {
+        "min_volatility": 0.0038418745404470694,
+        "max_volatility": 5.2070955435813815,
+        "volatility_ratio": 1355.3528333008617,
+        "significant_volatility_diff": true
+      },
+      "anomalies": [
+        "Significant volatility difference: 1355.4x"
+      ],
+      "venues_compared": [
+        "binance",
+        "coinbase",
+        "kraken"
+      ]
+    }
+  },
+  "switch_points": {
+    "earliest_real": {
+      "date": "20251002",
+      "slice": "slice_00",
+      "result": {
+        "venue": "binance",
+        "date": "20251002",
+        "slice": "slice_00",
+        "verdict": "REAL",
+        "confidence": "HIGH",
+        "synthetic_score": 0,
+        "duplicate_ratio": 0.04,
+        "price_std": 0.8549803272587212,
+        "outlier_count": 1,
+        "api_traces": true,
+        "evidence_summary": "API traces present, 1 outliers",
+        "total_rows": 50,
+        "time_span_seconds": 1.32,
+        "price_mean": 118596.1008,
+        "price_min": 118594.98,
+        "price_max": 118598.87,
+        "first_timestamp": "2025-10-02T00:00:00.089000",
+        "last_timestamp": "2025-10-02T00:00:01.409000"
+      }
+    },
+    "first_synthetic": null,
+    "has_real_data": true,
+    "has_synthetic_data": false
+  },
+  "summary": {
+    "total_venues": 3,
+    "total_slices_analyzed": 6
+  }
+}

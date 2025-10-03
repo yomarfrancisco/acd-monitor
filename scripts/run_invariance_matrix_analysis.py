@@ -185,12 +185,8 @@ def main():
     parser.add_argument("--vol", required=True, help="Volatility leadership CSV path")
     parser.add_argument("--fund", required=True, help="Funding leadership CSV path")
     parser.add_argument("--liq", required=True, help="Liquidity leadership CSV path")
-    parser.add_argument(
-        "--days", type=int, default=30, help="Number of days to analyze"
-    )
-    parser.add_argument(
-        "--bootstrap", type=int, default=500, help="Number of bootstrap samples"
-    )
+    parser.add_argument("--days", type=int, default=30, help="Number of days to analyze")
+    parser.add_argument("--bootstrap", type=int, default=500, help="Number of bootstrap samples")
     parser.add_argument("--export-dir", default="exports", help="Export directory")
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose logging")
 

@@ -1,12 +1,13 @@
+import io
+import random
+import uuid
+import zipfile
+from datetime import datetime, timedelta
+from typing import List, Literal, Optional
+
 from fastapi import FastAPI, HTTPException, Query, Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import List, Optional, Literal
-from datetime import datetime, timedelta
-import random
-import uuid
-import io
-import zipfile
 
 app = FastAPI(title="ACD Monitor API", version="1.0.0")
 

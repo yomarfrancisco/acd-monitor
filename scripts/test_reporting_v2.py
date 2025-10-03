@@ -5,27 +5,28 @@ Test script for ACD Reporting v2 - Attribution Tables and Provenance-Tracked Out
 This script tests the Reporting v2 functionality using the CMA Poster Frames case study.
 """
 
-import sys
 import os
+import sys
 from pathlib import Path
 
 # Add src to path
 sys.path.append(str(Path(__file__).parent.parent / "src"))
 
 import json
-import pandas as pd
-import numpy as np
 from datetime import datetime
 
-from acd.analytics.report_v2 import ReportV2Generator, generate_regulatory_bundle
+import numpy as np
+import pandas as pd
+
 from acd.analytics.integrated_engine import IntegratedResult
+from acd.analytics.report_v2 import ReportV2Generator, generate_regulatory_bundle
 from acd.icp.engine import ICPResult
-from acd.vmm.engine import VMMOutput
-from acd.vmm.crypto_moments import CryptoMoments
-from acd.validation.lead_lag import LeadLagResult
-from acd.validation.mirroring import MirroringResult
 from acd.validation.hmm import HMMResult
 from acd.validation.infoflow import InfoFlowResult
+from acd.validation.lead_lag import LeadLagResult
+from acd.validation.mirroring import MirroringResult
+from acd.vmm.crypto_moments import CryptoMoments
+from acd.vmm.engine import VMMOutput
 
 
 def create_mock_results():
@@ -133,9 +134,7 @@ def create_mock_results():
 
     hmm_result = HMMResult(
         state_sequence=np.array([0, 1, 2, 0, 1, 2, 0, 1]),
-        state_probabilities=np.array(
-            [[0.8, 0.1, 0.1], [0.2, 0.6, 0.2], [0.1, 0.2, 0.7]]
-        ),
+        state_probabilities=np.array([[0.8, 0.1, 0.1], [0.2, 0.6, 0.2], [0.1, 0.2, 0.7]]),
         transition_matrix=np.array([[0.7, 0.2, 0.1], [0.3, 0.5, 0.2], [0.2, 0.3, 0.5]]),
         emission_means=np.array([[1.0, 2.0], [1.5, 2.5], [2.0, 3.0]]),
         emission_covariances=np.array(
@@ -317,9 +316,7 @@ def test_regulatory_bundle_generation():
     print(f"   Executive Summary Length: {len(bundle.executive_summary)} chars")
     print(f"   Key Findings: {len(bundle.key_findings)} findings")
     print(f"   Recommendations: {len(bundle.recommendations)} recommendations")
-    print(
-        f"   Alternative Explanations: {len(bundle.alternative_explanations)} explanations"
-    )
+    print(f"   Alternative Explanations: {len(bundle.alternative_explanations)} explanations")
     print(f"   Audit Trail: {len(bundle.audit_trail)} entries")
 
     # Print executive summary
@@ -449,24 +446,16 @@ def main():
 
         print(f"\n🔍 Key Metrics:")
         print(f"   - Risk Band: {bundle.attribution_table.risk_band}")
-        print(
-            f"   - Total Risk Score: {bundle.attribution_table.total_risk_score:.1f}/100"
-        )
+        print(f"   - Total Risk Score: {bundle.attribution_table.total_risk_score:.1f}/100")
         print(f"   - Confidence Level: {bundle.attribution_table.confidence_level:.1%}")
-        print(
-            f"   - ICP Contribution: {bundle.attribution_table.icp_contribution:.1f}/100"
-        )
-        print(
-            f"   - VMM Contribution: {bundle.attribution_table.vmm_contribution:.1f}/100"
-        )
+        print(f"   - ICP Contribution: {bundle.attribution_table.icp_contribution:.1f}/100")
+        print(f"   - VMM Contribution: {bundle.attribution_table.vmm_contribution:.1f}/100")
 
         print(f"\n📋 Bundle Contents:")
         print(f"   - Executive Summary: {len(bundle.executive_summary)} chars")
         print(f"   - Key Findings: {len(bundle.key_findings)} findings")
         print(f"   - Recommendations: {len(bundle.recommendations)} recommendations")
-        print(
-            f"   - Alternative Explanations: {len(bundle.alternative_explanations)} explanations"
-        )
+        print(f"   - Alternative Explanations: {len(bundle.alternative_explanations)} explanations")
         print(f"   - Audit Trail: {len(bundle.audit_trail)} entries")
 
         return True

@@ -6,10 +6,10 @@ with configurable parameters and validation logic.
 """
 
 from acd.vmm.adaptive_thresholds import (  # noqa: F401
+    DEFAULT_PROFILES,
     AdaptiveThresholdConfig,
     AdaptiveThresholdManager,
     get_profile,
-    DEFAULT_PROFILES,
 )
 
 
@@ -62,9 +62,7 @@ class TestAdaptiveThresholdConfig:
 
     def test_invalid_dataset_boundaries(self):
         """Test validation of dataset size boundaries."""
-        with pytest.raises(
-            ValueError, match="Dataset size boundaries must be strictly increasing"
-        ):
+        with pytest.raises(ValueError, match="Dataset size boundaries must be strictly increasing"):
             AdaptiveThresholdConfig(
                 small_dataset_max=500, medium_dataset_max=200  # Lower than small_max
             )
@@ -117,9 +115,7 @@ class TestAdaptiveThresholdManager:
             thresholds.append(threshold)
 
         # Should be monotonically increasing
-        assert all(
-            thresholds[i] <= thresholds[i + 1] for i in range(len(thresholds) - 1)
-        )
+        assert all(thresholds[i] <= thresholds[i + 1] for i in range(len(thresholds) - 1))
 
         # First should be close to small threshold, last should be close to medium
         assert abs(thresholds[0] - 0.02) < 0.001

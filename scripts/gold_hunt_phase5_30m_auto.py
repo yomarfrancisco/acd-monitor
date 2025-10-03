@@ -4,12 +4,13 @@ Gold Hunt Phase 5 - 30+ Minute Window Auto-Analysis
 Pre-wired to trigger on first ≥30-minute window with preregistered gates
 """
 
+import argparse
 import json
-import pandas as pd
-import numpy as np
 from pathlib import Path
 from typing import Dict, List, Tuple
-import argparse
+
+import numpy as np
+import pandas as pd
 from scipy import stats
 from statsmodels.stats.multitest import multipletests
 
@@ -203,9 +204,7 @@ def check_preregistered_gates(
                 significant_episodes.append(episode_result)
 
         # Check if episodes persist at 15s duration
-        persistent_episodes = [
-            ep for ep in significant_episodes if ep["episode"]["duration"] >= 15
-        ]
+        persistent_episodes = [ep for ep in significant_episodes if ep["episode"]["duration"] >= 15]
 
         if len(significant_episodes) >= 1 and len(persistent_episodes) >= 1:
             gates["gate_1_episode_controls"] = True
@@ -213,9 +212,7 @@ def check_preregistered_gates(
     else:
         # Fallback to original gate if no control v2 results
         spread_episodes = mtc_results.get("spread", [])
-        survived_fdr = sum(
-            1 for ep in spread_episodes if ep.get("bh_fdr_10_q", 1.0) < 0.10
-        )
+        survived_fdr = sum(1 for ep in spread_episodes if ep.get("bh_fdr_10_q", 1.0) < 0.10)
         if survived_fdr >= 1:
             gates["gate_1_episode_controls"] = True
             gates["passed_gates"] += 1
@@ -242,12 +239,8 @@ def check_preregistered_gates(
 
     if infoshare_1m and infoshare_500ms:
         # Check stability across resampling
-        top_venue_1m = max(infoshare_1m, key=lambda x: x.get("point_estimate", 0))[
-            "venue"
-        ]
-        top_venue_500ms = max(
-            infoshare_500ms, key=lambda x: x.get("point_estimate", 0)
-        )["venue"]
+        top_venue_1m = max(infoshare_1m, key=lambda x: x.get("point_estimate", 0))["venue"]
+        top_venue_500ms = max(infoshare_500ms, key=lambda x: x.get("point_estimate", 0))["venue"]
 
         # TODO: Add volume-share normalization check
         # For now, just check resampling stability
@@ -267,9 +260,7 @@ def generate_30m_report(
     report.append("")
     report.append("## Window Specification")
     report.append(f"- **Duration**: {window_data['duration_minutes']:.1f} minutes")
-    report.append(
-        f"- **Time Range**: {window_data['start_utc']} to {window_data['end_utc']}"
-    )
+    report.append(f"- **Time Range**: {window_data['start_utc']} to {window_data['end_utc']}")
     report.append(f"- **Venues**: {', '.join(window_data['venues'])}")
     report.append(f"- **Policy**: {window_data['policy']}")
     report.append(f"- **Coverage**: {window_data['coverage']:.1%}")
@@ -311,9 +302,7 @@ def generate_30m_report(
     report.append("")
 
     if gates["passed_gates"] >= 2:
-        report.append(
-            "**✅ STRONG SIGNAL**: 30+ minute window passes preregistered gates"
-        )
+        report.append("**✅ STRONG SIGNAL**: 30+ minute window passes preregistered gates")
         report.append("**Recommendation**: Proceed to advanced coordination detection")
     else:
         report.append("**⚠️ MODERATE SIGNAL**: 30+ minute window partially passes gates")
@@ -336,9 +325,7 @@ def main():
         default="exports/gold_hunt/latest/phase4_30m",
         help="Export directory for UI",
     )
-    parser.add_argument(
-        "--seed", type=int, default=42, help="Random seed for reproducibility"
-    )
+    parser.add_argument("--seed", type=int, default=42, help="Random seed for reproducibility")
     parser.add_argument("--verbose", action="store_true", help="Verbose output")
 
     args = parser.parse_args()

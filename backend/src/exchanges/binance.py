@@ -7,12 +7,13 @@ No authentication required for public endpoints.
 Fresh commit - Binance MVP implementation complete.
 """
 
-import httpx
 import asyncio
-from datetime import datetime, timezone
-from typing import Dict, List, Optional
-from functools import lru_cache
 import logging
+from datetime import datetime, timezone
+from functools import lru_cache
+from typing import Dict, List, Optional
+
+import httpx
 
 logger = logging.getLogger(__name__)
 

@@ -1,5 +1,6 @@
-import aiohttp
 from datetime import datetime, timezone
+
+import aiohttp
 
 
 # Bybit v5: category=spot, interval in minutes as string: "5", "15", etc.

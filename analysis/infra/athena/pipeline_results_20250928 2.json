@@ -1,0 +1,12 @@
+{
+  "date": "20250928",
+  "dry_run": false,
+  "workgroup": "primary",
+  "results": {
+    "panel_1s": "TIMEOUT",
+    "env_flags": "TIMEOUT",
+    "market_structure": "TIMEOUT",
+    "wave3_features": "TIMEOUT"
+  },
+  "timestamp": 1759275633.672032
+}

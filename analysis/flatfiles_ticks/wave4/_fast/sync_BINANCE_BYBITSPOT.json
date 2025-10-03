@@ -1,0 +1,9 @@
+{
+  "status": "SUCCESS",
+  "correlation": 1.0,
+  "lag": 0,
+  "p_value": 0.5,
+  "significant": false,
+  "null_mean": 1.0,
+  "z_score": 0.0
+}

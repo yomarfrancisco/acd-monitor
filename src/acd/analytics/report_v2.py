@@ -512,11 +512,11 @@ class ReportV2Generator:
         drivers.sort(key=lambda x: x[1], reverse=True)
         top_drivers = drivers[:3]
 
-        summary += f"\n## Top Risk Drivers\n"
+        summary += "\n## Top Risk Drivers\n"
         for driver, score in top_drivers:
             summary += f"- **{driver}**: {score:.1f}/100\n"
 
-        summary += f"\n## Statistical Significance\n"
+        summary += "\n## Statistical Significance\n"
         summary += f"- **ICP p-value**: {attribution_table.icp_p_value:.4f}\n"
         if attribution_table.vmm_p_value is not None:
             summary += f"- **VMM p-value**: {attribution_table.vmm_p_value:.4f}\n"

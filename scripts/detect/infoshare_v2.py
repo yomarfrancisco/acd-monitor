@@ -17,14 +17,14 @@ import logging
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
 from scipy import stats
-from statsmodels.tsa.vector_ar.vecm import coint_johansen, VECM
 from statsmodels.stats.multitest import multipletests
 from statsmodels.tsa.stattools import adfuller
+from statsmodels.tsa.vector_ar.vecm import VECM, coint_johansen
 
 
 # Import custom JSON encoder from Section 2.1
@@ -97,9 +97,7 @@ def check_stationarity(series: pd.Series, name: str) -> Tuple[bool, float]:
         # Stationary if p-value < 0.05
         is_stationary = p_value < 0.05
 
-        logger.info(
-            f"{name}: ADF p-value = {p_value:.4f}, stationary = {is_stationary}"
-        )
+        logger.info(f"{name}: ADF p-value = {p_value:.4f}, stationary = {is_stationary}")
         return is_stationary, p_value
     except Exception as e:
         logger.warning(f"ADF test failed for {name}: {e}")
@@ -126,9 +124,7 @@ def run_johansen_test(
             }
 
         # Johansen test
-        johansen_result = coint_johansen(
-            log_prices, det_order=det_order, k_ar_diff=max_lags
-        )
+        johansen_result = coint_johansen(log_prices, det_order=det_order, k_ar_diff=max_lags)
 
         # Extract results
         trace_stats = johansen_result.lr1
@@ -167,24 +163,16 @@ def run_johansen_test(
         return {
             "rank": rank,
             "trace_stats": (
-                trace_stats.tolist()
-                if hasattr(trace_stats, "tolist")
-                else list(trace_stats)
+                trace_stats.tolist() if hasattr(trace_stats, "tolist") else list(trace_stats)
             ),
             "trace_pvalues": (
-                trace_pvalues.tolist()
-                if hasattr(trace_pvalues, "tolist")
-                else list(trace_pvalues)
+                trace_pvalues.tolist() if hasattr(trace_pvalues, "tolist") else list(trace_pvalues)
             ),
             "eigen_stats": (
-                eigen_stats.tolist()
-                if hasattr(eigen_stats, "tolist")
-                else list(eigen_stats)
+                eigen_stats.tolist() if hasattr(eigen_stats, "tolist") else list(eigen_stats)
             ),
             "eigen_pvalues": (
-                eigen_pvalues.tolist()
-                if hasattr(eigen_pvalues, "tolist")
-                else list(eigen_pvalues)
+                eigen_pvalues.tolist() if hasattr(eigen_pvalues, "tolist") else list(eigen_pvalues)
             ),
             "max_lags": max_lags,
             "det_order": det_order,
@@ -354,9 +342,7 @@ def run_infoshare_v2_analysis(
     vecm_results = None
     if johansen_results["rank"] > 0:
         logger.info(f"Cointegration rank = {johansen_results['rank']}, estimating VECM")
-        vecm_results = estimate_vecm(
-            prices_df, venues, johansen_results["rank"], max_lags
-        )
+        vecm_results = estimate_vecm(prices_df, venues, johansen_results["rank"], max_lags)
     else:
         logger.warning("No cointegration found, cannot estimate VECM")
 
@@ -369,9 +355,7 @@ def run_infoshare_v2_analysis(
         shifted_prices = apply_placebo_shift(prices_df, shift)
 
         # Run Johansen test on shifted data
-        placebo_johansen = run_johansen_test(
-            shifted_prices, venues, max_lags, det_order
-        )
+        placebo_johansen = run_johansen_test(shifted_prices, venues, max_lags, det_order)
         placebo_results[shift] = {"johansen": placebo_johansen, "shift": shift}
 
     # Check placebo collapse
@@ -383,9 +367,7 @@ def run_infoshare_v2_analysis(
 
     # Gate assessment
     gate_verdict = (
-        "pass"
-        if (johansen_results["rank"] > 0 and placebo_collapse and vecm_results)
-        else "fail"
+        "pass" if (johansen_results["rank"] > 0 and placebo_collapse and vecm_results) else "fail"
     )
 
     # Prepare results
@@ -472,9 +454,7 @@ def generate_infoshare_report(results: Dict, export_dir: str) -> str:
 def main():
     """Main function for InfoShare v2 analysis."""
     parser = argparse.ArgumentParser(description="InfoShare v2 Analysis")
-    parser.add_argument(
-        "--snapshot", required=True, help="Path to snapshot OVERLAP.json"
-    )
+    parser.add_argument("--snapshot", required=True, help="Path to snapshot OVERLAP.json")
     parser.add_argument("--cadence", default="1s", help="Data cadence")
     parser.add_argument("--max-lags", type=int, default=4, help="Maximum lags for VECM")
     parser.add_argument("--det-order", type=int, default=0, help="Deterministic order")
@@ -525,9 +505,7 @@ def main():
 
         infoshare_file = export_path / "infoshare.json"
         infoshare_data = results["vecm"] if results["vecm"] else {}
-        infoshare_file.write_text(
-            json.dumps(infoshare_data, cls=PandasJSONEncoder, indent=2)
-        )
+        infoshare_file.write_text(json.dumps(infoshare_data, cls=PandasJSONEncoder, indent=2))
 
         placebo_file = export_path / "placebo.json"
         placebo_file.write_text(

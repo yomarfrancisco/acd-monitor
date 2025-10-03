@@ -1,0 +1,77 @@
+name: Flat Files Analysis
+
+on:
+  workflow_dispatch:
+    inputs:
+      date:
+        description: 'Analysis date (YYYYMMDD)'
+        required: false
+        default: '20251003'
+        type: string
+  push:
+    branches: [ main, feat/** ]
+    paths:
+      - 'make_flatfiles_panel.py'
+      - '.github/workflows/flatfiles-analysis.yml'
+
+jobs:
+  flatfiles-analysis:
+    runs-on: ubuntu-latest
+    env:
+      COINAPI_KEY: ${{ secrets.COINAPI_KEY }}
+      PYTHONPATH: ${{ github.workspace }}:${{ github.workspace }}/src
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install aiohttp pandas numpy pyarrow
+      
+      - name: Verify API key
+        run: |
+          if [ -z "$COINAPI_KEY" ]; then
+            echo "❌ COINAPI_KEY not set"
+            exit 1
+          fi
+          echo "✅ COINAPI_KEY is set"
+      
+      - name: Test API connectivity
+        run: |
+          echo "Testing CoinAPI Flat Files connectivity..."
+          curl -sS -H "Accept: application/xml" \
+               -H "Authorization: ${COINAPI_KEY}" \
+            "https://s3.flatfiles.coinapi.io/bucket/?prefix=T-TRADES/D-20250925/E-BINANCE/" | head -10
+      
+      - name: Run Flat Files processor
+        run: |
+          python make_flatfiles_panel.py
+      
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: flatfiles-analysis-${{ github.run_id }}
+          path: |
+            analysis/flatfiles_1s/
+            data/flatfiles/
+          if-no-files-found: ignore
+          retention-days: 7
+      
+      - name: Report results
+        if: always()
+        run: |
+          echo "📊 Flat Files Analysis Results:"
+          if [ -d "analysis/flatfiles_1s" ]; then
+            echo "  ✅ Analysis completed"
+            echo "  📁 Output directory: analysis/flatfiles_1s/"
+            ls -la analysis/flatfiles_1s/
+          else
+            echo "  ❌ Analysis failed"
+          fi

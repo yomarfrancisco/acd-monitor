@@ -4,15 +4,16 @@ Gold Hunt Forensic Episode Analysis
 Deep-dive analysis of robust episodes with tick-level forensics
 """
 
+import argparse
 import json
-import pandas as pd
-import numpy as np
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List, Tuple
-import argparse
+
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import seaborn as sns
-from datetime import datetime, timedelta
 
 
 def load_btc_episode_data() -> Dict:
@@ -57,9 +58,7 @@ def load_eth_episodes_data() -> List[Dict]:
     return episodes
 
 
-def simulate_tick_data_around_episode(
-    episode: Dict, pair: str, window_start: str
-) -> pd.DataFrame:
+def simulate_tick_data_around_episode(episode: Dict, pair: str, window_start: str) -> pd.DataFrame:
     """Simulate tick data around episode for forensic analysis"""
     # Convert window start to datetime
     start_dt = datetime.fromisoformat(window_start.replace("Z", "+00:00"))
@@ -180,9 +179,7 @@ def simulate_tick_data_around_episode(
 def create_forensic_plots(episode: Dict, tick_data: pd.DataFrame, pair: str) -> Dict:
     """Create forensic plots for episode analysis"""
     fig, axes = plt.subplots(4, 1, figsize=(15, 12))
-    fig.suptitle(
-        f'{pair} Episode {episode["episode_id"]} Forensic Analysis', fontsize=16
-    )
+    fig.suptitle(f'{pair} Episode {episode["episode_id"]} Forensic Analysis', fontsize=16)
 
     # Plot 1: Mid-prices overlaid
     ax1 = axes[0]
@@ -269,9 +266,7 @@ def create_forensic_plots(episode: Dict, tick_data: pd.DataFrame, pair: str) -> 
     return {"plot_path": plot_path}
 
 
-def generate_episode_case_study(
-    episode: Dict, tick_data: pd.DataFrame, pair: str
-) -> str:
+def generate_episode_case_study(episode: Dict, tick_data: pd.DataFrame, pair: str) -> str:
     """Generate structured case study for episode"""
     case_study = []
     case_study.append(f"# {pair} Episode {episode['episode_id']} Case Study")
@@ -283,9 +278,7 @@ def generate_episode_case_study(
         f"- **Duration**: {episode.get('duration', episode.get('original_duration', 'N/A'))} seconds"
     )
     case_study.append(f"- **Leader**: {episode.get('leader', 'N/A')}")
-    case_study.append(
-        f"- **Lift**: {episode.get('lift', episode.get('original_lift', 'N/A')):.3f}"
-    )
+    case_study.append(f"- **Lift**: {episode.get('lift', episode.get('original_lift', 'N/A')):.3f}")
     case_study.append(
         f"- **P-value**: {episode.get('p_value', episode.get('original_p', 'N/A')):.3f}"
     )
@@ -347,9 +340,7 @@ def generate_episode_case_study(
         episode_vol = episode_data[f"{venue}_volatility"].mean()
         pre_vol = pre_episode_data[f"{venue}_volatility"].mean()
         vol_change = (episode_vol - pre_vol) / pre_vol * 100
-        case_study.append(
-            f"- **{venue.title()}**: {vol_change:+.1f}% volatility change"
-        )
+        case_study.append(f"- **{venue.title()}**: {vol_change:+.1f}% volatility change")
     case_study.append("")
 
     # Commentary
@@ -361,9 +352,7 @@ def generate_episode_case_study(
     case_study.append(
         f"- Leader venue ({episode.get('leader', 'N/A')}) shows strongest price movement"
     )
-    case_study.append(
-        f"- Cross-venue spread compression indicates price synchronization"
-    )
+    case_study.append(f"- Cross-venue spread compression indicates price synchronization")
     case_study.append(f"- Volume patterns suggest coordinated trading activity")
     case_study.append("")
     case_study.append("**Economic Context:**")
@@ -373,9 +362,7 @@ def generate_episode_case_study(
     case_study.append("")
     case_study.append("**Conclusion:**")
     if episode.get("survived_5s", False) and episode.get("survived_10s", False):
-        case_study.append(
-            "✅ **ROBUST SIGNAL**: Episode survives multiple statistical thresholds"
-        )
+        case_study.append("✅ **ROBUST SIGNAL**: Episode survives multiple statistical thresholds")
         case_study.append(
             "✅ **COORDINATION LIKELY**: Pattern consistent with coordinated behavior"
         )
@@ -397,9 +384,7 @@ def main():
         default="experiments/gold_hunt_v1/forensic_episodes",
         help="Output directory for forensic analysis",
     )
-    parser.add_argument(
-        "--seed", type=int, default=42, help="Random seed for reproducibility"
-    )
+    parser.add_argument("--seed", type=int, default=42, help="Random seed for reproducibility")
     parser.add_argument("--verbose", action="store_true", help="Verbose output")
 
     args = parser.parse_args()
@@ -456,9 +441,7 @@ def main():
             eth_episode, "ETH-USD", "2025-09-26T20:48:04Z"
         )
         eth_plots = create_forensic_plots(eth_episode, eth_tick_data, "ETH-USD")
-        eth_case_study = generate_episode_case_study(
-            eth_episode, eth_tick_data, "ETH-USD"
-        )
+        eth_case_study = generate_episode_case_study(eth_episode, eth_tick_data, "ETH-USD")
 
         # Save ETH case study
         with open(
@@ -565,9 +548,7 @@ def generate_comparison_summary(btc_episode: Dict, eth_episodes: List[Dict]) -> 
     summary.append("")
     summary.append("### Pattern Consistency")
     if btc_leader in eth_leaders:
-        summary.append(
-            f"✅ **LEADER CONSISTENCY**: {btc_leader.title()} leads in both BTC and ETH"
-        )
+        summary.append(f"✅ **LEADER CONSISTENCY**: {btc_leader.title()} leads in both BTC and ETH")
     else:
         summary.append(
             f"⚠️ **LEADER DIFFERENCE**: {btc_leader.title()} leads BTC, {', '.join(set(eth_leaders))} lead ETH"
@@ -587,12 +568,8 @@ def generate_comparison_summary(btc_episode: Dict, eth_episodes: List[Dict]) -> 
 
     summary.append("### Coordination Hypothesis")
     summary.append("✅ **SUPPORTED**: Both assets show coordination patterns")
-    summary.append(
-        "✅ **ROBUST**: BTC episode survives multiple statistical thresholds"
-    )
-    summary.append(
-        "✅ **CONSISTENT**: ETH shows similar patterns across multiple episodes"
-    )
+    summary.append("✅ **ROBUST**: BTC episode survives multiple statistical thresholds")
+    summary.append("✅ **CONSISTENT**: ETH shows similar patterns across multiple episodes")
     summary.append("")
     summary.append("**Next Steps**:")
     summary.append("- Analyze tick-level forensics for each episode")

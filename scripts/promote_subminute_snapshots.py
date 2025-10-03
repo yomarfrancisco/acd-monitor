@@ -12,7 +12,7 @@ import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 
 # Add src to path
 sys.path.append(str(Path(__file__).parent.parent / "src"))
@@ -21,9 +21,7 @@ sys.path.append(str(Path(__file__).parent.parent / "src"))
 def setup_logging(verbose: bool = False):
     """Setup logging configuration."""
     level = logging.DEBUG if verbose else logging.INFO
-    logging.basicConfig(
-        level=level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    )
+    logging.basicConfig(level=level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
 
 def find_subminute_snapshots(
@@ -202,9 +200,7 @@ def build_research_bundle(
         return False
 
 
-def create_promotion_index(
-    snapshots: List[Dict], granularity: int, export_dir: Path
-) -> None:
+def create_promotion_index(snapshots: List[Dict], granularity: int, export_dir: Path) -> None:
     """
     Create the promotion index file for a granularity.
 
@@ -245,9 +241,7 @@ def create_promotion_index(
         json.dump(promotion_data, f, indent=2)
 
     logger.info(f"Created promotion index: {promotion_file}")
-    print(
-        f"[PROMOTE:{granularity}s] created_index={promotion_file}, entries={len(promotion_data)}"
-    )
+    print(f"[PROMOTE:{granularity}s] created_index={promotion_file}, entries={len(promotion_data)}")
 
 
 def main():
@@ -258,9 +252,7 @@ def main():
         default="exports/sweep_continuous/snapshots",
         help="Snapshots directory",
     )
-    parser.add_argument(
-        "--export-dir", default="exports/sweep", help="Export directory"
-    )
+    parser.add_argument("--export-dir", default="exports/sweep", help="Export directory")
     parser.add_argument(
         "--granularity",
         type=int,
@@ -277,9 +269,7 @@ def main():
     parser.add_argument(
         "--min-coverage", type=float, default=0.96, help="Minimum coverage threshold"
     )
-    parser.add_argument(
-        "--max-entries", type=int, default=5, help="Maximum entries to promote"
-    )
+    parser.add_argument("--max-entries", type=int, default=5, help="Maximum entries to promote")
     parser.add_argument(
         "--build-bundles",
         action="store_true",
@@ -344,9 +334,7 @@ def main():
     # Process snapshots
     promoted_snapshots = []
     for i, snapshot in enumerate(valid_snapshots):
-        logger.info(
-            f"Processing snapshot {i+1}/{len(valid_snapshots)}: {snapshot['snapshot']}"
-        )
+        logger.info(f"Processing snapshot {i+1}/{len(valid_snapshots)}: {snapshot['snapshot']}")
 
         # Clean snapshot (skip if no ticks directory)
         ticks_dir = Path(snapshot["snapshot"]) / "ticks"
@@ -355,9 +343,7 @@ def main():
                 logger.error(f"Failed to clean snapshot: {snapshot['snapshot']}")
                 continue
         else:
-            logger.info(
-                f"No ticks directory found, skipping cleaning for: {snapshot['snapshot']}"
-            )
+            logger.info(f"No ticks directory found, skipping cleaning for: {snapshot['snapshot']}")
 
         # Build bundle if requested
         if args.build_bundles:

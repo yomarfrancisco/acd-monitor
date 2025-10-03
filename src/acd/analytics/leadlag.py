@@ -5,14 +5,15 @@ This module analyzes lead-lag relationships between venues at high frequency
 to detect coordination patterns and information flow.
 """
 
-import os
 import json
 import logging
-import numpy as np
-import pandas as pd
-from typing import Dict, List, Any
+import os
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Any, Dict, List
+
+import numpy as np
+import pandas as pd
 import scipy.stats as stats
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score

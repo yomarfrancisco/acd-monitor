@@ -6,19 +6,20 @@ This script sets up the infrastructure for collecting live crypto market data
 for crypto moment validation in Phase-4.
 """
 
-import sys
 import os
+import sys
 from pathlib import Path
 
 # Add src to path
 sys.path.append(str(Path(__file__).parent.parent / "src"))
 
 import json
-import pandas as pd
-import numpy as np
-from datetime import datetime, timedelta
-from typing import Dict, List, Any, Optional
 import logging
+from datetime import datetime, timedelta
+from typing import Any, Dict, List, Optional
+
+import numpy as np
+import pandas as pd
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -215,9 +216,7 @@ def create_mock_crypto_data():
         for pair in pairs:
             # Generate base price with trend and volatility
             base_price = 50000 if "BTC" in pair else (3000 if "ETH" in pair else 0.5)
-            price_trend = np.cumsum(
-                np.random.normal(0, base_price * 0.001, len(timestamps))
-            )
+            price_trend = np.cumsum(np.random.normal(0, base_price * 0.001, len(timestamps)))
             prices = base_price + price_trend
 
             # Add exchange-specific variations
@@ -699,6 +698,3 @@ def main():
 if __name__ == "__main__":
     success = main()
     sys.exit(0 if success else 1)
-
-
-

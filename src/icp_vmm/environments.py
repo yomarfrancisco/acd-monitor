@@ -5,9 +5,10 @@ Environment Labeling for ICP-VMM Analysis
 Labels observations by market environment for invariance testing.
 """
 
-import pandas as pd
-from typing import Dict, List, Tuple
 import logging
+from typing import Dict, List, Tuple
+
+import pandas as pd
 
 logger = logging.getLogger(__name__)
 

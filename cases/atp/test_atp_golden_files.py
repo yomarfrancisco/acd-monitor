@@ -6,17 +6,18 @@ reproduces expected coordination patterns and maintains consistency
 across runs.
 """
 
-import pytest
-import numpy as np
-import pandas as pd
-from pathlib import Path
 import json
 import sys
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import pytest
 
 # Add src to path
 sys.path.append(str(Path(__file__).parent.parent.parent / "src"))
 
-from cases.atp.prepare_data import prepare_atp_data, ATPConfig
+from cases.atp.prepare_data import ATPConfig, prepare_atp_data
 from cases.atp.run_analysis import run_atp_analysis
 
 
@@ -52,13 +53,9 @@ class TestATPGoldenFiles:
             "market_condition",
             "coordination_period",
         ]
-        airline_columns = [
-            col for col in atp_data.columns if col.startswith("Airline_")
-        ]
+        airline_columns = [col for col in atp_data.columns if col.startswith("Airline_")]
 
-        assert (
-            len(airline_columns) == 4
-        ), f"Expected 4 airlines, got {len(airline_columns)}"
+        assert len(airline_columns) == 4, f"Expected 4 airlines, got {len(airline_columns)}"
 
         for col in required_columns:
             assert col in atp_data.columns, f"Missing required column: {col}"
@@ -78,9 +75,7 @@ class TestATPGoldenFiles:
         ), "Coordination period should be boolean"
 
         # Check coordination periods exist
-        assert (
-            atp_data["coordination_period"].sum() > 0
-        ), "Should have coordination periods"
+        assert atp_data["coordination_period"].sum() > 0, "Should have coordination periods"
 
         # Check price data
         for airline in airline_columns:
@@ -88,23 +83,15 @@ class TestATPGoldenFiles:
                 np.float64,
                 np.int64,
             ], f"Price data should be numeric for {airline}"
-            assert (
-                atp_data[airline] > 0
-            ).all(), f"All prices should be positive for {airline}"
+            assert (atp_data[airline] > 0).all(), f"All prices should be positive for {airline}"
 
     def test_atp_coordination_patterns(self, atp_data):
         """Test that ATP data shows expected coordination patterns"""
-        airline_columns = [
-            col for col in atp_data.columns if col.startswith("Airline_")
-        ]
+        airline_columns = [col for col in atp_data.columns if col.startswith("Airline_")]
 
         # Check that coordination periods have higher prices
-        coordination_prices = atp_data[atp_data["coordination_period"]][
-            airline_columns
-        ].mean()
-        non_coordination_prices = atp_data[~atp_data["coordination_period"]][
-            airline_columns
-        ].mean()
+        coordination_prices = atp_data[atp_data["coordination_period"]][airline_columns].mean()
+        non_coordination_prices = atp_data[~atp_data["coordination_period"]][airline_columns].mean()
 
         # Coordination periods should have higher average prices
         for airline in airline_columns:
@@ -120,9 +107,7 @@ class TestATPGoldenFiles:
         coordination_data = atp_data[atp_data["coordination_period"]]
 
         for follower in follower_airlines:
-            correlation = coordination_data[lead_airline].corr(
-                coordination_data[follower]
-            )
+            correlation = coordination_data[lead_airline].corr(coordination_data[follower])
             assert (
                 correlation > 0.5
             ), f"Lead-follower correlation should be high during coordination: {correlation:.3f}"
@@ -153,9 +138,7 @@ class TestATPGoldenFiles:
         assert (
             "over_identification_p_value" in vmm_result
         ), "VMM should have over-identification p-value"
-        assert (
-            "structural_stability" in vmm_result
-        ), "VMM should have structural stability"
+        assert "structural_stability" in vmm_result, "VMM should have structural stability"
 
         # Check validation layers
         validation = atp_results["validation"]
@@ -169,9 +152,7 @@ class TestATPGoldenFiles:
         summary = atp_results.get("report", {}).get("summary", {})
 
         # Should detect coordination (since we generated coordinated data)
-        assert summary.get(
-            "coordination_detected", False
-        ), "Should detect coordination in ATP data"
+        assert summary.get("coordination_detected", False), "Should detect coordination in ATP data"
 
         # Should have key findings
         key_findings = summary.get("key_findings", [])
@@ -183,16 +164,12 @@ class TestATPGoldenFiles:
         # Lead-lag should show low switching entropy (persistent leadership)
         lead_lag = indicators.get("lead_lag_persistence")
         if lead_lag:
-            assert (
-                lead_lag["switching_entropy"] < 1.0
-            ), "Should show some leadership persistence"
+            assert lead_lag["switching_entropy"] < 1.0, "Should show some leadership persistence"
 
         # Mirroring should show coordination
         mirroring = indicators.get("mirroring_coordination")
         if mirroring:
-            assert (
-                mirroring["coordination_score"] > 0
-            ), "Should show some coordination score"
+            assert mirroring["coordination_score"] > 0, "Should show some coordination score"
             assert mirroring["mirroring_ratio"] >= 0, "Should have mirroring ratio"
 
         # HMM should show regime stability
@@ -217,9 +194,7 @@ class TestATPGoldenFiles:
         # Granger tests should show some significance
         granger_p = significance.get("granger_p_values")
         if granger_p is not None:
-            assert (
-                0 <= granger_p <= 1
-            ), f"Granger p-value should be between 0 and 1: {granger_p}"
+            assert 0 <= granger_p <= 1, f"Granger p-value should be between 0 and 1: {granger_p}"
 
     def test_atp_environment_analysis(self, atp_results):
         """Test environment-specific analysis"""
@@ -227,12 +202,8 @@ class TestATPGoldenFiles:
 
         # Should have volatility regimes
         assert "volatility_regimes" in env_analysis, "Should analyze volatility regimes"
-        assert (
-            "low" in env_analysis["volatility_regimes"]
-        ), "Should have low volatility regime"
-        assert (
-            "high" in env_analysis["volatility_regimes"]
-        ), "Should have high volatility regime"
+        assert "low" in env_analysis["volatility_regimes"], "Should have low volatility regime"
+        assert "high" in env_analysis["volatility_regimes"], "Should have high volatility regime"
 
         # Should have market conditions
         assert "market_conditions" in env_analysis, "Should analyze market conditions"
@@ -244,9 +215,7 @@ class TestATPGoldenFiles:
         ), "Should have bearish market condition"
 
         # Should detect coordination periods
-        assert env_analysis.get(
-            "coordination_periods", False
-        ), "Should detect coordination periods"
+        assert env_analysis.get("coordination_periods", False), "Should detect coordination periods"
 
     def test_atp_recommendations(self, atp_results):
         """Test that ATP analysis generates appropriate recommendations"""
@@ -294,9 +263,7 @@ class TestATPGoldenFiles:
         data2 = prepare_atp_data(config2)
 
         # Data should be identical
-        pd.testing.assert_frame_equal(
-            data1, data2, "Data should be identical with same seed"
-        )
+        pd.testing.assert_frame_equal(data1, data2, "Data should be identical with same seed")
 
         # Run analysis with same seed
         temp_data_path1 = "temp_atp_data1.csv"
@@ -311,8 +278,7 @@ class TestATPGoldenFiles:
 
             # Results should be identical
             assert (
-                results1["icp"]["invariance_p_value"]
-                == results2["icp"]["invariance_p_value"]
+                results1["icp"]["invariance_p_value"] == results2["icp"]["invariance_p_value"]
             ), "ICP results should be identical with same seed"
             assert (
                 results1["vmm"]["over_identification_p_value"]
@@ -327,6 +293,3 @@ class TestATPGoldenFiles:
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
-
-
-

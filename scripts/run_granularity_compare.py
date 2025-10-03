@@ -11,7 +11,7 @@ import logging
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Any, Optional
+from typing import Any, Dict, List, Optional
 
 # Add src to path
 sys.path.append(str(Path(__file__).parent.parent / "src"))
@@ -20,9 +20,7 @@ sys.path.append(str(Path(__file__).parent.parent / "src"))
 def setup_logging(verbose: bool = False):
     """Setup logging configuration."""
     level = logging.DEBUG if verbose else logging.INFO
-    logging.basicConfig(
-        level=level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    )
+    logging.basicConfig(level=level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
 
 def load_snapshot_data(snapshot_path: str) -> Optional[Dict]:
@@ -198,14 +196,10 @@ def compare_multi_granularity_results(results: Dict[int, Dict]) -> Dict:
             )
 
             # Compare Spread results
-            spread_comp = compare_spread_results(
-                results[g1]["spread"], results[g2]["spread"]
-            )
+            spread_comp = compare_spread_results(results[g1]["spread"], results[g2]["spread"])
 
             # Compare Lead-Lag results
-            leadlag_comp = compare_leadlag_results(
-                results[g1]["leadlag"], results[g2]["leadlag"]
-            )
+            leadlag_comp = compare_leadlag_results(results[g1]["leadlag"], results[g2]["leadlag"])
 
             comparison["pairwise_comparisons"][pair_key] = {
                 "infoshare": infoshare_comp,
@@ -214,9 +208,7 @@ def compare_multi_granularity_results(results: Dict[int, Dict]) -> Dict:
             }
 
     # Calculate overall stability flags
-    comparison["stability_flags"] = calculate_stability_flags(
-        comparison["pairwise_comparisons"]
-    )
+    comparison["stability_flags"] = calculate_stability_flags(comparison["pairwise_comparisons"])
 
     return comparison
 
@@ -248,8 +240,7 @@ def compare_infoshare_results(infoshare1: Dict, infoshare2: Dict) -> Dict:
         "ranks_stable": all(abs(change) <= 1 for change in rank_changes.values()),
         "js_distance": js_distance,
         "share_deltas": {
-            venue: infoshare2[venue]["point"] - infoshare1[venue]["point"]
-            for venue in venues1
+            venue: infoshare2[venue]["point"] - infoshare1[venue]["point"] for venue in venues1
         },
     }
 
@@ -260,8 +251,7 @@ def compare_spread_results(spread1: Dict, spread2: Dict) -> Dict:
         "episode_count_change": spread2["episodes"] - spread1["episodes"],
         "lift_change": spread2["average_lift"] - spread1["average_lift"],
         "p_value_change": spread2["p_value"] - spread1["p_value"],
-        "median_duration_change": spread2["median_duration"]
-        - spread1["median_duration"],
+        "median_duration_change": spread2["median_duration"] - spread1["median_duration"],
         "pval_stable": abs(spread2["p_value"] - spread1["p_value"]) < 0.01,
     }
 
@@ -272,8 +262,7 @@ def compare_leadlag_results(leadlag1: Dict, leadlag2: Dict) -> Dict:
         "coordination_change": leadlag2["coordination"] - leadlag1["coordination"],
         "edge_count_change": leadlag2["edge_count"] - leadlag1["edge_count"],
         "top_leader_change": leadlag2["top_leader"] != leadlag1["top_leader"],
-        "coordination_stable": abs(leadlag2["coordination"] - leadlag1["coordination"])
-        < 0.1,
+        "coordination_stable": abs(leadlag2["coordination"] - leadlag1["coordination"]) < 0.1,
     }
 
 
@@ -379,9 +368,7 @@ def compare_analysis_results(results_60s: Dict, results_30s: Dict) -> Dict:
 
         comparison["infoshare_comparison"] = {
             "rank_changes": rank_changes,
-            "ordering_stable": all(
-                abs(change) <= 1 for change in rank_changes.values()
-            ),
+            "ordering_stable": all(abs(change) <= 1 for change in rank_changes.values()),
             "share_deltas": {
                 venue: results_30s["infoshare"][venue]["point"]
                 - results_60s["infoshare"][venue]["point"]
@@ -389,9 +376,7 @@ def compare_analysis_results(results_60s: Dict, results_30s: Dict) -> Dict:
             },
         }
     else:
-        comparison["infoshare_comparison"] = {
-            "error": "Venue sets differ between granularities"
-        }
+        comparison["infoshare_comparison"] = {"error": "Venue sets differ between granularities"}
 
     # Compare Spread results
     spread_60s = results_60s["spread"]
@@ -401,8 +386,7 @@ def compare_analysis_results(results_60s: Dict, results_30s: Dict) -> Dict:
         "episode_count_change": spread_30s["episodes"] - spread_60s["episodes"],
         "lift_change": spread_30s["average_lift"] - spread_60s["average_lift"],
         "p_value_change": spread_30s["p_value"] - spread_60s["p_value"],
-        "median_duration_change": spread_30s["median_duration"]
-        - spread_60s["median_duration"],
+        "median_duration_change": spread_30s["median_duration"] - spread_60s["median_duration"],
     }
 
     # Compare Lead-Lag results
@@ -410,25 +394,19 @@ def compare_analysis_results(results_60s: Dict, results_30s: Dict) -> Dict:
     leadlag_30s = results_30s["leadlag"]
 
     comparison["leadlag_comparison"] = {
-        "coordination_change": leadlag_30s["coordination"]
-        - leadlag_60s["coordination"],
+        "coordination_change": leadlag_30s["coordination"] - leadlag_60s["coordination"],
         "edge_count_change": leadlag_30s["edge_count"] - leadlag_60s["edge_count"],
         "top_leader_change": leadlag_30s["top_leader"] != leadlag_60s["top_leader"],
     }
 
     # Set consistency flags
     comparison["consistency_flags"] = {
-        "ordering_stable": comparison["infoshare_comparison"].get(
-            "ordering_stable", False
-        ),
+        "ordering_stable": comparison["infoshare_comparison"].get("ordering_stable", False),
         "ranks_stable": all(
             abs(change) <= 1
-            for change in comparison["infoshare_comparison"]
-            .get("rank_changes", {})
-            .values()
+            for change in comparison["infoshare_comparison"].get("rank_changes", {}).values()
         ),
-        "spread_pval_change": abs(comparison["spread_comparison"]["p_value_change"])
-        < 0.01,
+        "spread_pval_change": abs(comparison["spread_comparison"]["p_value_change"]) < 0.01,
     }
 
     return comparison
@@ -482,9 +460,7 @@ def generate_comparison_report(comparison: Dict, export_dir: Path) -> None:
             # Spread section
             f.write("#### Spread\n")
             spread = pair_comparison["spread"]
-            f.write(
-                f"- **Episode Count Change:** {spread['episode_count_change']:+d}\n"
-            )
+            f.write(f"- **Episode Count Change:** {spread['episode_count_change']:+d}\n")
             f.write(f"- **Lift Change:** {spread['lift_change']:+.3f}\n")
             f.write(f"- **P-Value Change:** {spread['p_value_change']:+.3f}\n")
             f.write(f"- **P-Value Stable:** {spread['pval_stable']}\n\n")
@@ -492,9 +468,7 @@ def generate_comparison_report(comparison: Dict, export_dir: Path) -> None:
             # Lead-Lag section
             f.write("#### Lead-Lag\n")
             leadlag = pair_comparison["leadlag"]
-            f.write(
-                f"- **Coordination Change:** {leadlag['coordination_change']:+.3f}\n"
-            )
+            f.write(f"- **Coordination Change:** {leadlag['coordination_change']:+.3f}\n")
             f.write(f"- **Edge Count Change:** {leadlag['edge_count_change']:+d}\n")
             f.write(f"- **Top Leader Change:** {leadlag['top_leader_change']}\n")
             f.write(f"- **Coordination Stable:** {leadlag['coordination_stable']}\n\n")
@@ -504,9 +478,7 @@ def generate_comparison_report(comparison: Dict, export_dir: Path) -> None:
         flags = comparison["stability_flags"]
         f.write(f"- **Overall Ordering Stable:** {flags['overall_ordering_stable']}\n")
         f.write(f"- **Overall Ranks Stable:** {flags['overall_ranks_stable']}\n")
-        f.write(
-            f"- **Overall Spread P-Value Stable:** {flags['overall_spread_pval_stable']}\n"
-        )
+        f.write(f"- **Overall Spread P-Value Stable:** {flags['overall_spread_pval_stable']}\n")
         f.write(f"- **Overall Lead-Lag Stable:** {flags['overall_leadlag_stable']}\n\n")
 
     logger.info(f"Generated comparison report: {md_file}")
@@ -521,9 +493,7 @@ def main():
         default="exports/sweep_continuous/snapshots",
         help="Snapshots directory",
     )
-    parser.add_argument(
-        "--export-dir", default="exports/sweep", help="Export directory"
-    )
+    parser.add_argument("--export-dir", default="exports/sweep", help="Export directory")
     parser.add_argument(
         "--target-venues",
         default="binance,coinbase,kraken,okx,bybit",

@@ -5,13 +5,14 @@ Invariance-Conditional Pricing (ICP) Tests
 Tests parameter stability across market environments.
 """
 
-import pandas as pd
-import numpy as np
+import logging
 from typing import Dict
+
+import numpy as np
+import pandas as pd
 from scipy import stats
 from scipy.stats import chi2_contingency, ks_2samp
 from statsmodels.stats.multitest import multipletests
-import logging
 
 logger = logging.getLogger(__name__)
 

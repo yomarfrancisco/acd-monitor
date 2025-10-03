@@ -113,9 +113,7 @@ def calculate_fee_revenue(
         if tier == "retail":
             taker_fee_bps = venue_fees.get("retail", {}).get("taker_bps", 0)
         else:
-            taker_fee_bps = (
-                venue_fees.get("tiers", {}).get(tier, {}).get("taker_bps", 0)
-            )
+            taker_fee_bps = venue_fees.get("tiers", {}).get(tier, {}).get("taker_bps", 0)
 
         # Calculate fee revenue in basis points
         fee_revenue_bps = taker_fee_bps * notional_traded
@@ -127,9 +125,7 @@ def calculate_fee_revenue(
         return 0.0
 
 
-def build_baseline_model(
-    micro_controls: pd.DataFrame, fee_revenue: pd.DataFrame
-) -> Dict:
+def build_baseline_model(micro_controls: pd.DataFrame, fee_revenue: pd.DataFrame) -> Dict:
     """Build competitive baseline model for fee revenue."""
     try:
         # Prepare features for baseline model
@@ -223,9 +219,7 @@ def calculate_episode_excess_revenue(
                 notional_traded = venue_controls["price"].sum() * 0.1  # Placeholder
 
                 # Calculate fee revenue
-                fee_revenue = calculate_fee_revenue(
-                    venue, notional_traded, fee_schedules
-                )
+                fee_revenue = calculate_fee_revenue(venue, notional_traded, fee_schedules)
                 venue_revenues[venue] = fee_revenue
 
             # Calculate baseline predictions
@@ -251,9 +245,7 @@ def calculate_episode_excess_revenue(
                     "baseline_revenue_bps": baseline_revenue,
                     "excess_revenue_bps": excess_revenue,
                     "excess_revenue_pct": (
-                        (excess_revenue / baseline_revenue * 100)
-                        if baseline_revenue > 0
-                        else 0
+                        (excess_revenue / baseline_revenue * 100) if baseline_revenue > 0 else 0
                     ),
                 }
             )
@@ -291,9 +283,7 @@ def run_venue_excess_revenue_analysis(
         fee_revenue_data = []
         for _, row in micro_controls.iterrows():
             venue = row["venue"]
-            notional_traded = (
-                row["price"] * 0.1
-            )  # Placeholder - would need actual trade data
+            notional_traded = row["price"] * 0.1  # Placeholder - would need actual trade data
 
             fee_revenue = calculate_fee_revenue(venue, notional_traded, fee_schedules)
 
@@ -330,9 +320,7 @@ def run_venue_excess_revenue_analysis(
             "episode_results": episode_results,
             "summary": {
                 "n_episodes": len(episode_results),
-                "total_excess_revenue_bps": sum(
-                    ep["excess_revenue_bps"] for ep in episode_results
-                ),
+                "total_excess_revenue_bps": sum(ep["excess_revenue_bps"] for ep in episode_results),
                 "mean_excess_revenue_bps": np.mean(
                     [ep["excess_revenue_bps"] for ep in episode_results]
                 ),
@@ -361,13 +349,9 @@ def run_venue_excess_revenue_analysis(
 def main():
     """Main function for venue excess revenue analysis."""
     parser = argparse.ArgumentParser(description="Calculate venue excess revenue")
-    parser.add_argument(
-        "--snapshot", required=True, help="Path to snapshot OVERLAP.json"
-    )
+    parser.add_argument("--snapshot", required=True, help="Path to snapshot OVERLAP.json")
     parser.add_argument("--episodes", required=True, help="Path to episodes JSON")
-    parser.add_argument(
-        "--micro-controls", required=True, help="Path to micro_controls.json"
-    )
+    parser.add_argument("--micro-controls", required=True, help="Path to micro_controls.json")
     parser.add_argument(
         "--fee-bucket",
         default="acd-monitor-snapshots",
@@ -378,9 +362,7 @@ def main():
         default="fee_schedules/normalized_fees.json",
         help="S3 key for fee schedules",
     )
-    parser.add_argument(
-        "--output", required=True, help="Output path for analysis results"
-    )
+    parser.add_argument("--output", required=True, help="Output path for analysis results")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
 
     args = parser.parse_args()

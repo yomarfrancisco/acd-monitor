@@ -10,9 +10,9 @@ This script:
 """
 
 import argparse
+import json
 import logging
 import sys
-import json
 from datetime import datetime
 from pathlib import Path
 
@@ -20,15 +20,16 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent / "src"))
 
 import pandas as pd
-from acd.data.cache import DataCache
-from acd.analytics.info_share import InfoShareAnalyzer
-from acdlib.io.load_snapshot import load_snapshot_data
 from _analysis_utils import (
-    inclusive_end_date,
     ensure_time_mid_volume,
+    inclusive_end_date,
     resample_minute,
     validate_dataframe,
 )
+
+from acd.analytics.info_share import InfoShareAnalyzer
+from acd.data.cache import DataCache
+from acdlib.io.load_snapshot import load_snapshot_data
 
 
 def setup_logging(verbose: bool = False):
@@ -161,9 +162,7 @@ def run_info_share_analysis(
     final_rows = len(base_df)
 
     if final_rows < initial_rows:
-        logger.warning(
-            f"Dropped {initial_rows - final_rows} rows with NaN values after inner join"
-        )
+        logger.warning(f"Dropped {initial_rows - final_rows} rows with NaN values after inner join")
 
     # Guardrail: Check for sufficient data
     window_days = (end_utc - start_utc).days
@@ -200,9 +199,7 @@ def run_info_share_analysis(
             # Validate bounds with guardrails
             bounds = results.get("bounds", {})
             if not bounds:
-                logger.error(
-                    "[ABORT:infoshare:invalid_bounds] No bounds found in results"
-                )
+                logger.error("[ABORT:infoshare:invalid_bounds] No bounds found in results")
                 sys.exit(2)
 
             # Check each venue has valid bounds
@@ -234,21 +231,15 @@ def run_info_share_analysis(
                     sys.exit(2)
 
             # Check sum of point estimates is reasonable
-            point_sum = sum(
-                bounds[venue]["point"] for venue in venues if venue in bounds
-            )
+            point_sum = sum(bounds[venue]["point"] for venue in venues if venue in bounds)
             if not (0.98 <= point_sum <= 1.02):
                 logger.warning(
                     f"[WARN:infoshare:sum_point] Sum of point estimates is {point_sum:.3f}, expected ~1.0"
                 )
 
             # Log bounds summary
-            min_lower = min(
-                bounds[venue]["lower"] for venue in venues if venue in bounds
-            )
-            max_upper = max(
-                bounds[venue]["upper"] for venue in venues if venue in bounds
-            )
+            min_lower = min(bounds[venue]["lower"] for venue in venues if venue in bounds)
+            max_upper = max(bounds[venue]["upper"] for venue in venues if venue in bounds)
             logger.info(
                 f"[STATS:infoShare:bounds] min_lower={min_lower:.3f} max_upper={max_upper:.3f} sum_point={point_sum:.3f}"
             )
@@ -276,15 +267,11 @@ def run_info_share_analysis(
             # Print evidence blocks
             print_evidence_blocks(export_dir, results)
         else:
-            logger.error(
-                "[ABORT:infoshare:no_results] Analysis failed - no results generated"
-            )
+            logger.error("[ABORT:infoshare:no_results] Analysis failed - no results generated")
             sys.exit(2)
 
     except Exception as e:
-        logger.error(
-            f"[ABORT:infoshare:analysis_error] Analysis failed: {e}", exc_info=True
-        )
+        logger.error(f"[ABORT:infoshare:analysis_error] Analysis failed: {e}", exc_info=True)
         sys.exit(2)
 
 
@@ -323,14 +310,8 @@ def print_evidence_blocks(export_dir: str, results: dict) -> None:
                 overall = info_data["overall"]
                 print("Overall Information Share Bounds:")
                 for venue, bounds in overall.items():
-                    if (
-                        isinstance(bounds, dict)
-                        and "lower" in bounds
-                        and "upper" in bounds
-                    ):
-                        print(
-                            f"  {venue}: {bounds['lower']:.3f} - {bounds['upper']:.3f}"
-                        )
+                    if isinstance(bounds, dict) and "lower" in bounds and "upper" in bounds:
+                        print(f"  {venue}: {bounds['lower']:.3f} - {bounds['upper']:.3f}")
         else:
             print("No info share file found")
     except Exception as e:
@@ -444,8 +425,7 @@ def run_snapshot_info_share_analysis(
 
     # Calculate total minutes in window
     window_minutes = (
-        pd.to_datetime(overlap_data["end_utc"])
-        - pd.to_datetime(overlap_data["start_utc"])
+        pd.to_datetime(overlap_data["end_utc"]) - pd.to_datetime(overlap_data["start_utc"])
     ).total_seconds() / 60
 
     # Log environment
@@ -475,9 +455,7 @@ def run_snapshot_info_share_analysis(
 
 def main():
     """Main function to run information share analysis."""
-    parser = argparse.ArgumentParser(
-        description="Run information share analysis on real data"
-    )
+    parser = argparse.ArgumentParser(description="Run information share analysis on real data")
     parser.add_argument("--start", help="Start date (YYYY-MM-DD)")
     parser.add_argument("--end", help="End date (YYYY-MM-DD)")
     parser.add_argument("--pair", default="BTC-USD", help="Trading pair")
@@ -487,13 +465,9 @@ def main():
         help="Comma-separated list of venues",
     )
     parser.add_argument("--cache-dir", default="data/cache", help="Cache directory")
-    parser.add_argument(
-        "--export-dir", default="exports/real_data_runs", help="Export directory"
-    )
+    parser.add_argument("--export-dir", default="exports/real_data_runs", help="Export directory")
     parser.add_argument("--use-overlap-json", help="Path to OVERLAP.json file")
-    parser.add_argument(
-        "--from-snapshot-ticks", type=int, help="Use snapshot tick data (1=yes)"
-    )
+    parser.add_argument("--from-snapshot-ticks", type=int, help="Use snapshot tick data (1=yes)")
     parser.add_argument("--standardize", default="none", help="Standardization method")
     parser.add_argument(
         "--gg-blend-alpha", type=float, default=0.7, help="GG blend alpha parameter"

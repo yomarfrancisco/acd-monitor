@@ -54,7 +54,7 @@ REPORT_PREFIX = "analysis/20251001/wave1_report"
 SYMBOLS = ["btc_usd", "eth_usd"]
 ARTIFACTS = ["variance_ratios", "autocorr", "xcorr", "rolling", "pca"]
 
-s3 = boto3.client('s3')
+s3 = boto3.client("s3")
 
 # =============================================================================
 # UTILITY FUNCTIONS
@@ -65,7 +65,7 @@ def read_parquet_s3(key: str) -> pd.DataFrame:
     """Read Parquet file from S3."""
     try:
         response = s3.get_object(Bucket=S3_BUCKET, Key=key)
-        return pd.read_parquet(io.BytesIO(response['Body'].read()))
+        return pd.read_parquet(io.BytesIO(response["Body"].read()))
     except Exception as e:
         raise Exception(f"Failed to read {key}: {e}")
 
@@ -74,7 +74,7 @@ def get_artifact_hash(key: str) -> str:
     """Get SHA256 hash of S3 object."""
     try:
         response = s3.get_object(Bucket=S3_BUCKET, Key=key)
-        content = response['Body'].read()
+        content = response["Body"].read()
         return hashlib.sha256(content).hexdigest()
     except Exception as e:
         raise Exception(f"Failed to get hash for {key}: {e}")
@@ -89,6 +89,7 @@ def int_to_severity(severity_int: int) -> str:
     """Convert integer back to severity string."""
     return {0: "GREEN", 1: "AMBER", 2: "RED"}[severity_int]
 
+
 # =============================================================================
 # SCORING FUNCTIONS
 # =============================================================================
@@ -98,8 +99,9 @@ def score_variance_ratio(vr: float) -> str:
     """Score variance ratio."""
     if VR_GREEN_MIN <= vr <= VR_GREEN_MAX:
         return "GREEN"
-    elif ((VR_AMBER_MIN_LOW <= vr <= VR_AMBER_MAX_LOW) or
-          (VR_AMBER_MIN_HIGH <= vr <= VR_AMBER_MAX_HIGH)):
+    elif (VR_AMBER_MIN_LOW <= vr <= VR_AMBER_MAX_LOW) or (
+        VR_AMBER_MIN_HIGH <= vr <= VR_AMBER_MAX_HIGH
+    ):
         return "AMBER"
     else:
         return "RED"
@@ -133,14 +135,16 @@ def check_rolling_volatility_convergence(df: pd.DataFrame) -> bool:
         return False
 
     # Check if rolling vol correlations > threshold and spread std is small
-    vol_corr_cols = [col for col in df.columns if 'vol' in col.lower() and 'corr' in col.lower()]
-    spread_std_cols = [col for col in df.columns if 'spread' in col.lower()
-                       and 'std' in col.lower()]
+    vol_corr_cols = [col for col in df.columns if "vol" in col.lower() and "corr" in col.lower()]
+    spread_std_cols = [
+        col for col in df.columns if "spread" in col.lower() and "std" in col.lower()
+    ]
 
     if vol_corr_cols and spread_std_cols:
         max_vol_corr = df[vol_corr_cols].max().max() if len(vol_corr_cols) > 0 else 0
-        median_spread_std = df[spread_std_cols].median().median() if len(
-            spread_std_cols) > 0 else float('inf')
+        median_spread_std = (
+            df[spread_std_cols].median().median() if len(spread_std_cols) > 0 else float("inf")
+        )
 
         return max_vol_corr > ROLLING_VOL_CORR_THRESHOLD
     median_spread_std <= SPREAD_STD_THRESHOLD
@@ -150,11 +154,12 @@ def check_rolling_volatility_convergence(df: pd.DataFrame) -> bool:
 
 def check_pca_dominance(df: pd.DataFrame) -> bool:
     """Check if PCA shows first component dominance."""
-    if len(df) == 0 or 'explained_variance_ratio' not in df.columns:
+    if len(df) == 0 or "explained_variance_ratio" not in df.columns:
         return False
 
     # Check if any venue has first component > threshold
-    return df['explained_variance_ratio'].max() > PCA_FIRST_COMPONENT_THRESHOLD
+    return df["explained_variance_ratio"].max() > PCA_FIRST_COMPONENT_THRESHOLD
+
 
 # =============================================================================
 # MAIN ANALYSIS
@@ -199,7 +204,7 @@ def analyze_symbol(symbol: str) -> Dict[str, Any]:
         "pairwise_metrics": {},
         "flags": {},
         "overall_rating": "GREEN",
-        "artifact_hashes": artifact_hashes
+        "artifact_hashes": artifact_hashes,
     }
 
     # Analyze variance ratios
@@ -207,8 +212,8 @@ def analyze_symbol(symbol: str) -> Dict[str, Any]:
         vr_df = artifacts["variance_ratios"]
         venue_scores = {}
         for _, row in vr_df.iterrows():
-            venue = row['venue']
-            vr = row['vr_ratio']
+            venue = row["venue"]
+            vr = row["vr_ratio"]
             score = score_variance_ratio(vr)
             venue_scores[venue] = {"vr": vr, "score": score}
 
@@ -219,8 +224,8 @@ def analyze_symbol(symbol: str) -> Dict[str, Any]:
         ac_df = artifacts["autocorr"]
         venue_scores = {}
         for _, row in ac_df.iterrows():
-            venue = row['venue']
-            ar1 = row['ar1_coef']
+            venue = row["venue"]
+            ar1 = row["ar1_coef"]
             score = score_autocorrelation(ar1)
             venue_scores[venue] = {"ar1": ar1, "score": score}
 
@@ -234,7 +239,7 @@ def analyze_symbol(symbol: str) -> Dict[str, Any]:
 
         for _, row in xcorr_df.iterrows():
             pair = f"{row['venue1']}-{row['venue2']}"
-            xcorr = row['cross_corr']
+            xcorr = row["cross_corr"]
             score = score_cross_correlation(xcorr)
             pair_scores[pair] = {"xcorr": xcorr, "score": score}
             xcorr_values.append(abs(xcorr))
@@ -293,13 +298,15 @@ def create_pairwise_detail(scorecards: List[Dict[str, Any]]) -> pd.DataFrame:
         symbol = scorecard["symbol"]
         for pair, data in scorecard["pairwise_metrics"].items():
             venue1, venue2 = pair.split("-")
-            rows.append({
-                "symbol": symbol,
-                "venue1": venue1,
-                "venue2": venue2,
-                "cross_corr": data["xcorr"],
-                "score": data["score"]
-            })
+            rows.append(
+                {
+                    "symbol": symbol,
+                    "venue1": venue1,
+                    "venue2": venue2,
+                    "cross_corr": data["xcorr"],
+                    "score": data["score"],
+                }
+            )
 
     return pd.DataFrame(rows)
 
@@ -314,24 +321,28 @@ def create_per_venue_metrics(scorecards: List[Dict[str, Any]]) -> pd.DataFrame:
         # Variance ratios
         if "variance_ratios" in scorecard["per_venue_metrics"]:
             for venue, data in scorecard["per_venue_metrics"]["variance_ratios"].items():
-                rows.append({
-                    "symbol": symbol,
-                    "venue": venue,
-                    "metric": "variance_ratio",
-                    "value": data["vr"],
-                    "score": data["score"]
-                })
+                rows.append(
+                    {
+                        "symbol": symbol,
+                        "venue": venue,
+                        "metric": "variance_ratio",
+                        "value": data["vr"],
+                        "score": data["score"],
+                    }
+                )
 
         # Autocorrelation
         if "autocorrelation" in scorecard["per_venue_metrics"]:
             for venue, data in scorecard["per_venue_metrics"]["autocorrelation"].items():
-                rows.append({
-                    "symbol": symbol,
-                    "venue": venue,
-                    "metric": "autocorr_ar1",
-                    "value": data["ar1"],
-                    "score": data["score"]
-                })
+                rows.append(
+                    {
+                        "symbol": symbol,
+                        "venue": venue,
+                        "metric": "autocorr_ar1",
+                        "value": data["ar1"],
+                        "score": data["score"],
+                    }
+                )
 
     return pd.DataFrame(rows)
 
@@ -367,28 +378,19 @@ def main():
         "thresholds": {
             "variance_ratio": {
                 "green": [VR_GREEN_MIN, VR_GREEN_MAX],
-                "amber": [VR_AMBER_MIN_LOW, VR_AMBER_MAX_LOW,
-                          VR_AMBER_MIN_HIGH, VR_AMBER_MAX_HIGH]
+                "amber": [VR_AMBER_MIN_LOW, VR_AMBER_MAX_LOW, VR_AMBER_MIN_HIGH, VR_AMBER_MAX_HIGH],
             },
-            "autocorr": {
-                "green_max": AR1_GREEN_MAX,
-                "amber_max": AR1_AMBER_MAX
-            },
-            "cross_corr": {
-                "green_max": XCORR_GREEN_MAX,
-                "amber_max": XCORR_AMBER_MAX
-            },
+            "autocorr": {"green_max": AR1_GREEN_MAX, "amber_max": AR1_AMBER_MAX},
+            "cross_corr": {"green_max": XCORR_GREEN_MAX, "amber_max": XCORR_AMBER_MAX},
             "rolling_vol": {
                 "corr_threshold": ROLLING_VOL_CORR_THRESHOLD,
-                "spread_std_threshold": SPREAD_STD_THRESHOLD
+                "spread_std_threshold": SPREAD_STD_THRESHOLD,
             },
-            "pca": {
-                "first_component_threshold": PCA_FIRST_COMPONENT_THRESHOLD
-            }
+            "pca": {"first_component_threshold": PCA_FIRST_COMPONENT_THRESHOLD},
         },
         "artifact_hashes": all_artifact_hashes,
         "symbols": [sc["symbol"] for sc in scorecards],
-        "overall_ratings": {sc["symbol"]: sc["overall_rating"] for sc in scorecards}
+        "overall_ratings": {sc["symbol"]: sc["overall_rating"] for sc in scorecards},
     }
 
     # Write outputs to S3
@@ -398,37 +400,21 @@ def main():
     for scorecard in scorecards:
         symbol = scorecard["symbol"]
         key = f"{REPORT_PREFIX}/{symbol}_scorecard.json"
-        s3.put_object(
-            Bucket=S3_BUCKET,
-            Key=key,
-            Body=json.dumps(scorecard, indent=2)
-        )
+        s3.put_object(Bucket=S3_BUCKET, Key=key, Body=json.dumps(scorecard, indent=2))
         print(f"  ✅ {key}")
 
     # Save detailed CSVs
     pairwise_key = f"{REPORT_PREFIX}/pairwise_xcorr_detail.csv"
-    s3.put_object(
-        Bucket=S3_BUCKET,
-        Key=pairwise_key,
-        Body=pairwise_detail.to_csv(index=False)
-    )
+    s3.put_object(Bucket=S3_BUCKET, Key=pairwise_key, Body=pairwise_detail.to_csv(index=False))
     print(f"  ✅ {pairwise_key}")
 
     per_venue_key = f"{REPORT_PREFIX}/per_venue_metrics.csv"
-    s3.put_object(
-        Bucket=S3_BUCKET,
-        Key=per_venue_key,
-        Body=per_venue_metrics.to_csv(index=False)
-    )
+    s3.put_object(Bucket=S3_BUCKET, Key=per_venue_key, Body=per_venue_metrics.to_csv(index=False))
     print(f"  ✅ {per_venue_key}")
 
     # Save manifest
     manifest_key = f"{REPORT_PREFIX}/manifest.json"
-    s3.put_object(
-        Bucket=S3_BUCKET,
-        Key=manifest_key,
-        Body=json.dumps(manifest, indent=2)
-    )
+    s3.put_object(Bucket=S3_BUCKET, Key=manifest_key, Body=json.dumps(manifest, indent=2))
     print(f"  ✅ {manifest_key}")
 
     # Save README
@@ -456,11 +442,7 @@ Overall Ratings: {', '.join([f"{sc['symbol']}={sc['overall_rating']}" for sc in 
 """
 
     readme_key = f"{REPORT_PREFIX}/README.txt"
-    s3.put_object(
-        Bucket=S3_BUCKET,
-        Key=readme_key,
-        Body=readme_content
-    )
+    s3.put_object(Bucket=S3_BUCKET, Key=readme_key, Body=readme_content)
     print(f"  ✅ {readme_key}")
 
     # Print validation summary
@@ -487,11 +469,12 @@ Overall Ratings: {', '.join([f"{sc['symbol']}={sc['overall_rating']}" for sc in 
         if "xcorr_p75" in scorecard:
             xcorr_summary.append(f"p75={scorecard['xcorr_p75']:.2f}")
 
-        vr_str = ', '.join(vr_summary)
-        ar1_str = max(ar1_summary) if ar1_summary else 'N/A'
-        xcorr_str = ', '.join(xcorr_summary)
-        print(f"{symbol.upper()}: VR {vr_str} | AR1 max={ar1_str} | "
-              f"xcorr {xcorr_str} → {rating}")
+        vr_str = ", ".join(vr_summary)
+        ar1_str = max(ar1_summary) if ar1_summary else "N/A"
+        xcorr_str = ", ".join(xcorr_summary)
+        print(
+            f"{symbol.upper()}: VR {vr_str} | AR1 max={ar1_str} | " f"xcorr {xcorr_str} → {rating}"
+        )
 
     print(f"\n✅ Wave-1 analysis complete. Results saved to s3://{S3_BUCKET}/{REPORT_PREFIX}/")
 

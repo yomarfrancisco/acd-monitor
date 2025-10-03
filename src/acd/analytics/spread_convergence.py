@@ -5,14 +5,15 @@ This module detects convergence episodes where venues move toward consensus pric
 which may reflect coordinated algorithmic behavior.
 """
 
-import os
 import json
 import logging
-import numpy as np
-import pandas as pd
-from typing import Dict, List, Any
+import os
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Any, Dict, List
+
+import numpy as np
+import pandas as pd
 import scipy.stats as stats
 
 

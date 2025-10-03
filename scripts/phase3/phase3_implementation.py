@@ -18,14 +18,14 @@ import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Any, Tuple
+from typing import Any, Dict, List, Tuple
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from scipy import stats
-from sklearn.metrics import roc_curve, auc, precision_recall_curve
-import matplotlib.pyplot as plt
 import seaborn as sns
+from scipy import stats
+from sklearn.metrics import auc, precision_recall_curve, roc_curve
 
 # Add src to sys.path for acdlib imports
 sys.path.append(str(Path(__file__).parent.parent.parent / "src"))
@@ -153,9 +153,7 @@ def compute_power_analysis(
                     "mde_80_power": mde_delta_z,
                     "current_threshold": -1.5,
                     "power_at_threshold": 1
-                    - stats.norm.cdf(
-                        (-1.5 - delta_z_mean) / (delta_z_std / np.sqrt(n_obs))
-                    ),
+                    - stats.norm.cdf((-1.5 - delta_z_mean) / (delta_z_std / np.sqrt(n_obs))),
                 }
 
     return results
@@ -204,9 +202,7 @@ def generate_sensitivity_curves(synthetic_results: Dict[str, Any]) -> Dict[str, 
     return sensitivity_results
 
 
-def create_sensitivity_plots(
-    sensitivity_results: Dict[str, Any], output_dir: Path
-) -> None:
+def create_sensitivity_plots(sensitivity_results: Dict[str, Any], output_dir: Path) -> None:
     """Create ROC curves and sensitivity plots."""
 
     plt.style.use("seaborn-v0_8")
@@ -491,18 +487,10 @@ def main():
         default="analysis/BTC/phase3/20250929",
         help="Output directory for Phase 3 results",
     )
-    parser.add_argument(
-        "--bootstrap-n", type=int, default=1000, help="Bootstrap iterations"
-    )
-    parser.add_argument(
-        "--block-size", type=int, default=10, help="Block size for bootstrap"
-    )
-    parser.add_argument(
-        "--fdr-q", type=float, default=0.05, help="FDR correction threshold"
-    )
-    parser.add_argument(
-        "--seed", type=int, default=42, help="Random seed for reproducibility"
-    )
+    parser.add_argument("--bootstrap-n", type=int, default=1000, help="Bootstrap iterations")
+    parser.add_argument("--block-size", type=int, default=10, help="Block size for bootstrap")
+    parser.add_argument("--fdr-q", type=float, default=0.05, help="FDR correction threshold")
+    parser.add_argument("--seed", type=int, default=42, help="Random seed for reproducibility")
     parser.add_argument("--verbose", action="store_true", help="Enable verbose logging")
     args = parser.parse_args()
 
@@ -575,9 +563,7 @@ def main():
 
     # Phase 3.5: Comprehensive report
     logger.info("Phase 3.5: Generating comprehensive report")
-    generate_phase3_report(
-        output_dir, window_results, power_analysis, sensitivity_results
-    )
+    generate_phase3_report(output_dir, window_results, power_analysis, sensitivity_results)
 
     logger.info("Phase 3 Implementation completed successfully")
     logger.info(f"Results saved to: {output_dir}")

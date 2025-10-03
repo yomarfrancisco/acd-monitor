@@ -12,12 +12,13 @@ This script implements:
 import argparse
 import json
 import logging
+import sys
+from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, List, Tuple
+
 import numpy as np
 import pandas as pd
-import sys
-from pathlib import Path
-from typing import Dict, List, Any, Tuple
-from datetime import datetime
 import scipy.stats as stats
 from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import StandardScaler
@@ -43,15 +44,16 @@ class PandasJSONEncoder(json.JSONEncoder):
 # Add src to path
 sys.path.append(str(Path(__file__).parent.parent / "src"))
 
-from acd.data.cache import DataCache
-from acd.analytics.spread_convergence import SpreadConvergenceAnalyzer
-from acdlib.io.load_snapshot import load_snapshot_data
 from _analysis_utils import (
-    inclusive_end_date,
     ensure_time_mid_volume,
+    inclusive_end_date,
     resample_second,
     validate_dataframe,
 )
+
+from acd.analytics.spread_convergence import SpreadConvergenceAnalyzer
+from acd.data.cache import DataCache
+from acdlib.io.load_snapshot import load_snapshot_data
 
 
 def setup_logging(verbose: bool = False):
@@ -108,9 +110,7 @@ class ZScoreDispersionDetector:
 
         return z_scores
 
-    def detect_episodes(
-        self, dispersion: pd.Series, z_scores: pd.Series
-    ) -> List[Dict[str, Any]]:
+    def detect_episodes(self, dispersion: pd.Series, z_scores: pd.Series) -> List[Dict[str, Any]]:
         """
         Detect episodes using z-score threshold.
 
@@ -173,9 +173,7 @@ class ZScoreDispersionDetector:
         self.logger.info(f"Z-score detector found {len(episodes)} episodes")
         return episodes
 
-    def _merge_nearby_episodes(
-        self, starts: List[int], ends: List[int]
-    ) -> List[Tuple[int, int]]:
+    def _merge_nearby_episodes(self, starts: List[int], ends: List[int]) -> List[Tuple[int, int]]:
         """Merge episodes that are within merge_gap seconds."""
         if not starts:
             return []
@@ -243,9 +241,7 @@ class MatchedControlSampler:
 
             # Volume rate (if available)
             if volume_df is not None and i < len(volume_df):
-                volrate = (
-                    volume_df.iloc[i].sum() if not volume_df.iloc[i].isna().all() else 0
-                )
+                volrate = volume_df.iloc[i].sum() if not volume_df.iloc[i].isna().all() else 0
             else:
                 volrate = 0
 
@@ -278,9 +274,7 @@ class MatchedControlSampler:
 
         # Realized volatility (annualized)
         rv = returns.var() * 252 * 24 * 3600  # Assuming 1-second data
-        rv_value = (
-            rv if isinstance(rv, (int, float)) else rv.iloc[0] if len(rv) > 0 else 0.0
-        )
+        rv_value = rv if isinstance(rv, (int, float)) else rv.iloc[0] if len(rv) > 0 else 0.0
         return np.sqrt(rv_value) if not np.isnan(rv_value) else 0.0
 
     def sample_controls(
@@ -321,9 +315,7 @@ class MatchedControlSampler:
 
         # Standardize features for kNN
         scaler = StandardScaler()
-        features_scaled = scaler.fit_transform(
-            valid_features[["t_in_window", "vol30s", "volrate"]]
-        )
+        features_scaled = scaler.fit_transform(valid_features[["t_in_window", "vol30s", "volrate"]])
         episode_scaled = scaler.transform(
             [episode_features[["t_in_window", "vol30s", "volrate"]].values]
         )
@@ -345,9 +337,7 @@ class MatchedControlSampler:
 class EpisodeControlAnalyzer:
     """Analyze episodes vs matched controls."""
 
-    def __init__(
-        self, n_bootstrap: int = 1000, block_size: int = 10, random_state: int = 42
-    ):
+    def __init__(self, n_bootstrap: int = 1000, block_size: int = 10, random_state: int = 42):
         """
         Initialize episode-control analyzer.
 
@@ -428,15 +418,11 @@ class EpisodeControlAnalyzer:
             "realized_vol": data.get("realized_vol", pd.Series()),
         }
 
-    def _bootstrap_test(
-        self, episode_data: pd.Series, control_data: pd.Series
-    ) -> float:
+    def _bootstrap_test(self, episode_data: pd.Series, control_data: pd.Series) -> float:
         """Perform block bootstrap test."""
         # Combine data
         combined = pd.concat([episode_data, control_data])
-        labels = np.concatenate(
-            [np.ones(len(episode_data)), np.zeros(len(control_data))]
-        )
+        labels = np.concatenate([np.ones(len(episode_data)), np.zeros(len(control_data))])
 
         # Original difference
         original_diff = episode_data.mean() - control_data.mean()
@@ -479,9 +465,7 @@ class EpisodeControlAnalyzer:
         return np.array(bootstrap_labels[: len(data)])
 
 
-def write_empty_results(
-    out_file: Path, detector: str, allow_demo: bool, error_msg: str
-) -> None:
+def write_empty_results(out_file: Path, detector: str, allow_demo: bool, error_msg: str) -> None:
     """Write empty results file with error information."""
     payload = {
         "provenance": "DEMO" if allow_demo else "REAL",
@@ -494,9 +478,7 @@ def write_empty_results(
     }
 
     try:
-        out_file.write_text(
-            json.dumps(payload, separators=(",", ":")), encoding="utf-8"
-        )
+        out_file.write_text(json.dumps(payload, separators=(",", ":")), encoding="utf-8")
         print(f"[INFO] Wrote empty results to {out_file}")
     except Exception as e:
         print(f"[ERROR] Failed to write empty results to {out_file}: {e}")
@@ -548,15 +530,11 @@ def run_control_v2_analysis(
         if not overlap_file.exists():
             logger.error(f"OVERLAP.json not found in {snapshot_dir}")
             # Write empty results file on error
-            write_empty_results(
-                out_file, detector, allow_demo, "OVERLAP.json not found"
-            )
+            write_empty_results(out_file, detector, allow_demo, "OVERLAP.json not found")
             return
 
         # Load snapshot data using the proper function
-        overlap_data, resampled_mids = load_snapshot_data(
-            str(overlap_file), allow_demo=allow_demo
-        )
+        overlap_data, resampled_mids = load_snapshot_data(str(overlap_file), allow_demo=allow_demo)
 
         if resampled_mids.empty:
             logger.error("No tick data loaded from snapshot")
@@ -638,20 +616,14 @@ def run_control_v2_analysis(
 
                 # Extract episode and control data
                 episode_data = base_df.iloc[episode_start : episode_end + 1].copy()
-                episode_data["dispersion_zscore"] = z_scores.iloc[
-                    episode_start : episode_end + 1
-                ]
+                episode_data["dispersion_zscore"] = z_scores.iloc[episode_start : episode_end + 1]
 
                 control_data_list = []
                 for control_idx in control_indices:
                     control_start = max(0, control_idx - (episode_end - episode_start))
-                    control_end = min(
-                        len(base_df), control_idx + (episode_end - episode_start) + 1
-                    )
+                    control_end = min(len(base_df), control_idx + (episode_end - episode_start) + 1)
                     control_data = base_df.iloc[control_start:control_end].copy()
-                    control_data["dispersion_zscore"] = z_scores.iloc[
-                        control_start:control_end
-                    ]
+                    control_data["dispersion_zscore"] = z_scores.iloc[control_start:control_end]
                     control_data_list.append(control_data)
 
                 if not control_data_list:
@@ -663,9 +635,7 @@ def run_control_v2_analysis(
                 analyzer_episode = EpisodeControlAnalyzer(
                     n_bootstrap=bb_n, block_size=bb_size, random_state=seed
                 )
-                comparison = analyzer_episode.compare_episode_controls(
-                    episode_data, control_data
-                )
+                comparison = analyzer_episode.compare_episode_controls(episode_data, control_data)
 
                 episode_result = {
                     "episode": episode,
@@ -675,9 +645,7 @@ def run_control_v2_analysis(
                 episode_results.append(episode_result)
 
             # Generate summary report
-            generate_control_v2_report(
-                episode_results, export_dir, detector, allow_demo, out_file
-            )
+            generate_control_v2_report(episode_results, export_dir, detector, allow_demo, out_file)
 
             # Check updated Phase 5 gates
             check_updated_gates(episode_results, export_dir, allow_demo)
@@ -706,9 +674,7 @@ def run_control_v2_analysis(
 
         traceback.print_exc()
         # Write error results
-        write_empty_results(
-            out_file, detector, allow_demo, f"Analysis failed: {str(e)}"
-        )
+        write_empty_results(out_file, detector, allow_demo, f"Analysis failed: {str(e)}")
         # Ensure a non-zero exit code; 2 means failed during allow-demo path
         sys.exit(2 if allow_demo else 1)
 
@@ -791,9 +757,7 @@ def generate_markdown_report(summary: Dict) -> str:
 
     report.append("## Summary Statistics")
     report.append("")
-    report.append(
-        f"- **Mean Δz**: {summary['delta_z_mean']:.3f} ± {summary['delta_z_std']:.3f}"
-    )
+    report.append(f"- **Mean Δz**: {summary['delta_z_mean']:.3f} ± {summary['delta_z_std']:.3f}")
     report.append(
         f"- **Mean Cohen's d**: {summary['cohens_d_mean']:.3f} ± {summary['cohens_d_std']:.3f}"
     )
@@ -928,9 +892,7 @@ def check_updated_gates(
     logger.info(
         f"Gate 1 (Episode vs Controls): {'PASS' if gates['gate1_episode_control'] else 'FAIL'}"
     )
-    logger.info(
-        f"Significant episodes: {len(significant_episodes)}/{len(episode_results)}"
-    )
+    logger.info(f"Significant episodes: {len(significant_episodes)}/{len(episode_results)}")
 
 
 def main():
@@ -938,25 +900,17 @@ def main():
     parser = argparse.ArgumentParser(description="Gold Hunt Control v2 Analysis")
     parser.add_argument("--snapshot-dir", required=True, help="Snapshot directory")
     parser.add_argument("--export-dir", required=True, help="Export directory")
-    parser.add_argument(
-        "--export-file", default="control_v2_results.json", help="Export filename"
-    )
+    parser.add_argument("--export-file", default="control_v2_results.json", help="Export filename")
     parser.add_argument(
         "--detector",
         choices=["percentile", "zscore"],
         default="percentile",
         help="Detector type (default: percentile for backward compatibility)",
     )
-    parser.add_argument(
-        "--n-controls", type=int, default=100, help="Number of matched controls"
-    )
+    parser.add_argument("--n-controls", type=int, default=100, help="Number of matched controls")
     parser.add_argument("--z-cut", type=float, default=-1.5, help="Z-score threshold")
-    parser.add_argument(
-        "--roll", type=int, default=60, help="Rolling window size (seconds)"
-    )
-    parser.add_argument(
-        "--merge-gap", type=int, default=2, help="Merge gap tolerance (seconds)"
-    )
+    parser.add_argument("--roll", type=int, default=60, help="Rolling window size (seconds)")
+    parser.add_argument("--merge-gap", type=int, default=2, help="Merge gap tolerance (seconds)")
     parser.add_argument(
         "--min-dur", type=int, default=10, help="Minimum episode duration (seconds)"
     )
@@ -966,19 +920,11 @@ def main():
         help="Matched control features (comma-separated)",
     )
     parser.add_argument("--mc-k", type=int, default=5, help="kNN parameter")
-    parser.add_argument(
-        "--mc-gap", type=int, default=10, help="Control exclusion gap (seconds)"
-    )
-    parser.add_argument(
-        "--bb-size", type=int, default=10, help="Block bootstrap size (seconds)"
-    )
-    parser.add_argument(
-        "--bb-n", type=int, default=1000, help="Number of bootstrap samples"
-    )
+    parser.add_argument("--mc-gap", type=int, default=10, help="Control exclusion gap (seconds)")
+    parser.add_argument("--bb-size", type=int, default=10, help="Block bootstrap size (seconds)")
+    parser.add_argument("--bb-n", type=int, default=1000, help="Number of bootstrap samples")
     parser.add_argument("--seed", type=int, default=42, help="Random seed")
-    parser.add_argument(
-        "--allow-demo", action="store_true", help="Allow demo/synthetic data"
-    )
+    parser.add_argument("--allow-demo", action="store_true", help="Allow demo/synthetic data")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
 
     args = parser.parse_args()

@@ -3,11 +3,12 @@
 Test Continuous Measurement System
 """
 
+import json
 import subprocess
 import sys
-import json
-import boto3
 from datetime import datetime
+
+import boto3
 
 
 def test_continuous_measurement():
@@ -45,15 +46,11 @@ def test_continuous_measurement():
             # Verify S3 storage
             s3 = boto3.client("s3")
             try:
-                response = s3.get_object(
-                    Bucket="acd-monitor-snapshots", Key=output_path
-                )
+                response = s3.get_object(Bucket="acd-monitor-snapshots", Key=output_path)
                 data = json.loads(response["Body"].read())
                 print(f"✅ Results stored in S3: {len(data)} keys")
                 print(f"✅ Metrics for venues: {list(data.get('metrics', {}).keys())}")
-                print(
-                    f"✅ Cross-venue metrics: {list(data.get('cross_venue', {}).keys())}"
-                )
+                print(f"✅ Cross-venue metrics: {list(data.get('cross_venue', {}).keys())}")
                 return True
             except Exception as e:
                 print(f"❌ Failed to verify S3 storage: {e}")

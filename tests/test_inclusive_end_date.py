@@ -2,10 +2,11 @@
 Test inclusive_end_date function for off-by-one guard.
 """
 
-import pytest
-from datetime import datetime
 import sys
+from datetime import datetime
 from pathlib import Path
+
+import pytest
 
 # Add scripts to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))

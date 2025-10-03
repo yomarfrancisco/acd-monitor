@@ -8,12 +8,12 @@ This script runs the Spread v2 detector on real BTC snapshot data for calibratio
 import argparse
 import json
 import logging
+import os
 import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Any
-import os
+from typing import Any, Dict, List
 
 # Add src to sys.path for acdlib imports
 sys.path.append(str(Path(__file__).parent.parent.parent / "src"))
@@ -85,9 +85,7 @@ def load_snapshot_data(snapshot_path: str) -> Dict[str, Any]:
         "status": "available",
     }
 
-    logger.info(
-        f"Snapshot loaded: {snapshot_info['start_utc']} to {snapshot_info['end_utc']}"
-    )
+    logger.info(f"Snapshot loaded: {snapshot_info['start_utc']} to {snapshot_info['end_utc']}")
     logger.info(f"Venues: {venues}")
     logger.info(f"Coverage: {overlap_data.get('coverage', {})}")
 
@@ -232,9 +230,7 @@ def process_real_snapshots(
     return results
 
 
-def generate_real_calibration_report(
-    results: List[Dict[str, Any]], output_dir: Path
-) -> None:
+def generate_real_calibration_report(results: List[Dict[str, Any]], output_dir: Path) -> None:
     """
     Generate calibration report from real data results.
 
@@ -248,18 +244,10 @@ def generate_real_calibration_report(
     summary_data = {
         "total_snapshots": len(results),
         "successful_runs": len(
-            [
-                r
-                for r in results
-                if r.get("detector_results", {}).get("status") == "success"
-            ]
+            [r for r in results if r.get("detector_results", {}).get("status") == "success"]
         ),
         "failed_runs": len(
-            [
-                r
-                for r in results
-                if r.get("detector_results", {}).get("status") == "error"
-            ]
+            [r for r in results if r.get("detector_results", {}).get("status") == "error"]
         ),
         "load_errors": len([r for r in results if r.get("status") == "load_error"]),
         "snapshots": {},
@@ -270,12 +258,8 @@ def generate_real_calibration_report(
         window_name = result.get("window_name", "unknown")
         summary_data["snapshots"][window_name] = {
             "status": result.get("detector_results", {}).get("status", "unknown"),
-            "episodes_detected": result.get("detector_results", {}).get(
-                "episodes_detected", 0
-            ),
-            "delta_z_range": result.get("detector_results", {}).get(
-                "delta_z_range", [0, 0]
-            ),
+            "episodes_detected": result.get("detector_results", {}).get("episodes_detected", 0),
+            "delta_z_range": result.get("detector_results", {}).get("delta_z_range", [0, 0]),
             "p_value": result.get("detector_results", {}).get("p_value", 1.0),
             "start_utc": result.get("start_utc", "unknown"),
             "end_utc": result.get("end_utc", "unknown"),
@@ -313,9 +297,13 @@ def generate_real_calibration_report(
         report_content += f"### {result.get('window_name', 'unknown')}\n"
         report_content += f"- **Path**: {result.get('snapshot_path', 'unknown')}\n"
         report_content += f"- **Time Range**: {result.get('start_utc', 'unknown')} to {result.get('end_utc', 'unknown')}\n"
-        report_content += f"- **Status**: {result.get('detector_results', {}).get('status', 'unknown')}\n"
+        report_content += (
+            f"- **Status**: {result.get('detector_results', {}).get('status', 'unknown')}\n"
+        )
         report_content += f"- **Episodes Detected**: {result.get('detector_results', {}).get('episodes_detected', 0)}\n"
-        report_content += f"- **ΔZ Range**: {result.get('detector_results', {}).get('delta_z_range', [0, 0])}\n"
+        report_content += (
+            f"- **ΔZ Range**: {result.get('detector_results', {}).get('delta_z_range', [0, 0])}\n"
+        )
         report_content += (
             f"- **P-Value**: {result.get('detector_results', {}).get('p_value', 1.0)}\n"
         )
@@ -374,9 +362,7 @@ def main():
         default="calibration/spread/real_runs",
         help="Output directory for calibration results",
     )
-    parser.add_argument(
-        "--bootstrap-n", type=int, default=300, help="Bootstrap iterations"
-    )
+    parser.add_argument("--bootstrap-n", type=int, default=300, help="Bootstrap iterations")
     parser.add_argument("--verbose", action="store_true", help="Enable verbose logging")
     args = parser.parse_args()
 
@@ -417,9 +403,7 @@ def main():
     print(
         f"Failed runs: {len([r for r in results if r.get('detector_results', {}).get('status') == 'error'])}"
     )
-    print(
-        f"Load errors: {len([r for r in results if r.get('status') == 'load_error'])}"
-    )
+    print(f"Load errors: {len([r for r in results if r.get('status') == 'load_error'])}")
     print(f"Output directory: {output_dir}")
     print("=" * 60)
 

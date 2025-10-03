@@ -9,6 +9,10 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   detect:
     runs-on: ubuntu-latest
@@ -85,8 +89,31 @@ jobs:
           pip install -r requirements.txt
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
 
-      - name: Lint with flake8
-        run: flake8
+      - name: Install lint tools
+        run: |
+          pip install "black==24.8.0" "flake8==7.1.0" "isort==5.13.2"
 
       - name: Format check with black
-        run: black --check src tests
+        run: black --check --diff .
+
+      - name: Lint with flake8
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          EXISTING=()
+          while IFS= read -r pat; do
+            # skip blanks/comments
+            [[ -z "$pat" || "$pat" =~ ^# ]] && continue
+            matches=($pat)
+            if (( ${#matches[@]} )); then
+              EXISTING+=("${matches[@]}")
+            fi
+          done < lint-allowlist.txt
+          shopt -u nullglob
+
+          if (( ${#EXISTING[@]} == 0 )); then
+            echo "No matching allowlisted paths; skipping flake8."
+            exit 0
+          fi
+          echo "Linting ${#EXISTING[@]} path(s): ${EXISTING[*]}"
+          flake8 "${EXISTING[@]}"

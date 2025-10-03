@@ -1,0 +1,1320 @@
+{
+  "coinbase": {
+    "slice_00": {
+      "timestamp_analysis": {
+        "venue": "coinbase",
+        "slice": "slice_00",
+        "total_rows": 50,
+        "unique_timestamps": 32,
+        "duplicate_timestamps": 18,
+        "negative_time_diffs": 0,
+        "large_gaps": 0,
+        "time_span_seconds": 2.210491,
+        "mean_interval_ms": 45.11206122448979,
+        "std_interval_ms": 98.63288484501678,
+        "min_interval_ms": 0.0,
+        "max_interval_ms": 567.046,
+        "first_timestamp": "2025-10-02 15:45:40.492934+00:00",
+        "last_timestamp": "2025-10-02 15:45:42.703425+00:00",
+        "first_dt": "2025-10-02 15:45:40.492934+00:00",
+        "last_dt": "2025-10-02 15:45:42.703425+00:00"
+      },
+      "price_stats": {
+        "venue": "coinbase",
+        "slice": "slice_00",
+        "count": 50,
+        "mean": 119668.76999999997,
+        "std": 4.0963886534345475,
+        "min": 119654.36,
+        "max": 119671.69,
+        "range": 17.330000000001746,
+        "first_price": 119668.0,
+        "last_price": 119654.36,
+        "price_change": -13.639999999999418,
+        "mean_price_change": -0.27836734693876364,
+        "std_price_change": 1.7923947576066326,
+        "min_price_change": -5.809999999997672,
+        "max_price_change": 5.2299999999959255,
+        "zero_price_changes": 16,
+        "positive_changes": 15,
+        "negative_changes": 18,
+        "outliers_count": 1,
+        "outliers_percentage": 2.0,
+        "outlier_prices": [
+          119654.36
+        ]
+      },
+      "duplicate_analysis": {
+        "venue": "coinbase",
+        "slice": "slice_00",
+        "total_rows": 50,
+        "exact_duplicates": 0,
+        "timestamp_duplicates": 18,
+        "price_duplicates": 25,
+        "volume_duplicates": 11,
+        "consecutive_identical_prices": 16,
+        "zero_volume_trades": 0,
+        "unique_trades_estimate": "50",
+        "duplicate_rate": 0.0
+      },
+      "raw_rows": [
+        {
+          "row_index": 0,
+          "timestamp": 1759419940492,
+          "dt": "2025-10-02 15:45:40.492934+00:00",
+          "price": 119654.36,
+          "volume": 0.02507221,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 1,
+          "timestamp": 1759419940492,
+          "dt": "2025-10-02 15:45:40.492934+00:00",
+          "price": 119657.85,
+          "volume": 0.25069953,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 2,
+          "timestamp": 1759419940493,
+          "dt": "2025-10-02 15:45:40.493058+00:00",
+          "price": 119657.85,
+          "volume": 1.534e-05,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 3,
+          "timestamp": 1759419940497,
+          "dt": "2025-10-02 15:45:40.497073+00:00",
+          "price": 119657.99,
+          "volume": 8.36e-06,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 4,
+          "timestamp": 1759419940497,
+          "dt": "2025-10-02 15:45:40.497073+00:00",
+          "price": 119661.88,
+          "volume": 0.25070641,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 5,
+          "timestamp": 1759419940497,
+          "dt": "2025-10-02 15:45:40.497073+00:00",
+          "price": 119665.61,
+          "volume": 0.01087264,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 6,
+          "timestamp": 1759419940497,
+          "dt": "2025-10-02 15:45:40.497073+00:00",
+          "price": 119665.62,
+          "volume": 0.07731137,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 7,
+          "timestamp": 1759419940497,
+          "dt": "2025-10-02 15:45:40.497351+00:00",
+          "price": 119665.62,
+          "volume": 0.05676696,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 8,
+          "timestamp": 1759419940630,
+          "dt": "2025-10-02 15:45:40.630193+00:00",
+          "price": 119671.43,
+          "volume": 0.04,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 9,
+          "timestamp": 1759419940654,
+          "dt": "2025-10-02 15:45:40.654481+00:00",
+          "price": 119666.2,
+          "volume": 0.00253188,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 10,
+          "timestamp": 1759419940776,
+          "dt": "2025-10-02 15:45:40.776969+00:00",
+          "price": 119671.53,
+          "volume": 9.53e-06,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 11,
+          "timestamp": 1759419940776,
+          "dt": "2025-10-02 15:45:40.776969+00:00",
+          "price": 119671.0,
+          "volume": 0.11078256,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 12,
+          "timestamp": 1759419940854,
+          "dt": "2025-10-02 15:45:40.854808+00:00",
+          "price": 119670.0,
+          "volume": 0.02569013,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 13,
+          "timestamp": 1759419940854,
+          "dt": "2025-10-02 15:45:40.854808+00:00",
+          "price": 119671.52,
+          "volume": 9.87e-06,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 14,
+          "timestamp": 1759419940857,
+          "dt": "2025-10-02 15:45:40.857767+00:00",
+          "price": 119670.0,
+          "volume": 9.87e-06,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 15,
+          "timestamp": 1759419940886,
+          "dt": "2025-10-02 15:45:40.886840+00:00",
+          "price": 119670.0,
+          "volume": 0.0257,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 16,
+          "timestamp": 1759419940886,
+          "dt": "2025-10-02 15:45:40.886840+00:00",
+          "price": 119669.99,
+          "volume": 9.87e-06,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 17,
+          "timestamp": 1759419941036,
+          "dt": "2025-10-02 15:45:41.036110+00:00",
+          "price": 119671.51,
+          "volume": 9.87e-06,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 18,
+          "timestamp": 1759419941036,
+          "dt": "2025-10-02 15:45:41.036110+00:00",
+          "price": 119670.0,
+          "volume": 0.08672086,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 19,
+          "timestamp": 1759419941051,
+          "dt": "2025-10-02 15:45:41.051519+00:00",
+          "price": 119670.01,
+          "volume": 0.01318258,
+          "venue": "coinbase"
+        }
+      ]
+    },
+    "slice_01": {
+      "timestamp_analysis": {
+        "venue": "coinbase",
+        "slice": "slice_01",
+        "total_rows": 50,
+        "unique_timestamps": 27,
+        "duplicate_timestamps": 23,
+        "negative_time_diffs": 0,
+        "large_gaps": 0,
+        "time_span_seconds": 4.002001,
+        "mean_interval_ms": 81.67348979591836,
+        "std_interval_ms": 236.24685940453278,
+        "min_interval_ms": 0.0,
+        "max_interval_ms": 1196.2649999999999,
+        "first_timestamp": "2025-10-02 15:45:42.269242+00:00",
+        "last_timestamp": "2025-10-02 15:45:46.271243+00:00",
+        "first_dt": "2025-10-02 15:45:42.269242+00:00",
+        "last_dt": "2025-10-02 15:45:46.271243+00:00"
+      },
+      "price_stats": {
+        "venue": "coinbase",
+        "slice": "slice_01",
+        "count": 50,
+        "mean": 119670.48159999997,
+        "std": 3.8326833211218743,
+        "min": 119665.11,
+        "max": 119679.12,
+        "range": 14.009999999994761,
+        "first_price": 119679.12,
+        "last_price": 119671.68,
+        "price_change": -7.440000000002328,
+        "mean_price_change": -0.15183673469392506,
+        "std_price_change": 1.4460031804367637,
+        "min_price_change": -5.9799999999959255,
+        "max_price_change": 3.0,
+        "zero_price_changes": 18,
+        "positive_changes": 12,
+        "negative_changes": 19,
+        "outliers_count": 0,
+        "outliers_percentage": 0.0,
+        "outlier_prices": []
+      },
+      "duplicate_analysis": {
+        "venue": "coinbase",
+        "slice": "slice_01",
+        "total_rows": 50,
+        "exact_duplicates": 0,
+        "timestamp_duplicates": 23,
+        "price_duplicates": 29,
+        "volume_duplicates": 9,
+        "consecutive_identical_prices": 18,
+        "zero_volume_trades": 0,
+        "unique_trades_estimate": "50",
+        "duplicate_rate": 0.0
+      },
+      "raw_rows": [
+        {
+          "row_index": 0,
+          "timestamp": 1759419942269,
+          "dt": "2025-10-02 15:45:42.269242+00:00",
+          "price": 119671.68,
+          "volume": 5.695e-05,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 1,
+          "timestamp": 1759419942269,
+          "dt": "2025-10-02 15:45:42.269242+00:00",
+          "price": 119671.68,
+          "volume": 9.307e-05,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 2,
+          "timestamp": 1759419942269,
+          "dt": "2025-10-02 15:45:42.269242+00:00",
+          "price": 119671.66,
+          "volume": 9.668e-05,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 3,
+          "timestamp": 1759419942336,
+          "dt": "2025-10-02 15:45:42.336157+00:00",
+          "price": 119671.68,
+          "volume": 5.695e-05,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 4,
+          "timestamp": 1759419942336,
+          "dt": "2025-10-02 15:45:42.336157+00:00",
+          "price": 119671.68,
+          "volume": 1.16e-06,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 5,
+          "timestamp": 1759419942336,
+          "dt": "2025-10-02 15:45:42.336157+00:00",
+          "price": 119671.0,
+          "volume": 2.126e-05,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 6,
+          "timestamp": 1759419942336,
+          "dt": "2025-10-02 15:45:42.336157+00:00",
+          "price": 119671.0,
+          "volume": 0.14737609,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 7,
+          "timestamp": 1759419942341,
+          "dt": "2025-10-02 15:45:42.341161+00:00",
+          "price": 119671.01,
+          "volume": 9.307e-05,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 8,
+          "timestamp": 1759419942341,
+          "dt": "2025-10-02 15:45:42.341161+00:00",
+          "price": 119671.0,
+          "volume": 0.01084462,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 9,
+          "timestamp": 1759419942346,
+          "dt": "2025-10-02 15:45:42.346195+00:00",
+          "price": 119671.68,
+          "volume": 5.695e-05,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 10,
+          "timestamp": 1759419942346,
+          "dt": "2025-10-02 15:45:42.346195+00:00",
+          "price": 119671.0,
+          "volume": 0.06204837,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 11,
+          "timestamp": 1759419942354,
+          "dt": "2025-10-02 15:45:42.354105+00:00",
+          "price": 119668.0,
+          "volume": 0.00612553,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 12,
+          "timestamp": 1759419942357,
+          "dt": "2025-10-02 15:45:42.357281+00:00",
+          "price": 119668.0,
+          "volume": 0.00253614,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 13,
+          "timestamp": 1759419942360,
+          "dt": "2025-10-02 15:45:42.360984+00:00",
+          "price": 119668.0,
+          "volume": 0.00394475,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 14,
+          "timestamp": 1759419942364,
+          "dt": "2025-10-02 15:45:42.364330+00:00",
+          "price": 119668.0,
+          "volume": 5.692e-05,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 15,
+          "timestamp": 1759419942370,
+          "dt": "2025-10-02 15:45:42.370887+00:00",
+          "price": 119667.01,
+          "volume": 0.01229508,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 16,
+          "timestamp": 1759419942370,
+          "dt": "2025-10-02 15:45:42.370887+00:00",
+          "price": 119667.0,
+          "volume": 0.08743844,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 17,
+          "timestamp": 1759419942426,
+          "dt": "2025-10-02 15:45:42.426032+00:00",
+          "price": 119668.0,
+          "volume": 0.0257,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 18,
+          "timestamp": 1759419942646,
+          "dt": "2025-10-02 15:45:42.646819+00:00",
+          "price": 119669.99,
+          "volume": 8.357e-05,
+          "venue": "coinbase"
+        },
+        {
+          "row_index": 19,
+          "timestamp": 1759419942703,
+          "dt": "2025-10-02 15:45:42.703425+00:00",
+          "price": 119669.99,
+          "volume": 8.357e-05,
+          "venue": "coinbase"
+        }
+      ]
+    }
+  },
+  "kraken": {
+    "slice_00": {
+      "timestamp_analysis": {
+        "venue": "kraken",
+        "slice": "slice_00",
+        "total_rows": 50,
+        "unique_timestamps": 39,
+        "duplicate_timestamps": 11,
+        "negative_time_diffs": 0,
+        "large_gaps": 0,
+        "time_span_seconds": 5.41451,
+        "mean_interval_ms": 110.5002213877551,
+        "std_interval_ms": 211.46809042014556,
+        "min_interval_ms": 0.0,
+        "max_interval_ms": 1066.5006079999998,
+        "first_timestamp": "2025-10-02 00:00:00.094087168",
+        "last_timestamp": "2025-10-02 00:00:05.508598016",
+        "first_dt": "2025-10-02 00:00:00.094087168",
+        "last_dt": "2025-10-02 00:00:05.508598016"
+      },
+      "price_stats": {
+        "venue": "kraken",
+        "slice": "slice_00",
+        "count": 50,
+        "mean": 118621.766,
+        "std": 18.1829217674177,
+        "min": 118600.0,
+        "max": 118637.6,
+        "range": 37.60000000000582,
+        "first_price": 118600.0,
+        "last_price": 118637.5,
+        "price_change": 37.5,
+        "mean_price_change": 0.7653061224489796,
+        "std_price_change": 2.988655490514127,
+        "min_price_change": -0.10000000000582077,
+        "max_price_change": 12.5,
+        "zero_price_changes": 35,
+        "positive_changes": 9,
+        "negative_changes": 5,
+        "outliers_count": 0,
+        "outliers_percentage": 0.0,
+        "outlier_prices": []
+      },
+      "duplicate_analysis": {
+        "venue": "kraken",
+        "slice": "slice_00",
+        "total_rows": 50,
+        "exact_duplicates": 0,
+        "timestamp_duplicates": 11,
+        "price_duplicates": 44,
+        "volume_duplicates": 4,
+        "consecutive_identical_prices": 35,
+        "zero_volume_trades": 0,
+        "unique_trades_estimate": "50",
+        "duplicate_rate": 0.0
+      },
+      "raw_rows": [
+        {
+          "row_index": 0,
+          "timestamp": 1759363200094,
+          "dt": "2025-10-02 00:00:00.094087168",
+          "price": 118600.0,
+          "volume": 5.27e-05,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 1,
+          "timestamp": 1759363200094,
+          "dt": "2025-10-02 00:00:00.094087168",
+          "price": 118600.0,
+          "volume": 3.12e-05,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 2,
+          "timestamp": 1759363200119,
+          "dt": "2025-10-02 00:00:00.119140608",
+          "price": 118600.0,
+          "volume": 0.00033228,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 3,
+          "timestamp": 1759363200216,
+          "dt": "2025-10-02 00:00:00.216794368",
+          "price": 118600.0,
+          "volume": 0.00041535,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 4,
+          "timestamp": 1759363200220,
+          "dt": "2025-10-02 00:00:00.220969216",
+          "price": 118600.0,
+          "volume": 0.00022117,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 5,
+          "timestamp": 1759363200220,
+          "dt": "2025-10-02 00:00:00.220969216",
+          "price": 118600.0,
+          "volume": 0.00019418,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 6,
+          "timestamp": 1759363200242,
+          "dt": "2025-10-02 00:00:00.242087936",
+          "price": 118600.0,
+          "volume": 0.00016614,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 7,
+          "timestamp": 1759363200378,
+          "dt": "2025-10-02 00:00:00.378402560",
+          "price": 118600.0,
+          "volume": 8.39e-05,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 8,
+          "timestamp": 1759363200383,
+          "dt": "2025-10-02 00:00:00.383465472",
+          "price": 118600.0,
+          "volume": 0.00012461,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 9,
+          "timestamp": 1759363200403,
+          "dt": "2025-10-02 00:00:00.403716096",
+          "price": 118600.0,
+          "volume": 0.00363996,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 10,
+          "timestamp": 1759363200403,
+          "dt": "2025-10-02 00:00:00.403716096",
+          "price": 118600.0,
+          "volume": 0.00012375,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 11,
+          "timestamp": 1759363200403,
+          "dt": "2025-10-02 00:00:00.403716096",
+          "price": 118600.0,
+          "volume": 0.00043117,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 12,
+          "timestamp": 1759363200445,
+          "dt": "2025-10-02 00:00:00.445838080",
+          "price": 118600.0,
+          "volume": 8.369e-05,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 13,
+          "timestamp": 1759363200588,
+          "dt": "2025-10-02 00:00:00.588384",
+          "price": 118600.0,
+          "volume": 5e-05,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 14,
+          "timestamp": 1759363201654,
+          "dt": "2025-10-02 00:00:01.654884608",
+          "price": 118600.0,
+          "volume": 0.00023775,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 15,
+          "timestamp": 1759363201931,
+          "dt": "2025-10-02 00:00:01.931647744",
+          "price": 118600.0,
+          "volume": 0.00036718,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 16,
+          "timestamp": 1759363201990,
+          "dt": "2025-10-02 00:00:01.990778368",
+          "price": 118600.0,
+          "volume": 0.00210793,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 17,
+          "timestamp": 1759363202040,
+          "dt": "2025-10-02 00:00:02.040213760",
+          "price": 118600.0,
+          "volume": 0.00024921,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 18,
+          "timestamp": 1759363202085,
+          "dt": "2025-10-02 00:00:02.085393920",
+          "price": 118637.5,
+          "volume": 0.00043574,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 19,
+          "timestamp": 1759363202085,
+          "dt": "2025-10-02 00:00:02.085393920",
+          "price": 118637.4,
+          "volume": 5.268e-05,
+          "venue": "kraken"
+        }
+      ]
+    },
+    "slice_01": {
+      "timestamp_analysis": {
+        "venue": "kraken",
+        "slice": "slice_01",
+        "total_rows": 50,
+        "unique_timestamps": 40,
+        "duplicate_timestamps": 10,
+        "negative_time_diffs": 0,
+        "large_gaps": 1,
+        "time_span_seconds": 87.671444,
+        "mean_interval_ms": 1789.2131631020407,
+        "std_interval_ms": 2831.297573673605,
+        "min_interval_ms": 0.0,
+        "max_interval_ms": 16751.808256,
+        "first_timestamp": "2025-10-02 12:00:00.075388160",
+        "last_timestamp": "2025-10-02 12:01:27.746833152",
+        "first_dt": "2025-10-02 12:00:00.075388160",
+        "last_dt": "2025-10-02 12:01:27.746833152"
+      },
+      "price_stats": {
+        "venue": "kraken",
+        "slice": "slice_01",
+        "count": 50,
+        "mean": 118809.36600000001,
+        "std": 5.2070955435813815,
+        "min": 118800.1,
+        "max": 118812.3,
+        "range": 12.19999999999709,
+        "first_price": 118800.1,
+        "last_price": 118812.3,
+        "price_change": 12.19999999999709,
+        "mean_price_change": 0.24897959183667528,
+        "std_price_change": 1.7252178151718307,
+        "min_price_change": -0.10000000000582077,
+        "max_price_change": 12.19999999999709,
+        "zero_price_changes": 44,
+        "positive_changes": 3,
+        "negative_changes": 2,
+        "outliers_count": 0,
+        "outliers_percentage": 0.0,
+        "outlier_prices": []
+      },
+      "duplicate_analysis": {
+        "venue": "kraken",
+        "slice": "slice_01",
+        "total_rows": 50,
+        "exact_duplicates": 1,
+        "timestamp_duplicates": 10,
+        "price_duplicates": 47,
+        "volume_duplicates": 5,
+        "consecutive_identical_prices": 44,
+        "zero_volume_trades": 0,
+        "unique_trades_estimate": "49",
+        "duplicate_rate": 2.0
+      },
+      "raw_rows": [
+        {
+          "row_index": 0,
+          "timestamp": 1759406400075,
+          "dt": "2025-10-02 12:00:00.075388160",
+          "price": 118800.1,
+          "volume": 0.00016586,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 1,
+          "timestamp": 1759406400188,
+          "dt": "2025-10-02 12:00:00.188664320",
+          "price": 118800.1,
+          "volume": 0.00041466,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 2,
+          "timestamp": 1759406400245,
+          "dt": "2025-10-02 12:00:00.245528320",
+          "price": 118800.1,
+          "volume": 8.355e-05,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 3,
+          "timestamp": 1759406400410,
+          "dt": "2025-10-02 12:00:00.410836992",
+          "price": 118800.1,
+          "volume": 0.00418249,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 4,
+          "timestamp": 1759406402518,
+          "dt": "2025-10-02 12:00:02.518034432",
+          "price": 118800.1,
+          "volume": 0.00491969,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 5,
+          "timestamp": 1759406404293,
+          "dt": "2025-10-02 12:00:04.293658368",
+          "price": 118800.1,
+          "volume": 0.00354689,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 6,
+          "timestamp": 1759406404293,
+          "dt": "2025-10-02 12:00:04.293658368",
+          "price": 118800.1,
+          "volume": 0.00408231,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 7,
+          "timestamp": 1759406404293,
+          "dt": "2025-10-02 12:00:04.293658368",
+          "price": 118800.1,
+          "volume": 0.02032816,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 8,
+          "timestamp": 1759406404293,
+          "dt": "2025-10-02 12:00:04.293658368",
+          "price": 118800.1,
+          "volume": 0.007846,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 9,
+          "timestamp": 1759406404293,
+          "dt": "2025-10-02 12:00:04.293658368",
+          "price": 118800.1,
+          "volume": 0.001,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 10,
+          "timestamp": 1759406404293,
+          "dt": "2025-10-02 12:00:04.293658368",
+          "price": 118800.1,
+          "volume": 0.02851182,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 11,
+          "timestamp": 1759406404293,
+          "dt": "2025-10-02 12:00:04.293658368",
+          "price": 118800.1,
+          "volume": 0.001,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 12,
+          "timestamp": 1759406404856,
+          "dt": "2025-10-02 12:00:04.856178944",
+          "price": 118812.3,
+          "volume": 0.00106717,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 13,
+          "timestamp": 1759406405094,
+          "dt": "2025-10-02 12:00:05.094648064",
+          "price": 118812.3,
+          "volume": 9.121e-05,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 14,
+          "timestamp": 1759406405786,
+          "dt": "2025-10-02 12:00:05.786219264",
+          "price": 118812.3,
+          "volume": 0.00016751,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 15,
+          "timestamp": 1759406405816,
+          "dt": "2025-10-02 12:00:05.816203264",
+          "price": 118812.3,
+          "volume": 0.00062506,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 16,
+          "timestamp": 1759406407705,
+          "dt": "2025-10-02 12:00:07.705050112",
+          "price": 118812.3,
+          "volume": 0.00082931,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 17,
+          "timestamp": 1759406409063,
+          "dt": "2025-10-02 12:00:09.063419904",
+          "price": 118812.3,
+          "volume": 0.0001244,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 18,
+          "timestamp": 1759406409888,
+          "dt": "2025-10-02 12:00:09.888005632",
+          "price": 118812.3,
+          "volume": 0.00031338,
+          "venue": "kraken"
+        },
+        {
+          "row_index": 19,
+          "timestamp": 1759406412301,
+          "dt": "2025-10-02 12:00:12.301885952",
+          "price": 118812.3,
+          "volume": 8.292e-05,
+          "venue": "kraken"
+        }
+      ]
+    }
+  },
+  "binance": {
+    "slice_00": {
+      "timestamp_analysis": {
+        "venue": "binance",
+        "slice": "slice_00",
+        "total_rows": 50,
+        "unique_timestamps": 25,
+        "duplicate_timestamps": 25,
+        "negative_time_diffs": 0,
+        "large_gaps": 0,
+        "time_span_seconds": 1.32,
+        "mean_interval_ms": 26.93877551020408,
+        "std_interval_ms": 47.31076699303645,
+        "min_interval_ms": 0.0,
+        "max_interval_ms": 217.0,
+        "first_timestamp": "2025-10-02 00:00:00.089000",
+        "last_timestamp": "2025-10-02 00:00:01.409000",
+        "first_dt": "2025-10-02 00:00:00.089000",
+        "last_dt": "2025-10-02 00:00:01.409000"
+      },
+      "price_stats": {
+        "venue": "binance",
+        "slice": "slice_00",
+        "count": 50,
+        "mean": 118596.1008,
+        "std": 0.8549803272587212,
+        "min": 118594.98,
+        "max": 118598.87,
+        "range": 3.889999999999418,
+        "first_price": 118594.99,
+        "last_price": 118598.87,
+        "price_change": 3.8799999999901047,
+        "mean_price_change": 0.07918367346918581,
+        "std_price_change": 0.1746814796300821,
+        "min_price_change": -0.010000000009313226,
+        "max_price_change": 0.8600000000005821,
+        "zero_price_changes": 16,
+        "positive_changes": 30,
+        "negative_changes": 3,
+        "outliers_count": 1,
+        "outliers_percentage": 2.0,
+        "outlier_prices": [
+          118598.87
+        ]
+      },
+      "duplicate_analysis": {
+        "venue": "binance",
+        "slice": "slice_00",
+        "total_rows": 50,
+        "exact_duplicates": 2,
+        "timestamp_duplicates": 25,
+        "price_duplicates": 21,
+        "volume_duplicates": 15,
+        "consecutive_identical_prices": 16,
+        "zero_volume_trades": 0,
+        "unique_trades_estimate": "48",
+        "duplicate_rate": 4.0
+      },
+      "raw_rows": [
+        {
+          "row_index": 0,
+          "timestamp": 1759363200089,
+          "dt": "2025-10-02 00:00:00.089000",
+          "price": 118594.99,
+          "volume": 8e-05,
+          "venue": "binance"
+        },
+        {
+          "row_index": 1,
+          "timestamp": 1759363200241,
+          "dt": "2025-10-02 00:00:00.241000",
+          "price": 118594.98,
+          "volume": 0.00143,
+          "venue": "binance"
+        },
+        {
+          "row_index": 2,
+          "timestamp": 1759363200321,
+          "dt": "2025-10-02 00:00:00.321000",
+          "price": 118594.99,
+          "volume": 0.01283,
+          "venue": "binance"
+        },
+        {
+          "row_index": 3,
+          "timestamp": 1759363200321,
+          "dt": "2025-10-02 00:00:00.321000",
+          "price": 118595.0,
+          "volume": 0.00091,
+          "venue": "binance"
+        },
+        {
+          "row_index": 4,
+          "timestamp": 1759363200321,
+          "dt": "2025-10-02 00:00:00.321000",
+          "price": 118595.01,
+          "volume": 0.0001,
+          "venue": "binance"
+        },
+        {
+          "row_index": 5,
+          "timestamp": 1759363200321,
+          "dt": "2025-10-02 00:00:00.321000",
+          "price": 118595.37,
+          "volume": 0.00018,
+          "venue": "binance"
+        },
+        {
+          "row_index": 6,
+          "timestamp": 1759363200321,
+          "dt": "2025-10-02 00:00:00.321000",
+          "price": 118595.42,
+          "volume": 0.0051,
+          "venue": "binance"
+        },
+        {
+          "row_index": 7,
+          "timestamp": 1759363200321,
+          "dt": "2025-10-02 00:00:00.321000",
+          "price": 118595.43,
+          "volume": 0.0001,
+          "venue": "binance"
+        },
+        {
+          "row_index": 8,
+          "timestamp": 1759363200321,
+          "dt": "2025-10-02 00:00:00.321000",
+          "price": 118595.45,
+          "volume": 0.002,
+          "venue": "binance"
+        },
+        {
+          "row_index": 9,
+          "timestamp": 1759363200422,
+          "dt": "2025-10-02 00:00:00.422000",
+          "price": 118595.79,
+          "volume": 0.00059,
+          "venue": "binance"
+        },
+        {
+          "row_index": 10,
+          "timestamp": 1759363200450,
+          "dt": "2025-10-02 00:00:00.450000",
+          "price": 118595.8,
+          "volume": 0.00351,
+          "venue": "binance"
+        },
+        {
+          "row_index": 11,
+          "timestamp": 1759363200453,
+          "dt": "2025-10-02 00:00:00.453000",
+          "price": 118595.8,
+          "volume": 0.00046,
+          "venue": "binance"
+        },
+        {
+          "row_index": 12,
+          "timestamp": 1759363200489,
+          "dt": "2025-10-02 00:00:00.489000",
+          "price": 118595.8,
+          "volume": 0.00421,
+          "venue": "binance"
+        },
+        {
+          "row_index": 13,
+          "timestamp": 1759363200511,
+          "dt": "2025-10-02 00:00:00.511000",
+          "price": 118595.8,
+          "volume": 0.00042,
+          "venue": "binance"
+        },
+        {
+          "row_index": 14,
+          "timestamp": 1759363200627,
+          "dt": "2025-10-02 00:00:00.627000",
+          "price": 118595.8,
+          "volume": 0.00172,
+          "venue": "binance"
+        },
+        {
+          "row_index": 15,
+          "timestamp": 1759363200634,
+          "dt": "2025-10-02 00:00:00.634000",
+          "price": 118595.8,
+          "volume": 5e-05,
+          "venue": "binance"
+        },
+        {
+          "row_index": 16,
+          "timestamp": 1759363200678,
+          "dt": "2025-10-02 00:00:00.678000",
+          "price": 118595.79,
+          "volume": 0.00087,
+          "venue": "binance"
+        },
+        {
+          "row_index": 17,
+          "timestamp": 1759363200693,
+          "dt": "2025-10-02 00:00:00.693000",
+          "price": 118595.8,
+          "volume": 0.02689,
+          "venue": "binance"
+        },
+        {
+          "row_index": 18,
+          "timestamp": 1759363200701,
+          "dt": "2025-10-02 00:00:00.701000",
+          "price": 118595.79,
+          "volume": 7e-05,
+          "venue": "binance"
+        },
+        {
+          "row_index": 19,
+          "timestamp": 1759363200816,
+          "dt": "2025-10-02 00:00:00.816000",
+          "price": 118595.79,
+          "volume": 0.02,
+          "venue": "binance"
+        }
+      ]
+    },
+    "slice_01": {
+      "timestamp_analysis": {
+        "venue": "binance",
+        "slice": "slice_01",
+        "total_rows": 50,
+        "unique_timestamps": 28,
+        "duplicate_timestamps": 22,
+        "negative_time_diffs": 0,
+        "large_gaps": 0,
+        "time_span_seconds": 3.468,
+        "mean_interval_ms": 70.77551020408163,
+        "std_interval_ms": 104.22676905553152,
+        "min_interval_ms": 0.0,
+        "max_interval_ms": 405.0,
+        "first_timestamp": "2025-10-02 12:00:00.490000",
+        "last_timestamp": "2025-10-02 12:00:03.958000",
+        "first_dt": "2025-10-02 12:00:00.490000",
+        "last_dt": "2025-10-02 12:00:03.958000"
+      },
+      "price_stats": {
+        "venue": "binance",
+        "slice": "slice_01",
+        "count": 50,
+        "mean": 118765.72179999998,
+        "std": 0.0038418745404470694,
+        "min": 118765.72,
+        "max": 118765.73,
+        "range": 0.00999999999476131,
+        "first_price": 118765.72,
+        "last_price": 118765.72,
+        "price_change": 0.0,
+        "mean_price_change": 0.0,
+        "std_price_change": 0.004517539512159658,
+        "min_price_change": -0.00999999999476131,
+        "max_price_change": 0.00999999999476131,
+        "zero_price_changes": 39,
+        "positive_changes": 5,
+        "negative_changes": 5,
+        "outliers_count": 0,
+        "outliers_percentage": 0.0,
+        "outlier_prices": []
+      },
+      "duplicate_analysis": {
+        "venue": "binance",
+        "slice": "slice_01",
+        "total_rows": 50,
+        "exact_duplicates": 22,
+        "timestamp_duplicates": 22,
+        "price_duplicates": 48,
+        "volume_duplicates": 26,
+        "consecutive_identical_prices": 39,
+        "zero_volume_trades": 0,
+        "unique_trades_estimate": "28",
+        "duplicate_rate": 44.0
+      },
+      "raw_rows": [
+        {
+          "row_index": 0,
+          "timestamp": 1759406400490,
+          "dt": "2025-10-02 12:00:00.490000",
+          "price": 118765.72,
+          "volume": 0.01075,
+          "venue": "binance"
+        },
+        {
+          "row_index": 1,
+          "timestamp": 1759406400598,
+          "dt": "2025-10-02 12:00:00.598000",
+          "price": 118765.73,
+          "volume": 5e-05,
+          "venue": "binance"
+        },
+        {
+          "row_index": 2,
+          "timestamp": 1759406400800,
+          "dt": "2025-10-02 12:00:00.800000",
+          "price": 118765.72,
+          "volume": 0.00103,
+          "venue": "binance"
+        },
+        {
+          "row_index": 3,
+          "timestamp": 1759406400831,
+          "dt": "2025-10-02 12:00:00.831000",
+          "price": 118765.72,
+          "volume": 0.00041,
+          "venue": "binance"
+        },
+        {
+          "row_index": 4,
+          "timestamp": 1759406400975,
+          "dt": "2025-10-02 12:00:00.975000",
+          "price": 118765.73,
+          "volume": 0.00025,
+          "venue": "binance"
+        },
+        {
+          "row_index": 5,
+          "timestamp": 1759406401007,
+          "dt": "2025-10-02 12:00:01.007000",
+          "price": 118765.73,
+          "volume": 0.00203,
+          "venue": "binance"
+        },
+        {
+          "row_index": 6,
+          "timestamp": 1759406401037,
+          "dt": "2025-10-02 12:00:01.037000",
+          "price": 118765.72,
+          "volume": 0.01343,
+          "venue": "binance"
+        },
+        {
+          "row_index": 7,
+          "timestamp": 1759406401165,
+          "dt": "2025-10-02 12:00:01.165000",
+          "price": 118765.73,
+          "volume": 0.00084,
+          "venue": "binance"
+        },
+        {
+          "row_index": 8,
+          "timestamp": 1759406401303,
+          "dt": "2025-10-02 12:00:01.303000",
+          "price": 118765.72,
+          "volume": 0.0064,
+          "venue": "binance"
+        },
+        {
+          "row_index": 9,
+          "timestamp": 1759406401531,
+          "dt": "2025-10-02 12:00:01.531000",
+          "price": 118765.72,
+          "volume": 0.00885,
+          "venue": "binance"
+        },
+        {
+          "row_index": 10,
+          "timestamp": 1759406401688,
+          "dt": "2025-10-02 12:00:01.688000",
+          "price": 118765.73,
+          "volume": 0.00105,
+          "venue": "binance"
+        },
+        {
+          "row_index": 11,
+          "timestamp": 1759406402093,
+          "dt": "2025-10-02 12:00:02.093000",
+          "price": 118765.73,
+          "volume": 0.00024,
+          "venue": "binance"
+        },
+        {
+          "row_index": 12,
+          "timestamp": 1759406402195,
+          "dt": "2025-10-02 12:00:02.195000",
+          "price": 118765.72,
+          "volume": 0.01993,
+          "venue": "binance"
+        },
+        {
+          "row_index": 13,
+          "timestamp": 1759406402255,
+          "dt": "2025-10-02 12:00:02.255000",
+          "price": 118765.73,
+          "volume": 0.00025,
+          "venue": "binance"
+        },
+        {
+          "row_index": 14,
+          "timestamp": 1759406402309,
+          "dt": "2025-10-02 12:00:02.309000",
+          "price": 118765.73,
+          "volume": 0.00013,
+          "venue": "binance"
+        },
+        {
+          "row_index": 15,
+          "timestamp": 1759406402569,
+          "dt": "2025-10-02 12:00:02.569000",
+          "price": 118765.73,
+          "volume": 8e-05,
+          "venue": "binance"
+        },
+        {
+          "row_index": 16,
+          "timestamp": 1759406402760,
+          "dt": "2025-10-02 12:00:02.760000",
+          "price": 118765.72,
+          "volume": 7e-05,
+          "venue": "binance"
+        },
+        {
+          "row_index": 17,
+          "timestamp": 1759406403012,
+          "dt": "2025-10-02 12:00:03.012000",
+          "price": 118765.72,
+          "volume": 0.00059,
+          "venue": "binance"
+        },
+        {
+          "row_index": 18,
+          "timestamp": 1759406403388,
+          "dt": "2025-10-02 12:00:03.388000",
+          "price": 118765.72,
+          "volume": 0.00442,
+          "venue": "binance"
+        },
+        {
+          "row_index": 19,
+          "timestamp": 1759406403407,
+          "dt": "2025-10-02 12:00:03.407000",
+          "price": 118765.72,
+          "volume": 0.00111,
+          "venue": "binance"
+        }
+      ]
+    }
+  }
+}

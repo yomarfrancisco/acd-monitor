@@ -8,11 +8,12 @@ Implements proper lead-lag analysis with:
 - Multiple horizon support
 """
 
+import logging
+from typing import Dict, List, Tuple
+
 import numpy as np
 import pandas as pd
 from statsmodels.regression.linear_model import OLS
-import logging
-from typing import Dict, List, Tuple
 
 logger = logging.getLogger(__name__)
 

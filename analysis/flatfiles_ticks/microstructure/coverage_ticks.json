@@ -1,0 +1,71 @@
+{
+  "venue_gaps": {
+    "BINANCE": {
+      "avg_gap_seconds": 2.942688237440701,
+      "median_gap_seconds": 2.0,
+      "max_gap_seconds": 3218.0,
+      "gap_std": 12.761282974139013,
+      "total_observations": 205526
+    },
+    "BITGET": {
+      "avg_gap_seconds": 2.942688237440701,
+      "median_gap_seconds": 2.0,
+      "max_gap_seconds": 3218.0,
+      "gap_std": 12.761282974139013,
+      "total_observations": 205526
+    },
+    "BYBITSPOT": {
+      "avg_gap_seconds": 3.6179799478356585,
+      "median_gap_seconds": 2.0,
+      "max_gap_seconds": 86404.0,
+      "gap_std": 211.79331419654488,
+      "total_observations": 167165
+    },
+    "COINBASE": {
+      "avg_gap_seconds": 2.942688237440701,
+      "median_gap_seconds": 2.0,
+      "max_gap_seconds": 3218.0,
+      "gap_std": 12.761282974139013,
+      "total_observations": 205526
+    }
+  },
+  "cross_venue_overlap": {
+    "BINANCE_BITGET": {
+      "overlap_fraction": 1.0,
+      "common_seconds": 205526,
+      "venue1_seconds": 205526,
+      "venue2_seconds": 205526
+    },
+    "BINANCE_BYBITSPOT": {
+      "overlap_fraction": 1.0,
+      "common_seconds": 167165,
+      "venue1_seconds": 205526,
+      "venue2_seconds": 167165
+    },
+    "BINANCE_COINBASE": {
+      "overlap_fraction": 1.0,
+      "common_seconds": 205526,
+      "venue1_seconds": 205526,
+      "venue2_seconds": 205526
+    },
+    "BITGET_BYBITSPOT": {
+      "overlap_fraction": 1.0,
+      "common_seconds": 167165,
+      "venue1_seconds": 205526,
+      "venue2_seconds": 167165
+    },
+    "BITGET_COINBASE": {
+      "overlap_fraction": 1.0,
+      "common_seconds": 205526,
+      "venue1_seconds": 205526,
+      "venue2_seconds": 205526
+    },
+    "BYBITSPOT_COINBASE": {
+      "overlap_fraction": 1.0,
+      "common_seconds": 167165,
+      "venue1_seconds": 167165,
+      "venue2_seconds": 205526
+    }
+  },
+  "summary": {}
+}

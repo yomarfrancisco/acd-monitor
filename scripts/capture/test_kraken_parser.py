@@ -5,10 +5,11 @@ Tests the hardened Kraken WebSocket message parser
 """
 
 import json
-import pandas as pd
-from datetime import datetime, timezone
-import sys
 import os
+import sys
+from datetime import datetime, timezone
+
+import pandas as pd
 
 # Add the capture directory to path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))

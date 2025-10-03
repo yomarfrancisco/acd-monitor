@@ -4,10 +4,11 @@ Schema Validator for Enhanced Metrics
 Validates data structure before processing enhanced metrics
 """
 
-import pandas as pd
-import numpy as np
-from typing import Dict, List, Any, Tuple
 import logging
+from typing import Any, Dict, List, Tuple
+
+import numpy as np
+import pandas as pd
 
 logger = logging.getLogger(__name__)
 
@@ -30,9 +31,7 @@ class SchemaValidator:
     # Derived columns (computed on write)
     DERIVED_COLUMNS = ["mid_px", "spread_bps", "imbalance"]
 
-    def validate_schema(
-        self, data: Dict[str, pd.DataFrame]
-    ) -> Tuple[bool, Dict[str, Any]]:
+    def validate_schema(self, data: Dict[str, pd.DataFrame]) -> Tuple[bool, Dict[str, Any]]:
         """Validate schema for enhanced metrics processing"""
 
         if not data:
@@ -81,9 +80,7 @@ class SchemaValidator:
             "schema_status": schema_status,
             "enhanced_metrics": enhanced_metrics_available,
             "total_venues": len(data),
-            "complete_venues": sum(
-                1 for v in venue_results.values() if v["status"] == "complete"
-            ),
+            "complete_venues": sum(1 for v in venue_results.values() if v["status"] == "complete"),
             "missing_fields": list(missing_fields),
             "venue_details": venue_results,
         }

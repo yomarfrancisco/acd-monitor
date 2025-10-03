@@ -22,8 +22,8 @@ from datetime import datetime
 # Add the src directory to the path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
 
-from agent.providers.offline_mock import OfflineMockProvider
 from agent.bundle_generator import ACDBundleGenerator
+from agent.providers.offline_mock import OfflineMockProvider
 
 
 class ExchangeOpsQueryTester:

@@ -134,17 +134,22 @@ jobs:
     - name: "Diagnostic: Environment and S3 connectivity test"
       shell: bash
       run: |
+        set -eu   # no pipefail for this diag step
         echo "=== DIAGNOSTIC: Environment and S3 connectivity ==="
         echo "DATE: ${{ env.DATE }}"
         echo "BUCKET: ${{ env.ACD_S3_BUCKET }}"
         echo "WAVE1_PREFIX: $WAVE1_PREFIX"
-        echo "=== Testing S3 bucket root ==="
-        aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/" | head -5
-        echo "=== Testing canonical data for ${{ env.DATE }} ==="
-        aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/canonical/${{ env.DATE }}/btc_usd/" || echo "Canonical BTC data not found"
-        echo "=== Testing Wave-1 directory for ${{ env.DATE }} ==="
-        aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/analysis/${{ env.DATE }}/wave1/" || echo "Wave-1 directory not found"
-        echo "=== DIAGNOSTIC COMPLETE ==="
+
+        if ! aws s3 ls "s3://${{ env.ACD_S3_BUCKET }}/" --human-readable --summarize \
+             > /tmp/s3_root.txt 2>&1; then
+          echo "[warn] s3 root listing failed (non-fatal)"
+          cat /tmp/s3_root.txt || true
+        else
+          head -n 100 /tmp/s3_root.txt || true
+        fi
+
+        # never fail from diagnostics
+        true
 
     - name: Pre-validation S3 listing (Wave-1)
       shell: bash

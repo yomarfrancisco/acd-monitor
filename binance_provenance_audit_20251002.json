@@ -1,0 +1,200 @@
+{
+  "audit_date": "20251002",
+  "audit_timestamp": "2025-10-02T16:58:22.159026+00:00",
+  "binance_slices": {
+    "slice_00": {
+      "provenance_metadata": {
+        "slice": "slice_00",
+        "provenance_flags": {
+          "data_source": "unknown",
+          "provenance": "REAL",
+          "synthetic": false,
+          "fallback": false,
+          "real": true
+        },
+        "api_indicators": {
+          "has_http_calls": false,
+          "has_websocket": false,
+          "has_trades_endpoint": false,
+          "has_binance_api": true,
+          "log_length": 89,
+          "has_timestamps": true
+        },
+        "manifest_timestamps": {
+          "start_time": "2025-10-02T00:00:00+00:00",
+          "end_time": "2025-10-02T00:15:00+00:00",
+          "timestamp": "2025-10-02T15:46:01.938953+00:00",
+          "msgs": 1000,
+          "parse_rate": 1.0
+        },
+        "capture_log_preview": "Reality probe capture log\nVenue: binance\nSlice: slice_00\nMessages: 1000\nProvenance: REAL\n"
+      },
+      "temporal_patterns": {
+        "slice": "slice_00",
+        "temporal_analysis": {
+          "total_rows": 50,
+          "time_span_seconds": 1.32,
+          "mean_interval_ms": 26.93877551020408,
+          "std_interval_ms": 46.825515529709584,
+          "first_timestamp": "2025-10-02T00:00:00.089000",
+          "last_timestamp": "2025-10-02T00:00:01.409000"
+        },
+        "synthetic_indicators": {
+          "regular_intervals": "False",
+          "perfect_1s_spacing": false,
+          "high_duplicate_ratio": "False",
+          "geometric_brownian": true,
+          "no_api_traces": true,
+          "synthetic_score": 15
+        },
+        "duplicate_analysis": {
+          "exact_duplicates": 2,
+          "timestamp_duplicates": 25,
+          "price_duplicates": 21,
+          "duplicate_ratio": 0.04
+        }
+      },
+      "price_sanity": {
+        "slice": "slice_00",
+        "price_analysis": {
+          "mean": 118596.1008,
+          "std": 0.8549803272587212,
+          "min": 118594.98,
+          "max": 118598.87,
+          "range": 3.889999999999418,
+          "first_price": 118594.99,
+          "last_price": 118598.87,
+          "price_drift": 3.8799999999901047
+        },
+        "sanity_bounds": {
+          "below_50k": "0",
+          "above_500k": "0",
+          "sanity_violations": "0"
+        },
+        "outliers_3sigma": 1,
+        "outlier_ratio": 0.02
+      },
+      "consistency_check": {
+        "consistency_check": "pending_reference_data",
+        "deviations": {}
+      },
+      "timeline": {
+        "slice": "slice_00",
+        "verdict": "INDETERMINATE",
+        "confidence": "LOW",
+        "evidence": {
+          "synthetic_score": 15,
+          "duplicate_ratio": 0.04,
+          "has_api_traces": false,
+          "regular_intervals": "False",
+          "perfect_1s_spacing": false,
+          "high_duplicates": false,
+          "geometric_brownian": true
+        },
+        "timestamp_range": "2025-10-02T00:00:00.089000",
+        "price_mean": 118596.1008,
+        "total_rows": 50
+      }
+    },
+    "slice_01": {
+      "provenance_metadata": {
+        "slice": "slice_01",
+        "provenance_flags": {
+          "data_source": "unknown",
+          "provenance": "REAL",
+          "synthetic": false,
+          "fallback": false,
+          "real": true
+        },
+        "api_indicators": {
+          "has_http_calls": false,
+          "has_websocket": false,
+          "has_trades_endpoint": false,
+          "has_binance_api": true,
+          "log_length": 89,
+          "has_timestamps": true
+        },
+        "manifest_timestamps": {
+          "start_time": "2025-10-02T12:00:00+00:00",
+          "end_time": "2025-10-02T12:15:00+00:00",
+          "timestamp": "2025-10-02T15:46:04.529660+00:00",
+          "msgs": 1000,
+          "parse_rate": 1.0
+        },
+        "capture_log_preview": "Reality probe capture log\nVenue: binance\nSlice: slice_01\nMessages: 1000\nProvenance: REAL\n"
+      },
+      "temporal_patterns": {
+        "slice": "slice_01",
+        "temporal_analysis": {
+          "total_rows": 50,
+          "time_span_seconds": 3.468,
+          "mean_interval_ms": 70.77551020408163,
+          "std_interval_ms": 103.15774829310185,
+          "first_timestamp": "2025-10-02T12:00:00.490000",
+          "last_timestamp": "2025-10-02T12:00:03.958000"
+        },
+        "synthetic_indicators": {
+          "regular_intervals": "False",
+          "perfect_1s_spacing": false,
+          "high_duplicate_ratio": "True",
+          "geometric_brownian": true,
+          "no_api_traces": true,
+          "synthetic_score": 45
+        },
+        "duplicate_analysis": {
+          "exact_duplicates": 22,
+          "timestamp_duplicates": 22,
+          "price_duplicates": 48,
+          "duplicate_ratio": 0.44
+        }
+      },
+      "price_sanity": {
+        "slice": "slice_01",
+        "price_analysis": {
+          "mean": 118765.72179999998,
+          "std": 0.0038418745404470694,
+          "min": 118765.72,
+          "max": 118765.73,
+          "range": 0.00999999999476131,
+          "first_price": 118765.72,
+          "last_price": 118765.72,
+          "price_drift": 0.0
+        },
+        "sanity_bounds": {
+          "below_50k": "0",
+          "above_500k": "0",
+          "sanity_violations": "0"
+        },
+        "outliers_3sigma": 0,
+        "outlier_ratio": 0.0
+      },
+      "consistency_check": {
+        "consistency_check": "pending_reference_data",
+        "deviations": {}
+      },
+      "timeline": {
+        "slice": "slice_01",
+        "verdict": "LIKELY_SYNTHETIC",
+        "confidence": "MEDIUM",
+        "evidence": {
+          "synthetic_score": 45,
+          "duplicate_ratio": 0.44,
+          "has_api_traces": false,
+          "regular_intervals": "False",
+          "perfect_1s_spacing": false,
+          "high_duplicates": true,
+          "geometric_brownian": true
+        },
+        "timestamp_range": "2025-10-02T12:00:00.490000",
+        "price_mean": 118765.72179999998,
+        "total_rows": 50
+      }
+    }
+  },
+  "summary": {
+    "total_slices": 2,
+    "synthetic_slices": 0,
+    "real_slices": 0,
+    "indeterminate_slices": 1
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "ts": "2025-10-03T18:14:39.726912",
+  "rows": 0,
+  "pairs_done": 0,
+  "phase": "analyzed_BITGET",
+  "meta": {
+    "job": "wash-screens",
+    "args": {
+      "date": "20250925",
+      "venues": "BINANCE,COINBASE,BYBITSPOT,BITGET",
+      "out": "analysis/wash_screens"
+    }
+  },
+  "venue_done": "BITGET"
+}

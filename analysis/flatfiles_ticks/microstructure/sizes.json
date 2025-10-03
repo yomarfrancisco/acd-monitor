@@ -1,0 +1,93 @@
+{
+  "venue_distributions": {
+    "BINANCE": {
+      "mean_size": 0.3076550036005177,
+      "median_size": 0.01628,
+      "std_size": 1.5111164557728607,
+      "p95_size": 1.27995,
+      "gini_coefficient": 0.8781916862931782,
+      "total_observations": 205526,
+      "p10": 0.00049,
+      "p25": 0.00235,
+      "p50": 0.01628,
+      "p75": 0.1257775,
+      "p90": 0.609425,
+      "p95": 1.27995
+    },
+    "BITGET": {
+      "mean_size": 0.061159213666397434,
+      "median_size": 0.008791,
+      "std_size": 0.30048320263079953,
+      "p95_size": 0.25129725,
+      "gini_coefficient": 0.847215566979416,
+      "total_observations": 205526,
+      "p10": 0.000691,
+      "p25": 0.002547,
+      "p50": 0.008791,
+      "p75": 0.024412749999999997,
+      "p90": 0.11807699999999999,
+      "p95": 0.25129725
+    },
+    "BYBITSPOT": {
+      "mean_size": 0.2761606667723507,
+      "median_size": 0.011063,
+      "std_size": 0.8434197755655266,
+      "p95_size": 1.1971715999999981,
+      "gini_coefficient": 0.816630741788348,
+      "total_observations": 167165,
+      "p10": 0.000119,
+      "p25": 0.001041,
+      "p50": 0.011063,
+      "p75": 0.286575,
+      "p90": 0.7718044000000001,
+      "p95": 1.1971715999999981
+    },
+    "COINBASE": {
+      "mean_size": 0.13257526652384616,
+      "median_size": 0.004138795,
+      "std_size": 0.5979654790151758,
+      "p95_size": 0.61411191,
+      "gini_coefficient": 0.8836603300014535,
+      "total_observations": 205526,
+      "p10": 0.00012938,
+      "p25": 0.00065009,
+      "p50": 0.004138795,
+      "p75": 0.0499999975,
+      "p90": 0.297252705,
+      "p95": 0.61411191
+    }
+  },
+  "cross_venue_simultaneous": {
+    "BINANCE_BITGET": {
+      "simultaneous_large_trades_fraction": 0.23824558097539372,
+      "large_threshold_1": 0.609425,
+      "large_threshold_2": 0.11807699999999999
+    },
+    "BINANCE_BYBITSPOT": {
+      "simultaneous_large_trades_fraction": 0.2430071467638057,
+      "large_threshold_1": 0.609425,
+      "large_threshold_2": 0.7718044000000001
+    },
+    "BINANCE_COINBASE": {
+      "simultaneous_large_trades_fraction": 0.26699315621235065,
+      "large_threshold_1": 0.609425,
+      "large_threshold_2": 0.297252705
+    },
+    "BITGET_BYBITSPOT": {
+      "simultaneous_large_trades_fraction": 0.1350987804199627,
+      "large_threshold_1": 0.11807699999999999,
+      "large_threshold_2": 0.7718044000000001
+    },
+    "BITGET_COINBASE": {
+      "simultaneous_large_trades_fraction": 0.13600961498881614,
+      "large_threshold_1": 0.11807699999999999,
+      "large_threshold_2": 0.297252705
+    },
+    "BYBITSPOT_COINBASE": {
+      "simultaneous_large_trades_fraction": 0.11150319009493773,
+      "large_threshold_1": 0.7718044000000001,
+      "large_threshold_2": 0.297252705
+    }
+  },
+  "summary": {}
+}
