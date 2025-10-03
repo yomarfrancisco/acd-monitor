@@ -2,3 +2,13 @@
 line-length = 100
 target-version = ["py39"]
 include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.github
+  | \.venv
+  | venv
+  | build
+  | dist
+)/
+'''

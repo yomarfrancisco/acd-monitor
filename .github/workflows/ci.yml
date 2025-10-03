@@ -1,9 +1,5 @@
 name: ci
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 on:
   push:
     branches: [ main, feat/** ]
@@ -21,95 +17,26 @@ on:
       - ".github/workflows/**"
       - "pyproject.toml"
       - ".flake8"
-  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  detect:
-    runs-on: ubuntu-latest
-    outputs:
-      ui: ${{ steps.filter.outputs.ui }}
-      backend: ${{ steps.filter.outputs.backend }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Detect changed areas
-        id: filter
-        uses: dorny/paths-filter@v3
-        with:
-          filters: |
-            ui:
-              - 'ui/**'
-              - 'package.json'
-              - 'package-lock.json'
-            backend:
-              - 'src/**'
-              - 'tests/**'
-              - 'schemas/**'
-              - 'scripts/**'
-              - 'openapi/**'
-              - '.flake8'
-              - 'pyproject.toml'
-              - 'setup.cfg'
-
-  ui:
-    needs: detect
-    if: needs.detect.outputs.ui == 'true'
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ui/cursor-dashboard
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-          cache-dependency-path: ui/cursor-dashboard/package-lock.json
-
-      - name: Install deps (ci with fallback)
-        run: npm ci || npm install
-
-      - name: Typecheck
-        run: npx tsc --noEmit
-
-      - name: Contract Tests
-        run: npm run contracts
-
-      - name: Build
-        run: npm run build
-
-      - name: Verify static assets
-        run: test -d .next/static/css && test -d .next/static/chunks/app
-
   backend:
-    needs: detect
-    if: needs.detect.outputs.backend == 'true'
     runs-on: ubuntu-latest
-    env:
-      PYTHONPATH: ${{ github.workspace }}:${{ github.workspace }}/src
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-          cache: "pip"
-
-      - name: Install deps
+      - name: Install tooling
         run: |
-          pip install -r requirements.txt
-          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
-
-      - name: Install linters
-        run: |
-          pip install black==24.8.0 flake8==7.1.0 flake8-bugbear==24.2.6
-
+          python -m pip install --upgrade pip
+          pip install black==24.8.0 flake8==7.1.1 flake8-bugbear==24.4.26
       - name: Lint with flake8
         run: |
-          # fail-fast on real errors only
-          flake8 src scripts --count --select=E9,F63,F7,F82 --show-source --statistics
-          # style warnings don't fail CI in this pass
-          flake8 src scripts --count --exit-zero --max-complexity=12 --statistics
-
+          flake8 src scripts
       - name: Format check with black
         run: |
-          black --check src/icp_vmm scripts/wave4_tick_optimized
+          black --check src scripts

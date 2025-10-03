@@ -1,15 +1,16 @@
 [flake8]
 max-line-length = 100
-# Black compatibility note: E203 conflicts with Black's slicing rules
-extend-ignore = E203
+# Keep flake8 compatible with black (E203/W503)
+extend-ignore =
+    E203,
+    W503
+
+# Only linted by CI when called as "flake8 src scripts".
+# Exclude common build/venv dirs to avoid local noise.
 exclude =
     .git,
     .github,
     venv,
-    env,
+    .venv,
     build,
-    dist,
-    tests
-per-file-ignores =
-    scripts/**: E402
-    run_*.py: E402
+    dist
