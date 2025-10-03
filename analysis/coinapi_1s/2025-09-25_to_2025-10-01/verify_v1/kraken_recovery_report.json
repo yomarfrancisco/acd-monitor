@@ -1,0 +1,72 @@
+{
+  "recovery_status": "failed",
+  "days_analyzed": 7,
+  "days_passed": 0,
+  "days_failed": 7,
+  "daily_results": [
+    {
+      "date": "2025-09-25",
+      "status": "no_data",
+      "reason": "No data found",
+      "cv_dt": null,
+      "dup_ratio": null,
+      "price_std": null,
+      "coverage": null
+    },
+    {
+      "date": "2025-09-26",
+      "status": "no_data",
+      "reason": "No data found",
+      "cv_dt": null,
+      "dup_ratio": null,
+      "price_std": null,
+      "coverage": null
+    },
+    {
+      "date": "2025-09-27",
+      "status": "no_data",
+      "reason": "No data found",
+      "cv_dt": null,
+      "dup_ratio": null,
+      "price_std": null,
+      "coverage": null
+    },
+    {
+      "date": "2025-09-28",
+      "status": "no_data",
+      "reason": "No data found",
+      "cv_dt": null,
+      "dup_ratio": null,
+      "price_std": null,
+      "coverage": null
+    },
+    {
+      "date": "2025-09-29",
+      "status": "no_data",
+      "reason": "No data found",
+      "cv_dt": null,
+      "dup_ratio": null,
+      "price_std": null,
+      "coverage": null
+    },
+    {
+      "date": "2025-09-30",
+      "status": "no_data",
+      "reason": "No data found",
+      "cv_dt": null,
+      "dup_ratio": null,
+      "price_std": null,
+      "coverage": null
+    },
+    {
+      "date": "2025-10-01",
+      "status": "no_data",
+      "reason": "No data found",
+      "cv_dt": null,
+      "dup_ratio": null,
+      "price_std": null,
+      "coverage": null
+    }
+  ],
+  "summary": {}
+}
