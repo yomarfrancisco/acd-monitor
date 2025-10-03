@@ -9,40 +9,44 @@ import time
 import json
 from pathlib import Path
 
-def run_athena_query(athena_client, query, workgroup='primary', output_location='s3://acd-monitor-derived/athena-results/'):
+
+def run_athena_query(
+    athena_client,
+    query,
+    workgroup="primary",
+    output_location="s3://acd-monitor-derived/athena-results/",
+):
     """Run Athena query and return results"""
     try:
         print(f"🔍 Executing query...")
         print(f"Query: {query[:100]}...")
-        
+
         # Start query execution
         response = athena_client.start_query_execution(
             QueryString=query,
             WorkGroup=workgroup,
-            ResultConfiguration={
-                'OutputLocation': output_location
-            }
+            ResultConfiguration={"OutputLocation": output_location},
         )
-        
-        execution_id = response['QueryExecutionId']
+
+        execution_id = response["QueryExecutionId"]
         print(f"✅ Query submitted: {execution_id}")
-        
+
         # Wait for completion (max 5 minutes)
         start_time = time.time()
         timeout = 300  # 5 minutes
-        
+
         while time.time() - start_time < timeout:
             status = athena_client.get_query_execution(QueryExecutionId=execution_id)
-            state = status['QueryExecution']['Status']['State']
-            
-            if state == 'SUCCEEDED':
+            state = status["QueryExecution"]["Status"]["State"]
+
+            if state == "SUCCEEDED":
                 print(f"✅ Query completed: {execution_id}")
                 break
-            elif state == 'FAILED':
-                reason = status['QueryExecution']['Status'].get('StateChangeReason', 'Unknown')
+            elif state == "FAILED":
+                reason = status["QueryExecution"]["Status"].get("StateChangeReason", "Unknown")
                 print(f"❌ Query failed: {reason}")
                 return None
-            elif state == 'CANCELLED':
+            elif state == "CANCELLED":
                 print(f"⚠️ Query cancelled: {execution_id}")
                 return None
             else:
@@ -51,70 +55,71 @@ def run_athena_query(athena_client, query, workgroup='primary', output_location=
         else:
             print(f"⏰ Query timed out after {timeout} seconds")
             return None
-        
+
         # Get results
         results = athena_client.get_query_results(QueryExecutionId=execution_id, MaxResults=100)
-        
+
         # Parse and display results
-        rows = results.get('ResultSet', {}).get('Rows', [])
+        rows = results.get("ResultSet", {}).get("Rows", [])
         if len(rows) > 1:  # Skip header row
             print("📊 Results:")
             data_rows = rows[1:]  # Skip header
             for row in data_rows:
-                values = [field.get('VarCharValue', '') for field in row.get('Data', [])]
+                values = [field.get("VarCharValue", "") for field in row.get("Data", [])]
                 print("  " + " | ".join(values))
         else:
             print("📊 No results returned")
-        
+
         return execution_id
-        
+
     except Exception as e:
         print(f"❌ Error: {e}")
         return None
+
 
 def validate_glue_table():
     """Validate Glue table setup and run smoke tests"""
     print("🔍 Validating Glue Table and Zero-Copy Path")
     print("=" * 60)
-    
+
     # Initialize clients
     try:
-        athena = boto3.client('athena')
-        glue = boto3.client('glue')
+        athena = boto3.client("athena")
+        glue = boto3.client("glue")
         print("✅ AWS clients initialized")
     except Exception as e:
         print(f"❌ Failed to initialize AWS clients: {e}")
         return False
-    
+
     # Test 1: Check table exists
     print("\n📋 Test 1: Check Glue table exists")
     print("-" * 40)
     try:
-        table = glue.get_table(DatabaseName='acd_snapshots', Name='btc_ticks')
+        table = glue.get_table(DatabaseName="acd_snapshots", Name="btc_ticks")
         print("✅ Glue table exists")
         print(f"Database: {table['Table']['DatabaseName']}")
         print(f"Table: {table['Table']['Name']}")
         print(f"Location: {table['Table']['StorageDescriptor']['Location']}")
         print(f"Columns: {len(table['Table']['StorageDescriptor']['Columns'])}")
         print(f"Partitions: {len(table['Table']['PartitionKeys'])}")
-        
+
         # Show column details
         print("\n📊 Columns:")
-        for i, col in enumerate(table['Table']['StorageDescriptor']['Columns'], 1):
+        for i, col in enumerate(table["Table"]["StorageDescriptor"]["Columns"], 1):
             print(f"{i:2d}. {col['Name']:<25} {col['Type']:<15} {col.get('Comment', '')}")
-        
+
         print("\n🔑 Partition Keys:")
-        for i, part in enumerate(table['Table']['PartitionKeys'], 1):
+        for i, part in enumerate(table["Table"]["PartitionKeys"], 1):
             print(f"{i}. {part['Name']:<15} {part['Type']:<15} {part.get('Comment', '')}")
-            
+
     except Exception as e:
         print(f"❌ Glue table check failed: {e}")
         return False
-    
+
     # Test 2: Enable partition projection
     print("\n🔧 Test 2: Enable partition projection")
     print("-" * 40)
-    
+
     projection_sql = """
     ALTER TABLE acd_snapshots.btc_ticks SET TBLPROPERTIES (
       'projection.enabled'='true',
@@ -128,65 +133,69 @@ def validate_glue_table():
       'storage.location.template'='s3://acd-monitor-snapshots/snapshots/BTC-USD/${date}/${window}/ticks/${venue}.parquet'
     );
     """
-    
+
     execution_id = run_athena_query(athena, projection_sql)
     if not execution_id:
         print("❌ Failed to enable partition projection")
         return False
-    
+
     # Test 3: Smoke tests
     print("\n🧪 Test 3: Smoke tests")
     print("-" * 40)
-    
+
     smoke_tests = [
         {
-            'name': 'A) Pointed count for single file',
-            'query': """
+            "name": "A) Pointed count for single file",
+            "query": """
             SELECT count(*) AS n
             FROM acd_snapshots.btc_ticks
             WHERE date='20250929' AND window='0200-0230' AND venue='binance'
             """,
-            'expected': 'n > 0'
+            "expected": "n > 0",
         },
         {
-            'name': 'B) Schema preview',
-            'query': """
+            "name": "B) Schema preview",
+            "query": """
             SELECT ts_exchange, best_bid, best_ask, last_px, mid_px
             FROM acd_snapshots.btc_ticks
             WHERE date='20250929' AND window='0200-0230' AND venue='binance'
             ORDER BY ts_exchange
             LIMIT 5
             """,
-            'expected': '5 rows with sensible timestamps and prices'
+            "expected": "5 rows with sensible timestamps and prices",
         },
         {
-            'name': 'C) Multi-venue coverage',
-            'query': """
+            "name": "C) Multi-venue coverage",
+            "query": """
             SELECT venue, COUNT(1) AS rows
             FROM acd_snapshots.btc_ticks
             WHERE date='20250929'
             GROUP BY venue
             ORDER BY venue
             """,
-            'expected': 'rows for ≥3 venues'
-        }
+            "expected": "rows for ≥3 venues",
+        },
     ]
-    
+
     results = {}
     for test in smoke_tests:
         print(f"\n📊 {test['name']}:")
         print(f"Expected: {test['expected']}")
-        execution_id = run_athena_query(athena, test['query'])
-        results[test['name']] = execution_id is not None
-    
+        execution_id = run_athena_query(athena, test["query"])
+        results[test["name"]] = execution_id is not None
+
     # Summary
     print("\n📋 Validation Summary")
     print("=" * 60)
     print(f"Glue table exists: ✅")
-    print(f"Partition projection: {'✅' if results.get('A) Pointed count for single file', False) else '❌'}")
+    print(
+        f"Partition projection: {'✅' if results.get('A) Pointed count for single file', False) else '❌'}"
+    )
     print(f"Schema alignment: {'✅' if results.get('B) Schema preview', False) else '❌'}")
-    print(f"Multi-venue coverage: {'✅' if results.get('C) Multi-venue coverage', False) else '❌'}")
-    
+    print(
+        f"Multi-venue coverage: {'✅' if results.get('C) Multi-venue coverage', False) else '❌'}"
+    )
+
     success = all(results.values())
     if success:
         print("\n🎯 All tests passed! Zero-copy path validated.")
@@ -194,8 +203,9 @@ def validate_glue_table():
     else:
         print("\n❌ Some tests failed. Check the outputs above.")
         print("🔧 Fix issues before proceeding with analytics.")
-    
+
     return success
+
 
 def main():
     """Main function"""
@@ -205,9 +215,9 @@ def main():
     print("Requires: Athena and Glue permissions")
     print("Output: Results written to s3://acd-monitor-derived/athena-results/")
     print()
-    
+
     success = validate_glue_table()
-    
+
     if success:
         print("\n🎯 Next Steps:")
         print("1. Run Wave-1 analysis: python3 scripts/ops/athena_orchestrate.py --date 20250929")
@@ -219,10 +229,9 @@ def main():
         print("2. Verify partition projection settings")
         print("3. Ensure S3 data is accessible")
         print("4. Re-run validation script")
-    
+
     return success
+
 
 if __name__ == "__main__":
     main()
-
-

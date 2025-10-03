@@ -206,9 +206,7 @@ def low_activity_test(mid_prices: pd.DataFrame, episodes: List[Dict]) -> Dict:
         # Reduce volatility by 50%
         returns = mid_prices[venue].pct_change().fillna(0)
         low_vol_returns = returns * 0.5
-        low_vol_data[venue] = (
-            mid_prices[venue].iloc[0] * (1 + low_vol_returns).cumprod()
-        )
+        low_vol_data[venue] = mid_prices[venue].iloc[0] * (1 + low_vol_returns).cumprod()
 
     # Simulate episode detection on low-vol data
     # (In practice, would run full algorithm)
@@ -244,9 +242,7 @@ def generate_null_report(results: List[Dict]) -> str:
             report.append(
                 f"- **Shuffle Mean**: {result['shuffle_episodes_mean']:.2f} ± {result['shuffle_episodes_std']:.2f}"
             )
-            report.append(
-                f"- **Episodes Percentile**: {result['episodes_percentile']:.1f}%"
-            )
+            report.append(f"- **Episodes Percentile**: {result['episodes_percentile']:.1f}%")
             report.append(f"- **Real Avg Lift**: {result['real_avg_lift']:.3f}")
             report.append(
                 f"- **Shuffle Lift Mean**: {result['shuffle_lifts_mean']:.3f} ± {result['shuffle_lifts_std']:.3f}"
@@ -256,24 +252,14 @@ def generate_null_report(results: List[Dict]) -> str:
 
             # Interpretation
             if result["episodes_percentile"] > 95:
-                report.append(
-                    "**⚠️ WARNING**: Real episodes exceed 95th percentile of null"
-                )
-                report.append(
-                    "**Interpretation**: Episodes may be genuine coordination signals"
-                )
+                report.append("**⚠️ WARNING**: Real episodes exceed 95th percentile of null")
+                report.append("**Interpretation**: Episodes may be genuine coordination signals")
             elif result["episodes_percentile"] < 5:
                 report.append("**✅ GOOD**: Real episodes below 5th percentile of null")
-                report.append(
-                    "**Interpretation**: Episodes likely due to random chance"
-                )
+                report.append("**Interpretation**: Episodes likely due to random chance")
             else:
-                report.append(
-                    "**⚠️ CAUTION**: Real episodes within normal range of null"
-                )
-                report.append(
-                    "**Interpretation**: Cannot distinguish from random variation"
-                )
+                report.append("**⚠️ CAUTION**: Real episodes within normal range of null")
+                report.append("**Interpretation**: Cannot distinguish from random variation")
             report.append("")
 
         elif test_name == "venue_relabel":
@@ -281,21 +267,15 @@ def generate_null_report(results: List[Dict]) -> str:
             report.append(
                 f"- **Shuffle Mean**: {result['shuffle_episodes_mean']:.2f} ± {result['shuffle_episodes_std']:.2f}"
             )
-            report.append(
-                f"- **Episodes Percentile**: {result['episodes_percentile']:.1f}%"
-            )
+            report.append(f"- **Episodes Percentile**: {result['episodes_percentile']:.1f}%")
             report.append(f"- **Real Leaders**: {result['real_leaders']}")
             report.append(f"- **Shuffle Leaders**: {result['shuffle_leaders']}")
             report.append("")
 
             # Interpretation
             if result["episodes_percentile"] > 95:
-                report.append(
-                    "**⚠️ WARNING**: Real episodes exceed 95th percentile of null"
-                )
-                report.append(
-                    "**Interpretation**: Venue-specific coordination detected"
-                )
+                report.append("**⚠️ WARNING**: Real episodes exceed 95th percentile of null")
+                report.append("**Interpretation**: Venue-specific coordination detected")
             else:
                 report.append("**✅ GOOD**: Real episodes within normal range of null")
                 report.append("**Interpretation**: No venue-specific coordination")
@@ -316,9 +296,7 @@ def generate_null_report(results: List[Dict]) -> str:
                 report.append("**Interpretation**: Episodes may be volatility-driven")
             else:
                 report.append("**⚠️ WARNING**: Episodes persist in low-vol")
-                report.append(
-                    "**Interpretation**: Episodes may be genuine coordination"
-                )
+                report.append("**Interpretation**: Episodes may be genuine coordination")
             report.append("")
 
     return "\n".join(report)
@@ -339,9 +317,7 @@ def main():
     parser.add_argument(
         "--n-shuffles", type=int, default=500, help="Number of shuffles for null tests"
     )
-    parser.add_argument(
-        "--seed", type=int, default=42, help="Random seed for reproducibility"
-    )
+    parser.add_argument("--seed", type=int, default=42, help="Random seed for reproducibility")
     parser.add_argument("--verbose", action="store_true", help="Verbose output")
 
     args = parser.parse_args()
@@ -364,9 +340,7 @@ def main():
 
     print("Loading mid prices data...")
     mid_prices = load_mid_prices_data()
-    print(
-        f"Loaded {len(mid_prices)} seconds of data for {len(mid_prices.columns)} venues"
-    )
+    print(f"Loaded {len(mid_prices)} seconds of data for {len(mid_prices.columns)} venues")
 
     # Run null tests
     results = []

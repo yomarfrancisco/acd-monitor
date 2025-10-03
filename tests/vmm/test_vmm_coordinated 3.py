@@ -12,9 +12,7 @@ class TestVMMCoordinated:
     @pytest.fixture
     def coordinated_windows(self):
         """Load coordinated golden dataset windows"""
-        coordinated_dir = (
-            Path(__file__).parent.parent.parent / "data" / "golden" / "coordinated"
-        )
+        coordinated_dir = Path(__file__).parent.parent.parent / "data" / "golden" / "coordinated"
         windows = []
 
         for parquet_file in coordinated_dir.glob("*.parquet"):
@@ -56,9 +54,7 @@ class TestVMMCoordinated:
 
                 # Log progress for debugging
                 if (i + 1) % 10 == 0:
-                    print(
-                        "Processed {i + 1}/{len(coordinated_windows)} coordinated windows"
-                    )
+                    print("Processed {i + 1}/{len(coordinated_windows)} coordinated windows")
 
             except Exception as e:
                 pytest.fail(f"VMM failed on coordinated window {i}: {e}")
@@ -90,9 +86,7 @@ class TestVMMCoordinated:
         )
 
         # Most windows should show reasonable confidence (relaxed)
-        high_confidence_count = sum(
-            1 for score in regime_confidence_scores if score >= 0.5
-        )
+        high_confidence_count = sum(1 for score in regime_confidence_scores if score >= 0.5)
         high_confidence_rate = high_confidence_count / len(regime_confidence_scores)
 
         assert (
@@ -184,9 +178,7 @@ class TestVMMCoordinated:
                 pytest.fail(f"VMM failed on coordinated window: {e}")
 
         # Most windows should converge
-        converged_count = sum(
-            1 for status in convergence_statuses if status == "converged"
-        )
+        converged_count = sum(1 for status in convergence_statuses if status == "converged")
         convergence_rate = converged_count / len(convergence_statuses)
 
         assert (
@@ -235,9 +227,7 @@ class TestVMMCoordinated:
         stability_scores = [s["structural_stability"] for s in all_scores]
 
         # Scores should be consistent across windows
-        regime_cv = np.std(regime_scores) / np.mean(
-            regime_scores
-        )  # Coefficient of variation
+        regime_cv = np.std(regime_scores) / np.mean(regime_scores)  # Coefficient of variation
         stability_cv = np.std(stability_scores) / np.mean(stability_scores)
 
         print("Consistency metrics:")

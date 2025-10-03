@@ -108,15 +108,7 @@ class TestDefaultBehavior(unittest.TestCase):
             import pandas as pd
             import numpy as np
 
-            ticks_dir = (
-                snapshot_dir
-                / "ticks"
-                / "binance"
-                / "BTC-USD"
-                / "1s"
-                / "2025-01-01"
-                / "00"
-            )
+            ticks_dir = snapshot_dir / "ticks" / "binance" / "BTC-USD" / "1s" / "2025-01-01" / "00"
             ticks_dir.mkdir(parents=True)
 
             # Create minimal tick data

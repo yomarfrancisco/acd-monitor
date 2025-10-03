@@ -29,9 +29,7 @@ def load_overlap_data(export_dir: str, use_overlap_json: Optional[str] = None) -
         overlap_file = Path(export_dir) / "overlap.json"
 
     if not overlap_file.exists():
-        logger.error(
-            f"[ABORT:no_overlap_json] overlap.json not found at {overlap_file}"
-        )
+        logger.error(f"[ABORT:no_overlap_json] overlap.json not found at {overlap_file}")
         print(
             f'[ABORT:no_overlap_json] {{"file":"{overlap_file}",'
             f'"reason":"overlap.json required for analysis"}}'
@@ -50,9 +48,7 @@ def load_overlap_data(export_dir: str, use_overlap_json: Optional[str] = None) -
         required_fields = ["startUTC", "endUTC", "venues", "policy"]
         for field in required_fields:
             if field not in overlap_data:
-                logger.error(
-                    f"[ABORT:overlap_missing] Missing field '{field}' in overlap.json"
-                )
+                logger.error(f"[ABORT:overlap_missing] Missing field '{field}' in overlap.json")
                 print(
                     f'[ABORT:overlap_missing] {{"field":"{field}",'
                     f'"reason":"required field missing"}}'
@@ -61,9 +57,7 @@ def load_overlap_data(export_dir: str, use_overlap_json: Optional[str] = None) -
 
         # Abort if synthetic policy detected
         if overlap_data["policy"].startswith("SYNTHETIC"):
-            logger.error(
-                f"[ABORT:synthetic] Synthetic policy detected: {overlap_data['policy']}"
-            )
+            logger.error(f"[ABORT:synthetic] Synthetic policy detected: {overlap_data['policy']}")
             policy = overlap_data["policy"]
             print(
                 f'[ABORT:synthetic] {{"policy":"{policy}","reason":"synthetic data not allowed"}}'
@@ -78,9 +72,7 @@ def load_overlap_data(export_dir: str, use_overlap_json: Optional[str] = None) -
 
     except Exception as e:
         logger.error(f"[ABORT:overlap_missing] Error reading overlap.json: {e}")
-        print(
-            f'[ABORT:overlap_missing] {{"error":"{e}","reason":"invalid overlap.json format"}}'
-        )
+        print(f'[ABORT:overlap_missing] {{"error":"{e}","reason":"invalid overlap.json format"}}')
         sys.exit(2)
 
 
@@ -125,9 +117,7 @@ def run_spread_compression(
 
         for log_line in required_logs:
             if log_line not in output:
-                logger.error(
-                    f"[ABORT:spread_missing] Required log line '{log_line}' not found"
-                )
+                logger.error(f"[ABORT:spread_missing] Required log line '{log_line}' not found")
                 print(
                     f'[ABORT:spread_missing] {{"log":"{log_line}","reason":"required log line missing"}}'
                 )
@@ -143,9 +133,7 @@ def run_spread_compression(
         return False
 
 
-def run_info_share(
-    start: str, end: str, venues: list, export_dir: str, verbose: bool
-) -> bool:
+def run_info_share(start: str, end: str, venues: list, export_dir: str, verbose: bool) -> bool:
     """Run information share analysis."""
     logger.info("Running information share analysis")
 
@@ -182,9 +170,7 @@ def run_info_share(
 
         for log_line in required_logs:
             if log_line not in output:
-                logger.error(
-                    f"[ABORT:infoshare_missing] Required log line '{log_line}' not found"
-                )
+                logger.error(f"[ABORT:infoshare_missing] Required log line '{log_line}' not found")
                 print(
                     f'[ABORT:infoshare_missing] {{"log":"{log_line}","reason":"required log line missing"}}'
                 )
@@ -249,9 +235,7 @@ def run_invariance_matrix(
 
         for log_line in required_logs:
             if log_line not in output:
-                logger.error(
-                    f"[ABORT:invariance_missing] Required log line '{log_line}' not found"
-                )
+                logger.error(f"[ABORT:invariance_missing] Required log line '{log_line}' not found")
                 print(
                     f'[ABORT:invariance_missing] {{"log":"{log_line}","reason":"required log line missing"}}'
                 )
@@ -271,9 +255,7 @@ def build_manifest(overlap_data: dict, export_dir: str) -> dict:
     """Build MANIFEST.json with provenance."""
     try:
         # Get git commit hash
-        commit_hash = subprocess.check_output(
-            ["git", "rev-parse", "HEAD"], text=True
-        ).strip()
+        commit_hash = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
     except Exception:
         commit_hash = "unknown"
 
@@ -297,15 +279,9 @@ def build_manifest(overlap_data: dict, export_dir: str) -> dict:
                                         df = pd.read_parquet(file_path)
                                         total_messages += len(df)
                                         if "ts_local" in df.columns:
-                                            if (
-                                                first_ts is None
-                                                or df["ts_local"].min() < first_ts
-                                            ):
+                                            if first_ts is None or df["ts_local"].min() < first_ts:
                                                 first_ts = df["ts_local"].min()
-                                            if (
-                                                last_ts is None
-                                                or df["ts_local"].max() > last_ts
-                                            ):
+                                            if last_ts is None or df["ts_local"].max() > last_ts:
                                                 last_ts = df["ts_local"].max()
                                     except Exception:
                                         continue
@@ -365,9 +341,7 @@ def create_evidence_md(overlap_data: dict, export_dir: str) -> str:
 
     # Get file list
     try:
-        result = subprocess.run(
-            ["ls", "-lh", export_dir], capture_output=True, text=True
-        )
+        result = subprocess.run(["ls", "-lh", export_dir], capture_output=True, text=True)
         file_list = result.stdout
     except Exception:
         file_list = "Error getting file list"
@@ -474,9 +448,7 @@ def main():
     # Echo the overlap JSON (required by contract)
     overlap_json = json.dumps(overlap_data)
     print(f"[OVERLAP] {overlap_json}")
-    logger.info(
-        f"Using overlap window: {overlap_data['startUTC']} to {overlap_data['endUTC']}"
-    )
+    logger.info(f"Using overlap window: {overlap_data['startUTC']} to {overlap_data['endUTC']}")
 
     # Run analyses
     success = True
@@ -543,9 +515,7 @@ def main():
         subprocess.run(["git", "commit", "-m", commit_msg], check=True)
 
         # Get commit SHA
-        commit_sha = subprocess.check_output(
-            ["git", "rev-parse", "HEAD"], text=True
-        ).strip()
+        commit_sha = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
         print(f"Commit SHA: {commit_sha}")
 
         subprocess.run(["git", "push"], check=True)

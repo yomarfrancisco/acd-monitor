@@ -15,9 +15,7 @@ logger = logging.getLogger(__name__)
 class EnhancedMetricsCalculator:
     """Enhanced metrics calculator for liquidity and leadership analysis"""
 
-    def calculate_advanced_liquidity_metrics(
-        self, df: pd.DataFrame
-    ) -> Dict[str, float]:
+    def calculate_advanced_liquidity_metrics(self, df: pd.DataFrame) -> Dict[str, float]:
         """Calculate advanced liquidity metrics from bid/ask data"""
         if len(df) == 0:
             return {
@@ -48,9 +46,7 @@ class EnhancedMetricsCalculator:
             size_changes = df["last_sz"].diff().abs()
             spread_changes = df["spread_bps"].diff().abs()
             if size_changes.sum() > 0:
-                market_impact = (
-                    size_changes * spread_changes
-                ).sum() / size_changes.sum()
+                market_impact = (size_changes * spread_changes).sum() / size_changes.sum()
             else:
                 market_impact = 0
         else:
@@ -128,9 +124,7 @@ class EnhancedMetricsCalculator:
                 # Information leadership as price variance contribution
                 if len(df) > 1:
                     price_returns = df["last_px"].pct_change().dropna()
-                    info_leadership[venue] = (
-                        price_returns.var() if len(price_returns) > 0 else 0
-                    )
+                    info_leadership[venue] = price_returns.var() if len(price_returns) > 0 else 0
                 else:
                     info_leadership[venue] = 0
             else:
@@ -218,9 +212,7 @@ class EnhancedMetricsCalculator:
             total = sum(values)
             if total > 0:
                 for venue in venues:
-                    specialization[venue][metric] = (
-                        specialization[venue][metric] / total
-                    )
+                    specialization[venue][metric] = specialization[venue][metric] / total
 
         return specialization
 
@@ -246,8 +238,7 @@ class EnhancedMetricsCalculator:
             "venue_count": len(data),
             "active_venues": sum(1 for df in data.values() if len(df) > 0),
             "venue_dominance": (
-                max(len(df) for df in data.values())
-                / sum(len(df) for df in data.values())
+                max(len(df) for df in data.values()) / sum(len(df) for df in data.values())
                 if sum(len(df) for df in data.values()) > 0
                 else 0
             ),

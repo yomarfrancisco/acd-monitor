@@ -301,9 +301,7 @@ def assess_stress_response_quality(response: Any, query_obj: Dict[str, Any]) -> 
     ]
 
     indicator_count = sum(
-        1
-        for indicator in stress_indicators
-        if indicator.lower() in response_str.lower()
+        1 for indicator in stress_indicators if indicator.lower() in response_str.lower()
     )
     score += min(indicator_count * 0.1, 1.0)
 
@@ -436,9 +434,7 @@ def run_bundle_stress_testing(provider: OfflineMockProvider) -> Dict[str, Any]:
                 "error": None,
             }
 
-            print(
-                f"   ✅ PASS - {response_time:.3f}s - Quality: {quality_score:.1f}/5.0"
-            )
+            print(f"   ✅ PASS - {response_time:.3f}s - Quality: {quality_score:.1f}/5.0")
 
         except Exception as e:
             end_time = time.time()
@@ -462,12 +458,8 @@ def run_bundle_stress_testing(provider: OfflineMockProvider) -> Dict[str, Any]:
     successful_conditions = [r for r in stress_results if r["status"] == "PASS"]
     success_rate = len(successful_conditions) / len(stress_results) * 100
 
-    avg_response_time = sum(r["response_time"] for r in stress_results) / len(
-        stress_results
-    )
-    avg_quality_score = sum(r["quality_score"] for r in stress_results) / len(
-        stress_results
-    )
+    avg_response_time = sum(r["response_time"] for r in stress_results) / len(stress_results)
+    avg_quality_score = sum(r["quality_score"] for r in stress_results) / len(stress_results)
 
     return {
         "total_conditions": len(stress_results),
@@ -511,13 +503,9 @@ def generate_stress_test_report(
     # Calculate subcategory averages
     for subcategory in subcategories:
         if subcategories[subcategory]["total"] > 0:
-            subcategories[subcategory]["avg_quality"] /= subcategories[subcategory][
-                "total"
-            ]
+            subcategories[subcategory]["avg_quality"] /= subcategories[subcategory]["total"]
             subcategories[subcategory]["success_rate"] = (
-                subcategories[subcategory]["successful"]
-                / subcategories[subcategory]["total"]
-                * 100
+                subcategories[subcategory]["successful"] / subcategories[subcategory]["total"] * 100
             )
 
     return {
@@ -588,9 +576,7 @@ def main():
         print(
             f"   Average Quality Score: {test_report['overall_metrics']['avg_quality_score']:.1f}/5.0"
         )
-        print(
-            f"   Throughput: {test_report['overall_metrics']['throughput']:.1f} queries/minute"
-        )
+        print(f"   Throughput: {test_report['overall_metrics']['throughput']:.1f} queries/minute")
 
         print(f"\n📋 Subcategory Breakdown:")
         for subcategory, metrics in test_report["subcategory_breakdown"].items():
@@ -613,6 +599,3 @@ def main():
 if __name__ == "__main__":
     success = main()
     sys.exit(0 if success else 1)
-
-
-

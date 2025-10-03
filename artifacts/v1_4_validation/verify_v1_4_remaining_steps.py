@@ -233,9 +233,7 @@ def step4_entity_intelligence_guardrails():
         plt.text(x, y + 0.1, f"E{i+1}", ha="center")
 
     for i, j in edges:
-        plt.plot(
-            [nodes[i][0], nodes[j][0]], [nodes[i][1], nodes[j][1]], "k-", alpha=0.5
-        )
+        plt.plot([nodes[i][0], nodes[j][0]], [nodes[i][1], nodes[j][1]], "k-", alpha=0.5)
 
     plt.title("Coordination Network Graph")
     plt.axis("off")
@@ -244,10 +242,7 @@ def step4_entity_intelligence_guardrails():
     plt.subplot(2, 2, 3)
     behaviors = ["Timing", "Sizing", "Cancellation"]
     coordination_scores = [0.68, 0.72, 0.65]
-    colors = [
-        "red" if x > 0.7 else "orange" if x > 0.6 else "yellow"
-        for x in coordination_scores
-    ]
+    colors = ["red" if x > 0.7 else "orange" if x > 0.6 else "yellow" for x in coordination_scores]
     plt.bar(behaviors, coordination_scores, color=colors, alpha=0.7)
     plt.title("Behavioral Coordination Scores")
     plt.ylabel("Coordination Score")
@@ -260,9 +255,7 @@ def step4_entity_intelligence_guardrails():
     confidence_levels = ["High", "Medium", "Requires Verification"]
     counts = [2, 2, 1]
     colors = ["green", "orange", "red"]
-    plt.pie(
-        counts, labels=confidence_levels, colors=colors, autopct="%1.0f", startangle=90
-    )
+    plt.pie(counts, labels=confidence_levels, colors=colors, autopct="%1.0f", startangle=90)
     plt.title("Attribution Confidence Distribution")
 
     plt.tight_layout()
@@ -445,9 +438,7 @@ def step6_documentation_parity():
     }
 
     # Save results
-    with open(
-        "artifacts/v1_4_validation/docs/appendix_parity_checklist.json", "w"
-    ) as f:
+    with open("artifacts/v1_4_validation/docs/appendix_parity_checklist.json", "w") as f:
         json.dump(appendix_checklist, f, indent=2)
 
     print("Step 6: Documentation parity check complete")
@@ -489,6 +480,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-

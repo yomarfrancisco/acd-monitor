@@ -59,9 +59,7 @@ def inject_synchronization_signal(tick_data, interval_minutes=5):
         tick_data[venue] = tick_data[venue].copy()
         for jump_time in jump_times:
             # Find closest tick to jump time
-            mask = abs(tick_data[venue]["ts_exchange"] - jump_time) < timedelta(
-                seconds=30
-            )
+            mask = abs(tick_data[venue]["ts_exchange"] - jump_time) < timedelta(seconds=30)
             if mask.any():
                 # Apply synchronized price jump (e.g., +0.1% to mid price)
                 tick_data[venue].loc[mask, "mid"] *= 1.001
@@ -69,9 +67,7 @@ def inject_synchronization_signal(tick_data, interval_minutes=5):
     return tick_data
 
 
-def inject_dominance_spike(
-    tick_data, dominant_venue="binance", block_duration_minutes=10
-):
+def inject_dominance_spike(tick_data, dominant_venue="binance", block_duration_minutes=10):
     """
     Inject dominance spike for specified venue during block periods
     """
@@ -159,9 +155,7 @@ def main():
         for injection_type in injection_types:
             output_path = f"analysis/BTC/synthetic/20250929/injected_data/{base_window.split('/')[-1]}_{injection_type}.json"
 
-            synthetic_data = create_synthetic_dataset(
-                base_window, injection_type, output_path
-            )
+            synthetic_data = create_synthetic_dataset(base_window, injection_type, output_path)
             synthetic_datasets.append(synthetic_data)
 
     # Save summary
@@ -172,15 +166,11 @@ def main():
         "datasets": synthetic_datasets,
     }
 
-    with open(
-        "analysis/BTC/synthetic/20250929/synthetic_datasets_summary.json", "w"
-    ) as f:
+    with open("analysis/BTC/synthetic/20250929/synthetic_datasets_summary.json", "w") as f:
         json.dump(summary, f, indent=2)
 
     print(f"\nSynthetic datasets created: {len(synthetic_datasets)}")
-    print(
-        "Summary saved to: analysis/BTC/synthetic/20250929/synthetic_datasets_summary.json"
-    )
+    print("Summary saved to: analysis/BTC/synthetic/20250929/synthetic_datasets_summary.json")
 
 
 if __name__ == "__main__":

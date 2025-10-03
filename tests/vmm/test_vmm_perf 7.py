@@ -104,9 +104,7 @@ class TestVMMPerformance:
         print("  Std Dev: {std_time:.3f}s")
 
         # Performance assertions
-        assert (
-            median_time <= 2.0
-        ), f"Median runtime {median_time:.3f}s exceeds 2s target"
+        assert median_time <= 2.0, f"Median runtime {median_time:.3f}s exceeds 2s target"
         assert p95_time <= 5.0, f"P95 runtime {p95_time:.3f}s exceeds 5s target"
 
         print("  ✅ Median: {median_time:.3f}s (≤2s)")
@@ -138,9 +136,7 @@ class TestVMMPerformance:
                 iteration_counts.append(result.iterations)
                 convergence_statuses.append(result.convergence_status)
 
-                print(
-                    "    ✅ {result.convergence_status}: {result.iterations} iterations"
-                )
+                print("    ✅ {result.convergence_status}: {result.iterations} iterations")
 
             except Exception as e:
                 print("    ❌ Failed: {e}")
@@ -168,17 +164,14 @@ class TestVMMPerformance:
         # Convergence assertions
         max_iterations_target = vmm_config.max_iters  # Allow max iterations
         assert mean_iterations <= max_iterations_target, (
-            f"Mean iterations {mean_iterations:.1f} exceeds target "
-            f"{max_iterations_target:.1f}"
+            f"Mean iterations {mean_iterations:.1f} exceeds target " f"{max_iterations_target:.1f}"
         )
 
         assert (
             convergence_rate >= 0.0
         ), f"Convergence rate {convergence_rate:.1%} below 0% threshold"
 
-        print(
-            "  ✅ Mean iterations: {mean_iterations:.1f} (≤{max_iterations_target:.1f})"
-        )
+        print("  ✅ Mean iterations: {mean_iterations:.1f} (≤{max_iterations_target:.1f})")
         print("  ✅ Convergence rate: {convergence_rate:.1%} (≥0%)")
 
     @pytest.mark.slow
@@ -204,9 +197,7 @@ class TestVMMPerformance:
                 n_windows=1, window_size=size, n_firms=3, seed=42
             )
             test_data = pd.concat(competitive_windows, ignore_index=True)
-            test_data.index = pd.date_range(
-                "2024-01-01", periods=len(test_data), freq="H"
-            )
+            test_data.index = pd.date_range("2024-01-01", periods=len(test_data), freq="H")
 
             # Measure runtime
             start_time = time.time()
@@ -224,9 +215,7 @@ class TestVMMPerformance:
                     }
                 )
 
-                print(
-                    "    ✅ {size} points: {run_time:.3f}s, {result.iterations} iterations"
-                )
+                print("    ✅ {size} points: {run_time:.3f}s, {result.iterations} iterations")
 
             except Exception as e:
                 print("    ❌ {size} points failed: {e}")
@@ -319,8 +308,6 @@ class TestVMMPerformance:
         memory_std = np.std(memory_usage)
         memory_cv = memory_std / mean_memory if mean_memory > 0 else 0
 
-        assert (
-            memory_cv < 0.5
-        ), f"Memory usage coefficient of variation {memory_cv:.2f} is too high"
+        assert memory_cv < 0.5, f"Memory usage coefficient of variation {memory_cv:.2f} is too high"
 
         print("  ✅ Memory consistency: CV = {memory_cv:.2f} (<0.5)")

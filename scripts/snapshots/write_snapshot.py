@@ -206,12 +206,8 @@ def main():
 
     # Parse date and times
     date_obj = datetime.strptime(args.date, "%Y-%m-%d")
-    start_time = datetime.combine(
-        date_obj, datetime.strptime(args.start_time, "%H%M").time()
-    )
-    end_time = datetime.combine(
-        date_obj, datetime.strptime(args.end_time, "%H%M").time()
-    )
+    start_time = datetime.combine(date_obj, datetime.strptime(args.start_time, "%H%M").time())
+    end_time = datetime.combine(date_obj, datetime.strptime(args.end_time, "%H%M").time())
 
     # Add timezone
     start_time = start_time.replace(tzinfo=timezone.utc)

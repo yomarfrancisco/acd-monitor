@@ -131,9 +131,7 @@ def run_spread_compression_analysis(
     venue_data = load_real_tick_data(venues, pair, cache_dir, start_date, end_date)
 
     if len(venue_data) < 3:
-        logger.error(
-            f"[ABORT:spread:insufficient_venues] Found {len(venue_data)} venues, need ≥3"
-        )
+        logger.error(f"[ABORT:spread:insufficient_venues] Found {len(venue_data)} venues, need ≥3")
         sys.exit(2)
 
     # Build inner-joined second grid across all venues
@@ -156,9 +154,7 @@ def run_spread_compression_analysis(
     final_rows = len(base_df)
 
     if final_rows < initial_rows:
-        logger.warning(
-            f"Dropped {initial_rows - final_rows} rows with NaN values after inner join"
-        )
+        logger.warning(f"Dropped {initial_rows - final_rows} rows with NaN values after inner join")
 
     # Guardrail: Check for sufficient data
     window_days = (end_utc - start_utc).days
@@ -203,9 +199,7 @@ def run_spread_compression_analysis(
             )
 
             if episodes:
-                median_dur = sum(ep.get("duration", 0) for ep in episodes) / len(
-                    episodes
-                )
+                median_dur = sum(ep.get("duration", 0) for ep in episodes) / len(episodes)
                 avg_lift = sum(ep.get("lift", 0) for ep in episodes) / len(episodes)
                 logger.info(
                     f"[SPREAD:episodes] count={len(episodes)} medianDur={median_dur:.2f} lift={avg_lift:.3f}"
@@ -235,15 +229,11 @@ def run_spread_compression_analysis(
             # Print evidence blocks
             print_evidence_blocks(export_dir, results)
         else:
-            logger.error(
-                "[ABORT:spread:no_results] Analysis failed - no results generated"
-            )
+            logger.error("[ABORT:spread:no_results] Analysis failed - no results generated")
             sys.exit(2)
 
     except Exception as e:
-        logger.error(
-            f"[ABORT:spread:analysis_error] Analysis failed: {e}", exc_info=True
-        )
+        logger.error(f"[ABORT:spread:analysis_error] Analysis failed: {e}", exc_info=True)
         sys.exit(2)
 
 
@@ -281,9 +271,7 @@ def print_evidence_blocks(export_dir: str, results: dict) -> None:
             print(f"Total episodes detected: {len(df)}")
             if len(df) > 0:
                 print(f"Median duration: {df['duration'].median():.2f}s")
-                print(
-                    f"Duration range: {df['duration'].min():.2f}s - {df['duration'].max():.2f}s"
-                )
+                print(f"Duration range: {df['duration'].min():.2f}s - {df['duration'].max():.2f}s")
                 print(f"Leaders: {df['leader'].value_counts().to_dict()}")
         else:
             print("No episodes file found")
@@ -379,12 +367,8 @@ def run_snapshot_spread_analysis(
     )
 
     # Log permutation stats
-    logger.info(
-        f"[STATS:spread:permute] n_permutes={permutes}, episodes_found={len(episodes)}"
-    )
-    print(
-        f"[STATS:spread:permute] n_permutes={permutes}, episodes_found={len(episodes)}"
-    )
+    logger.info(f"[STATS:spread:permute] n_permutes={permutes}, episodes_found={len(episodes)}")
+    print(f"[STATS:spread:permute] n_permutes={permutes}, episodes_found={len(episodes)}")
 
     # Save results
     results = {
@@ -403,9 +387,7 @@ def run_snapshot_spread_analysis(
 
 def main():
     """Main function to run spread compression analysis."""
-    parser = argparse.ArgumentParser(
-        description="Run spread compression analysis on real data"
-    )
+    parser = argparse.ArgumentParser(description="Run spread compression analysis on real data")
     parser.add_argument("--start", help="Start date (YYYY-MM-DD)")
     parser.add_argument("--end", help="End date (YYYY-MM-DD)")
     parser.add_argument("--pair", default="BTC-USD", help="Trading pair")
@@ -415,16 +397,10 @@ def main():
         help="Comma-separated list of venues",
     )
     parser.add_argument("--cache-dir", default="data/cache", help="Cache directory")
-    parser.add_argument(
-        "--export-dir", default="exports/real_data_runs", help="Export directory"
-    )
+    parser.add_argument("--export-dir", default="exports/real_data_runs", help="Export directory")
     parser.add_argument("--use-overlap-json", help="Path to OVERLAP.json file")
-    parser.add_argument(
-        "--from-snapshot-ticks", type=int, help="Use snapshot tick data (1=yes)"
-    )
-    parser.add_argument(
-        "--permutes", type=int, default=1000, help="Number of permutations"
-    )
+    parser.add_argument("--from-snapshot-ticks", type=int, help="Use snapshot tick data (1=yes)")
+    parser.add_argument("--permutes", type=int, default=1000, help="Number of permutations")
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose logging")
 
     args = parser.parse_args()

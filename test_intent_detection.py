@@ -47,6 +47,3 @@ def test_intent_detection():
 
 if __name__ == "__main__":
     test_intent_detection()
-
-
-

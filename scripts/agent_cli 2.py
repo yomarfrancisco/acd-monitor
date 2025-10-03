@@ -28,9 +28,7 @@ from agent.compose.answer import ACDAnswerComposer
 
 def main():
     """Main CLI entry point"""
-    parser = argparse.ArgumentParser(
-        description="ACD Agent CLI for testing providers and queries"
-    )
+    parser = argparse.ArgumentParser(description="ACD Agent CLI for testing providers and queries")
 
     # Provider selection
     parser.add_argument(
@@ -43,17 +41,13 @@ def main():
     # Query options
     parser.add_argument("--query", type=str, help="Query to send to the agent")
 
-    parser.add_argument(
-        "--interactive", action="store_true", help="Run in interactive mode"
-    )
+    parser.add_argument("--interactive", action="store_true", help="Run in interactive mode")
 
     # Health check
     parser.add_argument("--health", action="store_true", help="Check provider health")
 
     # Artifact operations
-    parser.add_argument(
-        "--list-artifacts", action="store_true", help="List available artifacts"
-    )
+    parser.add_argument("--list-artifacts", action="store_true", help="List available artifacts")
 
     parser.add_argument(
         "--artifacts-dir",
@@ -155,9 +149,7 @@ def run_query(args):
         provider = OfflineMockProvider(artifacts_dir=args.artifacts_dir)
 
     # Run query
-    result = provider.generate(
-        prompt=args.query, session_id=f"cli_session_{args.provider}"
-    )
+    result = provider.generate(prompt=args.query, session_id=f"cli_session_{args.provider}")
 
     # Output result
     if args.output == "json":
@@ -284,9 +276,7 @@ def run_sample_queries(args):
         "Generate a screening memo for BTC/USD (past week): headline verdict (LOW/AMBER/RED), top drivers (lead-lag, mirroring, regimes), and caveats.",
     ]
 
-    print(
-        f"Running {len(sample_queries)} sample queries with provider: {args.provider}"
-    )
+    print(f"Running {len(sample_queries)} sample queries with provider: {args.provider}")
     print("=" * 80)
 
     # Create provider
@@ -301,9 +291,7 @@ def run_sample_queries(args):
         print(f"\nQuery {i}: {query}")
         print("-" * 60)
 
-        result = provider.generate(
-            prompt=query, session_id=f"sample_{args.provider}_{i}"
-        )
+        result = provider.generate(prompt=query, session_id=f"sample_{args.provider}_{i}")
 
         print(f"Response: {result.content[:200]}...")
         print(f"Intent: {result.usage.get('intent', 'unknown')}")
@@ -327,5 +315,3 @@ def run_sample_queries(args):
 
 if __name__ == "__main__":
     main()
-
-

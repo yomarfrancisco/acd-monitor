@@ -18,9 +18,7 @@ import itertools
 def load_analysis_data() -> Tuple[Dict, List[Dict], pd.DataFrame]:
     """Load InfoShare, Spread episodes, and mid prices data"""
     # Load InfoShare results
-    infoshare_file = Path(
-        "exports/cross_window_analysis/window_9_8m/info_share_results.json"
-    )
+    infoshare_file = Path("exports/cross_window_analysis/window_9_8m/info_share_results.json")
     with open(infoshare_file) as f:
         infoshare_data = json.load(f)
 
@@ -229,9 +227,7 @@ def compute_episode_controls_contrast(
         episode_data = mid_prices_df.iloc[start_idx:end_idx]
 
         # Get non-episode periods (before and after)
-        non_episode_data = pd.concat(
-            [mid_prices_df.iloc[:start_idx], mid_prices_df.iloc[end_idx:]]
-        )
+        non_episode_data = pd.concat([mid_prices_df.iloc[:start_idx], mid_prices_df.iloc[end_idx:]])
 
         # Compute episode vs non-episode contrasts for each control
         for venue in ["binance", "coinbase", "kraken", "okx", "bybit"]:
@@ -333,9 +329,7 @@ def generate_controls_report(
     report.append("")
 
     # Check if controls explain InfoShare ordering
-    volume_corrs = correlations_df[correlations_df["control"] == "volume_proxy"][
-        "spearman_rho"
-    ]
+    volume_corrs = correlations_df[correlations_df["control"] == "volume_proxy"]["spearman_rho"]
     if volume_corrs.mean() > 0.5:
         report.append(
             "**Volume appears to explain InfoShare ordering** - high volume venues have higher InfoShare"
@@ -361,9 +355,7 @@ def generate_controls_report(
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Gold Hunt Phase 3 - Economic Controls"
-    )
+    parser = argparse.ArgumentParser(description="Gold Hunt Phase 3 - Economic Controls")
     parser.add_argument(
         "--output-dir",
         default="experiments/gold_hunt_v1/phase3_controls",
@@ -374,9 +366,7 @@ def main():
         default="exports/gold_hunt/latest/phase3_controls",
         help="Export directory for UI",
     )
-    parser.add_argument(
-        "--seed", type=int, default=42, help="Random seed for reproducibility"
-    )
+    parser.add_argument("--seed", type=int, default=42, help="Random seed for reproducibility")
     parser.add_argument("--verbose", action="store_true", help="Verbose output")
 
     args = parser.parse_args()
@@ -395,14 +385,10 @@ def main():
     controls_df = compute_economic_controls(mid_prices_df)
 
     print("Computing InfoShare-control correlations...")
-    correlations_df = compute_infoshare_controls_correlations(
-        infoshare_data, controls_df
-    )
+    correlations_df = compute_infoshare_controls_correlations(infoshare_data, controls_df)
 
     print("Computing episode-control contrasts...")
-    contrasts_df = compute_episode_controls_contrast(
-        episodes, mid_prices_df, controls_df
-    )
+    contrasts_df = compute_episode_controls_contrast(episodes, mid_prices_df, controls_df)
 
     # Save results
     controls_df.to_csv(f"{args.output_dir}/venue_controls.csv", index=False)

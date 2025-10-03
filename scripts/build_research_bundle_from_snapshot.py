@@ -24,9 +24,7 @@ from acdlib.io.load_snapshot import load_snapshot_data
 def setup_logging(verbose: bool = False):
     """Setup logging configuration."""
     level = logging.DEBUG if verbose else logging.INFO
-    logging.basicConfig(
-        level=level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    )
+    logging.basicConfig(level=level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
 
 def run_analysis(script_path: str, args: list, verbose: bool = False):
@@ -89,9 +87,7 @@ def validate_infoshare_results(export_dir: str, overlap_data: dict):
         required_keys = ["bounds", "overlap_window", "standardize", "gg_blend_alpha"]
         missing_keys = [key for key in required_keys if key not in results]
         if missing_keys:
-            logger.error(
-                f"[ABORT:bundle:infoshare_invalid] Missing keys: {missing_keys}"
-            )
+            logger.error(f"[ABORT:bundle:infoshare_invalid] Missing keys: {missing_keys}")
             print(f"[ABORT:bundle:infoshare_invalid] Missing keys: {missing_keys}")
             return False
 
@@ -104,27 +100,19 @@ def validate_infoshare_results(export_dir: str, overlap_data: dict):
         # Check each venue has valid bounds
         for venue in overlap_data["venues"]:
             if venue not in bounds:
-                logger.error(
-                    f"[ABORT:bundle:infoshare_invalid] Missing bounds for {venue}"
-                )
+                logger.error(f"[ABORT:bundle:infoshare_invalid] Missing bounds for {venue}")
                 print(f"[ABORT:bundle:infoshare_invalid] Missing bounds for {venue}")
                 return False
 
             venue_bounds = bounds[venue]
             if not all(key in venue_bounds for key in ["lower", "upper", "point"]):
-                logger.error(
-                    f"[ABORT:bundle:infoshare_invalid] Incomplete bounds for {venue}"
-                )
+                logger.error(f"[ABORT:bundle:infoshare_invalid] Incomplete bounds for {venue}")
                 print(f"[ABORT:bundle:infoshare_invalid] Incomplete bounds for {venue}")
                 return False
 
             # Check bounds are in valid range
             if not (
-                0
-                <= venue_bounds["lower"]
-                <= venue_bounds["point"]
-                <= venue_bounds["upper"]
-                <= 1
+                0 <= venue_bounds["lower"] <= venue_bounds["point"] <= venue_bounds["upper"] <= 1
             ):
                 logger.error(
                     f"[ABORT:bundle:infoshare_invalid] Invalid bounds for {venue}: {venue_bounds}"
@@ -288,9 +276,7 @@ def create_evidence_md(export_dir: str, overlap_data: dict):
         f.write("- OVERLAP.json: Window metadata and policy\n")
         f.write("- GAP_REPORT.json: Gap analysis and coverage statistics\n")
         f.write("- MANIFEST.json: Complete provenance with git SHA and seeds\n")
-        f.write(
-            "- evidence/info_share_results.json: Information share analysis results\n"
-        )
+        f.write("- evidence/info_share_results.json: Information share analysis results\n")
         f.write("- evidence/spread_results.json: Spread compression analysis results\n")
         f.write("- evidence/leadlag_results.json: Lead-lag analysis results\n")
         f.write("- evidence/leadlag_summary.json: Lead-lag summary statistics\n")
@@ -595,9 +581,7 @@ def build_research_bundle(
     ]
     leadlag_args = [arg for arg in leadlag_args if arg]  # Remove empty strings
 
-    return_code, stdout, stderr = run_analysis(
-        "scripts/run_leadlag_real.py", leadlag_args, verbose
-    )
+    return_code, stdout, stderr = run_analysis("scripts/run_leadlag_real.py", leadlag_args, verbose)
 
     if return_code != 0:
         logger.error("Lead-Lag analysis failed")
@@ -622,16 +606,12 @@ def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(description="Build research bundle from snapshot")
     parser.add_argument("--snapshot", required=True, help="Path to snapshot directory")
-    parser.add_argument(
-        "--export-dir", help="Export directory (default: <snapshot>/evidence)"
-    )
+    parser.add_argument("--export-dir", help="Export directory (default: <snapshot>/evidence)")
     parser.add_argument("--pair", default="BTC-USD", help="Trading pair")
     parser.add_argument(
         "--gg-blend-alpha", type=float, default=0.7, help="GG blend alpha parameter"
     )
-    parser.add_argument(
-        "--permutes", type=int, default=1000, help="Number of permutations"
-    )
+    parser.add_argument("--permutes", type=int, default=1000, help="Number of permutations")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
 
     args = parser.parse_args()

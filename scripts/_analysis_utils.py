@@ -120,22 +120,16 @@ def ensure_time_mid_volume(df: pd.DataFrame) -> pd.DataFrame:
     required_cols = ["time", "mid", "volume"]
     missing_cols = [col for col in required_cols if col not in result_df.columns]
     if missing_cols:
-        raise ValueError(
-            f"Missing required columns after normalization: {missing_cols}"
-        )
+        raise ValueError(f"Missing required columns after normalization: {missing_cols}")
 
     # Drop rows with NaN values in required columns
     initial_rows = len(result_df)
     result_df = result_df.dropna(subset=required_cols)
     dropped_rows = initial_rows - len(result_df)
     if dropped_rows > 0:
-        logger.warning(
-            f"Dropped {dropped_rows} rows with NaN values in required columns"
-        )
+        logger.warning(f"Dropped {dropped_rows} rows with NaN values in required columns")
 
-    logger.info(
-        f"Normalized DataFrame: {len(result_df)} rows, columns: {list(result_df.columns)}"
-    )
+    logger.info(f"Normalized DataFrame: {len(result_df)} rows, columns: {list(result_df.columns)}")
     return result_df
 
 
@@ -160,19 +154,14 @@ def resample_minute(df: pd.DataFrame) -> pd.DataFrame:
     # Use proper pandas resample syntax
     try:
         # Resample to 1-minute bars
-        resampled = df.resample("1T").agg(
-            {"mid": ["first", "last", "min", "max"], "volume": "sum"}
-        )
+        resampled = df.resample("1T").agg({"mid": ["first", "last", "min", "max"], "volume": "sum"})
 
         # Flatten column names
         resampled.columns = ["open", "close", "low", "high", "volume"]
 
         # Add mid as average of OHLC
         resampled["mid"] = (
-            resampled["open"]
-            + resampled["close"]
-            + resampled["low"]
-            + resampled["high"]
+            resampled["open"] + resampled["close"] + resampled["low"] + resampled["high"]
         ) / 4
 
         # Drop NaN rows
@@ -210,19 +199,14 @@ def resample_second(df: pd.DataFrame) -> pd.DataFrame:
     # Use proper pandas resample syntax
     try:
         # Resample to 1-second bars
-        resampled = df.resample("1S").agg(
-            {"mid": ["first", "last", "min", "max"], "volume": "sum"}
-        )
+        resampled = df.resample("1S").agg({"mid": ["first", "last", "min", "max"], "volume": "sum"})
 
         # Flatten column names
         resampled.columns = ["open", "close", "low", "high", "volume"]
 
         # Add mid as average of OHLC
         resampled["mid"] = (
-            resampled["open"]
-            + resampled["close"]
-            + resampled["low"]
-            + resampled["high"]
+            resampled["open"] + resampled["close"] + resampled["low"] + resampled["high"]
         ) / 4
 
         # Drop NaN rows
@@ -263,9 +247,7 @@ def validate_dataframe(df: pd.DataFrame, required_cols: list = None) -> bool:
     # Check for NaN values in required columns
     nan_counts = df[required_cols].isna().sum()
     if nan_counts.any():
-        raise ValueError(
-            f"NaN values found in required columns: {nan_counts.to_dict()}"
-        )
+        raise ValueError(f"NaN values found in required columns: {nan_counts.to_dict()}")
 
     # Check data types
     if not pd.api.types.is_datetime64_any_dtype(df["time"]):
@@ -277,9 +259,7 @@ def validate_dataframe(df: pd.DataFrame, required_cols: list = None) -> bool:
     if not pd.api.types.is_numeric_dtype(df["volume"]):
         raise ValueError("Volume column is not numeric type")
 
-    logger.info(
-        f"DataFrame validation passed: {len(df)} rows, columns: {list(df.columns)}"
-    )
+    logger.info(f"DataFrame validation passed: {len(df)} rows, columns: {list(df.columns)}")
     return True
 
 
@@ -303,9 +283,7 @@ def expected_rows(start: datetime, end: datetime, freq: str = "S") -> int:
         raise ValueError(f"Unsupported frequency: {freq}")
 
 
-def compute_coverage(
-    df: pd.DataFrame, start: datetime, end: datetime, freq: str = "S"
-) -> float:
+def compute_coverage(df: pd.DataFrame, start: datetime, end: datetime, freq: str = "S") -> float:
     """
     Compute coverage ratio for a DataFrame within a time window.
 

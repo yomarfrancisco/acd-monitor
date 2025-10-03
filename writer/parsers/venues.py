@@ -2,6 +2,7 @@
 from decimal import Decimal
 from typing import Any, Dict, List, Optional, Tuple
 
+
 def _to_float(x: Any) -> Optional[float]:
     try:
         return float(x)
@@ -11,17 +12,19 @@ def _to_float(x: Any) -> Optional[float]:
         except Exception:
             return None
 
+
 def _detect_epoch_seconds(ts: Any) -> Optional[float]:
     try:
         ts = int(float(ts))
     except Exception:
         return None
     # heuristics: s / ms / µs
-    if ts > 9_999_999_999_999:   # µs
+    if ts > 9_999_999_999_999:  # µs
         return ts / 1_000_000.0
-    if ts > 9_999_999_999:       # ms
+    if ts > 9_999_999_999:  # ms
         return ts / 1_000.0
-    return float(ts)             # s
+    return float(ts)  # s
+
 
 # ---------- BYBIT (v5 trade / book-ticker) ----------
 def parse_bybit(msg: Dict[str, Any]) -> Optional[Dict[str, Any]]:
@@ -47,7 +50,10 @@ def parse_bybit(msg: Dict[str, Any]) -> Optional[Dict[str, Any]]:
             "ts_exchange": _detect_epoch_seconds(ts),
             "last_px": px,
             "trade_sz": sz,
-            "best_bid": None, "best_ask": None, "bid_sz": None, "ask_sz": None
+            "best_bid": None,
+            "best_ask": None,
+            "bid_sz": None,
+            "ask_sz": None,
         }
 
     # tickers (best bid/ask)
@@ -63,12 +69,14 @@ def parse_bybit(msg: Dict[str, Any]) -> Optional[Dict[str, Any]]:
             "venue": "bybit",
             "ts_exchange": _detect_epoch_seconds(ts),
             "last_px": None,
-            "best_bid": bid, "best_ask": ask,
-            "bid_sz": _to_float(d.get("bid1Size") or d.get("B")), 
+            "best_bid": bid,
+            "best_ask": ask,
+            "bid_sz": _to_float(d.get("bid1Size") or d.get("B")),
             "ask_sz": _to_float(d.get("ask1Size") or d.get("A")),
-            "trade_sz": None
+            "trade_sz": None,
         }
     return None
+
 
 # ---------- KRAKEN (trades channel) ----------
 def parse_kraken(msg: Any) -> Optional[Dict[str, Any]]:
@@ -94,10 +102,12 @@ def parse_kraken(msg: Any) -> Optional[Dict[str, Any]]:
         return None
     return {
         "venue": "kraken",
-        "symbol_alias": "BTC-USD" if pair.upper() in ("XBT/USD","XBTUSD") else None,
+        "symbol_alias": "BTC-USD" if pair.upper() in ("XBT/USD", "XBTUSD") else None,
         "ts_exchange": ts,
         "last_px": px,
         "trade_sz": sz,
-        "best_bid": None, "best_ask": None, "bid_sz": None, "ask_sz": None
+        "best_bid": None,
+        "best_ask": None,
+        "bid_sz": None,
+        "ask_sz": None,
     }
-

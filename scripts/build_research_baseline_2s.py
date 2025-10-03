@@ -22,9 +22,7 @@ sys.path.append(str(Path(__file__).parent.parent / "src"))
 def setup_logging(verbose: bool = False):
     """Setup logging configuration."""
     level = logging.DEBUG if verbose else logging.INFO
-    logging.basicConfig(
-        level=level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    )
+    logging.basicConfig(level=level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
 
 def load_best_2s_snapshot(promoted_file: str) -> Dict[str, Any]:
@@ -108,9 +106,7 @@ def pin_baseline_snapshot(best_snapshot: Dict[str, Any], baseline_dir: Path) -> 
     else:
         # Create mock tick data for demonstration
         baseline_ticks.mkdir(exist_ok=True)
-        logger.warning(
-            f"No tick data found in snapshot, created empty directory: {baseline_ticks}"
-        )
+        logger.warning(f"No tick data found in snapshot, created empty directory: {baseline_ticks}")
 
     # Create MANIFEST.json
     try:
@@ -166,9 +162,7 @@ def pin_baseline_snapshot(best_snapshot: Dict[str, Any], baseline_dir: Path) -> 
     print(f"[BASELINE:2s:pin] {json.dumps(pin_log)}")
 
 
-def build_research_bundle(
-    baseline_dir: Path, export_dir: str, verbose: bool = False
-) -> None:
+def build_research_bundle(baseline_dir: Path, export_dir: str, verbose: bool = False) -> None:
     """
     Build the canonical 2s research bundle.
 
@@ -388,20 +382,14 @@ def main():
         default="exports/sweep/REAL_2s_PROMOTED.json",
         help="Path to REAL_2s_PROMOTED.json",
     )
-    parser.add_argument(
-        "--from-overlap-json", help="Path to specific OVERLAP.json file"
-    )
-    parser.add_argument(
-        "--baseline-dir", default="baselines/2s", help="Baseline directory"
-    )
+    parser.add_argument("--from-overlap-json", help="Path to specific OVERLAP.json file")
+    parser.add_argument("--baseline-dir", default="baselines/2s", help="Baseline directory")
     parser.add_argument(
         "--export-dir",
         default="baselines/2s/evidence",
         help="Export directory for evidence",
     )
-    parser.add_argument(
-        "--rebuild-only", action="store_true", help="Only rebuild evidence bundle"
-    )
+    parser.add_argument("--rebuild-only", action="store_true", help="Only rebuild evidence bundle")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
 
     args = parser.parse_args()

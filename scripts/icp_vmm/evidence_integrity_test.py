@@ -69,10 +69,7 @@ def check_evidence_integrity(output_dir: str) -> bool:
         return False
 
     # Check for power banner
-    if (
-        "PROVISIONAL" not in evidence_content
-        or "integration testing only" not in evidence_content
-    ):
+    if "PROVISIONAL" not in evidence_content or "integration testing only" not in evidence_content:
         print("❌ Missing power banner in EVIDENCE.md")
         return False
 

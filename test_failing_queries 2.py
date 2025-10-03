@@ -58,5 +58,3 @@ def test_failing_queries():
 
 if __name__ == "__main__":
     test_failing_queries()
-
-

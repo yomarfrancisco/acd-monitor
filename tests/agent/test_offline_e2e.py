@@ -126,10 +126,7 @@ class TestOfflineE2E:
         assert result.content is not None
         assert len(result.content) > 0
         assert "lead" in result.content.lower() or "lag" in result.content.lower()
-        assert (
-            "entropy" in result.content.lower()
-            or "persistence" in result.content.lower()
-        )
+        assert "entropy" in result.content.lower() or "persistence" in result.content.lower()
 
         # Verify metadata
         assert result.usage is not None
@@ -138,9 +135,7 @@ class TestOfflineE2E:
 
     def test_spread_floor_analysis_query(self, offline_provider):
         """Test spread floor analysis query"""
-        query = (
-            "Highlight any periods where spread floors emerged despite high volatility."
-        )
+        query = "Highlight any periods where spread floors emerged despite high volatility."
 
         result = offline_provider.generate(prompt=query, session_id="test_session_3")
 
@@ -148,9 +143,7 @@ class TestOfflineE2E:
         assert result.content is not None
         assert len(result.content) > 0
         assert "spread" in result.content.lower()
-        assert (
-            "regime" in result.content.lower() or "volatility" in result.content.lower()
-        )
+        assert "regime" in result.content.lower() or "volatility" in result.content.lower()
 
         # Verify metadata
         assert result.usage is not None
@@ -186,8 +179,7 @@ class TestOfflineE2E:
         assert len(result.content) > 0
         assert "vmm" in result.content.lower()
         assert (
-            "over-identification" in result.content.lower()
-            or "stability" in result.content.lower()
+            "over-identification" in result.content.lower() or "stability" in result.content.lower()
         )
 
         # Verify metadata
@@ -327,9 +319,7 @@ class TestScriptedComplianceQueries:
 
     def test_scripted_query_3(self, offline_provider):
         """Test: Highlight any periods where spread floors emerged despite high volatility."""
-        query = (
-            "Highlight any periods where spread floors emerged despite high volatility."
-        )
+        query = "Highlight any periods where spread floors emerged despite high volatility."
         result = offline_provider.generate(prompt=query)
 
         assert "spread" in result.content.lower()
@@ -356,10 +346,7 @@ class TestScriptedComplianceQueries:
         query = "List all alternative explanations that could account for the coordination signal flagged on 2025-09-15."  # noqa: E501
         result = offline_provider.generate(prompt=query)
 
-        assert (
-            "alternative" in result.content.lower()
-            or "explanation" in result.content.lower()
-        )
+        assert "alternative" in result.content.lower() or "explanation" in result.content.lower()
         assert result.usage.get("intent") == "default"  # Should fall back to default
 
     def test_scripted_query_7(self, offline_provider):
@@ -384,10 +371,7 @@ class TestScriptedComplianceQueries:
         query = "Which alternative explanations (arbitrage latency, fee tiers, inventory shocks) were triggered for ETH/USD in the last 72h?"  # noqa: E501
         result = offline_provider.generate(prompt=query)
 
-        assert (
-            "alternative" in result.content.lower()
-            or "explanation" in result.content.lower()
-        )
+        assert "alternative" in result.content.lower() or "explanation" in result.content.lower()
         assert result.usage.get("intent") == "default"  # Should fall back to default
 
     def test_scripted_query_10(self, offline_provider):

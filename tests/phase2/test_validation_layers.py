@@ -66,24 +66,16 @@ class TestValidationLayers:
         # - More significant relationships
 
         # Test persistence scores
-        competitive_avg_persistence = np.mean(
-            list(competitive_result.persistence_scores.values())
-        )
-        coordinated_avg_persistence = np.mean(
-            list(coordinated_result.persistence_scores.values())
-        )
+        competitive_avg_persistence = np.mean(list(competitive_result.persistence_scores.values()))
+        coordinated_avg_persistence = np.mean(list(coordinated_result.persistence_scores.values()))
 
         # Test that results are different (not necessarily in expected direction for synthetic data)
         # The key is that the validation layers produce different results for different scenarios
-        persistence_diff = abs(
-            coordinated_avg_persistence - competitive_avg_persistence
-        )
+        persistence_diff = abs(coordinated_avg_persistence - competitive_avg_persistence)
         entropy_diff = abs(
             coordinated_result.switching_entropy - competitive_result.switching_entropy
         )
-        p_value_diff = abs(
-            coordinated_result.avg_granger_p - competitive_result.avg_granger_p
-        )
+        p_value_diff = abs(coordinated_result.avg_granger_p - competitive_result.avg_granger_p)
 
         # At least one metric should show meaningful difference
         assert (
@@ -129,15 +121,11 @@ class TestValidationLayers:
 
         # Test that results are different and valid
         cosine_diff = abs(
-            coordinated_result.avg_cosine_similarity
-            - competitive_result.avg_cosine_similarity
+            coordinated_result.avg_cosine_similarity - competitive_result.avg_cosine_similarity
         )
-        ratio_diff = abs(
-            coordinated_result.mirroring_ratio - competitive_result.mirroring_ratio
-        )
+        ratio_diff = abs(coordinated_result.mirroring_ratio - competitive_result.mirroring_ratio)
         score_diff = abs(
-            coordinated_result.coordination_score
-            - competitive_result.coordination_score
+            coordinated_result.coordination_score - competitive_result.coordination_score
         )
 
         # At least one metric should show meaningful difference
@@ -205,12 +193,8 @@ class TestValidationLayers:
         ), "Lockstep regime should be identified"
 
         # Test model quality (log-likelihood should be reasonable)
-        assert (
-            coordinated_result.log_likelihood > -1000
-        ), "Log-likelihood should be reasonable"
-        assert (
-            competitive_result.log_likelihood > -1000
-        ), "Log-likelihood should be reasonable"
+        assert coordinated_result.log_likelihood > -1000, "Log-likelihood should be reasonable"
+        assert competitive_result.log_likelihood > -1000, "Log-likelihood should be reasonable"
 
         # Test that we get valid results (not NaN or infinite)
         assert not np.isnan(
@@ -245,8 +229,7 @@ class TestValidationLayers:
 
         # Test that results are different and valid
         te_diff = abs(
-            coordinated_result.avg_transfer_entropy
-            - competitive_result.avg_transfer_entropy
+            coordinated_result.avg_transfer_entropy - competitive_result.avg_transfer_entropy
         )
         network_score_diff = abs(
             coordinated_result.coordination_network_score
@@ -422,9 +405,7 @@ class TestValidationLayers:
         )
 
         # Should have environment-specific results
-        assert (
-            len(hmm_result.env_dwell_times) > 0
-        ), "Should have environment-specific dwell times"
+        assert len(hmm_result.env_dwell_times) > 0, "Should have environment-specific dwell times"
         assert (
             len(hmm_result.env_stability) > 0
         ), "Should have environment-specific stability scores"
@@ -489,9 +470,7 @@ class TestValidationLayers:
         assert (
             result1.switching_entropy == result2.switching_entropy
         ), "Results should be reproducible"
-        assert (
-            result1.avg_granger_p == result2.avg_granger_p
-        ), "Results should be reproducible"
+        assert result1.avg_granger_p == result2.avg_granger_p, "Results should be reproducible"
 
         # Test with different seed
         result3 = analyze_lead_lag(

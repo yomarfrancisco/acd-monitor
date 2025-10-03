@@ -22,9 +22,7 @@ class TestVMMHardening:
 
         competitive_data = generator.generate_competitive_scenario()
         coordinated_data = generator.generate_coordinated_scenario()
-        price_columns = [
-            col for col in competitive_data.columns if col.startswith("Exchange_")
-        ]
+        price_columns = [col for col in competitive_data.columns if col.startswith("Exchange_")]
 
         global_scaler = GlobalMomentScaler(method="minmax")
         crypto_config = CryptoMomentConfig()
@@ -51,9 +49,7 @@ class TestVMMHardening:
         assert vmm_engine._per_timestep_scaler.get("fitted", False)
 
         # Get the stabilized moments
-        moment_matrix = vmm_engine._get_per_timestep_moments(
-            competitive_data, price_columns
-        )
+        moment_matrix = vmm_engine._get_per_timestep_moments(competitive_data, price_columns)
 
         # Apply stabilization pipeline
         moment_matrix_winsorized = np.clip(
@@ -62,12 +58,8 @@ class TestVMMHardening:
             vmm_engine._per_timestep_scaler["q99"],
         )
 
-        moment_matrix_centered = (
-            moment_matrix_winsorized - vmm_engine._per_timestep_scaler["mu0"]
-        )
-        moment_matrix_scaled = (
-            moment_matrix_centered / vmm_engine._per_timestep_scaler["sigma0"]
-        )
+        moment_matrix_centered = moment_matrix_winsorized - vmm_engine._per_timestep_scaler["mu0"]
+        moment_matrix_scaled = moment_matrix_centered / vmm_engine._per_timestep_scaler["sigma0"]
 
         # Check for zero-variance components
         component_stds = np.std(moment_matrix_scaled, axis=0)
@@ -79,9 +71,7 @@ class TestVMMHardening:
 
         # Assert std bounds for retained components
         for i, std_val in enumerate(component_stds):
-            assert (
-                0.9 <= std_val <= 1.1
-            ), f"Component {i} std {std_val} not in [0.9, 1.1]"
+            assert 0.9 <= std_val <= 1.1, f"Component {i} std {std_val} not in [0.9, 1.1]"
 
     def test_hac_condition_number_bounds(self, setup_vmm):
         """Test that HAC condition number ≤ 1e6"""
@@ -97,9 +87,7 @@ class TestVMMHardening:
 
         # Check condition number
         assert hasattr(vmm_engine, "_weight_matrix_metadata")
-        condition_number = vmm_engine._weight_matrix_metadata.get(
-            "condition_number", float("inf")
-        )
+        condition_number = vmm_engine._weight_matrix_metadata.get("condition_number", float("inf"))
         ridge_lambda = vmm_engine._weight_matrix_metadata.get("ridge_lambda", 0.0)
 
         assert (
@@ -204,16 +192,9 @@ class TestVMMHardening:
         )
 
         # Results should be identical
+        assert abs(result1.over_identification_stat - result2.over_identification_stat) < 1e-10
         assert (
-            abs(result1.over_identification_stat - result2.over_identification_stat)
-            < 1e-10
-        )
-        assert (
-            abs(
-                result1.over_identification_p_value
-                - result2.over_identification_p_value
-            )
-            < 1e-10
+            abs(result1.over_identification_p_value - result2.over_identification_p_value) < 1e-10
         )
 
     def test_zero_variance_component_handling(self, setup_vmm):
@@ -232,9 +213,7 @@ class TestVMMHardening:
         assert hasattr(vmm_engine, "_per_timestep_scaler")
         if "valid_components" in vmm_engine._per_timestep_scaler:
             valid_components = vmm_engine._per_timestep_scaler["valid_components"]
-            k_reduced = vmm_engine._per_timestep_scaler.get(
-                "k_reduced", len(valid_components)
-            )
+            k_reduced = vmm_engine._per_timestep_scaler.get("k_reduced", len(valid_components))
 
             assert np.sum(valid_components) == k_reduced
             assert k_reduced <= len(valid_components)
@@ -269,6 +248,3 @@ class TestVMMHardening:
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
-
-
-

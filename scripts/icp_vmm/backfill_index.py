@@ -41,16 +41,10 @@ def get_s3_runs(bucket: str, prefix: str) -> List[Dict[str, Any]]:
                                 "manifestHash": manifest.get("integrity", {}).get(
                                     "manifestHash", ""
                                 ),
-                                "runStatus": manifest.get("run", {}).get(
-                                    "runStatus", "UNKNOWN"
-                                ),
-                                "timestamp": manifest.get("run", {}).get(
-                                    "generatedAt", ""
-                                ),
+                                "runStatus": manifest.get("run", {}).get("runStatus", "UNKNOWN"),
+                                "timestamp": manifest.get("run", {}).get("generatedAt", ""),
                                 "venues": manifest.get("run", {}).get("venues", []),
-                                "observations": manifest.get("run", {}).get(
-                                    "observations", {}
-                                ),
+                                "observations": manifest.get("run", {}).get("observations", {}),
                                 "coverage": manifest.get("run", {}).get("coverage", {}),
                             }
                         )
@@ -74,12 +68,8 @@ def create_index(runs: List[Dict[str, Any]]) -> Dict[str, Any]:
         "runs": runs,
         "summary": {
             "statusCounts": {
-                "PROVISIONAL": len(
-                    [r for r in runs if r["runStatus"] == "PROVISIONAL"]
-                ),
-                "INSUFFICIENT": len(
-                    [r for r in runs if r["runStatus"] == "INSUFFICIENT"]
-                ),
+                "PROVISIONAL": len([r for r in runs if r["runStatus"] == "PROVISIONAL"]),
+                "INSUFFICIENT": len([r for r in runs if r["runStatus"] == "INSUFFICIENT"]),
                 "INVARIANT": len([r for r in runs if r["runStatus"] == "INVARIANT"]),
                 "VARIANT": len([r for r in runs if r["runStatus"] == "VARIANT"]),
                 "ERROR": len([r for r in runs if r["runStatus"] == "ERROR"]),

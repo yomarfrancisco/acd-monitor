@@ -129,9 +129,7 @@ def run_infoshare(snapshot, output_dir, results):
 
         bounds = infoshare_data.get("bounds", {})
         results["metrics"]["bounds_present"] = len(bounds)
-        results["metrics"]["bounds_sum"] = sum(
-            b.get("point", 0) for b in bounds.values()
-        )
+        results["metrics"]["bounds_sum"] = sum(b.get("point", 0) for b in bounds.values())
         results["artifacts"].append(str(infoshare_file))
 
     results["flags"]["infoshare_success"] = True
@@ -169,9 +167,7 @@ def run_spread(snapshot, output_dir, results):
             spread_data = json.load(f)
 
         results["metrics"]["permutes"] = spread_data.get("permutes", 0)
-        results["metrics"]["episodes_count"] = spread_data.get("episodes", {}).get(
-            "count", 0
-        )
+        results["metrics"]["episodes_count"] = spread_data.get("episodes", {}).get("count", 0)
         results["artifacts"].append(str(spread_file))
 
     results["flags"]["spread_success"] = True

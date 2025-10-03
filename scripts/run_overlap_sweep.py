@@ -55,9 +55,7 @@ def find_overlap_windows(
     """
     logger = logging.getLogger(__name__)
 
-    logger.info(
-        f"[SWEEP:search] {{'g_sec': {granularity_sec}, 'min_minutes': {min_duration_min}}}"
-    )
+    logger.info(f"[SWEEP:search] {{'g_sec': {granularity_sec}, 'min_minutes': {min_duration_min}}}")
 
     windows = []
     max_gap_s = granularity_sec
@@ -132,11 +130,7 @@ def create_snapshot(
         .replace("+00:00", "")
     )
     end_iso = (
-        window_data["end"]
-        .replace(":", "")
-        .replace("-", "")
-        .replace("T", "T")
-        .replace("+00:00", "")
+        window_data["end"].replace(":", "").replace("-", "").replace("T", "T").replace("+00:00", "")
     )
     snapshot_dir = export_dir / "snapshots" / f"{sweep_id}_{start_iso}__{end_iso}"
     snapshot_dir.mkdir(parents=True, exist_ok=True)
@@ -211,9 +205,7 @@ def run_analyses(
     # Determine analyses based on granularity
     if granularity_sec >= 900:  # 15m, 10m
         analyses["analyses_run"] = ["InfoShare", "Invariance"]
-        logger.info(
-            f"Running InfoShare + Invariance for {granularity_sec}s granularity"
-        )
+        logger.info(f"Running InfoShare + Invariance for {granularity_sec}s granularity")
 
     elif granularity_sec >= 300:  # 5m
         analyses["analyses_run"] = ["InfoShare", "Spread_Convergence", "Invariance"]
@@ -324,9 +316,7 @@ def create_subminute_evidence_bundle(
         f.write("BEGIN\n")
         f.write("- OVERLAP.json: Window metadata and policy\n")
         f.write("- MANIFEST.json: Complete provenance with git SHA and seeds\n")
-        f.write(
-            "- evidence/info_share_results.json: Information share analysis results\n"
-        )
+        f.write("- evidence/info_share_results.json: Information share analysis results\n")
         f.write("- evidence/spread_results.json: Spread compression analysis results\n")
         f.write("- evidence/leadlag_results.json: Lead-lag analysis results\n")
         f.write("END\n\n")
@@ -453,12 +443,8 @@ def generate_sweep_report(
 
     with open(markdown_file, "w") as f:
         f.write("# Overlap Sweep Results\n\n")
-        f.write(
-            "| Granularity | MinDur | WindowsFound | BestWindow | Coverage | Analyses |\n"
-        )
-        f.write(
-            "|-------------|--------|--------------|------------|----------|----------|\n"
-        )
+        f.write("| Granularity | MinDur | WindowsFound | BestWindow | Coverage | Analyses |\n")
+        f.write("|-------------|--------|--------------|------------|----------|----------|\n")
 
         for result in sweep_results:
             granularity = f"{result['granularity_sec']}s"
@@ -467,9 +453,7 @@ def generate_sweep_report(
 
             if result.get("windows"):
                 best_window = result["windows"][0]
-                best_window_str = (
-                    f"{best_window['start'][:19]} to {best_window['end'][:19]}"
-                )
+                best_window_str = f"{best_window['start'][:19]} to {best_window['end'][:19]}"
                 coverage = f"{best_window['coverage']:.2f}"
             else:
                 best_window_str = "None"
@@ -492,9 +476,7 @@ def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(description="Progressive Overlap Sweep")
     parser.add_argument("--pair", default="BTC-USD", help="Trading pair")
-    parser.add_argument(
-        "--export-dir", default="exports/sweep", help="Export directory"
-    )
+    parser.add_argument("--export-dir", default="exports/sweep", help="Export directory")
     parser.add_argument(
         "--granularities",
         default="900,600,300,60,30,15,5",
@@ -505,9 +487,7 @@ def main():
         default="15,10,5,1,1,1,1",
         help="Minimum durations in minutes (comma-separated)",
     )
-    parser.add_argument(
-        "--coverage-threshold", type=float, default=0.95, help="Coverage threshold"
-    )
+    parser.add_argument("--coverage-threshold", type=float, default=0.95, help="Coverage threshold")
     parser.add_argument(
         "--venues",
         default="binance,coinbase,kraken,okx,bybit",
@@ -577,12 +557,8 @@ def main():
     sweep_results = []
 
     # Run sweep for each granularity
-    for i, (granularity_sec, min_duration_min) in enumerate(
-        zip(granularities, min_durations)
-    ):
-        logger.info(
-            f"Processing granularity {granularity_sec}s (min {min_duration_min}m)"
-        )
+    for i, (granularity_sec, min_duration_min) in enumerate(zip(granularities, min_durations)):
+        logger.info(f"Processing granularity {granularity_sec}s (min {min_duration_min}m)")
 
         # Find overlap windows
         windows = find_overlap_windows(
@@ -635,9 +611,7 @@ def main():
 
         sweep_results.append(result)
 
-        logger.info(
-            f"[SWEEP:summary] Granularity {granularity_sec}s: {len(windows)} windows found"
-        )
+        logger.info(f"[SWEEP:summary] Granularity {granularity_sec}s: {len(windows)} windows found")
 
     # Generate reports
     generate_sweep_report(sweep_results, export_dir)
@@ -651,9 +625,7 @@ def main():
     for result in sweep_results:
         for window in result.get("windows", []):
             if "SYNTHETIC" in window.get("policy", ""):
-                logger.error(
-                    "[ABORT:synthetic] Synthetic data detected in sweep results"
-                )
+                logger.error("[ABORT:synthetic] Synthetic data detected in sweep results")
                 sys.exit(2)
 
 
@@ -787,12 +759,8 @@ def run_continuous_sweep(
                             / f"PING_subminute_{granularity_sec}s_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
                         )
                         with open(ping_file, "w") as f:
-                            f.write(
-                                f"Sub-minute window found: {granularity_sec}s granularity\n"
-                            )
-                            f.write(
-                                f"Duration: {window.get('duration_minutes', 0):.1f} minutes\n"
-                            )
+                            f.write(f"Sub-minute window found: {granularity_sec}s granularity\n")
+                            f.write(f"Duration: {window.get('duration_minutes', 0):.1f} minutes\n")
                             f.write(f"Venues: {', '.join(window.get('venues', []))}\n")
                             f.write(f"Evidence bundle: {evidence_bundle}\n")
                             f.write(f"Timestamp: {datetime.now().isoformat()}\n")
@@ -800,9 +768,7 @@ def run_continuous_sweep(
                         logger.info(f"Created PING file: {ping_file}")
 
                 else:
-                    logger.info(
-                        f"[SWEEP:none] granularity={granularity_sec}s, no_windows_found"
-                    )
+                    logger.info(f"[SWEEP:none] granularity={granularity_sec}s, no_windows_found")
 
             # Wait for next iteration
             logger.info(f"[SWEEP:loop] waiting {loop_interval}s for next scan")

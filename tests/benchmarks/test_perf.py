@@ -57,9 +57,7 @@ class TestPerformance:
 
         # Measure runtime
         start_time = time.time()
-        result = integrated_engine.analyze_coordination_risk(
-            competitive_data, price_columns
-        )
+        result = integrated_engine.analyze_coordination_risk(competitive_data, price_columns)
         end_time = time.time()
 
         # Measure memory after
@@ -71,9 +69,7 @@ class TestPerformance:
         peak_memory = memory_after
 
         # Performance assertions (soft ceilings to catch regressions)
-        assert (
-            runtime < 60.0
-        ), f"Competitive analysis took too long: {runtime:.2f}s (limit: 60s)"
+        assert runtime < 60.0, f"Competitive analysis took too long: {runtime:.2f}s (limit: 60s)"
         assert (
             memory_used < 500.0
         ), f"Competitive analysis used too much memory: {memory_used:.1f}MB (limit: 500MB)"
@@ -105,9 +101,7 @@ class TestPerformance:
 
         # Measure runtime
         start_time = time.time()
-        result = integrated_engine.analyze_coordination_risk(
-            coordinated_data, price_columns
-        )
+        result = integrated_engine.analyze_coordination_risk(coordinated_data, price_columns)
         end_time = time.time()
 
         # Measure memory after
@@ -119,9 +113,7 @@ class TestPerformance:
         peak_memory = memory_after
 
         # Performance assertions (soft ceilings to catch regressions)
-        assert (
-            runtime < 60.0
-        ), f"Coordinated analysis took too long: {runtime:.2f}s (limit: 60s)"
+        assert runtime < 60.0, f"Coordinated analysis took too long: {runtime:.2f}s (limit: 60s)"
         assert (
             memory_used < 500.0
         ), f"Coordinated analysis used too much memory: {memory_used:.1f}MB (limit: 500MB)"
@@ -174,9 +166,7 @@ class TestPerformance:
         peak_memory = memory_after
 
         # Performance assertions (soft ceilings to catch regressions)
-        assert (
-            runtime < 120.0
-        ), f"Both scenarios took too long: {runtime:.2f}s (limit: 120s)"
+        assert runtime < 120.0, f"Both scenarios took too long: {runtime:.2f}s (limit: 120s)"
         assert (
             memory_used < 800.0
         ), f"Both scenarios used too much memory: {memory_used:.1f}MB (limit: 800MB)"
@@ -186,12 +176,10 @@ class TestPerformance:
 
         # Verify results are valid and different
         assert (
-            competitive_result.risk_classification
-            != coordinated_result.risk_classification
+            competitive_result.risk_classification != coordinated_result.risk_classification
         ), "Scenarios should have different classifications"
         assert (
-            competitive_result.composite_risk_score
-            != coordinated_result.composite_risk_score
+            competitive_result.composite_risk_score != coordinated_result.composite_risk_score
         ), "Scenarios should have different scores"
 
         print("Both Scenarios Performance:")
@@ -214,9 +202,7 @@ class TestPerformance:
 
         for i in range(5):
             memory_before = self.get_memory_usage()
-            result = integrated_engine.analyze_coordination_risk(
-                competitive_data, price_columns
-            )
+            result = integrated_engine.analyze_coordination_risk(competitive_data, price_columns)
             memory_after = self.get_memory_usage()
 
             memory_used = memory_after - memory_before

@@ -36,9 +36,7 @@ def generate_coordinated_order_book_data():
 
         for venue_idx, venue in enumerate(venues):
             # Create coordinated order book structure
-            venue_price = current_price + np.random.normal(
-                0, 10
-            )  # Small venue-specific variation
+            venue_price = current_price + np.random.normal(0, 10)  # Small venue-specific variation
 
             for level in range(50):
                 if level < 25:  # Bid side
@@ -53,9 +51,9 @@ def generate_coordinated_order_book_data():
                     base_size = np.random.exponential(0.5) + 0.1
                 else:  # Other venues follow Binance with high correlation
                     correlation_factor = coordination_strength
-                    base_size = base_size * correlation_factor + np.random.exponential(
-                        0.1
-                    ) * (1 - correlation_factor)
+                    base_size = base_size * correlation_factor + np.random.exponential(0.1) * (
+                        1 - correlation_factor
+                    )
 
                 data.append(
                     {
@@ -209,20 +207,14 @@ def calculate_jaccard_index(orders1, orders2, time_window_ms=1000):
         orders1_copy = orders1.copy()
         orders2_copy = orders2.copy()
 
-        orders1_copy["timestamp_ms"] = (
-            orders1_copy["timestamp"].astype("int64") // 10**6
-        )
-        orders2_copy["timestamp_ms"] = (
-            orders2_copy["timestamp"].astype("int64") // 10**6
-        )
+        orders1_copy["timestamp_ms"] = orders1_copy["timestamp"].astype("int64") // 10**6
+        orders2_copy["timestamp_ms"] = orders2_copy["timestamp"].astype("int64") // 10**6
 
         # Create order placement identifiers
         def create_identifiers(orders):
             identifiers = set()
             for _, order in orders.iterrows():
-                rounded_time = (
-                    order["timestamp_ms"] // time_window_ms
-                ) * time_window_ms
+                rounded_time = (order["timestamp_ms"] // time_window_ms) * time_window_ms
                 price_bucket = round(order["price"], 2)
                 size_bucket = round(order["size"], 4)
                 identifier = (rounded_time, price_bucket, size_bucket, order["side"])
@@ -256,9 +248,7 @@ def calculate_price_correlation(prices1, prices2):
             return 0.0
 
         # Calculate Pearson correlation
-        correlation = np.corrcoef(aligned_prices["venue1"], aligned_prices["venue2"])[
-            0, 1
-        ]
+        correlation = np.corrcoef(aligned_prices["venue1"], aligned_prices["venue2"])[0, 1]
 
         if np.isnan(correlation):
             return 0.0
@@ -369,9 +359,7 @@ def create_metrics_plots(results, order_book_data, order_data, price_data):
     plt.figure(figsize=(12, 8))
 
     # Extract metrics for plotting
-    timestamps = pd.date_range(
-        "2025-09-18 14:00:00", "2025-09-18 16:00:00", freq="5min"
-    )
+    timestamps = pd.date_range("2025-09-18 14:00:00", "2025-09-18 16:00:00", freq="5min")
 
     # Use actual calculated values for plotting
     avg = results["average_metrics"]
@@ -435,9 +423,7 @@ def main():
     create_metrics_plots(results, order_book_data, order_data, price_data)
 
     # Save results
-    output_file = (
-        "artifacts/v1_4_validation/metrics/metrics_window_2025-09-18T14-16Z.json"
-    )
+    output_file = "artifacts/v1_4_validation/metrics/metrics_window_2025-09-18T14-16Z.json"
     with open(output_file, "w") as f:
         json.dump(results, f, indent=2, default=str)
 
@@ -476,6 +462,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-

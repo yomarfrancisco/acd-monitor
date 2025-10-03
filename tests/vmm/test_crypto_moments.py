@@ -43,34 +43,24 @@ class TestCryptoMoments:
         price_columns = ["Exchange_0", "Exchange_1", "Exchange_2", "Exchange_3"]
 
         # Calculate moments for both scenarios
-        competitive_moments = calculator.calculate_moments(
-            competitive_data, price_columns
-        )
-        coordinated_moments = calculator.calculate_moments(
-            coordinated_data, price_columns
-        )
+        competitive_moments = calculator.calculate_moments(competitive_data, price_columns)
+        coordinated_moments = calculator.calculate_moments(coordinated_data, price_columns)
 
         # Test that moments are different
         # Arbitrage timing should be different
         comp_arbitrage = np.mean(competitive_moments.lead_lag_betas)
         coord_arbitrage = np.mean(coordinated_moments.lead_lag_betas)
-        assert (
-            comp_arbitrage != coord_arbitrage
-        ), "Arbitrage timing should differ between scenarios"
+        assert comp_arbitrage != coord_arbitrage, "Arbitrage timing should differ between scenarios"
 
         # Mirroring should be different
         comp_mirroring = np.mean(competitive_moments.mirroring_ratios)
         coord_mirroring = np.mean(coordinated_moments.mirroring_ratios)
-        assert (
-            comp_mirroring != coord_mirroring
-        ), "Mirroring ratios should differ between scenarios"
+        assert comp_mirroring != coord_mirroring, "Mirroring ratios should differ between scenarios"
 
         # Spread floor dwell should be different
         comp_dwell = np.mean(competitive_moments.spread_floor_dwell_times)
         coord_dwell = np.mean(coordinated_moments.spread_floor_dwell_times)
-        assert (
-            comp_dwell != coord_dwell
-        ), "Spread floor dwell should differ between scenarios"
+        assert comp_dwell != coord_dwell, "Spread floor dwell should differ between scenarios"
 
         # Undercut initiation should be different
         comp_undercut = np.mean(competitive_moments.undercut_initiation_rate)
@@ -91,15 +81,9 @@ class TestCryptoMoments:
         assert np.all(np.isfinite(moments.undercut_initiation_rate))
 
         # Moments should be in reasonable ranges
-        assert np.all(
-            moments.lead_lag_betas >= 0
-        )  # Arbitrage timing normalized to [0,1]
-        assert np.all(
-            moments.mirroring_ratios >= 0
-        )  # Mirroring ratios should be non-negative
-        assert np.all(
-            moments.spread_floor_dwell_times >= 0
-        )  # Dwell times should be non-negative
+        assert np.all(moments.lead_lag_betas >= 0)  # Arbitrage timing normalized to [0,1]
+        assert np.all(moments.mirroring_ratios >= 0)  # Mirroring ratios should be non-negative
+        assert np.all(moments.spread_floor_dwell_times >= 0)  # Dwell times should be non-negative
         assert np.all(
             moments.undercut_initiation_rate >= 0
         )  # Undercut rates should be non-negative
@@ -112,16 +96,10 @@ class TestCryptoMoments:
         )
 
         # Environment invariance components should be present
-        assert np.all(
-            np.isfinite(moments.lead_lag_significance)
-        )  # Arbitrage invariance
-        assert np.all(
-            np.isfinite(moments.mirroring_consistency)
-        )  # Mirroring invariance
+        assert np.all(np.isfinite(moments.lead_lag_significance))  # Arbitrage invariance
+        assert np.all(np.isfinite(moments.mirroring_consistency))  # Mirroring invariance
         assert np.all(np.isfinite(moments.spread_floor_frequency))  # Dwell invariance
-        assert np.all(
-            np.isfinite(moments.undercut_response_time)
-        )  # Undercut invariance
+        assert np.all(np.isfinite(moments.undercut_response_time))  # Undercut invariance
 
         # Invariance components should be non-negative
         assert np.all(moments.lead_lag_significance >= 0)
@@ -129,9 +107,7 @@ class TestCryptoMoments:
         assert np.all(moments.spread_floor_frequency >= 0)
         assert np.all(moments.undercut_response_time >= 0)
 
-    def test_vmm_differentiation_with_crypto_moments(
-        self, competitive_data, coordinated_data
-    ):
+    def test_vmm_differentiation_with_crypto_moments(self, competitive_data, coordinated_data):
         """Test that VMM with crypto moments produces different results for competitive vs coordinated"""  # noqa: E501
         price_columns = ["Exchange_0", "Exchange_1", "Exchange_2", "Exchange_3"]
 
@@ -157,8 +133,7 @@ class TestCryptoMoments:
         ), "Over-identification p-values should differ between scenarios"
 
         assert (
-            competitive_result.structural_stability
-            != coordinated_result.structural_stability
+            competitive_result.structural_stability != coordinated_result.structural_stability
         ), "Structural stability should differ between scenarios"
 
         # Print results for verification
@@ -174,25 +149,17 @@ class TestCryptoMoments:
             f"stability: {coordinated_result.structural_stability:.6f}"
         )
 
-    def test_monotone_response_coordinated(
-        self, calculator, competitive_data, coordinated_data
-    ):
+    def test_monotone_response_coordinated(self, calculator, competitive_data, coordinated_data):
         """Test that coordinated scenario shows expected patterns"""
         price_columns = ["Exchange_0", "Exchange_1", "Exchange_2", "Exchange_3"]
 
-        competitive_moments = calculator.calculate_moments(
-            competitive_data, price_columns
-        )
-        coordinated_moments = calculator.calculate_moments(
-            coordinated_data, price_columns
-        )
+        competitive_moments = calculator.calculate_moments(competitive_data, price_columns)
+        coordinated_moments = calculator.calculate_moments(coordinated_data, price_columns)
 
         # Coordinated should have higher mirroring
         comp_mirroring = np.mean(competitive_moments.mirroring_ratios)
         coord_mirroring = np.mean(coordinated_moments.mirroring_ratios)
-        assert (
-            coord_mirroring >= comp_mirroring
-        ), "Coordinated should have higher mirroring"
+        assert coord_mirroring >= comp_mirroring, "Coordinated should have higher mirroring"
 
         # Coordinated should have higher dwell times
         comp_dwell = np.mean(competitive_moments.spread_floor_dwell_times)
@@ -206,18 +173,12 @@ class TestCryptoMoments:
             coord_herfindahl >= comp_herfindahl
         ), "Coordinated should have higher leader concentration"
 
-    def test_monotone_response_competitive(
-        self, calculator, competitive_data, coordinated_data
-    ):
+    def test_monotone_response_competitive(self, calculator, competitive_data, coordinated_data):
         """Test that competitive scenario shows expected patterns"""
         price_columns = ["Exchange_0", "Exchange_1", "Exchange_2", "Exchange_3"]
 
-        competitive_moments = calculator.calculate_moments(
-            competitive_data, price_columns
-        )
-        coordinated_moments = calculator.calculate_moments(
-            coordinated_data, price_columns
-        )
+        competitive_moments = calculator.calculate_moments(competitive_data, price_columns)
+        coordinated_moments = calculator.calculate_moments(coordinated_data, price_columns)
 
         # Competitive should have higher switching (lower persistence)
         # This is tested indirectly through the arbitrage timing moments
@@ -230,6 +191,3 @@ class TestCryptoMoments:
         assert (
             comp_arbitrage_var >= coord_arbitrage_var
         ), "Competitive should have higher arbitrage timing variance"
-
-
-

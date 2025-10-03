@@ -31,9 +31,7 @@ def configure_s3_bucket(bucket_name: str, region: str = "us-east-1"):
         s3_client.put_bucket_encryption(
             Bucket=bucket_name,
             ServerSideEncryptionConfiguration={
-                "Rules": [
-                    {"ApplyServerSideEncryptionByDefault": {"SSEAlgorithm": "AES256"}}
-                ]
+                "Rules": [{"ApplyServerSideEncryptionByDefault": {"SSEAlgorithm": "AES256"}}]
             },
         )
         print("✅ Server-side encryption (SSE-S3) configured")
@@ -80,13 +78,9 @@ def configure_s3_bucket(bucket_name: str, region: str = "us-east-1"):
 
 def main():
     parser = argparse.ArgumentParser(description="Configure S3 bucket for snapshots")
-    parser.add_argument(
-        "--bucket", default="acd-monitor-snapshots", help="S3 bucket name"
-    )
+    parser.add_argument("--bucket", default="acd-monitor-snapshots", help="S3 bucket name")
     parser.add_argument("--region", default="us-east-1", help="AWS region")
-    parser.add_argument(
-        "--dry-run", action="store_true", help="Show what would be configured"
-    )
+    parser.add_argument("--dry-run", action="store_true", help="Show what would be configured")
 
     args = parser.parse_args()
 

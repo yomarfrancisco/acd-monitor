@@ -209,9 +209,7 @@ def generate_final_summary(export_dir: str, start_date: str, end_date: str) -> N
     if export_path.exists():
         for file_path in export_path.rglob("*"):
             if file_path.is_file():
-                summary["files_generated"].append(
-                    str(file_path.relative_to(export_path))
-                )
+                summary["files_generated"].append(str(file_path.relative_to(export_path)))
 
     # Save summary
     summary_file = export_path / "pipeline_summary.json"
@@ -233,9 +231,7 @@ def main():
         help="Comma-separated list of venues",
     )
     parser.add_argument("--cache-dir", default="data/cache", help="Cache directory")
-    parser.add_argument(
-        "--export-dir", default="exports/real_data_runs", help="Export directory"
-    )
+    parser.add_argument("--export-dir", default="exports/real_data_runs", help="Export directory")
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose logging")
 
     args = parser.parse_args()

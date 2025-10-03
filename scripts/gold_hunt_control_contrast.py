@@ -53,9 +53,7 @@ def load_episode_data() -> Tuple[Dict, List[Dict]]:
     return btc_episode, eth_episodes
 
 
-def generate_control_periods(
-    episodes: List[Dict], window_duration: int = 588
-) -> List[Dict]:
+def generate_control_periods(episodes: List[Dict], window_duration: int = 588) -> List[Dict]:
     """Generate control periods avoiding episode times"""
     # Extract episode time ranges
     episode_ranges = []
@@ -99,9 +97,7 @@ def generate_control_periods(
     # If no control periods generated, create some at the beginning and end
     if not control_periods:
         # Beginning of window
-        control_periods.append(
-            {"control_id": 0, "start_idx": 0, "end_idx": 120, "type": "control"}
-        )
+        control_periods.append({"control_id": 0, "start_idx": 0, "end_idx": 120, "type": "control"})
         # End of window
         control_periods.append(
             {
@@ -124,9 +120,7 @@ def generate_control_periods(
     return control_periods
 
 
-def simulate_control_data(
-    control_period: Dict, pair: str, window_start: str
-) -> pd.DataFrame:
+def simulate_control_data(control_period: Dict, pair: str, window_start: str) -> pd.DataFrame:
     """Simulate control period data (normal market behavior)"""
     # Convert window start to datetime
     from datetime import datetime, timedelta
@@ -254,9 +248,7 @@ def calculate_episode_metrics(episode_data: pd.DataFrame) -> Dict:
     metrics["pre_volume"] = np.mean(pre_volumes)
     metrics["post_volume"] = np.mean(post_volumes)
     metrics["volume_change"] = (
-        (metrics["episode_volume"] - metrics["pre_volume"])
-        / metrics["pre_volume"]
-        * 100
+        (metrics["episode_volume"] - metrics["pre_volume"]) / metrics["pre_volume"] * 100
     )
 
     # Volatility metrics
@@ -287,9 +279,7 @@ def calculate_episode_metrics(episode_data: pd.DataFrame) -> Dict:
     metrics["pre_spread"] = pre_period["cross_venue_spread"].mean()
     metrics["post_spread"] = post_period["cross_venue_spread"].mean()
     metrics["spread_change"] = (
-        (metrics["episode_spread"] - metrics["pre_spread"])
-        / metrics["pre_spread"]
-        * 100
+        (metrics["episode_spread"] - metrics["pre_spread"]) / metrics["pre_spread"] * 100
     )
 
     return metrics
@@ -329,9 +319,7 @@ def calculate_control_metrics(control_data: pd.DataFrame) -> Dict:
     metrics["pre_volume"] = np.mean(pre_volumes)
     metrics["post_volume"] = np.mean(post_volumes)
     metrics["volume_change"] = (
-        (metrics["control_volume"] - metrics["pre_volume"])
-        / metrics["pre_volume"]
-        * 100
+        (metrics["control_volume"] - metrics["pre_volume"]) / metrics["pre_volume"] * 100
     )
 
     # Volatility metrics
@@ -362,17 +350,13 @@ def calculate_control_metrics(control_data: pd.DataFrame) -> Dict:
     metrics["pre_spread"] = pre_period["cross_venue_spread"].mean()
     metrics["post_spread"] = post_period["cross_venue_spread"].mean()
     metrics["spread_change"] = (
-        (metrics["control_spread"] - metrics["pre_spread"])
-        / metrics["pre_spread"]
-        * 100
+        (metrics["control_spread"] - metrics["pre_spread"]) / metrics["pre_spread"] * 100
     )
 
     return metrics
 
 
-def run_statistical_contrasts(
-    episode_metrics: List[Dict], control_metrics: List[Dict]
-) -> Dict:
+def run_statistical_contrasts(episode_metrics: List[Dict], control_metrics: List[Dict]) -> Dict:
     """Run statistical contrasts between episodes and controls"""
     contrasts = {}
 
@@ -385,8 +369,7 @@ def run_statistical_contrasts(
         "episode_mean": np.mean(episode_volumes),
         "control_mean": np.mean(control_volumes),
         "difference_pct": (
-            (np.mean(episode_volumes) - np.mean(control_volumes))
-            / np.mean(control_volumes)
+            (np.mean(episode_volumes) - np.mean(control_volumes)) / np.mean(control_volumes)
         )
         * 100,
         "t_statistic": volume_tstat,
@@ -421,8 +404,7 @@ def run_statistical_contrasts(
         "episode_mean": np.mean(episode_spreads),
         "control_mean": np.mean(control_spreads),
         "difference_pct": (
-            (np.mean(episode_spreads) - np.mean(control_spreads))
-            / np.mean(control_spreads)
+            (np.mean(episode_spreads) - np.mean(control_spreads)) / np.mean(control_spreads)
         )
         * 100,
         "t_statistic": spread_tstat,
@@ -443,9 +425,7 @@ def generate_control_contrast_report(
     report.append("## Summary")
     report.append(f"- **Episodes Analyzed**: {episode_count}")
     report.append(f"- **Control Periods**: {control_count}")
-    report.append(
-        f"- **Statistical Tests**: t-tests for episode vs control differences"
-    )
+    report.append(f"- **Statistical Tests**: t-tests for episode vs control differences")
     report.append("")
 
     # Volume analysis
@@ -485,9 +465,7 @@ def generate_control_contrast_report(
     report.append("## Validation Conclusions")
     report.append("")
 
-    significant_metrics = sum(
-        [vol["significant"], vol_vol["significant"], spread["significant"]]
-    )
+    significant_metrics = sum([vol["significant"], vol_vol["significant"], spread["significant"]])
 
     if significant_metrics >= 2:
         report.append(
@@ -496,29 +474,17 @@ def generate_control_contrast_report(
         report.append(
             "✅ **COORDINATION CONFIRMED**: Volume/volatility patterns are abnormal, not background noise"
         )
-        report.append(
-            "✅ **REGULATORY READY**: Evidence base validated against proper baselines"
-        )
+        report.append("✅ **REGULATORY READY**: Evidence base validated against proper baselines")
     elif significant_metrics == 1:
-        report.append(
-            "⚠️ **MODERATE VALIDATION**: Some episode patterns differ from controls"
-        )
-        report.append(
-            "⚠️ **PARTIAL CONFIRMATION**: Some coordination indicators validated"
-        )
-        report.append(
-            "⚠️ **ADDITIONAL ANALYSIS**: More control periods needed for full validation"
-        )
+        report.append("⚠️ **MODERATE VALIDATION**: Some episode patterns differ from controls")
+        report.append("⚠️ **PARTIAL CONFIRMATION**: Some coordination indicators validated")
+        report.append("⚠️ **ADDITIONAL ANALYSIS**: More control periods needed for full validation")
     else:
         report.append(
             "❌ **WEAK VALIDATION**: Episodes show no significant differences from controls"
         )
-        report.append(
-            "❌ **NORMAL BEHAVIOR**: Volume/volatility patterns may be background noise"
-        )
-        report.append(
-            "❌ **REVISIT HYPOTHESIS**: Coordination signals may be artifacts"
-        )
+        report.append("❌ **NORMAL BEHAVIOR**: Volume/volatility patterns may be background noise")
+        report.append("❌ **REVISIT HYPOTHESIS**: Coordination signals may be artifacts")
 
     report.append("")
     report.append("## Next Steps")
@@ -535,17 +501,13 @@ def generate_control_contrast_report(
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Gold Hunt Control-Period Contrast Analysis"
-    )
+    parser = argparse.ArgumentParser(description="Gold Hunt Control-Period Contrast Analysis")
     parser.add_argument(
         "--output-dir",
         default="experiments/gold_hunt_v1/control_contrast",
         help="Output directory for control analysis",
     )
-    parser.add_argument(
-        "--seed", type=int, default=42, help="Random seed for reproducibility"
-    )
+    parser.add_argument("--seed", type=int, default=42, help="Random seed for reproducibility")
     parser.add_argument("--verbose", action="store_true", help="Verbose output")
 
     args = parser.parse_args()
@@ -603,9 +565,7 @@ def main():
 
         # Alternate between BTC and ETH for control periods
         pair = "BTC-USD" if i % 2 == 0 else "ETH-USD"
-        control_data = simulate_control_data(
-            control_period, pair, "2025-09-26T20:48:04Z"
-        )
+        control_data = simulate_control_data(control_period, pair, "2025-09-26T20:48:04Z")
         control_metric = calculate_control_metrics(control_data)
         control_metrics.append(control_metric)
 
@@ -615,9 +575,7 @@ def main():
 
     # Generate report
     print("Generating validation report...")
-    report = generate_control_contrast_report(
-        contrasts, len(episode_metrics), len(control_metrics)
-    )
+    report = generate_control_contrast_report(contrasts, len(episode_metrics), len(control_metrics))
 
     # Save results
     with open(f"{args.output_dir}/control_contrast_report.md", "w") as f:

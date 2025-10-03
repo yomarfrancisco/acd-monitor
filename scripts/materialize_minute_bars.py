@@ -27,9 +27,7 @@ from acd.data.cache import DataCache
 def setup_logging(verbose: bool = False) -> None:
     """Setup logging configuration."""
     level = logging.DEBUG if verbose else logging.INFO
-    logging.basicConfig(
-        level=level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    )
+    logging.basicConfig(level=level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
 
 def materialize_minute_bars(
@@ -88,9 +86,7 @@ def materialize_minute_bars(
 
             if cached_data is not None:
                 df = cached_data
-                logger.info(
-                    f"[DATA:cache:hit] {venue}:{pair} - {len(df)} bars from cache"
-                )
+                logger.info(f"[DATA:cache:hit] {venue}:{pair} - {len(df)} bars from cache")
             else:
                 # Fetch fresh data
                 df = minute_adapter.get(pair, venue, start_utc, end_utc)
@@ -109,8 +105,7 @@ def materialize_minute_bars(
                 gap_info = {
                     "venue": venue,
                     "coverage_pct": venue_results["coverage_pct"],
-                    "missing_bars": venue_results["expected_bars"]
-                    - venue_results["actual_bars"],
+                    "missing_bars": venue_results["expected_bars"] - venue_results["actual_bars"],
                 }
                 results["gaps"].append(gap_info)
                 logger.warning(
@@ -123,9 +118,7 @@ def materialize_minute_bars(
 
     # Calculate overall coverage
     if results["total_bars"] > 0:
-        expected_total = (
-            len(venues) * ((end_utc - start_utc).days + 1) * 24 * 60
-        )  # minutes per day
+        expected_total = len(venues) * ((end_utc - start_utc).days + 1) * 24 * 60  # minutes per day
         results["coverage_pct"] = (results["total_bars"] / expected_total) * 100
 
     logger.info(
@@ -222,15 +215,11 @@ def export_data_inventory(results: Dict[str, Any], export_dir: str) -> None:
 
 def main():
     """Main function."""
-    parser = argparse.ArgumentParser(
-        description="Materialize minute bars for market data"
-    )
+    parser = argparse.ArgumentParser(description="Materialize minute bars for market data")
     parser.add_argument("--start", required=True, help="Start date (YYYY-MM-DD)")
     parser.add_argument("--end", required=True, help="End date (YYYY-MM-DD)")
     parser.add_argument("--pair", required=True, help="Trading pair (e.g., BTC-USD)")
-    parser.add_argument(
-        "--venues", required=True, help="Comma-separated list of venues"
-    )
+    parser.add_argument("--venues", required=True, help="Comma-separated list of venues")
     parser.add_argument("--export-dir", default="exports", help="Export directory")
     parser.add_argument("--no-cache", action="store_true", help="Disable caching")
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose logging")

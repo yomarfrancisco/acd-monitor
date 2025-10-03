@@ -27,9 +27,7 @@ from icp_vmm.export import ICPVMMExporter
 def setup_logging(verbose: bool = False):
     """Setup logging configuration."""
     level = logging.DEBUG if verbose else logging.INFO
-    logging.basicConfig(
-        level=level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    )
+    logging.basicConfig(level=level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
 
 def load_window_data(s3_uri: str) -> tuple:
@@ -47,9 +45,7 @@ def load_window_data(s3_uri: str) -> tuple:
     venue_data = {
         "binance": pd.DataFrame(
             {
-                "ts_exchange": pd.date_range(
-                    "2025-09-29 12:00:00", periods=100, freq="1s"
-                ),
+                "ts_exchange": pd.date_range("2025-09-29 12:00:00", periods=100, freq="1s"),
                 "last_px": 50000 + np.random.randn(100) * 10,
                 "best_bid": 50000 + np.random.randn(100) * 10 - 1,
                 "best_ask": 50000 + np.random.randn(100) * 10 + 1,
@@ -61,9 +57,7 @@ def load_window_data(s3_uri: str) -> tuple:
         ),
         "coinbase": pd.DataFrame(
             {
-                "ts_exchange": pd.date_range(
-                    "2025-09-29 12:00:00", periods=100, freq="1s"
-                ),
+                "ts_exchange": pd.date_range("2025-09-29 12:00:00", periods=100, freq="1s"),
                 "last_px": 50000 + np.random.randn(100) * 10,
                 "best_bid": 50000 + np.random.randn(100) * 10 - 1,
                 "best_ask": 50000 + np.random.randn(100) * 10 + 1,
@@ -90,9 +84,7 @@ def load_window_data(s3_uri: str) -> tuple:
 def main():
     """Main analysis function."""
     parser = argparse.ArgumentParser(description="ICP-VMM Single Window Analysis")
-    parser.add_argument(
-        "--symbol", required=True, help="Symbol to analyze (e.g., BTC-USD)"
-    )
+    parser.add_argument("--symbol", required=True, help="Symbol to analyze (e.g., BTC-USD)")
     parser.add_argument("--s3-window", required=True, help="S3 URI to window data")
     parser.add_argument("--out-prefix", required=True, help="S3 output prefix")
     parser.add_argument(
@@ -135,9 +127,7 @@ def main():
         logger.info("Labeling environments")
         labeled_data = {}
         for venue, data in prepared_data.items():
-            labeled_data[venue] = env_labeler.label_all_environments(
-                data, processed_metrics
-            )
+            labeled_data[venue] = env_labeler.label_all_environments(data, processed_metrics)
 
         # Get environment counts
         env_counts = {}
@@ -193,17 +183,13 @@ def main():
 
         # Export results
         logger.info("Exporting results")
-        export_status = exporter.export_to_s3(
-            results, results["window_id"], args.symbol
-        )
+        export_status = exporter.export_to_s3(results, results["window_id"], args.symbol)
 
         if export_status["status"] == "SUCCESS":
             logger.info(f"Analysis completed successfully: {status}")
             print(json.dumps(results, indent=2))
         else:
-            logger.error(
-                f"Export failed: {export_status.get('error', 'Unknown error')}"
-            )
+            logger.error(f"Export failed: {export_status.get('error', 'Unknown error')}")
             sys.exit(1)
 
     except Exception as e:

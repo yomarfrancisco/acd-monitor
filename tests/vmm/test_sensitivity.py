@@ -26,9 +26,7 @@ class TestVMMSensitivity:
         """VMM configuration"""
         return VMMConfig()
 
-    def test_coordination_strength_sensitivity(
-        self, base_config, crypto_config, vmm_config
-    ):
+    def test_coordination_strength_sensitivity(self, base_config, crypto_config, vmm_config):
         """Test that VMM results change monotonically with coordination strength"""
         coordination_strengths = [0.0, 0.25, 0.5, 0.75, 1.0]
         results = []
@@ -46,9 +44,7 @@ class TestVMMSensitivity:
             else:
                 data = generator.generate_coordinated_scenario()
                 # Apply coordination strength scaling
-                price_columns = [
-                    col for col in data.columns if col.startswith("Exchange_")
-                ]
+                price_columns = [col for col in data.columns if col.startswith("Exchange_")]
                 for col in price_columns:
                     # Scale coordination effects by strength parameter
                     base_volatility = np.std(np.diff(data[col]))
@@ -87,17 +83,13 @@ class TestVMMSensitivity:
 
         # J-stat should generally increase with coordination strength
         # (allowing for some noise, but trend should be upward)
-        j_increases = sum(
-            1 for i in range(1, len(j_stats)) if j_stats[i] > j_stats[i - 1]
-        )
+        j_increases = sum(1 for i in range(1, len(j_stats)) if j_stats[i] > j_stats[i - 1])
         assert (
             j_increases >= 2
         ), f"J-stat should increase with coordination strength, got {j_increases} increases"
 
         # p-values should generally decrease with coordination strength
-        p_decreases = sum(
-            1 for i in range(1, len(p_values)) if p_values[i] < p_values[i - 1]
-        )
+        p_decreases = sum(1 for i in range(1, len(p_values)) if p_values[i] < p_values[i - 1])
         assert (
             p_decreases >= 2
         ), f"p-values should decrease with coordination strength, got {p_decreases} decreases"
@@ -123,18 +115,12 @@ class TestVMMSensitivity:
         competitive_data = generator.generate_competitive_scenario()
         coordinated_data = generator.generate_coordinated_scenario()
 
-        price_columns = [
-            col for col in competitive_data.columns if col.startswith("Exchange_")
-        ]
+        price_columns = [col for col in competitive_data.columns if col.startswith("Exchange_")]
         calculator = CryptoMomentCalculator(crypto_config)
 
         # Calculate raw moments (no normalization)
-        competitive_moments = calculator.calculate_moments(
-            competitive_data, price_columns
-        )
-        coordinated_moments = calculator.calculate_moments(
-            coordinated_data, price_columns
-        )
+        competitive_moments = calculator.calculate_moments(competitive_data, price_columns)
+        coordinated_moments = calculator.calculate_moments(coordinated_data, price_columns)
 
         # Extract raw moment vectors
         comp_vector = np.concatenate(
@@ -172,13 +158,9 @@ class TestVMMSensitivity:
         print("Cosine similarity: {cosine_sim:.6f}")
 
         # Assert differentiation
-        assert (
-            comp_hash != coord_hash
-        ), "Raw moment vectors should have different hashes"
+        assert comp_hash != coord_hash, "Raw moment vectors should have different hashes"
         assert l2_distance > 0.001, f"L2 distance should be > 0.001, got {l2_distance}"
-        assert (
-            abs(cosine_sim) < 0.99
-        ), f"Cosine similarity should be < 0.99, got {cosine_sim}"
+        assert abs(cosine_sim) < 0.99, f"Cosine similarity should be < 0.99, got {cosine_sim}"
 
     def test_normalization_preserves_differentiation(self, base_config, crypto_config):
         """Test that normalization doesn't collapse differences between datasets"""
@@ -189,18 +171,12 @@ class TestVMMSensitivity:
         competitive_data = generator.generate_competitive_scenario()
         coordinated_data = generator.generate_coordinated_scenario()
 
-        price_columns = [
-            col for col in competitive_data.columns if col.startswith("Exchange_")
-        ]
+        price_columns = [col for col in competitive_data.columns if col.startswith("Exchange_")]
         calculator = CryptoMomentCalculator(crypto_config)
 
         # Calculate moments
-        competitive_moments = calculator.calculate_moments(
-            competitive_data, price_columns
-        )
-        coordinated_moments = calculator.calculate_moments(
-            coordinated_data, price_columns
-        )
+        competitive_moments = calculator.calculate_moments(competitive_data, price_columns)
+        coordinated_moments = calculator.calculate_moments(coordinated_data, price_columns)
 
         # Extract moment vectors
         comp_vector = np.concatenate(
@@ -252,9 +228,7 @@ class TestVMMSensitivity:
         print("Cosine change: {post_cosine - pre_cosine:.6f}")
 
         # Assert that normalization doesn't collapse differences
-        assert (
-            post_l2 > 0.001
-        ), f"Post-normalization L2 distance should be > 0.001, got {post_l2}"
+        assert post_l2 > 0.001, f"Post-normalization L2 distance should be > 0.001, got {post_l2}"
         assert (
             abs(post_cosine) < 0.99
         ), f"Post-normalization cosine similarity should be < 0.99, got {post_cosine}"
@@ -264,9 +238,7 @@ class TestVMMSensitivity:
             post_l2 / pre_l2 > 0.1
         ), f"L2 distance should not decrease by more than 90%, ratio: {post_l2/pre_l2}"
 
-    def test_vmm_differentiation_with_global_scaler(
-        self, base_config, crypto_config, vmm_config
-    ):
+    def test_vmm_differentiation_with_global_scaler(self, base_config, crypto_config, vmm_config):
         """Test VMM differentiation with proper global scaling"""
         np.random.seed(42)
 
@@ -275,9 +247,7 @@ class TestVMMSensitivity:
         competitive_data = generator.generate_competitive_scenario()
         coordinated_data = generator.generate_coordinated_scenario()
 
-        price_columns = [
-            col for col in competitive_data.columns if col.startswith("Exchange_")
-        ]
+        price_columns = [col for col in competitive_data.columns if col.startswith("Exchange_")]
 
         # Create VMM engine with crypto calculator
         crypto_calculator = CryptoMomentCalculator(crypto_config)
@@ -310,8 +280,7 @@ class TestVMMSensitivity:
         ), "p-values should be different between scenarios"
 
         assert (
-            competitive_result.structural_stability
-            != coordinated_result.structural_stability
+            competitive_result.structural_stability != coordinated_result.structural_stability
         ), "Stability values should be different between scenarios"
 
         # Assert expected patterns
@@ -322,6 +291,3 @@ class TestVMMSensitivity:
         assert (
             coordinated_result.over_identification_p_value < 0.05
         ), f"Coordinated scenario should have p < 0.05, got {coordinated_result.over_identification_p_value}"  # noqa: E501
-
-
-

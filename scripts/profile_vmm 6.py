@@ -113,9 +113,7 @@ class VMMProfiler:
 
         return function_times
 
-    def profile_batch(
-        self, windows: List[pd.DataFrame], price_cols: List[str]
-    ) -> List[Dict]:
+    def profile_batch(self, windows: List[pd.DataFrame], price_cols: List[str]) -> List[Dict]:
         """Profile a batch of VMM runs"""
         print(f"Profiling {len(windows)} VMM runs...")
 
@@ -215,9 +213,7 @@ class VMMProfiler:
         bottlenecks.sort(key=lambda x: x["avg_time"], reverse=True)
         return bottlenecks[:10]  # Top 10 bottlenecks
 
-    def generate_performance_report(
-        self, output_dir: str = "reports/performance"
-    ) -> Path:
+    def generate_performance_report(self, output_dir: str = "reports/performance") -> Path:
         """Generate comprehensive performance report"""
         output_path = Path(output_dir)
         output_path.mkdir(parents=True, exist_ok=True)
@@ -236,9 +232,7 @@ class VMMProfiler:
             f.write(f"- **Success Rate**: {summary['success_rate']:.1%}\n")
             f.write(f"- **P95 Runtime**: {summary['p95_time']:.3f}s\n")
             f.write(f"- **Target P95**: {summary['target_p95']:.1f}s\n")
-            f.write(
-                f"- **Meets P95 Target**: {'✅' if summary['meets_p95_target'] else '❌'}\n"
-            )
+            f.write(f"- **Meets P95 Target**: {'✅' if summary['meets_p95_target'] else '❌'}\n")
             f.write(f"- **Median Runtime**: {summary['median_time']:.3f}s\n")
             f.write(f"- **Target Median**: {summary['target_median']:.1f}s\n")
             f.write(

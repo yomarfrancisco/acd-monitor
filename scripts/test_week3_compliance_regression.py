@@ -130,9 +130,7 @@ def _get_expected_complexity(query_id: int) -> str:
         return "extreme"
 
 
-def execute_query_test(
-    provider: OfflineMockProvider, query_obj: Dict[str, Any]
-) -> Dict[str, Any]:
+def execute_query_test(provider: OfflineMockProvider, query_obj: Dict[str, Any]) -> Dict[str, Any]:
     """Execute a single query test"""
 
     start_time = time.time()
@@ -213,9 +211,7 @@ def assess_response_quality(response: Any, query_obj: Dict[str, Any]) -> float:
     ]
 
     indicator_count = sum(
-        1
-        for indicator in quality_indicators
-        if indicator.lower() in response_str.lower()
+        1 for indicator in quality_indicators if indicator.lower() in response_str.lower()
     )
     score += min(indicator_count * 0.1, 1.0)
 
@@ -349,12 +345,8 @@ def generate_test_report(
     successful_queries = len([r for r in individual_results if r["status"] == "PASS"])
     success_rate = successful_queries / total_queries * 100
 
-    avg_response_time = (
-        sum(r["response_time"] for r in individual_results) / total_queries
-    )
-    avg_quality_score = (
-        sum(r["quality_score"] for r in individual_results) / total_queries
-    )
+    avg_response_time = sum(r["response_time"] for r in individual_results) / total_queries
+    avg_quality_score = sum(r["quality_score"] for r in individual_results) / total_queries
 
     # Category breakdown
     categories = {}
@@ -395,13 +387,9 @@ def generate_test_report(
     # Calculate subcategory averages
     for subcategory in subcategories:
         if subcategories[subcategory]["total"] > 0:
-            subcategories[subcategory]["avg_quality"] /= subcategories[subcategory][
-                "total"
-            ]
+            subcategories[subcategory]["avg_quality"] /= subcategories[subcategory]["total"]
             subcategories[subcategory]["success_rate"] = (
-                subcategories[subcategory]["successful"]
-                / subcategories[subcategory]["total"]
-                * 100
+                subcategories[subcategory]["successful"] / subcategories[subcategory]["total"] * 100
             )
 
     return {
@@ -449,9 +437,7 @@ def main():
         stress_results = run_stress_tests(provider, query_suite)
 
         # Generate comprehensive report
-        test_report = generate_test_report(
-            individual_results, batch_results, stress_results
-        )
+        test_report = generate_test_report(individual_results, batch_results, stress_results)
 
         # Save results
         results_file = Path("artifacts/week3_compliance_regression_results.json")
@@ -474,9 +460,7 @@ def main():
         print(
             f"   Average Quality Score: {test_report['overall_metrics']['avg_quality_score']:.1f}/5.0"
         )
-        print(
-            f"   Throughput: {test_report['overall_metrics']['throughput']:.1f} queries/minute"
-        )
+        print(f"   Throughput: {test_report['overall_metrics']['throughput']:.1f} queries/minute")
 
         print(f"\n📋 Category Breakdown:")
         for category, metrics in test_report["category_breakdown"].items():

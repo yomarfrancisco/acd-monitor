@@ -47,9 +47,7 @@ class TestZScoreDetector(unittest.TestCase):
         self.assertFalse(z_scores.isna().all())
 
         # Episodes should have negative z-scores
-        episode_indices = (
-            list(range(100, 110)) + list(range(200, 215)) + list(range(300, 310))
-        )
+        episode_indices = list(range(100, 110)) + list(range(200, 215)) + list(range(300, 310))
         episode_z_scores = z_scores.iloc[episode_indices]
         self.assertTrue((episode_z_scores < -1.0).any())
 

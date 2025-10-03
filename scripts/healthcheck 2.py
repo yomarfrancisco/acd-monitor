@@ -15,9 +15,7 @@ from acd.monitoring import HealthChecker, MetricsCollector, RegressionDetector
 from acd.monitoring.metrics import RunMetrics
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -179,9 +177,7 @@ Examples:
         help="Run regression detection in addition to health check",
     )
 
-    parser.add_argument(
-        "--verbose", "-v", action="store_true", help="Enable verbose logging"
-    )
+    parser.add_argument("--verbose", "-v", action="store_true", help="Enable verbose logging")
 
     args = parser.parse_args()
 
