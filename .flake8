@@ -1,16 +1,7 @@
 [flake8]
 max-line-length = 100
-# Keep flake8 compatible with black (E203/W503)
-extend-ignore =
-    E203,
-    W503
-
-# Only linted by CI when called as "flake8 src scripts".
-# Exclude common build/venv dirs to avoid local noise.
-exclude =
-    .git,
-    .github,
-    venv,
-    .venv,
-    build,
-    dist
+# Black-compatible exceptions
+extend-ignore = E203, W503
+# Keep flake8-bugbear if installed
+select = C,E,F,W,B,B950
+exclude = .git, .venv, venv, build, dist
