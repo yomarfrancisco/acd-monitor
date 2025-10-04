@@ -1,0 +1,18 @@
+{
+  "exclusion_timestamp": "2025-10-04T10:10:11.403508",
+  "wash_screens_available": true,
+  "exclusion_rule": "high_wash_intensity",
+  "excluded_periods": [
+    "high_wash"
+  ],
+  "kept_periods": [
+    "low_wash",
+    "medium_wash"
+  ],
+  "sample_sizes": {
+    "original": 604790,
+    "excluded": "199548",
+    "kept": 405242,
+    "exclusion_pct": 32.99459316456952
+  }
+}
