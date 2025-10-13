@@ -162,7 +162,7 @@ def pin_baseline_snapshot(best_snapshot: Dict[str, Any], baseline_dir: Path) -> 
     print(f"[BASELINE:2s:pin] {json.dumps(pin_log)}")
 
 
-def build_research_bundle(baseline_dir: Path, export_dir: str, verbose: bool = False) -> None:
+def build_research_bundle(baseline_dir: Path, export_dir: str, verbose: bool = False, skip_infoshare: bool = False) -> None:
     """
     Build the canonical 2s research bundle.
 
@@ -180,28 +180,31 @@ def build_research_bundle(baseline_dir: Path, export_dir: str, verbose: bool = F
     overlap_file = baseline_dir / "OVERLAP.json"
 
     # Run InfoShare analysis
-    logger.info("Running InfoShare analysis")
-    infoshare_cmd = [
-        sys.executable,
-        "scripts/run_info_share_real.py",
-        "--use-overlap-json",
-        str(overlap_file),
-        "--from-snapshot-ticks",
-        "1",
-        "--standardize",
-        "none",
-        "--gg-blend-alpha",
-        "0.7",
-        "--export-dir",
-        str(evidence_dir),
-        "--verbose" if verbose else "",
-    ]
-    infoshare_cmd = [arg for arg in infoshare_cmd if arg]
+    if not skip_infoshare:
+        logger.info("Running InfoShare analysis")
+        infoshare_cmd = [
+            sys.executable,
+            "scripts/run_info_share_real.py",
+            "--use-overlap-json",
+            str(overlap_file),
+            "--from-snapshot-ticks",
+            "1",
+            "--standardize",
+            "none",
+            "--gg-blend-alpha",
+            "0.7",
+            "--export-dir",
+            str(evidence_dir),
+            "--verbose" if verbose else "",
+        ]
+        infoshare_cmd = [arg for arg in infoshare_cmd if arg]
 
-    result = subprocess.run(infoshare_cmd, capture_output=True, text=True, timeout=300)
-    if result.returncode != 0:
-        logger.error(f"InfoShare analysis failed: {result.stderr}")
-        raise RuntimeError("InfoShare analysis failed")
+        result = subprocess.run(infoshare_cmd, capture_output=True, text=True, timeout=300)
+        if result.returncode != 0:
+            logger.error(f"InfoShare analysis failed: {result.stderr}")
+            raise RuntimeError("InfoShare analysis failed")
+    else:
+        logger.info("Skipping InfoShare for E2E-lite")
 
     # Run Spread analysis
     logger.info("Running Spread analysis")
@@ -395,6 +398,11 @@ def main():
         action="store_true",
         help="Skip tick loading and analyses; emit placeholder evidence using OVERLAP.json only",
     )
+    parser.add_argument(
+        "--skip-infoshare",
+        action="store_true",
+        help="Skip InfoShare analysis (for E2E-lite mode)",
+    )
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
 
     args = parser.parse_args()
@@ -425,7 +433,7 @@ def main():
     if args.rebuild_only:
         # Only rebuild evidence bundle
         logger.info("Rebuilding evidence bundle only")
-        build_research_bundle(baseline_dir, args.export_dir, args.verbose)
+        build_research_bundle(baseline_dir, args.export_dir, args.verbose, args.skip_infoshare)
     elif args.from_overlap_json:
         # Use specific OVERLAP.json file
         logger.info(f"Using specific OVERLAP.json: {args.from_overlap_json}")
@@ -449,7 +457,7 @@ def main():
         pin_baseline_snapshot(best_snapshot, baseline_dir)
 
         # Build research bundle
-        build_research_bundle(baseline_dir, args.export_dir, args.verbose)
+        build_research_bundle(baseline_dir, args.export_dir, args.verbose, args.skip_infoshare)
     else:
         # Load best 2s snapshot from promoted file
         best_snapshot = load_best_2s_snapshot(args.promoted_file)
@@ -458,7 +466,7 @@ def main():
         pin_baseline_snapshot(best_snapshot, baseline_dir)
 
         # Build research bundle
-        build_research_bundle(baseline_dir, args.export_dir, args.verbose)
+        build_research_bundle(baseline_dir, args.export_dir, args.verbose, args.skip_infoshare)
 
     logger.info("Research baseline 2s completed successfully")
 

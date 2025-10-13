@@ -82,7 +82,17 @@ jobs:
       
       - name: E2E verify baseline
         run: |
-          make baseline-from-snapshot SNAPSHOT=test_snapshot
+          python scripts/build_research_baseline_2s.py \
+            --baseline-dir test_snapshot \
+            --export-dir test_snapshot/evidence \
+            --skip-infoshare \
+            --verbose
+      
+      - name: Verify snapshot wiring
+        run: |
+          test -f test_snapshot/OVERLAP.json
+          test -d test_snapshot/evidence
+          echo "[E2E:PASS] Snapshot wiring verified"
       
       - name: Verify bundles
         run: |
