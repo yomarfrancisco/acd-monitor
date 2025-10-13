@@ -1,5 +1,10 @@
 # Algorithmic Coordination Diagnostic (ACD)
 
+[![Baseline Integrity](https://github.com/yomarfrancisco/acd-monitor/actions/workflows/baseline_integrity.yml/badge.svg)](https://github.com/yomarfrancisco/acd-monitor/actions/workflows/baseline_integrity.yml)
+[![CI OIDC Probe](https://github.com/yomarfrancisco/acd-monitor/actions/workflows/ci_oidc_probe.yml/badge.svg)](https://github.com/yomarfrancisco/acd-monitor/actions/workflows/ci_oidc_probe.yml)
+[![Test Spread v2 Guardrails](https://github.com/yomarfrancisco/acd-monitor/actions/workflows/test_spread_v2_guardrails.yml/badge.svg)](https://github.com/yomarfrancisco/acd-monitor/actions/workflows/test_spread_v2_guardrails.yml)
+[![Court 1s Integrity](https://github.com/yomarfrancisco/acd-monitor/actions/workflows/court_1s_integrity.yml/badge.svg)](https://github.com/yomarfrancisco/acd-monitor/actions/workflows/court_1s_integrity.yml)
+
 The Algorithmic Coordination Diagnostic (ACD) is an **agent-driven monitoring system** that identifies and explains algorithmic coordination risks in real-time. Combining causal inference, environment partitioning, and continuous validation with natural-language reporting, ACD detects collusion signals and generates court-ready outputs that regulators, firms, and judges can easily understand and act on.
 
 Built on the methodological foundation of RBB Brief 55+, the ACD applies Invariant Causal Prediction (ICP) and Variational Method of Moments (VMM) to detect structural stability in pricing relationships across changing market environments.
