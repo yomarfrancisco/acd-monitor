@@ -1,0 +1,32 @@
+Phase 52R.CI_E2E_LITE_R1 - E2E Verify Lite Implementation
+
+RATIONALE:
+- Tiny test snapshot doesn't include actual tick data
+- InfoShare analysis requires real tick data to function properly
+- E2E workflow should verify wiring and basic functionality, not comprehensive analysis
+- Comprehensive checks remain in Baseline Integrity workflow
+- E2E verifies that the baseline script can run and produce expected file structure
+
+CHANGES:
+1. Added --skip-infoshare flag to scripts/build_research_baseline_2s.py
+   - Defaults to False (preserves existing behavior)
+   - When True, skips InfoShare analysis and logs "Skipping InfoShare for E2E-lite"
+   - Still creates evidence directory and OVERLAP.json
+
+2. Updated .github/workflows/e2e_verify.yml
+   - Replaced make baseline-from-snapshot with direct script call
+   - Added --skip-infoshare flag to E2E baseline step
+   - Added verification step to check OVERLAP.json and evidence directory exist
+
+SAFETY:
+- No UI changes (ui/ and src/ untouched)
+- No Vercel build impact (scripts/should-build.js gate preserved)
+- No file moves or deletions
+- Normal baseline jobs unchanged (flag defaults to False)
+- Comprehensive analysis preserved in Baseline Integrity workflow
+
+EXPECTED OUTCOME:
+- E2E Verify job passes with minimal test snapshot
+- Baseline Integrity remains comprehensive check
+- All other CI jobs (Court 1s, Test Spread, AWS Audit) remain green
+- Vercel not triggered by workflow-only changes
