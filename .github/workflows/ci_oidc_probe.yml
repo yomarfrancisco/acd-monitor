@@ -41,7 +41,7 @@ jobs:
         run: |
           set -euo pipefail
           echo "🔍 Testing S3 read access..."
-          aws s3api list-objects-v2 --bucket acd-monitor-snapshots --prefix "" --max-items 5 --no-paginate
+          aws s3api list-objects-v2 --bucket acd-monitor-snapshots --prefix "" --max-items 5
           
           echo "📊 S3 bucket info:"
           aws s3api get-bucket-location --bucket acd-monitor-snapshots
