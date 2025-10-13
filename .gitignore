@@ -80,3 +80,18 @@ data/
 *.csv.gz
 *.feather
 *.arrow
+
+# Repository hygiene additions
+artifacts/
+artifacts/**/*
+reports/**/*.parquet
+reports/**/*.feather
+reports/**/*.npz
+**/*.parquet
+**/*.feather
+**/*.npz
+**/*.pkl
+**/*.csv.gz
+!schemas/**
+!docs/**
+!state/**
