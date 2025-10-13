@@ -1,0 +1,42 @@
+{
+  "pair": "BINANCE_to_BITGET",
+  "date": "20250901",
+  "scale": "1s",
+  "N": 56827,
+  "overlap_pct": 0.9642160272833704,
+  "lag_results": [
+    {
+      "lag": 1,
+      "correlation": 0.030124667812128216,
+      "p_value": 0.05,
+      "significant": false
+    },
+    {
+      "lag": 2,
+      "correlation": -0.06581955896924742,
+      "p_value": 0.05,
+      "significant": false
+    },
+    {
+      "lag": 3,
+      "correlation": 0.0029713941042243688,
+      "p_value": 0.05,
+      "significant": false
+    },
+    {
+      "lag": 5,
+      "correlation": -0.006217799944528989,
+      "p_value": 0.05,
+      "significant": false
+    },
+    {
+      "lag": 10,
+      "correlation": 0.007851536758055154,
+      "p_value": 0.05,
+      "significant": false
+    }
+  ],
+  "icp_pass": false,
+  "significant_lags": 0,
+  "env_sizes_csv": "icp_BINANCE_to_BITGET_20250901_v1.env_sizes.csv"
+}

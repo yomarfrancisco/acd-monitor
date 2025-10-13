@@ -81,9 +81,7 @@ def run_export(fixture: Dict[str, Any], output_dir: str) -> str:
     fixture["ts_end"] = "2025-09-30T00:30:00Z"
 
     exporter = RefinedICPVMMExporter()
-    s3_inputs = [
-        f"s3://test-bucket/input/{venue}.parquet" for venue in fixture["venues"]
-    ]
+    s3_inputs = [f"s3://test-bucket/input/{venue}.parquet" for venue in fixture["venues"]]
 
     result = exporter.export_refined_results(
         fixture, fixture["window_id"], "BTC-USD", s3_inputs, output_dir

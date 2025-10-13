@@ -1,0 +1,15 @@
+{
+  "timestamp": "2025-10-12T15:12:29.500363",
+  "seed": 42,
+  "n_samples": 583,
+  "n_folds": 2,
+  "embargo_hours": 3,
+  "min_fold_size": 50,
+  "insufficient_folds": true,
+  "failure_reason": "Insufficient data for 3+ folds even with reduced parameters",
+  "recommendations": [
+    "Extend data coverage (more hours)",
+    "Justify reduced embargo with added block-bootstrap",
+    "Consider alternative CV strategies for limited data"
+  ]
+}

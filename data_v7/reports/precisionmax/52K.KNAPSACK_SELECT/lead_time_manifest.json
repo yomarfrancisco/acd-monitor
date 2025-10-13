@@ -1,0 +1,37 @@
+{
+  "computation_method": "knapsack_selected_alerts",
+  "distribution": {
+    "values": [
+      205,
+      195,
+      202,
+      208,
+      196,
+      202,
+      196,
+      197,
+      194,
+      199,
+      192,
+      202,
+      197,
+      201,
+      193
+    ],
+    "count": 15,
+    "median": 197,
+    "mean": 198.6,
+    "min": 192,
+    "max": 208,
+    "std": 4.454211490264019
+  },
+  "summary": {
+    "median_lead_minutes": 197,
+    "mean_lead_minutes": 198.6,
+    "min_lead_minutes": 192,
+    "max_lead_minutes": 208,
+    "std_lead_minutes": 4.454211490264019,
+    "total_alerts": 15
+  },
+  "status": "KNAPSACK_OPTIMIZED"
+}

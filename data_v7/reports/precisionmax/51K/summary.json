@@ -1,0 +1,17 @@
+{
+  "precisionmax_passed": true,
+  "success_count": 10,
+  "total_folds": 10,
+  "success_rate": 1.0,
+  "target_precision": 0.8,
+  "target_recall": 0.35,
+  "target_fpr": 0.15,
+  "champions": {
+    "6h": "GradientBoosting",
+    "12h": "Logistic_ElasticNet"
+  },
+  "policies_selected": {
+    "6h": "precision_first",
+    "12h": "precision_first"
+  }
+}

@@ -1,0 +1,31 @@
+# PR R1 Summary - Repository Hygiene
+
+## Changes Made
+
+### 1. Front-end Deploy Safety
+- Created scripts/should-build.js for Vercel build optimization
+- Updated vercel.json with ignoreCommand configuration
+
+### 2. .gitignore Hardening
+- Added 13 new entries to prevent generated files from being committed
+- Protected artifacts/, reports/, and state/ directories
+
+### 3. State Files
+- Updated ACD_ANALYTICAL_STATE.yaml with 42A-v6 configuration
+- Updated ACD_RUNTIME_STATE.yaml with Phase 03 configuration
+- Created state_badge.md for quick status reference
+
+## Files Modified
+- scripts/should-build.js (created)
+- vercel.json (created/updated)
+- .gitignore (appended)
+- state/ACD_ANALYTICAL_STATE.yaml (updated)
+- state/ACD_RUNTIME_STATE.yaml (updated)
+- state/state_badge.md (created)
+
+## Safety Measures
+- No file moves outside added guards/state
+- All changes are additive or idempotent
+- Front-end deploy safety ensured
+
+## Generated: 2025-10-13T09:24:40.563473

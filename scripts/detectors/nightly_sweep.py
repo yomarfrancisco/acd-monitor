@@ -46,9 +46,7 @@ def get_eligible_windows(bucket: str, prefix: str, hours_back: int = 24) -> List
 
     # List all windows in the time range
     try:
-        response = s3_client.list_objects_v2(
-            Bucket=bucket, Prefix=f"{prefix}/", Delimiter="/"
-        )
+        response = s3_client.list_objects_v2(Bucket=bucket, Prefix=f"{prefix}/", Delimiter="/")
 
         for prefix_obj in response.get("CommonPrefixes", []):
             symbol_prefix = prefix_obj["Prefix"]
@@ -58,9 +56,7 @@ def get_eligible_windows(bucket: str, prefix: str, hours_back: int = 24) -> List
                 continue
 
             # List windows for this symbol
-            symbol_response = s3_client.list_objects_v2(
-                Bucket=bucket, Prefix=symbol_prefix
-            )
+            symbol_response = s3_client.list_objects_v2(Bucket=bucket, Prefix=symbol_prefix)
 
             for window_obj in symbol_response.get("CommonPrefixes", []):
                 window_path = window_obj["Prefix"]
@@ -233,13 +229,9 @@ def save_detector_results(
 
 def main():
     parser = argparse.ArgumentParser(description="Nightly Detector Sweep")
-    parser.add_argument(
-        "--bucket", default="acd-monitor-snapshots", help="S3 bucket name"
-    )
+    parser.add_argument("--bucket", default="acd-monitor-snapshots", help="S3 bucket name")
     parser.add_argument("--prefix", default="snapshots", help="S3 prefix for snapshots")
-    parser.add_argument(
-        "--hours-back", type=int, default=24, help="Hours to look back for windows"
-    )
+    parser.add_argument("--hours-back", type=int, default=24, help="Hours to look back for windows")
     parser.add_argument(
         "--detectors",
         nargs="+",
@@ -288,9 +280,7 @@ def main():
                 )
                 total_results["spread_v2"]["windows_run"] += 1
                 if results["status"] == "success":
-                    total_results["spread_v2"]["episodes_found"].append(
-                        results["episodes_found"]
-                    )
+                    total_results["spread_v2"]["episodes_found"].append(results["episodes_found"])
                 else:
                     total_results["spread_v2"]["errors"] += 1
 
@@ -300,9 +290,7 @@ def main():
                 )
                 total_results["leadlag_v2"]["windows_run"] += 1
                 if results["status"] == "success":
-                    total_results["leadlag_v2"]["edges_found"].append(
-                        results["edges_found"]
-                    )
+                    total_results["leadlag_v2"]["edges_found"].append(results["edges_found"])
                 else:
                     total_results["leadlag_v2"]["errors"] += 1
 
@@ -318,9 +306,7 @@ def main():
                     total_results["infoshare_v2"]["errors"] += 1
 
             # Save results
-            save_detector_results(
-                s3_client, args.bucket, symbol, window, detector, results
-            )
+            save_detector_results(s3_client, args.bucket, symbol, window, detector, results)
 
     # Print summary
     logger.info("=== Nightly Sweep Summary ===")

@@ -1,0 +1,9 @@
+Week -6 BTCUSD-class Audit Report
+========================================
+Generated: 2025-10-11T15:49:43.399585Z
+Total files: 20
+Total bytes: 595,657,243
+Unique SHA-256 hashes: 20
+Days covered: 5/5
+Status: PASS
+BOM SHA-256: 58133ce60d42f0ab3b3bf8116e2c44d468d338dcc207a2999c2feacc78df7d11

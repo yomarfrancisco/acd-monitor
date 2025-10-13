@@ -91,18 +91,13 @@ def detect_spread_episodes(
             for episode in episodes:
                 episode_data = {
                     "venue_pair": f"{venue1}-{venue2}",
-                    "start_time": tick_data[venue1].iloc[episode["start"]][
-                        "ts_exchange"
-                    ],
+                    "start_time": tick_data[venue1].iloc[episode["start"]]["ts_exchange"],
                     "end_time": tick_data[venue1].iloc[episode["end"]]["ts_exchange"],
                     "duration_seconds": episode["duration"],
-                    "mean_spread": float(
-                        np.mean(spread[episode["start"] : episode["end"] + 1])
-                    ),
+                    "mean_spread": float(np.mean(spread[episode["start"] : episode["end"] + 1])),
                     "z_score": float(z_scores.iloc[episode["start"]]),
                     "compression_ratio": float(
-                        np.mean(spread[episode["start"] : episode["end"] + 1])
-                        / np.mean(spread)
+                        np.mean(spread[episode["start"] : episode["end"] + 1]) / np.mean(spread)
                     ),
                 }
                 spread_episodes.append(episode_data)
@@ -128,18 +123,14 @@ def find_contiguous_episodes(mask, min_duration, merge_gap):
             # End of episode
             duration = i - start_idx
             if duration >= min_duration:
-                episodes.append(
-                    {"start": start_idx, "end": i - 1, "duration": duration}
-                )
+                episodes.append({"start": start_idx, "end": i - 1, "duration": duration})
             in_episode = False
 
     # Handle episode that extends to end of data
     if in_episode:
         duration = len(mask) - start_idx
         if duration >= min_duration:
-            episodes.append(
-                {"start": start_idx, "end": len(mask) - 1, "duration": duration}
-            )
+            episodes.append({"start": start_idx, "end": len(mask) - 1, "duration": duration})
 
     # Merge episodes that are close together
     if merge_gap > 0 and len(episodes) > 1:
@@ -151,9 +142,7 @@ def find_contiguous_episodes(mask, min_duration, merge_gap):
             if gap <= merge_gap:
                 # Merge episodes
                 current_episode["end"] = next_episode["end"]
-                current_episode["duration"] = (
-                    current_episode["end"] - current_episode["start"] + 1
-                )
+                current_episode["duration"] = current_episode["end"] - current_episode["start"] + 1
             else:
                 # Gap too large, start new episode
                 merged_episodes.append(current_episode)
@@ -261,14 +250,10 @@ def run_spread_v2_analysis(
     logger.info(f"Loaded tick data for {len(tick_data)} venues")
 
     # Detect spread episodes
-    episodes = detect_spread_episodes(
-        tick_data, roll_window, z_threshold, min_duration, merge_gap
-    )
+    episodes = detect_spread_episodes(tick_data, roll_window, z_threshold, min_duration, merge_gap)
 
     # Sample matched controls
-    matched_controls = sample_matched_controls(
-        episodes, tick_data, mc_k, mc_per_episode, mc_gap
-    )
+    matched_controls = sample_matched_controls(episodes, tick_data, mc_k, mc_per_episode, mc_gap)
 
     # Generate results
     results = {
@@ -304,26 +289,14 @@ def main():
     Main function for Spread v2 detector
     """
     parser = argparse.ArgumentParser(description="Spread v2 Detector")
-    parser.add_argument(
-        "--snapshot", required=True, help="Path to snapshot OVERLAP.json"
-    )
+    parser.add_argument("--snapshot", required=True, help="Path to snapshot OVERLAP.json")
     parser.add_argument("--roll", type=int, default=60, help="Rolling window size")
-    parser.add_argument(
-        "--z-thresh", type=float, default=-1.5, help="Z-score threshold"
-    )
-    parser.add_argument(
-        "--min-dur", type=int, default=10, help="Minimum episode duration"
-    )
-    parser.add_argument(
-        "--merge-gap", type=int, default=2, help="Merge gap for episodes"
-    )
+    parser.add_argument("--z-thresh", type=float, default=-1.5, help="Z-score threshold")
+    parser.add_argument("--min-dur", type=int, default=10, help="Minimum episode duration")
+    parser.add_argument("--merge-gap", type=int, default=2, help="Merge gap for episodes")
     parser.add_argument("--mc-k", type=int, default=5, help="k for matched controls")
-    parser.add_argument(
-        "--mc-per-episode", type=int, default=100, help="Controls per episode"
-    )
-    parser.add_argument(
-        "--mc-gap", type=int, default=10, help="Gap for matched controls"
-    )
+    parser.add_argument("--mc-per-episode", type=int, default=100, help="Controls per episode")
+    parser.add_argument("--mc-gap", type=int, default=10, help="Gap for matched controls")
     parser.add_argument("--bb-size", type=int, default=10, help="Bootstrap block size")
     parser.add_argument("--bb-n", type=int, default=1000, help="Bootstrap iterations")
     parser.add_argument("--fdr", type=float, default=0.05, help="FDR threshold")
@@ -377,9 +350,7 @@ def main():
             f.write("## Summary\n\n")
             f.write(f"- **Total Episodes**: {results['summary']['total_episodes']}\n")
             f.write(f"- **Matched Controls**: {results['summary']['total_controls']}\n")
-            f.write(
-                f"- **Venues Analyzed**: {results['summary']['venues_analyzed']}\n\n"
-            )
+            f.write(f"- **Venues Analyzed**: {results['summary']['venues_analyzed']}\n\n")
             f.write("## Parameters\n\n")
             for key, value in results["parameters"].items():
                 f.write(f"- **{key}**: {value}\n")

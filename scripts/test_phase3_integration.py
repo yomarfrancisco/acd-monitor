@@ -61,9 +61,7 @@ def generate_test_data(
             period_length = n_samples - current_pos
 
         coordination_periods.append((current_pos, current_pos + period_length))
-        current_pos += period_length + np.random.randint(
-            200, 400
-        )  # Gap between periods
+        current_pos += period_length + np.random.randint(200, 400)  # Gap between periods
 
     # Generate exchange data
     exchanges = ["Exchange_A", "Exchange_B", "Exchange_C"]
@@ -72,9 +70,7 @@ def generate_test_data(
     for i, date in enumerate(dates):
         for j, exchange in enumerate(exchanges):
             # Check if in coordination period
-            in_coordination = any(
-                start <= i < end for start, end in coordination_periods
-            )
+            in_coordination = any(start <= i < end for start, end in coordination_periods)
 
             if in_coordination:
                 # Coordinated pricing with some variation
@@ -154,14 +150,10 @@ def test_seed_consistency():
     coordination_counts = [results[s]["coordination_periods"] for s in seeds]
 
     shape_consistent = len(set(data_shapes)) == 1
-    coordination_consistent = all(
-        abs(c - coordination_counts[0]) < 50 for c in coordination_counts
-    )
+    coordination_consistent = all(abs(c - coordination_counts[0]) < 50 for c in coordination_counts)
 
     print(f"   Data Shape Consistent: {'✅ Yes' if shape_consistent else '❌ No'}")
-    print(
-        f"   Coordination Count Consistent: {'✅ Yes' if coordination_consistent else '❌ No'}"
-    )
+    print(f"   Coordination Count Consistent: {'✅ Yes' if coordination_consistent else '❌ No'}")
 
     return results
 
@@ -207,9 +199,7 @@ def test_edge_cases():
 
         try:
             # Run basic ICP analysis
-            icp_config = ICPConfig(
-                significance_level=0.05, n_bootstrap=50
-            )  # Reduced for speed
+            icp_config = ICPConfig(significance_level=0.05, n_bootstrap=50)  # Reduced for speed
             icp_engine = ICPEngine(icp_config)
 
             # Pivot data
@@ -235,18 +225,14 @@ def test_edge_cases():
                 "n_samples": len(test_data),
             }
 
-            print(
-                f"     ✅ Success: p={icp_result.p_value:.3f}, reject={icp_result.reject_h0}"
-            )
+            print(f"     ✅ Success: p={icp_result.p_value:.3f}, reject={icp_result.reject_h0}")
 
         except Exception as e:
             edge_case_results[case_name] = {"success": False, "error": str(e)}
             print(f"     ❌ Failed: {e}")
 
     # Summary
-    successful_cases = [
-        name for name, result in edge_case_results.items() if result["success"]
-    ]
+    successful_cases = [name for name, result in edge_case_results.items() if result["success"]]
 
     print(f"\n✅ Edge Case Test Summary:")
     print(f"   Test Cases: {len(test_cases)}")
@@ -283,9 +269,7 @@ def test_end_to_end_pipeline():
         environment_columns=["environment"],
     )
 
-    print(
-        f"     ✅ ICP Complete: p={icp_result.p_value:.3f}, reject={icp_result.reject_h0}"
-    )
+    print(f"     ✅ ICP Complete: p={icp_result.p_value:.3f}, reject={icp_result.reject_h0}")
 
     # Step 2: VMM Analysis
     print("   Step 2: VMM Analysis...")
@@ -346,9 +330,7 @@ def test_end_to_end_pipeline():
         icp_result, vmm_result, validation_results
     )
 
-    print(
-        f"     ✅ Integrated Complete: risk_score={integrated_result.composite_risk_score:.1f}"
-    )
+    print(f"     ✅ Integrated Complete: risk_score={integrated_result.composite_risk_score:.1f}")
 
     # Step 5: Reporting v2
     print("   Step 5: Reporting v2...")
@@ -418,9 +400,7 @@ def test_end_to_end_pipeline():
         },
     }
 
-    successful_steps = sum(
-        1 for result in pipeline_results.values() if result["success"]
-    )
+    successful_steps = sum(1 for result in pipeline_results.values() if result["success"])
 
     print(f"\n✅ End-to-End Pipeline Test Summary:")
     print(f"   Pipeline Steps: {len(pipeline_results)}")
@@ -559,9 +539,7 @@ def test_bundle_generation_integration():
                         bundle_id=response.bundle_id,
                         refinement_instructions=["Add regulatory language"],
                     )
-                    refined_response = bundle_generator.refine_bundle(
-                        refinement_request
-                    )
+                    refined_response = bundle_generator.refine_bundle(refinement_request)
 
                     results.append(
                         {
@@ -569,9 +547,7 @@ def test_bundle_generation_integration():
                             "success": True,
                             "bundle_id": response.bundle_id,
                             "refined_id": (
-                                refined_response.bundle_id
-                                if refined_response.success
-                                else None
+                                refined_response.bundle_id if refined_response.success else None
                             ),
                             "files_generated": len(response.file_paths),
                             "refinement_success": refined_response.success,
@@ -601,16 +577,12 @@ def test_bundle_generation_integration():
                 print(f"     ❌ Failed: {response.error_message}")
 
         except Exception as e:
-            results.append(
-                {"scenario": scenario["name"], "success": False, "error": str(e)}
-            )
+            results.append({"scenario": scenario["name"], "success": False, "error": str(e)})
             print(f"     ❌ Exception: {e}")
 
     # Summary
     successful_scenarios = [r for r in results if r["success"]]
-    refinement_successful = [
-        r for r in successful_scenarios if r.get("refinement_success") is True
-    ]
+    refinement_successful = [r for r in successful_scenarios if r.get("refinement_success") is True]
 
     print(f"\n✅ Bundle Generation Integration Test Summary:")
     print(f"   Scenarios Tested: {len(test_scenarios)}")
@@ -663,18 +635,14 @@ def main():
         print(f"   ✅ Test Success Rate: {successful_tests/total_tests*100:.1f}%")
 
         print(f"\n📋 Integration Test Summary:")
-        print(
-            f"   ✅ Seed Consistency: {'Passed' if len(seed_results) > 0 else 'Failed'}"
-        )
+        print(f"   ✅ Seed Consistency: {'Passed' if len(seed_results) > 0 else 'Failed'}")
         print(
             f"   ✅ Edge Case Handling: {'Passed' if len([r for r in edge_case_results.values() if r['success']]) > 0 else 'Failed'}"
         )
         print(
             f"   ✅ End-to-End Pipeline: {'Passed' if len([r for r in pipeline_results.values() if r['success']]) > 0 else 'Failed'}"
         )
-        print(
-            f"   ✅ Provenance Tracking: {'Passed' if provenance_success else 'Failed'}"
-        )
+        print(f"   ✅ Provenance Tracking: {'Passed' if provenance_success else 'Failed'}")
         print(
             f"   ✅ Bundle Generation: {'Passed' if len([r for r in bundle_results if r['success']]) > 0 else 'Failed'}"
         )

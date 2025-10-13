@@ -77,8 +77,7 @@ def bai_perron_test(data):
             "pre_break_mean": data["similarity"][:best_break].mean(),
             "post_break_mean": data["similarity"][best_break:].mean(),
             "break_magnitude": abs(
-                data["similarity"][best_break:].mean()
-                - data["similarity"][:best_break].mean()
+                data["similarity"][best_break:].mean() - data["similarity"][:best_break].mean()
             ),
         }
 
@@ -252,9 +251,7 @@ def create_baseline_plots(
             linewidth=2,
             label="Threshold",
         )
-        plt.axhline(
-            y=-cusum_results["threshold"], color="r", linestyle="--", linewidth=2
-        )
+        plt.axhline(y=-cusum_results["threshold"], color="r", linestyle="--", linewidth=2)
 
         # Mark drift points
         for drift_point in cusum_results["drift_points"]:
@@ -309,9 +306,7 @@ def create_baseline_plots(
     plt.subplot(2, 2, 4)
     rolling_median = data["similarity"].rolling(window=14, min_periods=1).median()
     plt.plot(data["date"], data["similarity"], "b-", alpha=0.5, label="Similarity")
-    plt.plot(
-        data["date"], rolling_median, "r-", linewidth=2, label="14-Day Rolling Median"
-    )
+    plt.plot(data["date"], rolling_median, "r-", linewidth=2, label="14-Day Rolling Median")
     plt.axhline(
         y=baseline_value,
         color="g",
@@ -372,10 +367,7 @@ def main():
     results = {
         "baseline_series": data["similarity"].tolist(),
         "dates": [d.isoformat() for d in data["date"]],
-        "median_14d": data["similarity"]
-        .rolling(window=14, min_periods=1)
-        .median()
-        .tolist(),
+        "median_14d": data["similarity"].rolling(window=14, min_periods=1).median().tolist(),
         "breakpoints": structural_breaks,
         "tests": {
             "bai_perron": structural_breaks,
@@ -390,7 +382,9 @@ def main():
     }
 
     # Save results
-    output_file = "artifacts/v1_4_validation/baseline/adaptive_baseline_2025-09-04_to_2025-09-18.json"
+    output_file = (
+        "artifacts/v1_4_validation/baseline/adaptive_baseline_2025-09-04_to_2025-09-18.json"
+    )
     with open(output_file, "w") as f:
         json.dump(results, f, indent=2, default=str)
 
@@ -424,6 +418,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
 
 
 

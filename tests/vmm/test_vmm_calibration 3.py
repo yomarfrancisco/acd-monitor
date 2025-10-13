@@ -34,12 +34,8 @@ class TestVMMCalibration:
         self.coordinated_labels = np.ones(n_coordinated)
 
         # Combined dataset for calibration
-        self.all_scores = np.concatenate(
-            [self.competitive_scores, self.coordinated_scores]
-        )
-        self.all_labels = np.concatenate(
-            [self.competitive_labels, self.coordinated_labels]
-        )
+        self.all_scores = np.concatenate([self.competitive_scores, self.coordinated_scores])
+        self.all_labels = np.concatenate([self.competitive_labels, self.coordinated_labels])
 
         # Calibrate using isotonic regression
         self.calibrated_scores, self.calibrator = calibrate_confidence(
@@ -81,14 +77,10 @@ class TestVMMCalibration:
         """Test that calibration improves separation between classes"""
 
         # Before calibration: measure separation
-        raw_separation = np.mean(self.coordinated_scores) - np.mean(
-            self.competitive_scores
-        )
+        raw_separation = np.mean(self.coordinated_scores) - np.mean(self.competitive_scores)
 
         # After calibration: measure separation
-        cal_separation = np.mean(self.calibrated_coordinated) - np.mean(
-            self.calibrated_competitive
-        )
+        cal_separation = np.mean(self.calibrated_coordinated) - np.mean(self.calibrated_competitive)
 
         # Calibration should improve or maintain separation
         assert cal_separation >= raw_separation * 0.8, (
@@ -114,9 +106,7 @@ class TestVMMCalibration:
             assert key in metrics, f"Missing reliability metric: {key}"
 
         # Brier score should be reasonable (lower is better, typically < 0.25 for good calibration)
-        assert (
-            0 <= metrics["brier_score"] <= 1
-        ), f"Invalid Brier score: {metrics['brier_score']}"
+        assert 0 <= metrics["brier_score"] <= 1, f"Invalid Brier score: {metrics['brier_score']}"
 
         # ECE should be reasonable (lower is better, typically < 0.1 for good calibration)
         assert 0 <= metrics["ece"] <= 1, f"Invalid ECE: {metrics['ece']}"
@@ -154,9 +144,7 @@ class TestVMMCalibration:
                 assert self.calibrator["a"] == loaded_calibrator["a"]
                 assert self.calibrator["b"] == loaded_calibrator["b"]
 
-    @pytest.mark.xfail(
-        reason="Platt scaling needs calibration refinement to meet acceptance gates"
-    )
+    @pytest.mark.xfail(reason="Platt scaling needs calibration refinement to meet acceptance gates")
     def test_platt_scaling(self):
         """Test Platt scaling calibration method (currently needs refinement)"""
 
@@ -214,9 +202,7 @@ class TestVMMCalibration:
         assert curves["thresholds"][-1] == 1.0
 
         # Check accuracy bounds
-        assert np.all(curves["raw_accuracy"] >= 0) and np.all(
-            curves["raw_accuracy"] <= 1
-        )
+        assert np.all(curves["raw_accuracy"] >= 0) and np.all(curves["raw_accuracy"] <= 1)
         assert np.all(curves["calibrated_accuracy"] >= 0) and np.all(
             curves["calibrated_accuracy"] <= 1
         )
@@ -228,9 +214,7 @@ class TestVMMCalibration:
             plot_path = Path(temp_dir) / "reliability.png"
 
             # Should not raise an error
-            plot_reliability_diagram(
-                self.calibrated_scores, self.all_labels, save_path=plot_path
-            )
+            plot_reliability_diagram(self.calibrated_scores, self.all_labels, save_path=plot_path)
 
             # Check that plot was saved
             assert plot_path.exists(), f"Reliability plot not saved to {plot_path}"
@@ -275,14 +259,10 @@ class TestVMMCalibration:
         """Test calibration with different validation split ratios"""
 
         # Test with very small validation split
-        cal_small, _ = calibrate_confidence(
-            self.all_scores, self.all_labels, validation_split=0.05
-        )
+        cal_small, _ = calibrate_confidence(self.all_scores, self.all_labels, validation_split=0.05)
 
         # Test with large validation split
-        cal_large, _ = calibrate_confidence(
-            self.all_scores, self.all_labels, validation_split=0.5
-        )
+        cal_large, _ = calibrate_confidence(self.all_scores, self.all_labels, validation_split=0.5)
 
         # All should produce valid scores
         assert np.all(cal_small >= 0) and np.all(cal_small <= 1)

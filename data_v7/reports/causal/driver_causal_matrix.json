@@ -1,0 +1,115 @@
+{
+  "timestamp": "2025-10-12T09:54:24.956117",
+  "random_seed": 42,
+  "input_hashes": {
+    "driver_correlations": "e77d9ad6a3d6ac924aa45b37bdd73a169d1f7076513e08b051376ad0889a889d",
+    "css_timeline": "570a6309326c425e51293425c7b573c2d9b746cd37fec6ecbca163426feae12f",
+    "calibration_parquet": "642384a11752205451f381d0d04d55c803f01cdbfdcecea410f218e6477cc46d",
+    "hypothesis_metrics": "80fefded2705339a331b8253b21bfc0d534f26edd36e50127369bf3be83aeb76",
+    "invariance_metrics": "6cde7f97f907eea1197b5e08aabc1587e440ed3fb553f202deae5152a34ee3d8"
+  },
+  "causal_matrix": {
+    "price_volatility": {
+      "driver_to_css_lag1": -0.579883886364458,
+      "driver_to_css_lag1_std": 0.02588365152924175,
+      "css_to_driver_lag1": 0.5794507011190818,
+      "css_to_driver_lag1_std": 0.028799916628059075,
+      "feedback_strength": 0.9990458284826452,
+      "feedback_strength_std": 0.00768029977943585,
+      "n_venues": 4,
+      "driver_to_css_normalized": 1.0,
+      "css_to_driver_normalized": 0.999252979336791,
+      "conditional_independence": 0.42033270625823005
+    },
+    "leadership_pressure": {
+      "driver_to_css_lag1": NaN,
+      "driver_to_css_lag1_std": NaN,
+      "css_to_driver_lag1": NaN,
+      "css_to_driver_lag1_std": NaN,
+      "feedback_strength": NaN,
+      "feedback_strength_std": NaN,
+      "n_venues": 4,
+      "driver_to_css_normalized": NaN,
+      "css_to_driver_normalized": NaN,
+      "conditional_independence": 0
+    },
+    "volume_change": {
+      "driver_to_css_lag1": -0.17640261457609302,
+      "driver_to_css_lag1_std": 0.05137870931646077,
+      "css_to_driver_lag1": 0.1692836041006409,
+      "css_to_driver_lag1_std": 0.02788494680078126,
+      "feedback_strength": 1.0389023893322422,
+      "feedback_strength_std": 0.32855598945206727,
+      "n_venues": 4,
+      "driver_to_css_normalized": 1.0,
+      "css_to_driver_normalized": 0.9596433959181412,
+      "conditional_independence": 0.8271568906616331
+    },
+    "css_std_across_venues": {
+      "driver_to_css_lag1": -0.019250853197801385,
+      "driver_to_css_lag1_std": 0.012394553673258613,
+      "css_to_driver_lag1": -0.019250853197801385,
+      "css_to_driver_lag1_std": 0.012394553673258613,
+      "feedback_strength": 0.9999992116458162,
+      "feedback_strength_std": 4.445195286151193e-07,
+      "n_venues": 4,
+      "driver_to_css_normalized": 0.19250853197801385,
+      "css_to_driver_normalized": 0.19250853197801385,
+      "conditional_independence": 0.9807491468021986
+    },
+    "cross_venue_correlation": {
+      "driver_to_css_lag1": -0.5591814288232524,
+      "driver_to_css_lag1_std": 0.019486535426820405,
+      "css_to_driver_lag1": 0.551701497330306,
+      "css_to_driver_lag1_std": 0.02425253643525409,
+      "feedback_strength": 0.9863800355633237,
+      "feedback_strength_std": 0.015771808441323164,
+      "n_venues": 4,
+      "driver_to_css_normalized": 1.0,
+      "css_to_driver_normalized": 0.9866234264812993,
+      "conditional_independence": 0.4445585369232208
+    },
+    "asia_session": {
+      "driver_to_css_lag1": 0.02247352822992723,
+      "driver_to_css_lag1_std": 0.00482587399299707,
+      "css_to_driver_lag1": -0.12725052050466723,
+      "css_to_driver_lag1_std": 0.024120573226163827,
+      "feedback_strength": 5.735728248788054,
+      "feedback_strength_std": 0.6690903103378288,
+      "n_venues": 4,
+      "driver_to_css_normalized": 0.1766085367729632,
+      "css_to_driver_normalized": 1.0,
+      "conditional_independence": 0.9251379756327027
+    },
+    "us_session": {
+      "driver_to_css_lag1": -0.0979368838542432,
+      "driver_to_css_lag1_std": 0.02607166175013746,
+      "css_to_driver_lag1": 0.09275418749175726,
+      "css_to_driver_lag1_std": 0.01604680669356791,
+      "feedback_strength": 1.0261730408881566,
+      "feedback_strength_std": 0.322306531186244,
+      "n_venues": 4,
+      "driver_to_css_normalized": 0.9793688385424321,
+      "css_to_driver_normalized": 0.9275418749175726,
+      "conditional_independence": 0.9046544643269998
+    }
+  },
+  "feedback_summary": {
+    "total_drivers": 7,
+    "strong_feedback_count": 6,
+    "positive_feedback_count": 0,
+    "negative_feedback_count": 0
+  },
+  "narrative_summary": [
+    "## Causal Reintegration Analysis Summary",
+    "==================================================",
+    "",
+    "### Causal vs Reactive Drivers",
+    "",
+    "### Feedback Loop Analysis",
+    "",
+    "### Key Insights",
+    "",
+    "3. **Session Mediator**: Asia session amplifies feedback strength by 0.02"
+  ]
+}

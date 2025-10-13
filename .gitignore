@@ -71,3 +71,27 @@ build/
 !ui/cursor-dashboard/lib/**
 !ui/cursor-dashboard/utils/
 !ui/cursor-dashboard/utils/**
+
+# Generated artifacts (do not commit)
+analysis/
+backfill/
+data/
+*.parquet
+*.csv.gz
+*.feather
+*.arrow
+
+# Repository hygiene additions
+artifacts/
+artifacts/**/*
+reports/**/*.parquet
+reports/**/*.feather
+reports/**/*.npz
+**/*.parquet
+**/*.feather
+**/*.npz
+**/*.pkl
+**/*.csv.gz
+!schemas/**
+!docs/**
+!state/**

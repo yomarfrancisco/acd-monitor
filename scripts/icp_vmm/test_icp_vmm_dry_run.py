@@ -87,9 +87,7 @@ def main():
         transformer = DataTransformer()
         tester = PreconditionTester()
         vmm_analyzer = VMMAnalyzer()
-        icp_tester = ICPTester(
-            fdr_alpha=0.05, bootstrap_samples=100
-        )  # Reduced for speed
+        icp_tester = ICPTester(fdr_alpha=0.05, bootstrap_samples=100)  # Reduced for speed
         exporter = ICPVMMExporter("acd-monitor-snapshots", "analysis")
 
         # Prepare data
@@ -103,9 +101,7 @@ def main():
         print("\n🏷️ Labeling environments...")
         labeled_data = {}
         for venue, data in prepared_data.items():
-            labeled_data[venue] = env_labeler.label_all_environments(
-                data, processed_metrics
-            )
+            labeled_data[venue] = env_labeler.label_all_environments(data, processed_metrics)
 
         # Get environment counts
         env_counts = {}

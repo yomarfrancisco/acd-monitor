@@ -146,9 +146,7 @@ def process_synthetic_datasets(
 
         # Run detector
         detector_output_dir = output_dir / "detector_runs" / dataset_name
-        detector_results = run_spread_v2_detector(
-            dataset_path, detector_output_dir, bootstrap_n
-        )
+        detector_results = run_spread_v2_detector(dataset_path, detector_output_dir, bootstrap_n)
 
         # Compare with expected thresholds
         observed_delta_z = detector_results.get("delta_z_range", [0, 0])
@@ -157,9 +155,7 @@ def process_synthetic_datasets(
         expected_detection = expected.get("expected_detection", False)
 
         # Determine if detection matches expectation
-        detection_match = (
-            detector_results.get("episodes_detected", 0) > 0
-        ) == expected_detection
+        detection_match = (detector_results.get("episodes_detected", 0) > 0) == expected_detection
 
         # Check if observed delta_z is within expected range
         delta_z_match = (
@@ -210,9 +206,7 @@ def generate_summary_report(results: List[Dict[str, Any]], output_dir: Path) -> 
         "successful_runs": len(
             [r for r in results if r["detector_results"]["status"] == "success"]
         ),
-        "failed_runs": len(
-            [r for r in results if r["detector_results"]["status"] == "error"]
-        ),
+        "failed_runs": len([r for r in results if r["detector_results"]["status"] == "error"]),
         "detection_matches": len([r for r in results if r["detection_match"]]),
         "delta_z_matches": len([r for r in results if r["delta_z_match"]]),
         "overall_matches": len([r for r in results if r["overall_match"]]),
@@ -276,7 +270,9 @@ def generate_summary_report(results: List[Dict[str, Any]], output_dir: Path) -> 
         report_content += f"- **Window**: {result['window']}\n"
         report_content += f"- **Injection Type**: {result['injection_type']}\n"
         report_content += f"- **Status**: {result['detector_results']['status']}\n"
-        report_content += f"- **Episodes Detected**: {result['detector_results']['episodes_detected']}\n"
+        report_content += (
+            f"- **Episodes Detected**: {result['detector_results']['episodes_detected']}\n"
+        )
         report_content += f"- **Observed ΔZ**: {result['observed_delta_z']}\n"
         report_content += f"- **Expected ΔZ**: {result['expected_delta_z_range']}\n"
         report_content += f"- **Detection Match**: {result['detection_match']}\n"
@@ -336,9 +332,7 @@ def main():
         default="calibration/spread/synthetic_runs",
         help="Output directory for calibration results",
     )
-    parser.add_argument(
-        "--bootstrap-n", type=int, default=300, help="Bootstrap iterations"
-    )
+    parser.add_argument("--bootstrap-n", type=int, default=300, help="Bootstrap iterations")
     parser.add_argument("--verbose", action="store_true", help="Enable verbose logging")
     args = parser.parse_args()
 

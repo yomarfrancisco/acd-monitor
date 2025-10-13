@@ -1,0 +1,21 @@
+Week -6 Coverage Matrix (Jul 14 – Jul 20, 2025)
+============================================================
+Generated: 2025-10-11T19:42:04.661509Z
+Total files found: 0
+
+Coverage Matrix (Date × Venue):
+Date       BINANCE    COINBASE   BYBITSPOT  BITGET    
+------------------------------------------------------------
+20250714   FOUND      FOUND      FOUND      FOUND     
+20250715   FOUND      FOUND      FOUND      FOUND     
+20250716   FOUND      FOUND      FOUND      FOUND     
+20250717   FOUND      FOUND      FOUND      FOUND     
+20250718   FOUND      FOUND      FOUND      FOUND     
+20250719   FOUND      FOUND      FOUND      FOUND     
+20250720   FOUND      FOUND      FOUND      FOUND     
+
+Summary:
+  Expected combinations: 28
+  Found: 28
+  Missing: 0
+  Coverage: 100.0%

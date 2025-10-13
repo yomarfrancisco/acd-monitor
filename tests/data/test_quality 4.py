@@ -38,9 +38,7 @@ class TestDataQualityAssessment:
                 "firm_0_price": np.random.normal(100, 10, 100),
                 "firm_1_price": np.random.normal(100, 10, 100),
                 "firm_2_price": np.random.normal(100, 10, 100),
-                "volume": np.random.normal(
-                    1000, 200, 100
-                ),  # Use normal instead of exponential
+                "volume": np.random.normal(1000, 200, 100),  # Use normal instead of exponential
             }
         )
 
@@ -245,9 +243,7 @@ class TestDataQualityConfig:
         # For now, just test that it doesn't crash
         try:
             config = DataQualityConfig(completeness_threshold=1.5)  # > 1.0
-            assert (
-                config.completeness_threshold == 1.5
-            )  # Current implementation allows this
+            assert config.completeness_threshold == 1.5  # Current implementation allows this
         except Exception:
             # If it does validate, that's fine too
             pass

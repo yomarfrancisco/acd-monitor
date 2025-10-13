@@ -1,0 +1,22 @@
+{
+  "day": "2025-09-01",
+  "wave7_n_obs": 16705,
+  "wave7_n_env": 54,
+  "session_counts": {
+    "Asia": 5512,
+    "EU": 5512,
+    "US": 5679
+  },
+  "n_inconsistencies": 0,
+  "inconsistencies": [],
+  "fdr_significant_edge": {
+    "edge_id": "BITGET->COINBASE",
+    "lag_s": 5,
+    "gamma": -8.279160718145784e-07,
+    "p_raw": 0.0035637696677268,
+    "p_fdr": 0.0427652360127224,
+    "n_obs": 16704
+  },
+  "wave9_n_edges": 12,
+  "wave9_n_significant_fdr": 1
+}

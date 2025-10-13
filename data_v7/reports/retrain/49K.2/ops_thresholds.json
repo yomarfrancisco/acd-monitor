@@ -1,0 +1,52 @@
+{
+  "fold_0": {
+    "Logistic_L2_6h": {
+      "roc_optimal": 0.4268497863293738,
+      "ops_optimal": 0.6033455663496019
+    },
+    "Logistic_L2_12h": {
+      "roc_optimal": 0.5959775419377586,
+      "ops_optimal": 0.6363930972937334
+    }
+  },
+  "fold_1": {
+    "Logistic_L2_6h": {
+      "roc_optimal": 0.5502362646761592,
+      "ops_optimal": 0.5808390917264701
+    },
+    "Logistic_L2_12h": {
+      "roc_optimal": 0.6122481099476265,
+      "ops_optimal": 0.621491742920305
+    }
+  },
+  "fold_2": {
+    "Logistic_L2_6h": {
+      "roc_optimal": 0.40461963296485626,
+      "ops_optimal": 0.5969794771680729
+    },
+    "Logistic_L2_12h": {
+      "roc_optimal": 0.4903133350768568,
+      "ops_optimal": 0.6437782235844826
+    }
+  },
+  "fold_3": {
+    "Logistic_L2_6h": {
+      "roc_optimal": 0.44202652706925183,
+      "ops_optimal": 0.6058362916225719
+    },
+    "Logistic_L2_12h": {
+      "roc_optimal": 0.5787064824014407,
+      "ops_optimal": 0.6442476077498768
+    }
+  },
+  "fold_4": {
+    "Logistic_L2_6h": {
+      "roc_optimal": 0.6047683632859167,
+      "ops_optimal": 0.6358919995038217
+    },
+    "Logistic_L2_12h": {
+      "roc_optimal": 0.5918615396550638,
+      "ops_optimal": 0.6307866093553779
+    }
+  }
+}

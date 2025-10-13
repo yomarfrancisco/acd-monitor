@@ -1,0 +1,21 @@
+{
+  "audit_passed": false,
+  "frozen_rerun_match": true,
+  "no_leakage": true,
+  "inversion_collapse": true,
+  "placebo_collapse": true,
+  "oos_performance": true,
+  "window_overlap_ok": false,
+  "input_hashes": {
+    "r2_summary": "b8523349019ea3b8411010477895556a90b316a2a4fe80b2fd64fab2c0dede59",
+    "r2_env_manifest": "e42197640808766c10d7f51c9070787cbdb58907713b6b5840746f408f7bad48",
+    "cv_manifest": "160314c6ef1c7f2367e9716a6a473b4f9ebe1777420868c8fe48791914761b30",
+    "labels_summary": "26b1e2c924f5a32c299dabc2c83e9aef00e5a2fe766c113132f2a48bf65b8c2f",
+    "metrics_calibrated": "d363e85f7b5592c0ae800d08c6b65b8e2776359f3414398639748a89b9654081"
+  },
+  "pre_registered_params": {
+    "K": 20,
+    "W": 6,
+    "persistence_hours": 2
+  }
+}

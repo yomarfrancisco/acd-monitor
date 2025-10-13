@@ -1,0 +1,28 @@
+{
+  "setup_timestamp": "2025-10-04T10:00:46.705782",
+  "random_seed": 1729,
+  "data_sources": {
+    "design_matrix": "analysis/icp_vmm_wave7/design/design_matrix_v1.parquet",
+    "derived_data": "analysis/icp_vmm_wave7/derived_data_v1.parquet",
+    "wave8_config": "analysis/icp_vmm_wave8/baseline_config_v1.json",
+    "wash_screens": "analysis/wash_screens_v2"
+  },
+  "venues": {
+    "all_venues": [
+      "BINANCE",
+      "COINBASE",
+      "BYBITSPOT",
+      "BITGET"
+    ],
+    "no_bitget_venues": [
+      "BINANCE",
+      "COINBASE",
+      "BYBITSPOT"
+    ]
+  },
+  "total_observations": 604790,
+  "time_span_hours": 167.99972222222223,
+  "commit_sha": "58aeebb55e9c5684b6f2ab3a83b6dcf235b4d404",
+  "data_hash": "0b440013815db27b",
+  "wash_available": true
+}

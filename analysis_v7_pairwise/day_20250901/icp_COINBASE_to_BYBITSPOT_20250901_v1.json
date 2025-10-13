@@ -1,0 +1,42 @@
+{
+  "pair": "COINBASE_to_BYBITSPOT",
+  "date": "20250901",
+  "scale": "1s",
+  "N": 48718,
+  "overlap_pct": 0.9852373152136544,
+  "lag_results": [
+    {
+      "lag": 1,
+      "correlation": 0.02770967298512813,
+      "p_value": 0.05,
+      "significant": false
+    },
+    {
+      "lag": 2,
+      "correlation": -0.02500483092074871,
+      "p_value": 0.05,
+      "significant": false
+    },
+    {
+      "lag": 3,
+      "correlation": -0.0004211146938587785,
+      "p_value": 0.05,
+      "significant": false
+    },
+    {
+      "lag": 5,
+      "correlation": 0.007394209591857875,
+      "p_value": 0.05,
+      "significant": false
+    },
+    {
+      "lag": 10,
+      "correlation": -0.004150143669386352,
+      "p_value": 0.05,
+      "significant": false
+    }
+  ],
+  "icp_pass": false,
+  "significant_lags": 0,
+  "env_sizes_csv": "icp_COINBASE_to_BYBITSPOT_20250901_v1.env_sizes.csv"
+}

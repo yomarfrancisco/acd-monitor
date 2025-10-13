@@ -1,0 +1,5 @@
+venue,real_lrs,placebo_lrs,delta_lrs
+BINANCE,0.25,0.245,0.005
+COINBASE,0.75,0.255,0.495
+BYBITSPOT,0.5,0.25,0.25
+BITGET,0.125,0.25,0.125

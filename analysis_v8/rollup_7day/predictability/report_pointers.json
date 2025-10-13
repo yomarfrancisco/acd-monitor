@@ -1,0 +1,21 @@
+{
+  "report_path": "analysis_v8/predictability/d1_3_to_d4_7/report.json",
+  "auc_plot_path": "analysis_v8/predictability/d1_3_to_d4_7/auc.png",
+  "calibration_plot_path": "analysis_v8/predictability/d1_3_to_d4_7/calibration.png",
+  "summary": {
+    "training_days": [
+      "2025-09-01",
+      "2025-09-02",
+      "2025-09-03"
+    ],
+    "test_days": [
+      "2025-09-04",
+      "2025-09-05",
+      "2025-09-06",
+      "2025-09-07"
+    ],
+    "auc": 0.7711315801516873,
+    "pr_auc": 0.47448455038996007,
+    "ece": 0.03314103068820396
+  }
+}

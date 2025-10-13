@@ -1,0 +1,11 @@
+{
+  "day": "2025-09-01",
+  "total_tests": 36,
+  "bh_significant": 4,
+  "placebo_robust": 27,
+  "final_kept": 0,
+  "mean_abs_beta": 0.022407818643212375,
+  "median_abs_beta": 0.010290752855299023,
+  "memory_peak_mb": 256.1875,
+  "status": "ACD_DAY5_5S_NULL"
+}

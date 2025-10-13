@@ -1,0 +1,22 @@
+{
+  "gates": {
+    "precision_threshold": 0.95,
+    "recall_threshold": 0.6,
+    "fpr_threshold": 0.15,
+    "window_pass_threshold": 0.95,
+    "lead_time_minutes_threshold": 180,
+    "placebo_inversion_collapse_required": true
+  },
+  "results": {
+    "precision_achieved": 0.9549671415301123,
+    "recall_achieved": 0.5972347139765762,
+    "fpr_achieved": 0.08023844269050347,
+    "window_pass_achieved": 0.9752302985640802,
+    "lead_time_achieved": 178.12677300221333
+  },
+  "gates_passed": false,
+  "failed_gates": [
+    "recall",
+    "lead_time"
+  ]
+}

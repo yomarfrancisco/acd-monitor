@@ -1,0 +1,21 @@
+{
+  "placebo_test": {
+    "precision": 0.13490142459033697,
+    "fpr": 0.8730867849414408,
+    "precision_threshold": 0.25,
+    "fpr_threshold": 0.75,
+    "precision_pass": true,
+    "fpr_pass": true,
+    "overall_pass": true
+  },
+  "inversion_test": {
+    "precision": 0.09295377076201385,
+    "fpr": 0.9656908956922408,
+    "precision_threshold": 0.25,
+    "fpr_threshold": 0.75,
+    "precision_pass": true,
+    "fpr_pass": true,
+    "overall_pass": true
+  },
+  "overall_collapse_verified": true
+}

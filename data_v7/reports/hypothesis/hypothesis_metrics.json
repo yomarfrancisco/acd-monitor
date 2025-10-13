@@ -1,0 +1,133 @@
+{
+  "causal_anomalies": {
+    "variables": [
+      "price_last",
+      "vol_proxy",
+      "ofi",
+      "price_std"
+    ],
+    "anomaly_scores": {
+      "price_last_BINANCE": {
+        "threshold": 1.8628836102782953,
+        "anomaly_count": 106,
+        "anomaly_rate": 0.050189393939393936
+      },
+      "price_last_BITGET": {
+        "threshold": 1.8388190956478063,
+        "anomaly_count": 106,
+        "anomaly_rate": 0.050332383665717
+      },
+      "price_last_BYBITSPOT": {
+        "threshold": 2.4855004072527795,
+        "anomaly_count": 106,
+        "anomaly_rate": 0.050189393939393936
+      },
+      "price_last_COINBASE": {
+        "threshold": 1.8330247730563567,
+        "anomaly_count": 106,
+        "anomaly_rate": 0.050189393939393936
+      },
+      "vol_proxy_BINANCE": {
+        "threshold": 1.9981406666652346,
+        "anomaly_count": 106,
+        "anomaly_rate": 0.050189393939393936
+      },
+      "vol_proxy_BITGET": {
+        "threshold": 1.9681222050811553,
+        "anomaly_count": 106,
+        "anomaly_rate": 0.050332383665717
+      },
+      "vol_proxy_BYBITSPOT": {
+        "threshold": 1.1122164012126516,
+        "anomaly_count": 106,
+        "anomaly_rate": 0.050189393939393936
+      },
+      "vol_proxy_COINBASE": {
+        "threshold": 2.0134087699035934,
+        "anomaly_count": 106,
+        "anomaly_rate": 0.050189393939393936
+      },
+      "ofi_BINANCE": {
+        "threshold": 1.9929442347222195,
+        "anomaly_count": 106,
+        "anomaly_rate": 0.050189393939393936
+      },
+      "ofi_BITGET": {
+        "threshold": 1.4939653707907716,
+        "anomaly_count": 106,
+        "anomaly_rate": 0.050332383665717
+      },
+      "ofi_BYBITSPOT": {
+        "threshold": 0.5188360868454885,
+        "anomaly_count": 106,
+        "anomaly_rate": 0.050189393939393936
+      },
+      "ofi_COINBASE": {
+        "threshold": 1.7757501324792595,
+        "anomaly_count": 106,
+        "anomaly_rate": 0.050189393939393936
+      },
+      "price_std_BINANCE": {
+        "threshold": 1.5127317504702562,
+        "anomaly_count": 106,
+        "anomaly_rate": 0.050189393939393936
+      },
+      "price_std_BITGET": {
+        "threshold": 1.6282902087307047,
+        "anomaly_count": 106,
+        "anomaly_rate": 0.050332383665717
+      },
+      "price_std_BYBITSPOT": {
+        "threshold": 1.4744110982838472,
+        "anomaly_count": 106,
+        "anomaly_rate": 0.050189393939393936
+      },
+      "price_std_COINBASE": {
+        "threshold": 1.6600877065335884,
+        "anomaly_count": 106,
+        "anomaly_rate": 0.050189393939393936
+      }
+    },
+    "total_pairs": 16
+  },
+  "regime_persistence": {
+    "total_segments": 478,
+    "stable_segments": 4,
+    "transitional_segments": 474,
+    "avg_stable_duration": 39.0,
+    "avg_transition_duration": 4.531645569620253,
+    "stability_ratio": 0.06770833333333333,
+    "transition_frequency": 0.9916317991631799,
+    "total_stable_hours": 156.0,
+    "total_transition_hours": 2148.0
+  },
+  "cross_venue": {
+    "venue_stability": {
+      "BINANCE": {
+        "total_anomalies": 424,
+        "stability_score": 0.002352941176470588
+      },
+      "BITGET": {
+        "total_anomalies": 424,
+        "stability_score": 0.002352941176470588
+      },
+      "BYBITSPOT": {
+        "total_anomalies": 424,
+        "stability_score": 0.002352941176470588
+      },
+      "COINBASE": {
+        "total_anomalies": 424,
+        "stability_score": 0.002352941176470588
+      }
+    },
+    "synchronous_anomalies": 2397,
+    "most_stable_venue": "BINANCE",
+    "least_stable_venue": "BINANCE"
+  },
+  "metadata": {
+    "timestamp": "2025-10-12T08:16:05.456198",
+    "seed": 42,
+    "total_variables": 4,
+    "total_venues": 4
+  }
+}

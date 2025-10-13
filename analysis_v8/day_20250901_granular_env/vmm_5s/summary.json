@@ -1,0 +1,9 @@
+{
+  "freq": "5s",
+  "n_edges_tested": 60,
+  "n_edges_kept": 0,
+  "n_edges_rejected": 60,
+  "mean_abs_beta": 0.00825026052921316,
+  "median_abs_beta": 0.004098014242457719,
+  "coverage_pct": 100.0
+}

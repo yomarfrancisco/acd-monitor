@@ -1,0 +1,5 @@
+Global 14-Week BOM SHA-256
+========================================
+Generated: 2025-10-11T18:38:47.399729Z
+Total files: 131
+BOM SHA-256: 2a47b1a9958957a0484fa95710ae2b9ff2a16d24c1c69927b941ccf4526c1a9e

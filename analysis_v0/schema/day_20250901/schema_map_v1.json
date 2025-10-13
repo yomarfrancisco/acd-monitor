@@ -1,0 +1,170 @@
+[
+  {
+    "venue": "BINANCE",
+    "day": "20250901",
+    "kind": "ticks",
+    "path": "data_v6/views/BINANCE/20250901/ticks_canonical.parquet",
+    "schema": [
+      {
+        "name": "ts",
+        "dtype": "timestamp[ns]"
+      },
+      {
+        "name": "close",
+        "dtype": "double"
+      },
+      {
+        "name": "volume",
+        "dtype": "float"
+      }
+    ],
+    "num_row_groups": 2
+  },
+  {
+    "venue": "BINANCE",
+    "day": "20250901",
+    "kind": "bars",
+    "path": "data_v6/views/BINANCE/20250901/bars_canonical.parquet",
+    "schema": [
+      {
+        "name": "ts",
+        "dtype": "timestamp[ns]"
+      },
+      {
+        "name": "close",
+        "dtype": "double"
+      },
+      {
+        "name": "volume",
+        "dtype": "float"
+      }
+    ],
+    "num_row_groups": 1
+  },
+  {
+    "venue": "COINBASE",
+    "day": "20250901",
+    "kind": "ticks",
+    "path": "data_v6/views/COINBASE/20250901/ticks_canonical.parquet",
+    "schema": [
+      {
+        "name": "ts",
+        "dtype": "timestamp[ns]"
+      },
+      {
+        "name": "close",
+        "dtype": "double"
+      },
+      {
+        "name": "volume",
+        "dtype": "float"
+      }
+    ],
+    "num_row_groups": 1
+  },
+  {
+    "venue": "COINBASE",
+    "day": "20250901",
+    "kind": "bars",
+    "path": "data_v6/views/COINBASE/20250901/bars_canonical.parquet",
+    "schema": [
+      {
+        "name": "ts",
+        "dtype": "timestamp[ns]"
+      },
+      {
+        "name": "close",
+        "dtype": "double"
+      },
+      {
+        "name": "volume",
+        "dtype": "float"
+      }
+    ],
+    "num_row_groups": 1
+  },
+  {
+    "venue": "BYBITSPOT",
+    "day": "20250901",
+    "kind": "ticks",
+    "path": "data_v6/views/BYBITSPOT/20250901/ticks_canonical.parquet",
+    "schema": [
+      {
+        "name": "ts",
+        "dtype": "timestamp[ns]"
+      },
+      {
+        "name": "close",
+        "dtype": "double"
+      },
+      {
+        "name": "volume",
+        "dtype": "float"
+      }
+    ],
+    "num_row_groups": 1
+  },
+  {
+    "venue": "BYBITSPOT",
+    "day": "20250901",
+    "kind": "bars",
+    "path": "data_v6/views/BYBITSPOT/20250901/bars_canonical.parquet",
+    "schema": [
+      {
+        "name": "ts",
+        "dtype": "timestamp[ns]"
+      },
+      {
+        "name": "close",
+        "dtype": "double"
+      },
+      {
+        "name": "volume",
+        "dtype": "float"
+      }
+    ],
+    "num_row_groups": 1
+  },
+  {
+    "venue": "BITGET",
+    "day": "20250901",
+    "kind": "ticks",
+    "path": "data_v6/views/BITGET/20250901/ticks_canonical.parquet",
+    "schema": [
+      {
+        "name": "ts",
+        "dtype": "timestamp[ns]"
+      },
+      {
+        "name": "close",
+        "dtype": "double"
+      },
+      {
+        "name": "volume",
+        "dtype": "float"
+      }
+    ],
+    "num_row_groups": 1
+  },
+  {
+    "venue": "BITGET",
+    "day": "20250901",
+    "kind": "bars",
+    "path": "data_v6/views/BITGET/20250901/bars_canonical.parquet",
+    "schema": [
+      {
+        "name": "ts",
+        "dtype": "timestamp[ns]"
+      },
+      {
+        "name": "close",
+        "dtype": "double"
+      },
+      {
+        "name": "volume",
+        "dtype": "float"
+      }
+    ],
+    "num_row_groups": 1
+  }
+]

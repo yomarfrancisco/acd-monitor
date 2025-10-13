@@ -1,0 +1,265 @@
+{
+  "timestamp": "2025-10-12T13:46:39.261770",
+  "seed": 42,
+  "n_folds": 3,
+  "n_features": 30,
+  "feature_names": [
+    "price_last",
+    "volume_sum",
+    "ofi",
+    "vol_proxy",
+    "spread_proxy",
+    "ofi_variance_1h",
+    "ofi_variance_3h",
+    "ofi_variance_6h",
+    "adverse_selection_proxy",
+    "price_impact",
+    "price_corr_1h",
+    "price_corr_3h",
+    "price_corr_6h",
+    "price_corr_lag_1",
+    "price_corr_lag_2",
+    "price_coord_drift",
+    "leadership_entropy_6h",
+    "leadership_entropy_12h",
+    "css_diff_std_6h",
+    "css_diff_std_12h",
+    "css_diff_std_24h",
+    "css_volatility",
+    "hour_sin",
+    "hour_cos",
+    "weekday_sin",
+    "weekday_cos",
+    "is_weekend",
+    "is_asia",
+    "is_europe",
+    "is_us"
+  ],
+  "results": {
+    "6h": {
+      "Logistic Regression": {
+        "fold_results": [
+          {
+            "auc": 0.49,
+            "pr_auc": 0.1979624267543329,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "fpr": 0.0125,
+            "alerts_per_day": 0.06,
+            "median_lead_time": 6.0,
+            "threshold": 0.5,
+            "n_test": 200,
+            "n_positives": "40",
+            "success": true,
+            "fold": 0
+          },
+          {
+            "auc": 0.5321142857142858,
+            "pr_auc": 0.14057686257269816,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "fpr": 0.005714285714285714,
+            "alerts_per_day": 0.03,
+            "median_lead_time": 6.0,
+            "threshold": 0.5,
+            "n_test": 200,
+            "n_positives": "25",
+            "success": true,
+            "fold": 1
+          }
+        ],
+        "mean_auc": 0.5110571428571429,
+        "std_auc": 0.021057142857142885,
+        "mean_pr_auc": 0.16926964466351552,
+        "std_pr_auc": 0.028692782090817368,
+        "mean_precision": 0.0,
+        "std_precision": 0.0,
+        "mean_recall": 0.0,
+        "std_recall": 0.0,
+        "mean_f1": 0.0,
+        "std_f1": 0.0,
+        "mean_fpr": 0.009107142857142857,
+        "std_fpr": 0.003392857142857143,
+        "mean_alerts_per_day": 0.045,
+        "std_alerts_per_day": 0.015,
+        "mean_lead_time": 6.0,
+        "std_lead_time": 0.0
+      },
+      "Gradient Boosting": {
+        "fold_results": [
+          {
+            "auc": 0.469375,
+            "pr_auc": 0.2031216056955667,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "fpr": 0.00625,
+            "alerts_per_day": 0.03,
+            "median_lead_time": 6.0,
+            "threshold": 0.5,
+            "n_test": 200,
+            "n_positives": "40",
+            "success": true,
+            "fold": 0
+          }
+        ],
+        "mean_auc": 0.469375,
+        "std_auc": 0.0,
+        "mean_pr_auc": 0.2031216056955667,
+        "std_pr_auc": 0.0,
+        "mean_precision": 0.0,
+        "std_precision": 0.0,
+        "mean_recall": 0.0,
+        "std_recall": 0.0,
+        "mean_f1": 0.0,
+        "std_f1": 0.0,
+        "mean_fpr": 0.00625,
+        "std_fpr": 0.0,
+        "mean_alerts_per_day": 0.03,
+        "std_alerts_per_day": 0.0,
+        "mean_lead_time": 6.0,
+        "std_lead_time": 0.0
+      },
+      "Random Forest": {
+        "success": false,
+        "error": "No successful folds"
+      },
+      "Extra Trees": {
+        "fold_results": [
+          {
+            "auc": 0.44582857142857146,
+            "pr_auc": 0.12499110921314258,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "fpr": 0.005714285714285714,
+            "alerts_per_day": 0.03,
+            "median_lead_time": 6.0,
+            "threshold": 0.5,
+            "n_test": 200,
+            "n_positives": "25",
+            "success": true,
+            "fold": 1
+          }
+        ],
+        "mean_auc": 0.44582857142857146,
+        "std_auc": 0.0,
+        "mean_pr_auc": 0.12499110921314258,
+        "std_pr_auc": 0.0,
+        "mean_precision": 0.0,
+        "std_precision": 0.0,
+        "mean_recall": 0.0,
+        "std_recall": 0.0,
+        "mean_f1": 0.0,
+        "std_f1": 0.0,
+        "mean_fpr": 0.005714285714285714,
+        "std_fpr": 0.0,
+        "mean_alerts_per_day": 0.03,
+        "std_alerts_per_day": 0.0,
+        "mean_lead_time": 6.0,
+        "std_lead_time": 0.0
+      },
+      "Causal VAR": {
+        "success": false,
+        "error": "No successful folds"
+      }
+    },
+    "12h": {
+      "Logistic Regression": {
+        "success": false,
+        "error": "No successful folds"
+      },
+      "Gradient Boosting": {
+        "success": false,
+        "error": "No successful folds"
+      },
+      "Random Forest": {
+        "fold_results": [
+          {
+            "auc": 0.5057142857142856,
+            "pr_auc": 0.20560766075411124,
+            "precision": 1.0,
+            "recall": 0.02857142857142857,
+            "f1": 0.05555555555555556,
+            "fpr": 0.0,
+            "alerts_per_day": 0.03,
+            "median_lead_time": 12.0,
+            "threshold": 0.5,
+            "n_test": 200,
+            "n_positives": "35",
+            "success": true,
+            "fold": 1
+          }
+        ],
+        "mean_auc": 0.5057142857142856,
+        "std_auc": 0.0,
+        "mean_pr_auc": 0.20560766075411124,
+        "std_pr_auc": 0.0,
+        "mean_precision": 1.0,
+        "std_precision": 0.0,
+        "mean_recall": 0.02857142857142857,
+        "std_recall": 0.0,
+        "mean_f1": 0.05555555555555556,
+        "std_f1": 0.0,
+        "mean_fpr": 0.0,
+        "std_fpr": 0.0,
+        "mean_alerts_per_day": 0.03,
+        "std_alerts_per_day": 0.0,
+        "mean_lead_time": 12.0,
+        "std_lead_time": 0.0
+      },
+      "Extra Trees": {
+        "fold_results": [
+          {
+            "auc": 0.4731446198512067,
+            "pr_auc": 0.15845381041205964,
+            "precision": 0.14285714285714285,
+            "recall": 0.030303030303030304,
+            "f1": 0.05,
+            "fpr": 0.03592814371257485,
+            "alerts_per_day": 0.21,
+            "median_lead_time": 12.0,
+            "threshold": 0.5,
+            "n_test": 200,
+            "n_positives": "33",
+            "success": true,
+            "fold": 0
+          }
+        ],
+        "mean_auc": 0.4731446198512067,
+        "std_auc": 0.0,
+        "mean_pr_auc": 0.15845381041205964,
+        "std_pr_auc": 0.0,
+        "mean_precision": 0.14285714285714285,
+        "std_precision": 0.0,
+        "mean_recall": 0.030303030303030304,
+        "std_recall": 0.0,
+        "mean_f1": 0.05,
+        "std_f1": 0.0,
+        "mean_fpr": 0.03592814371257485,
+        "std_fpr": 0.0,
+        "mean_alerts_per_day": 0.21,
+        "std_alerts_per_day": 0.0,
+        "mean_lead_time": 12.0,
+        "std_lead_time": 0.0
+      },
+      "Causal VAR": {
+        "success": false,
+        "error": "No successful folds"
+      }
+    }
+  },
+  "acceptance_gates": {
+    "gate1_auc_high": false,
+    "gate2_excellent_model": false,
+    "gate3_fold_variance": false
+  },
+  "final_status": {
+    "MODEL_ZOO_OK": false,
+    "EXCELLENT_CORE_CANDIDATE": false
+  },
+  "high_auc_models": [],
+  "excellent_models": []
+}

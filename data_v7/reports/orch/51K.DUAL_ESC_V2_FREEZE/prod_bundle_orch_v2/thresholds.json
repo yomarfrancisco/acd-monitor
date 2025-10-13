@@ -1,0 +1,19 @@
+{
+  "tier1": {
+    "enter_threshold": 0.75,
+    "exit_threshold": 0.65,
+    "hysteresis": 0.05
+  },
+  "tier2": {
+    "enter_threshold": 0.75,
+    "threshold_boost": 0.02,
+    "12h_quantile_threshold": 0.8,
+    "hysteresis": 0.05
+  },
+  "cooldown_hours": 12,
+  "guards": {
+    "epsilon_minutes": 1,
+    "confirm_end_bound": "decision_time - epsilon",
+    "decision_time_bound": "label_start - epsilon"
+  }
+}

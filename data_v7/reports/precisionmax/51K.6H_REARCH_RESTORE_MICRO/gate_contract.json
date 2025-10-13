@@ -1,0 +1,13 @@
+{
+  "window_pass_threshold": 0.95,
+  "precision_threshold": 0.95,
+  "recall_threshold": 0.6,
+  "fpr_threshold": 0.15,
+  "lead_time_minutes_threshold": 180,
+  "placebo_inversion_collapse_required": true,
+  "gates_passed": false,
+  "failed_gates": [
+    "recall",
+    "lead_time"
+  ]
+}

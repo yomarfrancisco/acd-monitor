@@ -1,0 +1,21 @@
+{
+  "pid": 63512,
+  "ppid": 1,
+  "start_time": "2025-10-07T07:19:00Z",
+  "elapsed_time": "04:28:02",
+  "cpu_percent": 91.6,
+  "memory_percent": 0.3,
+  "command": "/opt/homebrew/Cellar/python@3.10/3.10.16/Frameworks/Python.framework/Versions/3.10/Resources/Python.app/Contents/MacOS/Python analysis_v10/phase_signal/finalizer3/audit/diagnostics/beacon_stress_test.py",
+  "working_directory": "/Users/ygorfrancisco/Desktop/acd-monitor",
+  "open_files_count": 200,
+  "log_paths": [
+    "analysis_v10/phase_signal/finalizer3/audit/diagnostics/"
+  ],
+  "rss_mb": 28.0,
+  "snapshot_time": "2025-10-07T11:44:00Z"
+}
+
+
+
+
+

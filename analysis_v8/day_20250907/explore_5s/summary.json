@@ -1,0 +1,10 @@
+{
+  "day": "2025-09-07",
+  "total_tests": 36,
+  "candidates": 6,
+  "candidate_rate": 0.16666666666666666,
+  "mean_abs_beta": 0.010221122993410723,
+  "median_abs_beta": 0.008422406993530487,
+  "memory_peak_mb": 163.109375,
+  "status": "ACD_DAY5_EXPLORE_COMPLETE"
+}

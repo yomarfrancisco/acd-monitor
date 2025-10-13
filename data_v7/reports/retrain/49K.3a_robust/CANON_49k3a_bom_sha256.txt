@@ -1,0 +1,11 @@
+# Phase 49K.3a — REFREEZE BOM Hash
+
+SHA256: eb22fed2a0a2caff6f00316b4a5242b72345d33d8e4f7d10534755d50f92316d
+
+Content: Phase 49K.3a — REFREEZE Results
+Timestamp: 2025-10-12T19:19:23.817719
+Seed: 42
+Folds: 5
+Features: 6
+Champions: 2
+Promoted: 1

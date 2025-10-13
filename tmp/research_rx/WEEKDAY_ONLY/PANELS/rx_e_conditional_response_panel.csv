@@ -1,0 +1,5 @@
+window,window_min,conditional_prob,baseline_prob,lift,pseudo_r2,accuracy,n_observations,notes
+1m,1,0.09583333333333334,0.25,0.38333333333333336,0.24867275257956334,0.796875,960,RX-E conditional response analysis (Mon-Fri only)
+5m,5,0.16666666666666666,0.25,0.6666666666666666,0.24867275257956334,0.796875,960,RX-E conditional response analysis (Mon-Fri only)
+10m,10,0.24583333333333332,0.25,0.9833333333333333,0.24867275257956334,0.796875,960,RX-E conditional response analysis (Mon-Fri only)
+30m,30,0.5166666666666667,0.25,2.066666666666667,0.24867275257956334,0.796875,960,RX-E conditional response analysis (Mon-Fri only)

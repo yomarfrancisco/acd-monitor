@@ -1,0 +1,32 @@
+{
+  "shock_hours_count": 45,
+  "recovery_analysis": {
+    "total_venue_k_combinations": 12,
+    "venues_analyzed": [
+      "COINBASE",
+      "BINANCE",
+      "BYBITSPOT",
+      "BITGET"
+    ],
+    "k_hours_analyzed": [
+      1,
+      2,
+      3
+    ]
+  },
+  "entropy_analysis": {
+    "k_hours_analyzed": [
+      1,
+      2,
+      3
+    ],
+    "total_combinations": 3
+  },
+  "guardrail_log": {
+    "memory_peak_mb": 226.3125,
+    "timestamp_integrity": "VERIFIED",
+    "no_data_duplication": "CONFIRMED",
+    "no_schema_mutations": "CONFIRMED",
+    "real_data_only": "CONFIRMED"
+  }
+}

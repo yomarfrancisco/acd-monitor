@@ -1,0 +1,20 @@
+{
+  "raw_seconds": [
+    10740,
+    10920,
+    10500,
+    10800,
+    10740
+  ],
+  "floored_minutes": [
+    178,
+    182,
+    175,
+    180,
+    179
+  ],
+  "mean_lead_time_minutes": 178.8,
+  "median_lead_time_minutes": 179.0,
+  "min_lead_time_minutes": 175,
+  "max_lead_time_minutes": 182
+}

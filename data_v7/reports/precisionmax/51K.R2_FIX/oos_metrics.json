@@ -1,0 +1,30 @@
+{
+  "6h": {
+    "hierarchical_mondrian": {
+      "precision": 0.96,
+      "recall": 0.72,
+      "fpr": 0.12,
+      "alerts_per_day": 0.28
+    },
+    "survival_fusion": {
+      "precision": 0.95,
+      "recall": 0.71,
+      "fpr": 0.14,
+      "alerts_per_day": 0.31
+    }
+  },
+  "12h": {
+    "hierarchical_mondrian": {
+      "precision": 0.97,
+      "recall": 0.58,
+      "fpr": 0.11,
+      "alerts_per_day": 0.28
+    },
+    "survival_fusion": {
+      "precision": 0.96,
+      "recall": 0.57,
+      "fpr": 0.13,
+      "alerts_per_day": 0.31
+    }
+  }
+}

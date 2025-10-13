@@ -1,0 +1,43 @@
+{
+  "phase": "42A-v3",
+  "timestamp": "2025-10-11T10:06:18.140853",
+  "decision": "REJECT",
+  "reason": "Failed conditions: R_real < 2.0, R_real not > nulls \u00d7 1.25",
+  "ratios": {
+    "r_real": 0,
+    "r_circshift": 0,
+    "r_blockperm": 0.0
+  },
+  "state_summary": [
+    {
+      "state": 0,
+      "label": "calm",
+      "mean_energy": 2.5911249294254532,
+      "mean_mmd": 2.5862147109616718,
+      "mean_z_avg": 2.590804265651094,
+      "median_duration": 384.0,
+      "time_percentage": 95.88888888888889,
+      "p_self": 0.9976931949250288
+    },
+    {
+      "state": 1,
+      "label": "transitional",
+      "mean_energy": 11.564252704780138,
+      "mean_mmd": 11.531918972378072,
+      "mean_z_avg": 11.557601289920841,
+      "median_duration": 12.5,
+      "time_percentage": 2.7777777777777777,
+      "p_self": 0.9322033898305084
+    },
+    {
+      "state": 2,
+      "label": "stressed",
+      "mean_energy": 30.968003746536084,
+      "mean_mmd": 30.860482971844927,
+      "mean_z_avg": 30.93970350438845,
+      "median_duration": 24.0,
+      "time_percentage": 1.3333333333333335,
+      "p_self": 0.9696969696969697
+    }
+  ]
+}

@@ -71,9 +71,7 @@ def main():
     start_time = overlap_data["startUTC"]
     end_time = overlap_data["endUTC"]
 
-    print(
-        f"Creating real tick data for {len(venues)} venues from {start_time} to {end_time}"
-    )
+    print(f"Creating real tick data for {len(venues)} venues from {start_time} to {end_time}")
 
     for venue in venues:
         venue_dir = snapshot_dir / "ticks" / venue

@@ -1,0 +1,14 @@
+{
+  "VALIDATION_OK": true,
+  "checked_files": 3,
+  "hash_match": true,
+  "num_edges": 9,
+  "num_segments": 0,
+  "runtime_s": 1.011883,
+  "timestamp": "2025-10-12T08:04:49.242374",
+  "checks": {
+    "artifact_crosscheck": true,
+    "structural_consistency": true,
+    "causal_map_preview": true
+  }
+}

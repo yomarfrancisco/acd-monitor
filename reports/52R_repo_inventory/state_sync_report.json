@@ -1,0 +1,38 @@
+{
+  "alignment": "RUNTIME_BEHIND",
+  "deltas": {
+    "phase_number": {
+      "analytical": "42A-v6",
+      "runtime": "03"
+    },
+    "dataset_sha": {
+      "analytical": "5b8d2180af2b6aa2b03f8a3a8bbfee175a099b9898c6d048aa984b6fcfaff40b",
+      "runtime": "<unknown>"
+    },
+    "method_version": {
+      "analytical": "DOWNLOAD_METHOD_v2.0 (sha256:ca573c1a2821c737...)",
+      "runtime": "DOWNLOAD_METHOD_v2.0"
+    }
+  },
+  "analytical_state": {
+    "phase_number": "42A-v6",
+    "phase_type": "HMM+Orch+QPE+Knapsack (frozen)",
+    "data_span": "2025-07-22_to_2025-10-07",
+    "dataset_sha": "5b8d2180af2b6aa2b03f8a3a8bbfee175a099b9898c6d048aa984b6fcfaff40b",
+    "method_version": "DOWNLOAD_METHOD_v2.0 (sha256:ca573c1a2821c737...)",
+    "source_repo": "acd-monitor",
+    "last_validated_commit": "fc3938c828d974d569f5e2e88a3f6309b217c6a0",
+    "created_at": "2025-10-13T09:20:58.438678"
+  },
+  "runtime_state": {
+    "phase_number": "03",
+    "phase_type": "Calibration",
+    "data_span": "2025-07-?? (local cache)",
+    "dataset_sha": "<unknown>",
+    "method_version": "DOWNLOAD_METHOD_v2.0",
+    "source_repo": "acd-monitor",
+    "last_validated_commit": "fc3938c828d974d569f5e2e88a3f6309b217c6a0",
+    "created_at": "2025-10-13T09:20:58.439651"
+  },
+  "generated_at": "2025-10-13T09:20:58.440031"
+}

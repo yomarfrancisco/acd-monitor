@@ -1,0 +1,42 @@
+{
+  "pair": "COINBASE_to_BITGET",
+  "date": "20250901",
+  "scale": "1s",
+  "N": 55186,
+  "overlap_pct": 0.9784755589439904,
+  "lag_results": [
+    {
+      "lag": 1,
+      "correlation": 0.04175554895624969,
+      "p_value": 0.05,
+      "significant": false
+    },
+    {
+      "lag": 2,
+      "correlation": -0.04628977065639369,
+      "p_value": 0.05,
+      "significant": false
+    },
+    {
+      "lag": 3,
+      "correlation": -0.0017884528455587867,
+      "p_value": 0.05,
+      "significant": false
+    },
+    {
+      "lag": 5,
+      "correlation": 0.014758373050095178,
+      "p_value": 0.05,
+      "significant": false
+    },
+    {
+      "lag": 10,
+      "correlation": -0.0025066125961893115,
+      "p_value": 0.05,
+      "significant": false
+    }
+  ],
+  "icp_pass": false,
+  "significant_lags": 0,
+  "env_sizes_csv": "icp_COINBASE_to_BITGET_20250901_v1.env_sizes.csv"
+}

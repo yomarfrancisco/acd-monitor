@@ -201,9 +201,7 @@ Court Mode Guardrails:
         )
 
     evidence_content += "\n## END MANIFEST\n\n## BEGIN EVIDENCE\n"
-    evidence_content += (
-        f"Court Evidence Bundle Generated: {datetime.now().isoformat()}\n"
-    )
+    evidence_content += f"Court Evidence Bundle Generated: {datetime.now().isoformat()}\n"
     evidence_content += f"Overlap Window: {overlap_data.get('startUTC', 'N/A')} to {overlap_data.get('endUTC', 'N/A')}\n"
     evidence_content += f"Venues: {', '.join(overlap_data.get('venues', []))}\n"
     evidence_content += f"Policy: {overlap_data.get('policy', 'COURT_1s')}\n"
@@ -221,13 +219,9 @@ def main():
     parser = argparse.ArgumentParser(description="Build court evidence bundle")
     parser.add_argument("--snapshot", required=True, help="Snapshot directory")
     parser.add_argument("--export-dir", required=True, help="Export directory")
-    parser.add_argument(
-        "--permutes", type=int, default=5000, help="Number of permutations"
-    )
+    parser.add_argument("--permutes", type=int, default=5000, help="Number of permutations")
     parser.add_argument("--alpha", type=float, default=0.05, help="Alpha level")
-    parser.add_argument(
-        "--no-stitch", action="store_true", help="No micro-gap stitching"
-    )
+    parser.add_argument("--no-stitch", action="store_true", help="No micro-gap stitching")
     parser.add_argument("--all5", action="store_true", help="Require all 5 venues")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
 

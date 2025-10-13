@@ -1,0 +1,302 @@
+{
+  "fold_0": {
+    "6h": {
+      "Logistic_L2": {
+        "train_indices": "2156 samples",
+        "test_indices": "168 samples",
+        "train_range": "2025-07-14 08:00:00 to 2025-10-12 00:00:00",
+        "test_range": "2025-07-07 00:00:00 to 2025-07-13 20:00:00",
+        "seed": 42,
+        "calibration_method": "Isotonic",
+        "fit_on_train_val_only": true
+      },
+      "Logistic_ElasticNet": {
+        "train_indices": "2156 samples",
+        "test_indices": "168 samples",
+        "train_range": "2025-07-14 08:00:00 to 2025-10-12 00:00:00",
+        "test_range": "2025-07-07 00:00:00 to 2025-07-13 20:00:00",
+        "seed": 42,
+        "calibration_method": "Isotonic",
+        "fit_on_train_val_only": true
+      },
+      "GradientBoosting": {
+        "train_indices": "2156 samples",
+        "test_indices": "168 samples",
+        "train_range": "2025-07-14 08:00:00 to 2025-10-12 00:00:00",
+        "test_range": "2025-07-07 00:00:00 to 2025-07-13 20:00:00",
+        "seed": 42,
+        "calibration_method": "Isotonic",
+        "fit_on_train_val_only": true
+      }
+    },
+    "12h": {
+      "Logistic_L2": {
+        "train_indices": "2156 samples",
+        "test_indices": "168 samples",
+        "train_range": "2025-07-14 08:00:00 to 2025-10-12 00:00:00",
+        "test_range": "2025-07-07 00:00:00 to 2025-07-13 20:00:00",
+        "seed": 42,
+        "calibration_method": "Isotonic",
+        "fit_on_train_val_only": true
+      },
+      "Logistic_ElasticNet": {
+        "train_indices": "2156 samples",
+        "test_indices": "168 samples",
+        "train_range": "2025-07-14 08:00:00 to 2025-10-12 00:00:00",
+        "test_range": "2025-07-07 00:00:00 to 2025-07-13 20:00:00",
+        "seed": 42,
+        "calibration_method": "Isotonic",
+        "fit_on_train_val_only": true
+      },
+      "GradientBoosting": {
+        "train_indices": "2156 samples",
+        "test_indices": "168 samples",
+        "train_range": "2025-07-14 08:00:00 to 2025-10-12 00:00:00",
+        "test_range": "2025-07-07 00:00:00 to 2025-07-13 20:00:00",
+        "seed": 42,
+        "calibration_method": "Isotonic",
+        "fit_on_train_val_only": true
+      }
+    }
+  },
+  "fold_1": {
+    "6h": {
+      "Logistic_L2": {
+        "train_indices": "2152 samples",
+        "test_indices": "168 samples",
+        "train_range": "2025-07-07 00:00:00 to 2025-10-12 00:00:00",
+        "test_range": "2025-07-21 00:00:00 to 2025-07-27 20:00:00",
+        "seed": 42,
+        "calibration_method": "Isotonic",
+        "fit_on_train_val_only": true
+      },
+      "Logistic_ElasticNet": {
+        "train_indices": "2152 samples",
+        "test_indices": "168 samples",
+        "train_range": "2025-07-07 00:00:00 to 2025-10-12 00:00:00",
+        "test_range": "2025-07-21 00:00:00 to 2025-07-27 20:00:00",
+        "seed": 42,
+        "calibration_method": "Isotonic",
+        "fit_on_train_val_only": true
+      },
+      "GradientBoosting": {
+        "train_indices": "2152 samples",
+        "test_indices": "168 samples",
+        "train_range": "2025-07-07 00:00:00 to 2025-10-12 00:00:00",
+        "test_range": "2025-07-21 00:00:00 to 2025-07-27 20:00:00",
+        "seed": 42,
+        "calibration_method": "Isotonic",
+        "fit_on_train_val_only": true
+      }
+    },
+    "12h": {
+      "Logistic_L2": {
+        "train_indices": "2144 samples",
+        "test_indices": "168 samples",
+        "train_range": "2025-07-07 00:00:00 to 2025-10-12 00:00:00",
+        "test_range": "2025-07-21 00:00:00 to 2025-07-27 20:00:00",
+        "seed": 42,
+        "calibration_method": "Isotonic",
+        "fit_on_train_val_only": true
+      },
+      "Logistic_ElasticNet": {
+        "train_indices": "2144 samples",
+        "test_indices": "168 samples",
+        "train_range": "2025-07-07 00:00:00 to 2025-10-12 00:00:00",
+        "test_range": "2025-07-21 00:00:00 to 2025-07-27 20:00:00",
+        "seed": 42,
+        "calibration_method": "Isotonic",
+        "fit_on_train_val_only": true
+      },
+      "GradientBoosting": {
+        "train_indices": "2144 samples",
+        "test_indices": "168 samples",
+        "train_range": "2025-07-07 00:00:00 to 2025-10-12 00:00:00",
+        "test_range": "2025-07-21 00:00:00 to 2025-07-27 20:00:00",
+        "seed": 42,
+        "calibration_method": "Isotonic",
+        "fit_on_train_val_only": true
+      }
+    }
+  },
+  "fold_2": {
+    "6h": {
+      "Logistic_L2": {
+        "train_indices": "2152 samples",
+        "test_indices": "168 samples",
+        "train_range": "2025-07-07 00:00:00 to 2025-10-12 00:00:00",
+        "test_range": "2025-08-04 00:00:00 to 2025-08-10 20:00:00",
+        "seed": 42,
+        "calibration_method": "Isotonic",
+        "fit_on_train_val_only": true
+      },
+      "Logistic_ElasticNet": {
+        "train_indices": "2152 samples",
+        "test_indices": "168 samples",
+        "train_range": "2025-07-07 00:00:00 to 2025-10-12 00:00:00",
+        "test_range": "2025-08-04 00:00:00 to 2025-08-10 20:00:00",
+        "seed": 42,
+        "calibration_method": "Isotonic",
+        "fit_on_train_val_only": true
+      },
+      "GradientBoosting": {
+        "train_indices": "2152 samples",
+        "test_indices": "168 samples",
+        "train_range": "2025-07-07 00:00:00 to 2025-10-12 00:00:00",
+        "test_range": "2025-08-04 00:00:00 to 2025-08-10 20:00:00",
+        "seed": 42,
+        "calibration_method": "Isotonic",
+        "fit_on_train_val_only": true
+      }
+    },
+    "12h": {
+      "Logistic_L2": {
+        "train_indices": "2144 samples",
+        "test_indices": "168 samples",
+        "train_range": "2025-07-07 00:00:00 to 2025-10-12 00:00:00",
+        "test_range": "2025-08-04 00:00:00 to 2025-08-10 20:00:00",
+        "seed": 42,
+        "calibration_method": "Isotonic",
+        "fit_on_train_val_only": true
+      },
+      "Logistic_ElasticNet": {
+        "train_indices": "2144 samples",
+        "test_indices": "168 samples",
+        "train_range": "2025-07-07 00:00:00 to 2025-10-12 00:00:00",
+        "test_range": "2025-08-04 00:00:00 to 2025-08-10 20:00:00",
+        "seed": 42,
+        "calibration_method": "Isotonic",
+        "fit_on_train_val_only": true
+      },
+      "GradientBoosting": {
+        "train_indices": "2144 samples",
+        "test_indices": "168 samples",
+        "train_range": "2025-07-07 00:00:00 to 2025-10-12 00:00:00",
+        "test_range": "2025-08-04 00:00:00 to 2025-08-10 20:00:00",
+        "seed": 42,
+        "calibration_method": "Isotonic",
+        "fit_on_train_val_only": true
+      }
+    }
+  },
+  "fold_3": {
+    "6h": {
+      "Logistic_L2": {
+        "train_indices": "2152 samples",
+        "test_indices": "168 samples",
+        "train_range": "2025-07-07 00:00:00 to 2025-10-12 00:00:00",
+        "test_range": "2025-08-18 00:00:00 to 2025-08-24 20:00:00",
+        "seed": 42,
+        "calibration_method": "Isotonic",
+        "fit_on_train_val_only": true
+      },
+      "Logistic_ElasticNet": {
+        "train_indices": "2152 samples",
+        "test_indices": "168 samples",
+        "train_range": "2025-07-07 00:00:00 to 2025-10-12 00:00:00",
+        "test_range": "2025-08-18 00:00:00 to 2025-08-24 20:00:00",
+        "seed": 42,
+        "calibration_method": "Isotonic",
+        "fit_on_train_val_only": true
+      },
+      "GradientBoosting": {
+        "train_indices": "2152 samples",
+        "test_indices": "168 samples",
+        "train_range": "2025-07-07 00:00:00 to 2025-10-12 00:00:00",
+        "test_range": "2025-08-18 00:00:00 to 2025-08-24 20:00:00",
+        "seed": 42,
+        "calibration_method": "Isotonic",
+        "fit_on_train_val_only": true
+      }
+    },
+    "12h": {
+      "Logistic_L2": {
+        "train_indices": "2144 samples",
+        "test_indices": "168 samples",
+        "train_range": "2025-07-07 00:00:00 to 2025-10-12 00:00:00",
+        "test_range": "2025-08-18 00:00:00 to 2025-08-24 20:00:00",
+        "seed": 42,
+        "calibration_method": "Isotonic",
+        "fit_on_train_val_only": true
+      },
+      "Logistic_ElasticNet": {
+        "train_indices": "2144 samples",
+        "test_indices": "168 samples",
+        "train_range": "2025-07-07 00:00:00 to 2025-10-12 00:00:00",
+        "test_range": "2025-08-18 00:00:00 to 2025-08-24 20:00:00",
+        "seed": 42,
+        "calibration_method": "Isotonic",
+        "fit_on_train_val_only": true
+      },
+      "GradientBoosting": {
+        "train_indices": "2144 samples",
+        "test_indices": "168 samples",
+        "train_range": "2025-07-07 00:00:00 to 2025-10-12 00:00:00",
+        "test_range": "2025-08-18 00:00:00 to 2025-08-24 20:00:00",
+        "seed": 42,
+        "calibration_method": "Isotonic",
+        "fit_on_train_val_only": true
+      }
+    }
+  },
+  "fold_4": {
+    "6h": {
+      "Logistic_L2": {
+        "train_indices": "2152 samples",
+        "test_indices": "168 samples",
+        "train_range": "2025-07-07 00:00:00 to 2025-10-12 00:00:00",
+        "test_range": "2025-09-01 00:00:00 to 2025-09-07 20:00:00",
+        "seed": 42,
+        "calibration_method": "Isotonic",
+        "fit_on_train_val_only": true
+      },
+      "Logistic_ElasticNet": {
+        "train_indices": "2152 samples",
+        "test_indices": "168 samples",
+        "train_range": "2025-07-07 00:00:00 to 2025-10-12 00:00:00",
+        "test_range": "2025-09-01 00:00:00 to 2025-09-07 20:00:00",
+        "seed": 42,
+        "calibration_method": "Isotonic",
+        "fit_on_train_val_only": true
+      },
+      "GradientBoosting": {
+        "train_indices": "2152 samples",
+        "test_indices": "168 samples",
+        "train_range": "2025-07-07 00:00:00 to 2025-10-12 00:00:00",
+        "test_range": "2025-09-01 00:00:00 to 2025-09-07 20:00:00",
+        "seed": 42,
+        "calibration_method": "Isotonic",
+        "fit_on_train_val_only": true
+      }
+    },
+    "12h": {
+      "Logistic_L2": {
+        "train_indices": "2144 samples",
+        "test_indices": "168 samples",
+        "train_range": "2025-07-07 00:00:00 to 2025-10-12 00:00:00",
+        "test_range": "2025-09-01 00:00:00 to 2025-09-07 20:00:00",
+        "seed": 42,
+        "calibration_method": "Isotonic",
+        "fit_on_train_val_only": true
+      },
+      "Logistic_ElasticNet": {
+        "train_indices": "2144 samples",
+        "test_indices": "168 samples",
+        "train_range": "2025-07-07 00:00:00 to 2025-10-12 00:00:00",
+        "test_range": "2025-09-01 00:00:00 to 2025-09-07 20:00:00",
+        "seed": 42,
+        "calibration_method": "Isotonic",
+        "fit_on_train_val_only": true
+      },
+      "GradientBoosting": {
+        "train_indices": "2144 samples",
+        "test_indices": "168 samples",
+        "train_range": "2025-07-07 00:00:00 to 2025-10-12 00:00:00",
+        "test_range": "2025-09-01 00:00:00 to 2025-09-07 20:00:00",
+        "seed": 42,
+        "calibration_method": "Isotonic",
+        "fit_on_train_val_only": true
+      }
+    }
+  }
+}

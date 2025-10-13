@@ -1,0 +1,12 @@
+{
+  "venue": "COINBASE",
+  "date": "20250901",
+  "total_rows": 497690,
+  "unique_timestamps": 330219,
+  "min_time": "2025-09-01T00:00:00.072113",
+  "max_time": "2025-09-01T23:59:59.489407",
+  "duplicate_pct": 0.0,
+  "empty_seconds_pct": 9.184027777777779,
+  "seconds_with_data": 78465,
+  "status": "SUCCESS"
+}

@@ -1,0 +1,13 @@
+{
+  "venue": "BITGET",
+  "date": "20250904",
+  "total_trades": 227477,
+  "first_ts": 1756944000444000000,
+  "last_ts": 1757030399544000000,
+  "median_gap_ms": 2.0,
+  "p99_gap_ms": 5556.0,
+  "gaps_gt_1s": 25759,
+  "gaps_gt_10s": 617,
+  "dup_rate_pct": 4.117666894278512,
+  "status": "SUCCESS"
+}

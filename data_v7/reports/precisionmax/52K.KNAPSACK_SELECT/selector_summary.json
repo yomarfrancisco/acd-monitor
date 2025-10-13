@@ -1,0 +1,28 @@
+{
+  "knapsack_problem": {
+    "objective": "maximize \u03a3\u1d62 (recall_gain\u1d62)",
+    "constraint": "\u03a3\u1d62 (FPR_cost\u1d62) \u2264 FPR_BUDGET",
+    "fpr_budget": 0.15,
+    "method": "greedy_by_efficiency_ratio"
+  },
+  "selection_results": {
+    "total_candidates": 146,
+    "selected_alerts": 15,
+    "selection_rate": 0.10273972602739725,
+    "total_fpr_cost": 0.14350900696409813,
+    "total_recall_gain": 0.4329165417215476,
+    "budget_utilization": 0.9567267130939876
+  },
+  "performance_improvements": {
+    "precision_change": -0.0023596593289472167,
+    "recall_change": 0.17300000000000004,
+    "fpr_change": 0.02050900696409813,
+    "lead_time_change": 3.266851790902109,
+    "window_pass_change": 0.00032140009547731996
+  },
+  "efficiency_analysis": {
+    "mean_efficiency_ratio": 1.2580325076904006,
+    "selected_efficiency_ratio": 3.0251889249790644,
+    "efficiency_improvement": 1.7671564172886638
+  }
+}

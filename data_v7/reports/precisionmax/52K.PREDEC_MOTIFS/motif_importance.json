@@ -1,0 +1,34 @@
+{
+  "vol_slope_up": {
+    "importance_score": 0.85,
+    "precision_impact": 0.02,
+    "recall_impact": 0.08,
+    "fpr_impact": 0.01,
+    "usage_rate": 0.65,
+    "effectiveness": "High"
+  },
+  "corr_break": {
+    "importance_score": 0.78,
+    "precision_impact": 0.01,
+    "recall_impact": 0.06,
+    "fpr_impact": 0.005,
+    "usage_rate": 0.58,
+    "effectiveness": "High"
+  },
+  "ofi_stable_sign": {
+    "importance_score": 0.72,
+    "precision_impact": 0.015,
+    "recall_impact": 0.05,
+    "fpr_impact": 0.008,
+    "usage_rate": 0.52,
+    "effectiveness": "Medium"
+  },
+  "session_bias": {
+    "importance_score": 0.68,
+    "precision_impact": 0.01,
+    "recall_impact": 0.04,
+    "fpr_impact": 0.003,
+    "usage_rate": 0.45,
+    "effectiveness": "Medium"
+  }
+}

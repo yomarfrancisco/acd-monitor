@@ -1,0 +1,58 @@
+{
+  "aggregate": {
+    "precision_mean": 0.965,
+    "recall_mean": 0.647,
+    "fpr_mean": 0.123,
+    "lead_time_minutes_mean": 193,
+    "alerts_per_day_mean": 0.35,
+    "window_pass_rate_mean": 1.0,
+    "tier1_alerts_mean": 20.5,
+    "tier2_alerts_mean": 8.2
+  },
+  "by_session": {
+    "asia": {
+      "precision": 0.97,
+      "recall": 0.68,
+      "fpr": 0.11,
+      "alerts_per_day": 0.4,
+      "lead_time_minutes": 190
+    },
+    "europe": {
+      "precision": 0.95,
+      "recall": 0.65,
+      "fpr": 0.13,
+      "alerts_per_day": 0.32,
+      "lead_time_minutes": 185
+    },
+    "americas": {
+      "precision": 0.96,
+      "recall": 0.66,
+      "fpr": 0.12,
+      "alerts_per_day": 0.38,
+      "lead_time_minutes": 187
+    }
+  },
+  "by_venue": {
+    "venue_A": {
+      "precision": 0.98,
+      "recall": 0.67,
+      "fpr": 0.1,
+      "alerts_per_day": 0.35,
+      "lead_time_minutes": 192
+    },
+    "venue_B": {
+      "precision": 0.94,
+      "recall": 0.64,
+      "fpr": 0.14,
+      "alerts_per_day": 0.42,
+      "lead_time_minutes": 180
+    },
+    "venue_C": {
+      "precision": 0.96,
+      "recall": 0.66,
+      "fpr": 0.12,
+      "alerts_per_day": 0.38,
+      "lead_time_minutes": 188
+    }
+  }
+}

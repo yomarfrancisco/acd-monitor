@@ -1,0 +1,38 @@
+Global BTCUSD-class Comprehensive Audit Report
+============================================================
+Generated: 2025-10-11T16:16:10.915336Z
+Total weeks analyzed: 14
+Total files expected: 392
+Total files found: 100
+Total files valid: 100
+Total files missing: 292
+Overall coverage: 25.5%
+Total bytes: 6,677,187,985
+BOM SHA-256: f3cdf64e2d56cf622099d398b71a0ecdbd66df8b92646f0a06d3f405624a9114
+
+Format Comparison:
+V6 Legacy: 100 files, 100 valid
+V7 New: 0 files, 0 valid
+
+Week-by-Week Summary:
+Week   Name                      Valid  Total  Coverage   Status     Bytes       
+--------------------------------------------------------------------------------
+W-7    Week -7 (July 7-13)       0      28     0.0      % MISSING    0           
+W-6    Week -6 (July 14-20)      0      28     0.0      % MISSING    0           
+W-5    Week -5 (July 21-27)      24     28     85.7     % PARTIAL    1,226,129,540
+W-4    Week -4 (July 28 - Aug 3) 0      28     0.0      % MISSING    0           
+W-3    Week -3 (Aug 4-10)        0      28     0.0      % MISSING    0           
+W-2    Week -2 (Aug 11-17)       0      28     0.0      % MISSING    0           
+W-1    Week -1 (Aug 18-24)       0      28     0.0      % MISSING    0           
+W0     Week 0 (Aug 25-31)        0      28     0.0      % MISSING    0           
+W1     Week 1 (Sep 1-7)          0      28     0.0      % MISSING    0           
+W2     Week 2 (Sep 8-14)         0      28     0.0      % MISSING    0           
+W3     Week 3 (Sep 15-21)        0      28     0.0      % MISSING    0           
+W4     Week 4 (Sep 22-28)        28     28     100.0    % COMPLETE   1,683,154,941
+W5     Week 5 (Sep 29 - Oct 5)   28     28     100.0    % COMPLETE   1,747,984,503
+W6     Week 6 (Oct 6-12)         20     28     71.4     % PARTIAL    2,019,919,001
+
+Status Summary:
+MISSING: 10 weeks
+PARTIAL: 2 weeks
+COMPLETE: 2 weeks

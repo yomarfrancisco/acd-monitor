@@ -1,0 +1,18 @@
+{
+  "day": "2025-09-01",
+  "n_obs": 16705,
+  "n_env": 54,
+  "env_top": {
+    "low|med|US|low": 980,
+    "low|low|US|low": 873,
+    "med|high|Asia|low": 805,
+    "high|high|US|low": 758,
+    "med|low|EU|low": 747,
+    "high|med|Asia|low": 732,
+    "high|low|Asia|low": 712,
+    "low|low|EU|low": 709,
+    "med|med|Asia|low": 707,
+    "low|high|US|low": 702
+  },
+  "components": 4
+}

@@ -1,0 +1,12 @@
+{
+  "day": "2025-09-01",
+  "n_edges": 12,
+  "n_significant_raw": 1,
+  "n_significant_fdr": 1,
+  "n_session_hits": 12,
+  "ridge_grid": [
+    0.0001,
+    0.001,
+    0.01
+  ]
+}

@@ -59,8 +59,7 @@ def check_window_coverage(
         # Calculate coverage statistics
         venues = overlap_data["venues"]
         coverage_percentages = [
-            coverage_data.get(venue, {}).get("coverage_percentage", 0)
-            for venue in venues
+            coverage_data.get(venue, {}).get("coverage_percentage", 0) for venue in venues
         ]
 
         high_coverage_venues = [
@@ -81,9 +80,7 @@ def check_window_coverage(
             "min_coverage": min(coverage_percentages) if coverage_percentages else 0,
             "max_coverage": max(coverage_percentages) if coverage_percentages else 0,
             "avg_coverage": (
-                sum(coverage_percentages) / len(coverage_percentages)
-                if coverage_percentages
-                else 0
+                sum(coverage_percentages) / len(coverage_percentages) if coverage_percentages else 0
             ),
         }
 
@@ -92,9 +89,7 @@ def check_window_coverage(
         return {"status": "error", "reason": str(e)}
 
 
-def generate_coverage_report(
-    symbols: List[str], days_back: int, bucket: str, prefix: str
-) -> Dict:
+def generate_coverage_report(symbols: List[str], days_back: int, bucket: str, prefix: str) -> Dict:
     """Generate coverage report for recent windows."""
     try:
         s3_client = boto3.client("s3")
@@ -134,9 +129,7 @@ def generate_coverage_report(
 
         # Generate summary statistics
         total_windows = len(coverage_results)
-        available_windows = len(
-            [r for r in coverage_results if r.get("status") == "available"]
-        )
+        available_windows = len([r for r in coverage_results if r.get("status") == "available"])
         meets_threshold_windows = len(
             [r for r in coverage_results if r.get("meets_threshold", False)]
         )
@@ -154,9 +147,7 @@ def generate_coverage_report(
                         }
 
                     venue_stats[venue]["windows"] += 1
-                    venue_stats[venue]["total_coverage"] += data.get(
-                        "coverage_percentage", 0
-                    )
+                    venue_stats[venue]["total_coverage"] += data.get("coverage_percentage", 0)
                     if data.get("coverage_percentage", 0) >= 95.0:
                         venue_stats[venue]["high_coverage"] += 1
 
@@ -172,9 +163,7 @@ def generate_coverage_report(
                 "available_windows": available_windows,
                 "meets_threshold_windows": meets_threshold_windows,
                 "threshold_rate": (
-                    meets_threshold_windows / available_windows
-                    if available_windows > 0
-                    else 0
+                    meets_threshold_windows / available_windows if available_windows > 0 else 0
                 ),
             },
             "venue_performance": venue_stats,
@@ -250,14 +239,10 @@ def main():
     parser.add_argument(
         "--symbols", default="BTC-USD,ETH-USD", help="Comma-separated list of symbols"
     )
-    parser.add_argument(
-        "--days-back", type=int, default=1, help="Number of days to look back"
-    )
+    parser.add_argument("--days-back", type=int, default=1, help="Number of days to look back")
     parser.add_argument("--bucket", default="acd-monitor-snapshots", help="S3 bucket")
     parser.add_argument("--prefix", default="snapshots", help="S3 prefix")
-    parser.add_argument(
-        "--output", default="reports/coverage_report.json", help="Output file path"
-    )
+    parser.add_argument("--output", default="reports/coverage_report.json", help="Output file path")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
 
     args = parser.parse_args()
@@ -269,9 +254,7 @@ def main():
         symbols = [s.strip() for s in args.symbols.split(",")]
 
         # Generate coverage report
-        report = generate_coverage_report(
-            symbols, args.days_back, args.bucket, args.prefix
-        )
+        report = generate_coverage_report(symbols, args.days_back, args.bucket, args.prefix)
 
         if "error" in report:
             logger.error(f"Coverage report generation failed: {report['error']}")

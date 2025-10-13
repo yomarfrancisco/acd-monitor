@@ -1,0 +1,54 @@
+Week -4 Coverage Matrix (Jul 28 – Aug 3, 2025)
+============================================================
+Generated: 2025-10-11T19:30:18.771983Z
+Total files found: 31
+
+Coverage Matrix (Date × Venue):
+Date       BINANCE    COINBASE   BYBITSPOT  BITGET    
+------------------------------------------------------------
+20250728   FOUND      FOUND      FOUND      FOUND     
+20250729   FOUND      FOUND      FOUND      FOUND     
+20250730   FOUND      FOUND      FOUND      FOUND     
+20250731   FOUND      FOUND      FOUND      FOUND     
+20250801   FOUND      FOUND      FOUND      FOUND     
+20250802   FOUND      FOUND      FOUND      FOUND     
+20250803   FOUND      FOUND      FOUND      FOUND     
+
+Summary:
+  Expected combinations: 28
+  Found: 28
+  Missing: 0
+  Coverage: 100.0%
+
+Files found:
+  20250803 BYBITSPOT: 11.0 MB - /Users/ygorfrancisco/Desktop/acd-monitor/analysis/flatfiles_ticks_v4/raw/BYBITSPOT_20250803_BTCUSDT.csv.gz
+  20250802 BINANCE: 89.2 MB - /Users/ygorfrancisco/Desktop/acd-monitor/analysis/flatfiles_ticks_v4/raw/BINANCE_20250802_BTCUSDT.csv.gz
+  20250803 BINANCE: 64.6 MB - /Users/ygorfrancisco/Desktop/acd-monitor/analysis/flatfiles_ticks_v4/raw/BINANCE_20250803_BTCUSDT.csv.gz
+  20250802 BYBITSPOT: 15.1 MB - /Users/ygorfrancisco/Desktop/acd-monitor/analysis/flatfiles_ticks_v4/raw/BYBITSPOT_20250802_BTCUSDT.csv.gz
+  20250801 BINANCE: 149.5 MB - /Users/ygorfrancisco/Desktop/acd-monitor/analysis/flatfiles_ticks_v4/raw/BINANCE_20250801_BTCUSDT.csv.gz
+  20250801 BYBITSPOT: 26.8 MB - /Users/ygorfrancisco/Desktop/acd-monitor/analysis/flatfiles_ticks_v4/raw/BYBITSPOT_20250801_BTCUSDT.csv.gz
+  20250802 COINBASE: 25.1 MB - /Users/ygorfrancisco/Desktop/acd-monitor/analysis/flatfiles_ticks_v4/raw/COINBASE_20250802_BTCUSDT.csv.gz
+  20250801 BITGET: 11.0 MB - /Users/ygorfrancisco/Desktop/acd-monitor/analysis/flatfiles_ticks_v4/raw/BITGET_20250801_BTCUSDT.csv.gz
+  20250803 COINBASE: 17.2 MB - /Users/ygorfrancisco/Desktop/acd-monitor/analysis/flatfiles_ticks_v4/raw/COINBASE_20250803_BTCUSDT.csv.gz
+  20250803 BITGET: 3.9 MB - /Users/ygorfrancisco/Desktop/acd-monitor/analysis/flatfiles_ticks_v4/raw/BITGET_20250803_BTCUSDT.csv.gz
+  20250801 COINBASE: 44.2 MB - /Users/ygorfrancisco/Desktop/acd-monitor/analysis/flatfiles_ticks_v4/raw/COINBASE_20250801_BTCUSDT.csv.gz
+  20250802 BITGET: 4.7 MB - /Users/ygorfrancisco/Desktop/acd-monitor/analysis/flatfiles_ticks_v4/raw/BITGET_20250802_BTCUSDT.csv.gz
+  20250803 BYBITSPOT: 11.0 MB - /Users/ygorfrancisco/Desktop/acd-monitor/data_v6/raw/coinapi_jul_aug/D-20250803/E-BYBITSPOT/BYBITSPOT_20250803_BTCUSDT.csv.gz
+  20250803 BITGET: 3.9 MB - /Users/ygorfrancisco/Desktop/acd-monitor/data_v6/raw/coinapi_jul_aug/D-20250803/E-BITGET/BITGET_20250803_BTCUSDT.csv.gz
+  20250803 COINBASE: 17.2 MB - /Users/ygorfrancisco/Desktop/acd-monitor/data_v6/raw/coinapi_jul_aug/D-20250803/E-COINBASE/COINBASE_20250803_BTCUSDT.csv.gz
+  20250730 BITGET: 11.1 MB - /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w4/BITGET_20250730_BTCUSDT.csv.gz
+  20250731 BITGET: 6.1 MB - /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w4/BITGET_20250731_BTCUSDT.csv.gz
+  20250729 BITGET: 32.9 MB - /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w4/BITGET_20250729_BTCUSDT.csv.gz
+  20250728 BITGET: 18.2 MB - /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w4/BITGET_20250728_BTCUSDT.csv.gz
+  20250731 COINBASE: 25.1 MB - /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w4/COINBASE_20250731_BTC-USD.csv.gz
+  20250728 BINANCE: 67.3 MB - /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w4/BINANCE_20250728_BTCUSDT.csv.gz
+  20250729 BYBITSPOT: 19.5 MB - /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w4/BYBITSPOT_20250729_BTCUSDT.csv.gz
+  20250728 BYBITSPOT: 18.9 MB - /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w4/BYBITSPOT_20250728_BTCUSDT.csv.gz
+  20250730 COINBASE: 27.6 MB - /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w4/COINBASE_20250730_BTC-USD.csv.gz
+  20250729 BINANCE: 71.9 MB - /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w4/BINANCE_20250729_BTCUSDT.csv.gz
+  20250730 BYBITSPOT: 22.6 MB - /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w4/BYBITSPOT_20250730_BTCUSDT.csv.gz
+  20250728 COINBASE: 26.0 MB - /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w4/COINBASE_20250728_BTC-USD.csv.gz
+  20250731 BINANCE: 68.6 MB - /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w4/BINANCE_20250731_BTCUSDT.csv.gz
+  20250729 COINBASE: 27.0 MB - /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w4/COINBASE_20250729_BTC-USD.csv.gz
+  20250730 BINANCE: 73.4 MB - /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w4/BINANCE_20250730_BTCUSDT.csv.gz
+  20250731 BYBITSPOT: 18.4 MB - /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w4/BYBITSPOT_20250731_BTCUSDT.csv.gz

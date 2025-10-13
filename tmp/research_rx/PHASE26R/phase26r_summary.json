@@ -1,0 +1,142 @@
+{
+  "panel_summary": {
+    "total_observations": 693,
+    "total_shocks": 45,
+    "time_range_hours": "0-24",
+    "robustness_filters_applied": [
+      "spike_filter",
+      "degenerate_entropy_filter"
+    ]
+  },
+  "drop_audit": {
+    "total_dropped": 424,
+    "drop_reasons": {
+      "insufficient_beacons": 420,
+      "insufficient_venues": 4
+    }
+  },
+  "within_shock_elasticity": [
+    {
+      "proxy": "A_t",
+      "n_shocks": 41,
+      "mean_beta": 0.48410576920597503,
+      "median_beta": 0.46101638747872126,
+      "std_beta": 0.2536549234666913,
+      "iqr_beta": 0.34554470740861964,
+      "t_statistic": 12.220497603275977,
+      "p_value": 4.398722416247092e-15,
+      "ci_lower": 0.40646185171203014,
+      "ci_upper": 0.5617496866999199,
+      "p_value_holm": 8.797444832494184e-15
+    },
+    {
+      "proxy": "A_t_unique",
+      "n_shocks": 41,
+      "mean_beta": 1.6540257339819675,
+      "median_beta": 1.6829618723452306,
+      "std_beta": 0.11145855236617247,
+      "iqr_beta": 0.15315481701325373,
+      "t_statistic": 95.02126164175742,
+      "p_value": 9.751768918860068e-49,
+      "ci_lower": 1.6199082072033082,
+      "ci_upper": 1.6881432607606268,
+      "p_value_holm": 2.9255306756580206e-48
+    },
+    {
+      "proxy": "A_t_rate",
+      "n_shocks": 41,
+      "mean_beta": -0.7415457107961413,
+      "median_beta": -0.7850591696593539,
+      "std_beta": 0.4314675430941092,
+      "iqr_beta": 0.7289291975176054,
+      "t_statistic": -11.004789097027142,
+      "p_value": 1.1371405234680047e-13,
+      "ci_lower": -0.8736181730983101,
+      "ci_upper": -0.6094732484939724,
+      "p_value_holm": 1.1371405234680047e-13
+    }
+  ],
+  "pooled_elasticity": [
+    {
+      "proxy": "A_t",
+      "beta": -0.019842529803571093,
+      "beta_se": 0.006980886300355023,
+      "p_value": 0.004477409648468455,
+      "ci_lower": -0.03352506695226694,
+      "ci_upper": -0.006159992654875247,
+      "r_squared_marginal": 0.0,
+      "r_squared_conditional": 0.0,
+      "lr_statistic": 0.0,
+      "lr_p_value": 1.0,
+      "random_slope_var": 0.0,
+      "n_observations": 693,
+      "n_shocks": 45,
+      "model_type": "robust"
+    },
+    {
+      "proxy": "A_t_unique",
+      "beta": -0.007780601502026395,
+      "beta_se": 0.008546127483118065,
+      "p_value": 0.36259882614280425,
+      "ci_lower": -0.024531011368937802,
+      "ci_upper": 0.008969808364885014,
+      "r_squared_marginal": 0.0,
+      "r_squared_conditional": 0.0,
+      "lr_statistic": 0.0,
+      "lr_p_value": 1.0,
+      "random_slope_var": 0.0,
+      "n_observations": 693,
+      "n_shocks": 45,
+      "model_type": "robust"
+    },
+    {
+      "proxy": "A_t_rate",
+      "beta": -0.08069359059119906,
+      "beta_se": 0.011593984469579958,
+      "p_value": 3.403855282462567e-12,
+      "ci_lower": -0.10341780015157577,
+      "ci_upper": -0.057969381030822345,
+      "r_squared_marginal": 0.0,
+      "r_squared_conditional": 0.0,
+      "lr_statistic": 0.0,
+      "lr_p_value": 1.0,
+      "random_slope_var": 0.0,
+      "n_observations": 693,
+      "n_shocks": 45,
+      "model_type": "robust"
+    }
+  ],
+  "placebo_test": [
+    {
+      "proxy": "A_t",
+      "real_beta": 0.48410576920597503,
+      "circular_empirical_p": 1.0,
+      "venue_empirical_p": 0.0,
+      "n_circular_iterations": 2000,
+      "n_venue_iterations": 1000
+    },
+    {
+      "proxy": "A_t_unique",
+      "real_beta": 1.6540257339819675,
+      "circular_empirical_p": 1.0,
+      "venue_empirical_p": 0.0,
+      "n_circular_iterations": 2000,
+      "n_venue_iterations": 1000
+    },
+    {
+      "proxy": "A_t_rate",
+      "real_beta": -0.7415457107961413,
+      "circular_empirical_p": 1.0,
+      "venue_empirical_p": 0.0,
+      "n_circular_iterations": 2000,
+      "n_venue_iterations": 1000
+    }
+  ],
+  "guardrail_log": {
+    "memory_peak_mb": 241.875,
+    "timestamp_integrity": "VERIFIED",
+    "no_data_duplication": "CONFIRMED",
+    "no_schema_mutations": "CONFIRMED",
+    "real_data_only": "CONFIRMED"
+  }
+}

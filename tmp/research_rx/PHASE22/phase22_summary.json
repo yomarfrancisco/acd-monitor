@@ -1,0 +1,16 @@
+{
+  "high_volatility_hours": 22,
+  "low_volatility_hours": 0,
+  "normal_volatility_hours": 244,
+  "insufficient_data_hours": 142,
+  "leadership_share_differences": [],
+  "entropy_analysis": {
+    "mean_H_high": 0.0,
+    "mean_H_low": 0.0,
+    "delta_H": 0.0,
+    "std_delta_H": 0.0,
+    "p_value": 1.0,
+    "significant": false,
+    "correlation_rho": 0.0
+  }
+}

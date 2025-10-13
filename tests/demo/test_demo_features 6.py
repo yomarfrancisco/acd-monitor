@@ -192,9 +192,7 @@ class TestDemoFeatureEngineering:
 
         features = {"price": np.array([100, 101, 102])}
 
-        with pytest.raises(
-            ValueError, match="Missing required columns for VMM analysis"
-        ):
+        with pytest.raises(ValueError, match="Missing required columns for VMM analysis"):
             feature_eng._reshape_for_vmm(test_data, features)
 
     def test_run_vmm_analysis_success(self):
@@ -285,9 +283,7 @@ class TestDemoFeatureEngineering:
             "overall": 0.91,
         }
 
-        evidence_data = feature_eng.prepare_evidence_data(
-            test_data, vmm_result, quality_metrics
-        )
+        evidence_data = feature_eng.prepare_evidence_data(test_data, vmm_result, quality_metrics)
 
         # Check core identification
         assert "bundle_id" in evidence_data

@@ -1,0 +1,8 @@
+{
+  "day": "2025-09-01",
+  "n_edges": 12,
+  "n_tests": 36,
+  "n_significant": 12,
+  "n_kept": 12,
+  "coverage_5s": 1.0
+}

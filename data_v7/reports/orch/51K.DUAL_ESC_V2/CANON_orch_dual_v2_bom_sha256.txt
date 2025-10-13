@@ -1,0 +1,12 @@
+Bill of Materials - SHA256 Hashes
+==================================================
+
+INPUTS:
+policy_6h_micro: 73377b1ccc699dc48466346adc29043fe5e484035b1edea0326b4834017db569
+prod_bundle_12h: b8cba0df5d7d279a0189ad84452c30e4fa9a09d95756126f5f96bea2a3d6169e
+
+OUTPUTS:
+orch_policy: fb697eb33fe518c57a097040769c29b30bea6d2ea2f1bb947cbf16321756462a
+metrics_oos_dual: 69b7b5268169429ff8d91048f01e2983dd1f59f0d8f8993161479a62a45e0d74
+window_pass_dual: c7a8a0c04786d46535dccc1628d4433610d20cb4d5ea35998a01e5d02de37c9c
+alerts_dual: 148 alerts

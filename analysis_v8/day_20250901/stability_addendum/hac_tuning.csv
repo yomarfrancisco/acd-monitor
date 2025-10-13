@@ -1,0 +1,13 @@
+edge,lag_s,p_30s,keep_30s,p_60s,keep_60s,p_120s,keep_120s
+BINANCE->COINBASE,5,0.0,True,0.0,True,0.0,True
+BINANCE->BYBITSPOT,5,0.0,True,0.0,True,0.0,True
+BINANCE->BITGET,5,0.0,True,0.0,True,0.0,True
+COINBASE->BINANCE,5,0.0,True,0.0,True,0.0,True
+COINBASE->BYBITSPOT,5,0.0,True,0.0,True,0.0,True
+COINBASE->BITGET,5,0.0,True,0.0,True,0.0,True
+BYBITSPOT->BINANCE,5,0.0,True,0.0,True,0.0,True
+BYBITSPOT->COINBASE,5,0.0,True,0.0,True,0.0,True
+BYBITSPOT->BITGET,5,0.0,True,0.0,True,0.0,True
+BITGET->BINANCE,5,0.0,True,0.0,True,0.0,True
+BITGET->COINBASE,5,0.0,True,0.0,True,0.0,True
+BITGET->BYBITSPOT,5,0.0,True,0.0,True,0.0,True

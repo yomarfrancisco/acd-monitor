@@ -1,0 +1,63 @@
+{
+  "timestamp": "2025-10-12T14:16:40.895790",
+  "seed": 42,
+  "n_samples": 583,
+  "n_folds": 2,
+  "stable_features": [
+    "price_coord_drift",
+    "price_corr_lag_1",
+    "css_diff_std_6h",
+    "css_diff_std_24h",
+    "is_asia",
+    "is_weekend"
+  ],
+  "embargo_hours": 24,
+  "fold_results": {
+    "0": {
+      "Logistic L1": {
+        "error": "This solver needs samples of at least 2 classes in the data, but the data contains only one class: 0"
+      },
+      "Logistic L2": {
+        "error": "This solver needs samples of at least 2 classes in the data, but the data contains only one class: 0"
+      },
+      "GBM": {
+        "error": "y contains 1 class after sample_weight trimmed classes with zero weights, while a minimum of 2 classes are required."
+      }
+    },
+    "1": {
+      "Logistic L1": {
+        "error": "This solver needs samples of at least 2 classes in the data, but the data contains only one class: 0"
+      },
+      "Logistic L2": {
+        "error": "This solver needs samples of at least 2 classes in the data, but the data contains only one class: 0"
+      },
+      "GBM": {
+        "error": "y contains 1 class after sample_weight trimmed classes with zero weights, while a minimum of 2 classes are required."
+      }
+    }
+  },
+  "gate_a_results": {
+    "Logistic L1": {
+      "passed": false
+    },
+    "Logistic L2": {
+      "passed": false
+    },
+    "GBM": {
+      "passed": false
+    }
+  },
+  "gate_b_results": {
+    "Logistic L1": {
+      "passed": false
+    },
+    "Logistic L2": {
+      "passed": false
+    },
+    "GBM": {
+      "passed": false
+    }
+  },
+  "integrity_passed": false,
+  "feature_prune_ok": false
+}

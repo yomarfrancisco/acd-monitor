@@ -120,9 +120,7 @@ def fetch_venue_data(
 
         # For now, generate synthetic data to test the framework
         # In production, this would make actual API calls to fetch real data
-        logger.info(
-            f"Fetching data for {venue} {symbol} from {start_time} to {end_time}"
-        )
+        logger.info(f"Fetching data for {venue} {symbol} from {start_time} to {end_time}")
 
         # Generate synthetic tick data
         timestamps = pd.date_range(start=start_time, end=end_time, freq="1S")
@@ -394,9 +392,7 @@ def capture_window(
         )
 
         if success:
-            logger.info(
-                f"Successfully captured {symbol} window with {len(venue_data)} venues"
-            )
+            logger.info(f"Successfully captured {symbol} window with {len(venue_data)} venues")
             return True
         else:
             logger.error(f"Failed to write {symbol} window to S3")
@@ -410,9 +406,7 @@ def capture_window(
 def main():
     """Main function for window capture."""
     parser = argparse.ArgumentParser(description="Capture 30-minute window")
-    parser.add_argument(
-        "--symbol", required=True, help="Trading symbol (e.g., BTC-USD)"
-    )
+    parser.add_argument("--symbol", required=True, help="Trading symbol (e.g., BTC-USD)")
     parser.add_argument("--start", required=True, help="Start time (ISO format)")
     parser.add_argument("--end", required=True, help="End time (ISO format)")
     parser.add_argument(

@@ -1,0 +1,18 @@
+Week -6 Download Summary (Corrected)
+==================================================
+Generated: 2025-10-11T19:42:00.909938Z
+Target: Jul 14-20, 2025 (7 COINBASE files)
+
+Download Results:
+  Successful: 7
+  Failed: 0
+  Success Rate: 100.0%
+
+Downloaded Files:
+  COINBASE_20250714_BTC-USD.csv.gz: 49.9 MB
+  COINBASE_20250715_BTC-USD.csv.gz: 65.7 MB
+  COINBASE_20250716_BTC-USD.csv.gz: 35.3 MB
+  COINBASE_20250717_BTC-USD.csv.gz: 36.0 MB
+  COINBASE_20250718_BTC-USD.csv.gz: 42.7 MB
+  COINBASE_20250719_BTC-USD.csv.gz: 23.6 MB
+  COINBASE_20250720_BTC-USD.csv.gz: 19.2 MB

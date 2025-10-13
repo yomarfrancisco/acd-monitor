@@ -1,0 +1,26 @@
+Top 5 Strongest Causal Edges (by p-value)
+==================================================
+Generated: 2025-10-12T08:04:49.242175Z
+
+1. price_last → vol_proxy
+   P-value: 0.000000
+   Significant: ✓
+
+2. price_std → vol_proxy
+   P-value: 0.000000
+   Significant: ✓
+
+3. price_last → price_std
+   P-value: 0.004536
+   Significant: ✓
+
+4. vol_proxy → price_std
+   P-value: 0.004536
+   Significant: ✓
+
+5. ofi → price_std
+   P-value: 0.004536
+   Significant: ✓
+
+Total edges: 9
+Significant edges: 9

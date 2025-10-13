@@ -1,0 +1,28 @@
+Week -5 BTCUSD-class Audit Report (Updated)
+==================================================
+Generated: 2025-10-11T16:12:33.005113Z
+Total files found: 28
+Total files valid: 28
+Total files missing: 0
+Total bytes: 1,364,423,129
+Unique SHA-256 hashes: 28
+Coverage: 100.0%
+Status: PASS
+BOM SHA-256: 28f5c032447013194405762943d88bd3e7cd6b4b3ea594f7adcbae8e07eadcb1
+
+Coverage Matrix (7 days × 4 venues):
+Date       COINBASE   BINANCE    BYBITSPOT  BITGET    
+--------------------------------------------------
+20250721   ✅          ✅          ✅          ✅         
+20250722   ✅          ✅          ✅          ✅         
+20250723   ✅          ✅          ✅          ✅         
+20250724   ✅          ✅          ✅          ✅         
+20250725   ✅          ✅          ✅          ✅         
+20250726   ✅          ✅          ✅          ✅         
+20250727   ✅          ✅          ✅          ✅         
+
+Per-venue totals:
+COINBASE: 7 files, 7 days
+BINANCE: 7 files, 7 days
+BYBITSPOT: 7 files, 7 days
+BITGET: 7 files, 7 days

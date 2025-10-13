@@ -1,0 +1,35 @@
+{
+  "timestamp": "2025-10-05T23:47:35.400858",
+  "frequency": "1s",
+  "total_venues": 4,
+  "common_seconds": 36642,
+  "aligned_observations": 36642,
+  "returns_observations": 36641,
+  "lrs_results": [
+    {
+      "venue": "BINANCE",
+      "lrs": 0.9345472087166247,
+      "n_obs": 36641,
+      "frequency": "1s"
+    },
+    {
+      "venue": "COINBASE",
+      "lrs": 0.9066713785672529,
+      "n_obs": 36641,
+      "frequency": "1s"
+    },
+    {
+      "venue": "BYBITSPOT",
+      "lrs": 0.9434053142818595,
+      "n_obs": 36641,
+      "frequency": "1s"
+    },
+    {
+      "venue": "BITGET",
+      "lrs": 0.9222222884675854,
+      "n_obs": 36641,
+      "frequency": "1s"
+    }
+  ],
+  "status": "SUCCESS"
+}

@@ -1,0 +1,197 @@
+{
+  "overall_success": false,
+  "precision_passed": false,
+  "recall_passed": false,
+  "target_precision": 1.0,
+  "target_recall": 0.8,
+  "champions": {
+    "6h": "GradientBoosting",
+    "12h": "Logistic_ElasticNet"
+  },
+  "frozen_thresholds": {
+    "6h": {
+      "enter": 0.3889,
+      "exit": 0.3389,
+      "cooldown": 2
+    },
+    "12h": {
+      "enter": 0.5,
+      "exit": 0.45,
+      "cooldown": 2
+    }
+  },
+  "success_summary": {
+    "6h": {
+      "P1_persistence_consensus": {
+        "precision_ok": false,
+        "recall_ok": "True",
+        "median_precision": 0.5,
+        "median_recall": 1.0,
+        "median_fpr": 0.0,
+        "per_fold_precision": [
+          1.0,
+          0.5,
+          0,
+          0.75,
+          0
+        ],
+        "per_fold_recall": [
+          1.0,
+          1.0,
+          0,
+          1.0,
+          0
+        ],
+        "per_fold_fpr": [
+          0,
+          1.0,
+          0,
+          1.0,
+          0
+        ]
+      },
+      "P2_mondrian_conformal": {
+        "precision_ok": false,
+        "recall_ok": "True",
+        "median_precision": 1.0,
+        "median_recall": 1.0,
+        "median_fpr": 0.0,
+        "per_fold_precision": [
+          1.0,
+          1.0,
+          1.0,
+          0,
+          1.0
+        ],
+        "per_fold_recall": [
+          1.0,
+          1.0,
+          1.0,
+          0,
+          1.0
+        ],
+        "per_fold_fpr": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "P3_hybrid": {
+        "precision_ok": false,
+        "recall_ok": "False",
+        "median_precision": 0.0,
+        "median_recall": 0.0,
+        "median_fpr": 0.0,
+        "per_fold_precision": [
+          1.0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "per_fold_recall": [
+          1.0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "per_fold_fpr": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    "12h": {
+      "P1_persistence_consensus": {
+        "precision_ok": false,
+        "recall_ok": "False",
+        "median_precision": 0.0,
+        "median_recall": 0.0,
+        "median_fpr": 0.0,
+        "per_fold_precision": [
+          0,
+          1.0,
+          0,
+          0.6666666666666666,
+          0
+        ],
+        "per_fold_recall": [
+          0,
+          1.0,
+          0,
+          1.0,
+          0
+        ],
+        "per_fold_fpr": [
+          0,
+          0,
+          0,
+          1.0,
+          0
+        ]
+      },
+      "P2_mondrian_conformal": {
+        "precision_ok": false,
+        "recall_ok": "False",
+        "median_precision": 0.0,
+        "median_recall": 0.0,
+        "median_fpr": 0.0,
+        "per_fold_precision": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "per_fold_recall": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "per_fold_fpr": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "P3_hybrid": {
+        "precision_ok": false,
+        "recall_ok": "False",
+        "median_precision": 0.0,
+        "median_recall": 0.0,
+        "median_fpr": 0.0,
+        "per_fold_precision": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "per_fold_recall": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "per_fold_fpr": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    }
+  }
+}

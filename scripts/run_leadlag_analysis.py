@@ -28,9 +28,7 @@ from acd.analytics.leadlag import LeadLagMatrixAnalyzer, create_leadlag_analyzer
 def setup_logging(verbose: bool = False) -> None:
     """Setup logging configuration."""
     level = logging.DEBUG if verbose else logging.INFO
-    logging.basicConfig(
-        level=level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    )
+    logging.basicConfig(level=level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
 
 def run_leadlag_analysis(
@@ -200,13 +198,9 @@ def main():
     parser.add_argument("--start", required=True, help="Start date (YYYY-MM-DD)")
     parser.add_argument("--end", required=True, help="End date (YYYY-MM-DD)")
     parser.add_argument("--pair", required=True, help="Trading pair (e.g., BTC-USD)")
-    parser.add_argument(
-        "--venues", required=True, help="Comma-separated list of venues"
-    )
+    parser.add_argument("--venues", required=True, help="Comma-separated list of venues")
     parser.add_argument("--export-dir", default="exports", help="Export directory")
-    parser.add_argument(
-        "--print-evidence", action="store_true", help="Print evidence blocks"
-    )
+    parser.add_argument("--print-evidence", action="store_true", help="Print evidence blocks")
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose logging")
 
     args = parser.parse_args()

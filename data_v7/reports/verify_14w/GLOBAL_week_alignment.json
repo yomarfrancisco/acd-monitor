@@ -1,0 +1,236 @@
+{
+  "week_boundaries": {
+    "W-7": {
+      "start": "2025-07-07",
+      "end": "2025-07-13",
+      "label": "Jul 7\u201313, 2025"
+    },
+    "W-6": {
+      "start": "2025-07-14",
+      "end": "2025-07-20",
+      "label": "Jul 14\u201320, 2025"
+    },
+    "W-5": {
+      "start": "2025-07-21",
+      "end": "2025-07-27",
+      "label": "Jul 21\u201327, 2025"
+    },
+    "W-4": {
+      "start": "2025-07-28",
+      "end": "2025-08-03",
+      "label": "Jul 28\u2013Aug 3, 2025"
+    },
+    "W-3": {
+      "start": "2025-08-04",
+      "end": "2025-08-10",
+      "label": "Aug 4\u201310, 2025"
+    },
+    "W-2": {
+      "start": "2025-08-11",
+      "end": "2025-08-17",
+      "label": "Aug 11\u201317, 2025"
+    },
+    "W-1": {
+      "start": "2025-08-18",
+      "end": "2025-08-24",
+      "label": "Aug 18\u201324, 2025"
+    },
+    "W0": {
+      "start": "2025-08-25",
+      "end": "2025-08-31",
+      "label": "Aug 25\u201331, 2025"
+    },
+    "W+1": {
+      "start": "2025-09-01",
+      "end": "2025-09-07",
+      "label": "Sep 1\u20137, 2025"
+    },
+    "W+2": {
+      "start": "2025-09-08",
+      "end": "2025-09-14",
+      "label": "Sep 8\u201314, 2025"
+    },
+    "W+3": {
+      "start": "2025-09-15",
+      "end": "2025-09-21",
+      "label": "Sep 15\u201321, 2025"
+    },
+    "W+4": {
+      "start": "2025-09-22",
+      "end": "2025-09-28",
+      "label": "Sep 22\u201328, 2025"
+    },
+    "W+5": {
+      "start": "2025-09-29",
+      "end": "2025-10-05",
+      "label": "Sep 29\u2013Oct 5, 2025"
+    },
+    "W+6": {
+      "start": "2025-10-06",
+      "end": "2025-10-12",
+      "label": "Oct 6\u201312, 2025"
+    }
+  },
+  "inventory": [
+    {
+      "Week_Label": "W+1",
+      "Date_Range": "Sep 1\u20137, 2025",
+      "Files_Found": 28,
+      "Expected_Files": 28,
+      "Coverage_%": 100.0,
+      "Source_Directories": "v4(28)",
+      "Data_Size_MB": 904.0
+    },
+    {
+      "Week_Label": "W+2",
+      "Date_Range": "Sep 8\u201314, 2025",
+      "Files_Found": 27,
+      "Expected_Files": 28,
+      "Coverage_%": 96.4,
+      "Source_Directories": "v4(27)",
+      "Data_Size_MB": 940.9
+    },
+    {
+      "Week_Label": "W+3",
+      "Date_Range": "Sep 15\u201321, 2025",
+      "Files_Found": 26,
+      "Expected_Files": 28,
+      "Coverage_%": 92.9,
+      "Source_Directories": "v4(26)",
+      "Data_Size_MB": 1127.8
+    },
+    {
+      "Week_Label": "W+4",
+      "Date_Range": "Sep 22\u201328, 2025",
+      "Files_Found": 56,
+      "Expected_Files": 28,
+      "Coverage_%": 200.0,
+      "Source_Directories": "v4(28), v6(28)",
+      "Data_Size_MB": 2936.9
+    },
+    {
+      "Week_Label": "W+5",
+      "Date_Range": "Sep 29\u2013Oct 5, 2025",
+      "Files_Found": 28,
+      "Expected_Files": 28,
+      "Coverage_%": 100.0,
+      "Source_Directories": "v6(28)",
+      "Data_Size_MB": 1667.0
+    },
+    {
+      "Week_Label": "W+6",
+      "Date_Range": "Oct 6\u201312, 2025",
+      "Files_Found": 20,
+      "Expected_Files": 28,
+      "Coverage_%": 71.4,
+      "Source_Directories": "v6(20)",
+      "Data_Size_MB": 1926.3
+    },
+    {
+      "Week_Label": "W-1",
+      "Date_Range": "Aug 18\u201324, 2025",
+      "Files_Found": 35,
+      "Expected_Files": 28,
+      "Coverage_%": 125.0,
+      "Source_Directories": "v4(35)",
+      "Data_Size_MB": 1339.1
+    },
+    {
+      "Week_Label": "W-2",
+      "Date_Range": "Aug 11\u201317, 2025",
+      "Files_Found": 35,
+      "Expected_Files": 28,
+      "Coverage_%": 125.0,
+      "Source_Directories": "v4(35)",
+      "Data_Size_MB": 1394.9
+    },
+    {
+      "Week_Label": "W-3",
+      "Date_Range": "Aug 4\u201310, 2025",
+      "Files_Found": 35,
+      "Expected_Files": 28,
+      "Coverage_%": 125.0,
+      "Source_Directories": "v4(35)",
+      "Data_Size_MB": 1084.7
+    },
+    {
+      "Week_Label": "W-4",
+      "Date_Range": "Jul 28\u2013Aug 3, 2025",
+      "Files_Found": 12,
+      "Expected_Files": 28,
+      "Coverage_%": 42.9,
+      "Source_Directories": "v4(12)",
+      "Data_Size_MB": 462.3
+    },
+    {
+      "Week_Label": "W-5",
+      "Date_Range": "Jul 21\u201327, 2025",
+      "Files_Found": 27,
+      "Expected_Files": 28,
+      "Coverage_%": 96.4,
+      "Source_Directories": "v6(24), v7(3)",
+      "Data_Size_MB": 1270.7
+    },
+    {
+      "Week_Label": "W-6",
+      "Date_Range": "Jul 14\u201320, 2025",
+      "Files_Found": 21,
+      "Expected_Files": 28,
+      "Coverage_%": 75.0,
+      "Source_Directories": "v7(21)",
+      "Data_Size_MB": 715.6
+    },
+    {
+      "Week_Label": "W-7",
+      "Date_Range": "Jul 7\u201313, 2025",
+      "Files_Found": 14,
+      "Expected_Files": 28,
+      "Coverage_%": 50.0,
+      "Source_Directories": "v7(14)",
+      "Data_Size_MB": 215.1
+    },
+    {
+      "Week_Label": "W0",
+      "Date_Range": "Aug 25\u201331, 2025",
+      "Files_Found": 35,
+      "Expected_Files": 28,
+      "Coverage_%": 125.0,
+      "Source_Directories": "v4(35)",
+      "Data_Size_MB": 1376.9
+    }
+  ],
+  "availability_matrix": {
+    "100%": [
+      "W+1",
+      "W+4",
+      "W+5",
+      "W-1",
+      "W-2",
+      "W-3",
+      "W0"
+    ],
+    "90-99%": [
+      "W+2",
+      "W+3",
+      "W-5"
+    ],
+    "50-89%": [
+      "W+6",
+      "W-6",
+      "W-7"
+    ],
+    "<50%": [
+      "W-4"
+    ]
+  },
+  "summary": {
+    "total_weeks": 14,
+    "total_files": 399,
+    "total_size_mb": 17362.2,
+    "coverage_100pct": 7,
+    "coverage_90_99pct": 3,
+    "coverage_50_89pct": 3,
+    "coverage_lt50pct": 1
+  },
+  "generated": "2025-10-11T18:59:51.933342Z"
+}

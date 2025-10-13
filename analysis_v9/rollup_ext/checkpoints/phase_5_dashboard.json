@@ -1,0 +1,26 @@
+{
+  "phase": 5,
+  "status": "COMPLETE",
+  "key_files": {
+    "mde_per_day": "analysis_v9/power/mde_per_day.csv",
+    "mde_pooled_week": "analysis_v9/power/mde_pooled_week.csv",
+    "summary": "analysis_v9/power/summary.json"
+  },
+  "core_metrics": {
+    "total_mde_calculations": 1512,
+    "total_pooled_calculations": 72,
+    "exceeds_mde_05_rate": 0.03968253968253968,
+    "exceeds_mde_10_rate": 0.052248677248677246,
+    "median_mde_05": 0.03390457495523217,
+    "median_mde_10": 0.03009113295498198,
+    "median_observed_beta": 0.0097255464577131
+  },
+  "flags": {
+    "any_mde_calculations": true,
+    "any_pooled_calculations": true,
+    "power_sufficient": false,
+    "memory_ok": true
+  },
+  "next": "Create 'analysis_v9/controls/CONTINUE_PHASE_5.txt' with PROCEED to continue",
+  "memory_peak_mb": 153.15625
+}

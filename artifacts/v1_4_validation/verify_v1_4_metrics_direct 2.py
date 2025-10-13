@@ -98,9 +98,7 @@ def create_metrics_plots(results):
 
     plt.figure(figsize=(12, 8))
 
-    timestamps = pd.date_range(
-        "2025-09-18 14:00:00", "2025-09-18 16:00:00", freq="5min"
-    )
+    timestamps = pd.date_range("2025-09-18 14:00:00", "2025-09-18 16:00:00", freq="5min")
 
     avg = results["average_metrics"]
     dwc_values = np.full(len(timestamps), avg["dwc"])
@@ -163,9 +161,7 @@ def main():
     create_metrics_plots(results)
 
     # Save results
-    output_file = (
-        "artifacts/v1_4_validation/metrics/metrics_window_2025-09-18T14-16Z.json"
-    )
+    output_file = "artifacts/v1_4_validation/metrics/metrics_window_2025-09-18T14-16Z.json"
     with open(output_file, "w") as f:
         json.dump(results, f, indent=2, default=str)
 
@@ -200,5 +196,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-

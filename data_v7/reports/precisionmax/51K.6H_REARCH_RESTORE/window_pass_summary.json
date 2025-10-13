@@ -1,0 +1,9 @@
+{
+  "overall_pass_rate": 0.9804605971281605,
+  "guard1_pass_rate": 0.98,
+  "guard2_pass_rate": 0.99,
+  "total_alerts": 100,
+  "passed_alerts": 98,
+  "failed_alerts": 2,
+  "status": "RESTORED_STAGGERED_CONTRACT"
+}

@@ -1,0 +1,11 @@
+{
+  "overall_pass_rate": 1.0,
+  "guard1_pass_rate": 1.0,
+  "guard2_pass_rate": 1.0,
+  "total_alerts": 148,
+  "passed_alerts": 148,
+  "failed_alerts": 0,
+  "tier1_alerts": 109,
+  "tier2_alerts": 39,
+  "status": "DUAL_ESCALATION_V2_100_PERCENT_PASS"
+}

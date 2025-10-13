@@ -47,9 +47,7 @@ def load_overlap_data(overlap_file):
         required_fields = ["startUTC", "endUTC", "venues", "policy"]
         missing_fields = [field for field in required_fields if field not in data]
         if missing_fields:
-            logger.error(
-                f"[ABORT:leadlag:overlap_invalid] Missing fields: {missing_fields}"
-            )
+            logger.error(f"[ABORT:leadlag:overlap_invalid] Missing fields: {missing_fields}")
             sys.exit(2)
 
         return data
@@ -92,9 +90,7 @@ def run_leadlag_analysis_snapshot(overlap_data, horizons, out_dir):
 
     # Validate venues count - must have at least 2 for edges
     if len(venues) < 2:
-        logger.error(
-            f"[ABORT:leadlag:venues_lt_2] Found {len(venues)} venues, need ≥2 for edges"
-        )
+        logger.error(f"[ABORT:leadlag:venues_lt_2] Found {len(venues)} venues, need ≥2 for edges")
         sys.exit(2)
 
     logger.info(f"Running lead-lag analysis on {len(venues)} venues")
@@ -164,9 +160,7 @@ def run_leadlag_analysis_snapshot(overlap_data, horizons, out_dir):
         from_venue = edge["from"]
         out_degrees[from_venue] = out_degrees.get(from_venue, 0) + 1
 
-    top_leader = (
-        max(out_degrees.items(), key=lambda x: x[1])[0] if out_degrees else None
-    )
+    top_leader = max(out_degrees.items(), key=lambda x: x[1])[0] if out_degrees else None
 
     # Calculate summary statistics
     edge_count = len(edges)
@@ -213,9 +207,7 @@ def main():
     """Main function to run lead-lag analysis."""
     parser = argparse.ArgumentParser(description="Run lead-lag analysis on real data")
     parser.add_argument("--use-overlap-json", required=True, help="OVERLAP.json file")
-    parser.add_argument(
-        "--horizons", default="1,5", help="Lead-lag horizons (comma-separated)"
-    )
+    parser.add_argument("--horizons", default="1,5", help="Lead-lag horizons (comma-separated)")
     parser.add_argument("--export-dir", required=True, help="Export directory")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
 
@@ -232,9 +224,7 @@ def main():
         # Validate overlap file
         overlap_file = Path(args.use_overlap_json)
         if not overlap_file.exists():
-            logger.error(
-                f"[ABORT:leadlag:overlap_missing] OVERLAP.json not found: {overlap_file}"
-            )
+            logger.error(f"[ABORT:leadlag:overlap_missing] OVERLAP.json not found: {overlap_file}")
             sys.exit(2)
 
         # Load overlap data
@@ -243,11 +233,7 @@ def main():
         # Robust horizons parsing with fallback
         raw = args.horizons or "1,5"
         horizons = sorted(
-            {
-                int(h)
-                for h in str(raw).split(",")
-                if str(h).strip().isdigit() and int(h) > 0
-            }
+            {int(h) for h in str(raw).split(",") if str(h).strip().isdigit() and int(h) > 0}
         )
         if not horizons:
             print("[WARN:leadlag:horizons_empty] falling back to [1,5]")

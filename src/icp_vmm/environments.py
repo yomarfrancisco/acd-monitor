@@ -110,7 +110,7 @@ class EnvironmentLabeler:
         vol_q67 = liquidity_volatility.quantile(0.67)
 
         labels = []
-        for i, (ratio, vol) in enumerate(zip(liquidity_ratio, liquidity_volatility)):
+        for _, (ratio, vol) in enumerate(zip(liquidity_ratio, liquidity_volatility)):
             if ratio < ratio_q33 or vol > vol_q67:
                 labels.append("thin")
             elif ratio > ratio_q67:

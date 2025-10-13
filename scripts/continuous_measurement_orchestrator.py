@@ -17,9 +17,7 @@ from typing import Dict, List, Any
 import subprocess
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -61,9 +59,7 @@ class ContinuousMeasurementOrchestrator:
                         time_range = time_prefix["Prefix"].split("/")[3]
 
                         # Check if OVERLAP.json exists AND tick data is available
-                        overlap_key = (
-                            f"snapshots/{symbol}/{date}/{time_range}/OVERLAP.json"
-                        )
+                        overlap_key = f"snapshots/{symbol}/{date}/{time_range}/OVERLAP.json"
                         tick_key = f"snapshots/{symbol}/{date}/{time_range}/ticks/binance/part-0000.parquet"
                         try:
                             # Check both OVERLAP.json and at least one tick file
@@ -102,9 +98,7 @@ class ContinuousMeasurementOrchestrator:
 
         try:
             # Run continuous measurement script
-            output_path = (
-                f"continuous_metrics/{symbol}/{date}/{time_range}/metrics.json"
-            )
+            output_path = f"continuous_metrics/{symbol}/{date}/{time_range}/metrics.json"
 
             cmd = [
                 "python",
@@ -168,9 +162,7 @@ class ContinuousMeasurementOrchestrator:
 
     def run_monitoring_mode(self, check_interval: int = 300):
         """Run in monitoring mode, checking for new windows periodically"""
-        logger.info(
-            f"Starting monitoring mode (checking every {check_interval} seconds)"
-        )
+        logger.info(f"Starting monitoring mode (checking every {check_interval} seconds)")
 
         while True:
             try:
@@ -188,9 +180,7 @@ class ContinuousMeasurementOrchestrator:
                 if new_windows:
                     logger.info(f"Found {len(new_windows)} new windows to process")
                     for window in new_windows:
-                        self.process_window(
-                            window["symbol"], window["date"], window["time_range"]
-                        )
+                        self.process_window(window["symbol"], window["date"], window["time_range"])
                 else:
                     logger.info("No new windows found")
 
@@ -215,9 +205,7 @@ def main():
         default="batch",
         help="Run mode: batch (process all) or monitor (continuous)",
     )
-    parser.add_argument(
-        "--max-windows", type=int, help="Maximum number of windows to process"
-    )
+    parser.add_argument("--max-windows", type=int, help="Maximum number of windows to process")
     parser.add_argument(
         "--check-interval",
         type=int,
@@ -233,12 +221,8 @@ def main():
 
     if args.mode == "batch":
         # Process all available windows
-        processed, failed = orchestrator.run_continuous_measurement(
-            max_windows=args.max_windows
-        )
-        logger.info(
-            f"Batch processing completed: {processed} processed, {failed} failed"
-        )
+        processed, failed = orchestrator.run_continuous_measurement(max_windows=args.max_windows)
+        logger.info(f"Batch processing completed: {processed} processed, {failed} failed")
         sys.exit(0 if failed == 0 else 1)
 
     elif args.mode == "monitor":

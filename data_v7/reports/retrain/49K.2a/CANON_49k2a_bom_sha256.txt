@@ -1,0 +1,12 @@
+# Phase 49K.2a — CALIBRATION-REPAIR BOM Hash
+
+SHA256: 50d3748ae588aa030675edb96e0cae9b0fb531f3f282e857019f35ac93b48cd7
+
+Content: Phase 49K.2a — CALIBRATION-REPAIR Results
+Timestamp: 2025-10-12T16:00:22.329520
+Seed: 42
+Folds: 5
+Features: 6
+Models: 3
+Success: True
+Gates: True

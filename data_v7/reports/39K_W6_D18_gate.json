@@ -1,0 +1,12 @@
+{
+  "date": "20250718",
+  "list_ok": true,
+  "target_found": true,
+  "write_ok": true,
+  "integrity_ok": true,
+  "budget_ok": true,
+  "all_gates_passed": true,
+  "total_files": 4,
+  "total_quarantined": 8,
+  "total_calls": 16
+}

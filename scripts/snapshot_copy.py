@@ -13,16 +13,10 @@ logger = logging.getLogger(__name__)
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Copy snapshot ticks to court baseline"
-    )
-    parser.add_argument(
-        "--from-snapshot", required=True, help="Source snapshot directory"
-    )
+    parser = argparse.ArgumentParser(description="Copy snapshot ticks to court baseline")
+    parser.add_argument("--from-snapshot", required=True, help="Source snapshot directory")
     parser.add_argument("--to", required=True, help="Target directory")
-    parser.add_argument(
-        "--strict", action="store_true", help="Strict mode - fail on any issues"
-    )
+    parser.add_argument("--strict", action="store_true", help="Strict mode - fail on any issues")
     parser.add_argument("--echo", action="store_true", help="Echo operations")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
 

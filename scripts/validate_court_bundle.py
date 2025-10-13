@@ -17,18 +17,10 @@ def main():
     parser = argparse.ArgumentParser(description="Validate court bundle")
     parser.add_argument("--overlap-json", required=True, help="OVERLAP.json file")
     parser.add_argument("--out-dir", required=True, help="Output directory")
-    parser.add_argument(
-        "--require-all5", action="store_true", help="Require all 5 venues"
-    )
-    parser.add_argument(
-        "--coverage-min", type=float, default=0.999, help="Minimum coverage"
-    )
-    parser.add_argument(
-        "--permutes-min", type=int, default=5000, help="Minimum permutations"
-    )
-    parser.add_argument(
-        "--no-stitch", action="store_true", help="No micro-gap stitching"
-    )
+    parser.add_argument("--require-all5", action="store_true", help="Require all 5 venues")
+    parser.add_argument("--coverage-min", type=float, default=0.999, help="Minimum coverage")
+    parser.add_argument("--permutes-min", type=int, default=5000, help="Minimum permutations")
+    parser.add_argument("--no-stitch", action="store_true", help="No micro-gap stitching")
     parser.add_argument("--alpha", type=float, default=0.05, help="Alpha level")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
 
@@ -69,11 +61,7 @@ def main():
         return 1
 
     # Validate policy
-    if not (
-        policy.startswith("BEST4")
-        or policy.startswith("ALL5")
-        or policy.startswith("COURT")
-    ):
+    if not (policy.startswith("BEST4") or policy.startswith("ALL5") or policy.startswith("COURT")):
         logger.error(f"Invalid policy for court mode: {policy}")
         return 1
 

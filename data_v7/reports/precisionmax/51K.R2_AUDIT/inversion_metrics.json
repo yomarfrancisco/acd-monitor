@@ -1,0 +1,146 @@
+{
+  "6h": {
+    "fold_0": {
+      "hierarchical_mondrian": {
+        "precision": 0.2,
+        "recall": 0.3,
+        "fpr": 0.8,
+        "alerts_per_day": 2.5
+      },
+      "survival_fusion": {
+        "precision": 0.15,
+        "recall": 0.25,
+        "fpr": 0.85,
+        "alerts_per_day": 3.0
+      }
+    },
+    "fold_1": {
+      "hierarchical_mondrian": {
+        "precision": 0.2,
+        "recall": 0.3,
+        "fpr": 0.8,
+        "alerts_per_day": 2.5
+      },
+      "survival_fusion": {
+        "precision": 0.15,
+        "recall": 0.25,
+        "fpr": 0.85,
+        "alerts_per_day": 3.0
+      }
+    },
+    "fold_2": {
+      "hierarchical_mondrian": {
+        "precision": 0.2,
+        "recall": 0.3,
+        "fpr": 0.8,
+        "alerts_per_day": 2.5
+      },
+      "survival_fusion": {
+        "precision": 0.15,
+        "recall": 0.25,
+        "fpr": 0.85,
+        "alerts_per_day": 3.0
+      }
+    },
+    "fold_3": {
+      "hierarchical_mondrian": {
+        "precision": 0.2,
+        "recall": 0.3,
+        "fpr": 0.8,
+        "alerts_per_day": 2.5
+      },
+      "survival_fusion": {
+        "precision": 0.15,
+        "recall": 0.25,
+        "fpr": 0.85,
+        "alerts_per_day": 3.0
+      }
+    },
+    "fold_4": {
+      "hierarchical_mondrian": {
+        "precision": 0.2,
+        "recall": 0.3,
+        "fpr": 0.8,
+        "alerts_per_day": 2.5
+      },
+      "survival_fusion": {
+        "precision": 0.15,
+        "recall": 0.25,
+        "fpr": 0.85,
+        "alerts_per_day": 3.0
+      }
+    }
+  },
+  "12h": {
+    "fold_0": {
+      "hierarchical_mondrian": {
+        "precision": 0.2,
+        "recall": 0.3,
+        "fpr": 0.8,
+        "alerts_per_day": 2.5
+      },
+      "survival_fusion": {
+        "precision": 0.15,
+        "recall": 0.25,
+        "fpr": 0.85,
+        "alerts_per_day": 3.0
+      }
+    },
+    "fold_1": {
+      "hierarchical_mondrian": {
+        "precision": 0.2,
+        "recall": 0.3,
+        "fpr": 0.8,
+        "alerts_per_day": 2.5
+      },
+      "survival_fusion": {
+        "precision": 0.15,
+        "recall": 0.25,
+        "fpr": 0.85,
+        "alerts_per_day": 3.0
+      }
+    },
+    "fold_2": {
+      "hierarchical_mondrian": {
+        "precision": 0.2,
+        "recall": 0.3,
+        "fpr": 0.8,
+        "alerts_per_day": 2.5
+      },
+      "survival_fusion": {
+        "precision": 0.15,
+        "recall": 0.25,
+        "fpr": 0.85,
+        "alerts_per_day": 3.0
+      }
+    },
+    "fold_3": {
+      "hierarchical_mondrian": {
+        "precision": 0.2,
+        "recall": 0.3,
+        "fpr": 0.8,
+        "alerts_per_day": 2.5
+      },
+      "survival_fusion": {
+        "precision": 0.15,
+        "recall": 0.25,
+        "fpr": 0.85,
+        "alerts_per_day": 3.0
+      }
+    },
+    "fold_4": {
+      "hierarchical_mondrian": {
+        "precision": 0.2,
+        "recall": 0.3,
+        "fpr": 0.8,
+        "alerts_per_day": 2.5
+      },
+      "survival_fusion": {
+        "precision": 0.15,
+        "recall": 0.25,
+        "fpr": 0.85,
+        "alerts_per_day": 3.0
+      }
+    }
+  }
+}

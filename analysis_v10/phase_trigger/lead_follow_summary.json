@@ -1,0 +1,42 @@
+{
+  "first_mover_rates": {
+    "BINANCE": 0.28390596745027125,
+    "COINBASE": 0.33273056057866185,
+    "BYBITSPOT": 0.18625678119349007,
+    "BITGET": 0.19710669077757687
+  },
+  "binomial_pvals": {
+    "BINANCE": 0.030671409031530296,
+    "COINBASE": 5.2643323512106925e-06,
+    "BYBITSPOT": 0.9997789380608334,
+    "BITGET": 0.9980605840763338
+  },
+  "p_bh": {
+    "BINANCE": 0.06134281806306059,
+    "COINBASE": 2.105732940484277e-05,
+    "BYBITSPOT": 0.9997789380608334,
+    "BITGET": 0.9997789380608334
+  },
+  "significant": {
+    "BINANCE": false,
+    "COINBASE": true,
+    "BYBITSPOT": false,
+    "BITGET": false
+  },
+  "median_lag_sec": {
+    "BINANCE": 3.665,
+    "COINBASE": 3.632536,
+    "BYBITSPOT": 4.426,
+    "BITGET": 3.802
+  },
+  "by_session": {
+    "London": 246,
+    "NewYork": 254,
+    "Sydney": 14,
+    "Tokyo": 426
+  },
+  "by_wash": {
+    "high": 51,
+    "low": 889
+  }
+}

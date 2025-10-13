@@ -1,0 +1,32 @@
+{
+  "W5_gate": true,
+  "W6_gate": false,
+  "W7_coinbase_gate": false,
+  "week_summary": {
+    "W5": {
+      "expected": 28,
+      "found": 28,
+      "percentage": 100.0,
+      "pass": true,
+      "type": "All venues"
+    },
+    "W6": {
+      "expected": 28,
+      "found": 0,
+      "percentage": 0.0,
+      "pass": false,
+      "type": "All venues"
+    },
+    "W7": {
+      "expected": 7,
+      "found": 0,
+      "percentage": 0.0,
+      "pass": false,
+      "type": "COINBASE BTC-USD only"
+    }
+  },
+  "integrity_issues_count": 0,
+  "uncategorized_v7_count": 12,
+  "total_valid_files": 28,
+  "timestamp": "2025-10-11T16:27:21.011574Z"
+}

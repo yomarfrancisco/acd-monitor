@@ -1,0 +1,19 @@
+{
+  "baseline_knapsack": {
+    "selected_alerts": 15,
+    "fpr_cost": 0.1435,
+    "recall_gain": 0.4329,
+    "budget_utilization": 0.957
+  },
+  "quantum_knapsack": {
+    "selected_alerts": 18,
+    "fpr_cost": 0.148,
+    "recall_gain": 0.52,
+    "budget_utilization": 0.9866666666666667
+  },
+  "improvements": {
+    "additional_alerts": 3,
+    "additional_recall_gain": 0.08710000000000001,
+    "fpr_cost_change": 0.004500000000000004
+  }
+}

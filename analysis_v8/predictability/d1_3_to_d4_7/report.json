@@ -1,0 +1,58 @@
+{
+  "analysis_period": "D1-D3 to D4-D7",
+  "training_days": [
+    "2025-09-01",
+    "2025-09-02",
+    "2025-09-03"
+  ],
+  "test_days": [
+    "2025-09-04",
+    "2025-09-05",
+    "2025-09-06",
+    "2025-09-07"
+  ],
+  "training_samples": 591104,
+  "test_samples": 667982,
+  "model_type": "RandomForest",
+  "n_estimators": 100,
+  "max_depth": 10,
+  "performance_metrics": {
+    "auc": 0.7711315801516873,
+    "pr_auc": 0.47448455038996007,
+    "ece": 0.03314103068820396
+  },
+  "feature_importances": {
+    "r_i_lag1": 0.05912828175461291,
+    "r_j_lag1": 0.019009185585675676,
+    "r_i_rolling_mean": 0.057855122544160906,
+    "r_j_rolling_mean": 0.014635614923376249,
+    "vol_i": 0.1876143772338813,
+    "vol_j": 0.05844300128798219,
+    "session_tokyo": 0.004407073376155802,
+    "session_london": 0.006588215034206018,
+    "session_newyork": 0.04761142827104753,
+    "session_sydney": 0.007255860494941582,
+    "vol_low": 0.16795162641303288,
+    "vol_med": 0.06427927745201024,
+    "vol_high": 0.29237508711291676,
+    "wash_bin": 0.012845848515999925
+  },
+  "feature_columns": [
+    "r_i_lag1",
+    "r_j_lag1",
+    "r_i_rolling_mean",
+    "r_j_rolling_mean",
+    "vol_i",
+    "vol_j",
+    "session_tokyo",
+    "session_london",
+    "session_newyork",
+    "session_sydney",
+    "vol_low",
+    "vol_med",
+    "vol_high",
+    "wash_bin"
+  ],
+  "memory_peak_mb": 231.46875,
+  "status": "ACD_PREDICTABILITY_COMPLETE"
+}

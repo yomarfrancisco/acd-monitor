@@ -78,9 +78,7 @@ def timestamp_bundle(bundle: EvidenceBundle, output_path: Path) -> None:
 
         # Get timestamp
         logger.info(f"Requesting timestamp for bundle {bundle.bundle_id}")
-        timestamp_chain = timestamp_client.timestamp_bundle(
-            bundle_data, bundle_checksum
-        )
+        timestamp_chain = timestamp_client.timestamp_bundle(bundle_data, bundle_checksum)
 
         # Update bundle with timestamp chain
         bundle.timestamp_chain = timestamp_chain
@@ -95,9 +93,7 @@ def timestamp_bundle(bundle: EvidenceBundle, output_path: Path) -> None:
         if latest_timestamp:
             print("✅ Bundle timestamped successfully!")
             print(f"   Timestamp: {latest_timestamp.isoformat()}")
-            print(
-                f"   Provider: {timestamp_chain.timestamp_responses[0].provider_name}"
-            )
+            print(f"   Provider: {timestamp_chain.timestamp_responses[0].provider_name}")
             print(
                 f"   Response time: {timestamp_chain.timestamp_responses[0].response_time_ms:.2f}ms"
             )
@@ -122,12 +118,8 @@ def verify_timestamp(bundle: EvidenceBundle) -> None:
             # It's a dictionary loaded from JSON
             print("📋 Timestamp chain information:")
             timestamp_chain = bundle.timestamp_chain
-            print(
-                f"   Bundle checksum: {timestamp_chain.get('bundle_checksum', 'N/A')}"
-            )
-            print(
-                f"   Timestamp created: {timestamp_chain.get('timestamp_created', 'N/A')}"
-            )
+            print(f"   Bundle checksum: {timestamp_chain.get('bundle_checksum', 'N/A')}")
+            print(f"   Timestamp created: {timestamp_chain.get('timestamp_created', 'N/A')}")
 
             responses = timestamp_chain.get("timestamp_responses", [])
             print(f"   Number of responses: {len(responses)}")
@@ -139,9 +131,7 @@ def verify_timestamp(bundle: EvidenceBundle) -> None:
                 print(f"     Policy OID: {response.get('policy_oid', 'N/A')}")
                 print(f"     Serial: {response.get('serial_number', 'N/A')}")
                 print(f"     Status: {response.get('status', 'N/A')}")
-                print(
-                    f"     Response time: {response.get('response_time_ms', 'N/A')}ms"
-                )
+                print(f"     Response time: {response.get('response_time_ms', 'N/A')}ms")
 
             print("✅ Timestamp chain information displayed successfully!")
             return
@@ -158,9 +148,7 @@ def verify_timestamp(bundle: EvidenceBundle) -> None:
             print("❌ Timestamp chain verification failed!")
             for response in verification_result["responses"]:
                 if not response.get("valid", True):
-                    print(
-                        f"   - {response['provider']}: {response.get('error', 'Unknown error')}"
-                    )
+                    print(f"   - {response['provider']}: {response.get('error', 'Unknown error')}")
 
     except Exception as e:
         logger.error(f"Failed to verify timestamp chain: {e}")
@@ -208,9 +196,7 @@ Examples:
         """,
     )
 
-    parser.add_argument(
-        "--bundle", "-b", type=Path, help="Path to evidence bundle file"
-    )
+    parser.add_argument("--bundle", "-b", type=Path, help="Path to evidence bundle file")
 
     parser.add_argument(
         "--output",
@@ -223,13 +209,9 @@ Examples:
         "--verify", "-v", action="store_true", help="Verify existing timestamp chain"
     )
 
-    parser.add_argument(
-        "--status", "-s", action="store_true", help="Show TSA provider status"
-    )
+    parser.add_argument("--status", "-s", action="store_true", help="Show TSA provider status")
 
-    parser.add_argument(
-        "--providers", action="store_true", help="Show status of all TSA providers"
-    )
+    parser.add_argument("--providers", action="store_true", help="Show status of all TSA providers")
 
     args = parser.parse_args()
 

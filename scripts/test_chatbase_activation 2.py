@@ -45,9 +45,7 @@ def test_chatbase_environment():
         return True
     else:
         print(f"   ❌ Missing required environment variables")
-        print(
-            f"   Required: CHATBASE_API_KEY, CHATBASE_ASSISTANT_ID, CHATBASE_SIGNING_SECRET"
-        )
+        print(f"   Required: CHATBASE_API_KEY, CHATBASE_ASSISTANT_ID, CHATBASE_SIGNING_SECRET")
         return False
 
 
@@ -139,9 +137,7 @@ def test_offline_mock_fallback():
         # Test with a compliance query
         test_query = "Generate a regulatory bundle for BTC/USD coordination signals"
 
-        response = mock_provider.generate(
-            prompt=test_query, session_id="fallback_test_001"
-        )
+        response = mock_provider.generate(prompt=test_query, session_id="fallback_test_001")
 
         print(f"   ✅ Offline mock provider working")
         print(f"   Response length: {len(response.content)} characters")
@@ -217,9 +213,7 @@ def test_compliance_query_regression():
         for i, query in enumerate(test_queries):
             print(f"   Testing query {i+1}: {query[:50]}...")
 
-            response = mock_provider.generate(
-                prompt=query, session_id=f"regression_test_{i}"
-            )
+            response = mock_provider.generate(prompt=query, session_id=f"regression_test_{i}")
 
             # Check response quality
             has_content = len(response.content) > 0
@@ -232,9 +226,7 @@ def test_compliance_query_regression():
                     "success": has_content and has_usage and has_intent,
                     "content_length": len(response.content),
                     "intent": (
-                        response.usage.get("intent", "unknown")
-                        if response.usage
-                        else "unknown"
+                        response.usage.get("intent", "unknown") if response.usage else "unknown"
                     ),
                 }
             )
@@ -338,5 +330,3 @@ def main():
 if __name__ == "__main__":
     success = main()
     sys.exit(0 if success else 1)
-
-

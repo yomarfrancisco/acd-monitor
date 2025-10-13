@@ -1,0 +1,51 @@
+COVERAGE MATRIX - Week -7, -6, -5
+==================================================
+
+W-7 (July 7):
+------------------------------
+Day     BINA  BITG  BYBI  COIN  
+Jul 7   ✓     ✗     ✗     ✗     
+Jul 8   ✓     ✓     ✓     ✗     
+Jul 9   ✓     ✓     ✓     ✗     
+Jul 10  ✓     ✓     ✓     ✗     
+Jul 11  ✓     ✗     ✓     ✗     
+Jul 12  ✗     ✗     ✗     ✗     
+Jul 13  ✗     ✗     ✗     ✗     
+TOTAL   9/7   6/7   12/7  0/7   
+
+Summary: 27 files, 0.57 GB
+Zero-byte files: 0
+Duplicate hashes: 0
+
+W-6 (July 6):
+------------------------------
+Day     BINA  BITG  BYBI  COIN  
+Jul 14  ✗     ✗     ✗     ✗     
+Jul 15  ✗     ✗     ✗     ✗     
+Jul 16  ✗     ✗     ✗     ✗     
+Jul 17  ✗     ✗     ✗     ✗     
+Jul 18  ✗     ✗     ✗     ✗     
+Jul 19  ✗     ✗     ✗     ✗     
+Jul 20  ✗     ✗     ✗     ✗     
+TOTAL   0/7   0/7   0/7   0/7   
+
+Summary: 0 files, 0.00 GB
+Zero-byte files: 0
+Duplicate hashes: 0
+
+W-5 (July 5):
+------------------------------
+Day     BINA  BITG  BYBI  COIN  
+Jul 21  ✗     ✗     ✗     ✗     
+Jul 22  ✓     ✓     ✓     ✓     
+Jul 23  ✓     ✓     ✓     ✓     
+Jul 24  ✓     ✓     ✓     ✓     
+Jul 25  ✓     ✓     ✓     ✓     
+Jul 26  ✓     ✓     ✓     ✓     
+Jul 27  ✓     ✓     ✓     ✓     
+TOTAL   6/7   6/7   6/7   6/7   
+
+Summary: 24 files, 1.14 GB
+Zero-byte files: 0
+Duplicate hashes: 0
+

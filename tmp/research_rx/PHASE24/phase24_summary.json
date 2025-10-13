@@ -1,0 +1,33 @@
+{
+  "entropy_trajectory": {
+    "total_observations": 1008,
+    "unique_shocks": 44,
+    "max_hours_post_shock": 24
+  },
+  "exponential_decay_model": {
+    "delta_H0": -0.22211805334989632,
+    "lambda": -0.011741741656066043,
+    "half_life": Infinity,
+    "r_squared": 0.14520708489096978,
+    "lambda_ci_lower": -0.029431955901427647,
+    "lambda_ci_upper": 0.004136022772345654,
+    "n_bootstrap": 1000,
+    "n_data_points": 24
+  },
+  "venue_correlations": {
+    "total_combinations": 96,
+    "venues_analyzed": [
+      "COINBASE",
+      "BINANCE",
+      "BYBITSPOT",
+      "BITGET"
+    ]
+  },
+  "guardrail_log": {
+    "memory_peak_mb": 280.859375,
+    "timestamp_integrity": "VERIFIED",
+    "no_data_duplication": "CONFIRMED",
+    "no_schema_mutations": "CONFIRMED",
+    "real_data_only": "CONFIRMED"
+  }
+}

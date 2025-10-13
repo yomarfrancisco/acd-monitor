@@ -1,0 +1,423 @@
+#!/usr/bin/env python3
+"""
+Week-3 Real-Beacon Analysis Protocol
+Day-by-day checkpoints with strict read-only validation
+"""
+
+import pandas as pd
+import numpy as np
+import psutil
+import os
+import json
+from datetime import datetime, timedelta
+import warnings
+warnings.filterwarnings('ignore')
+
+def get_memory_usage():
+    """Get current memory usage in MB"""
+    process = psutil.Process(os.getpid())
+    return process.memory_info().rss / 1024 / 1024
+
+def step0_preflight(date_str, venues, base_path="data_v6/views"):
+    """Step 0: Preflight validation for a single day"""
+    print(f"🔍 Step 0 - Preflight for {date_str}")
+    print("-" * 40)
+    
+    venue_data = {}
+    
+    for venue in venues:
+        try:
+            file_path = os.path.join(base_path, venue, date_str, "ticks_canonical.parquet")
+            
+            if not os.path.exists(file_path):
+                print(f"❌ HALT: Missing file {file_path}")
+                return False, None
+            
+            # Load data
+            df = pd.read_parquet(file_path)
+            df['ts'] = pd.to_datetime(df['ts'], utc=True)
+            
+            # Verify schema
+            required_cols = ['ts', 'price', 'size', 'venue']
+            missing_cols = [col for col in required_cols if col not in df.columns]
+            if missing_cols:
+                print(f"❌ HALT: {venue} missing columns: {missing_cols}")
+                return False, None
+            
+            # Check monotonic timestamps
+            if not df['ts'].is_monotonic_increasing:
+                print(f"❌ HALT: {venue} timestamps not monotonic")
+                return False, None
+            
+            # Check non-zero tick counts
+            if len(df) == 0:
+                print(f"❌ HALT: {venue} has zero ticks")
+                return False, None
+            
+            # Check price range
+            price_min, price_max = df['price'].min(), df['price'].max()
+            if price_min < 90000 or price_max > 130000:
+                print(f"❌ HALT: {venue} price range ${price_min:,.0f} - ${price_max:,.0f} outside [$90K, $130K]")
+                return False, None
+            
+            # Check memory
+            current_memory = get_memory_usage()
+            if current_memory > 500:
+                print(f"❌ HALT: Memory limit exceeded: {current_memory:.1f} MB > 500 MB")
+                return False, None
+            
+            venue_data[venue] = df
+            print(f"✅ {venue}: {len(df):,} ticks, ${price_min:,.0f}-${price_max:,.0f}, {current_memory:.1f} MB")
+            
+        except Exception as e:
+            print(f"❌ HALT: Error loading {venue}: {str(e)}")
+            return False, None
+    
+    print(f"✅ Preflight passed for {date_str}")
+    return True, venue_data
+
+def detect_beacons(df, micro_p10, round_levels):
+    """Detect beacons using Week-4 logic"""
+    beacons = []
+    
+    for level in round_levels:
+        # Define price band around round level
+        band_low = level * 0.999  # -0.10%
+        band_high = level * 1.001  # +0.10%
+        
+        # Find trades within price band
+        band_trades = df[(df['price'] >= band_low) & (df['price'] <= band_high)]
+        
+        if len(band_trades) < 3:
+            continue
+        
+        # Group by 10-second windows
+        band_trades = band_trades.copy()
+        band_trades['window'] = (band_trades['ts'] - band_trades['ts'].min()).dt.total_seconds() // 10
+        
+        for window in band_trades['window'].unique():
+            window_trades = band_trades[band_trades['window'] == window]
+            
+            # Count micro trades
+            micro_trades = window_trades[window_trades['size'] <= micro_p10]
+            
+            if len(micro_trades) >= 3:
+                # Use median timestamp of micro trades as event time
+                event_ts = micro_trades['ts'].median()
+                beacons.append({
+                    't_event': event_ts,
+                    'level': level,
+                    'n_micro_10s': len(micro_trades)
+                })
+    
+    return beacons
+
+def sample_beacons(beacons, target_count=24, seed=1337):
+    """Sample beacons deterministically"""
+    if len(beacons) <= target_count:
+        return beacons, len(beacons)
+    
+    # Sort by timestamp for deterministic sampling
+    beacons_sorted = sorted(beacons, key=lambda x: x['t_event'])
+    
+    # Apply 60-second lockout
+    sampled = []
+    last_event_time = None
+    
+    for beacon in beacons_sorted:
+        if last_event_time is None or (beacon['t_event'] - last_event_time).total_seconds() >= 60:
+            sampled.append(beacon)
+            last_event_time = beacon['t_event']
+            
+            if len(sampled) >= target_count:
+                break
+    
+    return sampled, len(beacons)
+
+def step1_beacon_detection(date_str, venue_data, venues, cache_path="data_v6/cache/beacons/week-3"):
+    """Step 1: Beacon detection for a single day"""
+    print(f"🔍 Step 1 - Beacon Detection for {date_str}")
+    print("-" * 40)
+    
+    os.makedirs(cache_path, exist_ok=True)
+    all_beacons = []
+    
+    for venue in venues:
+        try:
+            df = venue_data[venue]
+            
+            # Compute micro threshold (10th percentile by size)
+            micro_p10 = df['size'].quantile(0.10)
+            
+            # Define round levels ($100/$250 increments)
+            min_price = df['price'].min()
+            max_price = df['price'].max()
+            round_levels = np.arange(
+                np.floor(min_price / 100) * 100,
+                np.ceil(max_price / 100) * 100 + 1,
+                250
+            )
+            
+            # Detect beacons
+            raw_beacons = detect_beacons(df, micro_p10, round_levels)
+            sampled_beacons, n_raw = sample_beacons(raw_beacons)
+            
+            print(f"  {venue}: {n_raw} raw → {len(sampled_beacons)} sampled")
+            
+            if len(sampled_beacons) != 24:
+                print(f"❌ HALT: {venue} has {len(sampled_beacons)} beacons, expected 24")
+                return False, None
+            
+            # Convert to DataFrame
+            beacon_df = pd.DataFrame(sampled_beacons)
+            beacon_df['date'] = date_str
+            beacon_df['venue'] = venue
+            beacon_df = beacon_df.rename(columns={
+                't_event': 'event_ts',
+                'level': 'round_level',
+                'n_micro_10s': 'n_micro'
+            })
+            beacon_df = beacon_df[['date', 'venue', 'event_ts', 'round_level', 'n_micro']]
+            
+            # Ensure event_ts is UTC
+            beacon_df['event_ts'] = pd.to_datetime(beacon_df['event_ts'], utc=True)
+            
+            # Save to parquet
+            output_file = os.path.join(cache_path, f"{venue}_{date_str}.parquet")
+            beacon_df.to_parquet(output_file, index=False)
+            
+            all_beacons.extend(beacon_df.to_dict('records'))
+            
+        except Exception as e:
+            print(f"❌ HALT: Error processing {venue}: {str(e)}")
+            return False, None
+    
+    print(f"✅ Beacon detection completed for {date_str}")
+    return True, all_beacons
+
+def compute_effects(event, venue_data, venues, min_coverage_pct=60):
+    """Compute effects for a single event"""
+    event_ts = event['event_ts']
+    
+    # Define analysis windows
+    pre_start_3m = event_ts - pd.Timedelta(minutes=3)
+    post_end_3m = event_ts + pd.Timedelta(minutes=3)
+    post_end_6m = event_ts + pd.Timedelta(minutes=6)
+    post_end_9m = event_ts + pd.Timedelta(minutes=9)
+    
+    # Build 1-sec VWAP bars for each venue
+    venue_vwap = {}
+    coverage_ok = True
+    
+    for venue in venues:
+        df = venue_data[venue]
+        
+        # Get data for all windows
+        all_data = df[
+            (df['ts'] >= pre_start_3m) & 
+            (df['ts'] <= post_end_9m)
+        ].copy()
+        
+        if len(all_data) == 0:
+            return {'status': 'FAIL_COVERAGE', 'reason': 'No data in window'}
+        
+        # Build 1-sec VWAP
+        vwap_bars = all_data.set_index('ts').resample('1S').apply(
+            lambda x: np.average(x['price'], weights=x['size']) if len(x) > 0 else np.nan
+        ).dropna()
+        
+        # Check coverage
+        expected_bars = (post_end_9m - pre_start_3m).total_seconds() + 1
+        coverage_pct = (len(vwap_bars) / expected_bars) * 100
+        
+        if coverage_pct < min_coverage_pct:
+            coverage_ok = False
+        
+        venue_vwap[venue] = vwap_bars
+    
+    if not coverage_ok:
+        return {'status': 'FAIL_COVERAGE', 'reason': 'Low coverage'}
+    
+    # Compute ΔDispersion
+    delta_dispersions = []
+    
+    for window_minutes in [3, 6, 9]:
+        pre_end = event_ts
+        post_start = event_ts
+        post_end = event_ts + pd.Timedelta(minutes=window_minutes)
+        
+        pre_dispersions = []
+        post_dispersions = []
+        
+        for venue in venues:
+            vwap = venue_vwap[venue]
+            
+            pre_bars = vwap[(vwap.index >= pre_start_3m) & (vwap.index < pre_end)]
+            post_bars = vwap[(vwap.index >= post_start) & (vwap.index <= post_end)]
+            
+            if len(pre_bars) > 1 and len(post_bars) > 1:
+                pre_disp = np.mean(np.abs(pre_bars.diff().dropna()))
+                post_disp = np.mean(np.abs(post_bars.diff().dropna()))
+                
+                pre_dispersions.append(pre_disp)
+                post_dispersions.append(post_disp)
+        
+        if len(pre_dispersions) > 0 and len(post_dispersions) > 0:
+            delta_disp = np.mean(post_dispersions) - np.mean(pre_dispersions)
+            delta_dispersions.append(delta_disp)
+    
+    # Compute ΔLag (cross-correlation)
+    delta_lags = []
+    
+    for i, venue1 in enumerate(venues):
+        for j, venue2 in enumerate(venues):
+            if i >= j:
+                continue
+            
+            vwap1 = venue_vwap[venue1]
+            vwap2 = venue_vwap[venue2]
+            
+            # Align time series
+            common_index = vwap1.index.intersection(vwap2.index)
+            if len(common_index) < 10:
+                continue
+            
+            vwap1_aligned = vwap1.loc[common_index]
+            vwap2_aligned = vwap2.loc[common_index]
+            
+            # Compute cross-correlation
+            correlation = np.corrcoef(vwap1_aligned, vwap2_aligned)[0, 1]
+            if not np.isnan(correlation):
+                delta_lags.append(correlation)
+    
+    # Typology
+    median_delta_disp_3m = np.median(delta_dispersions) if len(delta_dispersions) > 0 else 0
+    
+    if median_delta_disp_3m >= 0.001:  # 10 bps
+        typology = 'Signal-10'
+    elif median_delta_disp_3m >= 0.0007:  # 7 bps
+        typology = 'Signal-7'
+    elif abs(median_delta_disp_3m) < 0.0005:  # 5 bps
+        typology = 'Compression'
+    else:
+        typology = 'Unclassified'
+    
+    # Leadership (simplified)
+    leader_venue = 'NONE'
+    
+    return {
+        'status': 'OK',
+        'delta_dispersion_3m': median_delta_disp_3m,
+        'delta_dispersion_6m': np.median(delta_dispersions[1:]) if len(delta_dispersions) > 1 else 0,
+        'delta_dispersion_9m': np.median(delta_dispersions[2:]) if len(delta_dispersions) > 2 else 0,
+        'delta_lag_ms': np.median(delta_lags) if len(delta_lags) > 0 else 0,
+        'typology': typology,
+        'leader': leader_venue
+    }
+
+def step2_effects_computation(date_str, all_beacons, venue_data, venues):
+    """Step 2: Effects computation for a single day"""
+    print(f"🔍 Step 2 - Effects Computation for {date_str}")
+    print("-" * 40)
+    
+    results = []
+    
+    for beacon in all_beacons:
+        effects = compute_effects(beacon, venue_data, venues)
+        effects['date'] = date_str
+        effects['venue'] = beacon['venue']
+        effects['event_ts'] = beacon['event_ts']
+        results.append(effects)
+    
+    # Aggregate results
+    ok_results = [r for r in results if r['status'] == 'OK']
+    
+    if len(ok_results) == 0:
+        print(f"❌ HALT: No successful event processing")
+        return False, None
+    
+    # Compute summary statistics
+    delta_disp_3m = [r['delta_dispersion_3m'] for r in ok_results]
+    delta_lag_ms = [r['delta_lag_ms'] for r in ok_results]
+    
+    typology_counts = {}
+    for r in ok_results:
+        typology = r['typology']
+        typology_counts[typology] = typology_counts.get(typology, 0) + 1
+    
+    leader_counts = {}
+    for r in ok_results:
+        leader = r['leader']
+        leader_counts[leader] = leader_counts.get(leader, 0) + 1
+    
+    summary = {
+        'date': date_str,
+        'total_beacons': len(all_beacons),
+        'processed_ok': len(ok_results),
+        'median_delta_disp_3m': np.median(delta_disp_3m),
+        'median_delta_lag_ms': np.median(delta_lag_ms),
+        'typology_counts': typology_counts,
+        'leader_counts': leader_counts
+    }
+    
+    print(f"✅ Effects computation completed for {date_str}")
+    return True, summary
+
+def main():
+    print("🧾 Week-3 Real-Beacon Analysis Protocol")
+    print("=" * 50)
+    print("Mode: STRICT READ-ONLY, STREAMING, PERSISTENT CACHE")
+    print(f"Current memory: {get_memory_usage():.1f} MB")
+    print()
+    
+    venues = ['BINANCE', 'COINBASE', 'BYBITSPOT', 'BITGET']
+    date_str = '20250811'  # Start with first day
+    date_display = '2025-08-11'
+    
+    print(f"📅 Processing {date_display} ({date_str})")
+    print("=" * 50)
+    
+    # Step 0: Preflight
+    preflight_ok, venue_data = step0_preflight(date_str, venues)
+    if not preflight_ok:
+        print("❌ Preflight failed - halting")
+        return
+    
+    # Step 1: Beacon Detection
+    beacon_ok, all_beacons = step1_beacon_detection(date_str, venue_data, venues)
+    if not beacon_ok:
+        print("❌ Beacon detection failed - halting")
+        return
+    
+    # Step 2: Effects Computation
+    effects_ok, summary = step2_effects_computation(date_str, all_beacons, venue_data, venues)
+    if not effects_ok:
+        print("❌ Effects computation failed - halting")
+        return
+    
+    # Step 3: Checkpoint Summary
+    print(f"\n📊 DAY {date_display}")
+    print(f"beacons={summary['total_beacons']} processed={summary['processed_ok']} med_Δdisp3={summary['median_delta_disp_3m']:.2f} bps med_Δlag={summary['median_delta_lag_ms']:.2f} ms")
+    
+    # Typology percentages
+    total_ok = summary['processed_ok']
+    s10_pct = (summary['typology_counts'].get('Signal-10', 0) / total_ok) * 100
+    s7_pct = (summary['typology_counts'].get('Signal-7', 0) / total_ok) * 100
+    c_pct = (summary['typology_counts'].get('Compression', 0) / total_ok) * 100
+    
+    print(f"typology: {s10_pct:.1f}% S10 / {s7_pct:.1f}% S7 / {c_pct:.1f}% Compression")
+    
+    # Leadership percentage
+    leader_pct = (summary['leader_counts'].get('NONE', 0) / total_ok) * 100
+    print(f"leaders: {leader_pct:.1f}%")
+    
+    print(f"✅ CHECKPOINT OK")
+    print(f"\nMemory usage: {get_memory_usage():.1f} MB")
+    print("\n⏸️  Waiting for 'continue' confirmation before proceeding to next day...")
+
+if __name__ == "__main__":
+    main()
+
+
+
+

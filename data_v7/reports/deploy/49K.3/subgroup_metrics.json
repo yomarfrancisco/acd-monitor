@@ -1,0 +1,106 @@
+{
+  "6h": {
+    "session_Asia": {
+      "auc_mean": 0.8788,
+      "auc_std": 0.0342,
+      "precision_mean": 0.556,
+      "precision_std": 0.1181,
+      "recall_mean": 0.6438,
+      "recall_std": 0.102,
+      "fpr_mean": 0.1006,
+      "fpr_std": 0.0546
+    },
+    "session_Europe": {
+      "auc_mean": 0.8788,
+      "auc_std": 0.0342,
+      "precision_mean": 0.556,
+      "precision_std": 0.1181,
+      "recall_mean": 0.6438,
+      "recall_std": 0.102,
+      "fpr_mean": 0.1006,
+      "fpr_std": 0.0546
+    },
+    "session_US": {
+      "auc_mean": 0.8788,
+      "auc_std": 0.0342,
+      "precision_mean": 0.556,
+      "precision_std": 0.1181,
+      "recall_mean": 0.6438,
+      "recall_std": 0.102,
+      "fpr_mean": 0.1006,
+      "fpr_std": 0.0546
+    },
+    "time_weekday": {
+      "auc_mean": 0.8788,
+      "auc_std": 0.0342,
+      "precision_mean": 0.556,
+      "precision_std": 0.1181,
+      "recall_mean": 0.6438,
+      "recall_std": 0.102,
+      "fpr_mean": 0.1006,
+      "fpr_std": 0.0546
+    },
+    "time_weekend": {
+      "auc_mean": 0.8788,
+      "auc_std": 0.0342,
+      "precision_mean": 0.556,
+      "precision_std": 0.1181,
+      "recall_mean": 0.6438,
+      "recall_std": 0.102,
+      "fpr_mean": 0.1006,
+      "fpr_std": 0.0546
+    }
+  },
+  "12h": {
+    "session_Asia": {
+      "auc_mean": 0.8765,
+      "auc_std": 0.0331,
+      "precision_mean": 0.5242,
+      "precision_std": 0.144,
+      "recall_mean": 0.6514,
+      "recall_std": 0.1,
+      "fpr_mean": 0.1242,
+      "fpr_std": 0.087
+    },
+    "session_Europe": {
+      "auc_mean": 0.8765,
+      "auc_std": 0.0331,
+      "precision_mean": 0.5242,
+      "precision_std": 0.144,
+      "recall_mean": 0.6514,
+      "recall_std": 0.1,
+      "fpr_mean": 0.1242,
+      "fpr_std": 0.087
+    },
+    "session_US": {
+      "auc_mean": 0.8765,
+      "auc_std": 0.0331,
+      "precision_mean": 0.5242,
+      "precision_std": 0.144,
+      "recall_mean": 0.6514,
+      "recall_std": 0.1,
+      "fpr_mean": 0.1242,
+      "fpr_std": 0.087
+    },
+    "time_weekday": {
+      "auc_mean": 0.8765,
+      "auc_std": 0.0331,
+      "precision_mean": 0.5242,
+      "precision_std": 0.144,
+      "recall_mean": 0.6514,
+      "recall_std": 0.1,
+      "fpr_mean": 0.1242,
+      "fpr_std": 0.087
+    },
+    "time_weekend": {
+      "auc_mean": 0.8765,
+      "auc_std": 0.0331,
+      "precision_mean": 0.5242,
+      "precision_std": 0.144,
+      "recall_mean": 0.6514,
+      "recall_std": 0.1,
+      "fpr_mean": 0.1242,
+      "fpr_std": 0.087
+    }
+  }
+}

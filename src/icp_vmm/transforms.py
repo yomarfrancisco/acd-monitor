@@ -63,7 +63,7 @@ class DataTransformer:
 
         # Get common timestamp range
         all_timestamps = []
-        for venue, df in venue_data.items():
+        for _, df in venue_data.items():
             if "ts_exchange" in df.columns:
                 all_timestamps.extend(df["ts_exchange"].tolist())
 

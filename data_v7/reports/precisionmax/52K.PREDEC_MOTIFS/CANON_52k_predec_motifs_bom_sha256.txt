@@ -1,0 +1,14 @@
+Bill of Materials - SHA256 Hashes
+==================================================
+
+INPUTS:
+metrics_calibrated: d363e85f7b5592c0ae800d08c6b65b8e2776359f3414398639748a89b9654081
+thresholds_calibrated: 46846249769b5075f4ee66b42d28e8b16b01534c745e02b7ac5f8838df404665
+conformal_summary: 306c7f2cfa4f11669197168a6c65c6042477a9c5f8e220d68624396d948fdc03
+cv_manifest: 160314c6ef1c7f2367e9716a6a473b4f9ebe1777420868c8fe48791914761b30
+
+OUTPUTS:
+metrics_oos: b3e885e949e837ccf8cb15714ac1ce1aa5b7983de97f7ab65100c7f6a639c4b4
+motif_importance: a1639e476178e48056adb7e6ff6c9b0e800278cd0ee179fe1717870140e0ea63
+gate_contract: f93471057a566700f8c51c4ac41e34858642d3c997c3e17125d23c9f934c9a0d
+alerts_final: 146 alerts

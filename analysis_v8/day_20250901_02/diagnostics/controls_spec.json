@@ -1,0 +1,8 @@
+{
+  "market_return": "cross_venue_median",
+  "volatility": "5min_rolling_std",
+  "wash_intensity": "round_number_clustering",
+  "hac_bandwidth": "30s",
+  "regression_formula": "r_j = \u03b1 + \u03b2*r_i + \u03b3*vol_j + \u03b4*r_M + \u03b5",
+  "note": "Simplified analysis due to timestamp constraints"
+}

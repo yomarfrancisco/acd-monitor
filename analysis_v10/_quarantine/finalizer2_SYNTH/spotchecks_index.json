@@ -1,0 +1,52 @@
+[
+  {
+    "filename": "grounded_placebo_0.csv",
+    "sha256": "71e1a0d5ae00e422fea6136171fb9adbdaee622bbb5d61c44496def172750c43",
+    "type": "grounded_placebo"
+  },
+  {
+    "filename": "grounded_placebo_1.csv",
+    "sha256": "eefb2b28290adc715e5f99a08079707fb42f19db97206cf5699463121174b890",
+    "type": "grounded_placebo"
+  },
+  {
+    "filename": "grounded_placebo_2.csv",
+    "sha256": "81ccd1b568bde1cee00d1600c69f735c3b6a0b8f7ae26bc9e0eba5c1175bdbce",
+    "type": "grounded_placebo"
+  },
+  {
+    "filename": "grounded_placebo_3.csv",
+    "sha256": "6ae0809b69a0ebce0b805edd652d174d0e7a86e339cdf8400652fcc9f78b0d67",
+    "type": "grounded_placebo"
+  },
+  {
+    "filename": "grounded_placebo_4.csv",
+    "sha256": "6516ac27dd65ef365ea5af70ef7826f7115452ddff67db21782446f81cae5be3",
+    "type": "grounded_placebo"
+  },
+  {
+    "filename": "band_not_touched_10.csv",
+    "sha256": "ba793307beb331d67bc3492cc88563b12b57e6da7a7ae3c4760af37997a4da52",
+    "type": "band_not_touched"
+  },
+  {
+    "filename": "band_not_touched_17.csv",
+    "sha256": "fde66d83d92c865b14ef5e9bf8aca0f5468c7b4a1d659a22b684a292c2856541",
+    "type": "band_not_touched"
+  },
+  {
+    "filename": "band_not_touched_31.csv",
+    "sha256": "fbe4cb905bc65f61f7fca454b8a944492ae5af0b7d274fced230e87f961c2cec",
+    "type": "band_not_touched"
+  },
+  {
+    "filename": "band_not_touched_33.csv",
+    "sha256": "63bfd8f85892fc26c383589b1d01f86b6e97c2a9908f8ea8d959fb6cc5442d97",
+    "type": "band_not_touched"
+  },
+  {
+    "filename": "band_not_touched_66.csv",
+    "sha256": "33febef769f187f90f1ae8b545e615a9f482d34307ab8d795eff247ee5361ea8",
+    "type": "band_not_touched"
+  }
+]

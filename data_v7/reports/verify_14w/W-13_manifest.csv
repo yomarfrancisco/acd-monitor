@@ -1,0 +1,8 @@
+date,venue,pair,abs_path,size_bytes,sha256,source_format
+20250709,COINBASE,BTC-USD,/Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w7/20250709/E-COINBASE/IDDI_584179f1__BTC-USD.csv.gz,32502380,8318932b45142b34b0a138193bce043f38fd8a8736558de68e140cc947a8a208,v7
+20250707,COINBASE,BTC-USD,/Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w7/20250707/E-COINBASE/IDDI_6bc99d65__BTC-USD.csv.gz,25820939,46e2c5010cc23a1075d4c11f837ef5f0d679a57dbdc96f4a4299e07911a47356,v7
+20250708,COINBASE,BTC-USD,/Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w7/20250708/E-COINBASE/IDDI_2cb45db2__BTC-USD.csv.gz,23786134,66f568408e3dcc09d27c01af274b7157bad982295e39b9ad357a5052ab700287,v7
+20250712,COINBASE,BTC-USD,/Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w7/20250712/E-COINBASE/IDDI_4cdc0510__BTC-USD.csv.gz,21806601,0cdb825cb8386c29cee65d3ea88c8e67c8b2baefb23f5eb04b7f6362e877e709,v7
+20250713,COINBASE,BTC-USD,/Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w7/20250713/E-COINBASE/IDDI_4d5bce95__BTC-USD.csv.gz,24890509,2bbf97fe4e1f042b972c1349d0ce62f9e2c5ac0e8aef016a056bb362306f2296,v7
+20250711,COINBASE,BTC-USD,/Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w7/20250711/E-COINBASE/IDDI_e7faa80c__BTC-USD.csv.gz,47573558,bd7a9db52ef4bb4d0e081bbd8f346d42c40ef164e0c250b3587ceaf8fed7554f,v7
+20250710,COINBASE,BTC-USD,/Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w7/20250710/E-COINBASE/IDDI_b8e116bb__BTC-USD.csv.gz,41308286,eb438f7704971d876f642a82ed679041a85efbb92c2bd8982b8b387f16ba4d91,v7

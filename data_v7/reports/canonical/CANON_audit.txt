@@ -1,0 +1,20 @@
+Canonical Dataset Audit Report
+==================================================
+Generated: 2025-10-11T20:32:30.157043Z
+Date Range: 2025-07-07 → 2025-10-12
+
+Summary Statistics:
+  Total canonical files: 386
+  Expected total files: 392
+  Coverage: 98.5%
+  COINBASE files: 96
+  BINANCE files: 96
+  BYBITSPOT files: 97
+  BITGET files: 97
+
+Missing Files Analysis:
+  20251011: Missing {'BITGET', 'BINANCE', 'BYBITSPOT', 'COINBASE'} (4 files)
+  20251012: Missing {'BITGET', 'BINANCE', 'BYBITSPOT', 'COINBASE'} (4 files)
+
+Overall Status: FAIL
+Total Coverage: 386/392 (98.5%)

@@ -1,0 +1,15 @@
+{
+  "status": "STOP:INPUT_MISSING",
+  "day": "2025-09-02",
+  "reason": "Day-2 aligned returns not found",
+  "missing_paths": [
+    "analysis_v7/icp_20250902_5s/aligned_returns.parquet",
+    "analysis_v7/icp_20250902_5s/aligned_5s.parquet",
+    "data_v6/views/BINANCE/20250902/",
+    "data_v6/views/COINBASE/20250902/",
+    "data_v6/views/BYBITSPOT/20250902/",
+    "data_v6/views/BITGET/20250902/"
+  ],
+  "available_data": [],
+  "recommendation": "Day-2 data not available for analysis. Only Day-1 (2025-09-01) data exists."
+}

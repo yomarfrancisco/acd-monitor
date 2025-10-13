@@ -24,9 +24,7 @@ from _analysis_utils import inclusive_end_date, ensure_time_mid_volume, resample
 def setup_logging(verbose: bool = False) -> None:
     """Setup logging configuration."""
     level = logging.DEBUG if verbose else logging.INFO
-    logging.basicConfig(
-        level=level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    )
+    logging.basicConfig(level=level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
 
 def materialize_minute_data(
@@ -105,9 +103,7 @@ def materialize_minute_data(
             )
 
             if coverage < 0.9:
-                logger.warning(
-                    f"[WARN:materialize:low_coverage] venue={venue} coverage={coverage}"
-                )
+                logger.warning(f"[WARN:materialize:low_coverage] venue={venue} coverage={coverage}")
 
             # Legacy fields for compatibility
             actual_bars = actual_minutes
@@ -143,9 +139,7 @@ def materialize_minute_data(
             print(
                 f"[MZ:done] venue={venue} path={cache_dir} rows={actual_minutes} coverage={coverage}"
             )
-            print(
-                f"[DATA:minute:materialize] {json.dumps(materialize_log, ensure_ascii=False)}"
-            )
+            print(f"[DATA:minute:materialize] {json.dumps(materialize_log, ensure_ascii=False)}")
 
             results["venues"][venue] = {
                 "success": True,
@@ -183,9 +177,7 @@ def main():
     parser.add_argument("--start", required=True, help="Start date (YYYY-MM-DD)")
     parser.add_argument("--end", required=True, help="End date (YYYY-MM-DD)")
     parser.add_argument("--pair", required=True, help="Trading pair (e.g., BTC-USD)")
-    parser.add_argument(
-        "--venues", required=True, help="Comma-separated list of venues"
-    )
+    parser.add_argument("--venues", required=True, help="Comma-separated list of venues")
     parser.add_argument("--cache-dir", default="data/cache", help="Cache directory")
     parser.add_argument(
         "--min-coverage", type=float, default=0.95, help="Minimum coverage required"
@@ -224,9 +216,7 @@ def main():
 
         for venue, result in results["venues"].items():
             if result["success"]:
-                print(
-                    f"  {venue}: {result['bars']} bars ({result['coverage_pct']:.2f}% coverage)"
-                )
+                print(f"  {venue}: {result['bars']} bars ({result['coverage_pct']:.2f}% coverage)")
             else:
                 print(f"  {venue}: FAILED - {result['reason']}")
 

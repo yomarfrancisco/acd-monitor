@@ -1,0 +1,7 @@
+{
+  "freq": "5s",
+  "n_edges": 36,
+  "n_significant_raw": 18,
+  "n_significant_fdr": 12,
+  "memory_peak_mb": 179.953125
+}

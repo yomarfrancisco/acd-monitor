@@ -123,14 +123,10 @@ class TestDemoPipeline:
         # Mock ingestion methods
         with patch.object(pipeline.ingestion, "ingest_golden_datasets") as mock_golden:
             with patch.object(pipeline.ingestion, "generate_mock_feeds") as mock_feeds:
-                with patch.object(
-                    pipeline.ingestion, "validate_mock_data"
-                ) as mock_validate:
+                with patch.object(pipeline.ingestion, "validate_mock_data") as mock_validate:
 
                     # Setup mocks
-                    mock_golden.return_value = {
-                        "test_dataset": pd.DataFrame({"col": range(50)})
-                    }
+                    mock_golden.return_value = {"test_dataset": pd.DataFrame({"col": range(50)})}
                     mock_feeds.side_effect = [
                         [MagicMock(), MagicMock()],  # market_style
                         [MagicMock(), MagicMock()],  # regulatory_style
@@ -152,9 +148,7 @@ class TestDemoPipeline:
                     assert results["golden_datasets"]["test_dataset"] == 50
                     assert results["mock_feeds"]["market_style"] == 2
                     assert results["mock_feeds"]["regulatory_style"] == 2
-                    assert (
-                        len(results["quality_metrics"]) == 4
-                    )  # 2 market + 2 regulatory
+                    assert len(results["quality_metrics"]) == 4  # 2 market + 2 regulatory
 
     def test_run_feature_engineering_phase(self):
         """Test feature engineering phase execution."""
@@ -167,18 +161,12 @@ class TestDemoPipeline:
         }
 
         # Mock feature engineering methods
-        with patch.object(
-            pipeline.feature_engineering, "prepare_vmm_windows"
-        ) as mock_windows:
-            with patch.object(
-                pipeline.feature_engineering, "run_vmm_analysis"
-            ) as mock_vmm:
+        with patch.object(pipeline.feature_engineering, "prepare_vmm_windows") as mock_windows:
+            with patch.object(pipeline.feature_engineering, "run_vmm_analysis") as mock_vmm:
                 with patch.object(
                     pipeline.feature_engineering, "prepare_evidence_data"
                 ) as mock_evidence:
-                    with patch.object(
-                        pipeline.ingestion, "validate_mock_data"
-                    ) as mock_validate:
+                    with patch.object(pipeline.ingestion, "validate_mock_data") as mock_validate:
 
                         # Setup mocks
                         mock_windows.return_value = [MagicMock(), MagicMock()]
@@ -187,9 +175,7 @@ class TestDemoPipeline:
                         mock_validate.return_value = {"overall": 0.9}
 
                         # Run feature engineering phase
-                        results = pipeline._run_feature_engineering_phase(
-                            ingestion_results
-                        )
+                        results = pipeline._run_feature_engineering_phase(ingestion_results)
 
                         # Check results
                         assert "vmm_windows" in results

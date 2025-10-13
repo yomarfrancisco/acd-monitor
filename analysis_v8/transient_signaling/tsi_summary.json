@@ -1,0 +1,13 @@
+{
+  "analysis_period": "2025-09-01 to 2025-09-03",
+  "total_edges": 12,
+  "edges_with_tsi_above_0.1": 12,
+  "edges_with_tsi_bh_above_0.1": 12,
+  "mean_tsi": 0.35185185185185186,
+  "median_tsi": 0.3333333333333333,
+  "max_tsi": 0.5555555555555556,
+  "tsi_above_threshold_ratio": 1.0,
+  "environment_analysis_available": true,
+  "memory_peak_mb": 263.921875,
+  "status": "ACD_TSI_PASS"
+}

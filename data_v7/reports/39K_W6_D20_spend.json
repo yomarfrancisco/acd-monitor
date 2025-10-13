@@ -1,0 +1,39 @@
+{
+  "date": "20250720",
+  "total_calls": 16,
+  "list_calls": 4,
+  "get_calls": 12,
+  "budget_used": "16/24",
+  "duration_seconds": 61.74732804298401,
+  "timestamp": "2025-10-11T15:49:43.391789Z",
+  "per_venue": {
+    "COINBASE": {
+      "target_found": true,
+      "new_files": 1,
+      "quarantined_files": 2,
+      "target_keys_available": 2,
+      "quarantine_keys_available": 32
+    },
+    "BINANCE": {
+      "target_found": true,
+      "new_files": 1,
+      "quarantined_files": 2,
+      "target_keys_available": 2,
+      "quarantine_keys_available": 227
+    },
+    "BYBITSPOT": {
+      "target_found": true,
+      "new_files": 1,
+      "quarantined_files": 2,
+      "target_keys_available": 3,
+      "quarantine_keys_available": 20
+    },
+    "BITGET": {
+      "target_found": true,
+      "new_files": 1,
+      "quarantined_files": 2,
+      "target_keys_available": 2,
+      "quarantine_keys_available": 22
+    }
+  }
+}

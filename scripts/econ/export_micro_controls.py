@@ -129,9 +129,7 @@ def calculate_microstructure_controls(
 
             # Price momentum (30-second return)
             if i >= 30:
-                momentum_30s = (price - venue_data.iloc[i - 30]) / venue_data.iloc[
-                    i - 30
-                ]
+                momentum_30s = (price - venue_data.iloc[i - 30]) / venue_data.iloc[i - 30]
             else:
                 momentum_30s = 0.0
 
@@ -193,9 +191,7 @@ def calculate_cross_venue_controls(resampled_mids: pd.DataFrame) -> pd.DataFrame
             spread = abs(venue1_prices - venue2_prices)
             spread_bps = (spread / venue1_prices) * 10000  # Convert to basis points
 
-            for timestamp, spread_val, spread_bps_val in zip(
-                common_idx, spread, spread_bps
-            ):
+            for timestamp, spread_val, spread_bps_val in zip(common_idx, spread, spread_bps):
                 cross_controls.append(
                     {
                         "timestamp": timestamp,
@@ -257,12 +253,8 @@ def export_micro_controls(snapshot_path: str, output_path: str) -> bool:
 def main():
     """Main function for microstructure controls export."""
     parser = argparse.ArgumentParser(description="Export microstructure controls")
-    parser.add_argument(
-        "--snapshot", required=True, help="Path to snapshot OVERLAP.json"
-    )
-    parser.add_argument(
-        "--output", required=True, help="Output path for micro_controls.json"
-    )
+    parser.add_argument("--snapshot", required=True, help="Path to snapshot OVERLAP.json")
+    parser.add_argument("--output", required=True, help="Output path for micro_controls.json")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
 
     args = parser.parse_args()

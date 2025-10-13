@@ -1,0 +1,14 @@
+{
+  "PRECHECK_OK": true,
+  "timestamp": "2025-10-12T07:55:52.642660",
+  "checks": {
+    "bom_consistency": true,
+    "manifest_agreement": true,
+    "coverage_integrity": true,
+    "naming_normalization": true,
+    "format_content_sanity": true,
+    "beacons_inputs": true
+  },
+  "total_canonical_files": 386,
+  "total_issues": 0
+}

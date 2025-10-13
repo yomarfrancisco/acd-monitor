@@ -1,0 +1,5 @@
+window,window_min,total_beacons,positive_responses,conditional_prob,baseline_prob,lift,is_shuffled
+1m,1,240,3,0.0125,0.25,0.05,True
+5m,5,240,15,0.0625,0.25,0.25,True
+10m,10,240,21,0.0875,0.25,0.35,True
+30m,30,240,55,0.22916666666666666,0.25,0.9166666666666666,True

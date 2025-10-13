@@ -1,0 +1,27 @@
+{
+  "hourly_beacons.parquet": {
+    "sha256": "53f028bcaa274a863625ce56fed0578e3178f1b12554afeb5ccebec1d06ede30",
+    "size": 1311565,
+    "rows": 9210
+  },
+  "venue_aligned.parquet": {
+    "sha256": "6bcb4848a101c199bf04858ffb8a08ec412b9a6de0e92e21dcf4745f45be99b5",
+    "size": 438302,
+    "rows": 2304
+  },
+  "aggregates_1s.parquet": {
+    "sha256": "89547c9f3417930ce62faebe9247b4935c54e21080d75e27428f30df7227d661",
+    "size": 122387,
+    "rows": 2304
+  },
+  "aggregates_1m.parquet": {
+    "sha256": "5a97f190951ac34eb56330119ca69442e3626650e5cfa1884cc4b2f83e52c73d",
+    "size": 163122,
+    "rows": 2112
+  },
+  "aggregates_1h.parquet": {
+    "sha256": "78a9ce32c35918d49e50c06016b5382aabf766721cb99794dd00aa21f9cda464",
+    "size": 1257908,
+    "rows": 9210
+  }
+}

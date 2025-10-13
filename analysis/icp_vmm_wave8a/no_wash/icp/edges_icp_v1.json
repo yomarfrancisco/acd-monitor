@@ -1,0 +1,4091 @@
+[
+  {
+    "source": "BINANCE",
+    "target": "COINBASE",
+    "lag": 1,
+    "total_samples": 198595,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.022620591246615657,
+          0.039969600904845214,
+          0.0460317000940645,
+          0.07395108883759174,
+          0.009330982702180576
+        ],
+        "pooled_coefficient": 0.03803863269792189,
+        "coefficient_std": 0.02199355393537377,
+        "invariance_score": 0.9784797527825068,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.017662240908863598,
+          0.02675719262611712,
+          0.039866120607918165,
+          0.010425744171724913,
+          0.007065126919394173
+        ],
+        "pooled_coefficient": 0.02198863792883832,
+        "coefficient_std": 0.011867044254718382,
+        "invariance_score": 0.9882721308870585,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.02170293451333154,
+          0.028678296150743878,
+          0.018055116559113453
+        ],
+        "pooled_coefficient": 0.022569893483093247,
+        "coefficient_std": 0.004407243916249105,
+        "invariance_score": 0.995612094652897,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.04958160179596889,
+          0.019298003201905035
+        ],
+        "pooled_coefficient": 0.022943563218966317,
+        "coefficient_std": 0.015141799297031928,
+        "invariance_score": 0.985084054949252,
+        "p_value": 0.05,
+        "invariant": false
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "time_of_day"
+    ]
+  },
+  {
+    "source": "BINANCE",
+    "target": "COINBASE",
+    "lag": 2,
+    "total_samples": 184164,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.007594065290959151,
+          0.009664627746528558,
+          0.015504910414098546,
+          0.022459327957954175,
+          0.001798087173353527
+        ],
+        "pooled_coefficient": 0.01127441272177184,
+        "coefficient_std": 0.0070548185211430445,
+        "invariance_score": 0.9929946032813756,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.003222784261140882,
+          0.008639421293252094,
+          0.011800157655471427,
+          0.0017972649747072993,
+          0.002302377394407029
+        ],
+        "pooled_coefficient": 0.006160734915512121,
+        "coefficient_std": 0.0039662317550106145,
+        "invariance_score": 0.9960494370930411,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.005686582475842091,
+          0.008224247357561146,
+          0.005062719824256633
+        ],
+        "pooled_coefficient": 0.006258433468371908,
+        "coefficient_std": 0.0013672439432748538,
+        "invariance_score": 0.9986346228603497,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.01518355434924783,
+          0.005133392075525944
+        ],
+        "pooled_coefficient": 0.0064010405815112924,
+        "coefficient_std": 0.005025081136860943,
+        "invariance_score": 0.9950000440474813,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "volatility",
+      "liquidity",
+      "time_of_day",
+      "coverage"
+    ]
+  },
+  {
+    "source": "BINANCE",
+    "target": "COINBASE",
+    "lag": 3,
+    "total_samples": 183970,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.0032643609038910354,
+          0.0038623244316986927,
+          0.010080659143107181,
+          0.007028021569728554,
+          0.0017642146778962834
+        ],
+        "pooled_coefficient": 0.005160152387295492,
+        "coefficient_std": 0.0029833937692309268,
+        "invariance_score": 0.9970254803940279,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.004901718629768524,
+          0.0022784347629771743,
+          0.0056900697024220796,
+          0.00107314320055711,
+          0.0005604351537838103
+        ],
+        "pooled_coefficient": 0.0031613137103255902,
+        "coefficient_std": 0.0020488375390024893,
+        "invariance_score": 0.9979553516133661,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.0036505881476771138,
+          0.004326642525523679,
+          0.0021204463084035876
+        ],
+        "pooled_coefficient": 0.0033439854505649185,
+        "coefficient_std": 0.0009228991348845511,
+        "invariance_score": 0.9990779518225806,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.0040866629508660565,
+          0.003207645603521147
+        ],
+        "pooled_coefficient": 0.003318706533138395,
+        "coefficient_std": 0.00043950867367245476,
+        "invariance_score": 0.9995606844093402,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "volatility",
+      "liquidity",
+      "time_of_day",
+      "coverage"
+    ]
+  },
+  {
+    "source": "BINANCE",
+    "target": "COINBASE",
+    "lag": 5,
+    "total_samples": 183560,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.006450772502486114,
+          -0.0009138519623416965,
+          0.004631299531049688,
+          0.0036360626359792903,
+          0.0009643330166488526
+        ],
+        "pooled_coefficient": 0.002925179619316837,
+        "coefficient_std": 0.0026239288944018883,
+        "invariance_score": 0.9973829380899623,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          -0.0005789561080969475,
+          0.002163438652962606,
+          0.006334380109390182,
+          0.0012232988426588978,
+          0.0012944646881294665
+        ],
+        "pooled_coefficient": 0.002360372928527984,
+        "coefficient_std": 0.0023033668406256106,
+        "invariance_score": 0.9977019264657505,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.0025030316638817575,
+          0.004178532483185945,
+          0.0007579765815271921
+        ],
+        "pooled_coefficient": 0.0024302098045822394,
+        "coefficient_std": 0.0013965323289535972,
+        "invariance_score": 0.9986054152537301,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.00832578050785449,
+          0.001660460933979654
+        ],
+        "pooled_coefficient": 0.0025043377420906326,
+        "coefficient_std": 0.0033326597869374184,
+        "invariance_score": 0.9966784099426753,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "volatility",
+      "liquidity",
+      "time_of_day",
+      "coverage"
+    ]
+  },
+  {
+    "source": "BINANCE",
+    "target": "COINBASE",
+    "lag": 10,
+    "total_samples": 182630,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.0002612594837214557,
+          -0.002244626825734112,
+          -0.006310123006626646,
+          0.00100833077298058,
+          0.0016646342475184366
+        ],
+        "pooled_coefficient": -0.001103914157002854,
+        "coefficient_std": 0.0029118356957869755,
+        "invariance_score": 0.9970966184741785,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.00013205118556816752,
+          -0.0015251469170196926,
+          0.0015121324851251896,
+          -0.00018472082334979853,
+          0.0010165051422877278
+        ],
+        "pooled_coefficient": 0.00019065932629983964,
+        "coefficient_std": 0.001050394938213954,
+        "invariance_score": 0.9989507072335966,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          -0.0011585664220435375,
+          -3.897355052223508e-05,
+          0.001791430795414851
+        ],
+        "pooled_coefficient": 0.00018003724007412025,
+        "coefficient_std": 0.0012159290846737057,
+        "invariance_score": 0.9987855476033175,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          -0.0008085910915340572,
+          0.00030806138677720146
+        ],
+        "pooled_coefficient": 0.00016627104032788814,
+        "coefficient_std": 0.0005583262391556294,
+        "invariance_score": 0.9994419853150849,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "volatility",
+      "liquidity",
+      "time_of_day",
+      "coverage"
+    ]
+  },
+  {
+    "source": "BINANCE",
+    "target": "BYBITSPOT",
+    "lag": 1,
+    "total_samples": 93875,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.027186812232762723,
+          0.03600914900163144,
+          0.040208507039136455,
+          0.09657723102772708,
+          0.007185126040240298
+        ],
+        "pooled_coefficient": 0.0406120856800328,
+        "coefficient_std": 0.029825071648864953,
+        "invariance_score": 0.971038701163964,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.005717833977169393,
+          0.023728232510531765,
+          0.045330354079120824,
+          0.01312714651971288,
+          0.002841769035770733
+        ],
+        "pooled_coefficient": 0.022597357185877714,
+        "coefficient_std": 0.015388424648516991,
+        "invariance_score": 0.9848447901561969,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.01714111431080331,
+          0.0252828025491095,
+          0.02900386136248938
+        ],
+        "pooled_coefficient": 0.023220356623358238,
+        "coefficient_std": 0.004953765500154538,
+        "invariance_score": 0.9950706533273308,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.048712995452680735,
+          0.019174363280216634
+        ],
+        "pooled_coefficient": 0.023844220431444754,
+        "coefficient_std": 0.01476931608623205,
+        "invariance_score": 0.9854456418300127,
+        "p_value": 0.05,
+        "invariant": false
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "time_of_day"
+    ]
+  },
+  {
+    "source": "BINANCE",
+    "target": "BYBITSPOT",
+    "lag": 2,
+    "total_samples": 87829,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.01611746433214403,
+          0.021142563445287057,
+          0.021046049070039916,
+          0.027269838941576693,
+          0.0011524018990272424
+        ],
+        "pooled_coefficient": 0.017286596228369262,
+        "coefficient_std": 0.008835482502162916,
+        "invariance_score": 0.9912418995411931,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.009150102444676447,
+          0.009891530478335325,
+          0.013620639821075883,
+          0.007453420840742159,
+          0.005513799659240336
+        ],
+        "pooled_coefficient": 0.010035307191955828,
+        "coefficient_std": 0.002706803179276555,
+        "invariance_score": 0.9973005038255509,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.014380592132477771,
+          0.00921322980204234,
+          0.005610098924367
+        ],
+        "pooled_coefficient": 0.010198931823375309,
+        "coefficient_std": 0.003599471206366873,
+        "invariance_score": 0.9964134385184159,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.024026047799821874,
+          0.007897638631984675
+        ],
+        "pooled_coefficient": 0.010545093060165673,
+        "coefficient_std": 0.0080642045839186,
+        "invariance_score": 0.9920003065804255,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "volatility",
+      "liquidity",
+      "time_of_day",
+      "coverage"
+    ]
+  },
+  {
+    "source": "BINANCE",
+    "target": "BYBITSPOT",
+    "lag": 3,
+    "total_samples": 87372,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.006549069670604843,
+          0.011709082555974267,
+          0.021131444014912872,
+          0.022054557135039437,
+          0.00821651743051882
+        ],
+        "pooled_coefficient": 0.013825560258779816,
+        "coefficient_std": 0.006479563128167646,
+        "invariance_score": 0.993562151318772,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.014432149985261399,
+          0.016191646226142876,
+          0.009662416815859115,
+          -0.004064140819172638,
+          0.014192569673373815
+        ],
+        "pooled_coefficient": 0.010708739913840084,
+        "coefficient_std": 0.007395102578834394,
+        "invariance_score": 0.992659183512106,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.013113772838231815,
+          0.010452858625193597,
+          0.00565900995421897
+        ],
+        "pooled_coefficient": 0.01019552141784592,
+        "coefficient_std": 0.0030846382677572042,
+        "invariance_score": 0.9969248474654302,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.007444525678404777,
+          0.010642642476547039
+        ],
+        "pooled_coefficient": 0.010115845597010535,
+        "coefficient_std": 0.0015990583990711307,
+        "invariance_score": 0.9984034945064476,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "volatility",
+      "liquidity",
+      "time_of_day",
+      "coverage"
+    ]
+  },
+  {
+    "source": "BINANCE",
+    "target": "BYBITSPOT",
+    "lag": 5,
+    "total_samples": 86970,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.016239034851062102,
+          0.008393745247882436,
+          -0.006884948948392571,
+          0.011606984077663146,
+          0.0045712595457220746
+        ],
+        "pooled_coefficient": 0.006630569048808495,
+        "coefficient_std": 0.007835643145300275,
+        "invariance_score": 0.992225276811161,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          -0.0006802360709820253,
+          0.01723994365306551,
+          0.014696787611487393,
+          -0.013336591163474614,
+          0.007671654401998922
+        ],
+        "pooled_coefficient": 0.007478040682444453,
+        "coefficient_std": 0.011130205001697124,
+        "invariance_score": 0.9889923128132857,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          -0.006358845172290004,
+          0.009220723584936941,
+          0.022132304537671205
+        ],
+        "pooled_coefficient": 0.006788487364984685,
+        "coefficient_std": 0.011648450050236034,
+        "invariance_score": 0.9884856740010252,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.00977182813787967,
+          0.0063955169776812315
+        ],
+        "pooled_coefficient": 0.006953460452377931,
+        "coefficient_std": 0.0016881555800992189,
+        "invariance_score": 0.9983146894862488,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "volatility",
+      "coverage"
+    ]
+  },
+  {
+    "source": "BINANCE",
+    "target": "BYBITSPOT",
+    "lag": 10,
+    "total_samples": 86502,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.006195059814426289,
+          -0.004364080329403987,
+          0.003963578815478379,
+          -0.007859790267773538,
+          -0.005158677500545223
+        ],
+        "pooled_coefficient": -0.0014316712501640195,
+        "coefficient_std": 0.00549700287903312,
+        "invariance_score": 0.9945330489665374,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.0044213045144965435,
+          -0.008977285480326211,
+          -0.007677263835647823,
+          0.012891654862815365,
+          -0.00528303120238348
+        ],
+        "pooled_coefficient": -0.0024054258492574787,
+        "coefficient_std": 0.008353534914693258,
+        "invariance_score": 0.9917156685374242,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          -0.00569315897079914,
+          -0.006692386631929071,
+          0.00938281381015595
+        ],
+        "pooled_coefficient": -0.002108633975660456,
+        "coefficient_std": 0.007353725287710958,
+        "invariance_score": 0.9926999572214709,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          -0.013820109799183423,
+          0.00017188472061065502
+        ],
+        "pooled_coefficient": -0.002144424284076534,
+        "coefficient_std": 0.006995997259897039,
+        "invariance_score": 0.9930526066847003,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "volatility",
+      "liquidity",
+      "time_of_day",
+      "coverage"
+    ]
+  },
+  {
+    "source": "BINANCE",
+    "target": "BITGET",
+    "lag": 1,
+    "total_samples": 124370,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.020074196171372644,
+          0.061117792675694484,
+          0.034750546744700385,
+          0.06767306928868104,
+          0.00985557812666536
+        ],
+        "pooled_coefficient": 0.04039768889644351,
+        "coefficient_std": 0.022523389748696932,
+        "invariance_score": 0.977972738839517,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.00563226556523419,
+          0.04424142208275671,
+          0.02723743135118865,
+          0.0298285769482292,
+          0.018910236340847316
+        ],
+        "pooled_coefficient": 0.026718397766444454,
+        "coefficient_std": 0.01273266240614331,
+        "invariance_score": 0.987427420010438,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.004586422491005864,
+          0.03426818537497083,
+          0.04909265286117933
+        ],
+        "pooled_coefficient": 0.025428287278732524,
+        "coefficient_std": 0.018503982832270116,
+        "invariance_score": 0.9818321939391793,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.04124654695191624,
+          0.023434879175196533
+        ],
+        "pooled_coefficient": 0.02658503953876272,
+        "coefficient_std": 0.008905833888359855,
+        "invariance_score": 0.9911727798678333,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "coverage"
+    ]
+  },
+  {
+    "source": "BINANCE",
+    "target": "BITGET",
+    "lag": 2,
+    "total_samples": 116241,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          -0.008720935746217144,
+          -0.023183238537342353,
+          0.031879866751986695,
+          0.05023798177221131,
+          -0.007749060176384274
+        ],
+        "pooled_coefficient": 0.009062675125056562,
+        "coefficient_std": 0.027760033249729508,
+        "invariance_score": 0.9729897715890415,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.004477430131424024,
+          0.010679180185344568,
+          0.006765047071209297,
+          -0.026039739428772104,
+          -0.03924495375293327
+        ],
+        "pooled_coefficient": -0.00377941702057725,
+        "coefficient_std": 0.020109808461679184,
+        "invariance_score": 0.9802866237586672,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          -0.0006234120452482171,
+          0.004972222480466021,
+          -0.02187198629650592
+        ],
+        "pooled_coefficient": -0.002085351648355992,
+        "coefficient_std": 0.011563470155423042,
+        "invariance_score": 0.9885687151655977,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.023398914878102486,
+          -0.008199504887462579
+        ],
+        "pooled_coefficient": -0.002380596124619126,
+        "coefficient_std": 0.015799209882782533,
+        "invariance_score": 0.9844465227684064,
+        "p_value": 0.05,
+        "invariant": false
+      }
+    },
+    "overall_invariant": false,
+    "invariant_environments": []
+  },
+  {
+    "source": "BINANCE",
+    "target": "BITGET",
+    "lag": 3,
+    "total_samples": 116016,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.025421608657361226,
+          0.019567516183904794,
+          0.020630238845814754,
+          0.040856735465226786,
+          0.004459820893622212
+        ],
+        "pooled_coefficient": 0.022766126064544354,
+        "coefficient_std": 0.011683833233678819,
+        "invariance_score": 0.9884511021626852,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.02549858793010647,
+          -0.022932299326298155,
+          0.026864880769669496,
+          0.003053374372806289,
+          0.06630300723254015
+        ],
+        "pooled_coefficient": 0.015841554774396846,
+        "coefficient_std": 0.029500528724241148,
+        "invariance_score": 0.9713448144016028,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.03330272407495121,
+          0.012288693490480356,
+          -0.010311598753663264
+        ],
+        "pooled_coefficient": 0.0163351997823943,
+        "coefficient_std": 0.017809397789819895,
+        "invariance_score": 0.9825022270097985,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.009147267501797469,
+          0.016580709086338907
+        ],
+        "pooled_coefficient": 0.015208146805066956,
+        "coefficient_std": 0.0037167207922707193,
+        "invariance_score": 0.9962970420684663,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "coverage"
+    ]
+  },
+  {
+    "source": "BINANCE",
+    "target": "BITGET",
+    "lag": 5,
+    "total_samples": 115958,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.010576166291286567,
+          0.014665341746485358,
+          0.02512486016244964,
+          -0.02284646235201914,
+          -0.002743872211368984
+        ],
+        "pooled_coefficient": 0.005708768950414042,
+        "coefficient_std": 0.016522139379055317,
+        "invariance_score": 0.9837464047864733,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          -0.019976615042165503,
+          0.0162920719232881,
+          0.0018645923782397763,
+          0.014009452546197872,
+          0.02214412693386306
+        ],
+        "pooled_coefficient": 0.006054723352047566,
+        "coefficient_std": 0.014958883425291834,
+        "invariance_score": 0.9852615867799408,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          -0.0018524578046106616,
+          0.010076003087481092,
+          0.007133126469102522
+        ],
+        "pooled_coefficient": 0.00491330035943895,
+        "coefficient_std": 0.005073782577406715,
+        "invariance_score": 0.9949518307358535,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          -0.006805278845598851,
+          0.00742140923906813
+        ],
+        "pooled_coefficient": 0.004793548875095984,
+        "coefficient_std": 0.007113344042333491,
+        "invariance_score": 0.9929368982305586,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "time_of_day",
+      "coverage"
+    ]
+  },
+  {
+    "source": "BINANCE",
+    "target": "BITGET",
+    "lag": 10,
+    "total_samples": 115314,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          -0.01750457675087535,
+          -0.03313765524873416,
+          0.0366304183507208,
+          -0.0015572809476200181,
+          -0.0068148702201978545
+        ],
+        "pooled_coefficient": -0.004132827801141232,
+        "coefficient_std": 0.02321620621481863,
+        "invariance_score": 0.9773105565824624,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          -0.004766303234855911,
+          -0.0048483741997750835,
+          -0.02627763382627757,
+          0.012154903265399288,
+          -0.006538173785572557
+        ],
+        "pooled_coefficient": -0.008497612467376042,
+        "coefficient_std": 0.012197586956611847,
+        "invariance_score": 0.9879494012692853,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          -0.012829282512724674,
+          -0.022081150566832065,
+          0.025289181987889157
+        ],
+        "pooled_coefficient": -0.00986370217127112,
+        "coefficient_std": 0.02050084769174206,
+        "invariance_score": 0.9799109939613351,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          -0.01128610881054593,
+          -0.008008018950310994
+        ],
+        "pooled_coefficient": -0.00861400817582245,
+        "coefficient_std": 0.0016390449301174684,
+        "invariance_score": 0.9983636371421285,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "coverage"
+    ]
+  },
+  {
+    "source": "COINBASE",
+    "target": "BINANCE",
+    "lag": 1,
+    "total_samples": 214818,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.13799287260897472,
+          0.13405090488284757,
+          0.13268102409968688,
+          0.1508316426357417,
+          0.09086301600066057
+        ],
+        "pooled_coefficient": 0.12885837929272423,
+        "coefficient_std": 0.020251323569545662,
+        "invariance_score": 0.9801506519994578,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.1137841964925662,
+          0.12052259811520949,
+          0.15008424110770785,
+          0.06176920107286808,
+          0.062332682441188704
+        ],
+        "pooled_coefficient": 0.1055039660546584,
+        "coefficient_std": 0.034599442703472295,
+        "invariance_score": 0.9665576441709055,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.1344924537103542,
+          0.13517572756572951,
+          0.10366835494878224
+        ],
+        "pooled_coefficient": 0.12407570391955916,
+        "coefficient_std": 0.014694316576477757,
+        "invariance_score": 0.9855184794706888,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.15747946127569823,
+          0.11633482584550756
+        ],
+        "pooled_coefficient": 0.12106261486206495,
+        "coefficient_std": 0.020572317715095337,
+        "invariance_score": 0.9798423714243458,
+        "p_value": 0.05,
+        "invariant": false
+      }
+    },
+    "overall_invariant": false,
+    "invariant_environments": []
+  },
+  {
+    "source": "COINBASE",
+    "target": "BINANCE",
+    "lag": 2,
+    "total_samples": 214392,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.08477764669665404,
+          0.09592760097543748,
+          0.08386714465867882,
+          0.07791417816406072,
+          0.07286578548107758
+        ],
+        "pooled_coefficient": 0.08292854702874852,
+        "coefficient_std": 0.00774051537474134,
+        "invariance_score": 0.992318939988373,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.048435700733728174,
+          0.1168123936816126,
+          0.08330700956392065,
+          0.06722369291063929,
+          0.03337789410189347
+        ],
+        "pooled_coefficient": 0.0723104269187939,
+        "coefficient_std": 0.028921410740251896,
+        "invariance_score": 0.9718915259821014,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.09388771205808144,
+          0.08069717124735803,
+          0.0730933220772612
+        ],
+        "pooled_coefficient": 0.08281567266095427,
+        "coefficient_std": 0.008590793158022782,
+        "invariance_score": 0.9914823799539912,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.08239223573101734,
+          0.08287625605901418
+        ],
+        "pooled_coefficient": 0.08282046295868493,
+        "coefficient_std": 0.00024201016399841985,
+        "invariance_score": 0.9997580483907502,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "volatility",
+      "time_of_day",
+      "coverage"
+    ]
+  },
+  {
+    "source": "COINBASE",
+    "target": "BINANCE",
+    "lag": 3,
+    "total_samples": 214261,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.04466922608597801,
+          0.04193509601209192,
+          0.04197407507299877,
+          0.05867921483047485,
+          0.06532420951731106
+        ],
+        "pooled_coefficient": 0.05070050466882565,
+        "coefficient_std": 0.009661286712683667,
+        "invariance_score": 0.9904311605883795,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.0931813197878761,
+          0.03488167548356851,
+          0.048364381220393146,
+          0.029010271426931727,
+          0.05982436016933098
+        ],
+        "pooled_coefficient": 0.05269214878525864,
+        "coefficient_std": 0.02274364238080929,
+        "invariance_score": 0.97776212783111,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.05325127627590818,
+          0.03706360453956249,
+          0.06616598575666782
+        ],
+        "pooled_coefficient": 0.05288186546230785,
+        "coefficient_std": 0.011906016358322717,
+        "invariance_score": 0.9882340690085326,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.04126772226384544,
+          0.054015866843139505
+        ],
+        "pooled_coefficient": 0.0525443572742721,
+        "coefficient_std": 0.0063740722896470335,
+        "invariance_score": 0.9936662991772581,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "volatility",
+      "coverage"
+    ]
+  },
+  {
+    "source": "COINBASE",
+    "target": "BINANCE",
+    "lag": 5,
+    "total_samples": 214475,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.026340125252382,
+          0.05412872888889245,
+          0.03709475270643369,
+          0.029132318071188792,
+          0.02867330187227028
+        ],
+        "pooled_coefficient": 0.034962923823703085,
+        "coefficient_std": 0.010195285412216227,
+        "invariance_score": 0.9899076093905388,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.03757104083957042,
+          0.0497887271438312,
+          0.02687260483691622,
+          0.056269920896655154,
+          -0.03525387001017283
+        ],
+        "pooled_coefficient": 0.029030601337744537,
+        "coefficient_std": 0.03275163958176066,
+        "invariance_score": 0.9682870127468166,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.04767345997554767,
+          0.024335194181453447,
+          0.03517076263544706
+        ],
+        "pooled_coefficient": 0.0364349000046092,
+        "coefficient_std": 0.009535906615262879,
+        "invariance_score": 0.9905541679570026,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.02127822864708718,
+          0.039333949095961954
+        ],
+        "pooled_coefficient": 0.037256415261075225,
+        "coefficient_std": 0.009027860224437387,
+        "invariance_score": 0.9910529128279676,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "time_of_day",
+      "coverage"
+    ]
+  },
+  {
+    "source": "COINBASE",
+    "target": "BINANCE",
+    "lag": 10,
+    "total_samples": 214006,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.02756765099210208,
+          0.005954513774354589,
+          -0.009048387147198059,
+          0.00527368217426485,
+          0.014977921019861722
+        ],
+        "pooled_coefficient": 0.00900686080824632,
+        "coefficient_std": 0.012077937153742887,
+        "invariance_score": 0.9880661985501733,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.032917869883565765,
+          0.0037725838046144596,
+          0.0087852222526233,
+          -0.019937457781404058,
+          0.03591346546933446
+        ],
+        "pooled_coefficient": 0.011691531469785764,
+        "coefficient_std": 0.020528107642465925,
+        "invariance_score": 0.9798848189591876,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.026982318502230297,
+          0.009125397733023208,
+          -0.007688213715804367
+        ],
+        "pooled_coefficient": 0.009737369650944985,
+        "coefficient_std": 0.014156321530961451,
+        "invariance_score": 0.9860412825612611,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.009318616830400512,
+          0.010007432217459717
+        ],
+        "pooled_coefficient": 0.009927799022636992,
+        "coefficient_std": 0.00034440769352960237,
+        "invariance_score": 0.9996557108822914,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "coverage"
+    ]
+  },
+  {
+    "source": "COINBASE",
+    "target": "BYBITSPOT",
+    "lag": 1,
+    "total_samples": 69278,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.18654116976650026,
+          0.17414355662491582,
+          0.18239750027880972,
+          0.2431965458774747,
+          0.1566668448240716
+        ],
+        "pooled_coefficient": 0.18725324363425236,
+        "coefficient_std": 0.029162329020590332,
+        "invariance_score": 0.9716640143170195,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.16061705173261237,
+          0.17926137928464805,
+          0.19016782159181034,
+          0.1570586470804284,
+          0.3101609106539149
+        ],
+        "pooled_coefficient": 0.18871559797484713,
+        "coefficient_std": 0.056666867927749116,
+        "invariance_score": 0.9463720594941339,
+        "p_value": 0.1,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.1728522603771485,
+          0.17814135663730668,
+          0.2026042025667131
+        ],
+        "pooled_coefficient": 0.18366106035448188,
+        "coefficient_std": 0.012959695788037493,
+        "invariance_score": 0.9872061091453836,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.19036526619668886,
+          0.18076540332761878
+        ],
+        "pooled_coefficient": 0.1825112486506277,
+        "coefficient_std": 0.00479993143453504,
+        "invariance_score": 0.995222997848256,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "coverage"
+    ]
+  },
+  {
+    "source": "COINBASE",
+    "target": "BYBITSPOT",
+    "lag": 2,
+    "total_samples": 68153,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.10268690518064748,
+          0.09786620116649765,
+          0.11978507152723501,
+          0.11085967873158804,
+          0.059090687847697596
+        ],
+        "pooled_coefficient": 0.09762564888038519,
+        "coefficient_std": 0.020860793759641984,
+        "invariance_score": 0.9795654864138572,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.10337146210417039,
+          0.11402366007129573,
+          0.0797016668068269,
+          0.12869729739295602,
+          0.10440736172821032
+        ],
+        "pooled_coefficient": 0.10177765934318878,
+        "coefficient_std": 0.01600366427097274,
+        "invariance_score": 0.9842484187471351,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.11573976836470913,
+          0.06867219807612411,
+          0.112951481276124
+        ],
+        "pooled_coefficient": 0.09842934090552832,
+        "coefficient_std": 0.021560729833207448,
+        "invariance_score": 0.9788943239461371,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.06673152177261768,
+          0.10535329025343661
+        ],
+        "pooled_coefficient": 0.09825263791143168,
+        "coefficient_std": 0.019310884240409464,
+        "invariance_score": 0.981054961210583,
+        "p_value": 0.05,
+        "invariant": false
+      }
+    },
+    "overall_invariant": false,
+    "invariant_environments": []
+  },
+  {
+    "source": "COINBASE",
+    "target": "BYBITSPOT",
+    "lag": 3,
+    "total_samples": 67873,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.04635605345450222,
+          0.0758150416614363,
+          0.08353056673816658,
+          0.12086106275153675,
+          0.12344319642893989
+        ],
+        "pooled_coefficient": 0.08958217931129882,
+        "coefficient_std": 0.029047248593936013,
+        "invariance_score": 0.9717726774609957,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.12423591896126286,
+          0.11067913478490893,
+          0.07705418115587048,
+          0.042657831981806844,
+          0.05634349768543527
+        ],
+        "pooled_coefficient": 0.08758374324069171,
+        "coefficient_std": 0.03110209202875157,
+        "invariance_score": 0.9698360693192307,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.13448689233426103,
+          0.09101343541439987,
+          0.030335644204735848
+        ],
+        "pooled_coefficient": 0.08764717015150278,
+        "coefficient_std": 0.04271249919791178,
+        "invariance_score": 0.9590371274624908,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.09198144016016763,
+          0.08746097138347281
+        ],
+        "pooled_coefficient": 0.08829196292542353,
+        "coefficient_std": 0.0022602343883474096,
+        "invariance_score": 0.9977448627504146,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "coverage"
+    ]
+  },
+  {
+    "source": "COINBASE",
+    "target": "BYBITSPOT",
+    "lag": 5,
+    "total_samples": 67802,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.06657864676053894,
+          0.04836687118654731,
+          0.02918331345800805,
+          0.06063619755754854,
+          0.065995283735459
+        ],
+        "pooled_coefficient": 0.05389752319265178,
+        "coefficient_std": 0.014097040542724232,
+        "invariance_score": 0.9860989234963353,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.03936624329021898,
+          0.07025318613471587,
+          0.050123389057208964,
+          0.06739041545049142,
+          0.09218390302856708
+        ],
+        "pooled_coefficient": 0.05956853503836047,
+        "coefficient_std": 0.01813404910214111,
+        "invariance_score": 0.982188937578374,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.041366631934148475,
+          0.06592233683609429,
+          0.0510287185433423
+        ],
+        "pooled_coefficient": 0.05293992063344442,
+        "coefficient_std": 0.010100376377614214,
+        "invariance_score": 0.99000062111269,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.039028041037727196,
+          0.06210311876713074
+        ],
+        "pooled_coefficient": 0.057892211467258904,
+        "coefficient_std": 0.011537538864701772,
+        "invariance_score": 0.9885940576385815,
+        "p_value": 0.05,
+        "invariant": false
+      }
+    },
+    "overall_invariant": false,
+    "invariant_environments": []
+  },
+  {
+    "source": "COINBASE",
+    "target": "BYBITSPOT",
+    "lag": 10,
+    "total_samples": 67579,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          -0.0026328399588013665,
+          0.005880476262395354,
+          0.006202224561791665,
+          0.013344798290434995,
+          0.031064066081443083
+        ],
+        "pooled_coefficient": 0.010787305933235824,
+        "coefficient_std": 0.01133919594084337,
+        "invariance_score": 0.9887879398065903,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          -0.014156738662468684,
+          0.0042735244457650645,
+          0.019922639812638022,
+          -0.0010961204716979929,
+          0.04382515264155823
+        ],
+        "pooled_coefficient": 0.009025545180800038,
+        "coefficient_std": 0.0199024184208772,
+        "invariance_score": 0.9804859582040287,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.014513928164843294,
+          0.007491588748058195,
+          0.014679113190785787
+        ],
+        "pooled_coefficient": 0.012092785459938561,
+        "coefficient_std": 0.0033499758637959023,
+        "invariance_score": 0.9966612090054502,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.012887448914655762,
+          0.010396586876131403
+        ],
+        "pooled_coefficient": 0.010851605326620212,
+        "coefficient_std": 0.0012454310192621795,
+        "invariance_score": 0.9987561181497784,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "time_of_day",
+      "coverage"
+    ]
+  },
+  {
+    "source": "COINBASE",
+    "target": "BITGET",
+    "lag": 1,
+    "total_samples": 88765,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.16114488756695644,
+          0.21335297638623957,
+          0.23300953547305017,
+          0.2556730952188852,
+          0.1842792625922751
+        ],
+        "pooled_coefficient": 0.21116315498069982,
+        "coefficient_std": 0.03368620066789805,
+        "invariance_score": 0.9674115794076266,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.14929426488573164,
+          0.22446965942190167,
+          0.2214811653015006,
+          0.14308396852612953,
+          0.19531078586024792
+        ],
+        "pooled_coefficient": 0.19495373637089686,
+        "coefficient_std": 0.03467554058816576,
+        "invariance_score": 0.9664865561928193,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.23639695220022305,
+          0.1999150397813278,
+          0.1742791255279806
+        ],
+        "pooled_coefficient": 0.20762219980523008,
+        "coefficient_std": 0.025488024255035862,
+        "invariance_score": 0.9751454686430379,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.24208405636802172,
+          0.19071767327639638
+        ],
+        "pooled_coefficient": 0.20128954791956546,
+        "coefficient_std": 0.025683191545812667,
+        "invariance_score": 0.9749599176846162,
+        "p_value": 0.05,
+        "invariant": false
+      }
+    },
+    "overall_invariant": false,
+    "invariant_environments": []
+  },
+  {
+    "source": "COINBASE",
+    "target": "BITGET",
+    "lag": 2,
+    "total_samples": 87767,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.08023571994473155,
+          0.15671036445072062,
+          0.10255764764973352,
+          0.16173824416356467,
+          0.10252288908134088
+        ],
+        "pooled_coefficient": 0.12194855921298305,
+        "coefficient_std": 0.03248932154329895,
+        "invariance_score": 0.9685330193103248,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.2082606771092526,
+          0.13476477351682975,
+          0.09053155400574725,
+          0.11478957162329416,
+          0.07416680242439956
+        ],
+        "pooled_coefficient": 0.12429642930967678,
+        "coefficient_std": 0.046696456161174585,
+        "invariance_score": 0.9553868211874559,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.1163618387763843,
+          0.129332951814598,
+          0.09456654135335128
+        ],
+        "pooled_coefficient": 0.11693753318516727,
+        "coefficient_std": 0.014344910284249378,
+        "invariance_score": 0.9858579560672025,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.07736601665075685,
+          0.13880667614424202
+        ],
+        "pooled_coefficient": 0.12603229449240114,
+        "coefficient_std": 0.03072032974674259,
+        "invariance_score": 0.9701952810474875,
+        "p_value": 0.05,
+        "invariant": false
+      }
+    },
+    "overall_invariant": false,
+    "invariant_environments": []
+  },
+  {
+    "source": "COINBASE",
+    "target": "BITGET",
+    "lag": 3,
+    "total_samples": 87449,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.08874178550440275,
+          0.04973072988799241,
+          0.06677742165762113,
+          0.03560703766573477,
+          0.05409459930608846
+        ],
+        "pooled_coefficient": 0.058890287110534865,
+        "coefficient_std": 0.017901254898832094,
+        "invariance_score": 0.9824135643681752,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.15312572644470673,
+          0.027205546756458462,
+          0.0595205145427163,
+          0.040680540173324974,
+          -0.04575895969695971
+        ],
+        "pooled_coefficient": 0.0526124264273331,
+        "coefficient_std": 0.06396155623687136,
+        "invariance_score": 0.9398835833288026,
+        "p_value": 0.1,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.0781271666453811,
+          0.0262087712246779,
+          0.12161971078980142
+        ],
+        "pooled_coefficient": 0.06617032413767783,
+        "coefficient_std": 0.03900194947821982,
+        "invariance_score": 0.9624621017334891,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.07169478179517975,
+          0.05445503655724281
+        ],
+        "pooled_coefficient": 0.05805088045642942,
+        "coefficient_std": 0.008619872618968471,
+        "invariance_score": 0.9914537945831007,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "coverage"
+    ]
+  },
+  {
+    "source": "COINBASE",
+    "target": "BITGET",
+    "lag": 5,
+    "total_samples": 87525,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.0731557636479655,
+          0.06247460838769494,
+          0.05896549976290454,
+          0.06065563743429519,
+          0.011489865736667569
+        ],
+        "pooled_coefficient": 0.054772578061364305,
+        "coefficient_std": 0.0215067605811866,
+        "invariance_score": 0.9789460418559048,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.002957271211476749,
+          0.08418752747649441,
+          0.04830658645037413,
+          0.03642033851227861,
+          0.09693483084851548
+        ],
+        "pooled_coefficient": 0.05354262277568477,
+        "coefficient_std": 0.03376750293033441,
+        "invariance_score": 0.9673354958105992,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.05348774205124026,
+          0.0481979294856319,
+          0.06363034143004874
+        ],
+        "pooled_coefficient": 0.05353455513281839,
+        "coefficient_std": 0.006403243774841812,
+        "invariance_score": 0.9936374968836305,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.006855387240480117,
+          0.07802719385335243
+        ],
+        "pooled_coefficient": 0.06319353379928767,
+        "coefficient_std": 0.035585903306436156,
+        "invariance_score": 0.9656369373194278,
+        "p_value": 0.05,
+        "invariant": false
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "time_of_day"
+    ]
+  },
+  {
+    "source": "COINBASE",
+    "target": "BITGET",
+    "lag": 10,
+    "total_samples": 87381,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.08176063992340048,
+          -0.02687870500131321,
+          0.007317164980246973,
+          -0.01590659545945961,
+          0.026451429911978436
+        ],
+        "pooled_coefficient": 0.012990761226053943,
+        "coefficient_std": 0.038354060679396895,
+        "invariance_score": 0.9630626371757032,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.020927377022690416,
+          -0.0088066819863905,
+          0.02871266936457291,
+          -0.08005277213972706,
+          0.21319706632907082
+        ],
+        "pooled_coefficient": 0.024721954080140444,
+        "coefficient_std": 0.0971058395973888,
+        "invariance_score": 0.9114890869298223,
+        "p_value": 0.1,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          -0.008360062975178223,
+          0.040354240758875635,
+          -0.008797400505311874
+        ],
+        "pooled_coefficient": 0.011781338602063528,
+        "coefficient_std": 0.023067915407847077,
+        "invariance_score": 0.9774522149894116,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          -0.002209695362706399,
+          0.026512855537166233
+        ],
+        "pooled_coefficient": 0.020525498278252053,
+        "coefficient_std": 0.014361275449936317,
+        "invariance_score": 0.9858420507589211,
+        "p_value": 0.05,
+        "invariant": false
+      }
+    },
+    "overall_invariant": false,
+    "invariant_environments": []
+  },
+  {
+    "source": "BYBITSPOT",
+    "target": "BINANCE",
+    "lag": 1,
+    "total_samples": 99833,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.034399468319854916,
+          0.05022358510047472,
+          0.04653068562687293,
+          0.05640570627786934,
+          -0.010920047963918596
+        ],
+        "pooled_coefficient": 0.03547503399630308,
+        "coefficient_std": 0.024213188283072,
+        "invariance_score": 0.976359230128972,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          -0.006995271350747046,
+          0.019498861410728888,
+          0.04780135119807129,
+          0.0007888689461946383,
+          0.02518883668401243
+        ],
+        "pooled_coefficient": 0.020302176071592022,
+        "coefficient_std": 0.019288698094200276,
+        "invariance_score": 0.981076315149707,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.00033672069395287394,
+          0.03929725631520323,
+          0.02895095912508526
+        ],
+        "pooled_coefficient": 0.021953895128587583,
+        "coefficient_std": 0.01647807918429361,
+        "invariance_score": 0.9837890461961394,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.0560342149508873,
+          0.014703773791946735
+        ],
+        "pooled_coefficient": 0.021017209506328186,
+        "coefficient_std": 0.020665220579470282,
+        "invariance_score": 0.979753184332334,
+        "p_value": 0.05,
+        "invariant": false
+      }
+    },
+    "overall_invariant": false,
+    "invariant_environments": []
+  },
+  {
+    "source": "BYBITSPOT",
+    "target": "BINANCE",
+    "lag": 2,
+    "total_samples": 98701,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.0277430997706715,
+          0.028008294801216457,
+          0.030185079627460625,
+          0.024595564073764183,
+          0.0007445614303821874
+        ],
+        "pooled_coefficient": 0.02237726777151574,
+        "coefficient_std": 0.010902137498576157,
+        "invariance_score": 0.9892154372869832,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.008287381719674278,
+          0.024215737443595998,
+          0.028310605564188247,
+          -0.004503177423633677,
+          -0.010003864294092241
+        ],
+        "pooled_coefficient": 0.013847107259483,
+        "coefficient_std": 0.015153000709868532,
+        "invariance_score": 0.9850731853235202,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.018643986251401828,
+          0.02780075784057444,
+          0.002489022009130762
+        ],
+        "pooled_coefficient": 0.017679012704799844,
+        "coefficient_std": 0.010464295412953968,
+        "invariance_score": 0.9896440720761168,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.018416727421738683,
+          0.015884797333094735
+        ],
+        "pooled_coefficient": 0.016274613136653297,
+        "coefficient_std": 0.001265965044321974,
+        "invariance_score": 0.9987356355968157,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "coverage"
+    ]
+  },
+  {
+    "source": "BYBITSPOT",
+    "target": "BINANCE",
+    "lag": 3,
+    "total_samples": 98332,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.016805101329983228,
+          0.020968088001487376,
+          0.008016079088258483,
+          0.025648418156303553,
+          0.015335755430902825
+        ],
+        "pooled_coefficient": 0.017289917568765238,
+        "coefficient_std": 0.0058894884346470475,
+        "invariance_score": 0.9941449945522225,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.02796394191227305,
+          0.008551539828597916,
+          0.010538303694255449,
+          0.03024630920666237,
+          0.013345647056791721
+        ],
+        "pooled_coefficient": 0.016766192448640756,
+        "coefficient_std": 0.009119014681836662,
+        "invariance_score": 0.9909633902947396,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.0245578435200412,
+          -0.0012747634231736183,
+          0.024146200013782867
+        ],
+        "pooled_coefficient": 0.015107940157407653,
+        "coefficient_std": 0.012081751224801597,
+        "invariance_score": 0.9880624749826972,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.0222482624527718,
+          0.015412536118906141
+        ],
+        "pooled_coefficient": 0.016469330567584352,
+        "coefficient_std": 0.0034178631669328297,
+        "invariance_score": 0.9965937788309394,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "volatility",
+      "liquidity",
+      "coverage"
+    ]
+  },
+  {
+    "source": "BYBITSPOT",
+    "target": "BINANCE",
+    "lag": 5,
+    "total_samples": 98236,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.006980516052252723,
+          0.03384488895566444,
+          0.007616355674237209,
+          0.005422215828052477,
+          -0.006285553563375521
+        ],
+        "pooled_coefficient": 0.01011420092986946,
+        "coefficient_std": 0.013178621540935399,
+        "invariance_score": 0.9869927954846777,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          -0.010103158150337231,
+          0.009386512322546753,
+          0.015601611908877119,
+          -0.004701785551749031,
+          0.005712274709713823
+        ],
+        "pooled_coefficient": 0.004824246062711271,
+        "coefficient_std": 0.009357291089089819,
+        "invariance_score": 0.9907294560888411,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.009291005672719186,
+          -0.007141469408028274,
+          0.013394985722404598
+        ],
+        "pooled_coefficient": 0.004431643817211066,
+        "coefficient_std": 0.008873273721637258,
+        "invariance_score": 0.9912047687724895,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.016087879610668505,
+          0.003472895114013876
+        ],
+        "pooled_coefficient": 0.005432252513032121,
+        "coefficient_std": 0.006307492248327314,
+        "invariance_score": 0.9937320428428543,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "liquidity",
+      "time_of_day",
+      "coverage"
+    ]
+  },
+  {
+    "source": "BYBITSPOT",
+    "target": "BINANCE",
+    "lag": 10,
+    "total_samples": 98209,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.01292449193588421,
+          -0.001426180262876661,
+          0.0013895140638291786,
+          0.004008953499913567,
+          0.010103684405572362
+        ],
+        "pooled_coefficient": 0.005211774370612511,
+        "coefficient_std": 0.005354593740487355,
+        "invariance_score": 0.994673925226158,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          -0.012947691401209377,
+          0.018911927171187812,
+          0.006586516094092448,
+          0.015306740376500951,
+          0.007647528167134536
+        ],
+        "pooled_coefficient": 0.007226471433048577,
+        "coefficient_std": 0.011039434672096152,
+        "invariance_score": 0.9890811037695315,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.014373030785800796,
+          0.005757597568048288,
+          -0.00015732720415019314
+        ],
+        "pooled_coefficient": 0.007401206946125391,
+        "coefficient_std": 0.005966045851375684,
+        "invariance_score": 0.9940693367574583,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.008645268879554023,
+          0.0068026890140157675
+        ],
+        "pooled_coefficient": 0.007087925007618982,
+        "coefficient_std": 0.0009212899327691276,
+        "invariance_score": 0.9990795580611229,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "volatility",
+      "time_of_day",
+      "coverage"
+    ]
+  },
+  {
+    "source": "BYBITSPOT",
+    "target": "COINBASE",
+    "lag": 1,
+    "total_samples": 68780,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.07069574708940363,
+          0.09620799838174711,
+          0.0826558244725892,
+          0.10412170095350638,
+          0.03287660514843246
+        ],
+        "pooled_coefficient": 0.07693672632714181,
+        "coefficient_std": 0.02499061582811727,
+        "invariance_score": 0.975618688169231,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.05565340005181119,
+          0.061562603772587945,
+          0.08140977452966017,
+          0.03555495654195236,
+          0.03572774943440027
+        ],
+        "pooled_coefficient": 0.06096161435158642,
+        "coefficient_std": 0.017235518798092896,
+        "invariance_score": 0.9830565110246472,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.05690507968732118,
+          0.09072603690838697,
+          0.04507916112176227
+        ],
+        "pooled_coefficient": 0.0652403971291683,
+        "coefficient_std": 0.019342948087231335,
+        "invariance_score": 0.9810241017279534,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.0900206654409494,
+          0.05733931843992868
+        ],
+        "pooled_coefficient": 0.06328306618107099,
+        "coefficient_std": 0.016340673500510362,
+        "invariance_score": 0.983922051014421,
+        "p_value": 0.05,
+        "invariant": false
+      }
+    },
+    "overall_invariant": false,
+    "invariant_environments": []
+  },
+  {
+    "source": "BYBITSPOT",
+    "target": "COINBASE",
+    "lag": 2,
+    "total_samples": 66946,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.011185211982936101,
+          0.02733126518693713,
+          0.028236055310751802,
+          0.025877788279318515,
+          0.00434360229541922
+        ],
+        "pooled_coefficient": 0.019385533038615715,
+        "coefficient_std": 0.00976852394084445,
+        "invariance_score": 0.9903259769845859,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.010886334325535018,
+          0.014911035910077992,
+          0.01875917323246946,
+          0.007971071653268663,
+          0.005665947115029139
+        ],
+        "pooled_coefficient": 0.01359872228487042,
+        "coefficient_std": 0.004713823292927165,
+        "invariance_score": 0.995308292586761,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.011562926074072924,
+          0.01655780842730486,
+          0.015182704695486769
+        ],
+        "pooled_coefficient": 0.014410752768940627,
+        "coefficient_std": 0.002106670813918189,
+        "invariance_score": 0.9978977579181195,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.013387898707739704,
+          0.014498364526980476
+        ],
+        "pooled_coefficient": 0.014293575428239004,
+        "coefficient_std": 0.0005552329096203861,
+        "invariance_score": 0.9994450752028894,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "volatility",
+      "liquidity",
+      "time_of_day",
+      "coverage"
+    ]
+  },
+  {
+    "source": "BYBITSPOT",
+    "target": "COINBASE",
+    "lag": 3,
+    "total_samples": 66418,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.01220413064798364,
+          0.007028747646693112,
+          0.008376425631429521,
+          0.016467943826042348,
+          0.007941432726192993
+        ],
+        "pooled_coefficient": 0.01021823844410285,
+        "coefficient_std": 0.0035094019027062874,
+        "invariance_score": 0.9965028709287106,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.011689132355485184,
+          0.014127564648934818,
+          0.0067324801281126055,
+          0.006428564472574656,
+          0.006728215421696248
+        ],
+        "pooled_coefficient": 0.009447733293799316,
+        "coefficient_std": 0.003172967355675533,
+        "invariance_score": 0.9968370685226503,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.013218049915199235,
+          0.005064048741002529,
+          0.009291784595700795
+        ],
+        "pooled_coefficient": 0.009157920522936307,
+        "coefficient_std": 0.003329615342565009,
+        "invariance_score": 0.9966814342050212,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.017854962979017834,
+          0.007563499748728167
+        ],
+        "pooled_coefficient": 0.009478060856763023,
+        "coefficient_std": 0.005145731615144833,
+        "invariance_score": 0.9948806113847031,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "volatility",
+      "liquidity",
+      "time_of_day",
+      "coverage"
+    ]
+  },
+  {
+    "source": "BYBITSPOT",
+    "target": "COINBASE",
+    "lag": 5,
+    "total_samples": 66446,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.00293996607686231,
+          0.013359861534145853,
+          0.011981243661801626,
+          -0.0011097234163622855,
+          0.003955893697917826
+        ],
+        "pooled_coefficient": 0.0064782896028251664,
+        "coefficient_std": 0.005545792063923781,
+        "invariance_score": 0.9944847941210706,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.0012265714378314042,
+          0.010243478668877908,
+          0.005918575722927488,
+          0.006338361949425448,
+          0.0008407366510837677
+        ],
+        "pooled_coefficient": 0.0056732069006068765,
+        "coefficient_std": 0.0035108382162431927,
+        "invariance_score": 0.9965014446455966,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.007492369658357297,
+          0.006840951702898681,
+          0.003345256431639586
+        ],
+        "pooled_coefficient": 0.00600233575522004,
+        "coefficient_std": 0.001820951488078388,
+        "invariance_score": 0.9981823583491903,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.006645688308574658,
+          0.0057272013480459145
+        ],
+        "pooled_coefficient": 0.005898164938447436,
+        "coefficient_std": 0.0004592434802643719,
+        "invariance_score": 0.9995409673274976,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "volatility",
+      "liquidity",
+      "time_of_day",
+      "coverage"
+    ]
+  },
+  {
+    "source": "BYBITSPOT",
+    "target": "COINBASE",
+    "lag": 10,
+    "total_samples": 66518,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.006936714776091108,
+          0.005530850331216762,
+          0.003708156974095186,
+          0.01030089154533915,
+          0.003347888021815806
+        ],
+        "pooled_coefficient": 0.005860765650015691,
+        "coefficient_std": 0.002524887583009646,
+        "invariance_score": 0.997481471418533,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          -0.003323391412626965,
+          0.004343950894580001,
+          0.010449748625695414,
+          0.004202476378490719,
+          -0.0007632683734772963
+        ],
+        "pooled_coefficient": 0.004445293590758482,
+        "coefficient_std": 0.0047517731085405706,
+        "invariance_score": 0.9952706994546133,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.0009295870999148212,
+          0.011779367425698524,
+          0.003519509260611032
+        ],
+        "pooled_coefficient": 0.0055481367861888965,
+        "coefficient_std": 0.00462662207979946,
+        "invariance_score": 0.9953946849723917,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.011779418799897867,
+          0.0035477721257027397
+        ],
+        "pooled_coefficient": 0.005083517867107495,
+        "coefficient_std": 0.004115823337097564,
+        "invariance_score": 0.9959010472283776,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "volatility",
+      "liquidity",
+      "time_of_day",
+      "coverage"
+    ]
+  },
+  {
+    "source": "BYBITSPOT",
+    "target": "BITGET",
+    "lag": 1,
+    "total_samples": 47731,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.012374764444200756,
+          0.11179261806380587,
+          0.10491438555390045,
+          0.025706405575364775,
+          -0.011614403638466338
+        ],
+        "pooled_coefficient": 0.05397309944767899,
+        "coefficient_std": 0.05025289985892929,
+        "invariance_score": 0.9521516199901192,
+        "p_value": 0.1,
+        "invariant": false
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          -0.001191831807879057,
+          0.0652322550619832,
+          0.04981480590953079,
+          0.0019241626248767236,
+          -0.03589421796645422
+        ],
+        "pooled_coefficient": 0.032310121331624926,
+        "coefficient_std": 0.036753099290395524,
+        "invariance_score": 0.9645498052375718,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.010013924201777193,
+          0.07874768619414647,
+          0.013785974294822059
+        ],
+        "pooled_coefficient": 0.04138153950608126,
+        "coefficient_std": 0.031549929410766134,
+        "invariance_score": 0.9694150244101244,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.10596672501473099,
+          0.014747759056085599
+        ],
+        "pooled_coefficient": 0.03642160399830339,
+        "coefficient_std": 0.04560948297932269,
+        "invariance_score": 0.9563800025518469,
+        "p_value": 0.05,
+        "invariant": false
+      }
+    },
+    "overall_invariant": false,
+    "invariant_environments": []
+  },
+  {
+    "source": "BYBITSPOT",
+    "target": "BITGET",
+    "lag": 2,
+    "total_samples": 45140,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.051919848614855005,
+          0.029292407329074184,
+          0.048580882905864375,
+          0.10256536021990426,
+          0.03931735883837802
+        ],
+        "pooled_coefficient": 0.05354191191503608,
+        "coefficient_std": 0.025368371884225697,
+        "invariance_score": 0.9752592603986716,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.039726242519846265,
+          0.04172746916694683,
+          0.04222367371701714,
+          0.09698814000622276,
+          0.07931025884625174
+        ],
+        "pooled_coefficient": 0.051150253709029515,
+        "coefficient_std": 0.023672418051719036,
+        "invariance_score": 0.9768750064627384,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.05775499784932123,
+          0.03764209156598979,
+          0.05145605939170622
+        ],
+        "pooled_coefficient": 0.04748368101568515,
+        "coefficient_std": 0.008399942671397117,
+        "invariance_score": 0.9916700286107271,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          -0.0028318940166339466,
+          0.06669100875171877
+        ],
+        "pooled_coefficient": 0.04965527929844563,
+        "coefficient_std": 0.034761451384176356,
+        "invariance_score": 0.9664063139019368,
+        "p_value": 0.05,
+        "invariant": false
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "time_of_day"
+    ]
+  },
+  {
+    "source": "BYBITSPOT",
+    "target": "BITGET",
+    "lag": 3,
+    "total_samples": 44576,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.009712968472921081,
+          0.005867882425176705,
+          0.014539768189775532,
+          -0.013552211597669365,
+          0.01345501265385571
+        ],
+        "pooled_coefficient": 0.006105403428348954,
+        "coefficient_std": 0.010243020189359589,
+        "invariance_score": 0.9898608354775472,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.031380602627618555,
+          0.0021224389345351783,
+          0.019820482409985442,
+          0.003510767534550685,
+          -0.16318459153759302
+        ],
+        "pooled_coefficient": -0.0007475569257421178,
+        "coefficient_std": 0.07177960383271557,
+        "invariance_score": 0.9330276452583818,
+        "p_value": 0.1,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          -0.0013840814072224395,
+          -0.0046317150362088335,
+          0.05292532455288965
+        ],
+        "pooled_coefficient": 0.006244724829996551,
+        "coefficient_std": 0.02640048717182955,
+        "invariance_score": 0.9742785710823519,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.0466790638985834,
+          -0.006629881716819248
+        ],
+        "pooled_coefficient": 0.006606465422252821,
+        "coefficient_std": 0.026654472807701324,
+        "invariance_score": 0.9740375428017115,
+        "p_value": 0.05,
+        "invariant": false
+      }
+    },
+    "overall_invariant": false,
+    "invariant_environments": []
+  },
+  {
+    "source": "BYBITSPOT",
+    "target": "BITGET",
+    "lag": 5,
+    "total_samples": 44262,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          -0.005261219217547351,
+          0.025146100815103094,
+          0.030782625530786097,
+          -0.007756124354602783,
+          0.02191557680220106
+        ],
+        "pooled_coefficient": 0.013675084049169723,
+        "coefficient_std": 0.01617108457978093,
+        "invariance_score": 0.9840862578898629,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.005951700500699995,
+          0.049447408404785745,
+          0.014273967334114311,
+          -0.01259197395221719,
+          -0.10940157982117955
+        ],
+        "pooled_coefficient": 0.008684279221947302,
+        "coefficient_std": 0.053411594400027795,
+        "invariance_score": 0.9492965573153309,
+        "p_value": 0.1,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.01161422821198238,
+          0.020132280778628994,
+          0.0138323502129484
+        ],
+        "pooled_coefficient": 0.015912232426873375,
+        "coefficient_std": 0.00360811446405831,
+        "invariance_score": 0.9964048572225972,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          -0.011114533616913773,
+          0.02626204207797318
+        ],
+        "pooled_coefficient": 0.01687356508697067,
+        "coefficient_std": 0.018688287847443474,
+        "invariance_score": 0.981654557070708,
+        "p_value": 0.05,
+        "invariant": false
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "time_of_day"
+    ]
+  },
+  {
+    "source": "BYBITSPOT",
+    "target": "BITGET",
+    "lag": 10,
+    "total_samples": 44018,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          -0.03552365112367262,
+          0.011692722404183417,
+          0.049404550890046695,
+          -0.016830460064431417,
+          0.009793429019041806
+        ],
+        "pooled_coefficient": 0.005150066672738782,
+        "coefficient_std": 0.028809421343886844,
+        "invariance_score": 0.9719973196724284,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.029863429193277568,
+          -0.03858228550471418,
+          0.019831709398696367,
+          -0.05019274442747982,
+          0.07394819600184367
+        ],
+        "pooled_coefficient": 0.0025544549708522,
+        "coefficient_std": 0.045865458477415785,
+        "invariance_score": 0.9561459286128567,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          -0.025660445709151738,
+          0.02158328008015642,
+          0.013411530185494935
+        ],
+        "pooled_coefficient": 0.002618381581805357,
+        "coefficient_std": 0.020616515556191276,
+        "invariance_score": 0.9797999393092751,
+        "p_value": 0.05,
+        "invariant": false
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.015259730239576967,
+          -0.0018849060916635314
+        ],
+        "pooled_coefficient": 0.002419364345351752,
+        "coefficient_std": 0.008572318165620249,
+        "invariance_score": 0.9915005418935039,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "coverage"
+    ]
+  },
+  {
+    "source": "BITGET",
+    "target": "BINANCE",
+    "lag": 1,
+    "total_samples": 133054,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          -0.0005115186169252074,
+          0.009117273416547814,
+          -0.000676531740251172,
+          0.004322005512998502,
+          0.005078890679462628
+        ],
+        "pooled_coefficient": 0.0034722051858484993,
+        "coefficient_std": 0.003694652259006037,
+        "invariance_score": 0.9963189479482725,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.00526923987738682,
+          -0.0024786405030729937,
+          0.00767606234764218,
+          0.0056310050547936814,
+          0.0013231795950625776
+        ],
+        "pooled_coefficient": 0.003461749226979859,
+        "coefficient_std": 0.003621942166839565,
+        "invariance_score": 0.9963911289553717,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.003074728113605287,
+          0.00633339390552936,
+          0.0005770170400132968
+        ],
+        "pooled_coefficient": 0.003980029944322679,
+        "coefficient_std": 0.002356865573134717,
+        "invariance_score": 0.9976486761810255,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.010833088274087894,
+          0.0027393216399385213
+        ],
+        "pooled_coefficient": 0.004118049229962087,
+        "coefficient_std": 0.004046883317074686,
+        "invariance_score": 0.9959694279377623,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "volatility",
+      "liquidity",
+      "time_of_day",
+      "coverage"
+    ]
+  },
+  {
+    "source": "BITGET",
+    "target": "BINANCE",
+    "lag": 2,
+    "total_samples": 132436,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          6.127316786269447e-05,
+          -0.0035575808916755236,
+          0.0012613573306101836,
+          0.001423072805086411,
+          -0.002187811534580394
+        ],
+        "pooled_coefficient": -0.00055884761263402,
+        "coefficient_std": 0.0019628136473060004,
+        "invariance_score": 0.9980410314429125,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          -0.004308796303422472,
+          0.006019071282401359,
+          0.0004323428942607861,
+          -0.005077790624208949,
+          -0.00017351228336564054
+        ],
+        "pooled_coefficient": -1.1124512218558393e-05,
+        "coefficient_std": 0.003971476921057888,
+        "invariance_score": 0.9960442333150364,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.0005219127673614934,
+          -0.002991944371479324,
+          0.0007188323569881669
+        ],
+        "pooled_coefficient": -0.0009229524929544895,
+        "coefficient_std": 0.0017047591307701314,
+        "invariance_score": 0.9982981421269781,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.004299010786624762,
+          -0.0010797504851359889
+        ],
+        "pooled_coefficient": -0.0001585021695167532,
+        "coefficient_std": 0.002689380635880375,
+        "invariance_score": 0.9973178327328303,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "volatility",
+      "liquidity",
+      "time_of_day",
+      "coverage"
+    ]
+  },
+  {
+    "source": "BITGET",
+    "target": "BINANCE",
+    "lag": 3,
+    "total_samples": 132250,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.0034537013604748978,
+          0.0037558494413419846,
+          0.0034114697970361774,
+          0.00018505291235685335,
+          -0.0018606666030314394
+        ],
+        "pooled_coefficient": 0.001984231894163109,
+        "coefficient_std": 0.0022434280967704757,
+        "invariance_score": 0.9977615936070235,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          -0.0004705198308810595,
+          0.002813199488300149,
+          0.00708043730673898,
+          -0.0012473844422167609,
+          0.0013031306960277682
+        ],
+        "pooled_coefficient": 0.0024734887653630236,
+        "coefficient_std": 0.002951352933944245,
+        "invariance_score": 0.9970573319181328,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          -0.0027773762892193297,
+          0.006589324805362317,
+          0.0026347992468341713
+        ],
+        "pooled_coefficient": 0.002174681721393767,
+        "coefficient_std": 0.003839343199346955,
+        "invariance_score": 0.9961753409792542,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.005419372092144549,
+          0.0015699093446214498
+        ],
+        "pooled_coefficient": 0.0022302122741304216,
+        "coefficient_std": 0.0019247313737615498,
+        "invariance_score": 0.9980789661004549,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "volatility",
+      "liquidity",
+      "time_of_day",
+      "coverage"
+    ]
+  },
+  {
+    "source": "BITGET",
+    "target": "BINANCE",
+    "lag": 5,
+    "total_samples": 132204,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          -0.003841664769649908,
+          0.0036717874650938325,
+          -0.00013002983691957578,
+          0.0007282541453424535,
+          -0.0027130152871538853
+        ],
+        "pooled_coefficient": -0.00025312983296821876,
+        "coefficient_std": 0.0026496861461420807,
+        "invariance_score": 0.9973573161366792,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          -0.0006897312154006441,
+          -0.0007662660669549358,
+          0.0016751382839619508,
+          -0.003962081073039056,
+          0.0017756882336224522
+        ],
+        "pooled_coefficient": -0.00023021741995029135,
+        "coefficient_std": 0.0020950475068096004,
+        "invariance_score": 0.9979093325408384,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          -4.450226294430911e-05,
+          -0.0008587139413993413,
+          -0.00022275345081263447
+        ],
+        "pooled_coefficient": -0.00042105032074774506,
+        "coefficient_std": 0.00034946942147208665,
+        "invariance_score": 0.9996506526647391,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.000572125840539552,
+          -0.00046644892747363316
+        ],
+        "pooled_coefficient": -0.0002886867580188334,
+        "coefficient_std": 0.0005192873840065926,
+        "invariance_score": 0.9994809821354226,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "volatility",
+      "liquidity",
+      "time_of_day",
+      "coverage"
+    ]
+  },
+  {
+    "source": "BITGET",
+    "target": "BINANCE",
+    "lag": 10,
+    "total_samples": 132115,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.0026593175591052396,
+          0.0026090357566764043,
+          -0.00013395315968948852,
+          -0.00028601779219423427,
+          -0.002209851935986348
+        ],
+        "pooled_coefficient": 0.000649213829720238,
+        "coefficient_std": 0.0018692171677685552,
+        "invariance_score": 0.9981342702862428,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          -0.0006986969396571833,
+          0.0013244337150967065,
+          0.00017383815428436482,
+          0.003392842642425799,
+          -0.0011677345766628532
+        ],
+        "pooled_coefficient": 0.0005969288036841518,
+        "coefficient_std": 0.001632039556886755,
+        "invariance_score": 0.9983706196562874,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          -0.00159861879854416,
+          0.0013949560231159707,
+          0.0025098773815181584
+        ],
+        "pooled_coefficient": 0.0004240540693521341,
+        "coefficient_std": 0.0017347520062881074,
+        "invariance_score": 0.9982682521467747,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          -0.0020673663794100565,
+          0.0008726620553914951
+        ],
+        "pooled_coefficient": 0.00036672747971717133,
+        "coefficient_std": 0.0014700142174007757,
+        "invariance_score": 0.9985321435524463,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "volatility",
+      "liquidity",
+      "time_of_day",
+      "coverage"
+    ]
+  },
+  {
+    "source": "BITGET",
+    "target": "COINBASE",
+    "lag": 1,
+    "total_samples": 88410,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.01077310307417902,
+          0.008985580183182828,
+          0.0060162642132436045,
+          0.006717126645974839,
+          0.008020815535804368
+        ],
+        "pooled_coefficient": 0.008062685566898584,
+        "coefficient_std": 0.0016846520589757269,
+        "invariance_score": 0.998318181220494,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.0064604145722684785,
+          0.009697349035028646,
+          0.016869182951876116,
+          0.0029164388148811347,
+          0.0015388906172997567
+        ],
+        "pooled_coefficient": 0.009343271094462749,
+        "coefficient_std": 0.005481504633057747,
+        "invariance_score": 0.9945483784556949,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.008083208990061526,
+          0.00999458259727847,
+          0.006316065083992763
+        ],
+        "pooled_coefficient": 0.00848116332407461,
+        "coefficient_std": 0.0015021332144901699,
+        "invariance_score": 0.9985001198053679,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.016688378296354642,
+          0.007025057704580905
+        ],
+        "pooled_coefficient": 0.00902210023972736,
+        "coefficient_std": 0.004831660295886869,
+        "invariance_score": 0.9951915723928682,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "volatility",
+      "liquidity",
+      "time_of_day",
+      "coverage"
+    ]
+  },
+  {
+    "source": "BITGET",
+    "target": "COINBASE",
+    "lag": 2,
+    "total_samples": 87154,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.0009503229556753305,
+          0.002069840792480431,
+          0.0013499996423134543,
+          0.0015848534591135336,
+          -0.0009129225760014303
+        ],
+        "pooled_coefficient": 0.001096782960688004,
+        "coefficient_std": 0.0010266936100363033,
+        "invariance_score": 0.9989743594086051,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          1.5558842879748696e-05,
+          0.0029547083587221764,
+          0.002201965772274669,
+          -0.0012577536840655136,
+          0.0005789639300788235
+        ],
+        "pooled_coefficient": 0.0013123360859852657,
+        "coefficient_std": 0.001513812009002532,
+        "invariance_score": 0.9984884761539474,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.0011330248578074339,
+          0.002298435796547881,
+          -0.00031383427411268755
+        ],
+        "pooled_coefficient": 0.0013017246349080404,
+        "coefficient_std": 0.0010685160491606786,
+        "invariance_score": 0.9989326244587358,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.002946175373835011,
+          0.000775410800579927
+        ],
+        "pooled_coefficient": 0.0012291457781023341,
+        "coefficient_std": 0.001085382286627542,
+        "invariance_score": 0.9989157944908272,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "volatility",
+      "liquidity",
+      "time_of_day",
+      "coverage"
+    ]
+  },
+  {
+    "source": "BITGET",
+    "target": "COINBASE",
+    "lag": 3,
+    "total_samples": 86921,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          -0.0005508930349551447,
+          0.0023413283151076884,
+          0.001487607430364037,
+          -0.00022510866788736538,
+          0.004211194433095464
+        ],
+        "pooled_coefficient": 0.0013864804285032002,
+        "coefficient_std": 0.0017452562703102836,
+        "invariance_score": 0.9982577843424904,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.0015656136456982553,
+          0.002093200946014356,
+          0.0017753196217161025,
+          0.0007644330897939391,
+          0.000781958806157538
+        ],
+        "pooled_coefficient": 0.001552598979323664,
+        "coefficient_std": 0.0005356612022153003,
+        "invariance_score": 0.9994646255770916,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.0008348803232396711,
+          -0.0001763159495858241,
+          0.003736851538482955
+        ],
+        "pooled_coefficient": 0.001047522434697185,
+        "coefficient_std": 0.0016585413479572703,
+        "invariance_score": 0.9983442048567516,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          7.665405092122886e-05,
+          0.0016272550019035294
+        ],
+        "pooled_coefficient": 0.0013021534530177428,
+        "coefficient_std": 0.0007753004754911503,
+        "invariance_score": 0.9992253001496711,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "volatility",
+      "liquidity",
+      "time_of_day",
+      "coverage"
+    ]
+  },
+  {
+    "source": "BITGET",
+    "target": "COINBASE",
+    "lag": 5,
+    "total_samples": 86943,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.0024498419971606686,
+          0.0015158961613428701,
+          0.0005054311684495372,
+          -0.00023760176027167539,
+          0.0031994694134269567
+        ],
+        "pooled_coefficient": 0.0014056163922231447,
+        "coefficient_std": 0.0012488537963647824,
+        "invariance_score": 0.9987527038941122,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.0009510777835705214,
+          0.001639423899399375,
+          0.004562087462693583,
+          -0.0009932570202317455,
+          0.0003989118546541962
+        ],
+        "pooled_coefficient": 0.0018781024422070032,
+        "coefficient_std": 0.0018411126551705558,
+        "invariance_score": 0.9981622708112956,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.0017706591344988012,
+          0.0015097538541612428,
+          0.001153299592338358
+        ],
+        "pooled_coefficient": 0.001527362277273828,
+        "coefficient_std": 0.00025304018354058345,
+        "invariance_score": 0.999747023829596,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.004562370214694627,
+          0.001100368799308189
+        ],
+        "pooled_coefficient": 0.0018236448963956978,
+        "coefficient_std": 0.001731000707693219,
+        "invariance_score": 0.9982719904780123,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "volatility",
+      "liquidity",
+      "time_of_day",
+      "coverage"
+    ]
+  },
+  {
+    "source": "BITGET",
+    "target": "COINBASE",
+    "lag": 10,
+    "total_samples": 86942,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.002056011086455385,
+          0.0009724243437980227,
+          -0.002289722175317006,
+          -0.0016162079095135174,
+          0.0014108054969882483
+        ],
+        "pooled_coefficient": 2.2201112774596512e-05,
+        "coefficient_std": 0.0017298112265999761,
+        "invariance_score": 0.9982731758531955,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          -0.0012367120614591395,
+          0.0011294821559349342,
+          -0.00018830747259740416,
+          0.00108082955464818,
+          -0.00027591661263946744
+        ],
+        "pooled_coefficient": 0.00012738259916929325,
+        "coefficient_std": 0.0008981176067848045,
+        "invariance_score": 0.9991026882846655,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          -0.0006434333192148164,
+          0.00014211332425487108,
+          0.0008965582917951853
+        ],
+        "pooled_coefficient": 1.90292686515305e-05,
+        "coefficient_std": 0.0006287416798737847,
+        "invariance_score": 0.9993716533878306,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          -0.0012229701316039455,
+          0.00028278304488235856
+        ],
+        "pooled_coefficient": -3.4121001761914556e-05,
+        "coefficient_std": 0.0007528765882431521,
+        "invariance_score": 0.9992476898084871,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "volatility",
+      "liquidity",
+      "time_of_day",
+      "coverage"
+    ]
+  },
+  {
+    "source": "BITGET",
+    "target": "BYBITSPOT",
+    "lag": 1,
+    "total_samples": 48074,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.014644683064407622,
+          0.007118843482673828,
+          0.0033102500888313588,
+          0.01442351958281173,
+          0.0036142990775544117
+        ],
+        "pooled_coefficient": 0.008521867017055507,
+        "coefficient_std": 0.005009622249593255,
+        "invariance_score": 0.9950153489691176,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          -0.001067156824030266,
+          0.008441398593934248,
+          0.014918783089257521,
+          0.011007436626771033,
+          0.00522568316971453
+        ],
+        "pooled_coefficient": 0.009117977146708008,
+        "coefficient_std": 0.005414513534014209,
+        "invariance_score": 0.9946146455405916,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.004851887751805148,
+          0.012217807288330676,
+          0.007756353235542667
+        ],
+        "pooled_coefficient": 0.008647496998664407,
+        "coefficient_std": 0.0030294345389111376,
+        "invariance_score": 0.9969797152161304,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.023949689691280824,
+          0.005876249145786405
+        ],
+        "pooled_coefficient": 0.010156068739951826,
+        "coefficient_std": 0.00903672027274721,
+        "invariance_score": 0.9910442106900682,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "volatility",
+      "liquidity",
+      "time_of_day",
+      "coverage"
+    ]
+  },
+  {
+    "source": "BITGET",
+    "target": "BYBITSPOT",
+    "lag": 2,
+    "total_samples": 45668,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.004541023883436659,
+          0.003407417293841044,
+          0.006206177835459356,
+          -0.003874353530333191,
+          0.0036900275911172006
+        ],
+        "pooled_coefficient": 0.00290553219044442,
+        "coefficient_std": 0.003473935377604295,
+        "invariance_score": 0.9965380910703006,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.004947326941971297,
+          0.004501597291033853,
+          0.00728723005256028,
+          -0.002834522721983962,
+          -0.005215807977411845
+        ],
+        "pooled_coefficient": 0.0038406785055405085,
+        "coefficient_std": 0.004857872158157322,
+        "invariance_score": 0.9951656126774188,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.006621880070927589,
+          0.0012704538658406515,
+          0.0002781402297672708
+        ],
+        "pooled_coefficient": 0.003110194589777188,
+        "coefficient_std": 0.0027861858427517612,
+        "invariance_score": 0.9972215554202013,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.00483558376101238,
+          0.0025931477337208996
+        ],
+        "pooled_coefficient": 0.0031430522854778696,
+        "coefficient_std": 0.0011212180136457401,
+        "invariance_score": 0.9988800377082504,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "volatility",
+      "liquidity",
+      "time_of_day",
+      "coverage"
+    ]
+  },
+  {
+    "source": "BITGET",
+    "target": "BYBITSPOT",
+    "lag": 3,
+    "total_samples": 45130,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          -0.000425623451252812,
+          0.0006568374917779949,
+          0.0004894532324558797,
+          0.004254811634565848,
+          0.009103507834995906
+        ],
+        "pooled_coefficient": 0.002463106042488969,
+        "coefficient_std": 0.0035266374547932356,
+        "invariance_score": 0.9964857560096883,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          -0.0040974083973083445,
+          0.006605076858513541,
+          0.0015361440586419935,
+          0.00743803247239527,
+          0.0014862131504751494
+        ],
+        "pooled_coefficient": 0.0026296120368987045,
+        "coefficient_std": 0.004163522178170209,
+        "invariance_score": 0.9958537408637003,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          -0.000543864515558538,
+          0.004653467095373172,
+          0.003807797225718647
+        ],
+        "pooled_coefficient": 0.002564234922900869,
+        "coefficient_std": 0.0022770442174237654,
+        "invariance_score": 0.997728128933451,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.0011358532241574244,
+          0.002805828749252249
+        ],
+        "pooled_coefficient": 0.0023920537365863873,
+        "coefficient_std": 0.0008349877625474123,
+        "invariance_score": 0.9991657088603447,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "volatility",
+      "liquidity",
+      "time_of_day",
+      "coverage"
+    ]
+  },
+  {
+    "source": "BITGET",
+    "target": "BYBITSPOT",
+    "lag": 5,
+    "total_samples": 45437,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.0059187357019858,
+          -0.0009897658541536379,
+          0.004694980079704878,
+          -0.002672668291511021,
+          0.0013596927575807124
+        ],
+        "pooled_coefficient": 0.0019162274261747697,
+        "coefficient_std": 0.003262862786635808,
+        "invariance_score": 0.9967477488625733,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.0006435554907282241,
+          0.002968032867585537,
+          0.00168644512835403,
+          0.003233299190244454,
+          0.00042065452173178756
+        ],
+        "pooled_coefficient": 0.0019299836274552296,
+        "coefficient_std": 0.001155079119629043,
+        "invariance_score": 0.9988462535488061,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.0021951631906950487,
+          -0.0007497611586164218,
+          0.0052898998088052205
+        ],
+        "pooled_coefficient": 0.0013626353886766276,
+        "coefficient_std": 0.002465934097525184,
+        "invariance_score": 0.9975401317754051,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.0005166719507013318,
+          0.002113182376002124
+        ],
+        "pooled_coefficient": 0.0017202827660870005,
+        "coefficient_std": 0.0007982552126503961,
+        "invariance_score": 0.9992023814904825,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "volatility",
+      "liquidity",
+      "time_of_day",
+      "coverage"
+    ]
+  },
+  {
+    "source": "BITGET",
+    "target": "BYBITSPOT",
+    "lag": 10,
+    "total_samples": 44914,
+    "environment_results": {
+      "volatility": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          0.0011500421675061999,
+          0.005213425513918369,
+          -0.0040645527144673385,
+          -0.0036755496131456334,
+          0.015542880840247532
+        ],
+        "pooled_coefficient": 0.0022622595217452746,
+        "coefficient_std": 0.007210787680574031,
+        "invariance_score": 0.992840835534358,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "liquidity": {
+        "bins_tested": 5,
+        "bin_coefficients": [
+          -0.0019914011784139493,
+          0.002884890220011011,
+          0.009878277263005246,
+          -0.00038743697626042255,
+          -0.0030371088676218014
+        ],
+        "pooled_coefficient": 0.0036375034778398244,
+        "coefficient_std": 0.004657175966277978,
+        "invariance_score": 0.9953644127791168,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "time_of_day": {
+        "bins_tested": 3,
+        "bin_coefficients": [
+          0.002423901018885465,
+          0.0039447036255298865,
+          0.0010848408849700082
+        ],
+        "pooled_coefficient": 0.0028923948133847675,
+        "coefficient_std": 0.001168319662566752,
+        "invariance_score": 0.9988330437154059,
+        "p_value": 0.01,
+        "invariant": true
+      },
+      "coverage": {
+        "bins_tested": 2,
+        "bin_coefficients": [
+          0.008873567210831422,
+          0.001530184889494456
+        ],
+        "pooled_coefficient": 0.003351887828986295,
+        "coefficient_std": 0.0036716911606684832,
+        "invariance_score": 0.9963417408371632,
+        "p_value": 0.01,
+        "invariant": true
+      }
+    },
+    "overall_invariant": true,
+    "invariant_environments": [
+      "volatility",
+      "liquidity",
+      "time_of_day",
+      "coverage"
+    ]
+  }
+]

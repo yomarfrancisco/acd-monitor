@@ -1,0 +1,13 @@
+# Phase 49K.2b — CALIBRATION-AUDIT BOM Hash
+
+SHA256: 0f29cdae58868a13f6ea03abd4ebb757bff805d34e3f0eda56a3d7499fd62587
+
+Content: Phase 49K.2b — CALIBRATION-AUDIT Results
+Timestamp: 2025-10-12T19:08:06.425664
+Seed: 42
+Folds: 5
+Features: 6
+Models: 3
+Mean ECE: 0.0000
+Min HL p: 1.0000
+Success: True

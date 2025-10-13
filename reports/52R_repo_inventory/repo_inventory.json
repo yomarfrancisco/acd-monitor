@@ -1,0 +1,402 @@
+{
+  "repo_map": {
+    "analysis_v9_fixed": {
+      "file_count": 0,
+      "dir_count": 2,
+      "total_bytes": 0
+    },
+    "demo": {
+      "file_count": 699,
+      "dir_count": 2,
+      "total_bytes": 732578
+    },
+    "ui": {
+      "file_count": 45337,
+      "dir_count": 3566,
+      "total_bytes": 493546774
+    },
+    "locks": {
+      "file_count": 0,
+      "dir_count": 0,
+      "total_bytes": 0
+    },
+    "artifacts": {
+      "file_count": 172,
+      "dir_count": 46,
+      "total_bytes": 3225700
+    },
+    "infra": {
+      "file_count": 11,
+      "dir_count": 4,
+      "total_bytes": 22380
+    },
+    "court": {
+      "file_count": 8,
+      "dir_count": 2,
+      "total_bytes": 10664
+    },
+    "tools": {
+      "file_count": 1,
+      "dir_count": 0,
+      "total_bytes": 5143
+    },
+    "analysis": {
+      "file_count": 1352,
+      "dir_count": 1036,
+      "total_bytes": 18377457386
+    },
+    "evidence": {
+      "file_count": 1,
+      "dir_count": 0,
+      "total_bytes": 15732
+    },
+    "results 2": {
+      "file_count": 0,
+      "dir_count": 0,
+      "total_bytes": 0
+    },
+    "snapshots": {
+      "file_count": 42,
+      "dir_count": 45,
+      "total_bytes": 3620047
+    },
+    "calibration": {
+      "file_count": 13,
+      "dir_count": 44,
+      "total_bytes": 68903
+    },
+    "data_v7": {
+      "file_count": 1251,
+      "dir_count": 733,
+      "total_bytes": 23557933555
+    },
+    "experiments": {
+      "file_count": 113,
+      "dir_count": 75,
+      "total_bytes": 854430
+    },
+    "acd_docs": {
+      "file_count": 0,
+      "dir_count": 0,
+      "total_bytes": 0
+    },
+    "golden_datasets": {
+      "file_count": 192,
+      "dir_count": 6,
+      "total_bytes": 1479221
+    },
+    "node_modules": {
+      "file_count": 43417,
+      "dir_count": 7281,
+      "total_bytes": 255165391
+    },
+    "data_v6": {
+      "file_count": 745,
+      "dir_count": 542,
+      "total_bytes": 17565933447
+    },
+    "tests": {
+      "file_count": 197,
+      "dir_count": 22,
+      "total_bytes": 2541809
+    },
+    "cases": {
+      "file_count": 23,
+      "dir_count": 7,
+      "total_bytes": 1242605
+    },
+    "test_court_overlap": {
+      "file_count": 0,
+      "dir_count": 1,
+      "total_bytes": 0
+    },
+    "backend": {
+      "file_count": 2762,
+      "dir_count": 360,
+      "total_bytes": 28796708
+    },
+    "__pycache__": {
+      "file_count": 2,
+      "dir_count": 0,
+      "total_bytes": 24557
+    },
+    "docs": {
+      "file_count": 125,
+      "dir_count": 11,
+      "total_bytes": 2958767
+    },
+    "openapi": {
+      "file_count": 1,
+      "dir_count": 0,
+      "total_bytes": 8680
+    },
+    "schemas": {
+      "file_count": 4,
+      "dir_count": 0,
+      "total_bytes": 11158
+    },
+    "analysis_v6": {
+      "file_count": 102,
+      "dir_count": 18,
+      "total_bytes": 10760297
+    },
+    "exports": {
+      "file_count": 585,
+      "dir_count": 200,
+      "total_bytes": 671384
+    },
+    "analysis_v8": {
+      "file_count": 274,
+      "dir_count": 102,
+      "total_bytes": 5676963
+    },
+    "real_data_runs": {
+      "file_count": 25,
+      "dir_count": 30,
+      "total_bytes": 251288
+    },
+    "results": {
+      "file_count": 25,
+      "dir_count": 2,
+      "total_bytes": 120750
+    },
+    "data_forensics": {
+      "file_count": 3,
+      "dir_count": 2,
+      "total_bytes": 42014
+    },
+    "test_artifacts": {
+      "file_count": 0,
+      "dir_count": 0,
+      "total_bytes": 0
+    },
+    "writer": {
+      "file_count": 5,
+      "dir_count": 5,
+      "total_bytes": 16072
+    },
+    "analysis_v9": {
+      "file_count": 211,
+      "dir_count": 67,
+      "total_bytes": 113547001
+    },
+    "analysis_v0": {
+      "file_count": 14,
+      "dir_count": 9,
+      "total_bytes": 11160
+    },
+    "analysis_v7": {
+      "file_count": 45,
+      "dir_count": 12,
+      "total_bytes": 123238617
+    },
+    "logs": {
+      "file_count": 9,
+      "dir_count": 0,
+      "total_bytes": 12199
+    },
+    "acceptance": {
+      "file_count": 1,
+      "dir_count": 0,
+      "total_bytes": 2163
+    },
+    "binance-proxy": {
+      "file_count": 6,
+      "dir_count": 0,
+      "total_bytes": 2943
+    },
+    "scripts": {
+      "file_count": 265,
+      "dir_count": 24,
+      "total_bytes": 3045484
+    },
+    "db": {
+      "file_count": 1,
+      "dir_count": 0,
+      "total_bytes": 3677
+    },
+    "artifacts_wave1_ci": {
+      "file_count": 1,
+      "dir_count": 0,
+      "total_bytes": 172
+    },
+    "analysis_v7_pairwise": {
+      "file_count": 46,
+      "dir_count": 8,
+      "total_bytes": 22297
+    },
+    "analysis_v9_ridge": {
+      "file_count": 3,
+      "dir_count": 3,
+      "total_bytes": 4601
+    },
+    "baselines": {
+      "file_count": 11,
+      "dir_count": 2,
+      "total_bytes": 21263
+    },
+    "data": {
+      "file_count": 41,
+      "dir_count": 37,
+      "total_bytes": 6257435
+    },
+    "tmp": {
+      "file_count": 105,
+      "dir_count": 18,
+      "total_bytes": 3244362
+    },
+    "analysis_v11": {
+      "file_count": 4,
+      "dir_count": 2,
+      "total_bytes": 2777
+    },
+    "demos": {
+      "file_count": 7,
+      "dir_count": 55,
+      "total_bytes": 216943
+    },
+    "analysis_v10": {
+      "file_count": 118,
+      "dir_count": 21,
+      "total_bytes": 3300968
+    },
+    "analytics": {
+      "file_count": 21,
+      "dir_count": 5,
+      "total_bytes": 207956
+    },
+    "~": {
+      "file_count": 3,
+      "dir_count": 2,
+      "total_bytes": 23461
+    },
+    "reports": {
+      "file_count": 28,
+      "dir_count": 3,
+      "total_bytes": 380391
+    },
+    "src": {
+      "file_count": 355,
+      "dir_count": 46,
+      "total_bytes": 4367594
+    },
+    "sql": {
+      "file_count": 6,
+      "dir_count": 2,
+      "total_bytes": 7690
+    }
+  },
+  "duplicates": [
+    {
+      "path": ".vercel-redeploy 3",
+      "size": 45,
+      "modified_ts": "2025-09-27T13:10:06"
+    },
+    {
+      "path": ".vercel-redeploy 4",
+      "size": 45,
+      "modified_ts": "2025-09-27T17:44:04"
+    },
+    {
+      "path": ".vercel-redeploy 5",
+      "size": 45,
+      "modified_ts": "2025-09-27T23:32:12"
+    },
+    {
+      "path": ".vercel-redeploy 2",
+      "size": 45,
+      "modified_ts": "2025-09-24T22:24:21"
+    },
+    {
+      "path": ".npmrc 2",
+      "size": 29,
+      "modified_ts": "2025-09-28T12:43:51"
+    },
+    {
+      "path": ".flake8 8",
+      "size": 2059,
+      "modified_ts": "2025-10-02T17:20:16.737778"
+    },
+    {
+      "path": ".flake8 6",
+      "size": 2059,
+      "modified_ts": "2025-10-02T17:20:16.737592"
+    },
+    {
+      "path": ".flake8 7",
+      "size": 2059,
+      "modified_ts": "2025-10-02T17:20:16.737685"
+    },
+    {
+      "path": ".gitignore 7",
+      "size": 714,
+      "modified_ts": "2025-10-02T17:20:16.741296"
+    },
+    {
+      "path": ".gitignore 8",
+      "size": 714,
+      "modified_ts": "2025-10-02T17:20:16.741362"
+    },
+    {
+      "path": ".gitignore 6",
+      "size": 714,
+      "modified_ts": "2025-10-02T17:20:16.741218"
+    },
+    {
+      "path": ".flake8 2",
+      "size": 2059,
+      "modified_ts": "2025-10-02T17:20:16.737272"
+    },
+    {
+      "path": ".flake8 5",
+      "size": 2059,
+      "modified_ts": "2025-10-02T17:20:16.737509"
+    },
+    {
+      "path": ".flake8 4",
+      "size": 2059,
+      "modified_ts": "2025-10-02T17:20:16.737436"
+    },
+    {
+      "path": ".flake8 3",
+      "size": 2059,
+      "modified_ts": "2025-10-02T17:20:16.737359"
+    },
+    {
+      "path": ".gitignore 3",
+      "size": 714,
+      "modified_ts": "2025-10-02T17:20:16.740993"
+    },
+    {
+      "path": ".gitignore 4",
+      "size": 714,
+      "modified_ts": "2025-10-02T17:20:16.741070"
+    },
+    {
+      "path": ".gitignore 5",
+      "size": 714,
+      "modified_ts": "2025-10-02T17:20:16.741146"
+    },
+    {
+      "path": ".gitignore 2",
+      "size": 714,
+      "modified_ts": "2025-10-02T17:20:16.740921"
+    },
+    {
+      "path": ".vercel-preview-redeploy 3",
+      "size": 92,
+      "modified_ts": "2025-09-27T23:32:12"
+    },
+    {
+      "path": ".vercel-preview-redeploy 2",
+      "size": 92,
+      "modified_ts": "2025-09-27T17:44:04"
+    }
+  ],
+  "summary": {
+    "total_dirs": 57,
+    "total_duplicates": 21,
+    "total_yaml_files": 327,
+    "total_heavy_paths": 15
+  }
+}

@@ -1,0 +1,15 @@
+week,name,total_expected,files_found,files_valid,files_missing,coverage_percentage,total_bytes,status
+W-7,Week -7 (July 7-13),28,0,0,28,0.0,0,MISSING
+W-6,Week -6 (July 14-20),28,28,28,0,100.0,1035924396,COMPLETE
+W-5,Week -5 (July 21-27),28,18,18,10,64.28571428571429,1026825245,PARTIAL
+W-4,Week -4 (July 28 - Aug 3),28,0,0,28,0.0,0,MISSING
+W-3,Week -3 (Aug 4-10),28,0,0,28,0.0,0,MISSING
+W-2,Week -2 (Aug 11-17),28,0,0,28,0.0,0,MISSING
+W-1,Week -1 (Aug 18-24),28,0,0,28,0.0,0,MISSING
+W0,Week 0 (Aug 25-31),28,0,0,28,0.0,0,MISSING
+W1,Week 1 (Sep 1-7),28,0,0,28,0.0,0,MISSING
+W2,Week 2 (Sep 8-14),28,0,0,28,0.0,0,MISSING
+W3,Week 3 (Sep 15-21),28,0,0,28,0.0,0,MISSING
+W4,Week 4 (Sep 22-28),28,21,21,7,75.0,1428384553,PARTIAL
+W5,Week 5 (Sep 29 - Oct 5),28,21,21,7,75.0,1459246634,PARTIAL
+W6,Week 6 (Oct 6-12),28,15,15,13,53.57142857142857,1747112533,PARTIAL

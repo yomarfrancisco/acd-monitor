@@ -1,0 +1,23 @@
+{
+  "tierA": "6h_trigger && 12h_trigger_within_W=6h",
+  "tierB": "12h_trigger_only",
+  "tierC": "6h_trigger_only",
+  "dynamic_tau": {
+    "base": "3h",
+    "min": "2h",
+    "max": "4h",
+    "adjust": "volatility_index_percentile"
+  },
+  "cooldown_hours": 12,
+  "guards": [
+    "confirm_end <= decision_time + 2min",
+    "decision_time <= label_start - \u03b5"
+  ],
+  "ensemble_method": "weighted_alpha",
+  "ensemble_weights": {
+    "6h": 0.7,
+    "12h": 0.3
+  },
+  "confirmation_window": 6,
+  "status": "PRODUCTION_READY_V2"
+}

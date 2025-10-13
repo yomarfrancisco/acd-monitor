@@ -1,0 +1,22 @@
+{
+  "metrics": [
+    "tier_distribution",
+    "dynamic_tau_adjustments",
+    "cooldown_violations",
+    "window_guard_violations",
+    "ensemble_agreement_rate"
+  ],
+  "alerts": [
+    "tierA_high_precision",
+    "tierB_balanced_performance",
+    "tierC_high_recall",
+    "combined_targets_met"
+  ],
+  "dashboards": [
+    "orchestrator_performance",
+    "tier_breakdown",
+    "dynamic_tau_usage",
+    "cooldown_efficiency"
+  ],
+  "status": "PRODUCTION_READY"
+}

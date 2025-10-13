@@ -72,9 +72,7 @@ def update_baseline_manifest(baseline_dir: str) -> None:
                 "info_share_results.json": get_file_sha256(
                     Path(baseline_dir) / "evidence" / "info_share_results.json"
                 ),
-                "EVIDENCE.md": get_file_sha256(
-                    Path(baseline_dir) / "evidence" / "EVIDENCE.md"
-                ),
+                "EVIDENCE.md": get_file_sha256(Path(baseline_dir) / "evidence" / "EVIDENCE.md"),
             },
         }
     )

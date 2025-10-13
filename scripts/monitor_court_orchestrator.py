@@ -81,12 +81,8 @@ def run_court_diagnostics(overlap_data, overlap_dir):
 
 def main():
     parser = argparse.ArgumentParser(description="Monitor court orchestrator")
-    parser.add_argument(
-        "--overlap-dir", default="exports/overlap", help="Overlap directory"
-    )
-    parser.add_argument(
-        "--check-interval", type=int, default=30, help="Check interval in seconds"
-    )
+    parser.add_argument("--overlap-dir", default="exports/overlap", help="Overlap directory")
+    parser.add_argument("--check-interval", type=int, default=30, help="Check interval in seconds")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
 
     args = parser.parse_args()

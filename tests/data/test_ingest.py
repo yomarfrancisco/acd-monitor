@@ -174,9 +174,7 @@ class TestDataIngestion:
         }
 
         # Valid data should pass - check that validation returns a DataFrame
-        validated_data = ingestion._validate_data(
-            sample_data, "independent", expected_schema
-        )
+        validated_data = ingestion._validate_data(sample_data, "independent", expected_schema)
         assert isinstance(validated_data, pd.DataFrame)
         assert len(validated_data) > 0
 
@@ -186,9 +184,7 @@ class TestDataIngestion:
         # might not validate schema
         # For now, just check that the method doesn't crash
         try:
-            validated_data = ingestion._validate_data(
-                invalid_data, "independent", expected_schema
-            )
+            validated_data = ingestion._validate_data(invalid_data, "independent", expected_schema)
             # If it doesn't fail, that's fine for now
             assert isinstance(validated_data, pd.DataFrame)
         except Exception:
@@ -209,9 +205,7 @@ class TestDataIngestion:
 
         # Check preprocessing results - some rows may still have NaN values
         # Check that timestamp is sorted
-        assert processed_data[
-            "timestamp"
-        ].is_monotonic_increasing  # Sorted by timestamp
+        assert processed_data["timestamp"].is_monotonic_increasing  # Sorted by timestamp
         # Check that some preprocessing was done
         assert len(processed_data) <= len(sample_data)  # Some rows may be dropped
 

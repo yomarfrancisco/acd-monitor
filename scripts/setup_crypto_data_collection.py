@@ -215,9 +215,7 @@ def create_mock_crypto_data():
         for pair in pairs:
             # Generate base price with trend and volatility
             base_price = 50000 if "BTC" in pair else (3000 if "ETH" in pair else 0.5)
-            price_trend = np.cumsum(
-                np.random.normal(0, base_price * 0.001, len(timestamps))
-            )
+            price_trend = np.cumsum(np.random.normal(0, base_price * 0.001, len(timestamps)))
             prices = base_price + price_trend
 
             # Add exchange-specific variations
@@ -699,6 +697,8 @@ def main():
 if __name__ == "__main__":
     success = main()
     sys.exit(0 if success else 1)
+
+
 
 
 

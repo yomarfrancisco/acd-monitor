@@ -1,0 +1,10 @@
+{
+  "events_total": 160,
+  "placebo_families_total": 191,
+  "placebo_families_pass": 0,
+  "placebo_pass_rate": 0.0,
+  "tsi_low_n_count": 106,
+  "tsi_ge_100_ge_100_count": 932,
+  "memory_peak_MB": 268.625,
+  "rng_seed": 20251006
+}

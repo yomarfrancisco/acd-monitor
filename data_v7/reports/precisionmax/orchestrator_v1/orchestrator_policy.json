@@ -1,0 +1,19 @@
+{
+  "tierA": "6h_trigger && 12h_trigger_within_W=6h",
+  "tierB": "12h_trigger_only",
+  "tierC": "6h_trigger_only",
+  "dynamic_tau": {
+    "base": "3h",
+    "min": "2h",
+    "max": "4h",
+    "adjust": "volatility_index_percentile"
+  },
+  "cooldown_hours": 12,
+  "guards": [
+    "confirm_end <= decision_time - \u03b5",
+    "decision_time <= label_start - \u03b5"
+  ],
+  "ensemble_method": "min_alpha",
+  "confirmation_window": 6,
+  "status": "PRODUCTION_READY"
+}

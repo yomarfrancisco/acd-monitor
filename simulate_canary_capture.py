@@ -20,15 +20,22 @@ print("📊 Target window: 2025-09-28T02:00:00Z to 2025-09-28T02:30:00Z")
 
 # Simulate the capture command that would be run
 capture_command = [
-    "python", "scripts/capture/capture_window_enhanced.py",
-    "--symbol", "BTC-USD",
-    "--start", "2025-09-28T02:00:00Z", 
-    "--end", "2025-09-28T02:30:00Z",
-    "--venues", "binance,coinbase,kraken,okx,bybit",
-    "--bucket", "acd-monitor-snapshots",
-    "--prefix", "snapshots",
+    "python",
+    "scripts/capture/capture_window_enhanced.py",
+    "--symbol",
+    "BTC-USD",
+    "--start",
+    "2025-09-28T02:00:00Z",
+    "--end",
+    "2025-09-28T02:30:00Z",
+    "--venues",
+    "binance,coinbase,kraken,okx,bybit",
+    "--bucket",
+    "acd-monitor-snapshots",
+    "--prefix",
+    "snapshots",
     "--canary",  # This enables canary mode
-    "--verbose"
+    "--verbose",
 ]
 
 print(f"\n🚀 Capture command:")
@@ -43,11 +50,20 @@ print("✅ Timestamp unit detected: microseconds")
 print("✅ Price median: ~110,000 USD")
 print("✅ Cross-field pass-rate: >90%")
 print("✅ Written S3 keys:")
-print("   - s3://acd-monitor-snapshots/snapshots/BTC-USD/20250928/0200-0230/ticks_canary/binance/part-0000.parquet")
-print("   - s3://acd-monitor-snapshots/snapshots/BTC-USD/20250928/0200-0230/ticks_canary/coinbase/part-0000.parquet")
-print("   - s3://acd-monitor-snapshots/snapshots/BTC-USD/20250928/0200-0230/ticks_canary/kraken/part-0000.parquet")
-print("   - s3://acd-monitor-snapshots/snapshots/BTC-USD/20250928/0200-0230/ticks_canary/okx/part-0000.parquet")
-print("   - s3://acd-monitor-snapshots/snapshots/BTC-USD/20250928/0200-0230/ticks_canary/bybit/part-0000.parquet")
+print(
+    "   - s3://acd-monitor-snapshots/snapshots/BTC-USD/20250928/0200-0230/ticks_canary/binance/part-0000.parquet"
+)
+print(
+    "   - s3://acd-monitor-snapshots/snapshots/BTC-USD/20250928/0200-0230/ticks_canary/coinbase/part-0000.parquet"
+)
+print(
+    "   - s3://acd-monitor-snapshots/snapshots/BTC-USD/20250928/0200-0230/ticks_canary/kraken/part-0000.parquet"
+)
+print(
+    "   - s3://acd-monitor-snapshots/snapshots/BTC-USD/20250928/0200-0230/ticks_canary/okx/part-0000.parquet"
+)
+print(
+    "   - s3://acd-monitor-snapshots/snapshots/BTC-USD/20250928/0200-0230/ticks_canary/bybit/part-0000.parquet"
+)
 
 print(f"\n⏱️  Simulation complete - ready for validation gates")
-

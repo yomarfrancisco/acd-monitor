@@ -1,0 +1,13 @@
+{
+  "week": "W-12",
+  "expected": 28,
+  "found": 21,
+  "percentage": 75.0,
+  "pass": false,
+  "pass_threshold": 24,
+  "total_bytes": 750373824,
+  "v6_files": 0,
+  "v7_files": 21,
+  "date_range": "2025-07-14 to 2025-07-20",
+  "timestamp": "2025-10-11T18:38:47.380579Z"
+}

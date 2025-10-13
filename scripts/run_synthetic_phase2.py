@@ -27,9 +27,7 @@ from acd.validation.infoflow import analyze_infoflow
 from agent.providers.offline_mock import OfflineMockProvider
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -175,9 +173,7 @@ def run_phase2_analysis(seed: int = 42, n_samples: int = 6000):
         logger.info("Testing agent integration...")
         try:
             provider = OfflineMockProvider()
-            test_result = provider.generate(
-                prompt="Show mirroring ratios for BTC/USD last week"
-            )
+            test_result = provider.generate(prompt="Show mirroring ratios for BTC/USD last week")
             agent_results = {
                 "status": "success",
                 "response_length": len(test_result.content),
@@ -220,12 +216,8 @@ def run_phase2_analysis(seed: int = 42, n_samples: int = 6000):
 def main():
     """Main entry point"""
     parser = argparse.ArgumentParser(description="Phase-2 Synthetic Analysis Pipeline")
-    parser.add_argument(
-        "--seed", type=int, default=42, help="Random seed for reproducibility"
-    )
-    parser.add_argument(
-        "--N", type=int, default=6000, help="Number of samples per scenario"
-    )
+    parser.add_argument("--seed", type=int, default=42, help="Random seed for reproducibility")
+    parser.add_argument("--N", type=int, default=6000, help="Number of samples per scenario")
     parser.add_argument("--verbose", action="store_true", help="Verbose output")
 
     args = parser.parse_args()
@@ -241,9 +233,7 @@ def main():
         print("=" * 80)
         print(f"Seed: {args.seed}")
         print(f"Sample Size: {args.N}")
-        print(
-            f"Execution Time: {results['pipeline_info']['execution_time']:.2f} seconds"
-        )
+        print(f"Execution Time: {results['pipeline_info']['execution_time']:.2f} seconds")
         print(f"Results saved to: artifacts/phase2_results_seed_{args.seed}.json")
 
         # Print key findings

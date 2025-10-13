@@ -40,16 +40,12 @@ class TestDataWindowing:
     @pytest.fixture
     def fixed_window_config(self):
         """Fixed window configuration for VMM"""
-        return create_window_config(
-            window_size=100, step_size=50, window_type="fixed", seed=42
-        )
+        return create_window_config(window_size=100, step_size=50, window_type="fixed", seed=42)
 
     @pytest.fixture
     def rolling_window_config(self):
         """Rolling window configuration for ICP"""
-        return create_window_config(
-            window_size=100, step_size=50, window_type="rolling", seed=42
-        )
+        return create_window_config(window_size=100, step_size=50, window_type="rolling", seed=42)
 
     def test_fixed_window_creation(self, fixed_window_config, sample_data):
         """Test fixed window creation for VMM"""

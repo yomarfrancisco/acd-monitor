@@ -22,9 +22,7 @@ from acd.data.cache import DataCache
 def setup_logging(verbose: bool = False) -> None:
     """Setup logging configuration."""
     level = logging.DEBUG if verbose else logging.INFO
-    logging.basicConfig(
-        level=level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    )
+    logging.basicConfig(level=level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
 
 def materialize_cointegrated_data(
@@ -96,9 +94,7 @@ def materialize_cointegrated_data(
         # Calculate coverage
         expected_minutes = (end_utc - start_utc).total_seconds() / 60
         actual_bars = len(df)
-        coverage_pct = (
-            (actual_bars / expected_minutes) * 100 if expected_minutes > 0 else 0
-        )
+        coverage_pct = (actual_bars / expected_minutes) * 100 if expected_minutes > 0 else 0
 
         # Log materialization
         materialize_log = {
@@ -109,28 +105,20 @@ def materialize_cointegrated_data(
             "coveragePct": round(coverage_pct, 2),
             "source": source,
         }
-        print(
-            f"[DATA:minute:materialize] {json.dumps(materialize_log, ensure_ascii=False)}"
-        )
+        print(f"[DATA:minute:materialize] {json.dumps(materialize_log, ensure_ascii=False)}")
 
-        logger.info(
-            f"Cached {actual_bars} bars for {venue} ({coverage_pct:.2f}% coverage)"
-        )
+        logger.info(f"Cached {actual_bars} bars for {venue} ({coverage_pct:.2f}% coverage)")
 
     logger.info(f"Successfully materialized cointegrated data for {len(venues)} venues")
 
 
 def main():
     """Main function to materialize cointegrated minute data."""
-    parser = argparse.ArgumentParser(
-        description="Materialize cointegrated synthetic minute data"
-    )
+    parser = argparse.ArgumentParser(description="Materialize cointegrated synthetic minute data")
     parser.add_argument("--start", required=True, help="Start date (YYYY-MM-DD)")
     parser.add_argument("--end", required=True, help="End date (YYYY-MM-DD)")
     parser.add_argument("--pair", required=True, help="Trading pair (e.g., BTC-USD)")
-    parser.add_argument(
-        "--venues", required=True, help="Comma-separated list of venues"
-    )
+    parser.add_argument("--venues", required=True, help="Comma-separated list of venues")
     parser.add_argument(
         "--source", default="synthetic_info_share_v1", help="Data source identifier"
     )
@@ -141,9 +129,7 @@ def main():
         help="Leader bias JSON",
     )
     parser.add_argument("--cache-dir", default="data/cache", help="Cache directory")
-    parser.add_argument(
-        "--start-price", type=float, default=50000.0, help="Starting price"
-    )
+    parser.add_argument("--start-price", type=float, default=50000.0, help="Starting price")
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose logging")
 
     args = parser.parse_args()

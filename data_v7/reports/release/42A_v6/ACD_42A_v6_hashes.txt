@@ -1,0 +1,17 @@
+ACD 42A-v6 Release - SHA256 Hashes
+==================================================
+
+INPUTS:
+orch_v2_policy: bd7c422f48b702fda77f00a80909a5a66758d9ff600e0bf3ba938510408b2733
+orch_v2_thresholds: 8bca420a30c9b9980f2c5d55ea72a83c164f090d7e42a3de6d7abf7ea034d2c2
+orch_v2_conformal: 4de74c6e4d5e02c7d11b19deedd231276cc40e312c7d8660f3aa62b69933ce95
+orch_v2_metrics: 77bb030a9699e0d9fcdcc215d6f7e59755304463964b5daf97447a2125c4aa85
+q_knapsack_policy: eef59fc7d96d97aaf04e885336dac205282508be154e00e9047926746bb33ccf
+q_winner_spec: f6bf70ba2e2b10a3831948d4c03a56e13d82200aa9084dab7b1a43312fdb6054
+lead_time_manifest: 4f0ef4e3763f22e3ce73f93d190210617d2045b73897c33a108c1f1ee042c4c2
+cv_manifest: 160314c6ef1c7f2367e9716a6a473b4f9ebe1777420868c8fe48791914761b30
+
+OUTPUTS:
+ACD_42A_v6_policy: e68de7eceaaff2f02044fddd29574e89c23b1f7b7eb2403123b14cafc074821d
+ACD_42A_v6_metrics: 3698439cdcfc3c1b3eac59fe7e2c5cc699c4dd83765b561cfd362858b56313e4
+ACD_42A_v6_window_audit: 442fa9ed6cfea25e90c79700781526b0f1a9abcbd7ccaa30259889f97ddb5c52

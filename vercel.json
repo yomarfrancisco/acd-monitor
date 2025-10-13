@@ -1,3 +1,5 @@
 {
-  "version": 2
+  "version": 2,
+  "ignoreCommand": "node scripts/should-build.js",
+  "buildCommand": "npm run build"
 }

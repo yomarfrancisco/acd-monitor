@@ -1,0 +1,90 @@
+{
+  "BINANCE": {
+    "path": "data_v6/clean/BINANCE/20250903/ticks_v1.parquet",
+    "columns": [
+      {
+        "name": "ts",
+        "dtype": "int64"
+      },
+      {
+        "name": "price",
+        "dtype": "double"
+      },
+      {
+        "name": "size",
+        "dtype": "double"
+      },
+      {
+        "name": "venue",
+        "dtype": "string"
+      }
+    ],
+    "n_row_groups": 1
+  },
+  "COINBASE": {
+    "path": "data_v6/clean/COINBASE/20250903/ticks_v1.parquet",
+    "columns": [
+      {
+        "name": "ts",
+        "dtype": "int64"
+      },
+      {
+        "name": "price",
+        "dtype": "double"
+      },
+      {
+        "name": "size",
+        "dtype": "double"
+      },
+      {
+        "name": "venue",
+        "dtype": "string"
+      }
+    ],
+    "n_row_groups": 1
+  },
+  "BYBITSPOT": {
+    "path": "data_v6/clean/BYBITSPOT/20250903/ticks_v1.parquet",
+    "columns": [
+      {
+        "name": "ts",
+        "dtype": "int64"
+      },
+      {
+        "name": "price",
+        "dtype": "double"
+      },
+      {
+        "name": "size",
+        "dtype": "double"
+      },
+      {
+        "name": "venue",
+        "dtype": "string"
+      }
+    ],
+    "n_row_groups": 1
+  },
+  "BITGET": {
+    "path": "data_v6/clean/BITGET/20250903/ticks_v1.parquet",
+    "columns": [
+      {
+        "name": "ts",
+        "dtype": "int64"
+      },
+      {
+        "name": "price",
+        "dtype": "double"
+      },
+      {
+        "name": "size",
+        "dtype": "double"
+      },
+      {
+        "name": "venue",
+        "dtype": "string"
+      }
+    ],
+    "n_row_groups": 1
+  }
+}

@@ -1,0 +1,12 @@
+# Phase 49K.2 — REGULARIZED RETRAINING BOM Hash
+
+SHA256: 9fd26a6f89d7e1abcaf93f892bc55647f2b2dd09c134cc3f6836a3c71b840ef0
+
+Content: Phase 49K.2 — REGULARIZED RETRAINING Results
+Timestamp: 2025-10-12T15:50:49.105762
+Seed: 42
+Folds: 5
+Features: 6
+Models: 3
+Success: False
+Gates: False

@@ -208,9 +208,7 @@ def main():
     parser.add_argument("--export-dir", default="exports", help="Export directory")
     parser.add_argument("--start", default="2025-01-01", help="Start date (YYYY-MM-DD)")
     parser.add_argument("--end", default="2025-09-24", help="End date (YYYY-MM-DD)")
-    parser.add_argument(
-        "--print-evidence", action="store_true", help="Print evidence blocks"
-    )
+    parser.add_argument("--print-evidence", action="store_true", help="Print evidence blocks")
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose logging")
 
     args = parser.parse_args()

@@ -1,0 +1,5 @@
+venue,total_rows,dup_ts,bad_price,bad_size,dup_rate,status
+BINANCE,1275509,0,0,0,0.0,PASS
+COINBASE,497690,0,0,0,0.0,PASS
+BYBITSPOT,508706,0,0,0,0.0,PASS
+BITGET,325121,0,0,0,0.0,PASS

@@ -1,0 +1,14 @@
+{
+  "fusion_type": "2_tier_OR",
+  "tier1_logic": "if 12h triggers \u2192 emit (always)",
+  "tier2_logic": "if Tier-1 silent \u2192 emit 6h iff: (passes guards) AND [score_6h \u2265 (enter_threshold_6h + 0.02)] OR [score_6h \u2265 enter_threshold_6h AND score_12h \u2265 Q80(train)]",
+  "tier1_threshold": 0.75,
+  "tier2_threshold_boost": 0.02,
+  "tier2_12h_quantile": 0.8,
+  "cooldown_hours": 12,
+  "guards": [
+    "confirm_end <= decision_time - \u03b5",
+    "decision_time <= label_start - \u03b5"
+  ],
+  "status": "DUAL_ESCALATION_V2"
+}

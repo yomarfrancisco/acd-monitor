@@ -1,0 +1,23 @@
+{
+  "pid": 63512,
+  "reason": "Redundant after ground-truth micro-check; avoid long CPU and integrity risks",
+  "actions": ["SIGTERM", "SIGKILL_if_needed"],
+  "pre_kill_metrics": {
+    "elapsed_time": "04:28:02",
+    "cpu_percent": 91.6,
+    "memory_percent": 0.3,
+    "rss_mb": 28.0,
+    "open_files_count": 200
+  },
+  "exit_verified": true,
+  "archived_to": "analysis_v10/_postmortem/beacon_stress_test_PID63512/",
+  "rng_scan": "N/A (no new code executed)",
+  "notes": "No synthetic data created. Do not restart.",
+  "termination_time": "2025-10-07T11:44:00Z",
+  "exit_code": 0
+}
+
+
+
+
+

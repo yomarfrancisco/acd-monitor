@@ -1,0 +1,14 @@
+{
+  "gate_name": "median_lead_minutes_180",
+  "gate_description": "Median lead time must be \u2265 180 minutes",
+  "computed_value": 182,
+  "target_value": 180,
+  "operator": ">=",
+  "passed": true,
+  "computation_details": {
+    "method": "floor((label_start - decision_time).total_seconds()/60)",
+    "epsilon_excluded": true,
+    "total_alerts": 100
+  },
+  "status": "GATE_CHECK_COMPLETE"
+}

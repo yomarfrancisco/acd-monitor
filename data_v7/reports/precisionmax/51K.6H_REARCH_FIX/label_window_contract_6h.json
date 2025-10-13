@@ -1,0 +1,22 @@
+{
+  "horizon_hours": 6,
+  "score_time": "t",
+  "decision_time": "t+3h",
+  "persistence_window": [
+    "t",
+    "t+3h-\u03b5"
+  ],
+  "confirmation_window": [
+    "t",
+    "t+3h-\u03b5"
+  ],
+  "evaluation_window": [
+    "t+\u03b5",
+    "t+6h"
+  ],
+  "guards": [
+    "confirm_end <= t+3h-\u03b5",
+    "t+3h <= t+6h-\u03b5"
+  ],
+  "epsilon_minutes": 1
+}

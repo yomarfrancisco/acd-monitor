@@ -1,0 +1,16 @@
+{
+  "day": "2025-09-05",
+  "window_size": "10m",
+  "window_minutes": 10,
+  "window_bars": 120,
+  "step_bars": 60,
+  "total_edges": 12,
+  "mean_tsi": 0.017109942854868037,
+  "median_tsi": 0.005141192312447002,
+  "max_tsi": 0.06590666925597478,
+  "edges_above_threshold": 0,
+  "mean_run_length": 2.8333333333333335,
+  "empirical_null_edges": 12,
+  "memory_peak_mb": 244.9375,
+  "status": "ACD_DAY5_TSI_COMPLETE"
+}

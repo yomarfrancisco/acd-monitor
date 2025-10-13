@@ -92,12 +92,8 @@ def run_court_diagnostics(overlap_data, overlap_file, timestamp):
 
 def main():
     parser = argparse.ArgumentParser(description="Monitor for strict court overlaps")
-    parser.add_argument(
-        "--overlap-dir", default="exports/overlap", help="Overlap directory"
-    )
-    parser.add_argument(
-        "--check-interval", type=int, default=30, help="Check interval in seconds"
-    )
+    parser.add_argument("--overlap-dir", default="exports/overlap", help="Overlap directory")
+    parser.add_argument("--check-interval", type=int, default=30, help="Check interval in seconds")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
 
     args = parser.parse_args()
@@ -138,9 +134,7 @@ def main():
 
                     if success:
                         logger.info("Court diagnostics completed successfully")
-                        print(
-                            f"\n[OVERLAP:FOUND] Strict court overlap detected and analyzed"
-                        )
+                        print(f"\n[OVERLAP:FOUND] Strict court overlap detected and analyzed")
                         print(f"Results: exports/court_diag_{timestamp}/")
                     else:
                         logger.error("Court diagnostics failed")

@@ -1,0 +1,12 @@
+# Phase 50K.1-REPAIR BOM Hash
+
+SHA256: 74a3682fcaa04bc4f590092c77b219a2d52764e74823e7bfde386f6e62f85a0d
+
+Content: Phase 50K.1-REPAIR Results
+Timestamp: 2025-10-12T15:35:45.369842
+Seed: 42
+Folds: 5
+Features: 6
+Estimators: 2
+Success: True
+Gates: True

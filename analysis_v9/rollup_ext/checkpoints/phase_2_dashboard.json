@@ -1,0 +1,39 @@
+{
+  "phase": 2,
+  "status": "COMPLETE",
+  "key_files": {
+    "decision_tiered": "analysis_v9/tiers/decision_tiered.csv",
+    "persistence_\u22653days": "analysis_v9/tiers/persistence_\u22653days.csv",
+    "summary": "analysis_v9/tiers/summary.json"
+  },
+  "core_metrics": {
+    "total_combinations": 84,
+    "tier_1_total": 56,
+    "tier_2_total": 0,
+    "persistent_edges_count": 6,
+    "tier_1_by_frequency": {
+      "10S": 3,
+      "15S": 1,
+      "1S": 17,
+      "2S": 17,
+      "30S": 1,
+      "5S": 17
+    },
+    "tier_2_by_frequency": {
+      "10S": 0,
+      "15S": 0,
+      "1S": 0,
+      "2S": 0,
+      "30S": 0,
+      "5S": 0
+    }
+  },
+  "flags": {
+    "any_tier_1": true,
+    "any_tier_2": false,
+    "any_persistent": true,
+    "memory_ok": true
+  },
+  "next": "Create 'analysis_v9/controls/CONTINUE_PHASE_2.txt' with PROCEED to continue",
+  "memory_peak_mb": 155.515625
+}

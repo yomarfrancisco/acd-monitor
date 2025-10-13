@@ -1,0 +1,330 @@
+{
+  "phase": 1,
+  "status": "COMPLETE",
+  "key_files": {
+    "frequency_results": "analysis_v9/freq_sweep/frequency_results.csv",
+    "coverage_matrix": "analysis_v9/freq_sweep/coverage_matrix.csv"
+  },
+  "core_metrics": {
+    "total_day_freq_combinations": 42,
+    "successful_combinations": 42,
+    "coverage_matrix": [
+      {
+        "day": "2025-09-01",
+        "frequency": "1S",
+        "rows_per_pair_median": 16747.916666666668,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-01",
+        "frequency": "2S",
+        "rows_per_pair_median": 16747.916666666668,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-01",
+        "frequency": "5S",
+        "rows_per_pair_median": 16747.916666666668,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-01",
+        "frequency": "10S",
+        "rows_per_pair_median": 8562.666666666666,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-01",
+        "frequency": "15S",
+        "rows_per_pair_median": 5720.0,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-01",
+        "frequency": "30S",
+        "rows_per_pair_median": 2861.1666666666665,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-02",
+        "frequency": "1S",
+        "rows_per_pair_median": 16774.916666666668,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-02",
+        "frequency": "2S",
+        "rows_per_pair_median": 16774.916666666668,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-02",
+        "frequency": "5S",
+        "rows_per_pair_median": 16774.916666666668,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-02",
+        "frequency": "10S",
+        "rows_per_pair_median": 8564.583333333334,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-02",
+        "frequency": "15S",
+        "rows_per_pair_median": 5720.666666666667,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-02",
+        "frequency": "30S",
+        "rows_per_pair_median": 2861.4166666666665,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-03",
+        "frequency": "1S",
+        "rows_per_pair_median": 15757.583333333334,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-03",
+        "frequency": "2S",
+        "rows_per_pair_median": 15757.583333333334,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-03",
+        "frequency": "5S",
+        "rows_per_pair_median": 15757.583333333334,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-03",
+        "frequency": "10S",
+        "rows_per_pair_median": 8309.75,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-03",
+        "frequency": "15S",
+        "rows_per_pair_median": 5606.083333333333,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-03",
+        "frequency": "30S",
+        "rows_per_pair_median": 2821.3333333333335,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-04",
+        "frequency": "1S",
+        "rows_per_pair_median": 15084.416666666666,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-04",
+        "frequency": "2S",
+        "rows_per_pair_median": 15084.416666666666,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-04",
+        "frequency": "5S",
+        "rows_per_pair_median": 15084.416666666666,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-04",
+        "frequency": "10S",
+        "rows_per_pair_median": 8121.583333333333,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-04",
+        "frequency": "15S",
+        "rows_per_pair_median": 5515.166666666667,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-04",
+        "frequency": "30S",
+        "rows_per_pair_median": 2787.9166666666665,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-05",
+        "frequency": "1S",
+        "rows_per_pair_median": 12378.25,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-05",
+        "frequency": "2S",
+        "rows_per_pair_median": 12378.25,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-05",
+        "frequency": "5S",
+        "rows_per_pair_median": 12378.25,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-05",
+        "frequency": "10S",
+        "rows_per_pair_median": 6711.0,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-05",
+        "frequency": "15S",
+        "rows_per_pair_median": 4587.666666666667,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-05",
+        "frequency": "30S",
+        "rows_per_pair_median": 2372.5833333333335,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-06",
+        "frequency": "1S",
+        "rows_per_pair_median": 14314.25,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-06",
+        "frequency": "2S",
+        "rows_per_pair_median": 14314.25,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-06",
+        "frequency": "5S",
+        "rows_per_pair_median": 14314.25,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-06",
+        "frequency": "10S",
+        "rows_per_pair_median": 7849.5,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-06",
+        "frequency": "15S",
+        "rows_per_pair_median": 5379.916666666667,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-06",
+        "frequency": "30S",
+        "rows_per_pair_median": 2745.8333333333335,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-07",
+        "frequency": "1S",
+        "rows_per_pair_median": 13907.583333333334,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-07",
+        "frequency": "2S",
+        "rows_per_pair_median": 13907.583333333334,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-07",
+        "frequency": "5S",
+        "rows_per_pair_median": 13907.583333333334,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-07",
+        "frequency": "10S",
+        "rows_per_pair_median": 7754.083333333333,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-07",
+        "frequency": "15S",
+        "rows_per_pair_median": 5338.0,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      },
+      {
+        "day": "2025-09-07",
+        "frequency": "30S",
+        "rows_per_pair_median": 2738.0,
+        "pairs_analyzable": 12,
+        "skip_low_n_pairs": 0
+      }
+    ],
+    "kept_counts_by_freq": {
+      "1S": 17,
+      "2S": 17,
+      "5S": 17,
+      "10S": 3,
+      "15S": 1,
+      "30S": 1
+    },
+    "placebo_robust_by_freq": {
+      "1S": 221,
+      "2S": 221,
+      "5S": 221,
+      "10S": 228,
+      "15S": 241,
+      "30S": 241
+    }
+  },
+  "flags": {
+    "any_low_coverage": false,
+    "memory_ok": true
+  },
+  "next": "Create 'analysis_v9/controls/CONTINUE_PHASE_1.txt' with PROCEED to continue",
+  "memory_peak_mb": 168.09375
+}

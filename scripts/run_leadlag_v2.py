@@ -43,17 +43,13 @@ def parse_pairs(pairs_str: str) -> list:
 
 def main():
     parser = argparse.ArgumentParser(description="Lead-Lag Analysis v2")
-    parser.add_argument(
-        "--use-overlap-json", required=True, help="Path to OVERLAP.json file"
-    )
+    parser.add_argument("--use-overlap-json", required=True, help="Path to OVERLAP.json file")
     parser.add_argument(
         "--pairs",
         required=True,
         help="Comma-separated pairs (e.g., binance-okx,binance-bybit)",
     )
-    parser.add_argument(
-        "--freq", default="1s", help="Resampling frequency (default: 1s)"
-    )
+    parser.add_argument("--freq", default="1s", help="Resampling frequency (default: 1s)")
     parser.add_argument(
         "--horizons",
         default="1,2,5,10,30",
@@ -64,9 +60,7 @@ def main():
         default="xcorr,lagreg",
         help="Comma-separated methods (default: xcorr,lagreg)",
     )
-    parser.add_argument(
-        "--export-dir", required=True, help="Export directory for results"
-    )
+    parser.add_argument("--export-dir", required=True, help="Export directory for results")
     parser.add_argument("--verbose", action="store_true", help="Enable verbose logging")
 
     args = parser.parse_args()
@@ -136,8 +130,7 @@ def main():
         # Print summary
         print("\n[LLV2:summary] Lead-Lag v2 Analysis Complete")
         print(
-            f"[LLV2:summary] Window: {results['window']['start']} "
-            f"to {results['window']['end']}"
+            f"[LLV2:summary] Window: {results['window']['start']} " f"to {results['window']['end']}"
         )
         print(f"[LLV2:summary] Frequency: {results['window']['freq']}")
         print(f"[LLV2:summary] Edges analyzed: {len(results['edges'])}")

@@ -113,9 +113,7 @@ def main():
         print("\n🏷️ Labeling environments...")
         labeled_data = {}
         for venue, data in prepared_data.items():
-            labeled_data[venue] = env_labeler.label_all_environments(
-                data, processed_metrics
-            )
+            labeled_data[venue] = env_labeler.label_all_environments(data, processed_metrics)
 
         # Get environment counts
         env_counts = {}
@@ -223,9 +221,7 @@ def main():
                 print("\n📄 Sample ICP.json:")
                 icp_sample = {
                     "overall": icp_tests.get("overall", {}),
-                    "parameter_tests": list(
-                        icp_tests.get("parameter_tests", {}).keys()
-                    ),
+                    "parameter_tests": list(icp_tests.get("parameter_tests", {}).keys()),
                     "leadership_tests": icp_tests.get("leadership_tests", {}),
                     "residual_tests": icp_tests.get("residual_tests", {}),
                 }

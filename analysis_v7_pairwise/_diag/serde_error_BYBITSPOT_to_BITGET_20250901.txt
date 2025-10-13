@@ -1,0 +1,13 @@
+SERDE Error for BYBITSPOT_to_BITGET_20250901
+Error: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+
+First 20 offending entries:
+1. str: pair -> str
+2. str: date -> str
+3. str: scale -> str
+4. str: N -> int
+5. str: overlap_pct -> float
+6. str: env_sizes -> dict
+7. str: lag_results -> list
+8. str: icp_pass -> bool
+9. str: significant_lags -> int

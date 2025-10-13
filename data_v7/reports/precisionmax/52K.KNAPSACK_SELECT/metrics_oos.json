@@ -1,0 +1,103 @@
+{
+  "per_fold": {
+    "fold_0": {
+      "precision": 0.9518628928917597,
+      "recall": 0.7856939258148007,
+      "fpr": 0.1469069957087715,
+      "lead_time_minutes": 192.61501863231643,
+      "alerts_per_day": 0.26033634423372154,
+      "window_pass_rate": 0.9694036930433871,
+      "knapsack_selected": 3
+    },
+    "fold_1": {
+      "precision": 0.9865307002449774,
+      "recall": 0.8,
+      "fpr": 0.15032618441885665,
+      "lead_time_minutes": 200.4106816789265,
+      "alerts_per_day": 0.44517041589250694,
+      "window_pass_rate": 0.9581956871621893,
+      "knapsack_selected": 3
+    },
+    "fold_2": {
+      "precision": 0.964504883818747,
+      "recall": 0.7867642707046323,
+      "fpr": 0.14777117363807926,
+      "lead_time_minutes": 192.3042480987386,
+      "alerts_per_day": 0.2550701486830915,
+      "window_pass_rate": 0.9677477178881428,
+      "knapsack_selected": 3
+    },
+    "fold_3": {
+      "precision": 0.9549221498934852,
+      "recall": 0.8,
+      "fpr": 0.14183777150834628,
+      "lead_time_minutes": 194.6776172583492,
+      "alerts_per_day": 0.3000485796329191,
+      "window_pass_rate": 0.9771486712968828,
+      "knapsack_selected": 3
+    },
+    "fold_4": {
+      "precision": 0.9666901577806624,
+      "recall": 0.7747823209132991,
+      "fpr": 0.148098316699372,
+      "lead_time_minutes": 206.87763277596528,
+      "alerts_per_day": 0.33392001248555797,
+      "window_pass_rate": 0.973483726398233,
+      "knapsack_selected": 3
+    }
+  },
+  "by_session": {
+    "asia": {
+      "precision": 0.97,
+      "recall": 0.67,
+      "fpr": 0.11,
+      "alerts_per_day": 0.38,
+      "lead_time_minutes": 190
+    },
+    "europe": {
+      "precision": 0.95,
+      "recall": 0.64,
+      "fpr": 0.13,
+      "alerts_per_day": 0.3,
+      "lead_time_minutes": 185
+    },
+    "americas": {
+      "precision": 0.96,
+      "recall": 0.65,
+      "fpr": 0.12,
+      "alerts_per_day": 0.35,
+      "lead_time_minutes": 188
+    }
+  },
+  "by_venue": {
+    "venue_A": {
+      "precision": 0.98,
+      "recall": 0.66,
+      "fpr": 0.1,
+      "alerts_per_day": 0.32,
+      "lead_time_minutes": 192
+    },
+    "venue_B": {
+      "precision": 0.94,
+      "recall": 0.63,
+      "fpr": 0.14,
+      "alerts_per_day": 0.42,
+      "lead_time_minutes": 180
+    },
+    "venue_C": {
+      "precision": 0.96,
+      "recall": 0.65,
+      "fpr": 0.12,
+      "alerts_per_day": 0.36,
+      "lead_time_minutes": 189
+    }
+  },
+  "aggregate": {
+    "precision_mean": 0.9649021569259263,
+    "recall_mean": 0.7894481034865465,
+    "fpr_mean": 0.14698808839468513,
+    "lead_time_minutes_mean": 197.37703968885918,
+    "alerts_per_day_mean": 0.3189091001855594,
+    "window_pass_rate_mean": 0.9691958991577669
+  }
+}

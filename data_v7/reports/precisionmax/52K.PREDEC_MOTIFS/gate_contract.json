@@ -1,0 +1,26 @@
+{
+  "gates": {
+    "precision_threshold": 0.95,
+    "recall_threshold": 0.63,
+    "fpr_threshold": 0.15,
+    "window_pass_threshold": 0.95,
+    "lead_time_minutes_threshold": 180,
+    "placebo_inversion_collapse_required": true
+  },
+  "results": {
+    "precision_achieved": 0.9649671415301123,
+    "recall_achieved": 0.6272347139765763,
+    "fpr_achieved": 0.12323844269050346,
+    "window_pass_achieved": 0.9676584662527666,
+    "lead_time_achieved": 199.0
+  },
+  "gates_passed": false,
+  "failed_gates": [
+    "recall"
+  ],
+  "motif_improvements": {
+    "recall_improvement_vs_v2": 0.027234713976576286,
+    "precision_maintained": true,
+    "fpr_controlled": true
+  }
+}

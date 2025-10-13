@@ -1,0 +1,242 @@
+{
+  "fold_0": {
+    "6h": {
+      "Logistic_L2": {
+        "ops_threshold": 0.25,
+        "conformal_cutoff": 0.225,
+        "empirical_fpr": 0.14482758620689656,
+        "empirical_coverage": 0.8154761904761905,
+        "fpr_controlled": "True"
+      },
+      "Logistic_ElasticNet": {
+        "ops_threshold": 0.25,
+        "conformal_cutoff": 0.225,
+        "empirical_fpr": 0.1103448275862069,
+        "empirical_coverage": 0.8452380952380952,
+        "fpr_controlled": "True"
+      },
+      "GradientBoosting": {
+        "ops_threshold": 0.3888888888888889,
+        "conformal_cutoff": 0.35000000000000003,
+        "empirical_fpr": 0.11724137931034483,
+        "empirical_coverage": 0.8511904761904762,
+        "fpr_controlled": "True"
+      }
+    },
+    "12h": {
+      "Logistic_L2": {
+        "ops_threshold": 0.3333333333333333,
+        "conformal_cutoff": 0.3,
+        "empirical_fpr": 0.11678832116788321,
+        "empirical_coverage": 0.8214285714285714,
+        "fpr_controlled": "True"
+      },
+      "Logistic_ElasticNet": {
+        "ops_threshold": 0.23076923076923078,
+        "conformal_cutoff": 0.2538461538461539,
+        "empirical_fpr": 0.2846715328467153,
+        "empirical_coverage": 0.7261904761904762,
+        "fpr_controlled": "False"
+      },
+      "GradientBoosting": {
+        "ops_threshold": 0.26666666666666666,
+        "conformal_cutoff": 0.24,
+        "empirical_fpr": 0.15328467153284672,
+        "empirical_coverage": 0.7976190476190477,
+        "fpr_controlled": "True"
+      }
+    }
+  },
+  "fold_1": {
+    "6h": {
+      "Logistic_L2": {
+        "ops_threshold": 0.3333333333333333,
+        "conformal_cutoff": 0.3,
+        "empirical_fpr": 0.1347517730496454,
+        "empirical_coverage": 0.8214285714285714,
+        "fpr_controlled": "True"
+      },
+      "Logistic_ElasticNet": {
+        "ops_threshold": 0.45454545454545453,
+        "conformal_cutoff": 0.40909090909090906,
+        "empirical_fpr": 0.07092198581560284,
+        "empirical_coverage": 0.8690476190476191,
+        "fpr_controlled": "True"
+      },
+      "GradientBoosting": {
+        "ops_threshold": 0.34285714285714286,
+        "conformal_cutoff": 0.3085714285714286,
+        "empirical_fpr": 0.18439716312056736,
+        "empirical_coverage": 0.8154761904761905,
+        "fpr_controlled": "True"
+      }
+    },
+    "12h": {
+      "Logistic_L2": {
+        "ops_threshold": 0.42105263157894735,
+        "conformal_cutoff": 0.37894736842105264,
+        "empirical_fpr": 0.1056338028169014,
+        "empirical_coverage": 0.8571428571428571,
+        "fpr_controlled": "True"
+      },
+      "Logistic_ElasticNet": {
+        "ops_threshold": 0.5,
+        "conformal_cutoff": 0.45,
+        "empirical_fpr": 0.08450704225352113,
+        "empirical_coverage": 0.875,
+        "fpr_controlled": "True"
+      },
+      "GradientBoosting": {
+        "ops_threshold": 0.30303030303030304,
+        "conformal_cutoff": 0.27272727272727276,
+        "empirical_fpr": 0.19014084507042253,
+        "empirical_coverage": 0.7916666666666666,
+        "fpr_controlled": "True"
+      }
+    }
+  },
+  "fold_2": {
+    "6h": {
+      "Logistic_L2": {
+        "ops_threshold": 0.2631578947368421,
+        "conformal_cutoff": 0.23684210526315788,
+        "empirical_fpr": 0.1258741258741259,
+        "empirical_coverage": 0.8214285714285714,
+        "fpr_controlled": "True"
+      },
+      "Logistic_ElasticNet": {
+        "ops_threshold": 0.3181818181818182,
+        "conformal_cutoff": 0.2863636363636364,
+        "empirical_fpr": 0.11188811188811189,
+        "empirical_coverage": 0.8392857142857143,
+        "fpr_controlled": "True"
+      },
+      "GradientBoosting": {
+        "ops_threshold": 0.3076923076923077,
+        "conformal_cutoff": 0.27692307692307694,
+        "empirical_fpr": 0.11188811188811189,
+        "empirical_coverage": 0.8452380952380952,
+        "fpr_controlled": "True"
+      }
+    },
+    "12h": {
+      "Logistic_L2": {
+        "ops_threshold": 0.3,
+        "conformal_cutoff": 0.27,
+        "empirical_fpr": 0.09271523178807947,
+        "empirical_coverage": 0.8690476190476191,
+        "fpr_controlled": "True"
+      },
+      "Logistic_ElasticNet": {
+        "ops_threshold": 0.21739130434782608,
+        "conformal_cutoff": 0.1956521739130435,
+        "empirical_fpr": 0.13245033112582782,
+        "empirical_coverage": 0.8392857142857143,
+        "fpr_controlled": "True"
+      },
+      "GradientBoosting": {
+        "ops_threshold": 0.25,
+        "conformal_cutoff": 0.225,
+        "empirical_fpr": 0.09933774834437085,
+        "empirical_coverage": 0.8630952380952381,
+        "fpr_controlled": "True"
+      }
+    }
+  },
+  "fold_3": {
+    "6h": {
+      "Logistic_L2": {
+        "ops_threshold": 0.3125,
+        "conformal_cutoff": 0.28125,
+        "empirical_fpr": 0.1103448275862069,
+        "empirical_coverage": 0.8452380952380952,
+        "fpr_controlled": "True"
+      },
+      "Logistic_ElasticNet": {
+        "ops_threshold": 0.4666666666666667,
+        "conformal_cutoff": 0.42000000000000004,
+        "empirical_fpr": 0.06896551724137931,
+        "empirical_coverage": 0.8809523809523809,
+        "fpr_controlled": "True"
+      },
+      "GradientBoosting": {
+        "ops_threshold": 0.4,
+        "conformal_cutoff": 0.36000000000000004,
+        "empirical_fpr": 0.06896551724137931,
+        "empirical_coverage": 0.8928571428571429,
+        "fpr_controlled": "True"
+      }
+    },
+    "12h": {
+      "Logistic_L2": {
+        "ops_threshold": 0.4375,
+        "conformal_cutoff": 0.39375,
+        "empirical_fpr": 0.09219858156028368,
+        "empirical_coverage": 0.8630952380952381,
+        "fpr_controlled": "True"
+      },
+      "Logistic_ElasticNet": {
+        "ops_threshold": 0.5,
+        "conformal_cutoff": 0.45,
+        "empirical_fpr": 0.09219858156028368,
+        "empirical_coverage": 0.8809523809523809,
+        "fpr_controlled": "True"
+      },
+      "GradientBoosting": {
+        "ops_threshold": 0.3888888888888889,
+        "conformal_cutoff": 0.35000000000000003,
+        "empirical_fpr": 0.1347517730496454,
+        "empirical_coverage": 0.8392857142857143,
+        "fpr_controlled": "True"
+      }
+    }
+  },
+  "fold_4": {
+    "6h": {
+      "Logistic_L2": {
+        "ops_threshold": 0.4166666666666667,
+        "conformal_cutoff": 0.375,
+        "empirical_fpr": 0.060810810810810814,
+        "empirical_coverage": 0.8928571428571429,
+        "fpr_controlled": "True"
+      },
+      "Logistic_ElasticNet": {
+        "ops_threshold": 0.4,
+        "conformal_cutoff": 0.36000000000000004,
+        "empirical_fpr": 0.04054054054054054,
+        "empirical_coverage": 0.9107142857142857,
+        "fpr_controlled": "True"
+      },
+      "GradientBoosting": {
+        "ops_threshold": 0.5714285714285714,
+        "conformal_cutoff": 0.5142857142857142,
+        "empirical_fpr": 0.02027027027027027,
+        "empirical_coverage": 0.9226190476190477,
+        "fpr_controlled": "True"
+      }
+    },
+    "12h": {
+      "Logistic_L2": {
+        "ops_threshold": 0.23809523809523808,
+        "conformal_cutoff": 0.21428571428571427,
+        "empirical_fpr": 0.1554054054054054,
+        "empirical_coverage": 0.8214285714285714,
+        "fpr_controlled": "True"
+      },
+      "Logistic_ElasticNet": {
+        "ops_threshold": 0.5,
+        "conformal_cutoff": 0.45,
+        "empirical_fpr": 0.02702702702702703,
+        "empirical_coverage": 0.9166666666666666,
+        "fpr_controlled": "True"
+      },
+      "GradientBoosting": {
+        "ops_threshold": 0.4166666666666667,
+        "conformal_cutoff": 0.375,
+        "empirical_fpr": 0.060810810810810814,
+        "empirical_coverage": 0.8928571428571429,
+        "fpr_controlled": "True"
+      }
+    }
+  }
+}

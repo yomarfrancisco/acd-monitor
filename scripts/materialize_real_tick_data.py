@@ -110,9 +110,7 @@ def materialize_real_data(
             )
 
             if coverage < 0.8:
-                logger.warning(
-                    f"[WARN:materialize:low_coverage] venue={venue} coverage={coverage}"
-                )
+                logger.warning(f"[WARN:materialize:low_coverage] venue={venue} coverage={coverage}")
 
             # Log materialization
             materialize_log = {
@@ -128,14 +126,10 @@ def materialize_real_data(
             print(
                 f"[MZ:done] venue={venue} path={cache_dir} rows={actual_seconds} coverage={coverage}"
             )
-            print(
-                f"[DATA:tick:materialize] {json.dumps(materialize_log, ensure_ascii=False)}"
-            )
+            print(f"[DATA:tick:materialize] {json.dumps(materialize_log, ensure_ascii=False)}")
 
             successful_venues.append(venue)
-            logger.info(
-                f"Cached {actual_seconds} seconds for {venue} ({coverage:.4f} coverage)"
-            )
+            logger.info(f"Cached {actual_seconds} seconds for {venue} ({coverage:.4f} coverage)")
         else:
             logger.warning(f"No data retrieved for {venue}")
 
@@ -152,10 +146,7 @@ def materialize_real_data(
             venue: {
                 "ticks": len(venue_data.get(venue, [])),
                 "coverage_pct": round(
-                    (
-                        len(venue_data.get(venue, []))
-                        / (end_time - start_time).total_seconds()
-                    )
+                    (len(venue_data.get(venue, [])) / (end_time - start_time).total_seconds())
                     * 100,
                     2,
                 ),
@@ -179,9 +170,7 @@ def materialize_real_data(
 
 def main():
     """Main function to materialize real tick data."""
-    parser = argparse.ArgumentParser(
-        description="Materialize real tick data for BTC-USD"
-    )
+    parser = argparse.ArgumentParser(description="Materialize real tick data for BTC-USD")
     parser.add_argument("--start", required=True, help="Start date (YYYY-MM-DD)")
     parser.add_argument("--end", required=True, help="End date (YYYY-MM-DD)")
     parser.add_argument("--pair", default="BTC-USD", help="Trading pair")
@@ -191,9 +180,7 @@ def main():
         help="Comma-separated list of venues",
     )
     parser.add_argument("--cache-dir", default="data/cache", help="Cache directory")
-    parser.add_argument(
-        "--min-days", type=int, default=30, help="Minimum days of data required"
-    )
+    parser.add_argument("--min-days", type=int, default=30, help="Minimum days of data required")
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose logging")
 
     args = parser.parse_args()
@@ -225,9 +212,7 @@ def main():
         print("=" * 80 + "\n")
 
     except Exception as e:
-        logging.error(
-            f"An error occurred during data materialization: {e}", exc_info=True
-        )
+        logging.error(f"An error occurred during data materialization: {e}", exc_info=True)
         sys.exit(1)
 
 

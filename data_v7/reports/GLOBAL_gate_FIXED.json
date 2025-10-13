@@ -1,0 +1,277 @@
+{
+  "total_weeks": 14,
+  "total_expected": 392,
+  "total_found": 100,
+  "total_valid": 100,
+  "total_missing": 292,
+  "overall_coverage_percentage": 25.510204081632654,
+  "week_summaries": {
+    "W-7": {
+      "name": "Week -7 (July 7-13)",
+      "dates": [
+        "20250707",
+        "20250708",
+        "20250709",
+        "20250710",
+        "20250711",
+        "20250712",
+        "20250713"
+      ],
+      "total_expected": 28,
+      "files_found": 0,
+      "files_valid": 0,
+      "files_missing": 28,
+      "coverage_percentage": 0.0,
+      "total_bytes": 0,
+      "status": "MISSING"
+    },
+    "W-6": {
+      "name": "Week -6 (July 14-20)",
+      "dates": [
+        "20250714",
+        "20250715",
+        "20250716",
+        "20250717",
+        "20250718",
+        "20250719",
+        "20250720"
+      ],
+      "total_expected": 28,
+      "files_found": 0,
+      "files_valid": 0,
+      "files_missing": 28,
+      "coverage_percentage": 0.0,
+      "total_bytes": 0,
+      "status": "MISSING"
+    },
+    "W-5": {
+      "name": "Week -5 (July 21-27)",
+      "dates": [
+        "20250721",
+        "20250722",
+        "20250723",
+        "20250724",
+        "20250725",
+        "20250726",
+        "20250727"
+      ],
+      "total_expected": 28,
+      "files_found": 24,
+      "files_valid": 24,
+      "files_missing": 4,
+      "coverage_percentage": 85.71428571428571,
+      "total_bytes": 1226129540,
+      "status": "PARTIAL"
+    },
+    "W-4": {
+      "name": "Week -4 (July 28 - Aug 3)",
+      "dates": [
+        "20250728",
+        "20250729",
+        "20250730",
+        "20250731",
+        "20250801",
+        "20250802",
+        "20250803"
+      ],
+      "total_expected": 28,
+      "files_found": 0,
+      "files_valid": 0,
+      "files_missing": 28,
+      "coverage_percentage": 0.0,
+      "total_bytes": 0,
+      "status": "MISSING"
+    },
+    "W-3": {
+      "name": "Week -3 (Aug 4-10)",
+      "dates": [
+        "20250804",
+        "20250805",
+        "20250806",
+        "20250807",
+        "20250808",
+        "20250809",
+        "20250810"
+      ],
+      "total_expected": 28,
+      "files_found": 0,
+      "files_valid": 0,
+      "files_missing": 28,
+      "coverage_percentage": 0.0,
+      "total_bytes": 0,
+      "status": "MISSING"
+    },
+    "W-2": {
+      "name": "Week -2 (Aug 11-17)",
+      "dates": [
+        "20250811",
+        "20250812",
+        "20250813",
+        "20250814",
+        "20250815",
+        "20250816",
+        "20250817"
+      ],
+      "total_expected": 28,
+      "files_found": 0,
+      "files_valid": 0,
+      "files_missing": 28,
+      "coverage_percentage": 0.0,
+      "total_bytes": 0,
+      "status": "MISSING"
+    },
+    "W-1": {
+      "name": "Week -1 (Aug 18-24)",
+      "dates": [
+        "20250818",
+        "20250819",
+        "20250820",
+        "20250821",
+        "20250822",
+        "20250823",
+        "20250824"
+      ],
+      "total_expected": 28,
+      "files_found": 0,
+      "files_valid": 0,
+      "files_missing": 28,
+      "coverage_percentage": 0.0,
+      "total_bytes": 0,
+      "status": "MISSING"
+    },
+    "W0": {
+      "name": "Week 0 (Aug 25-31)",
+      "dates": [
+        "20250825",
+        "20250826",
+        "20250827",
+        "20250828",
+        "20250829",
+        "20250830",
+        "20250831"
+      ],
+      "total_expected": 28,
+      "files_found": 0,
+      "files_valid": 0,
+      "files_missing": 28,
+      "coverage_percentage": 0.0,
+      "total_bytes": 0,
+      "status": "MISSING"
+    },
+    "W1": {
+      "name": "Week 1 (Sep 1-7)",
+      "dates": [
+        "20250901",
+        "20250902",
+        "20250903",
+        "20250904",
+        "20250905",
+        "20250906",
+        "20250907"
+      ],
+      "total_expected": 28,
+      "files_found": 0,
+      "files_valid": 0,
+      "files_missing": 28,
+      "coverage_percentage": 0.0,
+      "total_bytes": 0,
+      "status": "MISSING"
+    },
+    "W2": {
+      "name": "Week 2 (Sep 8-14)",
+      "dates": [
+        "20250908",
+        "20250909",
+        "20250910",
+        "20250911",
+        "20250912",
+        "20250913",
+        "20250914"
+      ],
+      "total_expected": 28,
+      "files_found": 0,
+      "files_valid": 0,
+      "files_missing": 28,
+      "coverage_percentage": 0.0,
+      "total_bytes": 0,
+      "status": "MISSING"
+    },
+    "W3": {
+      "name": "Week 3 (Sep 15-21)",
+      "dates": [
+        "20250915",
+        "20250916",
+        "20250917",
+        "20250918",
+        "20250919",
+        "20250920",
+        "20250921"
+      ],
+      "total_expected": 28,
+      "files_found": 0,
+      "files_valid": 0,
+      "files_missing": 28,
+      "coverage_percentage": 0.0,
+      "total_bytes": 0,
+      "status": "MISSING"
+    },
+    "W4": {
+      "name": "Week 4 (Sep 22-28)",
+      "dates": [
+        "20250922",
+        "20250923",
+        "20250924",
+        "20250925",
+        "20250926",
+        "20250927",
+        "20250928"
+      ],
+      "total_expected": 28,
+      "files_found": 28,
+      "files_valid": 28,
+      "files_missing": 0,
+      "coverage_percentage": 100.0,
+      "total_bytes": 1683154941,
+      "status": "COMPLETE"
+    },
+    "W5": {
+      "name": "Week 5 (Sep 29 - Oct 5)",
+      "dates": [
+        "20250929",
+        "20250930",
+        "20251001",
+        "20251002",
+        "20251003",
+        "20251004",
+        "20251005"
+      ],
+      "total_expected": 28,
+      "files_found": 28,
+      "files_valid": 28,
+      "files_missing": 0,
+      "coverage_percentage": 100.0,
+      "total_bytes": 1747984503,
+      "status": "COMPLETE"
+    },
+    "W6": {
+      "name": "Week 6 (Oct 6-12)",
+      "dates": [
+        "20251006",
+        "20251007",
+        "20251008",
+        "20251009",
+        "20251010",
+        "20251011",
+        "20251012"
+      ],
+      "total_expected": 28,
+      "files_found": 20,
+      "files_valid": 20,
+      "files_missing": 8,
+      "coverage_percentage": 71.42857142857143,
+      "total_bytes": 2019919001,
+      "status": "PARTIAL"
+    }
+  },
+  "timestamp": "2025-10-11T16:18:53.804351Z"
+}

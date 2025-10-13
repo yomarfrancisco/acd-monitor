@@ -1,0 +1,4 @@
+proxy,real_beta,circular_empirical_p,venue_empirical_p,n_circular_iterations,n_venue_iterations
+A_t,0.48410576920597503,1.0,0.0,2000,1000
+A_t_unique,1.6540257339819675,1.0,0.0,2000,1000
+A_t_rate,-0.7415457107961413,1.0,0.0,2000,1000

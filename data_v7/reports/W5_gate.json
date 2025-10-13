@@ -1,0 +1,12 @@
+{
+  "week": "-5",
+  "days_expected": 7,
+  "venues_expected": 4,
+  "total_expected": 28,
+  "files_found": 28,
+  "files_valid": 28,
+  "files_missing": 0,
+  "coverage_percentage": 100.0,
+  "all_gates_passed": true,
+  "timestamp": "2025-10-11T16:12:33.004191Z"
+}

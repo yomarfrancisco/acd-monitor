@@ -1,0 +1,42 @@
+{
+  "pair": "BYBITSPOT_to_BITGET",
+  "date": "20250901",
+  "scale": "1s",
+  "N": 40930,
+  "overlap_pct": 0.9964456995398885,
+  "lag_results": [
+    {
+      "lag": 1,
+      "correlation": -0.00967235835791629,
+      "p_value": 0.05,
+      "significant": false
+    },
+    {
+      "lag": 2,
+      "correlation": 0.011286590859579077,
+      "p_value": 0.05,
+      "significant": false
+    },
+    {
+      "lag": 3,
+      "correlation": -0.007190311120263756,
+      "p_value": 0.05,
+      "significant": false
+    },
+    {
+      "lag": 5,
+      "correlation": 0.002866406549782175,
+      "p_value": 0.05,
+      "significant": false
+    },
+    {
+      "lag": 10,
+      "correlation": 6.93057296738564e-05,
+      "p_value": 0.05,
+      "significant": false
+    }
+  ],
+  "icp_pass": false,
+  "significant_lags": 0,
+  "env_sizes_csv": "icp_BYBITSPOT_to_BITGET_20250901_v1.env_sizes.csv"
+}

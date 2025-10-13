@@ -1,0 +1,177 @@
+{
+  "successful_downloads": 0,
+  "failed_downloads": 28,
+  "valid_files": 0,
+  "invalid_files": 0,
+  "skipped_existing": 0,
+  "files": [
+    {
+      "venue": "BINANCE",
+      "date": "20250908",
+      "status": "NO_BTC_FILES",
+      "message": "No BTCUSDT files found"
+    },
+    {
+      "venue": "BINANCE",
+      "date": "20250909",
+      "status": "NO_BTC_FILES",
+      "message": "No BTCUSDT files found"
+    },
+    {
+      "venue": "BINANCE",
+      "date": "20250910",
+      "status": "NO_BTC_FILES",
+      "message": "No BTCUSDT files found"
+    },
+    {
+      "venue": "BINANCE",
+      "date": "20250911",
+      "status": "NO_BTC_FILES",
+      "message": "No BTCUSDT files found"
+    },
+    {
+      "venue": "BINANCE",
+      "date": "20250912",
+      "status": "NO_BTC_FILES",
+      "message": "No BTCUSDT files found"
+    },
+    {
+      "venue": "BINANCE",
+      "date": "20250913",
+      "status": "NO_BTC_FILES",
+      "message": "No BTCUSDT files found"
+    },
+    {
+      "venue": "BINANCE",
+      "date": "20250914",
+      "status": "NO_BTC_FILES",
+      "message": "No BTCUSDT files found"
+    },
+    {
+      "venue": "BYBITSPOT",
+      "date": "20250908",
+      "status": "NO_BTC_FILES",
+      "message": "No BTCUSDT files found"
+    },
+    {
+      "venue": "BYBITSPOT",
+      "date": "20250909",
+      "status": "NO_BTC_FILES",
+      "message": "No BTCUSDT files found"
+    },
+    {
+      "venue": "BYBITSPOT",
+      "date": "20250910",
+      "status": "NO_BTC_FILES",
+      "message": "No BTCUSDT files found"
+    },
+    {
+      "venue": "BYBITSPOT",
+      "date": "20250911",
+      "status": "NO_BTC_FILES",
+      "message": "No BTCUSDT files found"
+    },
+    {
+      "venue": "BYBITSPOT",
+      "date": "20250912",
+      "status": "NO_BTC_FILES",
+      "message": "No BTCUSDT files found"
+    },
+    {
+      "venue": "BYBITSPOT",
+      "date": "20250913",
+      "status": "NO_BTC_FILES",
+      "message": "No BTCUSDT files found"
+    },
+    {
+      "venue": "BYBITSPOT",
+      "date": "20250914",
+      "status": "NO_BTC_FILES",
+      "message": "No BTCUSDT files found"
+    },
+    {
+      "venue": "BITGET",
+      "date": "20250908",
+      "status": "NO_BTC_FILES",
+      "message": "No BTCUSDT files found"
+    },
+    {
+      "venue": "BITGET",
+      "date": "20250909",
+      "status": "NO_BTC_FILES",
+      "message": "No BTCUSDT files found"
+    },
+    {
+      "venue": "BITGET",
+      "date": "20250910",
+      "status": "NO_BTC_FILES",
+      "message": "No BTCUSDT files found"
+    },
+    {
+      "venue": "BITGET",
+      "date": "20250911",
+      "status": "NO_BTC_FILES",
+      "message": "No BTCUSDT files found"
+    },
+    {
+      "venue": "BITGET",
+      "date": "20250912",
+      "status": "NO_BTC_FILES",
+      "message": "No BTCUSDT files found"
+    },
+    {
+      "venue": "BITGET",
+      "date": "20250913",
+      "status": "NO_BTC_FILES",
+      "message": "No BTCUSDT files found"
+    },
+    {
+      "venue": "BITGET",
+      "date": "20250914",
+      "status": "NO_BTC_FILES",
+      "message": "No BTCUSDT files found"
+    },
+    {
+      "venue": "COINBASE",
+      "date": "20250908",
+      "status": "NO_BTC_FILES",
+      "message": "No BTCUSD files found"
+    },
+    {
+      "venue": "COINBASE",
+      "date": "20250909",
+      "status": "NO_BTC_FILES",
+      "message": "No BTCUSD files found"
+    },
+    {
+      "venue": "COINBASE",
+      "date": "20250910",
+      "status": "NO_BTC_FILES",
+      "message": "No BTCUSD files found"
+    },
+    {
+      "venue": "COINBASE",
+      "date": "20250911",
+      "status": "NO_BTC_FILES",
+      "message": "No BTCUSD files found"
+    },
+    {
+      "venue": "COINBASE",
+      "date": "20250912",
+      "status": "NO_BTC_FILES",
+      "message": "No BTCUSD files found"
+    },
+    {
+      "venue": "COINBASE",
+      "date": "20250913",
+      "status": "NO_BTC_FILES",
+      "message": "No BTCUSD files found"
+    },
+    {
+      "venue": "COINBASE",
+      "date": "20250914",
+      "status": "NO_BTC_FILES",
+      "message": "No BTCUSD files found"
+    }
+  ]
+}

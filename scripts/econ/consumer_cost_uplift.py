@@ -123,9 +123,7 @@ def estimate_spread_from_controls(micro_controls: pd.DataFrame) -> pd.DataFrame:
             time_component = 1.5
 
         # Estimated spread
-        estimated_spread_bps = (
-            base_spread_bps + vol_component + momentum_component + time_component
-        )
+        estimated_spread_bps = base_spread_bps + vol_component + momentum_component + time_component
 
         spreads.append(
             {
@@ -186,9 +184,7 @@ def build_consumer_cost_baseline(
             "std_residual": float(residuals.std()),
         }
 
-        logger.info(
-            f"Consumer cost baseline model R² = {baseline_model['r_squared']:.3f}"
-        )
+        logger.info(f"Consumer cost baseline model R² = {baseline_model['r_squared']:.3f}")
         return baseline_model
 
     except Exception as e:
@@ -250,9 +246,7 @@ def calculate_episode_cost_uplift(
             # Calculate welfare loss (simplified)
             # Welfare loss = uplift * notional traded
             notional_traded = episode_costs["price"].sum() * 0.1  # Placeholder
-            welfare_loss = (
-                mean_uplift * notional_traded / 10000
-            )  # Convert bps to dollars
+            welfare_loss = mean_uplift * notional_traded / 10000  # Convert bps to dollars
 
             episode_results.append(
                 {
@@ -306,9 +300,7 @@ def run_consumer_cost_uplift_analysis(
             taker_fee_bps = 10.0  # 10 bps default
 
             # Calculate execution cost
-            execution_cost = calculate_execution_cost(
-                row["price"], spread_bps, taker_fee_bps
-            )
+            execution_cost = calculate_execution_cost(row["price"], spread_bps, taker_fee_bps)
 
             execution_costs.append(
                 {
@@ -325,9 +317,7 @@ def run_consumer_cost_uplift_analysis(
 
         # Build baseline model
         logger.info("Building consumer cost baseline model")
-        baseline_model = build_consumer_cost_baseline(
-            micro_controls, execution_costs_df
-        )
+        baseline_model = build_consumer_cost_baseline(micro_controls, execution_costs_df)
 
         if "error" in baseline_model:
             logger.error(f"Baseline model failed: {baseline_model['error']}")
@@ -348,18 +338,10 @@ def run_consumer_cost_uplift_analysis(
             "episode_results": episode_results,
             "summary": {
                 "n_episodes": len(episode_results),
-                "total_cost_uplift_bps": sum(
-                    ep["total_uplift_bps"] for ep in episode_results
-                ),
-                "mean_cost_uplift_bps": np.mean(
-                    [ep["cost_uplift_bps"] for ep in episode_results]
-                ),
-                "std_cost_uplift_bps": np.std(
-                    [ep["cost_uplift_bps"] for ep in episode_results]
-                ),
-                "total_welfare_loss_usd": sum(
-                    ep["welfare_loss_usd"] for ep in episode_results
-                ),
+                "total_cost_uplift_bps": sum(ep["total_uplift_bps"] for ep in episode_results),
+                "mean_cost_uplift_bps": np.mean([ep["cost_uplift_bps"] for ep in episode_results]),
+                "std_cost_uplift_bps": np.std([ep["cost_uplift_bps"] for ep in episode_results]),
+                "total_welfare_loss_usd": sum(ep["welfare_loss_usd"] for ep in episode_results),
             },
             "created_at": datetime.utcnow().isoformat() + "Z",
         }
@@ -382,16 +364,10 @@ def run_consumer_cost_uplift_analysis(
 def main():
     """Main function for consumer cost uplift analysis."""
     parser = argparse.ArgumentParser(description="Calculate consumer cost uplift")
-    parser.add_argument(
-        "--snapshot", required=True, help="Path to snapshot OVERLAP.json"
-    )
+    parser.add_argument("--snapshot", required=True, help="Path to snapshot OVERLAP.json")
     parser.add_argument("--episodes", required=True, help="Path to episodes JSON")
-    parser.add_argument(
-        "--micro-controls", required=True, help="Path to micro_controls.json"
-    )
-    parser.add_argument(
-        "--output", required=True, help="Output path for analysis results"
-    )
+    parser.add_argument("--micro-controls", required=True, help="Path to micro_controls.json")
+    parser.add_argument("--output", required=True, help="Output path for analysis results")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
 
     args = parser.parse_args()

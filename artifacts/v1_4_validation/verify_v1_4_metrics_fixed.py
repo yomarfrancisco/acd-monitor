@@ -21,9 +21,7 @@ def generate_mock_order_book_data():
 
     # Generate timestamps for 2-hour window (14:00-16:00 UTC, Sep 18, 2025)
     start_time = datetime(2025, 9, 18, 14, 0, 0)
-    timestamps = [
-        start_time + timedelta(seconds=i * 5) for i in range(1440)
-    ]  # 5-second intervals
+    timestamps = [start_time + timedelta(seconds=i * 5) for i in range(1440)]  # 5-second intervals
 
     venues = ["Binance", "Coinbase", "Kraken"]
     data = []
@@ -99,9 +97,7 @@ def generate_mock_price_data():
     np.random.seed(42)
 
     start_time = datetime(2025, 9, 18, 14, 0, 0)
-    timestamps = [
-        start_time + timedelta(seconds=i) for i in range(7200)
-    ]  # 1-second intervals
+    timestamps = [start_time + timedelta(seconds=i) for i in range(7200)]  # 1-second intervals
 
     venues = ["Binance", "Coinbase", "Kraken"]
     data = []
@@ -168,20 +164,14 @@ def calculate_jaccard_index(orders1, orders2, time_window_ms=1000):
         orders1_copy = orders1.copy()
         orders2_copy = orders2.copy()
 
-        orders1_copy["timestamp_ms"] = (
-            orders1_copy["timestamp"].astype("int64") // 10**6
-        )
-        orders2_copy["timestamp_ms"] = (
-            orders2_copy["timestamp"].astype("int64") // 10**6
-        )
+        orders1_copy["timestamp_ms"] = orders1_copy["timestamp"].astype("int64") // 10**6
+        orders2_copy["timestamp_ms"] = orders2_copy["timestamp"].astype("int64") // 10**6
 
         # Create order placement identifiers
         def create_identifiers(orders):
             identifiers = set()
             for _, order in orders.iterrows():
-                rounded_time = (
-                    order["timestamp_ms"] // time_window_ms
-                ) * time_window_ms
+                rounded_time = (order["timestamp_ms"] // time_window_ms) * time_window_ms
                 price_bucket = round(order["price"], 2)
                 size_bucket = round(order["size"], 4)
                 identifier = (rounded_time, price_bucket, size_bucket, order["side"])
@@ -215,9 +205,7 @@ def calculate_price_correlation(prices1, prices2):
             return 0.0
 
         # Calculate Pearson correlation
-        correlation = np.corrcoef(aligned_prices["venue1"], aligned_prices["venue2"])[
-            0, 1
-        ]
+        correlation = np.corrcoef(aligned_prices["venue1"], aligned_prices["venue2"])[0, 1]
 
         # Handle NaN
         if np.isnan(correlation):
@@ -330,9 +318,7 @@ def create_metrics_plots(results, order_book_data, order_data, price_data):
     plt.figure(figsize=(12, 8))
 
     # Extract DWC values over time (simplified)
-    timestamps = pd.date_range(
-        "2025-09-18 14:00:00", "2025-09-18 16:00:00", freq="5min"
-    )
+    timestamps = pd.date_range("2025-09-18 14:00:00", "2025-09-18 16:00:00", freq="5min")
     dwc_values = np.random.uniform(0.4, 0.8, len(timestamps))  # Simulated timeseries
 
     plt.subplot(2, 2, 1)
@@ -395,9 +381,7 @@ def main():
     create_metrics_plots(results, order_book_data, order_data, price_data)
 
     # Save results
-    output_file = (
-        "artifacts/v1_4_validation/metrics/metrics_window_2025-09-18T14-16Z.json"
-    )
+    output_file = "artifacts/v1_4_validation/metrics/metrics_window_2025-09-18T14-16Z.json"
     with open(output_file, "w") as f:
         json.dump(results, f, indent=2, default=str)
 
@@ -436,6 +420,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
 
 
 

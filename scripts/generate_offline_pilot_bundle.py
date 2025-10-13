@@ -44,9 +44,7 @@ def generate_pilot_dataset():
         for pair in pairs:
             # Generate base price with trend and volatility
             base_price = 50000 if "BTC" in pair else (3000 if "ETH" in pair else 0.5)
-            price_trend = np.cumsum(
-                np.random.normal(0, base_price * 0.001, len(timestamps))
-            )
+            price_trend = np.cumsum(np.random.normal(0, base_price * 0.001, len(timestamps)))
             prices = base_price + price_trend
 
             # Add exchange-specific variations
@@ -186,9 +184,7 @@ def generate_pilot_analysis_results():
         "hmm": {
             "n_states": 3,
             "state_sequence": np.array([0, 0, 1, 1, 2, 2, 0, 0]),
-            "transition_matrix": np.array(
-                [[0.7, 0.2, 0.1], [0.3, 0.5, 0.2], [0.1, 0.3, 0.6]]
-            ),
+            "transition_matrix": np.array([[0.7, 0.2, 0.1], [0.3, 0.5, 0.2], [0.1, 0.3, 0.6]]),
             "dwell_times": {"state_0": 45, "state_1": 38, "state_2": 52},
             "coordination_regime": 1,
         },
@@ -237,50 +233,28 @@ def generate_pilot_analysis_results():
                 "sigma_estimates": vmm_results["sigma_estimates"].tolist(),
                 "rho_estimates": vmm_results["rho_estimates"].tolist(),
                 "over_identification_stat": vmm_results["over_identification_stat"],
-                "over_identification_p_value": vmm_results[
-                    "over_identification_p_value"
-                ],
+                "over_identification_p_value": vmm_results["over_identification_p_value"],
             },
             "crypto_moments": {
                 "lead_lag_betas": crypto_moments["lead_lag_betas"].tolist(),
-                "lead_lag_significance": crypto_moments[
-                    "lead_lag_significance"
-                ].tolist(),
+                "lead_lag_significance": crypto_moments["lead_lag_significance"].tolist(),
                 "mirroring_ratios": crypto_moments["mirroring_ratios"].tolist(),
-                "mirroring_consistency": crypto_moments[
-                    "mirroring_consistency"
-                ].tolist(),
-                "spread_floor_dwell_times": crypto_moments[
-                    "spread_floor_dwell_times"
-                ].tolist(),
-                "spread_floor_frequency": crypto_moments[
-                    "spread_floor_frequency"
-                ].tolist(),
-                "undercut_initiation_rate": crypto_moments[
-                    "undercut_initiation_rate"
-                ].tolist(),
-                "undercut_response_time": crypto_moments[
-                    "undercut_response_time"
-                ].tolist(),
-                "mev_coordination_score": crypto_moments[
-                    "mev_coordination_score"
-                ].tolist(),
+                "mirroring_consistency": crypto_moments["mirroring_consistency"].tolist(),
+                "spread_floor_dwell_times": crypto_moments["spread_floor_dwell_times"].tolist(),
+                "spread_floor_frequency": crypto_moments["spread_floor_frequency"].tolist(),
+                "undercut_initiation_rate": crypto_moments["undercut_initiation_rate"].tolist(),
+                "undercut_response_time": crypto_moments["undercut_response_time"].tolist(),
+                "mev_coordination_score": crypto_moments["mev_coordination_score"].tolist(),
             },
             "validation_results": {
                 "lead_lag": validation_results["lead_lag"],
                 "mirroring": validation_results["mirroring"],
                 "hmm": {
                     "n_states": validation_results["hmm"]["n_states"],
-                    "state_sequence": validation_results["hmm"][
-                        "state_sequence"
-                    ].tolist(),
-                    "transition_matrix": validation_results["hmm"][
-                        "transition_matrix"
-                    ].tolist(),
+                    "state_sequence": validation_results["hmm"]["state_sequence"].tolist(),
+                    "transition_matrix": validation_results["hmm"]["transition_matrix"].tolist(),
                     "dwell_times": validation_results["hmm"]["dwell_times"],
-                    "coordination_regime": validation_results["hmm"][
-                        "coordination_regime"
-                    ],
+                    "coordination_regime": validation_results["hmm"]["coordination_regime"],
                 },
                 "infoflow": validation_results["infoflow"],
             },
@@ -449,9 +423,7 @@ def main():
         print(f"\n📊 Pilot Bundle Summary:")
         print(f"   Dataset: {len(pilot_dataset):,} records generated")
         print(f"   Analysis: Complete results with coordination detection")
-        print(
-            f"   Bundle: {'Generated successfully' if bundle_response else 'Generation failed'}"
-        )
+        print(f"   Bundle: {'Generated successfully' if bundle_response else 'Generation failed'}")
         print(f"   Summary: Comprehensive pilot report created")
 
         print(f"\n📁 Generated Files:")

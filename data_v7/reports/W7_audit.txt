@@ -1,0 +1,9 @@
+Week -7 COINBASE BTC-USD Audit Report
+========================================
+Generated: 2025-10-11T15:20:17.227277Z
+Total files: 14
+Total bytes: 225,552,345
+Unique SHA-256 hashes: 14
+Days covered: 7/7
+Status: PASS
+BOM SHA-256: 64cc390bdd36d871e927fed8a2a4443658ab51bd2eeb99de949cb5964f97bd41

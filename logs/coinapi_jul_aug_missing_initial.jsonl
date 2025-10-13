@@ -1,0 +1,7 @@
+{"date": "20250803", "venue": "COINBASE", "prefix": "T-TRADES/D-20250803/E-COINBASE/", "expected_path": "data_v6/raw/coinapi_jul_aug/D-20250803/E-COINBASE/"}
+{"date": "20250803", "venue": "BYBITSPOT", "prefix": "T-TRADES/D-20250803/E-BYBITSPOT/", "expected_path": "data_v6/raw/coinapi_jul_aug/D-20250803/E-BYBITSPOT/"}
+{"date": "20250803", "venue": "BITGET", "prefix": "T-TRADES/D-20250803/E-BITGET/", "expected_path": "data_v6/raw/coinapi_jul_aug/D-20250803/E-BITGET/"}
+{"date": "20250804", "venue": "BINANCE", "prefix": "T-TRADES/D-20250804/E-BINANCE/", "expected_path": "data_v6/raw/coinapi_jul_aug/D-20250804/E-BINANCE/"}
+{"date": "20250804", "venue": "COINBASE", "prefix": "T-TRADES/D-20250804/E-COINBASE/", "expected_path": "data_v6/raw/coinapi_jul_aug/D-20250804/E-COINBASE/"}
+{"date": "20250804", "venue": "BYBITSPOT", "prefix": "T-TRADES/D-20250804/E-BYBITSPOT/", "expected_path": "data_v6/raw/coinapi_jul_aug/D-20250804/E-BYBITSPOT/"}
+{"date": "20250804", "venue": "BITGET", "prefix": "T-TRADES/D-20250804/E-BITGET/", "expected_path": "data_v6/raw/coinapi_jul_aug/D-20250804/E-BITGET/"}

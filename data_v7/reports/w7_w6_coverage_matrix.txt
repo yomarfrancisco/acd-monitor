@@ -1,0 +1,79 @@
+W-7 Coverage Matrix:
+Date       | BINANCE | COINBASE | BYBITSPOT | BITGET
+--------------------------------------------------
+20250707 |    ✗    |    ✗    |    ✗    |    ✗    |
+20250708 |    ✗    |    ✗    |    ✗    |    ✗    |
+20250709 |    ✗    |    ✗    |    ✗    |    ✗    |
+20250710 |    ✗    |    ✗    |    ✗    |    ✗    |
+20250711 |    ✗    |    ✗    |    ✗    |    ✗    |
+20250712 |    ✗    |    ✗    |    ✗    |    ✗    |
+20250713 |    ✗    |    ✗    |    ✗    |    ✗    |
+
+W-6 Coverage Matrix:
+Date       | BINANCE | COINBASE | BYBITSPOT | BITGET
+--------------------------------------------------
+20250714 |    ✗    |    ✗    |    ✗    |    ✗    |
+20250715 |    ✗    |    ✗    |    ✗    |    ✗    |
+20250716 |    ✗    |    ✗    |    ✗    |    ✗    |
+20250717 |    ✗    |    ✗    |    ✗    |    ✗    |
+20250718 |    ✗    |    ✗    |    ✗    |    ✗    |
+20250719 |    ✗    |    ✗    |    ✗    |    ✗    |
+20250720 |    ✗    |    ✗    |    ✗    |    ✗    |
+
+Missing slots:
+W-7: 20250707/COINBASE
+W-7: 20250707/BITGET
+W-7: 20250707/BYBITSPOT
+W-7: 20250707/BINANCE
+W-7: 20250708/COINBASE
+W-7: 20250708/BITGET
+W-7: 20250708/BYBITSPOT
+W-7: 20250708/BINANCE
+W-7: 20250709/COINBASE
+W-7: 20250709/BITGET
+W-7: 20250709/BYBITSPOT
+W-7: 20250709/BINANCE
+W-7: 20250710/COINBASE
+W-7: 20250710/BITGET
+W-7: 20250710/BYBITSPOT
+W-7: 20250710/BINANCE
+W-7: 20250711/COINBASE
+W-7: 20250711/BITGET
+W-7: 20250711/BYBITSPOT
+W-7: 20250711/BINANCE
+W-7: 20250712/COINBASE
+W-7: 20250712/BITGET
+W-7: 20250712/BYBITSPOT
+W-7: 20250712/BINANCE
+W-7: 20250713/COINBASE
+W-7: 20250713/BITGET
+W-7: 20250713/BYBITSPOT
+W-7: 20250713/BINANCE
+W-6: 20250714/COINBASE
+W-6: 20250714/BITGET
+W-6: 20250714/BYBITSPOT
+W-6: 20250714/BINANCE
+W-6: 20250715/COINBASE
+W-6: 20250715/BITGET
+W-6: 20250715/BYBITSPOT
+W-6: 20250715/BINANCE
+W-6: 20250716/COINBASE
+W-6: 20250716/BITGET
+W-6: 20250716/BYBITSPOT
+W-6: 20250716/BINANCE
+W-6: 20250717/COINBASE
+W-6: 20250717/BITGET
+W-6: 20250717/BYBITSPOT
+W-6: 20250717/BINANCE
+W-6: 20250718/COINBASE
+W-6: 20250718/BITGET
+W-6: 20250718/BYBITSPOT
+W-6: 20250718/BINANCE
+W-6: 20250719/COINBASE
+W-6: 20250719/BITGET
+W-6: 20250719/BYBITSPOT
+W-6: 20250719/BINANCE
+W-6: 20250720/COINBASE
+W-6: 20250720/BITGET
+W-6: 20250720/BYBITSPOT
+W-6: 20250720/BINANCE

@@ -1,0 +1,84 @@
+{
+  "6h": {
+    "champion_model": "GradientBoosting",
+    "jackknife_variance": {
+      "precision_var": 0.014,
+      "recall_var": 0.0104,
+      "fpr_var": 0.003
+    },
+    "placebo_gaps": [
+      0.2187,
+      0.2475,
+      0.2366,
+      0.2299,
+      0.2078
+    ],
+    "placebo_passed": true,
+    "subgroup_deltas": {
+      "asia_delta_precision": 0.0031,
+      "asia_delta_recall": 0.0006,
+      "asia_delta_fpr": 0.0087,
+      "europe_delta_precision": 0.006,
+      "europe_delta_recall": 0.0142,
+      "europe_delta_fpr": 0.0002,
+      "us_delta_precision": 0.0097,
+      "us_delta_recall": 0.0083,
+      "us_delta_fpr": 0.0042,
+      "weekday_delta_precision": 0.0018,
+      "weekday_delta_recall": 0.0018,
+      "weekday_delta_fpr": 0.003,
+      "weekend_delta_precision": 0.0105,
+      "weekend_delta_recall": 0.0043,
+      "weekend_delta_fpr": 0.0029
+    },
+    "subgroup_passed": true,
+    "top3_features": [
+      "price_coord_drift",
+      "price_corr_lag_1",
+      "css_diff_std_6h"
+    ],
+    "ablation_passed": true,
+    "stress_pack_passed": true
+  },
+  "12h": {
+    "champion_model": "Logistic_ElasticNet",
+    "jackknife_variance": {
+      "precision_var": 0.0207,
+      "recall_var": 0.01,
+      "fpr_var": 0.0076
+    },
+    "placebo_gaps": [
+      0.2306,
+      0.207,
+      0.2146,
+      0.2183,
+      0.2228
+    ],
+    "placebo_passed": true,
+    "subgroup_deltas": {
+      "asia_delta_precision": 0.0157,
+      "asia_delta_recall": 0.002,
+      "asia_delta_fpr": 0.0051,
+      "europe_delta_precision": 0.0059,
+      "europe_delta_recall": 0.0009,
+      "europe_delta_fpr": 0.0061,
+      "us_delta_precision": 0.0017,
+      "us_delta_recall": 0.0007,
+      "us_delta_fpr": 0.019,
+      "weekday_delta_precision": 0.0097,
+      "weekday_delta_recall": 0.0081,
+      "weekday_delta_fpr": 0.003,
+      "weekend_delta_precision": 0.002,
+      "weekend_delta_recall": 0.0068,
+      "weekend_delta_fpr": 0.0044
+    },
+    "subgroup_passed": true,
+    "top3_features": [
+      "price_coord_drift",
+      "price_corr_lag_1",
+      "css_diff_std_6h"
+    ],
+    "ablation_passed": true,
+    "stress_pack_passed": true
+  }
+}

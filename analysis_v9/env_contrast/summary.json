@@ -1,0 +1,52 @@
+{
+  "total_tsi_results": 3024,
+  "total_delta_results": 504,
+  "significant_delta_vol": 19,
+  "significant_delta_wash": 254,
+  "delta_vol_positive": 179,
+  "delta_wash_positive": 396,
+  "by_frequency": {
+    "1S": {
+      "total_edges": 84,
+      "significant_delta_vol": 1,
+      "significant_delta_wash": 61,
+      "delta_vol_positive": 34,
+      "delta_wash_positive": 84
+    },
+    "2S": {
+      "total_edges": 84,
+      "significant_delta_vol": 1,
+      "significant_delta_wash": 61,
+      "delta_vol_positive": 34,
+      "delta_wash_positive": 84
+    },
+    "5S": {
+      "total_edges": 84,
+      "significant_delta_vol": 1,
+      "significant_delta_wash": 61,
+      "delta_vol_positive": 34,
+      "delta_wash_positive": 84
+    },
+    "10S": {
+      "total_edges": 84,
+      "significant_delta_vol": 0,
+      "significant_delta_wash": 0,
+      "delta_vol_positive": 31,
+      "delta_wash_positive": 65
+    },
+    "15S": {
+      "total_edges": 84,
+      "significant_delta_vol": 4,
+      "significant_delta_wash": 9,
+      "delta_vol_positive": 24,
+      "delta_wash_positive": 50
+    },
+    "30S": {
+      "total_edges": 84,
+      "significant_delta_vol": 12,
+      "significant_delta_wash": 62,
+      "delta_vol_positive": 22,
+      "delta_wash_positive": 29
+    }
+  }
+}

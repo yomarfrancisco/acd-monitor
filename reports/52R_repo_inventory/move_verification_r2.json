@@ -1,0 +1,14 @@
+{
+  "total_moves": 2571,
+  "total_quarantined": 21,
+  "integrity_checks": {
+    "passed": 2571,
+    "failed": 0
+  },
+  "safeguards": {
+    "ui_paths_protected": true,
+    "src_paths_protected": true,
+    "no_deletions": true
+  },
+  "generated_at": "2025-10-13T09:42:33.148117"
+}

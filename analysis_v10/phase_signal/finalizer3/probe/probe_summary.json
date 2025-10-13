@@ -1,0 +1,44 @@
+{
+  "clips": [
+    {
+      "venue": "BINANCE",
+      "date": 20250901,
+      "round_level": 109000,
+      "ts_event_found": "2025-09-01 07:33:39.684000",
+      "ticks_total": 6364,
+      "micro_trade_count": 1623,
+      "max_trades_10s_window": 240,
+      "rev_bps_3m": 21.233640167241763,
+      "visible_burst": true,
+      "peak_rss_MB": 140.515625
+    },
+    {
+      "venue": "BINANCE",
+      "date": 20250902,
+      "round_level": 111000,
+      "ts_event_found": "2025-09-02 13:45:44.036000",
+      "ticks_total": 14551,
+      "micro_trade_count": 4334,
+      "max_trades_10s_window": 235,
+      "rev_bps_3m": 38.570224391381196,
+      "visible_burst": true,
+      "peak_rss_MB": 177.4375
+    },
+    {
+      "venue": "BINANCE",
+      "date": 20250907,
+      "round_level": 111000,
+      "ts_event_found": "2025-09-07 03:26:51.410000",
+      "ticks_total": 796,
+      "micro_trade_count": 177,
+      "max_trades_10s_window": 403,
+      "rev_bps_3m": 0.9583543980112279,
+      "visible_burst": true,
+      "peak_rss_MB": 58.609375
+    }
+  ],
+  "total_clips": 3,
+  "visible_bursts_found": 3,
+  "peak_rss_MB": 81.03125,
+  "elapsed_sec": 6.9005889892578125
+}

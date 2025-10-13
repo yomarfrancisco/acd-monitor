@@ -1,0 +1,26 @@
+{
+  "6h": {
+    "champion_model": "GradientBoosting",
+    "global_cutoff": 0.35,
+    "per_fold_cutoffs": [
+      0.35,
+      0.3086,
+      0.2769,
+      0.36,
+      0.5143
+    ],
+    "target_fpr": 0.25
+  },
+  "12h": {
+    "champion_model": "Logistic_ElasticNet",
+    "global_cutoff": 0.45,
+    "per_fold_cutoffs": [
+      0.2538,
+      0.45,
+      0.1957,
+      0.45,
+      0.45
+    ],
+    "target_fpr": 0.25
+  }
+}

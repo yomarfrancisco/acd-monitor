@@ -1,0 +1,18 @@
+[
+  {
+    "total_calls": 3,
+    "list_calls": 1,
+    "get_calls": 2,
+    "budget_used": "3/8",
+    "duration_seconds": 2.5,
+    "timestamp": "2025-10-11T15:05:05.965089Z"
+  },
+  {
+    "total_calls": 3,
+    "list_calls": 1,
+    "get_calls": 2,
+    "budget_used": "3/8",
+    "duration_seconds": 2.5,
+    "timestamp": "2025-10-11T15:10:20.065325Z"
+  }
+]

@@ -201,9 +201,7 @@ class TestReportV2Generator:
             state_probabilities=np.array([[0.8, 0.1, 0.1], [0.2, 0.6, 0.2]]),
             transition_matrix=np.array([[0.7, 0.2, 0.1], [0.3, 0.5, 0.2]]),
             emission_means=np.array([[1.0, 2.0], [1.5, 2.5]]),
-            emission_covariances=np.array(
-                [[[1.0, 0.0], [0.0, 1.0]], [[1.5, 0.0], [0.0, 1.5]]]
-            ),
+            emission_covariances=np.array([[[1.0, 0.0], [0.0, 1.0]], [[1.5, 0.0], [0.0, 1.5]]]),
             dwell_times={0: 5.0, 1: 3.0, 2: 2.0},
             state_frequencies={0: 0.5, 1: 0.3, 2: 0.2},
             regime_stability=0.75,
@@ -416,9 +414,7 @@ class TestReportV2Generator:
             heteroscedasticity=0.10,
         )
 
-        contribution_no_reject = generator._calculate_icp_contribution(
-            icp_result_no_reject
-        )
+        contribution_no_reject = generator._calculate_icp_contribution(icp_result_no_reject)
         assert contribution_no_reject == 5.0  # Should be low due to no rejection
 
     def test_vmm_contribution_calculation(self, generator):

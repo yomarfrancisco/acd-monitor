@@ -215,10 +215,7 @@ class TestCMAPosterFramesGoldenFiles:
         if coordination_analysis["coordination_detected"]:
             assert coordination_analysis["n_periods"] > 0
             assert coordination_analysis["total_coordination_days"] > 0
-            assert (
-                len(coordination_analysis["periods"])
-                == coordination_analysis["n_periods"]
-            )
+            assert len(coordination_analysis["periods"]) == coordination_analysis["n_periods"]
 
             # Check period structure
             for period in coordination_analysis["periods"]:

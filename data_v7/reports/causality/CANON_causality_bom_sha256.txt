@@ -1,0 +1,6 @@
+Causality Analysis BOM SHA-256
+==============================
+Generated: 2025-10-12T08:00:30.208807Z
+ICP variables: 4
+VMM features: 12
+Invariant segments: 478

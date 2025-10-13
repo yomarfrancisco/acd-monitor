@@ -49,6 +49,7 @@ logger = logging.getLogger(__name__)
 # Version banner for GHA logs
 print("CAPTURE_PARSER_VERSION=v2025-10-02a")  # visible in GHA logs
 
+
 # Helper function for timestamp conversion
 def _to_ms(x):
     """Convert timestamp to milliseconds, handling various units."""
@@ -181,9 +182,9 @@ class VenueWebSocket:
                 for i, arg in enumerate(subscription.get("args", [])):
                     if isinstance(arg, str) and "{symbol}" in arg:
                         subscription["args"][i] = arg.replace("{symbol}", mapped_symbol)
-            
+
             await self.connection.send(json.dumps(subscription))
-            
+
             # For Coinbase, check for subscription errors and try fallback
             if self.venue == "coinbase":
                 try:
@@ -191,7 +192,9 @@ class VenueWebSocket:
                     response = await asyncio.wait_for(self.connection.recv(), timeout=5.0)
                     response_data = json.loads(response)
                     if response_data.get("type") == "error":
-                        logger.warning(f"Coinbase subscription error: {response_data.get('message')}")
+                        logger.warning(
+                            f"Coinbase subscription error: {response_data.get('message')}"
+                        )
                         logger.info("Trying Coinbase fallback subscription (ticker only)")
                         fallback_subscription = self.venue_config["fallback_subscription"].copy()
                         await self.connection.send(json.dumps(fallback_subscription))
@@ -264,7 +267,9 @@ class VenueWebSocket:
                     # Rate limit error logging (every 500th error)
                     if self.error_count % 500 == 0:
                         sample = str(data)[:100] + "..." if len(str(data)) > 100 else str(data)
-                        logger.warning(f"Failed to parse {self.venue} message (error #{self.error_count}): {sample}")
+                        logger.warning(
+                            f"Failed to parse {self.venue} message (error #{self.error_count}): {sample}"
+                        )
 
         except Exception as e:
             logger.error(f"Error processing message from {self.venue}: {e}")
@@ -273,39 +278,41 @@ class VenueWebSocket:
         """Check if message is a system message that should be skipped."""
         if not isinstance(data, dict):
             return False
-        
+
         # Coinbase system messages
         if data.get("type") in ["subscriptions", "heartbeat"]:
             return True
-        
+
         # Kraken system messages
         if data.get("event") in ["systemStatus", "subscriptionStatus", "heartbeat"]:
             return True
-        
+
         # OKX system messages
         if data.get("event") == "subscribe":
             return True
         if isinstance(data.get("arg"), dict) and data["arg"].get("channel") == "books":
             return True
-        
+
         # Bybit system messages
         if data.get("op") == "subscribe" and data.get("success"):
             return True
         if data.get("topic", "").startswith("orderbook"):
             return True
-        
+
         return False
 
     def _is_duplicate(self, parsed: Dict) -> bool:
         """Check if message is a duplicate based on timestamp, price, and size."""
         if not self.ring_buffer:
             return False
-            
+
         # Check last few messages for duplicates using new timestamp field
         for recent in list(self.ring_buffer)[-10:]:  # Check last 10 messages
-            if (recent.get("ts_exchange_ms") == parsed.get("ts_exchange_ms") and
-                recent.get("last_px") == parsed.get("last_px") and
-                recent.get("trade_sz") == parsed.get("trade_sz")):
+            if (
+                recent.get("ts_exchange_ms") == parsed.get("ts_exchange_ms")
+                and recent.get("last_px") == parsed.get("last_px")
+                and recent.get("trade_sz") == parsed.get("trade_sz")
+            ):
                 return True
         return False
 
@@ -352,7 +359,7 @@ class VenueWebSocket:
         # Skip system messages
         if data.get("type") in ["subscriptions", "heartbeat"]:
             return None
-        
+
         # Handle ticker messages
         if data.get("type") == "ticker":
             time_ms = pd.to_datetime(data["time"], utc=True).value // 1_000_000
@@ -365,7 +372,7 @@ class VenueWebSocket:
                 "trade_sz": float(data.get("last_size", 0)),
                 "venue_id": self.venue,
             }
-        
+
         # Handle trade messages
         if data.get("type") == "match":
             time_ms = pd.to_datetime(data["time"], utc=True).value // 1_000_000
@@ -376,27 +383,32 @@ class VenueWebSocket:
                 "trade_sz": float(data["size"]),
                 "venue_id": self.venue,
             }
-        
+
         return None
 
     def _parse_kraken_message(self, data) -> dict | None:
         """Parse Kraken WebSocket message - handle both dict system messages and array trade messages."""
+
         def f(x):
-            try: return float(x)
-            except Exception: return None
+            try:
+                return float(x)
+            except Exception:
+                return None
 
         # Handle dict system messages (skip)
         if isinstance(data, dict):
             event_type = data.get("event")
             if event_type in ["systemStatus", "subscriptionStatus", "heartbeat"]:
                 return None
-            
+
             # Handle dict trade data format
             if "data" in data and isinstance(data["data"], list):
                 trades = data["data"]
                 if trades and isinstance(trades[0], list):
                     price, volume, t = trades[0][0], trades[0][1], trades[0][2]
-                    px = f(price); vol = f(volume); ts_ms = _to_ms(t)
+                    px = f(price)
+                    vol = f(volume)
+                    ts_ms = _to_ms(t)
                     if px is not None and ts_ms is not None:
                         return {
                             "ts_exchange_ms": ts_ms,
@@ -412,7 +424,9 @@ class VenueWebSocket:
         # Handle array format: [chanId, [[price, volume, time, ...], ...], "XBT/USD", "trade"]
         if isinstance(data, list) and len(data) >= 4 and isinstance(data[1], list) and data[1]:
             price, volume, t = data[1][0][0], data[1][0][1], data[1][0][2]
-            px = f(price); vol = f(volume); ts_ms = _to_ms(t)
+            px = f(price)
+            vol = f(volume)
+            ts_ms = _to_ms(t)
             if px is not None and ts_ms is not None:
                 return {
                     "ts_exchange_ms": ts_ms,
@@ -423,7 +437,7 @@ class VenueWebSocket:
                     "trade_sz": vol,
                     "venue_id": self.venue,
                 }
-        
+
         return None
 
     def _parse_okx_message(self, data: Dict) -> Optional[Dict]:
@@ -431,11 +445,11 @@ class VenueWebSocket:
         # Skip subscription confirmation messages
         if data.get("event") == "subscribe":
             return None
-        
+
         # Skip books/orderbook messages (not needed for price data)
         if isinstance(data.get("arg"), dict) and data["arg"].get("channel") == "books":
             return None
-        
+
         # Handle ticker data
         if "data" in data and isinstance(data["data"], list):
             for item in data["data"]:
@@ -454,26 +468,35 @@ class VenueWebSocket:
 
     def _parse_bybit_message(self, data) -> dict | None:
         """Parse Bybit WebSocket message - handle orderbook, trade, and ticker formats."""
+
         def f(x):
-            try: return float(x)
-            except Exception: return None
+            try:
+                return float(x)
+            except Exception:
+                return None
 
         # Skip subscription confirmations
         if isinstance(data, dict) and data.get("op") == "subscribe" and data.get("success"):
             return None
-        
+
         # Skip orderbook messages (not a bug, just noise)
         if isinstance(data, dict) and data.get("topic", "").startswith("orderbook"):
             return None
-        
+
         # Handle trade/ticker messages with data array
         if isinstance(data, dict) and "data" in data:
             items = data["data"]
             if isinstance(items, dict):
                 items = [items]
             for it in items:
-                ts = it.get("T") or it.get("ts") or it.get("time") or data.get("ts") or data.get("timestamp")
-                px  = it.get("p") or it.get("lastPrice") or it.get("price")
+                ts = (
+                    it.get("T")
+                    or it.get("ts")
+                    or it.get("time")
+                    or data.get("ts")
+                    or data.get("timestamp")
+                )
+                px = it.get("p") or it.get("lastPrice") or it.get("price")
                 bid = it.get("bid1Price") or it.get("bp")
                 ask = it.get("ask1Price") or it.get("ap")
                 if ts is not None and px is not None:
@@ -488,7 +511,7 @@ class VenueWebSocket:
                             "trade_sz": f(it.get("v") or it.get("size")),
                             "venue_id": self.venue,
                         }
-        
+
         # Handle direct trade/ticker messages
         if isinstance(data, dict):
             ts = data.get("T") or data.get("ts") or data.get("time") or data.get("timestamp")
@@ -507,7 +530,7 @@ class VenueWebSocket:
                         "trade_sz": f(data.get("v") or data.get("size")),
                         "venue_id": self.venue,
                     }
-        
+
         return None
 
     def get_coverage_percentage(self) -> float:
@@ -523,9 +546,7 @@ class VenueWebSocket:
         if expected_messages == 0:
             return 0.0
 
-        return min(
-            100.0, (self.coverage_stats["messages_received"] / expected_messages) * 100
-        )
+        return min(100.0, (self.coverage_stats["messages_received"] / expected_messages) * 100)
 
     async def close(self):
         """Close WebSocket connection."""
@@ -536,7 +557,9 @@ class VenueWebSocket:
 class WebSocketCapture:
     """Main WebSocket capture coordinator."""
 
-    def __init__(self, symbol: str, venues: List[str], bucket: str, prefix: str, canary_mode: bool = False):
+    def __init__(
+        self, symbol: str, venues: List[str], bucket: str, prefix: str, canary_mode: bool = False
+    ):
         self.symbol = symbol
         self.venues = venues
         self.bucket = bucket
@@ -560,9 +583,7 @@ class WebSocketCapture:
             connection_tasks.append(task)
 
         # Wait for all connections
-        connection_results = await asyncio.gather(
-            *connection_tasks, return_exceptions=True
-        )
+        connection_results = await asyncio.gather(*connection_tasks, return_exceptions=True)
 
         # Check connection success
         successful_venues = []
@@ -583,16 +604,14 @@ class WebSocketCapture:
         listen_tasks = []
 
         for venue in successful_venues:
-            task = asyncio.create_task(
-                self.venue_connections[venue].listen(duration_seconds)
-            )
+            task = asyncio.create_task(self.venue_connections[venue].listen(duration_seconds))
             listen_tasks.append(task)
 
         # Wait for all listening to complete with timeout
         try:
             await asyncio.wait_for(
                 asyncio.gather(*listen_tasks, return_exceptions=True),
-                timeout=duration_seconds + 60  # Add 1 minute buffer
+                timeout=duration_seconds + 60,  # Add 1 minute buffer
             )
         except asyncio.TimeoutError:
             logger.warning("Capture timeout reached, stopping all connections")
@@ -633,26 +652,26 @@ class WebSocketCapture:
                     else None
                 ),
             }
-            
+
             # Log parsing summary for this venue
-            total_parsed = connection.coverage_stats["parsed_ok"] + connection.coverage_stats["parsed_err"]
+            total_parsed = (
+                connection.coverage_stats["parsed_ok"] + connection.coverage_stats["parsed_err"]
+            )
             if total_parsed > 0:
                 success_rate = connection.coverage_stats["parsed_ok"] / total_parsed
-                logger.info(f"{venue} parsing summary: {connection.coverage_stats['parsed_ok']}/{total_parsed} ({success_rate:.1%})")
+                logger.info(
+                    f"{venue} parsing summary: {connection.coverage_stats['parsed_ok']}/{total_parsed} ({success_rate:.1%})"
+                )
             else:
                 logger.warning(f"{venue} parsing summary: No messages parsed")
 
         # Check if we have ≥3 venues with ≥95% coverage
         high_coverage_venues = [
-            v
-            for v, data in coverage_data.items()
-            if data["coverage_percentage"] >= 95.0
+            v for v, data in coverage_data.items() if data["coverage_percentage"] >= 95.0
         ]
 
         if len(high_coverage_venues) < 3:
-            logger.warning(
-                f"Only {len(high_coverage_venues)} venues with ≥95% coverage"
-            )
+            logger.warning(f"Only {len(high_coverage_venues)} venues with ≥95% coverage")
             return {
                 "success": False,
                 "reason": "insufficient_coverage",
@@ -660,9 +679,7 @@ class WebSocketCapture:
             }
 
         # Write to S3
-        success = await self._write_to_s3(
-            venue_data, coverage_data, start_time, end_time
-        )
+        success = await self._write_to_s3(venue_data, coverage_data, start_time, end_time)
 
         # Close all connections and cancel any pending tasks
         for connection in self.venue_connections.values():
@@ -678,7 +695,7 @@ class WebSocketCapture:
         else:
             logger.error("CAPTURE_FAILED - WebSocket capture failed")
             print("CAPTURE_FAILED - WebSocket capture failed")
-        
+
         # Ensure we always return a result
         logger.info("CAPTURE_COMPLETE core path")
         print("CAPTURE_COMPLETE core path")
@@ -758,9 +775,7 @@ class WebSocketCapture:
                 ContentType="application/json",
             )
 
-            logger.info(
-                f"Successfully wrote WebSocket capture to s3://{self.bucket}/{s3_path}"
-            )
+            logger.info(f"Successfully wrote WebSocket capture to s3://{self.bucket}/{s3_path}")
             logger.info("S3_WRITE_COMPLETE - All data persisted successfully")
             print("S3_WRITE_COMPLETE - All data persisted successfully")
             return True
@@ -773,9 +788,7 @@ class WebSocketCapture:
 async def main():
     """Main function for WebSocket capture."""
     parser = argparse.ArgumentParser(description="WebSocket market data capture")
-    parser.add_argument(
-        "--symbol", required=True, help="Trading symbol (e.g., BTC-USD)"
-    )
+    parser.add_argument("--symbol", required=True, help="Trading symbol (e.g., BTC-USD)")
     parser.add_argument("--start", required=True, help="Start time (ISO format)")
     parser.add_argument("--end", required=True, help="End time (ISO format)")
     parser.add_argument(

@@ -59,9 +59,7 @@ def _load_json_s3(s3_client, bucket: str, key: str, *, allow_missing=False, log=
     except ClientError as e:
         code = getattr(e, "response", {}).get("Error", {}).get("Code")
         if code == "NoSuchKey" and allow_missing:
-            log.warning(
-                "Missing %s (coverage meta); downgrading to quality warning", key
-            )
+            log.warning("Missing %s (coverage meta); downgrading to quality warning", key)
             return None
         raise
 
@@ -70,9 +68,7 @@ def _first_parquet_key(s3_client, bucket: str, prefix: str) -> str:
     """Find the first parquet file in a venue directory, preferring deterministic ordering."""
     try:
         resp = s3_client.list_objects_v2(Bucket=bucket, Prefix=prefix)
-        keys = [
-            x["Key"] for x in resp.get("Contents", []) if x["Key"].endswith(".parquet")
-        ]
+        keys = [x["Key"] for x in resp.get("Contents", []) if x["Key"].endswith(".parquet")]
 
         if not keys:
             return None
@@ -145,9 +141,7 @@ def verify_overlap_json(overlap_data: Dict) -> List[str]:
     return issues
 
 
-def verify_clock_skew(
-    s3_client, bucket: str, base_key: str, venues: List[str]
-) -> List[str]:
+def verify_clock_skew(s3_client, bucket: str, base_key: str, venues: List[str]) -> List[str]:
     """Verify clock skew between venues."""
     issues = []
 
@@ -183,9 +177,7 @@ def verify_clock_skew(
                 gaps = timestamps.diff().dropna()
                 large_gaps = gaps[gaps > pd.Timedelta(minutes=5)]
                 if len(large_gaps) > 0:
-                    issues.append(
-                        f"Large gaps in {venue}: {len(large_gaps)} gaps > 5min"
-                    )
+                    issues.append(f"Large gaps in {venue}: {len(large_gaps)} gaps > 5min")
 
             # Clean up temp file
             os.remove(temp_file)
@@ -265,9 +257,7 @@ def verify_provenance(s3_client, bucket: str, base_key: str) -> List[str]:
 
         # Check provenance is either REAL or DEMO
         if provenance_data.get("provenance") not in ["REAL", "DEMO"]:
-            issues.append(
-                f"Invalid provenance value: {provenance_data.get('provenance')}"
-            )
+            issues.append(f"Invalid provenance value: {provenance_data.get('provenance')}")
 
     except Exception as e:
         issues.append(f"Failed to verify provenance: {e}")
@@ -320,9 +310,7 @@ def discover_and_verify_windows(args) -> int:
                     continue
 
                 # Verify this window
-                result = verify_single_window(
-                    s3_client, bucket, base_key, overlap_data, args
-                )
+                result = verify_single_window(s3_client, bucket, base_key, overlap_data, args)
                 critical_count = len(result.get("critical", []))
                 quality_count = len(result.get("quality", []))
 
@@ -359,9 +347,7 @@ def discover_and_verify_windows(args) -> int:
                     )
                     return 0
                 else:
-                    logger.warning(
-                        f"Verification passed with {total_quality} quality warnings"
-                    )
+                    logger.warning(f"Verification passed with {total_quality} quality warnings")
             else:
                 logger.info("All verifications passed")
             return 0
@@ -371,9 +357,7 @@ def discover_and_verify_windows(args) -> int:
         return 1
 
 
-def verify_single_window(
-    s3_client, bucket: str, base_key: str, overlap_data: Dict, args
-) -> Dict:
+def verify_single_window(s3_client, bucket: str, base_key: str, overlap_data: Dict, args) -> Dict:
     """Verify a single window and return structured results."""
     critical_issues = []
     quality_issues = []
@@ -390,9 +374,7 @@ def verify_single_window(
     # Run requested verification checks
     if "clocks" in args.report:
         logger.info("Verifying clock skew...")
-        clock_issues = verify_clock_skew(
-            s3_client, bucket, base_key, overlap_data["venues"]
-        )
+        clock_issues = verify_clock_skew(s3_client, bucket, base_key, overlap_data["venues"])
         if clock_issues:
             # Missing parquet files are quality issues when --warn-on-quality is set
             if args.warn_on_quality:
@@ -474,18 +456,14 @@ def verify_single_window(
 
     # Log summary for this window
     if critical_issues:
-        logger.error(
-            f"Window verification failed with {len(critical_issues)} critical issues"
-        )
+        logger.error(f"Window verification failed with {len(critical_issues)} critical issues")
     elif quality_issues:
         if args.warn_on_quality:
             logger.warning(
                 f"Window verification passed with {len(quality_issues)} quality warnings"
             )
         else:
-            logger.error(
-                f"Window verification failed with {len(quality_issues)} quality issues"
-            )
+            logger.error(f"Window verification failed with {len(quality_issues)} quality issues")
     else:
         logger.info("All verifications passed")
 
@@ -580,9 +558,7 @@ def main():
                         f"Verification passed with {len(quality_issues)} quality warnings"
                     )
             else:
-                logger.error(
-                    f"Verification failed with {len(quality_issues)} quality issues"
-                )
+                logger.error(f"Verification failed with {len(quality_issues)} quality issues")
                 return 1
         else:
             logger.info("All verifications passed")

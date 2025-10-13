@@ -69,9 +69,7 @@ class LiquidityRegimeIntegration:
             for venue in self.venues:
                 # Generate realistic liquidity metrics
                 base_volume = np.random.lognormal(15, 1)  # Volume in USD
-                true_range = np.random.lognormal(
-                    -8, 0.5
-                )  # True range as fraction of price
+                true_range = np.random.lognormal(-8, 0.5)  # True range as fraction of price
                 close_price = 45000 + np.random.normal(0, 1000)  # BTC price
                 daily_return = np.random.normal(0, 0.02)  # Daily return
                 sigma20 = np.random.uniform(0.1, 0.5)  # 20-day volatility
@@ -154,9 +152,7 @@ class LiquidityRegimeIntegration:
         leadership_data = self.fetch_leadership_data(start_date, end_date)
 
         # Step 3: Run liquidity regime analysis
-        results = self.analyzer.analyze_liquidity_regimes(
-            liquidity_data, leadership_data
-        )
+        results = self.analyzer.analyze_liquidity_regimes(liquidity_data, leadership_data)
 
         # Step 4: Export results
         self.analyzer._export_results(results, export_dir)
@@ -172,9 +168,7 @@ class LiquidityRegimeIntegration:
             },
             "results": {
                 "total_days": len(results.regime_assignments),
-                "regime_counts": results.regime_assignments["regime"]
-                .value_counts()
-                .to_dict(),
+                "regime_counts": results.regime_assignments["regime"].value_counts().to_dict(),
                 "leadership_regimes": len(results.leadership_by_regime),
             },
             "export_files": [
@@ -198,12 +192,8 @@ class LiquidityRegimeIntegration:
 def main():
     """Main function to run liquidity regime analysis."""
     parser = argparse.ArgumentParser(description="Run liquidity regime analysis")
-    parser.add_argument(
-        "--start-date", default="2025-01-01", help="Start date (YYYY-MM-DD)"
-    )
-    parser.add_argument(
-        "--end-date", default="2025-09-24", help="End date (YYYY-MM-DD)"
-    )
+    parser.add_argument("--start-date", default="2025-01-01", help="Start date (YYYY-MM-DD)")
+    parser.add_argument("--end-date", default="2025-09-24", help="End date (YYYY-MM-DD)")
     parser.add_argument("--export-dir", default="exports", help="Export directory")
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose logging")
 

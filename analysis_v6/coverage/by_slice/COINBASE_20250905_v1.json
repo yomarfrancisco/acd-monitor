@@ -1,0 +1,13 @@
+{
+  "venue": "COINBASE",
+  "date": "20250905",
+  "total_trades": 434014,
+  "first_ts": 1757030400213181000,
+  "last_ts": 1757116799910879000,
+  "median_gap_ms": 3.6069999999999998,
+  "p99_gap_ms": 2124.6869600000027,
+  "gaps_gt_1s": 22073,
+  "gaps_gt_10s": 13,
+  "dup_rate_pct": 0.4865454812260396,
+  "status": "SUCCESS"
+}

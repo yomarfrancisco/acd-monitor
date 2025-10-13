@@ -22,9 +22,7 @@ sys.path.append(str(Path(__file__).parent.parent / "src"))
 def setup_logging(verbose: bool = False):
     """Setup logging configuration."""
     level = logging.DEBUG if verbose else logging.INFO
-    logging.basicConfig(
-        level=level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    )
+    logging.basicConfig(level=level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
 
 def validate_inputs(baseline_overlap: str, candidate_1s_overlap: str) -> None:
@@ -45,9 +43,7 @@ def validate_inputs(baseline_overlap: str, candidate_1s_overlap: str) -> None:
     # Check candidate file
     candidate_path = Path(candidate_1s_overlap)
     if not candidate_path.exists():
-        raise FileNotFoundError(
-            f"Candidate 1s overlap file not found: {candidate_1s_overlap}"
-        )
+        raise FileNotFoundError(f"Candidate 1s overlap file not found: {candidate_1s_overlap}")
 
     # Load and validate baseline
     with open(baseline_path, "r") as f:
@@ -218,28 +214,19 @@ def select_tolerance_adjustment(diagnostics: Dict[str, Any]) -> str:
     analyses = diagnostics["analyses"]
 
     # Rule 1: Spread p-value unstable and small N
-    if (
-        not analyses["spread"]["pval_stable"]
-        and diagnostics["settings"]["permutes"] < 5000
-    ):
+    if not analyses["spread"]["pval_stable"] and diagnostics["settings"]["permutes"] < 5000:
         rule = "increase_duration_permutes"
         logger.info(f"[RETRY:1s:rule_fired] {rule}")
         return rule
 
     # Rule 2: Lead-lag unstable but InfoShare stable
-    if (
-        not analyses["leadlag"]["coordination_stable"]
-        and analyses["infoshare"]["ordering_stable"]
-    ):
+    if not analyses["leadlag"]["coordination_stable"] and analyses["infoshare"]["ordering_stable"]:
         rule = "enable_prev_tick_sync"
         logger.info(f"[RETRY:1s:rule_fired] {rule}")
         return rule
 
     # Rule 3: InfoShare ordering unstable
-    if (
-        not analyses["infoshare"]["ordering_stable"]
-        or analyses["infoshare"]["js_distance"] > 0.02
-    ):
+    if not analyses["infoshare"]["ordering_stable"] or analyses["infoshare"]["js_distance"] > 0.02:
         rule = "enforce_inner_join_coverage"
         logger.info(f"[RETRY:1s:rule_fired] {rule}")
         return rule
@@ -570,12 +557,8 @@ Stay at 2s baseline until court-mode 1s windows appear.
 
 def main():
     """Main entry point."""
-    parser = argparse.ArgumentParser(
-        description="1s Retry Plan - diagnostic-driven tolerances"
-    )
-    parser.add_argument(
-        "--baseline-overlap", required=True, help="Path to baseline OVERLAP.json"
-    )
+    parser = argparse.ArgumentParser(description="1s Retry Plan - diagnostic-driven tolerances")
+    parser.add_argument("--baseline-overlap", required=True, help="Path to baseline OVERLAP.json")
     parser.add_argument(
         "--candidate-1s-overlap",
         required=True,
@@ -585,22 +568,14 @@ def main():
     parser.add_argument(
         "--min-duration-sec", type=int, default=180, help="Minimum duration in seconds"
     )
-    parser.add_argument(
-        "--permutes", type=int, default=5000, help="Number of permutations"
-    )
-    parser.add_argument(
-        "--leadlag-horizons", type=str, default="1,2,5", help="Lead-lag horizons"
-    )
+    parser.add_argument("--permutes", type=int, default=5000, help="Number of permutations")
+    parser.add_argument("--leadlag-horizons", type=str, default="1,2,5", help="Lead-lag horizons")
     parser.add_argument(
         "--prev-tick-align", action="store_true", help="Enable previous-tick alignment"
     )
-    parser.add_argument(
-        "--refresh-time", action="store_true", help="Enable refresh-time sampling"
-    )
+    parser.add_argument("--refresh-time", action="store_true", help="Enable refresh-time sampling")
     parser.add_argument("--hac-bandwidth", default="auto", help="HAC bandwidth setting")
-    parser.add_argument(
-        "--coverage", type=float, default=0.99, help="Coverage threshold"
-    )
+    parser.add_argument("--coverage", type=float, default=0.99, help="Coverage threshold")
     parser.add_argument("--best4", action="store_true", help="Allow BEST4 policy")
     parser.add_argument("--all5", action="store_true", help="Require ALL5 policy")
     parser.add_argument(
@@ -609,24 +584,18 @@ def main():
         default=0,
         help="Micro-gap stitch level (0=off, 1=on)",
     )
-    parser.add_argument(
-        "--spread-permutes", type=int, default=2000, help="Spread permutations"
-    )
+    parser.add_argument("--spread-permutes", type=int, default=2000, help="Spread permutations")
     parser.add_argument(
         "--research-alpha", type=float, default=0.05, help="Research significance level"
     )
-    parser.add_argument(
-        "--gg-blend-alpha", type=float, default=0.7, help="GG blend alpha"
-    )
+    parser.add_argument("--gg-blend-alpha", type=float, default=0.7, help="GG blend alpha")
     parser.add_argument(
         "--gg-only",
         choices=["on", "off"],
         default="off",
         help="Use GG variance+hint only",
     )
-    parser.add_argument(
-        "--winsorize", type=float, default=99.5, help="Winsorization percentile"
-    )
+    parser.add_argument("--winsorize", type=float, default=99.5, help="Winsorization percentile")
     parser.add_argument(
         "--clock-skew-sec",
         type=float,
@@ -639,12 +608,8 @@ def main():
     parser.add_argument(
         "--max-leadlag-delta", type=float, default=0.10, help="Maximum lead-lag delta"
     )
-    parser.add_argument(
-        "--no-spread-flip", action="store_true", help="Reject spread p-value flips"
-    )
-    parser.add_argument(
-        "--real-only", action="store_true", help="Real data only (no synthetic)"
-    )
+    parser.add_argument("--no-spread-flip", action="store_true", help="Reject spread p-value flips")
+    parser.add_argument("--real-only", action="store_true", help="Real data only (no synthetic)")
     parser.add_argument("--ratchet", help="Ratchet configuration string")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
 
@@ -704,18 +669,14 @@ def main():
             logger.info(
                 f'[RETRY:1s:PASS] {{"rule":"{rule}","timestamp":"{datetime.now().isoformat()}"}}'
             )
-            print(
-                f'[RETRY:1s:PASS] {{"rule":"{rule}","timestamp":"{datetime.now().isoformat()}"}}'
-            )
+            print(f'[RETRY:1s:PASS] {{"rule":"{rule}","timestamp":"{datetime.now().isoformat()}"}}')
         else:
             # Create failure report
             create_fail_report(args.export_dir, rule, diagnostics)
             logger.info(
                 f'[RETRY:1s:FAIL] {{"rule":"{rule}","timestamp":"{datetime.now().isoformat()}"}}'
             )
-            print(
-                f'[RETRY:1s:FAIL] {{"rule":"{rule}","timestamp":"{datetime.now().isoformat()}"}}'
-            )
+            print(f'[RETRY:1s:FAIL] {{"rule":"{rule}","timestamp":"{datetime.now().isoformat()}"}}')
 
     except Exception as e:
         logger.error(f"1s retry plan failed: {e}")
@@ -810,9 +771,7 @@ def run_ratchet_mode(args, horizons):
                 print(f"[RETRY:1s:ratchet:{rung_name}:PASS] {json.dumps(config)}")
 
                 # Create evidence bundle for this rung
-                create_evidence_bundle(
-                    args.export_dir, args.candidate_1s_overlap, rung_name
-                )
+                create_evidence_bundle(args.export_dir, args.candidate_1s_overlap, rung_name)
 
                 return {
                     "success": True,
