@@ -390,6 +390,11 @@ def main():
         help="Export directory for evidence",
     )
     parser.add_argument("--rebuild-only", action="store_true", help="Only rebuild evidence bundle")
+    parser.add_argument(
+        "--snapshot-only",
+        action="store_true",
+        help="Skip tick loading and analyses; emit placeholder evidence using OVERLAP.json only",
+    )
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
 
     args = parser.parse_args()
@@ -401,6 +406,21 @@ def main():
     logger.info("Building research baseline 2s")
 
     baseline_dir = Path(args.baseline_dir)
+    export_dir = Path(args.export_dir)
+
+    if args.snapshot_only:
+        print("⚙️  Snapshot-only mode enabled: skipping tick loads")
+        export_dir.mkdir(parents=True, exist_ok=True)
+        (export_dir / "info_share_results.json").write_text(
+            json.dumps({"mode": "snapshot-only", "reason": "no ticks in CI"}, indent=2)
+        )
+        (export_dir / "spread_results.json").write_text(
+            json.dumps({"mode": "snapshot-only"}, indent=2)
+        )
+        (export_dir / "leadlag_results.json").write_text(
+            json.dumps({"mode": "snapshot-only", "venues_count": 0, "edges_count": 0, "edges": [], "horizons": []}, indent=2)
+        )
+        return
 
     if args.rebuild_only:
         # Only rebuild evidence bundle

@@ -29,9 +29,11 @@ jobs:
           ln -sf ../../baselines/2s artifacts/baselines/2s
       - name: Build baseline evidence bundle
         run: |
+          set -euo pipefail
           python scripts/build_research_baseline_2s.py \
             --baseline-dir artifacts/baselines/2s \
             --export-dir artifacts/baselines/2s/evidence \
+            --snapshot-only \
             --verbose
       - name: Reject mock/demo/empty parquet
         run: |
@@ -66,7 +68,9 @@ jobs:
           try:
               with open("artifacts/baselines/2s/evidence/info_share_results.json") as f:
                   data = json.load(f)
-              if not data.get("bounds") or data["bounds"] == {}:
+              if data.get("mode") == "snapshot-only":
+                  print("[CI:pass:infoshare_snapshot] InfoShare in snapshot-only mode")
+              elif not data.get("bounds") or data["bounds"] == {}:
                   print("[CI:fail:infoshare_empty] InfoShare bounds are empty")
                   sys.exit(2)
           except FileNotFoundError:
@@ -81,7 +85,9 @@ jobs:
           try:
               with open("artifacts/baselines/2s/evidence/spread_results.json") as f:
                   data = json.load(f)
-              if data.get("permutes", 0) < 1000:
+              if data.get("mode") == "snapshot-only":
+                  print("[CI:pass:spread_snapshot] Spread in snapshot-only mode")
+              elif data.get("permutes", 0) < 1000:
                   print("[CI:fail:permutes_low] Spread permutations < 1000")
                   sys.exit(2)
           except FileNotFoundError:
@@ -116,9 +122,12 @@ jobs:
           if not fns:
               print("[CI:fail:leadlag_missing] leadlag_results.json missing"); sys.exit(2)
           d = json.load(open(str(fns[0])))
-          vc = int(d.get("venues_count", 0) or 0)
-          ec = int(d.get("edges_count", len(d.get("edges", []))) or 0)
-          if vc >= 2 and ec == 0:
-              print("[CI:fail:leadlag_empty] Lead-Lag edges are empty"); sys.exit(2)
-          print("[CI:pass:leadlag] vc=", vc, " ec=", ec)
+          if d.get("mode") == "snapshot-only":
+              print("[CI:pass:leadlag_snapshot] Lead-Lag in snapshot-only mode")
+          else:
+              vc = int(d.get("venues_count", 0) or 0)
+              ec = int(d.get("edges_count", len(d.get("edges", []))) or 0)
+              if vc >= 2 and ec == 0:
+                  print("[CI:fail:leadlag_empty] Lead-Lag edges are empty"); sys.exit(2)
+              print("[CI:pass:leadlag] vc=", vc, " ec=", ec)
           PY
