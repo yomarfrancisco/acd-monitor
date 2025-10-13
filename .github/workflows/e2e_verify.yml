@@ -91,20 +91,16 @@ jobs:
       - name: E2E verify baseline
         run: |
           set -euo pipefail
-          BASE=artifacts/baselines/2s
-          EV="$BASE/evidence"
-          mkdir -p "$EV"
-
-          # Prefer direct call over Makefile so we can handle empty snapshots gracefully
           if python scripts/build_research_baseline_2s.py \
-               --baseline-dir "$BASE" \
-               --export-dir "$EV" \
+               --baseline-dir artifacts/baselines/2s \
+               --export-dir artifacts/baselines/2s/evidence \
                --verbose; then
             echo "✅ Baseline evidence built."
           else
             echo "⚠️ No ticks / InfoShare failed; writing stub evidence for snapshot-only mode."
-            printf '{}' > "$EV/info_share_results.json"
-            printf '{}' > "$EV/spread_results.json"
+            mkdir -p artifacts/baselines/2s/evidence
+            printf '{}' > artifacts/baselines/2s/evidence/info_share_results.json
+            printf '{}' > artifacts/baselines/2s/evidence/spread_results.json
           fi
       
       - name: Verify snapshot wiring
