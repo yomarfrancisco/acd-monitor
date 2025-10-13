@@ -1,0 +1,142 @@
+{
+  "W-1": {
+    "expected": 28,
+    "found": 28,
+    "percentage": 100.0,
+    "pass": true,
+    "total_bytes": 1747984503,
+    "v6_files": 28,
+    "v7_files": 0,
+    "date_range": "2025-09-29 to 2025-10-05"
+  },
+  "W-10": {
+    "expected": 28,
+    "found": 0,
+    "percentage": 0.0,
+    "pass": false,
+    "total_bytes": 0,
+    "v6_files": 0,
+    "v7_files": 0,
+    "date_range": "2025-07-28 to 2025-08-03"
+  },
+  "W-11": {
+    "expected": 28,
+    "found": 27,
+    "percentage": 96.42857142857143,
+    "pass": true,
+    "total_bytes": 1332376931,
+    "v6_files": 24,
+    "v7_files": 3,
+    "date_range": "2025-07-21 to 2025-07-27"
+  },
+  "W-12": {
+    "expected": 28,
+    "found": 21,
+    "percentage": 75.0,
+    "pass": false,
+    "total_bytes": 750373824,
+    "v6_files": 0,
+    "v7_files": 21,
+    "date_range": "2025-07-14 to 2025-07-20"
+  },
+  "W-13": {
+    "expected": 28,
+    "found": 7,
+    "percentage": 25.0,
+    "pass": false,
+    "total_bytes": 217688407,
+    "v6_files": 0,
+    "v7_files": 7,
+    "date_range": "2025-07-07 to 2025-07-13"
+  },
+  "W-2": {
+    "expected": 28,
+    "found": 28,
+    "percentage": 100.0,
+    "pass": true,
+    "total_bytes": 1683154941,
+    "v6_files": 28,
+    "v7_files": 0,
+    "date_range": "2025-09-22 to 2025-09-28"
+  },
+  "W-3": {
+    "expected": 28,
+    "found": 0,
+    "percentage": 0.0,
+    "pass": false,
+    "total_bytes": 0,
+    "v6_files": 0,
+    "v7_files": 0,
+    "date_range": "2025-09-15 to 2025-09-21"
+  },
+  "W-4": {
+    "expected": 28,
+    "found": 0,
+    "percentage": 0.0,
+    "pass": false,
+    "total_bytes": 0,
+    "v6_files": 0,
+    "v7_files": 0,
+    "date_range": "2025-09-08 to 2025-09-14"
+  },
+  "W-5": {
+    "expected": 28,
+    "found": 0,
+    "percentage": 0.0,
+    "pass": false,
+    "total_bytes": 0,
+    "v6_files": 0,
+    "v7_files": 0,
+    "date_range": "2025-09-01 to 2025-09-07"
+  },
+  "W-6": {
+    "expected": 28,
+    "found": 0,
+    "percentage": 0.0,
+    "pass": false,
+    "total_bytes": 0,
+    "v6_files": 0,
+    "v7_files": 0,
+    "date_range": "2025-08-25 to 2025-08-31"
+  },
+  "W-7": {
+    "expected": 28,
+    "found": 0,
+    "percentage": 0.0,
+    "pass": false,
+    "total_bytes": 0,
+    "v6_files": 0,
+    "v7_files": 0,
+    "date_range": "2025-08-18 to 2025-08-24"
+  },
+  "W-8": {
+    "expected": 28,
+    "found": 0,
+    "percentage": 0.0,
+    "pass": false,
+    "total_bytes": 0,
+    "v6_files": 0,
+    "v7_files": 0,
+    "date_range": "2025-08-11 to 2025-08-17"
+  },
+  "W-9": {
+    "expected": 28,
+    "found": 0,
+    "percentage": 0.0,
+    "pass": false,
+    "total_bytes": 0,
+    "v6_files": 0,
+    "v7_files": 0,
+    "date_range": "2025-08-04 to 2025-08-10"
+  },
+  "W0": {
+    "expected": 28,
+    "found": 20,
+    "percentage": 71.42857142857143,
+    "pass": false,
+    "total_bytes": 2019919001,
+    "v6_files": 20,
+    "v7_files": 0,
+    "date_range": "2025-10-06 to 2025-10-12"
+  }
+}

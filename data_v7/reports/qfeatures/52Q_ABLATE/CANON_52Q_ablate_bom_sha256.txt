@@ -1,0 +1,17 @@
+Bill of Materials - SHA256 Hashes
+==================================================
+
+INPUTS:
+qmetrics_comparison: ac06968dcb3afe9e9ad1499068ac0606351fb89ec88ac8477d525bf8625b85d7
+qfeatures_manifest: [hash]
+knapsack_metrics: [hash]
+calibrated_metrics: [hash]
+thresholds: [hash]
+cv_manifest: [hash]
+
+OUTPUTS:
+q_winner_spec: c077be09de690a6bdd6be8022c4cd46cfc62a989392dfa7bf69fd488329298d0
+q_ablation_table: 16 rows
+q_calibration_audit: 70aae156f2ac803a27ad501e8c9805dfd790d4e7683cebfd5412e3cd458070d6
+q_knapsack_policy: b69974add64e21d6336b3a7af4e4f5cd96b26d88050af1f137a6f5402b74aca2
+q_stress_results: e603fed9320b06c4f620f7d62ab8248db72ffbff4cb6d623015bf0d686127101

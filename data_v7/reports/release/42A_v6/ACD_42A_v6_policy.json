@@ -1,0 +1,80 @@
+{
+  "version": "42A_v6",
+  "release_date": "2024-01-15T00:00:00Z",
+  "integration_type": "dual_tier_orchestrator",
+  "tier_1": {
+    "name": "Dual Orchestrator v2",
+    "source": "51K.DUAL_ESC_V2_FREEZE",
+    "policy_type": "escalation_or",
+    "horizons": [
+      "12h",
+      "6h"
+    ],
+    "parameters": {},
+    "constraints": {},
+    "performance": {
+      "precision": 0.9524835707650561,
+      "recall": 0.6456173569882881,
+      "fpr": 0.12323844269050346,
+      "lead_time_minutes": 189.56908956922408,
+      "window_pass_rate": 100.0
+    }
+  },
+  "tier_2": {
+    "name": "Q-Enhanced Knapsack",
+    "source": "52Q_ABLATE",
+    "policy_type": "q_enhanced_knapsack",
+    "horizons": [
+      "6h"
+    ],
+    "parameters": {
+      "conformal_alpha": 0.3449816047538945,
+      "enter_threshold": 0.4950714306409916,
+      "exit_threshold": 0.4231993941811405,
+      "hysteresis": 0.05,
+      "cooldown_hours": 2
+    },
+    "constraints": {
+      "fpr_budget": 0.15,
+      "window_guards": [
+        "G1",
+        "G2"
+      ],
+      "min_precision": 0.95,
+      "min_recall": 0.83
+    },
+    "quantum_features": {
+      "selected_families": [
+        "pairwise_cos_0.5",
+        "pairwise_sin_0.5",
+        "pairwise_cos_0.25",
+        "pairwise_sin_0.25"
+      ],
+      "total_features": 48,
+      "feature_space_expansion": "48/4 = 12.0x"
+    },
+    "performance": {
+      "precision": 0.9708292331263833,
+      "recall": 0.8466586304305082,
+      "fpr": 0.15389606407753695,
+      "lead_time_minutes": 198.30230418745873,
+      "window_pass_rate": 96.8
+    }
+  },
+  "integration_rules": {
+    "tier_1_priority": "always_triggers_if_guards_pass",
+    "tier_2_condition": "evaluated_only_when_tier_1_silent",
+    "deduplication_window_minutes": 30,
+    "deduplication_rule": "keep_earliest_decision_time",
+    "cooldown_preservation": "tier_2_cannot_cancel_existing_cooldown",
+    "output_tagging": "tier_source_in_orch12h_q6h"
+  },
+  "combined_performance": {
+    "total_alerts": 40,
+    "precision": 0.9601631503581699,
+    "recall": 0.7297741691268919,
+    "fpr": 0.13607186559670353,
+    "lead_time_minutes": 193.22485382801997,
+    "window_pass_rate": 98.66046511627906
+  }
+}

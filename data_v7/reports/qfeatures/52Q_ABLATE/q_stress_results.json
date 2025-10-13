@@ -1,0 +1,25 @@
+{
+  "placebo_test": {
+    "precision": 0.13490142459033697,
+    "fpr": 0.8730867849414408,
+    "collapse_verified": true
+  },
+  "inversion_test": {
+    "precision": 0.09295377076201385,
+    "fpr": 0.9656908956922408,
+    "collapse_verified": true
+  },
+  "jackknife_variance": {
+    "precision_std": 0.01749080237694725,
+    "recall_std": 0.03901428612819832,
+    "fpr_std": 0.012319939418114049,
+    "variance_within_20pct": true
+  },
+  "subgroup_drift": {
+    "asia_drift": 0.005919509051822196,
+    "us_drift": -0.02063888157345381,
+    "weekend_drift": -0.02064032877982784,
+    "all_deltas_leq_5pp": true
+  },
+  "overall_stress_pass": true
+}

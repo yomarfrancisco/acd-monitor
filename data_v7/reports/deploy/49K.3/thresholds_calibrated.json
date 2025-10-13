@@ -1,0 +1,30 @@
+{
+  "6h": {
+    "champion_model": "GradientBoosting",
+    "enter_threshold": 0.3889,
+    "exit_threshold": 0.3389,
+    "cooldown_hours": 2,
+    "per_fold_thresholds": [
+      0.3889,
+      0.3429,
+      0.3077,
+      0.4,
+      0.5714
+    ],
+    "global_threshold": 0.3889
+  },
+  "12h": {
+    "champion_model": "Logistic_ElasticNet",
+    "enter_threshold": 0.5,
+    "exit_threshold": 0.45,
+    "cooldown_hours": 2,
+    "per_fold_thresholds": [
+      0.2308,
+      0.5,
+      0.2174,
+      0.5,
+      0.5
+    ],
+    "global_threshold": 0.5
+  }
+}

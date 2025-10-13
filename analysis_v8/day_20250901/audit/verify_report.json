@@ -1,0 +1,10 @@
+{
+  "day": "2025-09-01",
+  "n_tests": 36,
+  "n_kept": 12,
+  "fdr_max_diff": 1.3877787807814457e-16,
+  "placebo_ks_stat": 0.10382929167112431,
+  "placebo_ks_p": 0.7947961158939199,
+  "baseline_coverage": 1.0,
+  "all_checks_passed": true
+}

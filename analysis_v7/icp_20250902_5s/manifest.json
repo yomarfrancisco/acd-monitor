@@ -1,0 +1,14 @@
+{
+  "day": "2025-09-02",
+  "aligned_file": "analysis_v7/icp_20250902_5s/aligned_5s.parquet",
+  "sha256": "24ee41b4308ae507819109bee94dc8f15fa10188aa4be4ea61df8374bb90b385",
+  "rows": 201328,
+  "pairs": 12,
+  "venues": [
+    "BINANCE",
+    "COINBASE",
+    "BYBITSPOT",
+    "BITGET"
+  ],
+  "created_at": "2025-10-06T10:49:01.902878"
+}

@@ -1,0 +1,11 @@
+{
+  "day": "2025-09-01",
+  "n_kept_edges": 12,
+  "n_micro_pass": 12,
+  "n_jackknife_stable": 2,
+  "micro_pass_rate": 1.0,
+  "jackknife_stable_rate": 0.16666666666666666,
+  "micro_pass_threshold": 0.7,
+  "jackknife_stable_threshold": 0.7,
+  "decision_rule_met": false
+}

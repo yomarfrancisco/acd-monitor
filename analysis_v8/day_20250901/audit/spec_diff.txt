@@ -1,0 +1,4 @@
+Lag set: [5, 15, 30]
+Frequency: 5s
+Controls: none (simple OLS)
+HAC/NW: none

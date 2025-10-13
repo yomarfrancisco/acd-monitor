@@ -1,0 +1,146 @@
+{
+  "analysis_v10/phase_trigger/windows.csv": {
+    "sha256": "6302c806ce13e2e886c8b0f01ec780239cf33a79a8a9eed1df3dd16becccadab",
+    "exists": true
+  },
+  "analysis_v7/icp_20250901_5s/aligned_5s.parquet": {
+    "sha256": "7518f83e30e99a931c7967741a2818379a0f441552d094beebcf4b43b1a1120d",
+    "exists": true
+  },
+  "analysis_v7/icp_20250902_5s/aligned_5s.parquet": {
+    "sha256": "24ee41b4308ae507819109bee94dc8f15fa10188aa4be4ea61df8374bb90b385",
+    "exists": true
+  },
+  "analysis_v7/icp_20250903_5s/aligned_5s.parquet": {
+    "sha256": "5800da2bdaddeaa1aad01012e9456765779f848724bc0be0a11a20246eeee963",
+    "exists": true
+  },
+  "analysis_v7/icp_20250904_5s/aligned_5s.parquet": {
+    "sha256": "e12e67410a5bd1b4d03447238661c6f3a7f8b124b963d61125f43e35676036fb",
+    "exists": true
+  },
+  "analysis_v7/icp_20250905_5s/aligned_5s.parquet": {
+    "sha256": "5f0935b0618fe3c8b7482a6dbca2385fb942d664392c0a7e3f752dde96629944",
+    "exists": true
+  },
+  "analysis_v7/icp_20250906_5s/aligned_5s.parquet": {
+    "sha256": "404d403681a60f30bfb7cf6c28df70626e30f519550659cc9ae1f3a5f6a8e6cc",
+    "exists": true
+  },
+  "analysis_v7/icp_20250907_5s/aligned_5s.parquet": {
+    "sha256": "3002134e772e9b953ab06b5a0248a8c7fbdb359b5be618ac003a8af07c64ea76",
+    "exists": true
+  },
+  "data_v6/views/BINANCE/20250901/ticks_canonical.parquet": {
+    "sha256": "31a628324f45a52318fccb0b9963e4ee41cf69036b7d111df8ed402a6bfbae87",
+    "exists": true
+  },
+  "data_v6/views/BINANCE/20250902/ticks_canonical.parquet": {
+    "sha256": "5a3b2bac8cbd7f429468ec2a3e536d8298072132d6705d4f60a4a5c645576139",
+    "exists": true
+  },
+  "data_v6/views/BINANCE/20250903/ticks_canonical.parquet": {
+    "sha256": "5479c2b630279b2c306b7aeccc3a7819606facb8133623dec2de1598f540fc43",
+    "exists": true
+  },
+  "data_v6/views/BINANCE/20250904/ticks_canonical.parquet": {
+    "sha256": "887a5e2909326df5f8d32fb21b5d7ed8e9f7ca8676385a6ac7109092ea1caadd",
+    "exists": true
+  },
+  "data_v6/views/BINANCE/20250905/ticks_canonical.parquet": {
+    "sha256": "32fa22691b2ccc7d3074de34a158d4d8d278965b6285af6ab79a77673229f162",
+    "exists": true
+  },
+  "data_v6/views/BINANCE/20250906/ticks_canonical.parquet": {
+    "sha256": "665e79a7d4cfd00bfde309d1d8b7ac14e7300bc7fba6d232d32ef950d60c0328",
+    "exists": true
+  },
+  "data_v6/views/BINANCE/20250907/ticks_canonical.parquet": {
+    "sha256": "768ab3cf01e59c1fe4084539620bb5b67e9c0399ce36f2ce53c94d7eee8db8c4",
+    "exists": true
+  },
+  "data_v6/views/COINBASE/20250901/ticks_canonical.parquet": {
+    "sha256": "e54b6f62791de820a2740ef7cee906534b72c4a57a56baa7cb72ea5386a1aa77",
+    "exists": true
+  },
+  "data_v6/views/COINBASE/20250902/ticks_canonical.parquet": {
+    "sha256": "e2a9ae1a42c4fab9cb85276c4c335fb93dcaa3d07805ac9ba708d9b5726eed42",
+    "exists": true
+  },
+  "data_v6/views/COINBASE/20250903/ticks_canonical.parquet": {
+    "sha256": "7144c0b3b7d8e485a3825b4a7e2dd8bd56b51754a7c3755a01dc5771461ed60d",
+    "exists": true
+  },
+  "data_v6/views/COINBASE/20250904/ticks_canonical.parquet": {
+    "sha256": "4367eecd1b25077fe5d5ce9dea47d96b36718e14e21fe2bc2027ce6f2f64bc2e",
+    "exists": true
+  },
+  "data_v6/views/COINBASE/20250905/ticks_canonical.parquet": {
+    "sha256": "878cd3b30258a8c9fac4a18bc44b657907919d32e55dacdbc98820dca49bbde8",
+    "exists": true
+  },
+  "data_v6/views/COINBASE/20250906/ticks_canonical.parquet": {
+    "sha256": "3d4d0ab9d803503fa208175caa7810e448cee2a8028f5637403b2626fa8f2b0e",
+    "exists": true
+  },
+  "data_v6/views/COINBASE/20250907/ticks_canonical.parquet": {
+    "sha256": "7611a918337937cdb2b732f3c185e3120d927b8ef2ad345ef7974bdafea62ae7",
+    "exists": true
+  },
+  "data_v6/views/BYBITSPOT/20250901/ticks_canonical.parquet": {
+    "sha256": "9ad2846904207f6990eb6b87773d293b0eecc33d150398abcd31e810c40bcb68",
+    "exists": true
+  },
+  "data_v6/views/BYBITSPOT/20250902/ticks_canonical.parquet": {
+    "sha256": "3e8908212b53b2b0354906c4425833c468c40e27aa8d82e78842b50033a7a46d",
+    "exists": true
+  },
+  "data_v6/views/BYBITSPOT/20250903/ticks_canonical.parquet": {
+    "sha256": "aa53c895f46befe0f9ae3ecc40234615cf14109ae5ec18bd12c3cfc7e8aca9b6",
+    "exists": true
+  },
+  "data_v6/views/BYBITSPOT/20250904/ticks_canonical.parquet": {
+    "sha256": "c5841862d1db5f5902a09e87c1c6ad3980f668ea07f94a15c92551ae0b67843c",
+    "exists": true
+  },
+  "data_v6/views/BYBITSPOT/20250905/ticks_canonical.parquet": {
+    "sha256": "ac54c11dfa0a433977ce866f4e595ec76e35bbdfc845569656ddac6c15c0cb7f",
+    "exists": true
+  },
+  "data_v6/views/BYBITSPOT/20250906/ticks_canonical.parquet": {
+    "sha256": "223058dec50dae09fddd99a36f70ba3a7cc4b44bf9a20ac37a71d24e9d8237dc",
+    "exists": true
+  },
+  "data_v6/views/BYBITSPOT/20250907/ticks_canonical.parquet": {
+    "sha256": "ec1e8ced8faf84a558e59bc32535f24ac4bc1c87a7438281101f00b3de5673a3",
+    "exists": true
+  },
+  "data_v6/views/BITGET/20250901/ticks_canonical.parquet": {
+    "sha256": "c5a5e9d95ed796d9606181a448c2e56d800e9f0dbb7f68f39b7175fe13320191",
+    "exists": true
+  },
+  "data_v6/views/BITGET/20250902/ticks_canonical.parquet": {
+    "sha256": "4c25584330f9f13127a81f617b9793a8426826c26b3944dcd1f205005f5bc743",
+    "exists": true
+  },
+  "data_v6/views/BITGET/20250903/ticks_canonical.parquet": {
+    "sha256": "7e43b9957579d81a4e67cb42910cb8155c063d2df171be20d3d11e1584d7ebad",
+    "exists": true
+  },
+  "data_v6/views/BITGET/20250904/ticks_canonical.parquet": {
+    "sha256": "99eddd5d88de68312d3798311c4c667d26209ddc333710e6a488181a43c3f315",
+    "exists": true
+  },
+  "data_v6/views/BITGET/20250905/ticks_canonical.parquet": {
+    "sha256": "c90e7e9def9ec3890164ef1a85f5c73223d7408e6ac878d57ef9b4132e2375e0",
+    "exists": true
+  },
+  "data_v6/views/BITGET/20250906/ticks_canonical.parquet": {
+    "sha256": "e527779323cd9a16523ad067a2c9bb09a107f26aef08b0c7578c81f626f64b50",
+    "exists": true
+  },
+  "data_v6/views/BITGET/20250907/ticks_canonical.parquet": {
+    "sha256": "016bf2829f30516c05a814db109680e0924d8000f9952b2427637d8155b73b90",
+    "exists": true
+  }
+}

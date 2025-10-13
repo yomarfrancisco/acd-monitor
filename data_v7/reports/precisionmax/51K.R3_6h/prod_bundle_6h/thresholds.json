@@ -1,0 +1,8 @@
+{
+  "6h": {
+    "enter_threshold": 0.5,
+    "exit_threshold": 0.45,
+    "cooldown_hours": 2,
+    "calibration_method": "isotonic"
+  }
+}

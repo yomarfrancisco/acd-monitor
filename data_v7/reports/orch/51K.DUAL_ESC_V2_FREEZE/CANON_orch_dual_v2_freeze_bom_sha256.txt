@@ -1,0 +1,15 @@
+Bill of Materials - SHA256 Hashes
+==================================================
+
+INPUTS:
+orch_policy: 0aba62b1d113fb9a10ff63c2b0f65059b5218dda7e10b175c912b6b5eaf4d847
+metrics_oos: 54c161554b97d62e6a3a9c4381283ace856a11da5fb92e1a3e36c3d1b62d2041
+window_pass: b563ba446556c528997ee37967af64a7e5973ceaaaaad97e56f2853a6daed4e1
+
+OUTPUTS:
+prod_bundle_orch_v2/policy.json: 180b34a9cb8670063a2092fd5eb9ed144b6d5aa4bd6b1757887c92346ffd8f07
+prod_bundle_orch_v2/thresholds.json: aea85165adec1d2fb05ae1fa245719f7425acd3c371b4e548c94c2bd5acb01e1
+prod_bundle_orch_v2/conformal.json: e5aaed0cf05f9c4520964e7174e2fbbc923825d2d5d4961ae84a238661897257
+prod_bundle_orch_v2/metrics.json: cdcb00e6c2e870df7434733c79cce8d13b428aa1988f2c91604e2f2bd684dae8
+prod_bundle_orch_v2/hashes.json: a5059076e78a0cc1183b8357a85ff6862693c6f41fd6095a40772e638d0fbca2
+prod_bundle_orch_v2/model_card_addendum.md: 3130ea086fd414884dfdbb8194be2d73933c19e3ba948ae62241e46880a8265f

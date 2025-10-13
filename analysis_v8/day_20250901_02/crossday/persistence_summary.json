@@ -1,0 +1,9 @@
+{
+  "pearson_rho": 0.21852324166103448,
+  "spearman_rho": 0.3250965250965251,
+  "hit_overlap": 0.2777777777777778,
+  "kendall_tau": 0.19682539682539685,
+  "top5_overlap": 0.0,
+  "top10_overlap": 0.7,
+  "persistence": "MODERATE"
+}

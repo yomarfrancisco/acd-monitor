@@ -1,0 +1,152 @@
+{
+  "fold_0": {
+    "6h": {
+      "Logistic_L2": {
+        "roc_optimal": 0.13725490196078433,
+        "ops_optimal": 0.25
+      },
+      "Logistic_ElasticNet": {
+        "roc_optimal": 0.16129032258064516,
+        "ops_optimal": 0.25
+      },
+      "GradientBoosting": {
+        "roc_optimal": 0.3888888888888889,
+        "ops_optimal": 0.3888888888888889
+      }
+    },
+    "12h": {
+      "Logistic_L2": {
+        "roc_optimal": 0.26666666666666666,
+        "ops_optimal": 0.3333333333333333
+      },
+      "Logistic_ElasticNet": {
+        "roc_optimal": 0.2,
+        "ops_optimal": 0.23076923076923078
+      },
+      "GradientBoosting": {
+        "roc_optimal": 0.22857142857142856,
+        "ops_optimal": 0.26666666666666666
+      }
+    }
+  },
+  "fold_1": {
+    "6h": {
+      "Logistic_L2": {
+        "roc_optimal": 0.25,
+        "ops_optimal": 0.3333333333333333
+      },
+      "Logistic_ElasticNet": {
+        "roc_optimal": 0.45454545454545453,
+        "ops_optimal": 0.45454545454545453
+      },
+      "GradientBoosting": {
+        "roc_optimal": 0.2222222222222222,
+        "ops_optimal": 0.34285714285714286
+      }
+    },
+    "12h": {
+      "Logistic_L2": {
+        "roc_optimal": 0.42105263157894735,
+        "ops_optimal": 0.42105263157894735
+      },
+      "Logistic_ElasticNet": {
+        "roc_optimal": 0.2,
+        "ops_optimal": 0.5
+      },
+      "GradientBoosting": {
+        "roc_optimal": 0.17391304347826086,
+        "ops_optimal": 0.30303030303030304
+      }
+    }
+  },
+  "fold_2": {
+    "6h": {
+      "Logistic_L2": {
+        "roc_optimal": 0.1875,
+        "ops_optimal": 0.2631578947368421
+      },
+      "Logistic_ElasticNet": {
+        "roc_optimal": 0.2,
+        "ops_optimal": 0.3181818181818182
+      },
+      "GradientBoosting": {
+        "roc_optimal": 0.15384615384615385,
+        "ops_optimal": 0.3076923076923077
+      }
+    },
+    "12h": {
+      "Logistic_L2": {
+        "roc_optimal": 0.10144927536231885,
+        "ops_optimal": 0.3
+      },
+      "Logistic_ElasticNet": {
+        "roc_optimal": 0.13333333333333333,
+        "ops_optimal": 0.21739130434782608
+      },
+      "GradientBoosting": {
+        "roc_optimal": 0.12962962962962962,
+        "ops_optimal": 0.25
+      }
+    }
+  },
+  "fold_3": {
+    "6h": {
+      "Logistic_L2": {
+        "roc_optimal": 0.13725490196078433,
+        "ops_optimal": 0.3125
+      },
+      "Logistic_ElasticNet": {
+        "roc_optimal": 0.35,
+        "ops_optimal": 0.4666666666666667
+      },
+      "GradientBoosting": {
+        "roc_optimal": 0.26666666666666666,
+        "ops_optimal": 0.4
+      }
+    },
+    "12h": {
+      "Logistic_L2": {
+        "roc_optimal": 0.2,
+        "ops_optimal": 0.4375
+      },
+      "Logistic_ElasticNet": {
+        "roc_optimal": 0.2,
+        "ops_optimal": 0.5
+      },
+      "GradientBoosting": {
+        "roc_optimal": 0.3,
+        "ops_optimal": 0.3888888888888889
+      }
+    }
+  },
+  "fold_4": {
+    "6h": {
+      "Logistic_L2": {
+        "roc_optimal": 0.375,
+        "ops_optimal": 0.4166666666666667
+      },
+      "Logistic_ElasticNet": {
+        "roc_optimal": 0.14285714285714285,
+        "ops_optimal": 0.4
+      },
+      "GradientBoosting": {
+        "roc_optimal": 0.1875,
+        "ops_optimal": 0.5714285714285714
+      }
+    },
+    "12h": {
+      "Logistic_L2": {
+        "roc_optimal": 0.2,
+        "ops_optimal": 0.23809523809523808
+      },
+      "Logistic_ElasticNet": {
+        "roc_optimal": 0.14285714285714285,
+        "ops_optimal": 0.5
+      },
+      "GradientBoosting": {
+        "roc_optimal": 0.125,
+        "ops_optimal": 0.4166666666666667
+      }
+    }
+  }
+}

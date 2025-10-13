@@ -1,0 +1,114 @@
+{
+  "panel_summary": {
+    "total_observations": 701,
+    "total_shocks": 45,
+    "time_range_hours": "0-24",
+    "missing_hours_dropped": "insufficient data (< 3 beacons or < 2 venues)"
+  },
+  "within_shock_elasticity": [
+    {
+      "proxy": "A_t",
+      "n_shocks": 41,
+      "mean_beta": 0.4424844732695846,
+      "median_beta": 0.4480915251243848,
+      "std_beta": 0.2139486589565129,
+      "iqr_beta": 0.4038267314262814,
+      "t_statistic": 13.24281754930783,
+      "p_value": 3.29524562986365e-16,
+      "ci_lower": 0.376994666105873,
+      "ci_upper": 0.5079742804332963
+    },
+    {
+      "proxy": "A_t_unique",
+      "n_shocks": 41,
+      "mean_beta": 1.650176657547934,
+      "median_beta": 1.6644728074093318,
+      "std_beta": 0.11281320195136191,
+      "iqr_beta": 0.17243840212613382,
+      "t_statistic": 93.66178753215988,
+      "p_value": 1.7311072076744342e-48,
+      "ci_lower": 1.6156444717546252,
+      "ci_upper": 1.6847088433412427
+    },
+    {
+      "proxy": "A_t_rate",
+      "n_shocks": 41,
+      "mean_beta": -0.6026951060530931,
+      "median_beta": -0.6106022692887353,
+      "std_beta": 0.38273918019668696,
+      "iqr_beta": 0.6232039583579059,
+      "t_statistic": -10.082928116655163,
+      "p_value": 1.5211813804375458e-12,
+      "ci_lower": -0.7198517885363094,
+      "ci_upper": -0.4855384235698768
+    }
+  ],
+  "pooled_elasticity": [
+    {
+      "proxy": "A_t",
+      "beta": -0.01581585271498603,
+      "beta_se": 0.0067838432847270895,
+      "p_value": 0.019732273801346487,
+      "ci_lower": -0.029112185553051124,
+      "ci_upper": -0.0025195198769209348,
+      "r_squared_marginal": 0.0,
+      "r_squared_conditional": 0.0,
+      "n_observations": 701,
+      "n_shocks": 45,
+      "model_type": "robust"
+    },
+    {
+      "proxy": "A_t_unique",
+      "beta": -0.00459099989560849,
+      "beta_se": 0.008393847698126183,
+      "p_value": 0.5844143196265246,
+      "ci_lower": -0.02104294138393581,
+      "ci_upper": 0.011860941592718827,
+      "r_squared_marginal": 0.0,
+      "r_squared_conditional": 0.0,
+      "n_observations": 701,
+      "n_shocks": 45,
+      "model_type": "robust"
+    },
+    {
+      "proxy": "A_t_rate",
+      "beta": -0.07477077471109823,
+      "beta_se": 0.0114760599613196,
+      "p_value": 7.251078624011871e-11,
+      "ci_lower": -0.09726385223528465,
+      "ci_upper": -0.05227769718691182,
+      "r_squared_marginal": 0.0,
+      "r_squared_conditional": 0.0,
+      "n_observations": 701,
+      "n_shocks": 45,
+      "model_type": "robust"
+    }
+  ],
+  "placebo_test": [
+    {
+      "proxy": "A_t",
+      "real_beta": 0.4424844732695846,
+      "empirical_p_value": 1.0,
+      "n_placebo_iterations": 200
+    },
+    {
+      "proxy": "A_t_unique",
+      "real_beta": 1.650176657547934,
+      "empirical_p_value": 1.0,
+      "n_placebo_iterations": 200
+    },
+    {
+      "proxy": "A_t_rate",
+      "real_beta": -0.6026951060530931,
+      "empirical_p_value": 1.0,
+      "n_placebo_iterations": 200
+    }
+  ],
+  "guardrail_log": {
+    "memory_peak_mb": 238.859375,
+    "timestamp_integrity": "VERIFIED",
+    "no_data_duplication": "CONFIRMED",
+    "no_schema_mutations": "CONFIRMED",
+    "real_data_only": "CONFIRMED"
+  }
+}

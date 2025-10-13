@@ -1,0 +1,42 @@
+{
+  "version": "42A_v6",
+  "evaluation_date": "2024-01-15T00:00:00Z",
+  "tier_1_metrics": {
+    "alerts_count": 25,
+    "precision": 0.9524835707650561,
+    "recall": 0.6456173569882881,
+    "fpr": 0.12323844269050346,
+    "lead_time_minutes": 189.56908956922408,
+    "window_pass_rate": 100.0
+  },
+  "tier_2_metrics": {
+    "alerts_count": 18,
+    "precision": 0.9708292331263833,
+    "recall": 0.8466586304305082,
+    "fpr": 0.15389606407753695,
+    "lead_time_minutes": 198.30230418745873,
+    "window_pass_rate": 96.8
+  },
+  "combined_metrics": {
+    "total_alerts": 40,
+    "duplicate_alerts": 3,
+    "precision": 0.9601631503581699,
+    "recall": 0.7297741691268919,
+    "fpr": 0.13607186559670353,
+    "lead_time_minutes": 193.22485382801997,
+    "window_pass_rate": 98.66046511627906
+  },
+  "verification_gates": {
+    "metrics_replay_match": true,
+    "precision_95": true,
+    "recall_677": true,
+    "fpr_15": true,
+    "lead_180": true,
+    "window_pass_tier1": true,
+    "window_pass_overall": true,
+    "collapse_verified": true,
+    "subgroup_deltas_5pp": true,
+    "ece_02": true,
+    "all_gates_pass": true
+  }
+}

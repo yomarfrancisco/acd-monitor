@@ -1,0 +1,203 @@
+{
+  "timestamp": "2025-10-12T14:03:36.982536",
+  "seed": 42,
+  "n_samples": 1800,
+  "n_folds": 2,
+  "candidate_features": [
+    "price_coord_drift",
+    "price_corr_lag_2",
+    "is_asia",
+    "css_diff_std_6h",
+    "is_weekend",
+    "css_diff_std_24h",
+    "price_corr_lag_1",
+    "price_corr_3h"
+  ],
+  "final_retained": [
+    "price_coord_drift",
+    "is_asia",
+    "css_diff_std_6h",
+    "is_weekend",
+    "css_diff_std_24h",
+    "price_corr_lag_1"
+  ],
+  "dropped_features": [
+    {
+      "feature": "price_corr_lag_2",
+      "reason": "RSI < 0.80"
+    },
+    {
+      "feature": "price_corr_3h",
+      "reason": "RSI < 0.80"
+    }
+  ],
+  "candidate_stability": {
+    "price_coord_drift": {
+      "mean_rank": 24.0,
+      "std_rank": 5.0,
+      "rsi": 0.8333333333333334,
+      "ranks": [
+        "19",
+        "29"
+      ],
+      "mean_vif": 1.0428256481187261,
+      "max_vif": 1.0559280445604333,
+      "vif_scores": [
+        1.0559280445604333,
+        1.029723251677019
+      ]
+    },
+    "price_corr_lag_2": {
+      "mean_rank": 15.0,
+      "std_rank": 13.0,
+      "rsi": 0.5666666666666667,
+      "ranks": [
+        "2",
+        "28"
+      ],
+      "mean_vif": 1.0415595575682013,
+      "max_vif": 1.054759348707548,
+      "vif_scores": [
+        1.054759348707548,
+        1.0283597664288544
+      ]
+    },
+    "is_asia": {
+      "mean_rank": 8.5,
+      "std_rank": 4.5,
+      "rsi": 0.85,
+      "ranks": [
+        "4",
+        "13"
+      ],
+      "mean_vif": 1.0451967792415828,
+      "max_vif": 1.0584829875997523,
+      "vif_scores": [
+        1.0584829875997523,
+        1.0319105708834133
+      ]
+    },
+    "css_diff_std_6h": {
+      "mean_rank": 8.0,
+      "std_rank": 3.0,
+      "rsi": 0.9,
+      "ranks": [
+        "11",
+        "5"
+      ],
+      "mean_vif": 1.057178043044722,
+      "max_vif": 1.0767901429300213,
+      "vif_scores": [
+        1.0767901429300213,
+        1.0375659431594229
+      ]
+    },
+    "is_weekend": {
+      "mean_rank": 3.0,
+      "std_rank": 2.0,
+      "rsi": 0.9333333333333333,
+      "ranks": [
+        "5",
+        "1"
+      ],
+      "mean_vif": 1.075232876759534,
+      "max_vif": 1.0978423851242696,
+      "vif_scores": [
+        1.0978423851242696,
+        1.0526233683947988
+      ]
+    },
+    "css_diff_std_24h": {
+      "mean_rank": 15.5,
+      "std_rank": 1.5,
+      "rsi": 0.95,
+      "ranks": [
+        "14",
+        "17"
+      ],
+      "mean_vif": 1.044381980763776,
+      "max_vif": 1.0626441582872745,
+      "vif_scores": [
+        1.0626441582872745,
+        1.0261198032402774
+      ]
+    },
+    "price_corr_lag_1": {
+      "mean_rank": 24.5,
+      "std_rank": 2.5,
+      "rsi": 0.9166666666666666,
+      "ranks": [
+        "22",
+        "27"
+      ],
+      "mean_vif": 1.0402425796048242,
+      "max_vif": 1.0522448701251335,
+      "vif_scores": [
+        1.0522448701251335,
+        1.028240289084515
+      ]
+    },
+    "price_corr_3h": {
+      "mean_rank": 18.5,
+      "std_rank": 7.5,
+      "rsi": 0.75,
+      "ranks": [
+        "26",
+        "11"
+      ],
+      "mean_vif": 1.0328835875954185,
+      "max_vif": 1.0408183953340457,
+      "vif_scores": [
+        1.0408183953340457,
+        1.0249487798567911
+      ]
+    }
+  },
+  "high_corr_pairs": [
+    {
+      "feature1": "price_last",
+      "feature2": "spread_proxy",
+      "pearson_r": 0.9999999152714016,
+      "spearman_r": 0.9999989053460043,
+      "max_r": 0.9999999152714016
+    },
+    {
+      "feature1": "ofi_variance_1h",
+      "feature2": "ofi_variance_3h",
+      "pearson_r": 0.9478298775723226,
+      "spearman_r": 0.9450359998016447,
+      "max_r": 0.9478298775723226
+    },
+    {
+      "feature1": "ofi_variance_1h",
+      "feature2": "ofi_variance_6h",
+      "pearson_r": 0.9326577490812157,
+      "spearman_r": 0.9290263623440911,
+      "max_r": 0.9326577490812157
+    },
+    {
+      "feature1": "ofi_variance_3h",
+      "feature2": "ofi_variance_6h",
+      "pearson_r": 0.9845380983546036,
+      "spearman_r": 0.9835600722307549,
+      "max_r": 0.9845380983546036
+    }
+  ],
+  "perfect_correlations": [
+    {
+      "feature1": "price_last",
+      "feature2": "spread_proxy",
+      "pearson_r": 0.9999999152714016
+    }
+  ],
+  "acceptance_gates": {
+    "gate1_folds_3_plus": false,
+    "gate2_mean_rsi_0_80": "True",
+    "gate3_max_corr_0_85": "True"
+  },
+  "final_status": {
+    "FEATURE_PRUNE_OK": false
+  },
+  "mean_rsi_retained": 0.8972222222222223,
+  "max_corr_retained": 0.07814843849938098
+}

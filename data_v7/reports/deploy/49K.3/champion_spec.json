@@ -1,0 +1,60 @@
+{
+  "6h": {
+    "model_family": "GradientBoosting",
+    "description": "Gradient Boosting (shallow)",
+    "features": [
+      "price_coord_drift",
+      "price_corr_lag_1",
+      "css_diff_std_6h",
+      "css_diff_std_24h",
+      "is_asia",
+      "is_weekend"
+    ],
+    "horizon": "6h",
+    "calibration_method": "Isotonic",
+    "cv_stats": {
+      "n_folds": 5,
+      "cv_method": "LOO-Week",
+      "embargo_hours": 6,
+      "mean_ece": 0.0,
+      "mean_f1": 0.5797792207792207,
+      "std_ece": 0.0,
+      "std_f1": 0.034359769600266245
+    },
+    "data_stats": {
+      "n_samples": 2332,
+      "n_features": 6,
+      "target_definition": "P15 percentile (train-only)",
+      "base_rate": "~15%"
+    }
+  },
+  "12h": {
+    "model_family": "Logistic_ElasticNet",
+    "description": "Logistic Elastic-Net",
+    "features": [
+      "price_coord_drift",
+      "price_corr_lag_1",
+      "css_diff_std_6h",
+      "css_diff_std_24h",
+      "is_asia",
+      "is_weekend"
+    ],
+    "horizon": "12h",
+    "calibration_method": "Isotonic",
+    "cv_stats": {
+      "n_folds": 5,
+      "cv_method": "LOO-Week",
+      "embargo_hours": 6,
+      "mean_ece": 0.0,
+      "mean_f1": 0.5618507983464178,
+      "std_ece": 0.0,
+      "std_f1": 0.08492496671197662
+    },
+    "data_stats": {
+      "n_samples": 2332,
+      "n_features": 6,
+      "target_definition": "P15 percentile (train-only)",
+      "base_rate": "~15%"
+    }
+  }
+}

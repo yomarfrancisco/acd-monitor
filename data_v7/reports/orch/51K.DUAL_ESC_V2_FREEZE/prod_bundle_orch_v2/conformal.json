@@ -1,0 +1,12 @@
+{
+  "tier1": {
+    "alpha": 0.4,
+    "cutoff": 0.72
+  },
+  "tier2": {
+    "alpha": 0.35,
+    "cutoff": 0.7
+  },
+  "fusion_method": "2_tier_OR",
+  "quantile_method": "Q80_train"
+}

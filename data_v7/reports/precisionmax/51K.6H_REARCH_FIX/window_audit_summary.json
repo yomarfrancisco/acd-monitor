@@ -1,0 +1,8 @@
+{
+  "total_alerts": 15,
+  "window_pass_count": 15,
+  "window_pass_rate": 1.0,
+  "passes_guard_100": true,
+  "guard1_failures": 0,
+  "guard2_failures": 0
+}

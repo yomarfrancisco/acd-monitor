@@ -1,0 +1,6 @@
+windows.parquet: ae18ffd2b89b6779381b984b61cb90f7907e15d9e13f437f217834ccef7e89e8
+vwap_deltas.csv: None
+beta_deltas.csv: None
+chow_cusum.csv: None
+tsi_deltas.csv: None
+placebos.csv: f1e3307696562e9dee4550c1044dd554ccbad3120fb0c662c849b330691051b5

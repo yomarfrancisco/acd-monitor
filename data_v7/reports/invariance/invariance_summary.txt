@@ -1,0 +1,29 @@
+Invariance Analysis Summary Report
+==================================================
+Generated: 2025-10-11T23:45:32.041348Z
+
+Dataset Overview:
+  Total timestamps: 2304
+  Price features: 4
+  Volume features: 4
+  OFI features: 4
+  Date range: 2025-07-07 00:00:00 to 2025-10-10 23:00:00
+
+Cross-Venue Correlation Analysis:
+  Price correlation (mean): 0.4561
+  Volume correlation (mean): 0.3437
+  OFI correlation (mean): 0.0814
+
+Invariance Metrics Available:
+  ✓ price_correlation
+  ✓ volume_correlation
+  ✓ ofi_correlation
+  ✓ price_differences
+  ✓ price_ratios
+  ✓ volume_symmetry
+  ✓ ofi_divergence
+
+Interpretation:
+  - Price correlation > 0.9: High price invariance
+  - Volume correlation > 0.7: Moderate volume symmetry
+  - OFI correlation > 0.5: Order flow coordination

@@ -1,0 +1,42 @@
+{
+  "pair": "BINANCE_to_BYBITSPOT",
+  "date": "20250903",
+  "scale": "1s",
+  "N": 42092,
+  "overlap_pct": 0.9268931803668553,
+  "lag_results": [
+    {
+      "lag": 1,
+      "correlation": -0.06368723592651296,
+      "p_value": 0.05,
+      "significant": false
+    },
+    {
+      "lag": 2,
+      "correlation": 0.0238250111395972,
+      "p_value": 0.05,
+      "significant": false
+    },
+    {
+      "lag": 3,
+      "correlation": 0.020355321727469473,
+      "p_value": 0.05,
+      "significant": false
+    },
+    {
+      "lag": 5,
+      "correlation": -0.010762274063380022,
+      "p_value": 0.05,
+      "significant": false
+    },
+    {
+      "lag": 10,
+      "correlation": 0.004900336458699953,
+      "p_value": 0.05,
+      "significant": false
+    }
+  ],
+  "icp_pass": false,
+  "significant_lags": 0,
+  "env_sizes_csv": "icp_BINANCE_to_BYBITSPOT_20250903_v1.env_sizes.csv"
+}

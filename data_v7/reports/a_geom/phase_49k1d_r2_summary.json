@@ -1,0 +1,202 @@
+{
+  "timestamp": "2025-10-12T14:41:13.113555",
+  "seed": 42,
+  "n_samples": 583,
+  "n_folds": 2,
+  "stable_features": [
+    "price_coord_drift",
+    "is_asia",
+    "css_diff_std_6h",
+    "is_weekend",
+    "css_diff_std_24h",
+    "price_corr_lag_1"
+  ],
+  "embargo_hours": 6,
+  "horizons": [
+    "6h",
+    "12h"
+  ],
+  "fold_results": {
+    "0": {
+      "6h": {
+        "base_rate": 0.1590909090909091,
+        "train_base_rate": 0.15034965034965034,
+        "p10_threshold": -0.11030021730323072,
+        "p15_threshold": -0.08388209927352228,
+        "threshold_results": {
+          "default": {
+            "threshold": 0.5,
+            "auc": 0.7612574535651457,
+            "pr_auc": 0.47577404698764436,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "fpr": 0.0
+          },
+          "roc_optimal": {
+            "threshold": 0.1597110333302556,
+            "auc": 0.7612574535651457,
+            "pr_auc": 0.47577404698764436,
+            "precision": 0.276,
+            "recall": 0.7582417582417582,
+            "f1": 0.404692082111437,
+            "fpr": 0.3762993762993763
+          },
+          "ops_optimal": {
+            "threshold": 0.1817254943422565,
+            "auc": 0.7612574535651457,
+            "pr_auc": 0.47577404698764436,
+            "precision": 0.3419354838709677,
+            "recall": 0.5824175824175825,
+            "f1": 0.43089430894308944,
+            "fpr": 0.21205821205821207
+          }
+        },
+        "n_test": 572
+      },
+      "12h": {
+        "base_rate": 0.1486013986013986,
+        "train_base_rate": 0.15034965034965034,
+        "p10_threshold": -0.1129043996557202,
+        "p15_threshold": -0.0917047089236487,
+        "threshold_results": {
+          "default": {
+            "threshold": 0.5,
+            "auc": 0.7352578813866408,
+            "pr_auc": 0.39643511893076294,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "fpr": 0.0
+          },
+          "roc_optimal": {
+            "threshold": 0.16222492212890377,
+            "auc": 0.7352578813866408,
+            "pr_auc": 0.39643511893076294,
+            "precision": 0.23622047244094488,
+            "recall": 0.7058823529411765,
+            "f1": 0.35398230088495575,
+            "fpr": 0.39835728952772076
+          },
+          "ops_optimal": {
+            "threshold": 0.16222492212890377,
+            "auc": 0.7352578813866408,
+            "pr_auc": 0.39643511893076294,
+            "precision": 0.23622047244094488,
+            "recall": 0.7058823529411765,
+            "f1": 0.35398230088495575,
+            "fpr": 0.39835728952772076
+          }
+        },
+        "n_test": 572
+      }
+    },
+    "1": {
+      "6h": {
+        "base_rate": 0.15734265734265734,
+        "train_base_rate": 0.15034965034965034,
+        "p10_threshold": -0.11079364104175264,
+        "p15_threshold": -0.09112038769369567,
+        "threshold_results": {
+          "default": {
+            "threshold": 0.5,
+            "auc": 0.6939142461964038,
+            "pr_auc": 0.3165218997260506,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "fpr": 0.0
+          },
+          "roc_optimal": {
+            "threshold": 0.17931506629173655,
+            "auc": 0.6939142461964038,
+            "pr_auc": 0.3165218997260506,
+            "precision": 0.26605504587155965,
+            "recall": 0.6444444444444445,
+            "f1": 0.37662337662337664,
+            "fpr": 0.33195020746887965
+          },
+          "ops_optimal": {
+            "threshold": 0.21952714809240437,
+            "auc": 0.6939142461964038,
+            "pr_auc": 0.3165218997260506,
+            "precision": 0.3939393939393939,
+            "recall": 0.43333333333333335,
+            "f1": 0.4126984126984127,
+            "fpr": 0.12448132780082988
+          }
+        },
+        "n_test": 572
+      },
+      "12h": {
+        "base_rate": 0.1555944055944056,
+        "train_base_rate": 0.15034965034965034,
+        "p10_threshold": -0.11861778781697623,
+        "p15_threshold": -0.09944871804211741,
+        "threshold_results": {
+          "default": {
+            "threshold": 0.5,
+            "auc": 0.723381487426431,
+            "pr_auc": 0.3598197738379675,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "fpr": 0.0
+          },
+          "roc_optimal": {
+            "threshold": 0.17207215419456576,
+            "auc": 0.723381487426431,
+            "pr_auc": 0.3598197738379675,
+            "precision": 0.25390625,
+            "recall": 0.7303370786516854,
+            "f1": 0.37681159420289856,
+            "fpr": 0.39544513457556935
+          },
+          "ops_optimal": {
+            "threshold": 0.2042475024471539,
+            "auc": 0.723381487426431,
+            "pr_auc": 0.3598197738379675,
+            "precision": 0.3368421052631579,
+            "recall": 0.3595505617977528,
+            "f1": 0.34782608695652173,
+            "fpr": 0.13043478260869565
+          }
+        },
+        "n_test": 572
+      }
+    }
+  },
+  "success_criteria": {
+    "folds_created": 2,
+    "folds_criteria": false,
+    "recall_fpr_criteria": false,
+    "leakage_criteria": true,
+    "base_rate_stability": {
+      "6h": {
+        "mean_base_rate": 0.15821678321678323,
+        "std_base_rate": 0.0008741258741258723,
+        "max_diff": 0.0017482517482517446,
+        "stable": "True"
+      },
+      "12h": {
+        "mean_base_rate": 0.15209790209790208,
+        "std_base_rate": 0.003496503496503503,
+        "max_diff": 0.006993006993007006,
+        "stable": "True"
+      }
+    },
+    "all_criteria_passed": false
+  },
+  "best_recall_fpr": {
+    "6h": {
+      "best_recall": 0.7582417582417582,
+      "best_fpr": 0.3762993762993763,
+      "best_threshold": "roc_optimal"
+    },
+    "12h": {
+      "best_recall": 0.7303370786516854,
+      "best_fpr": 0.39544513457556935,
+      "best_threshold": "roc_optimal"
+    }
+  }
+}

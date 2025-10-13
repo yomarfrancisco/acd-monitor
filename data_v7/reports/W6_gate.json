@@ -1,0 +1,9 @@
+{
+  "week": "-6",
+  "days_expected": 5,
+  "days_passed": 5,
+  "all_gates_passed": true,
+  "total_files": 20,
+  "total_bytes": 595657243,
+  "timestamp": "2025-10-11T15:49:43.398863Z"
+}

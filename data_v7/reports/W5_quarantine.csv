@@ -1,0 +1,7 @@
+date,venue,file_path,filename,size_bytes,sha256,reason
+20250722,COINBASE,/Users/ygorfrancisco/Desktop/acd-monitor/data_v6/raw/coinapi_jul/COINBASE_20250722_BTCUSDT.csv.gz,COINBASE_20250722_BTCUSDT.csv.gz,33423988,3cd955930dc3af70408508fbe915fe2b2b60d5ebe6694d1bf3995294daac2c6e,Non-target pair (not BTC-USD)
+20250723,COINBASE,/Users/ygorfrancisco/Desktop/acd-monitor/data_v6/raw/coinapi_jul/COINBASE_20250723_BTCUSDT.csv.gz,COINBASE_20250723_BTCUSDT.csv.gz,28872167,e5ef94237bd9dfb3864a2d9ba77e75f0fbda05058568ad42a76167bbf1ef3d07,Non-target pair (not BTC-USD)
+20250724,COINBASE,/Users/ygorfrancisco/Desktop/acd-monitor/data_v6/raw/coinapi_jul/COINBASE_20250724_BTCUSDT.csv.gz,COINBASE_20250724_BTCUSDT.csv.gz,30037426,79ad97d782ddd0433c70467ae7b3b8da6f21ab38aa68a3f2b81c085ca0ff04b4,Non-target pair (not BTC-USD)
+20250725,COINBASE,/Users/ygorfrancisco/Desktop/acd-monitor/data_v6/raw/coinapi_jul/COINBASE_20250725_BTCUSDT.csv.gz,COINBASE_20250725_BTCUSDT.csv.gz,58962149,48d3488cc484bd1314f69ee6839e81fa0abc812ef46bcb4d8c3b251780cf717b,Non-target pair (not BTC-USD)
+20250726,COINBASE,/Users/ygorfrancisco/Desktop/acd-monitor/data_v6/raw/coinapi_jul/COINBASE_20250726_BTCUSDT.csv.gz,COINBASE_20250726_BTCUSDT.csv.gz,27302863,e2bafc4dab8de9f761826916cb8f587b2ee4e62afbed7bf005f0bf340c4cc895,Non-target pair (not BTC-USD)
+20250727,COINBASE,/Users/ygorfrancisco/Desktop/acd-monitor/data_v6/raw/coinapi_jul/COINBASE_20250727_BTCUSDT.csv.gz,COINBASE_20250727_BTCUSDT.csv.gz,20705702,6fdd3e2864b527fbdf6982763a6eed2b1928b95052620c841e6562f8da173054,Non-target pair (not BTC-USD)

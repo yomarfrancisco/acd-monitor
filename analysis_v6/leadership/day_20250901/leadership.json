@@ -1,0 +1,108 @@
+{
+  "timestamp": "2025-10-05T15:00:59.342716",
+  "date": "20250901",
+  "venues": [
+    "BINANCE",
+    "COINBASE",
+    "BYBITSPOT",
+    "BITGET"
+  ],
+  "total_observations": 275890,
+  "aligned_observations": 36641,
+  "missing_data_pct": 0.0,
+  "regression_results": {
+    "BINANCE_to_COINBASE": {
+      "alpha": 2.1103408542545218e-07,
+      "beta": 0.6840167848536263,
+      "r_squared": 0.6187305312721916,
+      "n_obs": 36641
+    },
+    "BINANCE_to_BYBITSPOT": {
+      "alpha": 6.007544150999067e-08,
+      "beta": 0.8357294408873315,
+      "r_squared": 0.7516252516925531,
+      "n_obs": 36641
+    },
+    "BINANCE_to_BITGET": {
+      "alpha": 3.9087867260967264e-08,
+      "beta": 0.7820091551888567,
+      "r_squared": 0.7001477442928444,
+      "n_obs": 36641
+    },
+    "COINBASE_to_BINANCE": {
+      "alpha": -3.7432059892308113e-07,
+      "beta": 0.9045546030049305,
+      "r_squared": 0.6187305312721914,
+      "n_obs": 36641
+    },
+    "COINBASE_to_BYBITSPOT": {
+      "alpha": -2.9111622582718193e-07,
+      "beta": 0.8913844793282719,
+      "r_squared": 0.6465945887042036,
+      "n_obs": 36641
+    },
+    "COINBASE_to_BITGET": {
+      "alpha": -3.1660060092391063e-07,
+      "beta": 0.8186632307497878,
+      "r_squared": 0.58024119638861,
+      "n_obs": 36641
+    },
+    "BYBITSPOT_to_BINANCE": {
+      "alpha": -1.0696665850843477e-07,
+      "beta": 0.8993643336224186,
+      "r_squared": 0.751625251692553,
+      "n_obs": 36641
+    },
+    "BYBITSPOT_to_COINBASE": {
+      "alpha": 1.358480895832843e-07,
+      "beta": 0.7253823728133606,
+      "r_squared": 0.6465945887042036,
+      "n_obs": 36641
+    },
+    "BYBITSPOT_to_BITGET": {
+      "alpha": -4.9306499165327784e-08,
+      "beta": 0.8153162484599905,
+      "r_squared": 0.7072097752350855,
+      "n_obs": 36641
+    },
+    "BITGET_to_BINANCE": {
+      "alpha": -9.524740887255184e-08,
+      "beta": 0.8953191144208157,
+      "r_squared": 0.7001477442928445,
+      "n_obs": 36641
+    },
+    "BITGET_to_COINBASE": {
+      "alpha": 1.4005103884591854e-07,
+      "beta": 0.7087666510405947,
+      "r_squared": 0.5802411963886098,
+      "n_obs": 36641
+    },
+    "BITGET_to_BYBITSPOT": {
+      "alpha": -1.606354647630278e-08,
+      "beta": 0.8674054718900425,
+      "r_squared": 0.7072097752350855,
+      "n_obs": 36641
+    }
+  },
+  "lrs_results": {
+    "BINANCE": {
+      "lrs": 0.7672517936432715,
+      "n_pairs": 3
+    },
+    "COINBASE": {
+      "lrs": 0.8715341043609968,
+      "n_pairs": 3
+    },
+    "BYBITSPOT": {
+      "lrs": 0.81335431829859,
+      "n_pairs": 3
+    },
+    "BITGET": {
+      "lrs": 0.8238304124504842,
+      "n_pairs": 3
+    }
+  },
+  "lrs_variance": 0.001373228843199639,
+  "lrs_entropy": 0.6507922457391716,
+  "status": "SUCCESS"
+}

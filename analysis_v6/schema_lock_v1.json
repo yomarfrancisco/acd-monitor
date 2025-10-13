@@ -1,0 +1,68 @@
+{
+  "timestamp": "2025-10-05T02:49:54.437077",
+  "commit_sha": "fc3938c828d974d569f5e2e88a3f6309b217c6a0",
+  "schema_hash": "9e71c5a573ffe7f9873d933273c4d031dafe6019",
+  "schema_info": {
+    "hash": "9e71c5a573ffe7f9873d933273c4d031dafe6019",
+    "columns": [
+      "ts",
+      "price",
+      "size",
+      "venue"
+    ],
+    "dtypes": [
+      "int64",
+      "float64",
+      "float64",
+      "object"
+    ],
+    "row_count": 1275509
+  },
+  "sample_rows": [
+    {
+      "ts": 1756684800178000000,
+      "price": 108246.36,
+      "size": 0.00023,
+      "venue": "BINANCE"
+    },
+    {
+      "ts": 1756684800336000000,
+      "price": 108246.36,
+      "size": 0.00027,
+      "venue": "BINANCE"
+    },
+    {
+      "ts": 1756684800396000000,
+      "price": 108246.36,
+      "size": 0.00046,
+      "venue": "BINANCE"
+    }
+  ],
+  "schema_mismatches": [],
+  "continuity_issues": [
+    "BINANCE 20250903\u219220250904: 1.0s gap",
+    "COINBASE 20250902\u219220250903: 3.0s gap",
+    "COINBASE 20250906\u219220250907: 2.8s gap",
+    "BYBITSPOT 20250901\u219220250902: 2.2s gap",
+    "BYBITSPOT 20250902\u219220250903: 2.2s gap",
+    "BYBITSPOT 20250903\u219220250904: 2.9s gap",
+    "BYBITSPOT 20250904\u219220250905: 1.0s gap",
+    "BYBITSPOT 20250905\u219220250906: 2.8s gap",
+    "BYBITSPOT 20250906\u219220250907: 1.3s gap",
+    "BITGET 20250902\u219220250903: 1.8s gap",
+    "BITGET 20250903\u219220250904: 1.1s gap",
+    "BITGET 20250905\u219220250906: 1.9s gap",
+    "BITGET 20250906\u219220250907: 3.8s gap"
+  ],
+  "volume_issues": [
+    "BINANCE 20250906: 32.2% of baseline",
+    "BINANCE 20250907: 36.1% of baseline",
+    "COINBASE 20250906: 27.0% of baseline",
+    "COINBASE 20250907: 27.2% of baseline",
+    "BYBITSPOT 20250906: 27.0% of baseline",
+    "BYBITSPOT 20250907: 35.5% of baseline",
+    "BITGET 20250906: 40.1% of baseline",
+    "BITGET 20250907: 44.5% of baseline"
+  ],
+  "status": "PASS"
+}

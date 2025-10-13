@@ -1,0 +1,22 @@
+{
+  "fix_passed": false,
+  "window_pass_rate": 0.5,
+  "window_pass_100": false,
+  "integrity_ok": true,
+  "placebo_ok": true,
+  "inversion_ok": true,
+  "performance_ok": true,
+  "input_hashes": {
+    "cv_manifest": "160314c6ef1c7f2367e9716a6a473b4f9ebe1777420868c8fe48791914761b30",
+    "metrics_calibrated": "d363e85f7b5592c0ae800d08c6b65b8e2776359f3414398639748a89b9654081",
+    "calibration_fit": "3859c1961ff4eb8c716679ce6d970540fd7490b868f32d1b53019d42a847bbed",
+    "r2_env_manifest": "e42197640808766c10d7f51c9070787cbdb58907713b6b5840746f408f7bad48",
+    "labels_summary": "26b1e2c924f5a32c299dabc2c83e9aef00e5a2fe766c113132f2a48bf65b8c2f"
+  },
+  "window_guard_params": {
+    "K": 20,
+    "W": 6,
+    "persistence_hours": 2,
+    "epsilon_minutes": 1
+  }
+}

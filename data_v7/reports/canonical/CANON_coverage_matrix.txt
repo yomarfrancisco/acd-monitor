@@ -1,0 +1,174 @@
+Canonical Coverage Matrix (Jul 7 – Oct 12, 2025)
+======================================================================
+Generated: 2025-10-11T20:19:34.170182Z
+Total canonical files: 382
+
+
+W-7 (20250707 – 20250713):
+Date       BINANCE    COINBASE   BYBITSPOT  BITGET    
+------------------------------------------------------------
+20250707   FOUND      FOUND      FOUND      FOUND     
+20250708   FOUND      FOUND      FOUND      FOUND     
+20250709   FOUND      FOUND      FOUND      FOUND     
+20250710   FOUND      FOUND      FOUND      FOUND     
+20250711   FOUND      FOUND      FOUND      FOUND     
+20250712   FOUND      FOUND      FOUND      FOUND     
+20250713   FOUND      FOUND      FOUND      FOUND     
+Coverage: 28/28 (100.0%)
+
+W-6 (20250714 – 20250720):
+Date       BINANCE    COINBASE   BYBITSPOT  BITGET    
+------------------------------------------------------------
+20250714   FOUND      FOUND      FOUND      FOUND     
+20250715   FOUND      FOUND      FOUND      FOUND     
+20250716   FOUND      FOUND      FOUND      FOUND     
+20250717   FOUND      FOUND      FOUND      FOUND     
+20250718   FOUND      FOUND      FOUND      FOUND     
+20250719   FOUND      FOUND      FOUND      FOUND     
+20250720   FOUND      FOUND      FOUND      FOUND     
+Coverage: 28/28 (100.0%)
+
+W-5 (20250721 – 20250727):
+Date       BINANCE    COINBASE   BYBITSPOT  BITGET    
+------------------------------------------------------------
+20250721   FOUND      MISSING    FOUND      FOUND     
+20250722   FOUND      FOUND      FOUND      FOUND     
+20250723   FOUND      FOUND      FOUND      FOUND     
+20250724   FOUND      FOUND      FOUND      FOUND     
+20250725   FOUND      FOUND      FOUND      FOUND     
+20250726   FOUND      FOUND      FOUND      FOUND     
+20250727   FOUND      FOUND      FOUND      FOUND     
+Coverage: 27/28 (96.4%)
+⚠️ WARNING: W-5 marked complete but coverage is 96.4%
+
+W-4 (20250728 – 20250803):
+Date       BINANCE    COINBASE   BYBITSPOT  BITGET    
+------------------------------------------------------------
+20250728   FOUND      FOUND      FOUND      FOUND     
+20250729   FOUND      FOUND      FOUND      FOUND     
+20250730   FOUND      FOUND      FOUND      FOUND     
+20250731   FOUND      FOUND      FOUND      FOUND     
+20250801   FOUND      FOUND      FOUND      FOUND     
+20250802   FOUND      FOUND      FOUND      FOUND     
+20250803   FOUND      FOUND      FOUND      FOUND     
+Coverage: 28/28 (100.0%)
+
+W-3 (20250804 – 20250810):
+Date       BINANCE    COINBASE   BYBITSPOT  BITGET    
+------------------------------------------------------------
+20250804   FOUND      FOUND      FOUND      FOUND     
+20250805   FOUND      FOUND      FOUND      FOUND     
+20250806   FOUND      FOUND      FOUND      FOUND     
+20250807   FOUND      FOUND      FOUND      FOUND     
+20250808   FOUND      FOUND      FOUND      FOUND     
+20250809   FOUND      FOUND      FOUND      FOUND     
+20250810   FOUND      FOUND      FOUND      FOUND     
+Coverage: 28/28 (100.0%)
+
+W-2 (20250811 – 20250817):
+Date       BINANCE    COINBASE   BYBITSPOT  BITGET    
+------------------------------------------------------------
+20250811   FOUND      FOUND      FOUND      FOUND     
+20250812   FOUND      FOUND      FOUND      FOUND     
+20250813   FOUND      FOUND      FOUND      FOUND     
+20250814   FOUND      FOUND      FOUND      FOUND     
+20250815   FOUND      FOUND      FOUND      FOUND     
+20250816   FOUND      FOUND      FOUND      FOUND     
+20250817   FOUND      FOUND      FOUND      FOUND     
+Coverage: 28/28 (100.0%)
+
+W-1 (20250818 – 20250824):
+Date       BINANCE    COINBASE   BYBITSPOT  BITGET    
+------------------------------------------------------------
+20250818   FOUND      FOUND      FOUND      FOUND     
+20250819   FOUND      FOUND      FOUND      FOUND     
+20250820   FOUND      FOUND      FOUND      FOUND     
+20250821   FOUND      FOUND      FOUND      FOUND     
+20250822   FOUND      FOUND      FOUND      FOUND     
+20250823   FOUND      FOUND      FOUND      FOUND     
+20250824   FOUND      FOUND      FOUND      FOUND     
+Coverage: 28/28 (100.0%)
+
+W0 (20250825 – 20250831):
+Date       BINANCE    COINBASE   BYBITSPOT  BITGET    
+------------------------------------------------------------
+20250825   FOUND      FOUND      FOUND      FOUND     
+20250826   FOUND      FOUND      FOUND      FOUND     
+20250827   FOUND      FOUND      FOUND      FOUND     
+20250828   FOUND      FOUND      FOUND      FOUND     
+20250829   FOUND      FOUND      FOUND      FOUND     
+20250830   FOUND      FOUND      FOUND      FOUND     
+20250831   FOUND      FOUND      FOUND      FOUND     
+Coverage: 28/28 (100.0%)
+
+W+1 (20250901 – 20250907):
+Date       BINANCE    COINBASE   BYBITSPOT  BITGET    
+------------------------------------------------------------
+20250901   FOUND      FOUND      FOUND      FOUND     
+20250902   FOUND      FOUND      FOUND      FOUND     
+20250903   FOUND      FOUND      FOUND      FOUND     
+20250904   FOUND      FOUND      FOUND      FOUND     
+20250905   FOUND      FOUND      FOUND      FOUND     
+20250906   FOUND      FOUND      FOUND      FOUND     
+20250907   FOUND      FOUND      FOUND      FOUND     
+Coverage: 28/28 (100.0%)
+
+W+2 (20250908 – 20250914):
+Date       BINANCE    COINBASE   BYBITSPOT  BITGET    
+------------------------------------------------------------
+20250908   FOUND      FOUND      FOUND      FOUND     
+20250909   FOUND      FOUND      FOUND      FOUND     
+20250910   FOUND      FOUND      FOUND      FOUND     
+20250911   FOUND      FOUND      FOUND      FOUND     
+20250912   FOUND      FOUND      FOUND      FOUND     
+20250913   MISSING    FOUND      FOUND      FOUND     
+20250914   FOUND      FOUND      FOUND      FOUND     
+Coverage: 27/28 (96.4%)
+
+W+3 (20250915 – 20250921):
+Date       BINANCE    COINBASE   BYBITSPOT  BITGET    
+------------------------------------------------------------
+20250915   FOUND      FOUND      FOUND      FOUND     
+20250916   FOUND      FOUND      FOUND      FOUND     
+20250917   FOUND      FOUND      FOUND      FOUND     
+20250918   FOUND      FOUND      FOUND      FOUND     
+20250919   FOUND      FOUND      FOUND      FOUND     
+20250920   MISSING    FOUND      FOUND      FOUND     
+20250921   MISSING    FOUND      FOUND      FOUND     
+Coverage: 26/28 (92.9%)
+
+W+4 (20250922 – 20250928):
+Date       BINANCE    COINBASE   BYBITSPOT  BITGET    
+------------------------------------------------------------
+20250922   FOUND      FOUND      FOUND      FOUND     
+20250923   FOUND      FOUND      FOUND      FOUND     
+20250924   FOUND      FOUND      FOUND      FOUND     
+20250925   FOUND      FOUND      FOUND      FOUND     
+20250926   FOUND      FOUND      FOUND      FOUND     
+20250927   FOUND      FOUND      FOUND      FOUND     
+20250928   FOUND      FOUND      FOUND      FOUND     
+Coverage: 28/28 (100.0%)
+
+W+5 (20250929 – 20251005):
+Date       BINANCE    COINBASE   BYBITSPOT  BITGET    
+------------------------------------------------------------
+20250929   FOUND      FOUND      FOUND      FOUND     
+20250930   FOUND      FOUND      FOUND      FOUND     
+20251001   FOUND      FOUND      FOUND      FOUND     
+20251002   FOUND      FOUND      FOUND      FOUND     
+20251003   FOUND      FOUND      FOUND      FOUND     
+20251004   FOUND      FOUND      FOUND      FOUND     
+20251005   FOUND      FOUND      FOUND      FOUND     
+Coverage: 28/28 (100.0%)
+
+W+6 (20251006 – 20251012):
+Date       BINANCE    COINBASE   BYBITSPOT  BITGET    
+------------------------------------------------------------
+20251006   FOUND      FOUND      FOUND      FOUND     
+20251007   FOUND      FOUND      FOUND      FOUND     
+20251008   FOUND      FOUND      FOUND      FOUND     
+20251009   FOUND      FOUND      FOUND      FOUND     
+20251010   FOUND      FOUND      FOUND      FOUND     
+20251011   MISSING    MISSING    MISSING    MISSING   
+20251012   MISSING    MISSING    MISSING    MISSING   
+Coverage: 20/28 (71.4%)

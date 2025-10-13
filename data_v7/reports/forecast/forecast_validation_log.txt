@@ -1,0 +1,48 @@
+Phase 46K-FORECAST-VALIDATION Log
+Started: 2025-10-12T10:22:29.683839Z
+==================================================
+
+[2025-10-12T10:22:29.684083] 🔍 Starting forecast validation analysis...
+[2025-10-12T10:22:29.684129] 📊 Loading forecast validation inputs...
+[2025-10-12T10:22:29.684428]   ✅ Loaded causal matrix: 7 drivers
+[2025-10-12T10:22:29.772466]   ✅ Loaded CSS timeline: 2332 records
+[2025-10-12T10:22:29.773921]   ✅ Loaded calibration parquet: 4 records
+[2025-10-12T10:22:29.774205]   ✅ Loaded hypothesis metrics: 4 categories
+[2025-10-12T10:22:29.796594]   ✅ Loaded invariance metrics: 8 categories
+[2025-10-12T10:22:29.796725]   ✅ Loaded 5 input categories with 5 hash verifications
+[2025-10-12T10:22:29.796766] 📊 Splitting data for train/test validation...
+[2025-10-12T10:22:29.803820]   📈 Training data: 420 records (18.0%)
+[2025-10-12T10:22:29.803985]   📈 Test data: 1912 records (82.0%)
+[2025-10-12T10:22:29.804042] 🔧 Fitting causal VAR model...
+[2025-10-12T10:22:29.804094]   📊 Selected causal drivers: ['price_volatility', 'cross_venue_correlation', 'volume_change']
+[2025-10-12T10:22:29.942631]   ✅ VAR model fitted: 384 training samples
+[2025-10-12T10:22:29.942964]   📊 Training metrics - Accuracy: 0.766, Precision: 0.000, Recall: 0.000, F1: 0.000
+[2025-10-12T10:22:29.943095] 🔮 Generating 6-hour ahead CSS forecasts...
+[2025-10-12T10:22:30.784337]   ✅ Generated 1876 forecasts across 4 venues
+[2025-10-12T10:22:30.784493]   📊 Actual instability events: 407 out of 1876 (21.7%)
+[2025-10-12T10:22:30.784680] 📊 Computing forecast validation metrics...
+[2025-10-12T10:22:30.790088]   ✅ Forecast metrics computed:
+[2025-10-12T10:22:30.790216]     - AUC: 0.627
+[2025-10-12T10:22:30.790265]     - Precision: 0.000
+[2025-10-12T10:22:30.790303]     - Recall: 0.000
+[2025-10-12T10:22:30.790336]     - F1: 0.000
+[2025-10-12T10:22:30.790373]     - Hit Rate: 0.000
+[2025-10-12T10:22:30.790413]     - False Positive Rate: 0.000
+[2025-10-12T10:22:30.790442]     - Median Lead Time: 8.0 hours
+[2025-10-12T10:22:30.790477] ⚖️ Optimizing forecast thresholds...
+[2025-10-12T10:22:30.805229]   ✅ Optimal threshold: 0.250
+[2025-10-12T10:22:30.805364]     - Precision: 0.307
+[2025-10-12T10:22:30.805403]     - Recall: 0.474
+[2025-10-12T10:22:30.805435]     - F1: 0.373
+[2025-10-12T10:22:30.805465]     - FPR: 0.297
+[2025-10-12T10:22:30.805496] 📊 Creating inline forecast visualizations...
+[2025-10-12T10:22:30.805743]   ✅ Inline visualizations created: /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/reports/forecast/forecast_confusion.md
+[2025-10-12T10:22:30.805777] 📝 Generating lead-time summary...
+[2025-10-12T10:22:30.805910]   ✅ Lead-time summary generated: /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/reports/forecast/leadtime_summary.txt
+[2025-10-12T10:22:30.805942] 💾 Saving forecast metrics JSON...
+[2025-10-12T10:22:30.806144]   ✅ Forecast metrics JSON saved: /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/reports/forecast/forecast_metrics.json
+[2025-10-12T10:22:30.806181] 🔐 Computing forecast BOM hash...
+[2025-10-12T10:22:30.806564]   ✅ Forecast BOM computed: 7d108ac371636f9d...
+[2025-10-12T10:22:30.806599]   ✅ BOM saved: /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/reports/forecast/CANON_forecast_bom_sha256.txt
+[2025-10-12T10:22:30.806635] ✅ Forecast validation analysis complete in 1.1 seconds
+[2025-10-12T10:22:30.806663] 🎯 Final status: FORECAST_OK=true

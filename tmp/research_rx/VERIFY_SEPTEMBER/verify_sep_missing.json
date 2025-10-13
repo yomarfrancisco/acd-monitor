@@ -1,0 +1,9 @@
+{
+  "missing_weeks": [
+    "week1",
+    "week2",
+    "week3"
+  ],
+  "total_missing": 3,
+  "verification_timestamp": "2025-10-09T13:06:39.142717"
+}

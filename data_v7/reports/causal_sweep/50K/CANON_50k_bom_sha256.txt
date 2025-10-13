@@ -1,0 +1,12 @@
+# Phase 50K-CAUSAL-SWEEP BOM Hash
+
+SHA256: 05a7d9799f67ff7f0349dca1321290e880dc5670d18a6cab60087f843007d410
+
+Content: Phase 50K-CAUSAL-SWEEP Results
+Timestamp: 2025-10-12T14:49:59.704515
+Seed: 42
+Folds: 2
+Features: 6
+Estimators: 5
+Success: False
+Stable Drivers: 2

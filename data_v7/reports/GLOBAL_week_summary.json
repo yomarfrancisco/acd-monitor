@@ -1,0 +1,23 @@
+{
+  "W5": {
+    "expected": 28,
+    "found": 28,
+    "percentage": 100.0,
+    "pass": true,
+    "type": "All venues"
+  },
+  "W6": {
+    "expected": 28,
+    "found": 0,
+    "percentage": 0.0,
+    "pass": false,
+    "type": "All venues"
+  },
+  "W7": {
+    "expected": 7,
+    "found": 0,
+    "percentage": 0.0,
+    "pass": false,
+    "type": "COINBASE BTC-USD only"
+  }
+}

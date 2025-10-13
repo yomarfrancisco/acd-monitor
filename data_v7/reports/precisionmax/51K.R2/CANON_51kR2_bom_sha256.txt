@@ -1,0 +1,13 @@
+# Phase 51K.R2 — Hierarchical Mondrian + Survival Fusion BOM Hash
+
+SHA256: ba7d5d9fc3c88d58eb6ad505f6ce28d360531dfd8091e5bf9390d33fe2244cc8
+
+Content: Phase 51K.R2 — Hierarchical Mondrian + Survival Fusion Results
+Timestamp: 2025-10-12T20:18:39.326255
+Seed: 42
+Folds: 5
+Features: 6
+Champions: 2
+Success: True
+Precision: True
+Recall: True

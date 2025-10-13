@@ -1,0 +1,49 @@
+{
+  "analysis_period": "2025-09-01 to 2025-09-07",
+  "total_days": 7,
+  "phases_completed": [
+    "PHASE A: Harmonize Day-1..Day-3 data-prep",
+    "PHASE B: Confirmatory track (frozen spec)",
+    "PHASE C: Exploratory track (candidate surfacing)",
+    "PHASE D: TSI windows + run-length, three window sizes",
+    "PHASE E: Environment conditioning and partials",
+    "PHASE F: Predictability out-of-sample",
+    "PHASE G: Weekly pooled confirmatory test",
+    "PHASE H: Final rollup"
+  ],
+  "confirmatory_summary": {
+    "total_tests": 252,
+    "bh_significant": 17,
+    "placebo_robust": 221,
+    "final_kept": 0
+  },
+  "exploratory_summary": {
+    "total_tests": 252,
+    "candidates": 43,
+    "candidate_rate": 0.17063492063492064
+  },
+  "tsi_summary": {
+    "window_sizes": [
+      "5m",
+      "10m",
+      "30m"
+    ],
+    "total_edges_per_day": 12,
+    "days_analyzed": 7
+  },
+  "environment_summary": {
+    "total_days": 7,
+    "mean_tsi_overall": 0.027063380651036268,
+    "mean_vol_tsi": {
+      "low": 0.027062835651158985,
+      "med": 0.03955225641351269,
+      "high": 0.026444954351426294
+    },
+    "mean_wash_tsi": {
+      "low": 0.14242029294946706,
+      "high": 0.1153195547595726
+    }
+  },
+  "memory_peak_mb": 130.6875,
+  "status": "ACD_7DAY_HARMONIZED_COMPLETE"
+}

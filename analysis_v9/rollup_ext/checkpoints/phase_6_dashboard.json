@@ -1,0 +1,38 @@
+{
+  "phase": 6,
+  "status": "COMPLETE",
+  "key_files": {
+    "frequency_matrix": "analysis_v9/rollup_ext/frequency_matrix.csv",
+    "persistence_edges": "analysis_v9/rollup_ext/persistence_edges.csv",
+    "env_contrast_summary": "analysis_v9/rollup_ext/env_contrast_summary.csv",
+    "predictive_overlap": "analysis_v9/rollup_ext/predictive_overlap.csv",
+    "power_dashboard": "analysis_v9/rollup_ext/power_dashboard.csv",
+    "summary": "analysis_v9/rollup_ext/summary.json",
+    "executive_snapshot": "analysis_v9/rollup_ext/executive_snapshot.md"
+  },
+  "core_metrics": {
+    "total_combinations_processed": 42,
+    "persistent_edges_found": 6,
+    "environment_amplification_evidence": {
+      "volatility_amplification": true,
+      "wash_amplification": true,
+      "volatility_rate": 0.037698412698412696,
+      "wash_rate": 0.503968253968254
+    },
+    "residual_overlap_signal": {
+      "consistent_overlap": true,
+      "jaccard_threshold": 0.2,
+      "overlap_rate": 0.8923611111111112
+    },
+    "power_sufficient_frequencies": 0,
+    "peak_ram_mb": 183.625
+  },
+  "flags": {
+    "all_phases_complete": true,
+    "comprehensive_analysis": true,
+    "executive_summary_created": true,
+    "memory_ok": true
+  },
+  "next": "Analysis complete - no further phases",
+  "memory_peak_mb": 184.140625
+}

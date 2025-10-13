@@ -1,0 +1,126 @@
+{
+  "per_fold": {
+    "fold_0": {
+      "precision": 0.962625607782879,
+      "recall": 0.6425519748375926,
+      "fpr": 0.13113450676804042,
+      "lead_time_minutes": 196.4523229278047,
+      "alerts_per_day": 0.3041168988591605,
+      "window_pass_rate": 1.0,
+      "tier1_alerts": 24,
+      "tier2_alerts": 13
+    },
+    "fold_1": {
+      "precision": 0.9591583601898772,
+      "recall": 0.6367313178330133,
+      "fpr": 0.12038154186173275,
+      "lead_time_minutes": 187.9947350933046,
+      "alerts_per_day": 0.40495128632644756,
+      "window_pass_rate": 1.0,
+      "tier1_alerts": 19,
+      "tier2_alerts": 7
+    },
+    "fold_2": {
+      "precision": 0.9548388303267681,
+      "recall": 0.6535196606284818,
+      "fpr": 0.11869832231289741,
+      "lead_time_minutes": 185.55363077536367,
+      "alerts_per_day": 0.3912139968434072,
+      "window_pass_rate": 1.0,
+      "tier1_alerts": 22,
+      "tier2_alerts": 6
+    },
+    "fold_3": {
+      "precision": 0.9905620218404902,
+      "recall": 0.6551193744141683,
+      "fpr": 0.12384953851661686,
+      "lead_time_minutes": 190.03797097157786,
+      "alerts_per_day": 0.3341048247374583,
+      "window_pass_rate": 1.0,
+      "tier1_alerts": 15,
+      "tier2_alerts": 14
+    },
+    "fold_4": {
+      "precision": 0.9589607546309242,
+      "recall": 0.6414008389807108,
+      "fpr": 0.12022990962935648,
+      "lead_time_minutes": 200.0,
+      "alerts_per_day": 0.32440764696895574,
+      "window_pass_rate": 1.0,
+      "tier1_alerts": 19,
+      "tier2_alerts": 5
+    }
+  },
+  "by_session": {
+    "asia": {
+      "precision": 0.97,
+      "recall": 0.68,
+      "fpr": 0.11,
+      "alerts_per_day": 0.4,
+      "lead_time_minutes": 190
+    },
+    "europe": {
+      "precision": 0.95,
+      "recall": 0.65,
+      "fpr": 0.13,
+      "alerts_per_day": 0.32,
+      "lead_time_minutes": 185
+    },
+    "americas": {
+      "precision": 0.96,
+      "recall": 0.66,
+      "fpr": 0.12,
+      "alerts_per_day": 0.38,
+      "lead_time_minutes": 187
+    }
+  },
+  "by_venue": {
+    "venue_A": {
+      "precision": 0.98,
+      "recall": 0.67,
+      "fpr": 0.1,
+      "alerts_per_day": 0.35,
+      "lead_time_minutes": 192
+    },
+    "venue_B": {
+      "precision": 0.94,
+      "recall": 0.64,
+      "fpr": 0.14,
+      "alerts_per_day": 0.42,
+      "lead_time_minutes": 180
+    },
+    "venue_C": {
+      "precision": 0.96,
+      "recall": 0.66,
+      "fpr": 0.12,
+      "alerts_per_day": 0.38,
+      "lead_time_minutes": 188
+    }
+  },
+  "by_weekend_weekday": {
+    "weekend": {
+      "precision": 0.95,
+      "recall": 0.63,
+      "fpr": 0.13,
+      "alerts_per_day": 0.28,
+      "lead_time_minutes": 182
+    },
+    "weekday": {
+      "precision": 0.96,
+      "recall": 0.66,
+      "fpr": 0.12,
+      "alerts_per_day": 0.45,
+      "lead_time_minutes": 187
+    }
+  },
+  "aggregate": {
+    "precision_mean": 0.9652291149541877,
+    "recall_mean": 0.6458646333387934,
+    "fpr_mean": 0.12285876381772878,
+    "lead_time_minutes_mean": 192.00773195361018,
+    "alerts_per_day_mean": 0.35175893074708586,
+    "window_pass_rate_mean": 1.0,
+    "tier1_alerts_mean": 19.8,
+    "tier2_alerts_mean": 9.0
+  }
+}

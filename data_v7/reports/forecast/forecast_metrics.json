@@ -1,0 +1,82 @@
+{
+  "timestamp": "2025-10-12T10:22:30.805969",
+  "random_seed": 42,
+  "input_hashes": {
+    "causal_matrix": "9b2b9d8c8f7e0157e53b98c5091cff94283bf1811954ea4f94c0c0784b9525e7",
+    "css_timeline": "570a6309326c425e51293425c7b573c2d9b746cd37fec6ecbca163426feae12f",
+    "calibration_parquet": "642384a11752205451f381d0d04d55c803f01cdbfdcecea410f218e6477cc46d",
+    "hypothesis_metrics": "80fefded2705339a331b8253b21bfc0d534f26edd36e50127369bf3be83aeb76",
+    "invariance_metrics": "6cde7f97f907eea1197b5e08aabc1587e440ed3fb553f202deae5152a34ee3d8"
+  },
+  "model_info": {
+    "selected_drivers": [
+      "price_volatility",
+      "cross_venue_correlation",
+      "volume_change"
+    ],
+    "feature_names": [
+      "css_mean",
+      "css_std",
+      "css_diff_mean",
+      "css_diff_std",
+      "causal_mean",
+      "causal_std",
+      "coord_mean",
+      "coord_std",
+      "hour_mean",
+      "weekend_mean",
+      "asia_sessions",
+      "us_sessions"
+    ],
+    "train_metrics": {
+      "accuracy": 0.765625,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    }
+  },
+  "forecast_metrics": {
+    "auc": 0.6273518397412202,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "hit_rate": 0.0,
+    "false_positive_rate": 0.0,
+    "confusion_matrix": {
+      "true_negatives": 1469,
+      "false_positives": 0,
+      "false_negatives": 407,
+      "true_positives": 0
+    },
+    "lead_time_stats": {
+      "mean": 10.368550368550368,
+      "median": 8.0,
+      "std": 6.370370110384962,
+      "min": "4",
+      "max": "20",
+      "count": 407
+    },
+    "total_forecasts": 1876,
+    "total_events": 407,
+    "event_rate": 0.21695095948827292
+  },
+  "optimal_threshold": {
+    "threshold": 0.25000000000000006,
+    "precision": 0.3068362480127186,
+    "recall": 0.4742014742014742,
+    "f1": 0.37258687258687256,
+    "false_positive_rate": 0.2968005445881552,
+    "score": 0.2620028858966912
+  },
+  "acceptance_criteria": {
+    "auc_threshold": 0.75,
+    "precision_threshold": 0.7,
+    "leadtime_threshold": 4.0,
+    "fpr_threshold": 0.25,
+    "auc_passed": "False",
+    "precision_passed": "False",
+    "leadtime_passed": "True",
+    "fpr_passed": "True",
+    "all_passed": false
+  }
+}

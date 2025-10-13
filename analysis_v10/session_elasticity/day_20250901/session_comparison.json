@@ -1,0 +1,9 @@
+{
+  "Asia": {
+    "total_edges": 12,
+    "significant_gamma": 0,
+    "mean_elasticity": 6.450715101896808,
+    "median_elasticity": 0.8688150595329933,
+    "elasticity_std": 17.417766024136707
+  }
+}

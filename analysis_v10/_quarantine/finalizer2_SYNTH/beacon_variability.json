@@ -1,0 +1,13 @@
+{
+  "beacon_events_total": 167,
+  "trades_per_beacon": {
+    "p01": 3.0,
+    "p25": 6.0,
+    "p50": 10.0,
+    "p75": 15.0,
+    "p99": 19.0
+  },
+  "iqr": 9.0,
+  "zeros_in_event_distribution": 51,
+  "memory_peak_MB": 51.53125
+}

@@ -1,0 +1,54 @@
+{
+  "granger_causality": {
+    "total_tests": 12,
+    "significant_links": 5,
+    "bonferroni_alpha": 0.004166666666666667,
+    "significant_pairs": [
+      {
+        "from_venue": "BYBITSPOT",
+        "to_venue": "BINANCE",
+        "p_value": 0.0010464232468159356
+      },
+      {
+        "from_venue": "BITGET",
+        "to_venue": "BINANCE",
+        "p_value": 2.5394263764023184e-05
+      },
+      {
+        "from_venue": "BINANCE",
+        "to_venue": "BYBITSPOT",
+        "p_value": 9.895920134112148e-07
+      },
+      {
+        "from_venue": "BINANCE",
+        "to_venue": "BITGET",
+        "p_value": 0.0027277953176559917
+      },
+      {
+        "from_venue": "BYBITSPOT",
+        "to_venue": "BITGET",
+        "p_value": 1.6324185632519397e-14
+      }
+    ]
+  },
+  "var_models": {
+    "total_coefficients": 9,
+    "lags_tested": [
+      1,
+      2,
+      3
+    ],
+    "venues_analyzed": [
+      "BINANCE",
+      "BYBITSPOT",
+      "BITGET"
+    ]
+  },
+  "guardrail_log": {
+    "memory_peak_mb": 288.546875,
+    "timestamp_integrity": "VERIFIED",
+    "no_data_duplication": "CONFIRMED",
+    "no_schema_mutations": "CONFIRMED",
+    "real_data_only": "CONFIRMED"
+  }
+}

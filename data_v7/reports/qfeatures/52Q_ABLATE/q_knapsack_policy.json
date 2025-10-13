@@ -1,0 +1,37 @@
+{
+  "policy_type": "q_enhanced_knapsack",
+  "version": "52Q_ABLATE_v1",
+  "parameters": {
+    "conformal_alpha": 0.3449816047538945,
+    "enter_threshold": 0.4950714306409916,
+    "exit_threshold": 0.4231993941811405,
+    "hysteresis": 0.05,
+    "cooldown_hours": 2
+  },
+  "constraints": {
+    "fpr_budget": 0.15,
+    "window_guards": [
+      "G1",
+      "G2"
+    ],
+    "min_precision": 0.95,
+    "min_recall": 0.83
+  },
+  "quantum_features": {
+    "selected_families": [
+      "pairwise_cos_0.5",
+      "pairwise_sin_0.5",
+      "pairwise_cos_0.25",
+      "pairwise_sin_0.25"
+    ],
+    "total_features": 48,
+    "feature_space_expansion": "48/4 = 12.0x"
+  },
+  "performance_targets": {
+    "precision": "\u22650.95",
+    "recall": "\u22650.83",
+    "fpr": "\u22640.15",
+    "lead_time_minutes": "\u2265180",
+    "window_pass_rate": "\u226595%"
+  }
+}

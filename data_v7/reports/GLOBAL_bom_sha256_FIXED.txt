@@ -1,0 +1,4 @@
+Global BTCUSD-class BOM SHA-256 (Fixed)
+Generated: 2025-10-11T16:18:53.800066Z
+Total files: 100
+BOM SHA-256: f3cdf64e2d56cf622099d398b71a0ecdbd66df8b92646f0a06d3f405624a9114

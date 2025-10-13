@@ -1,0 +1,25 @@
+{
+  "phase": 3,
+  "status": "COMPLETE",
+  "key_files": {
+    "tsi_by_env": "analysis_v9/env_contrast/tsi_by_env.csv",
+    "deltas": "analysis_v9/env_contrast/deltas.csv",
+    "summary": "analysis_v9/env_contrast/summary.json"
+  },
+  "core_metrics": {
+    "total_tsi_results": 3024,
+    "total_delta_results": 504,
+    "significant_delta_vol": 19,
+    "significant_delta_wash": 254,
+    "delta_vol_positive": 179,
+    "delta_wash_positive": 396
+  },
+  "flags": {
+    "any_tsi_results": true,
+    "any_delta_results": true,
+    "any_significant_deltas": true,
+    "memory_ok": true
+  },
+  "next": "Create 'analysis_v9/controls/CONTINUE_PHASE_3.txt' with PROCEED to continue",
+  "memory_peak_mb": 130.90625
+}

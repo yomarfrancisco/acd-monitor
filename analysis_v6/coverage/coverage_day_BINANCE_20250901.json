@@ -1,0 +1,12 @@
+{
+  "venue": "BINANCE",
+  "date": "20250901",
+  "total_rows": 1275509,
+  "unique_timestamps": 436267,
+  "min_time": "2025-09-01T00:00:00.178000",
+  "max_time": "2025-09-01T23:59:59.376000",
+  "duplicate_pct": 0.0,
+  "empty_seconds_pct": 5.377314814814815,
+  "seconds_with_data": 81754,
+  "status": "SUCCESS"
+}

@@ -1,0 +1,55 @@
+Phase 46K-FORECAST-VALIDATION Summary
+==================================================
+Generated: 2025-10-12T10:22:30.805806Z
+
+PERFORMANCE OVERVIEW:
+-------------------------
+Total Forecasts: 1876
+Actual Instability Events: 407
+Event Rate: 21.7%
+
+KEY METRICS:
+---------------
+AUC (Area Under ROC Curve): 0.627
+Precision: 0.000
+Recall: 0.000
+F1 Score: 0.000
+Hit Rate: 0.0%
+False Positive Rate: 0.0%
+
+LEAD TIME ANALYSIS:
+--------------------
+Mean Lead Time: 10.4 hours
+Median Lead Time: 8.0 hours
+Lead Time Std Dev: 6.4 hours
+Min Lead Time: 4.0 hours
+Max Lead Time: 20.0 hours
+Events with Lead Time: 407
+
+THRESHOLD OPTIMIZATION:
+-------------------------
+Optimal Threshold: 0.250
+Optimal Precision: 0.307
+Optimal Recall: 0.474
+Optimal F1: 0.373
+Optimal FPR: 0.297
+
+ACCEPTANCE CRITERIA:
+--------------------
+AUC ≥ 0.75: ❌ FAIL (0.627)
+Precision ≥ 0.70: ❌ FAIL (0.000)
+Median Lead-time ≥ 4h: ✅ PASS (8.0h)
+False-positive rate < 25%: ✅ PASS (0.0%)
+
+OVERALL ASSESSMENT:
+--------------------
+❌ FORECAST MODEL NEEDS IMPROVEMENT
+Some acceptance criteria were not met.
+Model requires further refinement for operational use.
+
+IMPLICATIONS:
+---------------
+• Limited discriminative power - model needs improvement
+• Low precision may lead to excessive false alarms
+• Sufficient lead time for preventive action
+• Acceptable false positive rate for early warning system

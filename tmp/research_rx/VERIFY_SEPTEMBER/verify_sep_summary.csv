@@ -1,0 +1,4 @@
+week,beacon_files_found,tick_files_found,beacon_total_size_mb,tick_total_size_mb,beacon_observations,tick_observations,beacon_hours_total,beacon_hours_valid,tick_hours_total,tick_hours_valid,beacon_min_timestamp,beacon_max_timestamp,tick_min_timestamp,tick_max_timestamp,beacon_venues_found,tick_venues_found,beacon_avg_per_hour,tick_avg_per_hour,beacon_continuity_gaps,tick_continuity_gaps,beacon_schema_columns,tick_schema_columns,beacon_validation_status,tick_validation_status,beacon_valid_hours_pct,tick_valid_hours_pct
+week1,0,0,0.0,0.0,0,0,0,0,0,0,,,,,[],[],0.0,0.0,0,0,[],[],MISSING,MISSING,0.0,0.0
+week2,0,0,0.0,0.0,0,0,0,0,0,0,,,,,[],[],0.0,0.0,0,0,[],[],MISSING,MISSING,0.0,0.0
+week3,0,0,0.0,0.0,0,0,0,0,0,0,,,,,[],[],0.0,0.0,0,0,[],[],MISSING,MISSING,0.0,0.0

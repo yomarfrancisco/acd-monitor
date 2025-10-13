@@ -1,0 +1,23 @@
+{
+  "best_frequency_tier1_persistent": "1S",
+  "env_amplification_evidence": {
+    "volatility_amplification": true,
+    "wash_amplification": true,
+    "volatility_rate": 0.037698412698412696,
+    "wash_rate": 0.503968253968254
+  },
+  "residual_overlap_signal": {
+    "consistent_overlap": true,
+    "jaccard_threshold": 0.2,
+    "overlap_rate": 0.8923611111111112
+  },
+  "power_sufficient_by_freq": {
+    "1S": false,
+    "2S": false,
+    "5S": false,
+    "10S": false,
+    "15S": false,
+    "30S": false
+  },
+  "peak_ram_mb": 183.625
+}

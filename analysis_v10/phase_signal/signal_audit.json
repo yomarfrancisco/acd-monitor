@@ -1,0 +1,21 @@
+{
+  "halted": false,
+  "wave7_pass": true,
+  "wave8_pass": true,
+  "wave9_pass": true,
+  "memory_peak_MB": 186.046875,
+  "files": {
+    "anchor_placebos.csv": {
+      "sha256": "96b36d000aa08410f9a4edb1065776ee71d6405d232ecacf3bf8394dfa1644f5",
+      "rows": 960
+    },
+    "lead_follow_sessions.csv": {
+      "sha256": "70532b7e0c73775302506efd398995c60a1254d3b8865b2061058545f52f80c8",
+      "rows": 12
+    },
+    "beacon_events.csv": {
+      "sha256": "1f0ca1bef8d8ca76de3cb674eb5a1affb0879f5f6252e1598176e1164dd3486d",
+      "rows": 160
+    }
+  }
+}

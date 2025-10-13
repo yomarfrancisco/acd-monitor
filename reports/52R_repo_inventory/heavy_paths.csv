@@ -1,0 +1,16 @@
+path,size,modified_ts
+data/derived/btc_usd/panel_1s_inner.parquet,1772469,2025-09-30T14:19:22.658215
+data/derived/btc_usd/wave3/copula_marginals.parquet,874772,2025-09-30T19:48:09.597947
+data/derived/btc_usd/env_flags_1s.parquet,552330,2025-09-30T17:32:00.776506
+data/derived/btc_usd/svar_data.parquet,495448,2025-09-30T15:56:49.688926
+artifacts/v1_4_validation/baseline/baseline_breaks.png,485469,2025-09-29T09:16:52.283706
+data/derived/btc_usd/granger_causality_data.parquet,448810,2025-09-30T15:56:49.607194
+artifacts/v1_4_production_validation/baseline/real_baseline_analysis.png,445410,2025-09-29T09:16:52.267740
+data/derived/btc_usd/markov_switching_data.parquet,438127,2025-09-30T15:56:49.656144
+artifacts/v1_4_production_validation/metrics/real_data_metrics.png,330173,2025-09-29T09:16:52.276099
+artifacts/v1_4_validation/power_fpr/power_table.png,314076,2025-09-29T09:16:52.291723
+data/derived/btc_usd/cointegration_data.parquet,308465,2025-09-30T15:56:49.624325
+artifacts/v1_4_production_validation/power_fpr/real_power_fpr_analysis.png,290912,2025-09-29T09:16:52.278850
+artifacts/v1_4_validation/entities/network_graph.png,264878,2025-09-29T09:16:52.286772
+data/derived/btc_usd/market_structure_real_single_date.parquet,260188,2025-09-30T17:33:20.940174
+artifacts/v1_4_production_validation/entities/real_entity_analysis.png,258003,2025-09-29T09:16:52.273320

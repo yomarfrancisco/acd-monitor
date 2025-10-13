@@ -1,0 +1,8 @@
+{
+  "precision": 0.96,
+  "recall": 0.72,
+  "fpr": 0.12,
+  "alerts_per_day": 0.28,
+  "lead_time_median": 3.0,
+  "lead_time_iqr": 0.0
+}

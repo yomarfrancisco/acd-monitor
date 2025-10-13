@@ -1,0 +1,22 @@
+Phase 39G Final Audit
+===================
+Script Hash: 6716384d2c6c2210f706265afcbbb5e7cfca92c765a50953ad059969d5c173b3
+Time: 2025-10-11T14:16:41.520013Z
+Peak RSS: 72.3 MB
+
+File Counts:
+- Total inventory: 63
+- BTCUSD-class: 61
+- Quarantine: 2
+
+BOM Hash: 4e5dff64e8e95bb29c121f4c0bc476344e558c080657a158c5eb24a2054656f7
+
+Gate Outcomes:
+- w7_coinbase: FAIL
+- w6_aggregate: FAIL
+- w5_sanity: PASS
+
+Overall Status: FAIL
+
+Anomalies:
+- Conflicting dates: 4

@@ -1,0 +1,20 @@
+{
+  "inputs": {
+    "orch_policy": "0aba62b1d113fb9a10ff63c2b0f65059b5218dda7e10b175c912b6b5eaf4d847",
+    "metrics_oos": "54c161554b97d62e6a3a9c4381283ace856a11da5fb92e1a3e36c3d1b62d2041",
+    "window_pass": "b563ba446556c528997ee37967af64a7e5973ceaaaaad97e56f2853a6daed4e1"
+  },
+  "outputs": {
+    "policy": "180b34a9cb8670063a2092fd5eb9ed144b6d5aa4bd6b1757887c92346ffd8f07",
+    "thresholds": "aea85165adec1d2fb05ae1fa245719f7425acd3c371b4e548c94c2bd5acb01e1",
+    "conformal": "e5aaed0cf05f9c4520964e7174e2fbbc923825d2d5d4961ae84a238661897257",
+    "metrics": "cdcb00e6c2e870df7434733c79cce8d13b428aa1988f2c91604e2f2bd684dae8"
+  },
+  "verification": {
+    "metrics_verified": true,
+    "guards_verified": true,
+    "collapse_verified": true,
+    "oos_verified": true,
+    "overall_verified": true
+  }
+}

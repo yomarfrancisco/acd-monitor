@@ -1,0 +1,26 @@
+{
+  "timestamp": "2025-10-05T22:18:39.874715",
+  "date": "20250901",
+  "total_edges": 12,
+  "multi_session_edges": 0,
+  "stable_edges": 0,
+  "volatile_edges": 0,
+  "stability_ratio": 0,
+  "mean_abs_diff": NaN,
+  "leadership_correlation": NaN,
+  "leadership_correlation_p": NaN,
+  "total_observations": "207084",
+  "power_status": "SUFFICIENT",
+  "elasticity_mean": 6.450715101896808,
+  "elasticity_std": 17.417766024136707,
+  "outliers_count": 1,
+  "outliers": [
+    {
+      "edge": "COINBASE_to_BITGET",
+      "elasticity": 57.48755707250007,
+      "z_score": 2.9301600388866658
+    }
+  ],
+  "memory_peak_mb": 89.171875,
+  "status": "SUCCESS"
+}

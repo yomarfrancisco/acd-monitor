@@ -1,0 +1,17 @@
+Global Coverage Matrix
+==================================================
+Generated: 2025-10-11T16:27:21.009928Z
+Total files: 28
+Integrity issues: 0
+Uncategorized v7 files: 12
+
+Coverage Matrix (Date × Venue):
+Date       COINBASE   BINANCE    BYBITSPOT  BITGET    
+--------------------------------------------------
+20250721   ✅          ✅          ✅          ✅         
+20250722   ✅          ✅          ✅          ✅         
+20250723   ✅          ✅          ✅          ✅         
+20250724   ✅          ✅          ✅          ✅         
+20250725   ✅          ✅          ✅          ✅         
+20250726   ✅          ✅          ✅          ✅         
+20250727   ✅          ✅          ✅          ✅         

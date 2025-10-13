@@ -1,0 +1,43 @@
+Phase 40K-ICP-VMM Analysis Summary
+==================================================
+Generated: 2025-10-12T08:00:30.204749Z
+
+INVARIANT CAUSAL PREDICTION (ICP):
+------------------------------
+price_last:
+  Invariant parents: ['ofi', 'price_std']
+  P-value: 0.3147
+  Significance: No
+
+vol_proxy:
+  Invariant parents: ['price_last', 'price_std']
+  P-value: 0.0000
+  Significance: Yes
+
+ofi:
+  Invariant parents: ['price_last', 'price_std']
+  P-value: 0.2831
+  Significance: No
+
+price_std:
+  Invariant parents: ['price_last', 'vol_proxy', 'ofi']
+  P-value: 0.0045
+  Significance: Yes
+
+VARIATIONAL METHOD OF MOMENTS (VMM):
+----------------------------------------
+Features analyzed: 12
+Invariant segments: 478
+Window size: 24 hours
+
+INVARIANT SEGMENTS:
+  1. 2025-07-07 00:00:00 to 2025-07-07 11:00:00 (11h, transition)
+  2. 2025-07-07 11:00:00 to 2025-07-08 00:00:00 (13h, transition)
+  3. 2025-07-08 00:00:00 to 2025-07-08 01:00:00 (1h, transition)
+  4. 2025-07-08 01:00:00 to 2025-07-08 13:00:00 (12h, transition)
+  5. 2025-07-08 13:00:00 to 2025-07-08 14:00:00 (1h, transition)
+  6. 2025-07-08 14:00:00 to 2025-07-08 17:00:00 (3h, transition)
+  7. 2025-07-08 17:00:00 to 2025-07-08 21:00:00 (4h, transition)
+  8. 2025-07-08 21:00:00 to 2025-07-09 02:00:00 (5h, transition)
+  9. 2025-07-09 02:00:00 to 2025-07-09 03:00:00 (1h, transition)
+  10. 2025-07-09 03:00:00 to 2025-07-09 11:00:00 (8h, transition)

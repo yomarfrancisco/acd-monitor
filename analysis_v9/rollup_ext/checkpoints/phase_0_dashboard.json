@@ -1,0 +1,30 @@
+{
+  "phase": 0,
+  "status": "COMPLETE",
+  "key_files": {
+    "hash_manifest": "analysis_v8/harmonize/hash_manifest.csv",
+    "harmonized_data": [
+      "analysis_v7/icp_20250901_5s/aligned_5s.parquet",
+      "analysis_v7/icp_20250902_5s/aligned_5s.parquet",
+      "analysis_v7/icp_20250903_5s/aligned_5s.parquet",
+      "analysis_v7/icp_20250904_5s/aligned_5s.parquet",
+      "analysis_v7/icp_20250905_5s/aligned_5s.parquet",
+      "analysis_v7/icp_20250906_5s/aligned_5s.parquet",
+      "analysis_v7/icp_20250907_5s/aligned_5s.parquet"
+    ],
+    "spec_lock": "analysis_v9/extended/spec_lock_week.json"
+  },
+  "core_metrics": {
+    "files_missing_count": 0,
+    "files_missing_list": [],
+    "hash_manifest_rows": 7,
+    "predictability_auc": 0.7711315801516873,
+    "harmonized_files_count": 7
+  },
+  "flags": {
+    "missing_files": false,
+    "memory_ok": true
+  },
+  "next": "Create 'analysis_v9/controls/CONTINUE_PHASE_0.txt' with PROCEED to continue",
+  "memory_peak_mb": 154.546875
+}

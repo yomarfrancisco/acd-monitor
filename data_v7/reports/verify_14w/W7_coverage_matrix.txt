@@ -1,0 +1,32 @@
+Week -7 Coverage Matrix (Jul 7 – Jul 13, 2025)
+============================================================
+Generated: 2025-10-11T19:50:23.297602Z
+Total files found: 9
+
+Coverage Matrix (Date × Venue):
+Date       BINANCE    COINBASE   BYBITSPOT  BITGET    
+------------------------------------------------------------
+20250707   FOUND      FOUND      FOUND      FOUND     
+20250708   FOUND      FOUND      FOUND      FOUND     
+20250709   FOUND      FOUND      FOUND      FOUND     
+20250710   FOUND      FOUND      FOUND      FOUND     
+20250711   FOUND      FOUND      FOUND      FOUND     
+20250712   FOUND      FOUND      FOUND      FOUND     
+20250713   FOUND      FOUND      FOUND      FOUND     
+
+Summary:
+  Expected combinations: 28
+  Found: 28
+  Missing: 0
+  Coverage: 100.0%
+
+Downloaded Files:
+  BYBITSPOT_20250707_BTCUSDT.csv.gz: 0.0 MB
+  BITGET_20250707_BTCUSDT.csv.gz: 5.5 MB
+  BITGET_20250711_BTCUSDT.csv.gz: 6.7 MB
+  BINANCE_20250712_BTCUSDT.csv.gz: 53.2 MB
+  BYBITSPOT_20250712_BTCUSDT.csv.gz: 0.7 MB
+  BITGET_20250712_BTCUSDT.csv.gz: 2.4 MB
+  BINANCE_20250713_BTCUSDT.csv.gz: 60.6 MB
+  BYBITSPOT_20250713_BTCUSDT.csv.gz: 0.2 MB
+  BITGET_20250713_BTCUSDT.csv.gz: 3.1 MB

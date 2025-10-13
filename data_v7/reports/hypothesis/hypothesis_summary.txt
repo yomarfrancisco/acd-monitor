@@ -1,0 +1,34 @@
+Phase 41K-HYPOTHESIS-TESTING Summary
+==================================================
+Generated: 2025-10-12T08:16:05.456106Z
+
+CAUSAL ANOMALY DETECTION:
+------------------------------
+Variables analyzed: 4
+Variable-venue pairs: 16
+Top 5 anomaly rates:
+  1. price_last_BITGET: 0.050
+  2. vol_proxy_BITGET: 0.050
+  3. ofi_BITGET: 0.050
+  4. price_std_BITGET: 0.050
+  5. price_last_BINANCE: 0.050
+
+REGIME PERSISTENCE ANALYSIS:
+-----------------------------------
+Total segments: 478
+Stable segments: 4
+Transitional segments: 474
+Average stable duration: 39.0 hours
+Average transition duration: 4.5 hours
+Stability ratio: 0.068
+
+CROSS-VENUE COMPARISONS:
+------------------------------
+Synchronous anomalies: 2397
+Most stable venue: BINANCE
+Least stable venue: BINANCE
+Venue stability scores:
+  BINANCE: 0.002 (424 anomalies)
+  BITGET: 0.002 (424 anomalies)
+  BYBITSPOT: 0.002 (424 anomalies)
+  COINBASE: 0.002 (424 anomalies)

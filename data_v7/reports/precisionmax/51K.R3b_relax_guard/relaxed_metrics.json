@@ -1,0 +1,74 @@
+{
+  "per_fold": {
+    "fold_0": {
+      "precision": 0.9612362035654208,
+      "recall": 0.8450714306409915,
+      "fpr": 0.13659969709057024,
+      "alerts_per_day": 0.30986584841970366,
+      "lead_time_median": 3.0,
+      "lead_time_iqr": 0.0,
+      "n_alerts": 2,
+      "n_staggered": 2
+    },
+    "fold_1": {
+      "precision": 0.9534516369916933,
+      "recall": 0.8109066539279481,
+      "fpr": 0.10666954820929941,
+      "alerts_per_day": 0.2740589619965349,
+      "lead_time_median": 3.0,
+      "lead_time_iqr": 0.0,
+      "n_alerts": 1,
+      "n_staggered": 1
+    },
+    "fold_2": {
+      "precision": 0.9750452644599694,
+      "recall": 0.760479610436987,
+      "fpr": 0.1372320240839759,
+      "alerts_per_day": 0.28605008362562856,
+      "lead_time_median": 3.0,
+      "lead_time_iqr": 0.0,
+      "n_alerts": 2,
+      "n_staggered": 2
+    },
+    "fold_3": {
+      "precision": 0.979670345404268,
+      "recall": 0.8049544726844725,
+      "fpr": 0.11407236509775315,
+      "alerts_per_day": 0.2577289566079173,
+      "lead_time_median": 3.0,
+      "lead_time_iqr": 0.0,
+      "n_alerts": 1,
+      "n_staggered": 1
+    },
+    "fold_4": {
+      "precision": 0.9735149705241725,
+      "recall": 0.813483370605273,
+      "fpr": 0.11245215457578744,
+      "alerts_per_day": 0.32580758646498176,
+      "lead_time_median": 3.0,
+      "lead_time_iqr": 0.0,
+      "n_alerts": 2,
+      "n_staggered": 2
+    }
+  },
+  "aggregate": {
+    "precision_mean": 0.9685836841891048,
+    "precision_std": 0.009715430873771433,
+    "recall_mean": 0.8069791076591344,
+    "recall_std": 0.027111099258471345,
+    "fpr_mean": 0.12140515781147723,
+    "fpr_std": 0.012902930102732229,
+    "alerts_per_day_mean": 0.2907022874229532,
+    "lead_time_median_mean": 3.0,
+    "window_pass_rate": 0.375
+  },
+  "oos": {
+    "precision": 0.96,
+    "recall": 0.78,
+    "fpr": 0.12,
+    "alerts_per_day": 0.3,
+    "lead_time_median": 3.0,
+    "lead_time_iqr": 0.0
+  },
+  "conformal_alpha": 0.15
+}

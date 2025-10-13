@@ -1,0 +1,18 @@
+{
+  "conformal_alpha": 0.35,
+  "enter_threshold_adj": 0.0,
+  "hysteresis": 0.05,
+  "cooldown_hours": 2,
+  "horizon_hours": 6,
+  "stagger_hours": 3,
+  "epsilon_minutes": 1,
+  "decision_time": "t + 3h",
+  "evaluation_window": "(t+\u03b5, t+6h]",
+  "persistence_window": "[t, t+3h-\u03b5]",
+  "confirmation_window": "[t, t+3h-\u03b5]",
+  "guards": [
+    "confirm_end \u2264 t+3h\u2212\u03b5",
+    "t+3h \u2264 t+6h\u2212\u03b5"
+  ],
+  "status": "SELECTED_FROM_SWEEP"
+}

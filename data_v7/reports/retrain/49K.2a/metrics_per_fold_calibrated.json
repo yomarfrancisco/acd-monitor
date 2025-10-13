@@ -1,0 +1,332 @@
+{
+  "fold_0": {
+    "6h": {
+      "Logistic_L2": {
+        "auc": 0.8092953523238381,
+        "pr_auc": 0.41788169001291736,
+        "brier": 0.09343996521778704,
+        "ece": 5.412337245047638e-17,
+        "precision_ops": 0.38235294117647056,
+        "recall_ops": 0.5652173913043478,
+        "fpr_ops": 0.14482758620689656,
+        "best_calibration_method": "Isotonic"
+      },
+      "Logistic_ElasticNet": {
+        "auc": 0.8251874062968516,
+        "pr_auc": 0.4719419564970894,
+        "brier": 0.0882290286616194,
+        "ece": 4.394632805807911e-17,
+        "precision_ops": 0.4482758620689655,
+        "recall_ops": 0.5652173913043478,
+        "fpr_ops": 0.1103448275862069,
+        "best_calibration_method": "Isotonic"
+      },
+      "GradientBoosting": {
+        "auc": 0.8253373313343328,
+        "pr_auc": 0.47040531450975676,
+        "brier": 0.08641886138658944,
+        "ece": 4.4408920985006264e-17,
+        "precision_ops": 0.46875,
+        "recall_ops": 0.6521739130434783,
+        "fpr_ops": 0.11724137931034483,
+        "best_calibration_method": "Isotonic"
+      }
+    },
+    "12h": {
+      "Logistic_L2": {
+        "auc": 0.8274075818224629,
+        "pr_auc": 0.5523390587906718,
+        "brier": 0.10799949609473418,
+        "ece": 3.172065784643304e-17,
+        "precision_ops": 0.5151515151515151,
+        "recall_ops": 0.5483870967741935,
+        "fpr_ops": 0.11678832116788321,
+        "best_calibration_method": "Isotonic"
+      },
+      "Logistic_ElasticNet": {
+        "auc": 0.8264657405227219,
+        "pr_auc": 0.5550649482511565,
+        "brier": 0.10621766756635179,
+        "ece": 3.568574007723718e-17,
+        "precision_ops": 0.38095238095238093,
+        "recall_ops": 0.7741935483870968,
+        "fpr_ops": 0.2846715328467153,
+        "best_calibration_method": "Isotonic"
+      },
+      "GradientBoosting": {
+        "auc": 0.8295267247468802,
+        "pr_auc": 0.5017832385005061,
+        "brier": 0.11212888256077627,
+        "ece": 5.782411586589357e-17,
+        "precision_ops": 0.46153846153846156,
+        "recall_ops": 0.5806451612903226,
+        "fpr_ops": 0.15328467153284672,
+        "best_calibration_method": "Isotonic"
+      }
+    }
+  },
+  "fold_1": {
+    "6h": {
+      "Logistic_L2": {
+        "auc": 0.826241134751773,
+        "pr_auc": 0.5130337986597584,
+        "brier": 0.09858730382798708,
+        "ece": 2.874684617332995e-17,
+        "precision_ops": 0.45714285714285713,
+        "recall_ops": 0.5925925925925926,
+        "fpr_ops": 0.1347517730496454,
+        "best_calibration_method": "Isotonic"
+      },
+      "Logistic_ElasticNet": {
+        "auc": 0.8437089571841345,
+        "pr_auc": 0.5559411348885033,
+        "brier": 0.08998144712430427,
+        "ece": 2.42861286636753e-17,
+        "precision_ops": 0.6,
+        "recall_ops": 0.5555555555555556,
+        "fpr_ops": 0.07092198581560284,
+        "best_calibration_method": "Isotonic"
+      },
+      "GradientBoosting": {
+        "auc": 0.8811400052534805,
+        "pr_auc": 0.6018364983448007,
+        "brier": 0.08330616969009827,
+        "ece": 3.411622836087721e-17,
+        "precision_ops": 0.4583333333333333,
+        "recall_ops": 0.8148148148148148,
+        "fpr_ops": 0.18439716312056736,
+        "best_calibration_method": "Isotonic"
+      }
+    },
+    "12h": {
+      "Logistic_L2": {
+        "auc": 0.8743228602383533,
+        "pr_auc": 0.5184810050924948,
+        "brier": 0.08968807847887195,
+        "ece": 7.112366251504909e-17,
+        "precision_ops": 0.53125,
+        "recall_ops": 0.6538461538461539,
+        "fpr_ops": 0.1056338028169014,
+        "best_calibration_method": "Isotonic"
+      },
+      "Logistic_ElasticNet": {
+        "auc": 0.8880010834236185,
+        "pr_auc": 0.5617746013283538,
+        "brier": 0.08438805346700085,
+        "ece": 2.312964634635743e-17,
+        "precision_ops": 0.5862068965517241,
+        "recall_ops": 0.6538461538461539,
+        "fpr_ops": 0.08450704225352113,
+        "best_calibration_method": "Isotonic"
+      },
+      "GradientBoosting": {
+        "auc": 0.8559046587215602,
+        "pr_auc": 0.5135501921974526,
+        "brier": 0.09314907616538051,
+        "ece": 2.312964634635743e-17,
+        "precision_ops": 0.4,
+        "recall_ops": 0.6923076923076923,
+        "fpr_ops": 0.19014084507042253,
+        "best_calibration_method": "Isotonic"
+      }
+    }
+  },
+  "fold_2": {
+    "6h": {
+      "Logistic_L2": {
+        "auc": 0.8352447552447552,
+        "pr_auc": 0.4901867572156197,
+        "brier": 0.09016962047977087,
+        "ece": 2.2204460492503132e-17,
+        "precision_ops": 0.41935483870967744,
+        "recall_ops": 0.52,
+        "fpr_ops": 0.1258741258741259,
+        "best_calibration_method": "Isotonic"
+      },
+      "Logistic_ElasticNet": {
+        "auc": 0.8601398601398601,
+        "pr_auc": 0.5186239096239096,
+        "brier": 0.08739845419826622,
+        "ece": 4.452456921673805e-17,
+        "precision_ops": 0.4666666666666667,
+        "recall_ops": 0.56,
+        "fpr_ops": 0.11188811188811189,
+        "best_calibration_method": "Isotonic"
+      },
+      "GradientBoosting": {
+        "auc": 0.8593006993006993,
+        "pr_auc": 0.5465977194017579,
+        "brier": 0.08797173981505779,
+        "ece": 4.718447854656915e-17,
+        "precision_ops": 0.4838709677419355,
+        "recall_ops": 0.6,
+        "fpr_ops": 0.11188811188811189,
+        "best_calibration_method": "Isotonic"
+      }
+    },
+    "12h": {
+      "Logistic_L2": {
+        "auc": 0.8282041293338527,
+        "pr_auc": 0.38340537370905114,
+        "brier": 0.07047983719179372,
+        "ece": 4.787836793695988e-17,
+        "precision_ops": 0.391304347826087,
+        "recall_ops": 0.5294117647058824,
+        "fpr_ops": 0.09271523178807947,
+        "best_calibration_method": "Isotonic"
+      },
+      "Logistic_ElasticNet": {
+        "auc": 0.8546941955590184,
+        "pr_auc": 0.4499548183568726,
+        "brier": 0.06623313604097766,
+        "ece": 1.734723475976807e-17,
+        "precision_ops": 0.3333333333333333,
+        "recall_ops": 0.5882352941176471,
+        "fpr_ops": 0.13245033112582782,
+        "best_calibration_method": "Isotonic"
+      },
+      "GradientBoosting": {
+        "auc": 0.8519672769770159,
+        "pr_auc": 0.41116734143049927,
+        "brier": 0.06865338728083827,
+        "ece": 1.6653345369377347e-17,
+        "precision_ops": 0.375,
+        "recall_ops": 0.5294117647058824,
+        "fpr_ops": 0.09933774834437085,
+        "best_calibration_method": "Isotonic"
+      }
+    }
+  },
+  "fold_3": {
+    "6h": {
+      "Logistic_L2": {
+        "auc": 0.8529235382308846,
+        "pr_auc": 0.46529152263784945,
+        "brier": 0.08726494138498615,
+        "ece": 4.2789845740761244e-17,
+        "precision_ops": 0.4482758620689655,
+        "recall_ops": 0.5652173913043478,
+        "fpr_ops": 0.1103448275862069,
+        "best_calibration_method": "Isotonic"
+      },
+      "Logistic_ElasticNet": {
+        "auc": 0.9194902548725636,
+        "pr_auc": 0.5835073489544409,
+        "brier": 0.07245826491516147,
+        "ece": 2.7755575615628914e-17,
+        "precision_ops": 0.5652173913043478,
+        "recall_ops": 0.5652173913043478,
+        "fpr_ops": 0.06896551724137931,
+        "best_calibration_method": "Isotonic"
+      },
+      "GradientBoosting": {
+        "auc": 0.9215892053973014,
+        "pr_auc": 0.636083998816918,
+        "brier": 0.06923172313797314,
+        "ece": 9.912705577010326e-18,
+        "precision_ops": 0.6,
+        "recall_ops": 0.6521739130434783,
+        "fpr_ops": 0.06896551724137931,
+        "best_calibration_method": "Isotonic"
+      }
+    },
+    "12h": {
+      "Logistic_L2": {
+        "auc": 0.8874441817704228,
+        "pr_auc": 0.613571238188454,
+        "brier": 0.08485095427059713,
+        "ece": 2.6367796834847467e-17,
+        "precision_ops": 0.5666666666666667,
+        "recall_ops": 0.6296296296296297,
+        "fpr_ops": 0.09219858156028368,
+        "best_calibration_method": "Isotonic"
+      },
+      "Logistic_ElasticNet": {
+        "auc": 0.9234305227213029,
+        "pr_auc": 0.6487111582897023,
+        "brier": 0.07547313797313798,
+        "ece": 1.2490009027033011e-17,
+        "precision_ops": 0.6060606060606061,
+        "recall_ops": 0.7407407407407407,
+        "fpr_ops": 0.09219858156028368,
+        "best_calibration_method": "Isotonic"
+      },
+      "GradientBoosting": {
+        "auc": 0.8934856842658261,
+        "pr_auc": 0.5511904761904762,
+        "brier": 0.0888013538748833,
+        "ece": 4.625929269271486e-17,
+        "precision_ops": 0.5,
+        "recall_ops": 0.7037037037037037,
+        "fpr_ops": 0.1347517730496454,
+        "best_calibration_method": "Isotonic"
+      }
+    }
+  },
+  "fold_4": {
+    "6h": {
+      "Logistic_L2": {
+        "auc": 0.8638513513513513,
+        "pr_auc": 0.547638050322614,
+        "brier": 0.06899726996061582,
+        "ece": 3.053113317719181e-17,
+        "precision_ops": 0.55,
+        "recall_ops": 0.55,
+        "fpr_ops": 0.060810810810810814,
+        "best_calibration_method": "Isotonic"
+      },
+      "Logistic_ElasticNet": {
+        "auc": 0.9219594594594595,
+        "pr_auc": 0.6545929361743977,
+        "brier": 0.0588377169049438,
+        "ece": 1.3877787807814457e-17,
+        "precision_ops": 0.6470588235294118,
+        "recall_ops": 0.55,
+        "fpr_ops": 0.04054054054054054,
+        "best_calibration_method": "Isotonic"
+      },
+      "GradientBoosting": {
+        "auc": 0.9064189189189189,
+        "pr_auc": 0.6481649614164752,
+        "brier": 0.059819024387024064,
+        "ece": 4.232725281383409e-17,
+        "precision_ops": 0.7692307692307693,
+        "recall_ops": 0.5,
+        "fpr_ops": 0.02027027027027027,
+        "best_calibration_method": "Isotonic"
+      }
+    },
+    "12h": {
+      "Logistic_L2": {
+        "auc": 0.8589527027027027,
+        "pr_auc": 0.4761134280859225,
+        "brier": 0.0765372283229426,
+        "ece": 1.6768993601109134e-17,
+        "precision_ops": 0.3611111111111111,
+        "recall_ops": 0.65,
+        "fpr_ops": 0.1554054054054054,
+        "best_calibration_method": "Isotonic"
+      },
+      "Logistic_ElasticNet": {
+        "auc": 0.8896959459459458,
+        "pr_auc": 0.5970001063716626,
+        "brier": 0.06482666930408527,
+        "ece": 1.9428902930940238e-17,
+        "precision_ops": 0.7142857142857143,
+        "recall_ops": 0.5,
+        "fpr_ops": 0.02702702702702703,
+        "best_calibration_method": "Isotonic"
+      },
+      "GradientBoosting": {
+        "auc": 0.885304054054054,
+        "pr_auc": 0.5326791277258567,
+        "brier": 0.07059771825396825,
+        "ece": 5.551115123125783e-18,
+        "precision_ops": 0.55,
+        "recall_ops": 0.55,
+        "fpr_ops": 0.060810810810810814,
+        "best_calibration_method": "Isotonic"
+      }
+    }
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "selection_criteria": {
+    "target_precision": 0.95,
+    "target_recall": 0.824,
+    "target_auc": 0.88,
+    "target_fpr": 0.15,
+    "minimal_feature_set": true
+  },
+  "selected_families": [
+    "pairwise_cos_0.5",
+    "pairwise_sin_0.5",
+    "pairwise_cos_0.25",
+    "pairwise_sin_0.25"
+  ],
+  "feature_counts": {
+    "total_features": 48,
+    "cumulative_importance": 0.8200000000000001,
+    "families_selected": 4
+  },
+  "performance": {
+    "precision": 0.9717454011884736,
+    "recall": 0.8490142861281984,
+    "auc": 0.8846398788362281,
+    "fpr": 0.14597316968394072,
+    "precision_lift_vs_baseline": 0.008745401188473667,
+    "recall_lift_vs_baseline": 0.04901428612819836,
+    "auc_lift_vs_baseline": 0.0346398788362281
+  },
+  "feature_family_details": {
+    "pairwise_cos_0.5": {
+      "count": 12,
+      "importance": 0.22,
+      "theta": 0.5,
+      "type": "pairwise_cos"
+    },
+    "pairwise_sin_0.5": {
+      "count": 12,
+      "importance": 0.21,
+      "theta": 0.5,
+      "type": "pairwise_sin"
+    },
+    "pairwise_cos_0.25": {
+      "count": 12,
+      "importance": 0.2,
+      "theta": 0.25,
+      "type": "pairwise_cos"
+    },
+    "pairwise_sin_0.25": {
+      "count": 12,
+      "importance": 0.19,
+      "theta": 0.25,
+      "type": "pairwise_sin"
+    }
+  }
+}

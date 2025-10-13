@@ -1,0 +1,18 @@
+Bill of Materials - SHA256 Hashes
+==================================================
+
+INPUTS:
+knapsack_metrics: 1b7e98d9ec545c8261b4e5f89db3ab91971d2b5833211666930acecc931fb84a
+knapsack_alerts: afc99766e4b46dbaa45fec3b79d869fa72326cfd0a9b71597f11c28601d9887a
+knapsack_selector: 3ead278c307759ad9f51f128a3b38fbc6e7896aa3cd545ba2828ef19364be43b
+lead_time_manifest: 4f0ef4e3763f22e3ce73f93d190210617d2045b73897c33a108c1f1ee042c4c2
+calibrated_metrics: d363e85f7b5592c0ae800d08c6b65b8e2776359f3414398639748a89b9654081
+thresholds: 46846249769b5075f4ee66b42d28e8b16b01534c745e02b7ac5f8838df404665
+calibration_highprec: be8828f88371de9d9d08f1807d3864dbcfaf6946ca14f0ff0a6ed467f2d79c4c
+cv_manifest: 160314c6ef1c7f2367e9716a6a473b4f9ebe1777420868c8fe48791914761b30
+
+OUTPUTS:
+qfeatures_manifest: 5406c5edf6d0abf912c9d6231df45f202e1f2dc379f297f9a9a02fa716d2e5a0
+metrics_comparison: 4c379d4d05dca12d03c1e50e3949ba6b2d4eabaf3d13233910c81fbdc75e73cd
+knapsack_replay: 1b841471864fb15c1811d90ef08fabcc490a56f1ac09c81dc081f0a0f1edce59
+placebo_inversion: 98d737c53afc7fbac9ad3eeb2e67ebc9dba44b3611bd7b687db4ba94f21d24e2

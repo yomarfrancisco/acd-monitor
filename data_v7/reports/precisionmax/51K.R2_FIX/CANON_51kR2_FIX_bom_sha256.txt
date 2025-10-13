@@ -1,0 +1,12 @@
+# Phase 51K.R2-FIX — No-Peek Survival/Conformal, Strict Window Guard BOM Hash
+
+SHA256: 614c7010afe3d2d36c9b24d80a03dec92b13102e85e86c7d770add78318d0f73
+
+Content: Phase 51K.R2-FIX — No-Peek Survival/Conformal, Strict Window Guard Results
+Timestamp: 2025-10-12T20:33:30.481985
+Seed: 42
+Fix: False
+Window Pass: 50.0%
+Checks: 6
+Inputs: 5
+Hashes: Verified

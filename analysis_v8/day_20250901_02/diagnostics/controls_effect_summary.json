@@ -1,0 +1,12 @@
+{
+  "total_tests": 36,
+  "beta_drops_significance": 0.5,
+  "beta_magnitude_drop": 0.0,
+  "by_session": {
+    "full_day": {
+      "beta_drops_significance": 0.5,
+      "beta_magnitude_drop": 0.0,
+      "n_tests": 36
+    }
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "total_residual_windows": 75585,
+  "total_overlap_metrics": 288,
+  "median_jaccard": 0.29718301971326166,
+  "median_precision": 0.29718301971326166,
+  "median_recall": 1.0,
+  "median_mutual_info": 0.0,
+  "consistent_overlap_edges": 257,
+  "by_frequency": {
+    "1S": {
+      "total_edges": 48,
+      "median_jaccard": 0.23251421236016873,
+      "median_precision": 0.23251421236016873,
+      "median_recall": 1.0,
+      "consistent_overlap": 38
+    },
+    "2S": {
+      "total_edges": 48,
+      "median_jaccard": 0.23251421236016873,
+      "median_precision": 0.23251421236016873,
+      "median_recall": 1.0,
+      "consistent_overlap": 38
+    },
+    "5S": {
+      "total_edges": 48,
+      "median_jaccard": 0.23251421236016873,
+      "median_precision": 0.23251421236016873,
+      "median_recall": 1.0,
+      "consistent_overlap": 38
+    },
+    "10S": {
+      "total_edges": 48,
+      "median_jaccard": 0.3076716180695641,
+      "median_precision": 0.3076716180695641,
+      "median_recall": 1.0,
+      "consistent_overlap": 47
+    },
+    "15S": {
+      "total_edges": 48,
+      "median_jaccard": 0.41673133010462093,
+      "median_precision": 0.41673133010462093,
+      "median_recall": 1.0,
+      "consistent_overlap": 48
+    },
+    "30S": {
+      "total_edges": 48,
+      "median_jaccard": 0.43283208020050123,
+      "median_precision": 0.43283208020050123,
+      "median_recall": 1.0,
+      "consistent_overlap": 48
+    }
+  }
+}

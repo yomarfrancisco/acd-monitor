@@ -1,0 +1,14 @@
+{
+  "v6_legacy": {
+    "total_files": 100,
+    "valid_files": 100,
+    "total_bytes": 6677187985,
+    "weeks_covered": 4
+  },
+  "v7_new": {
+    "total_files": 0,
+    "valid_files": 0,
+    "total_bytes": 0,
+    "weeks_covered": 0
+  }
+}

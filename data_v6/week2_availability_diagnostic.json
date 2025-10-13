@@ -1,0 +1,247 @@
+{
+  "timestamp": "2025-10-07T15:05:27.242365",
+  "dates_checked": [
+    "20250908",
+    "20250909",
+    "20250910",
+    "20250911",
+    "20250912",
+    "20250913",
+    "20250914"
+  ],
+  "venues_checked": [
+    "BINANCE",
+    "COINBASE",
+    "BYBITSPOT",
+    "BITGET"
+  ],
+  "results": [
+    {
+      "date": "2025-09-08",
+      "venue": "BINANCE",
+      "http_status": "200 OK",
+      "objects": 0,
+      "example_file": null,
+      "size_mb": 0.0
+    },
+    {
+      "date": "2025-09-08",
+      "venue": "COINBASE",
+      "http_status": "200 OK",
+      "objects": 0,
+      "example_file": null,
+      "size_mb": 0.0
+    },
+    {
+      "date": "2025-09-08",
+      "venue": "BYBITSPOT",
+      "http_status": "200 OK",
+      "objects": 0,
+      "example_file": null,
+      "size_mb": 0.0
+    },
+    {
+      "date": "2025-09-08",
+      "venue": "BITGET",
+      "http_status": "200 OK",
+      "objects": 0,
+      "example_file": null,
+      "size_mb": 0.0
+    },
+    {
+      "date": "2025-09-09",
+      "venue": "BINANCE",
+      "http_status": "200 OK",
+      "objects": 0,
+      "example_file": null,
+      "size_mb": 0.0
+    },
+    {
+      "date": "2025-09-09",
+      "venue": "COINBASE",
+      "http_status": "200 OK",
+      "objects": 0,
+      "example_file": null,
+      "size_mb": 0.0
+    },
+    {
+      "date": "2025-09-09",
+      "venue": "BYBITSPOT",
+      "http_status": "200 OK",
+      "objects": 0,
+      "example_file": null,
+      "size_mb": 0.0
+    },
+    {
+      "date": "2025-09-09",
+      "venue": "BITGET",
+      "http_status": "200 OK",
+      "objects": 0,
+      "example_file": null,
+      "size_mb": 0.0
+    },
+    {
+      "date": "2025-09-10",
+      "venue": "BINANCE",
+      "http_status": "200 OK",
+      "objects": 0,
+      "example_file": null,
+      "size_mb": 0.0
+    },
+    {
+      "date": "2025-09-10",
+      "venue": "COINBASE",
+      "http_status": "200 OK",
+      "objects": 0,
+      "example_file": null,
+      "size_mb": 0.0
+    },
+    {
+      "date": "2025-09-10",
+      "venue": "BYBITSPOT",
+      "http_status": "200 OK",
+      "objects": 0,
+      "example_file": null,
+      "size_mb": 0.0
+    },
+    {
+      "date": "2025-09-10",
+      "venue": "BITGET",
+      "http_status": "200 OK",
+      "objects": 0,
+      "example_file": null,
+      "size_mb": 0.0
+    },
+    {
+      "date": "2025-09-11",
+      "venue": "BINANCE",
+      "http_status": "200 OK",
+      "objects": 0,
+      "example_file": null,
+      "size_mb": 0.0
+    },
+    {
+      "date": "2025-09-11",
+      "venue": "COINBASE",
+      "http_status": "200 OK",
+      "objects": 0,
+      "example_file": null,
+      "size_mb": 0.0
+    },
+    {
+      "date": "2025-09-11",
+      "venue": "BYBITSPOT",
+      "http_status": "200 OK",
+      "objects": 0,
+      "example_file": null,
+      "size_mb": 0.0
+    },
+    {
+      "date": "2025-09-11",
+      "venue": "BITGET",
+      "http_status": "200 OK",
+      "objects": 0,
+      "example_file": null,
+      "size_mb": 0.0
+    },
+    {
+      "date": "2025-09-12",
+      "venue": "BINANCE",
+      "http_status": "200 OK",
+      "objects": 0,
+      "example_file": null,
+      "size_mb": 0.0
+    },
+    {
+      "date": "2025-09-12",
+      "venue": "COINBASE",
+      "http_status": "200 OK",
+      "objects": 0,
+      "example_file": null,
+      "size_mb": 0.0
+    },
+    {
+      "date": "2025-09-12",
+      "venue": "BYBITSPOT",
+      "http_status": "200 OK",
+      "objects": 0,
+      "example_file": null,
+      "size_mb": 0.0
+    },
+    {
+      "date": "2025-09-12",
+      "venue": "BITGET",
+      "http_status": "200 OK",
+      "objects": 0,
+      "example_file": null,
+      "size_mb": 0.0
+    },
+    {
+      "date": "2025-09-13",
+      "venue": "BINANCE",
+      "http_status": "200 OK",
+      "objects": 0,
+      "example_file": null,
+      "size_mb": 0.0
+    },
+    {
+      "date": "2025-09-13",
+      "venue": "COINBASE",
+      "http_status": "200 OK",
+      "objects": 0,
+      "example_file": null,
+      "size_mb": 0.0
+    },
+    {
+      "date": "2025-09-13",
+      "venue": "BYBITSPOT",
+      "http_status": "200 OK",
+      "objects": 0,
+      "example_file": null,
+      "size_mb": 0.0
+    },
+    {
+      "date": "2025-09-13",
+      "venue": "BITGET",
+      "http_status": "200 OK",
+      "objects": 0,
+      "example_file": null,
+      "size_mb": 0.0
+    },
+    {
+      "date": "2025-09-14",
+      "venue": "BINANCE",
+      "http_status": "200 OK",
+      "objects": 0,
+      "example_file": null,
+      "size_mb": 0.0
+    },
+    {
+      "date": "2025-09-14",
+      "venue": "COINBASE",
+      "http_status": "200 OK",
+      "objects": 0,
+      "example_file": null,
+      "size_mb": 0.0
+    },
+    {
+      "date": "2025-09-14",
+      "venue": "BYBITSPOT",
+      "http_status": "200 OK",
+      "objects": 0,
+      "example_file": null,
+      "size_mb": 0.0
+    },
+    {
+      "date": "2025-09-14",
+      "venue": "BITGET",
+      "http_status": "200 OK",
+      "objects": 0,
+      "example_file": null,
+      "size_mb": 0.0
+    }
+  ],
+  "available_days": [],
+  "available_venues": [],
+  "memory_usage_mb": 36.0
+}

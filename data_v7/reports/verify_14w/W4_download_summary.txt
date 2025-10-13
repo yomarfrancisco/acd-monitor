@@ -1,0 +1,28 @@
+Week -4 Download Summary
+==================================================
+Generated: 2025-10-11T19:18:14.123523Z
+Target: Jul 28-31, 2025 (16 files)
+
+Download Results:
+  Successful: 0
+  Failed: 16
+  Success Rate: 0.0%
+
+
+Failed Files:
+  BINANCE_20250728_BTCUSDT.csv.gz: No files found in CoinAPI listing
+  COINBASE_20250728_BTC-USD.csv.gz: No files found in CoinAPI listing
+  BYBITSPOT_20250728_BTCUSDT.csv.gz: No files found in CoinAPI listing
+  BITGET_20250728_BTCUSDT.csv.gz: No files found in CoinAPI listing
+  BINANCE_20250729_BTCUSDT.csv.gz: No files found in CoinAPI listing
+  COINBASE_20250729_BTC-USD.csv.gz: No files found in CoinAPI listing
+  BYBITSPOT_20250729_BTCUSDT.csv.gz: No files found in CoinAPI listing
+  BITGET_20250729_BTCUSDT.csv.gz: No files found in CoinAPI listing
+  BINANCE_20250730_BTCUSDT.csv.gz: No files found in CoinAPI listing
+  COINBASE_20250730_BTC-USD.csv.gz: No files found in CoinAPI listing
+  BYBITSPOT_20250730_BTCUSDT.csv.gz: No files found in CoinAPI listing
+  BITGET_20250730_BTCUSDT.csv.gz: No files found in CoinAPI listing
+  BINANCE_20250731_BTCUSDT.csv.gz: No files found in CoinAPI listing
+  COINBASE_20250731_BTC-USD.csv.gz: No files found in CoinAPI listing
+  BYBITSPOT_20250731_BTCUSDT.csv.gz: No files found in CoinAPI listing
+  BITGET_20250731_BTCUSDT.csv.gz: No files found in CoinAPI listing

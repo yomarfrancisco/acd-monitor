@@ -1,0 +1,27 @@
+Week -4 Download Summary (Corrected)
+==================================================
+Generated: 2025-10-11T19:30:12.274978Z
+Target: Jul 28-31, 2025 (16 files)
+
+Download Results:
+  Successful: 16
+  Failed: 0
+  Success Rate: 100.0%
+
+Downloaded Files:
+  BINANCE_20250728_BTCUSDT.csv.gz: 67.3 MB
+  COINBASE_20250728_BTC-USD.csv.gz: 26.0 MB
+  BYBITSPOT_20250728_BTCUSDT.csv.gz: 18.9 MB
+  BITGET_20250728_BTCUSDT.csv.gz: 18.2 MB
+  BINANCE_20250729_BTCUSDT.csv.gz: 71.9 MB
+  COINBASE_20250729_BTC-USD.csv.gz: 27.0 MB
+  BYBITSPOT_20250729_BTCUSDT.csv.gz: 19.5 MB
+  BITGET_20250729_BTCUSDT.csv.gz: 32.9 MB
+  BINANCE_20250730_BTCUSDT.csv.gz: 73.4 MB
+  COINBASE_20250730_BTC-USD.csv.gz: 27.6 MB
+  BYBITSPOT_20250730_BTCUSDT.csv.gz: 22.6 MB
+  BITGET_20250730_BTCUSDT.csv.gz: 11.1 MB
+  BINANCE_20250731_BTCUSDT.csv.gz: 68.6 MB
+  COINBASE_20250731_BTC-USD.csv.gz: 25.1 MB
+  BYBITSPOT_20250731_BTCUSDT.csv.gz: 18.4 MB
+  BITGET_20250731_BTCUSDT.csv.gz: 6.1 MB

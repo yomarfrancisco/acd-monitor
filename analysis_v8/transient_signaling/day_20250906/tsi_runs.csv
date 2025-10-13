@@ -1,0 +1,13 @@
+edge,total_runs,mean_run_length,median_run_length,max_run_length,run_length_variance,run_length_95th_pct,runs
+BINANCE->COINBASE,1,11.0,11.0,11,0.0,11.0,[11]
+BINANCE->BYBITSPOT,0,0.0,0.0,0,0.0,0.0,[]
+BINANCE->BITGET,0,0.0,0.0,0,0.0,0.0,[]
+COINBASE->BINANCE,1,11.0,11.0,11,0.0,11.0,[11]
+COINBASE->BYBITSPOT,0,0.0,0.0,0,0.0,0.0,[]
+COINBASE->BITGET,1,1.0,1.0,1,0.0,1.0,[1]
+BYBITSPOT->BINANCE,0,0.0,0.0,0,0.0,0.0,[]
+BYBITSPOT->COINBASE,0,0.0,0.0,0,0.0,0.0,[]
+BYBITSPOT->BITGET,1,1.0,1.0,1,0.0,1.0,[1]
+BITGET->BINANCE,0,0.0,0.0,0,0.0,0.0,[]
+BITGET->COINBASE,1,1.0,1.0,1,0.0,1.0,[1]
+BITGET->BYBITSPOT,1,1.0,1.0,1,0.0,1.0,[1]

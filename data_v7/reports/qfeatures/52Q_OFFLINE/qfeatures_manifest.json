@@ -1,0 +1,56 @@
+{
+  "quantum_feature_maps": {
+    "single_features": {
+      "formula": "\u03c6_q(x) = [cos(\u03b8\u00b7x), sin(\u03b8\u00b7x), cos(2\u03b8\u00b7x), sin(2\u03b8\u00b7x)]",
+      "theta_values": [
+        0.5,
+        1.0,
+        2.0
+      ],
+      "base_features": [
+        "feature_1",
+        "feature_2",
+        "feature_3",
+        "feature_4"
+      ],
+      "feature_count": 48
+    },
+    "pairwise_features": {
+      "formula": "\u03c6_q(x_i x_j) = [cos(\u03b8\u00b7x_i\u00b7x_j), sin(\u03b8\u00b7x_i\u00b7x_j)]",
+      "theta_values": [
+        0.25,
+        0.5
+      ],
+      "feature_pairs": [
+        "feature_1_feature_2",
+        "feature_1_feature_3",
+        "feature_1_feature_4",
+        "feature_2_feature_3",
+        "feature_2_feature_4",
+        "feature_3_feature_4"
+      ],
+      "feature_count": 24
+    },
+    "total_quantum_features": 72,
+    "total_feature_space": 76
+  },
+  "model_training": {
+    "algorithms": [
+      "logistic_l2",
+      "shallow_gbm"
+    ],
+    "calibration_method": "isotonic",
+    "calibration_scope": "train_fold_only",
+    "cross_validation": "5_fold_loo_week"
+  },
+  "performance": {
+    "auc": 0.8812362035654209,
+    "pr_auc": 0.8275357153204959,
+    "precision": 0.9749598182543421,
+    "recall": 0.8339463393678815,
+    "fpr": 0.13712037280884873,
+    "ece": 0.015621088666940681,
+    "lead_time_minutes": 196.8371238766004,
+    "window_pass_rate": 0.9730525764240326
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "total_mde_calculations": 1512,
+  "total_pooled_calculations": 72,
+  "exceeds_mde_05_count": 60,
+  "exceeds_mde_10_count": 79,
+  "exceeds_mde_05_rate": 0.03968253968253968,
+  "exceeds_mde_10_rate": 0.052248677248677246,
+  "median_mde_05": 0.03390457495523217,
+  "median_mde_10": 0.03009113295498198,
+  "median_observed_beta": 0.0097255464577131,
+  "by_frequency": {
+    "1S": {
+      "total_tests": 252,
+      "exceeds_mde_05": 17,
+      "exceeds_mde_10": 22,
+      "exceeds_mde_05_rate": 0.06746031746031746,
+      "exceeds_mde_10_rate": 0.0873015873015873,
+      "median_mde_05": 0.02829156695757024,
+      "median_mde_10": 0.0251094521594539,
+      "median_observed_beta": 0.0089661276495333,
+      "power_sufficient": false,
+      "verdict": "UNDERPOWERED"
+    },
+    "2S": {
+      "total_tests": 252,
+      "exceeds_mde_05": 17,
+      "exceeds_mde_10": 22,
+      "exceeds_mde_05_rate": 0.06746031746031746,
+      "exceeds_mde_10_rate": 0.0873015873015873,
+      "median_mde_05": 0.02829156695757024,
+      "median_mde_10": 0.0251094521594539,
+      "median_observed_beta": 0.0089661276495333,
+      "power_sufficient": false,
+      "verdict": "UNDERPOWERED"
+    },
+    "5S": {
+      "total_tests": 252,
+      "exceeds_mde_05": 17,
+      "exceeds_mde_10": 22,
+      "exceeds_mde_05_rate": 0.06746031746031746,
+      "exceeds_mde_10_rate": 0.0873015873015873,
+      "median_mde_05": 0.02829156695757024,
+      "median_mde_10": 0.0251094521594539,
+      "median_observed_beta": 0.0089661276495333,
+      "power_sufficient": false,
+      "verdict": "UNDERPOWERED"
+    },
+    "10S": {
+      "total_tests": 252,
+      "exceeds_mde_05": 4,
+      "exceeds_mde_10": 7,
+      "exceeds_mde_05_rate": 0.015873015873015872,
+      "exceeds_mde_10_rate": 0.027777777777777776,
+      "median_mde_05": 0.03631888889986931,
+      "median_mde_10": 0.03223389516329958,
+      "median_observed_beta": 0.00851336572608135,
+      "power_sufficient": false,
+      "verdict": "UNDERPOWERED"
+    },
+    "15S": {
+      "total_tests": 252,
+      "exceeds_mde_05": 4,
+      "exceeds_mde_10": 4,
+      "exceeds_mde_05_rate": 0.015873015873015872,
+      "exceeds_mde_10_rate": 0.015873015873015872,
+      "median_mde_05": 0.04329621605157886,
+      "median_mde_10": 0.03842644231275433,
+      "median_observed_beta": 0.0108505194922602,
+      "power_sufficient": false,
+      "verdict": "UNDERPOWERED"
+    },
+    "30S": {
+      "total_tests": 252,
+      "exceeds_mde_05": 1,
+      "exceeds_mde_10": 2,
+      "exceeds_mde_05_rate": 0.003968253968253968,
+      "exceeds_mde_10_rate": 0.007936507936507936,
+      "median_mde_05": 0.057544384888141786,
+      "median_mde_10": 0.051072037881852654,
+      "median_observed_beta": 0.013808978769278099,
+      "power_sufficient": false,
+      "verdict": "UNDERPOWERED"
+    }
+  }
+}

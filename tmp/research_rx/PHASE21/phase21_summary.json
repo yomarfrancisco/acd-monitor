@@ -1,0 +1,40 @@
+{
+  "persistence_probability_Pp": 0.0,
+  "volatility_event_count_N": 0,
+  "mean_delta_H": 0.0,
+  "std_delta_H": 0.0,
+  "entropy_p_value": 1.0,
+  "entropy_significant": false,
+  "transition_matrix": {
+    "COINBASE": {
+      "COINBASE": 0.0,
+      "BINANCE": 0.0,
+      "BYBITSPOT": 0.0,
+      "BITGET": 0.0
+    },
+    "BINANCE": {
+      "COINBASE": 0.0,
+      "BINANCE": 0.0,
+      "BYBITSPOT": 0.0,
+      "BITGET": 0.0
+    },
+    "BYBITSPOT": {
+      "COINBASE": 0.0,
+      "BINANCE": 0.0,
+      "BYBITSPOT": 0.0,
+      "BITGET": 0.0
+    },
+    "BITGET": {
+      "COINBASE": 0.0,
+      "BINANCE": 0.0,
+      "BYBITSPOT": 0.0,
+      "BITGET": 0.0
+    }
+  },
+  "top_venues_by_stability": {
+    "COINBASE": 0.0,
+    "BINANCE": 0.0,
+    "BYBITSPOT": 0.0,
+    "BITGET": 0.0
+  }
+}

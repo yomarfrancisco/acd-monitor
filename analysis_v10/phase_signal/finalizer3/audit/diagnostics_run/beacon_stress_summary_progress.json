@@ -1,0 +1,20 @@
+{
+  "total_trades_per_venue_date": 13272805,
+  "total_venue_date_combinations": 28,
+  "configurations_tested": 0,
+  "configurations_total": 0,
+  "highest_yield_config": {
+    "window_s": null,
+    "band_pct": null,
+    "micro_quantile": null,
+    "rev_bps_limit": null,
+    "events_with_beacons": 0,
+    "beacons_found": 0,
+    "median_trades": 0,
+    "iqr": 0,
+    "zeros": 0
+  },
+  "recommendation": "DATA_GAP_OR_TOO_QUIET_WEEK",
+  "memory_peak_MB": 69.203125,
+  "elapsed_total_sec": 0.0013287067413330078
+}

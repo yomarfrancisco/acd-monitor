@@ -1,0 +1,20 @@
+# Phase 51K.6H-REARCH(A)-FIX — Staggered Decision, Correct Guard BOM Hash
+
+SHA256: 7e38d63b87c3a1a7481e022bae92eb607f066fa12eafc9156a5549c1334dadf1
+
+Content: Phase 51K.6H-REARCH(A)-FIX — Staggered Decision, Correct Guard Results
+Timestamp: 2025-10-12T21:10:17.420084
+Seed: 42
+Contract: τ=3h, H=6h (CORRECTED)
+Gates: 5/5
+Inputs: 6
+Hashes: Verified
+
+## Input Hashes
+
+- metrics_calibrated: d363e85f7b5592c0...
+- ops_thresholds: 46846249769b5075...
+- conformal_summary: 306c7f2cfa4f1166...
+- cv_manifest: 160314c6ef1c7f23...
+- labels_summary: 26b1e2c924f5a32c...
+- css_timeline: 570a6309326c425e...

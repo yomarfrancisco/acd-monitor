@@ -1,0 +1,33 @@
+Phase 45K-CAUSAL-REINTEGRATION Log
+Started: 2025-10-12T09:54:24.793150Z
+==================================================
+
+[2025-10-12T09:54:24.793737] 🔍 Starting causal reintegration analysis...
+[2025-10-12T09:54:24.793779] 📊 Loading causal reintegration inputs...
+[2025-10-12T09:54:24.880012]   ✅ Loaded driver correlations: 192 records
+[2025-10-12T09:54:24.885236]   ✅ Loaded CSS timeline: 2332 records
+[2025-10-12T09:54:24.886229]   ✅ Loaded calibration parquet: 4 records
+[2025-10-12T09:54:24.886547]   ✅ Loaded hypothesis metrics: 4 categories
+[2025-10-12T09:54:24.906516]   ✅ Loaded invariance metrics: 8 categories
+[2025-10-12T09:54:24.906729]   ✅ Loaded 5 input categories with 5 hash verifications
+[2025-10-12T09:54:24.906788] ⏰ Constructing lagged features for causal analysis...
+[2025-10-12T09:54:24.912445]   📊 Selected top drivers: ['price_volatility', 'leadership_pressure', 'volume_change', 'css_std_across_venues', 'cross_venue_correlation', 'asia_session', 'us_session']
+[2025-10-12T09:54:24.954088]   ✅ Lagged features constructed for 4 venues
+[2025-10-12T09:54:24.954314]   ✅ Granger causality tests completed for 28 driver-venue combinations
+[2025-10-12T09:54:24.954481] 🔗 Estimating causal matrix with partial correlations...
+[2025-10-12T09:54:24.955235]   ✅ Causal matrix estimated for 7 drivers
+[2025-10-12T09:54:24.955345] 🔄 Detecting feedback loops in causal relationships...
+[2025-10-12T09:54:24.955399]   ✅ Feedback loop detection complete:
+[2025-10-12T09:54:24.955442]     - Strong feedback loops: 6
+[2025-10-12T09:54:24.955486]     - Positive feedback loops: 0
+[2025-10-12T09:54:24.955522]     - Negative feedback loops: 0
+[2025-10-12T09:54:24.955558] 📊 Creating inline Markdown visualizations...
+[2025-10-12T09:54:24.955900]   ✅ Inline visualizations created:
+[2025-10-12T09:54:24.955944]     - Causal heatmap: /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/reports/causal/causal_heatmap.md
+[2025-10-12T09:54:24.955976]     - Feedback paths: /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/reports/causal/feedback_paths.md
+[2025-10-12T09:54:24.956013] 📝 Generating narrative output for causal analysis...
+[2025-10-12T09:54:24.956054]   ✅ Narrative output generated: 18 lines
+[2025-10-12T09:54:24.956086] 💾 Saving causal matrix JSON...
+[2025-10-12T09:54:24.956371]   ✅ Causal matrix JSON saved: /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/reports/causal/driver_causal_matrix.json
+[2025-10-12T09:54:24.956414] ✅ Causal reintegration analysis complete in 0.2 seconds
+[2025-10-12T09:54:24.956442] 🎯 Final status: CAUSAL_OK=true

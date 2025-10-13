@@ -1,0 +1,98 @@
+[
+  {
+    "edge": "BINANCE->COINBASE",
+    "original_tsi": 0.06590666925597478,
+    "null_tsi_mean": 0.20886308651953148,
+    "null_tsi_95th": 0.461075349196599,
+    "tsi_empirical_p": 0.8706467661691543,
+    "n_permutations": 200
+  },
+  {
+    "edge": "BINANCE->BYBITSPOT",
+    "original_tsi": 0.001161364688183221,
+    "null_tsi_mean": 0.21980020736751057,
+    "null_tsi_95th": 0.45982981537196704,
+    "tsi_empirical_p": 1.0,
+    "n_permutations": 200
+  },
+  {
+    "edge": "BINANCE->BITGET",
+    "original_tsi": 0.021049428409005762,
+    "null_tsi_mean": 0.2090180396584492,
+    "null_tsi_95th": 0.4342094808991409,
+    "tsi_empirical_p": 1.0,
+    "n_permutations": 200
+  },
+  {
+    "edge": "COINBASE->BINANCE",
+    "original_tsi": 0.06590666925597478,
+    "null_tsi_mean": 0.19401892540626536,
+    "null_tsi_95th": 0.4150763721967653,
+    "tsi_empirical_p": 0.9104477611940298,
+    "n_permutations": 200
+  },
+  {
+    "edge": "COINBASE->BYBITSPOT",
+    "original_tsi": 0.004941258722046218,
+    "null_tsi_mean": 0.20178866008170387,
+    "null_tsi_95th": 0.4326261295376448,
+    "tsi_empirical_p": 1.0,
+    "n_permutations": 200
+  },
+  {
+    "edge": "COINBASE->BITGET",
+    "original_tsi": 0.005341125902847785,
+    "null_tsi_mean": 0.19485069325928223,
+    "null_tsi_95th": 0.41850051665387566,
+    "tsi_empirical_p": 0.9950248756218906,
+    "n_permutations": 200
+  },
+  {
+    "edge": "BYBITSPOT->BINANCE",
+    "original_tsi": 0.001161364688183221,
+    "null_tsi_mean": 0.1859116500925952,
+    "null_tsi_95th": 0.39531934650490846,
+    "tsi_empirical_p": 1.0,
+    "n_permutations": 200
+  },
+  {
+    "edge": "BYBITSPOT->COINBASE",
+    "original_tsi": 0.004941258722046218,
+    "null_tsi_mean": 0.20641637361061885,
+    "null_tsi_95th": 0.4131075815524172,
+    "tsi_empirical_p": 1.0,
+    "n_permutations": 200
+  },
+  {
+    "edge": "BYBITSPOT->BITGET",
+    "original_tsi": 0.004259810151150456,
+    "null_tsi_mean": 0.20521945021122254,
+    "null_tsi_95th": 0.42170829076573696,
+    "tsi_empirical_p": 1.0,
+    "n_permutations": 200
+  },
+  {
+    "edge": "BITGET->BINANCE",
+    "original_tsi": 0.021049428409005765,
+    "null_tsi_mean": 0.20304865421859858,
+    "null_tsi_95th": 0.43977358222766894,
+    "tsi_empirical_p": 0.9900497512437811,
+    "n_permutations": 200
+  },
+  {
+    "edge": "BITGET->COINBASE",
+    "original_tsi": 0.005341125902847785,
+    "null_tsi_mean": 0.18866156506656032,
+    "null_tsi_95th": 0.3873236249846861,
+    "tsi_empirical_p": 1.0,
+    "n_permutations": 200
+  },
+  {
+    "edge": "BITGET->BYBITSPOT",
+    "original_tsi": 0.004259810151150456,
+    "null_tsi_mean": 0.19376479644466088,
+    "null_tsi_95th": 0.41444424584979944,
+    "tsi_empirical_p": 1.0,
+    "n_permutations": 200
+  }
+]

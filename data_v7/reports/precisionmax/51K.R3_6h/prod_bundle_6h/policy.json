@@ -1,0 +1,21 @@
+{
+  "horizon": "6h",
+  "champion_model": "GradientBoosting",
+  "staggered_decision": {
+    "tau_hours": 3,
+    "epsilon_minutes": 1,
+    "persistence_hours": 2,
+    "confirmation_method": "motif_m1"
+  },
+  "environment_cutoffs": {
+    "method": "hierarchical_mondrian",
+    "min_positives": 20,
+    "fallback_levels": [
+      "session\u00d7weekend\u00d7venue",
+      "session\u00d7weekend",
+      "session",
+      "global"
+    ]
+  },
+  "status": "PRODUCTION_READY"
+}

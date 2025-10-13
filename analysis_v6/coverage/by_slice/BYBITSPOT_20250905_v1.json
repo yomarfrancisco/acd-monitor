@@ -1,0 +1,13 @@
+{
+  "venue": "BYBITSPOT",
+  "date": "20250905",
+  "total_trades": 571914,
+  "first_ts": 1757030400552000000,
+  "last_ts": 1757116798571000000,
+  "median_gap_ms": 0.0,
+  "p99_gap_ms": 2838.0,
+  "gaps_gt_1s": 26899,
+  "gaps_gt_10s": 116,
+  "dup_rate_pct": 22.082773616420663,
+  "status": "SUCCESS"
+}

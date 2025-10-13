@@ -1,0 +1,47 @@
+{
+  "run_id": "ACD_WEEK_EXT_TESTS_2025W36_CHECKPOINTS",
+  "lags_periods": [
+    1,
+    3,
+    6
+  ],
+  "sessions": {
+    "Tokyo": "00:00-08:00 UTC",
+    "London": "08:00-16:00 UTC",
+    "NewYork": "13:00-21:00 UTC",
+    "Sydney": "21:00-05:00 UTC"
+  },
+  "placebo": {
+    "n_shuffles": 100,
+    "seed_per_day": true,
+    "seed_format": "YYYYMMDD"
+  },
+  "bh_alpha": [
+    0.05,
+    0.1
+  ],
+  "ram_cap_mb": 500,
+  "frequencies": [
+    "1S",
+    "2S",
+    "5S",
+    "10S",
+    "15S",
+    "30S"
+  ],
+  "venues": [
+    "BINANCE",
+    "COINBASE",
+    "BYBITSPOT",
+    "BITGET"
+  ],
+  "days": [
+    "2025-09-01",
+    "2025-09-02",
+    "2025-09-03",
+    "2025-09-04",
+    "2025-09-05",
+    "2025-09-06",
+    "2025-09-07"
+  ]
+}

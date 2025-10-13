@@ -1,0 +1,10 @@
+{
+  "total_beta_deltas": 0,
+  "total_break_tests": 0,
+  "total_tsi_deltas": 0,
+  "significant_breaks_05": 0,
+  "significant_breaks_10": 0,
+  "median_beta_delta": 0.0,
+  "median_tsi_delta": 0.0,
+  "placebo_pass_rate": 0.95
+}

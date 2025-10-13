@@ -1,0 +1,73 @@
+{
+  "day": "2025-09-01",
+  "analysis_type": "granular_env",
+  "frequencies": [
+    "1s",
+    "2s",
+    "5s"
+  ],
+  "sessions": [
+    "Tokyo",
+    "London",
+    "NewYork",
+    "Sydney"
+  ],
+  "persistence_analysis": {
+    "1s": {
+      "n_edges": 0,
+      "edges": []
+    },
+    "2s": {
+      "n_edges": 0,
+      "edges": []
+    },
+    "5s": {
+      "n_edges": 12,
+      "edges": [
+        "BYBITSPOT->BINANCE",
+        "BYBITSPOT->COINBASE",
+        "BITGET->COINBASE",
+        "BITGET->BYBITSPOT",
+        "COINBASE->BITGET",
+        "COINBASE->BYBITSPOT",
+        "BITGET->BINANCE",
+        "BINANCE->BYBITSPOT",
+        "COINBASE->BINANCE",
+        "BYBITSPOT->BITGET",
+        "BINANCE->COINBASE",
+        "BINANCE->BITGET"
+      ]
+    }
+  },
+  "session_coverage": {
+    "1s": {
+      "total_obs": 86400,
+      "session_counts": {
+        "Tokyo": 21600,
+        "London": 21600,
+        "NewYork": 21600,
+        "Sydney": 21600
+      }
+    },
+    "2s": {
+      "total_obs": 43200,
+      "session_counts": {
+        "Tokyo": 10800,
+        "London": 10800,
+        "NewYork": 10800,
+        "Sydney": 10800
+      }
+    },
+    "5s": {
+      "total_obs": 16706,
+      "session_counts": {
+        "Tokyo": 16706,
+        "London": 0,
+        "NewYork": 0,
+        "Sydney": 0
+      }
+    }
+  },
+  "memory_peak_mb": 179.984375,
+  "status": "ACD_DAY1_GRANULAR_ENV_PASS"
+}

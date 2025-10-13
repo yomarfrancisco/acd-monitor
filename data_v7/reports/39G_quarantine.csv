@@ -1,0 +1,3 @@
+path,fname,bytes,sha256,venue,date,pair,week_label
+/Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w6/IDDI-27577+SC-COINBASE_SPOT_BTC_EUR+S-BTC__002DEUR.csv.gz,IDDI-27577+SC-COINBASE_SPOT_BTC_EUR+S-BTC__002DEUR.csv.gz,1644179,1d0ee59da652f6953d3ff7a55b31fe5c010c4e74a4b8834103cd368d50fd1765,COINBASE,20250719,BTC,W-6
+/Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w6/IDDI-27579+SC-COINBASE_SPOT_BTC_GBP+S-BTC__002DGBP.csv.gz,IDDI-27579+SC-COINBASE_SPOT_BTC_GBP+S-BTC__002DGBP.csv.gz,974344,f5bd26eb1657c54e408717cdccde5d6b372ca381c4000c9d7ca221fe8d653475,COINBASE,20250719,BTC,W-6

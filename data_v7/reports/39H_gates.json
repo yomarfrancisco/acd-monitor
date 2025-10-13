@@ -1,0 +1,16 @@
+{
+  "w7_coinbase": {
+    "condition": "\u2265 5/7 dates filled",
+    "actual": "0/7",
+    "passed": false
+  },
+  "w6_aggregate": {
+    "condition": "\u2265 20/28 slots",
+    "actual": "0/28",
+    "passed": false
+  },
+  "overall": {
+    "status": "FAIL",
+    "timestamp": "2025-10-11T14:24:49.084076Z"
+  }
+}

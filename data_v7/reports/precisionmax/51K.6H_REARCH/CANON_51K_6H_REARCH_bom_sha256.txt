@@ -1,0 +1,20 @@
+# Phase 51K.6H-REARCH(A) — STAGGERED-DECISION CONTRACT BOM Hash
+
+SHA256: 4091fc704dbbc1032b601f61c094f3dc5682c419f2eb0a32a87f4fc209faf75d
+
+Content: Phase 51K.6H-REARCH(A) — STAGGERED-DECISION CONTRACT Results
+Timestamp: 2025-10-12T21:02:45.297626
+Seed: 42
+Contract: τ=3h, H=6h
+Gates: 4/5
+Inputs: 6
+Hashes: Verified
+
+## Input Hashes
+
+- metrics_calibrated: d363e85f7b5592c0...
+- ops_thresholds: 46846249769b5075...
+- conformal_summary: 306c7f2cfa4f1166...
+- cv_manifest: 160314c6ef1c7f23...
+- labels_summary: 26b1e2c924f5a32c...
+- css_timeline: 570a6309326c425e...

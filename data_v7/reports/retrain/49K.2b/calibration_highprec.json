@@ -1,0 +1,332 @@
+{
+  "fold_0": {
+    "6h": {
+      "Logistic_L2": {
+        "ece_10_bins": 0.0,
+        "ece_20_bins": 0.0,
+        "ece_50_bins": 0.0,
+        "brier": 0.09344,
+        "nll": 0.308412,
+        "hosmer_lemeshow_p": 1.0,
+        "hosmer_lemeshow_chi2": 0.0,
+        "spiegelhalter_z": 0.0
+      },
+      "Logistic_ElasticNet": {
+        "ece_10_bins": 0.0,
+        "ece_20_bins": 0.0,
+        "ece_50_bins": 0.0,
+        "brier": 0.088229,
+        "nll": 0.297031,
+        "hosmer_lemeshow_p": 1.0,
+        "hosmer_lemeshow_chi2": 0.0,
+        "spiegelhalter_z": 0.0
+      },
+      "GradientBoosting": {
+        "ece_10_bins": 0.0,
+        "ece_20_bins": 0.0,
+        "ece_50_bins": 0.0,
+        "brier": 0.086419,
+        "nll": 0.2862,
+        "hosmer_lemeshow_p": 1.0,
+        "hosmer_lemeshow_chi2": 0.0,
+        "spiegelhalter_z": 0.0
+      }
+    },
+    "12h": {
+      "Logistic_L2": {
+        "ece_10_bins": 0.0,
+        "ece_20_bins": 0.0,
+        "ece_50_bins": 0.0,
+        "brier": 0.107999,
+        "nll": 0.335097,
+        "hosmer_lemeshow_p": 1.0,
+        "hosmer_lemeshow_chi2": 0.0,
+        "spiegelhalter_z": 0.0
+      },
+      "Logistic_ElasticNet": {
+        "ece_10_bins": 0.0,
+        "ece_20_bins": 0.0,
+        "ece_50_bins": 0.0,
+        "brier": 0.106218,
+        "nll": 0.347095,
+        "hosmer_lemeshow_p": 1.0,
+        "hosmer_lemeshow_chi2": 0.0,
+        "spiegelhalter_z": -0.0
+      },
+      "GradientBoosting": {
+        "ece_10_bins": 0.0,
+        "ece_20_bins": 0.0,
+        "ece_50_bins": 0.0,
+        "brier": 0.112129,
+        "nll": 0.344312,
+        "hosmer_lemeshow_p": 1.0,
+        "hosmer_lemeshow_chi2": 0.0,
+        "spiegelhalter_z": 0.0
+      }
+    }
+  },
+  "fold_1": {
+    "6h": {
+      "Logistic_L2": {
+        "ece_10_bins": 0.0,
+        "ece_20_bins": 0.0,
+        "ece_50_bins": 0.0,
+        "brier": 0.098587,
+        "nll": 0.321194,
+        "hosmer_lemeshow_p": 1.0,
+        "hosmer_lemeshow_chi2": 0.0,
+        "spiegelhalter_z": 0.0
+      },
+      "Logistic_ElasticNet": {
+        "ece_10_bins": 0.0,
+        "ece_20_bins": 0.0,
+        "ece_50_bins": 0.0,
+        "brier": 0.089981,
+        "nll": 0.293075,
+        "hosmer_lemeshow_p": 1.0,
+        "hosmer_lemeshow_chi2": 0.0,
+        "spiegelhalter_z": 0.0
+      },
+      "GradientBoosting": {
+        "ece_10_bins": 0.0,
+        "ece_20_bins": 0.0,
+        "ece_50_bins": 0.0,
+        "brier": 0.083306,
+        "nll": 0.266337,
+        "hosmer_lemeshow_p": 1.0,
+        "hosmer_lemeshow_chi2": 0.0,
+        "spiegelhalter_z": -0.0
+      }
+    },
+    "12h": {
+      "Logistic_L2": {
+        "ece_10_bins": 0.0,
+        "ece_20_bins": 0.0,
+        "ece_50_bins": 0.0,
+        "brier": 0.089688,
+        "nll": 0.279985,
+        "hosmer_lemeshow_p": 1.0,
+        "hosmer_lemeshow_chi2": 0.0,
+        "spiegelhalter_z": 0.0
+      },
+      "Logistic_ElasticNet": {
+        "ece_10_bins": 0.0,
+        "ece_20_bins": 0.0,
+        "ece_50_bins": 0.0,
+        "brier": 0.084388,
+        "nll": 0.261696,
+        "hosmer_lemeshow_p": 1.0,
+        "hosmer_lemeshow_chi2": 0.0,
+        "spiegelhalter_z": 0.0
+      },
+      "GradientBoosting": {
+        "ece_10_bins": 0.0,
+        "ece_20_bins": 0.0,
+        "ece_50_bins": 0.0,
+        "brier": 0.093149,
+        "nll": 0.286152,
+        "hosmer_lemeshow_p": 1.0,
+        "hosmer_lemeshow_chi2": 0.0,
+        "spiegelhalter_z": 0.0
+      }
+    }
+  },
+  "fold_2": {
+    "6h": {
+      "Logistic_L2": {
+        "ece_10_bins": 0.0,
+        "ece_20_bins": 0.0,
+        "ece_50_bins": 0.0,
+        "brier": 0.09017,
+        "nll": 0.277474,
+        "hosmer_lemeshow_p": 1.0,
+        "hosmer_lemeshow_chi2": 0.0,
+        "spiegelhalter_z": 0.0
+      },
+      "Logistic_ElasticNet": {
+        "ece_10_bins": 0.0,
+        "ece_20_bins": 0.0,
+        "ece_50_bins": 0.0,
+        "brier": 0.087398,
+        "nll": 0.278314,
+        "hosmer_lemeshow_p": 1.0,
+        "hosmer_lemeshow_chi2": 0.0,
+        "spiegelhalter_z": 0.0
+      },
+      "GradientBoosting": {
+        "ece_10_bins": 0.0,
+        "ece_20_bins": 0.0,
+        "ece_50_bins": 0.0,
+        "brier": 0.087972,
+        "nll": 0.277837,
+        "hosmer_lemeshow_p": 1.0,
+        "hosmer_lemeshow_chi2": 0.0,
+        "spiegelhalter_z": -0.0
+      }
+    },
+    "12h": {
+      "Logistic_L2": {
+        "ece_10_bins": 0.0,
+        "ece_20_bins": 0.0,
+        "ece_50_bins": 0.0,
+        "brier": 0.07048,
+        "nll": 0.233996,
+        "hosmer_lemeshow_p": 1.0,
+        "hosmer_lemeshow_chi2": 0.0,
+        "spiegelhalter_z": -0.0
+      },
+      "Logistic_ElasticNet": {
+        "ece_10_bins": 0.0,
+        "ece_20_bins": 0.0,
+        "ece_50_bins": 0.0,
+        "brier": 0.066233,
+        "nll": 0.221601,
+        "hosmer_lemeshow_p": 1.0,
+        "hosmer_lemeshow_chi2": 0.0,
+        "spiegelhalter_z": 0.0
+      },
+      "GradientBoosting": {
+        "ece_10_bins": 0.0,
+        "ece_20_bins": 0.0,
+        "ece_50_bins": 0.0,
+        "brier": 0.068653,
+        "nll": 0.224918,
+        "hosmer_lemeshow_p": 1.0,
+        "hosmer_lemeshow_chi2": 0.0,
+        "spiegelhalter_z": 0.0
+      }
+    }
+  },
+  "fold_3": {
+    "6h": {
+      "Logistic_L2": {
+        "ece_10_bins": 0.0,
+        "ece_20_bins": 0.0,
+        "ece_50_bins": 0.0,
+        "brier": 0.087265,
+        "nll": 0.27694,
+        "hosmer_lemeshow_p": 1.0,
+        "hosmer_lemeshow_chi2": 0.0,
+        "spiegelhalter_z": 0.0
+      },
+      "Logistic_ElasticNet": {
+        "ece_10_bins": 0.0,
+        "ece_20_bins": 0.0,
+        "ece_50_bins": 0.0,
+        "brier": 0.072458,
+        "nll": 0.216209,
+        "hosmer_lemeshow_p": 1.0,
+        "hosmer_lemeshow_chi2": 0.0,
+        "spiegelhalter_z": 0.0
+      },
+      "GradientBoosting": {
+        "ece_10_bins": 0.0,
+        "ece_20_bins": 0.0,
+        "ece_50_bins": 0.0,
+        "brier": 0.069232,
+        "nll": 0.220069,
+        "hosmer_lemeshow_p": 1.0,
+        "hosmer_lemeshow_chi2": 0.0,
+        "spiegelhalter_z": 0.0
+      }
+    },
+    "12h": {
+      "Logistic_L2": {
+        "ece_10_bins": 0.0,
+        "ece_20_bins": 0.0,
+        "ece_50_bins": 0.0,
+        "brier": 0.084851,
+        "nll": 0.26397,
+        "hosmer_lemeshow_p": 1.0,
+        "hosmer_lemeshow_chi2": 0.0,
+        "spiegelhalter_z": -0.0
+      },
+      "Logistic_ElasticNet": {
+        "ece_10_bins": 0.0,
+        "ece_20_bins": 0.0,
+        "ece_50_bins": 0.0,
+        "brier": 0.075473,
+        "nll": 0.231547,
+        "hosmer_lemeshow_p": 1.0,
+        "hosmer_lemeshow_chi2": 0.0,
+        "spiegelhalter_z": 0.0
+      },
+      "GradientBoosting": {
+        "ece_10_bins": 0.0,
+        "ece_20_bins": 0.0,
+        "ece_50_bins": 0.0,
+        "brier": 0.088801,
+        "nll": 0.264268,
+        "hosmer_lemeshow_p": 1.0,
+        "hosmer_lemeshow_chi2": 0.0,
+        "spiegelhalter_z": 0.0
+      }
+    }
+  },
+  "fold_4": {
+    "6h": {
+      "Logistic_L2": {
+        "ece_10_bins": 0.0,
+        "ece_20_bins": 0.0,
+        "ece_50_bins": 0.0,
+        "brier": 0.068997,
+        "nll": 0.237587,
+        "hosmer_lemeshow_p": 1.0,
+        "hosmer_lemeshow_chi2": 0.0,
+        "spiegelhalter_z": 0.0
+      },
+      "Logistic_ElasticNet": {
+        "ece_10_bins": 0.0,
+        "ece_20_bins": 0.0,
+        "ece_50_bins": 0.0,
+        "brier": 0.058838,
+        "nll": 0.192246,
+        "hosmer_lemeshow_p": 1.0,
+        "hosmer_lemeshow_chi2": 0.0,
+        "spiegelhalter_z": -0.0
+      },
+      "GradientBoosting": {
+        "ece_10_bins": 0.0,
+        "ece_20_bins": 0.0,
+        "ece_50_bins": 0.0,
+        "brier": 0.059819,
+        "nll": 0.201772,
+        "hosmer_lemeshow_p": 1.0,
+        "hosmer_lemeshow_chi2": 0.0,
+        "spiegelhalter_z": 0.0
+      }
+    },
+    "12h": {
+      "Logistic_L2": {
+        "ece_10_bins": 0.0,
+        "ece_20_bins": 0.0,
+        "ece_50_bins": 0.0,
+        "brier": 0.076537,
+        "nll": 0.250081,
+        "hosmer_lemeshow_p": 1.0,
+        "hosmer_lemeshow_chi2": 0.0,
+        "spiegelhalter_z": 0.0
+      },
+      "Logistic_ElasticNet": {
+        "ece_10_bins": 0.0,
+        "ece_20_bins": 0.0,
+        "ece_50_bins": 0.0,
+        "brier": 0.064827,
+        "nll": 0.219213,
+        "hosmer_lemeshow_p": 1.0,
+        "hosmer_lemeshow_chi2": 0.0,
+        "spiegelhalter_z": -0.0
+      },
+      "GradientBoosting": {
+        "ece_10_bins": 0.0,
+        "ece_20_bins": 0.0,
+        "ece_50_bins": 0.0,
+        "brier": 0.070598,
+        "nll": 0.229418,
+        "hosmer_lemeshow_p": 1.0,
+        "hosmer_lemeshow_chi2": 0.0,
+        "spiegelhalter_z": 0.0
+      }
+    }
+  }
+}

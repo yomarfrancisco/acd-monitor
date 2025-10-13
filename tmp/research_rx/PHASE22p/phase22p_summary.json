@@ -1,0 +1,92 @@
+{
+  "volatility_buckets": {
+    "high_count": 45,
+    "low_count": 45,
+    "normal_count": 132,
+    "insufficient_count": 186
+  },
+  "leadership_differences": [
+    {
+      "venue": "COINBASE",
+      "mean_high": 0.26296296296296295,
+      "mean_low": 0.21052503052503052,
+      "delta_L": 0.05243793243793243,
+      "ci_lower": -0.039035436425249065,
+      "ci_upper": 0.14391130130111393,
+      "t_statistic": 1.123587650216263,
+      "p_value": 0.2643195723972322,
+      "hl_estimate": 0.033333333333333354,
+      "n_high": 45,
+      "n_low": 45
+    },
+    {
+      "venue": "BINANCE",
+      "mean_high": 0.27603174603174596,
+      "mean_low": 0.21859517026183692,
+      "delta_L": 0.05743657576990904,
+      "ci_lower": -0.026567752959299168,
+      "ci_upper": 0.14144090449911725,
+      "t_statistic": 1.3401177083613702,
+      "p_value": 0.18372583393241754,
+      "hl_estimate": 0.0,
+      "n_high": 45,
+      "n_low": 45
+    },
+    {
+      "venue": "BYBITSPOT",
+      "mean_high": 0.2157142857142857,
+      "mean_low": 0.3377384344051011,
+      "delta_L": -0.1220241486908154,
+      "ci_lower": -0.2134371798742715,
+      "ci_upper": -0.030611117507359314,
+      "t_statistic": -2.6163373901694076,
+      "p_value": 0.010490522701947542,
+      "hl_estimate": -0.1333333333333333,
+      "n_high": 45,
+      "n_low": 45
+    },
+    {
+      "venue": "BITGET",
+      "mean_high": 0.24529100529100528,
+      "mean_low": 0.2331413648080315,
+      "delta_L": 0.01214964048297379,
+      "ci_lower": -0.07973131456501902,
+      "ci_upper": 0.1040305955309666,
+      "t_statistic": 0.25917553136218563,
+      "p_value": 0.7961310286767603,
+      "hl_estimate": 0.0,
+      "n_high": 45,
+      "n_low": 45
+    },
+    {
+      "venue": "ENTROPY",
+      "mean_high": 0.9568175396468334,
+      "mean_low": 0.8766198819847731,
+      "delta_L": 0.08019765766206022,
+      "ci_lower": -0.04152147920095642,
+      "ci_upper": 0.20191679452507685,
+      "t_statistic": 1.2913943778170034,
+      "p_value": 0.20033715956940637,
+      "hl_estimate": 0.02320987654320983,
+      "n_high": 45,
+      "n_low": 45
+    }
+  ],
+  "placebo_test": {
+    "n_iterations": 100,
+    "empirical_p_values": {
+      "COINBASE": 1.0,
+      "BINANCE": 1.0,
+      "BYBITSPOT": 1.0,
+      "BITGET": 1.0,
+      "ENTROPY": 1.0
+    }
+  },
+  "guardrail_log": {
+    "memory_peak_mb": 123.390625,
+    "timestamp_integrity": "VERIFIED",
+    "no_data_duplication": "CONFIRMED",
+    "no_schema_mutations": "CONFIRMED",
+    "real_data_only": "CONFIRMED"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "w7_coinbase": {
+    "condition": "\u2265 5/7 dates filled",
+    "actual": "0/7",
+    "passed": false
+  },
+  "w6_aggregate": {
+    "condition": "\u2265 20/28 slots OR \u2265 5/7 dates for \u2265 2 venues",
+    "actual_slots": "10/28",
+    "actual_venues_5plus": "0/4",
+    "passed": false
+  },
+  "w5_sanity": {
+    "condition": "\u2265 20/28 slots",
+    "actual": "24/28",
+    "passed": true
+  },
+  "overall": {
+    "status": "FAIL",
+    "timestamp": "2025-10-11T14:16:41.516512Z"
+  }
+}

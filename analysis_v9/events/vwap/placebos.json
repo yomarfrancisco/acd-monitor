@@ -1,0 +1,5 @@
+{
+  "n_permutations": 200,
+  "placebo_pass_rate": 0.95,
+  "method": "circular_shift_within_day"
+}

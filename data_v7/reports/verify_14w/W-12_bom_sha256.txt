@@ -1,0 +1,5 @@
+W-12 BOM SHA-256
+==============================
+Generated: 2025-10-11T18:38:47.380518Z
+Files: 21
+BOM SHA-256: 9fbeb5cf4a9ff9d4187d2c50fad219e0f4a5d28e50cebb23dba1e040da0a9df8

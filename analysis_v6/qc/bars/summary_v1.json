@@ -1,0 +1,42 @@
+{
+  "venue_week_stats": {
+    "BINANCE": {
+      "total_rows": 527282,
+      "empty_seconds": 0,
+      "identical_ohlc_ratio": 0.5501318909701314,
+      "aligned_seconds": 0,
+      "correlations": []
+    },
+    "COINBASE": {
+      "total_rows": 491987,
+      "empty_seconds": 0,
+      "identical_ohlc_ratio": 0.6559001651679207,
+      "aligned_seconds": 0,
+      "correlations": []
+    },
+    "BYBITSPOT": {
+      "total_rows": 331759,
+      "empty_seconds": 0,
+      "identical_ohlc_ratio": 0.811644701716919,
+      "aligned_seconds": 0,
+      "correlations": []
+    },
+    "BITGET": {
+      "total_rows": 353873,
+      "empty_seconds": 0,
+      "identical_ohlc_ratio": 0.786393015081075,
+      "aligned_seconds": 0,
+      "correlations": []
+    }
+  },
+  "day_exceptions": [],
+  "aligned_seconds_by_date": {
+    "20250901": 79.85652365389518,
+    "20250902": 77.54630704238429,
+    "20250903": 65.57968484509928,
+    "20250904": 61.54473343971672,
+    "20250905": 59.336405314371255,
+    "20250906": 53.364771410851986,
+    "20250907": 53.03039161804086
+  }
+}

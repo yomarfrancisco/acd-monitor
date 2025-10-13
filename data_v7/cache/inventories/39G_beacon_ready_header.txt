@@ -1,0 +1,6 @@
+BEACON-READY MANIFEST
+====================
+Total files: 61
+Total bytes: 1,919,097,510 (1830.2 MB)
+Created: 2025-10-11T14:16:41.519056Z
+Manifest: /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/cache/inventories/39G_beacon_ready.csv

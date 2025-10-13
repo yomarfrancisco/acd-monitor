@@ -1,0 +1,68 @@
+{
+  "day": "2025-09-01",
+  "analysis_type": "midfreq_sweep",
+  "frequencies": [
+    "10s",
+    "15s",
+    "30s"
+  ],
+  "sessions": [
+    "Tokyo",
+    "London",
+    "NewYork",
+    "Sydney"
+  ],
+  "memory_peak_mb": 145.359375,
+  "status": "ACD_DAY1_MIDFREQ_PASS",
+  "10s": {
+    "edges_tested": 0,
+    "edges_kept": 0,
+    "kept_by_session": {
+      "Tokyo": 0,
+      "London": 0,
+      "NewYork": 0,
+      "Sydney": 0
+    },
+    "mean_abs_beta": 0,
+    "median_abs_beta": 0,
+    "coverage_pct": 0.0,
+    "skipped_counts": {
+      "MISSING_DATA": 0,
+      "INVALID_ESTIMATE": 0
+    }
+  },
+  "15s": {
+    "edges_tested": 0,
+    "edges_kept": 0,
+    "kept_by_session": {
+      "Tokyo": 0,
+      "London": 0,
+      "NewYork": 0,
+      "Sydney": 0
+    },
+    "mean_abs_beta": 0,
+    "median_abs_beta": 0,
+    "coverage_pct": 0.0,
+    "skipped_counts": {
+      "MISSING_DATA": 0,
+      "INVALID_ESTIMATE": 0
+    }
+  },
+  "30s": {
+    "edges_tested": 0,
+    "edges_kept": 0,
+    "kept_by_session": {
+      "Tokyo": 0,
+      "London": 0,
+      "NewYork": 0,
+      "Sydney": 0
+    },
+    "mean_abs_beta": 0,
+    "median_abs_beta": 0,
+    "coverage_pct": 0.0,
+    "skipped_counts": {
+      "MISSING_DATA": 0,
+      "INVALID_ESTIMATE": 0
+    }
+  }
+}

@@ -1,0 +1,386 @@
+{
+  "timestamp": "2025-10-12T13:57:36.248838",
+  "seed": 42,
+  "n_folds": 2,
+  "n_features_original": 30,
+  "n_features_selected": 8,
+  "selected_features": [
+    "price_coord_drift",
+    "price_corr_lag_2",
+    "is_asia",
+    "css_diff_std_6h",
+    "is_weekend",
+    "css_diff_std_24h",
+    "price_corr_lag_1",
+    "price_corr_3h"
+  ],
+  "dropped_features": [
+    {
+      "feature": "ofi_variance_1h",
+      "reason": "high VIF",
+      "vif": 11.061043249375633
+    },
+    {
+      "feature": "price_last",
+      "reason": "high VIF",
+      "vif": Infinity
+    },
+    {
+      "feature": "ofi_variance_6h",
+      "reason": "high VIF",
+      "vif": 38.89662707316661
+    }
+  ],
+  "stability_metrics": {
+    "price_last": {
+      "mean_rank": 12.0,
+      "std_rank": 1.0,
+      "rsi": 0.9666666666666667,
+      "ranks": [
+        "13",
+        "11"
+      ]
+    },
+    "volume_sum": {
+      "mean_rank": 17.5,
+      "std_rank": 4.5,
+      "rsi": 0.85,
+      "ranks": [
+        "22",
+        "13"
+      ]
+    },
+    "ofi": {
+      "mean_rank": 18.0,
+      "std_rank": 2.0,
+      "rsi": 0.9333333333333333,
+      "ranks": [
+        "20",
+        "16"
+      ]
+    },
+    "vol_proxy": {
+      "mean_rank": 18.5,
+      "std_rank": 2.5,
+      "rsi": 0.9166666666666666,
+      "ranks": [
+        "16",
+        "21"
+      ]
+    },
+    "spread_proxy": {
+      "mean_rank": 23.0,
+      "std_rank": 3.0,
+      "rsi": 0.9,
+      "ranks": [
+        "26",
+        "20"
+      ]
+    },
+    "ofi_variance_1h": {
+      "mean_rank": 12.0,
+      "std_rank": 0.0,
+      "rsi": 1.0,
+      "ranks": [
+        "12",
+        "12"
+      ]
+    },
+    "ofi_variance_3h": {
+      "mean_rank": 13.0,
+      "std_rank": 11.0,
+      "rsi": 0.6333333333333333,
+      "ranks": [
+        "2",
+        "24"
+      ]
+    },
+    "ofi_variance_6h": {
+      "mean_rank": 12.5,
+      "std_rank": 2.5,
+      "rsi": 0.9166666666666666,
+      "ranks": [
+        "15",
+        "10"
+      ]
+    },
+    "adverse_selection_proxy": {
+      "mean_rank": 26.5,
+      "std_rank": 1.5,
+      "rsi": 0.95,
+      "ranks": [
+        "25",
+        "28"
+      ]
+    },
+    "price_impact": {
+      "mean_rank": 13.0,
+      "std_rank": 12.0,
+      "rsi": 0.6,
+      "ranks": [
+        "1",
+        "25"
+      ]
+    },
+    "price_corr_1h": {
+      "mean_rank": 13.0,
+      "std_rank": 10.0,
+      "rsi": 0.6666666666666667,
+      "ranks": [
+        "23",
+        "3"
+      ]
+    },
+    "price_corr_3h": {
+      "mean_rank": 14.0,
+      "std_rank": 3.0,
+      "rsi": 0.9,
+      "ranks": [
+        "11",
+        "17"
+      ]
+    },
+    "price_corr_6h": {
+      "mean_rank": 15.0,
+      "std_rank": 7.0,
+      "rsi": 0.7666666666666666,
+      "ranks": [
+        "8",
+        "22"
+      ]
+    },
+    "price_corr_lag_1": {
+      "mean_rank": 14.5,
+      "std_rank": 0.5,
+      "rsi": 0.9833333333333333,
+      "ranks": [
+        "14",
+        "15"
+      ]
+    },
+    "price_corr_lag_2": {
+      "mean_rank": 5.5,
+      "std_rank": 3.5,
+      "rsi": 0.8833333333333333,
+      "ranks": [
+        "9",
+        "2"
+      ]
+    },
+    "price_coord_drift": {
+      "mean_rank": 5.5,
+      "std_rank": 0.5,
+      "rsi": 0.9833333333333333,
+      "ranks": [
+        "5",
+        "6"
+      ]
+    },
+    "leadership_entropy_6h": {
+      "mean_rank": 17.5,
+      "std_rank": 10.5,
+      "rsi": 0.65,
+      "ranks": [
+        "28",
+        "7"
+      ]
+    },
+    "leadership_entropy_12h": {
+      "mean_rank": 22.0,
+      "std_rank": 1.0,
+      "rsi": 0.9666666666666667,
+      "ranks": [
+        "21",
+        "23"
+      ]
+    },
+    "css_diff_std_6h": {
+      "mean_rank": 7.5,
+      "std_rank": 1.5,
+      "rsi": 0.95,
+      "ranks": [
+        "6",
+        "9"
+      ]
+    },
+    "css_diff_std_12h": {
+      "mean_rank": 28.5,
+      "std_rank": 1.5,
+      "rsi": 0.95,
+      "ranks": [
+        "27",
+        "30"
+      ]
+    },
+    "css_diff_std_24h": {
+      "mean_rank": 9.5,
+      "std_rank": 8.5,
+      "rsi": 0.7166666666666667,
+      "ranks": [
+        "18",
+        "1"
+      ]
+    },
+    "css_volatility": {
+      "mean_rank": 15.0,
+      "std_rank": 11.0,
+      "rsi": 0.6333333333333333,
+      "ranks": [
+        "4",
+        "26"
+      ]
+    },
+    "hour_sin": {
+      "mean_rank": 23.5,
+      "std_rank": 5.5,
+      "rsi": 0.8166666666666667,
+      "ranks": [
+        "29",
+        "18"
+      ]
+    },
+    "hour_cos": {
+      "mean_rank": 15.0,
+      "std_rank": 12.0,
+      "rsi": 0.6,
+      "ranks": [
+        "3",
+        "27"
+      ]
+    },
+    "weekday_sin": {
+      "mean_rank": 18.0,
+      "std_rank": 1.0,
+      "rsi": 0.9666666666666667,
+      "ranks": [
+        "17",
+        "19"
+      ]
+    },
+    "weekday_cos": {
+      "mean_rank": 26.5,
+      "std_rank": 2.5,
+      "rsi": 0.9166666666666666,
+      "ranks": [
+        "24",
+        "29"
+      ]
+    },
+    "is_weekend": {
+      "mean_rank": 12.0,
+      "std_rank": 2.0,
+      "rsi": 0.9333333333333333,
+      "ranks": [
+        "10",
+        "14"
+      ]
+    },
+    "is_asia": {
+      "mean_rank": 7.5,
+      "std_rank": 0.5,
+      "rsi": 0.9833333333333333,
+      "ranks": [
+        "7",
+        "8"
+      ]
+    },
+    "is_europe": {
+      "mean_rank": 12.0,
+      "std_rank": 7.0,
+      "rsi": 0.7666666666666666,
+      "ranks": [
+        "19",
+        "5"
+      ]
+    },
+    "is_us": {
+      "mean_rank": 17.0,
+      "std_rank": 13.0,
+      "rsi": 0.5666666666666667,
+      "ranks": [
+        "30",
+        "4"
+      ]
+    }
+  },
+  "high_corr_pairs": [
+    {
+      "feature1": "price_last",
+      "feature2": "spread_proxy",
+      "pearson_r": 0.9999999097276726,
+      "spearman_r": 0.9999989444359566,
+      "max_r": 0.9999999097276726
+    },
+    {
+      "feature1": "ofi_variance_1h",
+      "feature2": "ofi_variance_3h",
+      "pearson_r": 0.9400233229990189,
+      "spearman_r": 0.9242326373442151,
+      "max_r": 0.9400233229990189
+    },
+    {
+      "feature1": "ofi_variance_1h",
+      "feature2": "ofi_variance_6h",
+      "pearson_r": 0.9274035191139913,
+      "spearman_r": 0.9103482326572329,
+      "max_r": 0.9274035191139913
+    },
+    {
+      "feature1": "ofi_variance_3h",
+      "feature2": "ofi_variance_6h",
+      "pearson_r": 0.9861629490293076,
+      "spearman_r": 0.9830814606976614,
+      "max_r": 0.9861629490293076
+    }
+  ],
+  "exact_correlations": [
+    {
+      "feature1": "price_last",
+      "feature2": "spread_proxy",
+      "pearson_r": 0.9999999097276726,
+      "explanation": "Perfect linear relationship - likely derived features"
+    }
+  ],
+  "aggregate_vif": {
+    "price_last": Infinity,
+    "volume_sum": 1.1379038568688356,
+    "ofi": 3.2687735520702823,
+    "vol_proxy": 1.0702213549524204,
+    "spread_proxy": Infinity,
+    "ofi_variance_1h": 11.061043249375633,
+    "ofi_variance_3h": 46.76311535050202,
+    "ofi_variance_6h": 38.89662707316661,
+    "adverse_selection_proxy": 1.1198811186215707,
+    "price_impact": 1.0727787055727216,
+    "price_corr_1h": 1.0799333767725363,
+    "price_corr_3h": 1.07173406479915,
+    "price_corr_6h": 1.0531277661471687,
+    "price_corr_lag_1": 1.0642496330262814,
+    "price_corr_lag_2": 1.0926318153916803,
+    "price_coord_drift": 1.0806727738521273,
+    "leadership_entropy_6h": 1.1113000835251445,
+    "leadership_entropy_12h": 1.0706764984675896,
+    "css_diff_std_6h": 1.0758683332566976,
+    "css_diff_std_12h": 1.055968476361333,
+    "css_diff_std_24h": 1.0754554943918317,
+    "css_volatility": 1.0903596715266088,
+    "hour_sin": 1.0582666671862453,
+    "hour_cos": 1.0933443338479822,
+    "weekday_sin": 1.061148576172637,
+    "weekday_cos": 1.0546591011540114,
+    "is_weekend": 1.107640380855952,
+    "is_asia": 1.0733644306138803,
+    "is_europe": 1.0963111641049337,
+    "is_us": 1.0863812700665405
+  },
+  "acceptance_gates": {
+    "gate1_folds_3_plus": false,
+    "gate2_mean_rsi_0_80": "True",
+    "gate3_max_corr_0_85": "True"
+  },
+  "final_status": {
+    "FEATURE_PRUNE_OK": false
+  },
+  "mean_rsi_retained": 0.9166666666666666,
+  "max_corr_retained": 0.0992264481942791
+}

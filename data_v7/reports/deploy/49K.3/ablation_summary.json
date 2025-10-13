@@ -1,0 +1,72 @@
+{
+  "6h": {
+    "champion_model": "GradientBoosting",
+    "feature_ablation": {
+      "price_coord_drift": {
+        "delta_auc": 0.0337,
+        "delta_pr_auc": 0.0295,
+        "importance_rank": 1
+      },
+      "price_corr_lag_1": {
+        "delta_auc": 0.0373,
+        "delta_pr_auc": 0.026,
+        "importance_rank": 2
+      },
+      "css_diff_std_6h": {
+        "delta_auc": 0.0316,
+        "delta_pr_auc": 0.0216,
+        "importance_rank": 3
+      },
+      "css_diff_std_24h": {
+        "delta_auc": 0.0306,
+        "delta_pr_auc": 0.0287,
+        "importance_rank": 4
+      },
+      "is_asia": {
+        "delta_auc": 0.036,
+        "delta_pr_auc": 0.0271,
+        "importance_rank": 5
+      },
+      "is_weekend": {
+        "delta_auc": 0.0302,
+        "delta_pr_auc": 0.0297,
+        "importance_rank": 6
+      }
+    }
+  },
+  "12h": {
+    "champion_model": "Logistic_ElasticNet",
+    "feature_ablation": {
+      "price_coord_drift": {
+        "delta_auc": 0.0383,
+        "delta_pr_auc": 0.0221,
+        "importance_rank": 1
+      },
+      "price_corr_lag_1": {
+        "delta_auc": 0.0318,
+        "delta_pr_auc": 0.0218,
+        "importance_rank": 2
+      },
+      "css_diff_std_6h": {
+        "delta_auc": 0.033,
+        "delta_pr_auc": 0.0252,
+        "importance_rank": 3
+      },
+      "css_diff_std_24h": {
+        "delta_auc": 0.0343,
+        "delta_pr_auc": 0.0229,
+        "importance_rank": 4
+      },
+      "is_asia": {
+        "delta_auc": 0.0361,
+        "delta_pr_auc": 0.0214,
+        "importance_rank": 5
+      },
+      "is_weekend": {
+        "delta_auc": 0.0329,
+        "delta_pr_auc": 0.0237,
+        "importance_rank": 6
+      }
+    }
+  }
+}

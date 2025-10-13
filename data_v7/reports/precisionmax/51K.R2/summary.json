@@ -1,0 +1,135 @@
+{
+  "overall_success": true,
+  "precision_passed": true,
+  "recall_passed": true,
+  "target_precision": 1.0,
+  "target_recall_6h": 0.8,
+  "target_recall_12h": 0.6,
+  "champions": {
+    "6h": "GradientBoosting",
+    "12h": "Logistic_ElasticNet"
+  },
+  "pre_registered_params": {
+    "K": 20,
+    "W": 6,
+    "persistence_hours": 2
+  },
+  "success_summary": {
+    "6h": {
+      "hierarchical_mondrian": {
+        "precision_ok": true,
+        "recall_ok": "True",
+        "median_precision": 1.0,
+        "median_recall": 1.0,
+        "median_fpr": 0.0,
+        "per_fold_precision": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "per_fold_recall": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "per_fold_fpr": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "survival_fusion": {
+        "precision_ok": true,
+        "recall_ok": "True",
+        "median_precision": 1.0,
+        "median_recall": 1.0,
+        "median_fpr": 0.0,
+        "per_fold_precision": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "per_fold_recall": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "per_fold_fpr": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    "12h": {
+      "hierarchical_mondrian": {
+        "precision_ok": true,
+        "recall_ok": "True",
+        "median_precision": 1.0,
+        "median_recall": 1.0,
+        "median_fpr": 0.0,
+        "per_fold_precision": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "per_fold_recall": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "per_fold_fpr": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "survival_fusion": {
+        "precision_ok": true,
+        "recall_ok": "True",
+        "median_precision": 1.0,
+        "median_recall": 1.0,
+        "median_fpr": 0.0,
+        "per_fold_precision": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "per_fold_recall": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "per_fold_fpr": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    }
+  }
+}

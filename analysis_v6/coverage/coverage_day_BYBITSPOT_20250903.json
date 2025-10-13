@@ -1,0 +1,12 @@
+{
+  "venue": "BYBITSPOT",
+  "date": "20250903",
+  "total_rows": 393324,
+  "unique_timestamps": 152713,
+  "min_time": "2025-09-03T00:00:00.590000",
+  "max_time": "2025-09-03T23:59:58.142000",
+  "duplicate_pct": 0.0,
+  "empty_seconds_pct": 42.68518518518519,
+  "seconds_with_data": 49520,
+  "status": "SUCCESS"
+}

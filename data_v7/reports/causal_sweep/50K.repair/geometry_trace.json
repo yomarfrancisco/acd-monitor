@@ -1,0 +1,15 @@
+{
+  "step_a_hourly_rebuild": {},
+  "counts": {
+    "after_resample": 2332,
+    "after_features": 2332,
+    "after_labels_6h": 2308,
+    "after_labels_12h": 2284
+  },
+  "drops_percent": {
+    "resample": 0.0,
+    "features": 0.0,
+    "labels_6h": 1.0291595197255576,
+    "labels_12h": 2.0583190394511153
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "venue": "BINANCE",
+  "date": "20250902",
+  "total_trades": 1287133,
+  "first_ts": 1756771200138000000,
+  "last_ts": 1756857599579000000,
+  "median_gap_ms": 0.0,
+  "p99_gap_ms": 1052.0,
+  "gaps_gt_1s": 14611,
+  "gaps_gt_10s": 0,
+  "dup_rate_pct": 50.42475471070229,
+  "status": "SUCCESS"
+}

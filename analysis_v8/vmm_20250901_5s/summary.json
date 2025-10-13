@@ -1,0 +1,18 @@
+{
+  "timestamp": "2025-10-05T15:17:59.899592",
+  "date": "20250901",
+  "venues": [
+    "BINANCE",
+    "COINBASE",
+    "BYBITSPOT",
+    "BITGET"
+  ],
+  "aligned_observations": 17260,
+  "baseline_tests": 36,
+  "placebo_tests": 0,
+  "confirmed_edges": 0,
+  "fragile_edges": 0,
+  "rejected_edges": 36,
+  "memory_peak_mb": 173.015625,
+  "status": "SUCCESS"
+}

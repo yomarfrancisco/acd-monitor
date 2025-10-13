@@ -1,0 +1,97 @@
+name: CI AWS Audit
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  ci-aws-audit:
+    name: CI AWS Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::514258695205:role/acd-ci-oidc
+          aws-region: us-east-1
+
+      - name: Python setup
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install boto3 pyarrow pandas
+
+      - name: Capture commit short sha
+        id: meta
+        run: |
+          echo "shortsha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Make output dir
+        run: |
+          OUT="analysis/infra/CI_AUDIT/${{ steps.meta.outputs.shortsha }}"
+          mkdir -p "$OUT"
+          echo "$OUT" > ci_audit_outdir.txt
+
+      - name: Audit environment surface
+        run: |
+          OUT=$(cat ci_audit_outdir.txt)
+          python3 scripts/ops/ci_audit_env.py "$OUT/ENV.json"
+
+      - name: Audit STS identity
+        run: |
+          OUT=$(cat ci_audit_outdir.txt)
+          aws sts get-caller-identity > "$OUT/STS.json"
+
+      - name: Audit S3 list
+        env:
+          S3_BUCKET: acd-monitor-snapshots
+        run: |
+          OUT=$(cat ci_audit_outdir.txt)
+          echo "Listing s3://$S3_BUCKET/snapshots/BTC-USD/ ..." | tee "$OUT/S3_LIST.txt"
+          aws s3 ls "s3://$S3_BUCKET/snapshots/BTC-USD/" --recursive --human-readable --summarize >> "$OUT/S3_LIST.txt"
+
+      - name: Audit Parquet head
+        env:
+          S3_BUCKET: acd-monitor-snapshots
+        run: |
+          OUT=$(cat ci_audit_outdir.txt)
+          python3 scripts/ops/ci_audit_parquet.py "$OUT/PARQUET_HEAD.json"
+
+      - name: Write summary
+        run: |
+          OUT=$(cat ci_audit_outdir.txt)
+          SUMMARY="$OUT/SUMMARY.md"
+          echo "# CI AWS Audit Summary" > "$SUMMARY"
+          echo "" >> "$SUMMARY"
+          echo "- Commit: \`${{ steps.meta.outputs.shortsha }}\`" >> "$SUMMARY"
+          echo "- Region: \`us-east-1\`" >> "$SUMMARY"
+          echo "- Bucket: \`acd-monitor-snapshots\`" >> "$SUMMARY"
+          echo "" >> "$SUMMARY"
+          echo "## Artifacts" >> "$SUMMARY"
+          echo "- ENV.json" >> "$SUMMARY"
+          echo "- STS.json" >> "$SUMMARY"
+          echo "- S3_LIST.txt" >> "$SUMMARY"
+          echo "- PARQUET_HEAD.json" >> "$SUMMARY"
+
+      - name: Commit artifacts
+        if: always()
+        run: |
+          OUT=$(cat ci_audit_outdir.txt)
+          git config user.name "ci-bot"
+          git config user.email "ci-bot@users.noreply.github.com"
+          git add "$OUT" || true
+          git commit -m "chore(ci-audit): add CI AWS audit artifacts for ${{ steps.meta.outputs.shortsha }}" || echo "No changes"
+          git push || true

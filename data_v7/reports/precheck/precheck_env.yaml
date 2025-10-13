@@ -1,0 +1,9 @@
+beacons_dir: /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/beacons
+canonical_dir: /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/canonical
+hostname: Ygors-MacBook-Air.local
+numpy_version: 1.25.2
+pandas_version: 2.1.3
+platform: macOS-13.3.1-arm64-arm-64bit
+python_version: 3.10.16 (main, Dec  3 2024, 17:27:57) [Clang 15.0.0 (clang-1500.1.0.2.5)]
+timestamp: '2025-10-12T07:55:52.641605'
+working_directory: /Users/ygorfrancisco/Desktop/acd-monitor

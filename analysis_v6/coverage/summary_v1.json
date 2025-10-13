@@ -1,0 +1,30 @@
+{
+  "BINANCE": {
+    "total_trades": 6193456,
+    "avg_dup_rate": 51.485197204971755,
+    "avg_median_gap_ms": 0.2857142857142857,
+    "total_gaps_gt_1s": 119972,
+    "days_processed": 7
+  },
+  "COINBASE": {
+    "total_trades": 2625158,
+    "avg_dup_rate": 0.505957602214044,
+    "avg_median_gap_ms": 41.217285714285715,
+    "total_gaps_gt_1s": 157297,
+    "days_processed": 7
+  },
+  "BYBITSPOT": {
+    "total_trades": 2702096,
+    "avg_dup_rate": 25.228198748918988,
+    "avg_median_gap_ms": 0.0,
+    "total_gaps_gt_1s": 191903,
+    "days_processed": 7
+  },
+  "BITGET": {
+    "total_trades": 1752095,
+    "avg_dup_rate": 2.8061663349454977,
+    "avg_median_gap_ms": 46.142857142857146,
+    "total_gaps_gt_1s": 186055,
+    "days_processed": 7
+  }
+}

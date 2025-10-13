@@ -1,0 +1,60 @@
+Phase 42K-EXPLAIN-CSS Summary
+========================================
+Generated: 2025-10-12T08:55:46.979867Z
+
+CSS COMPONENT ATTRIBUTION ANALYSIS:
+----------------------------------------
+Component Attribution Statistics:
+Component            Mean     Std      Min      Max      Weight   Rel.Imp 
+--------------------------------------------------------------------------------
+causal_stability     0.332    0.000    0.332    0.332    0.350    0.950   
+regime_stability     0.000    0.000    0.000    0.000    0.250    0.001   
+coordination_stability 0.000    0.000    0.000    0.000    0.250    0.000   
+invariance_stability 0.075    0.000    0.075    0.075    0.150    0.500   
+
+CONTRIBUTION DYNAMICS ANALYSIS:
+-----------------------------------
+causal_stability:
+  BINANCE: Trend=-0.0083, Volatility=0.0136, Mean=0.3158
+  BITGET: Trend=-0.0083, Volatility=0.0136, Mean=0.3158
+  BYBITSPOT: Trend=-0.0083, Volatility=0.0136, Mean=0.3158
+  COINBASE: Trend=-0.0083, Volatility=0.0136, Mean=0.3158
+
+regime_stability:
+  BINANCE: Trend=-0.0000, Volatility=0.0000, Mean=0.0001
+  BITGET: Trend=-0.0000, Volatility=0.0000, Mean=0.0001
+  BYBITSPOT: Trend=-0.0000, Volatility=0.0000, Mean=0.0001
+  COINBASE: Trend=-0.0000, Volatility=0.0000, Mean=0.0001
+
+coordination_stability:
+  BINANCE: Trend=0.0000, Volatility=0.0000, Mean=0.0000
+  BITGET: Trend=0.0000, Volatility=0.0000, Mean=0.0000
+  BYBITSPOT: Trend=0.0000, Volatility=0.0000, Mean=0.0000
+  COINBASE: Trend=0.0000, Volatility=0.0000, Mean=0.0000
+
+invariance_stability:
+  BINANCE: Trend=-0.0037, Volatility=0.0061, Mean=0.0675
+  BITGET: Trend=-0.0037, Volatility=0.0061, Mean=0.0675
+  BYBITSPOT: Trend=-0.0037, Volatility=0.0061, Mean=0.0675
+  COINBASE: Trend=-0.0037, Volatility=0.0061, Mean=0.0675
+
+KEY INSIGHTS:
+---------------
+• Most important component: causal_stability (relative importance: 0.950)
+• Most volatile component: causal_stability (std: 0.000)
+• Strongest trend: causal_stability in BINANCE (trend: -0.0083)
+
+INPUT VERIFICATION:
+--------------------
+Input files processed: 4
+  calibration_parquet: 642384a117522054...
+  calibration_manifest: aa7bf0d0f9836f58...
+  hypothesis_metrics: 80fefded2705339a...
+  invariance_metrics: 6cde7f97f907eea1...
+
+METADATA:
+----------
+Timestamp: 2025-10-12T08:55:46.979913
+Random seed: 42
+Total components: 4
+Total venues: 4

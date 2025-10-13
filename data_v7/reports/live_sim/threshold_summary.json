@@ -1,0 +1,23 @@
+{
+  "timestamp": "2025-10-12T13:11:16.138835",
+  "global_feasible": false,
+  "constraints": {
+    "precision_min": 0.5,
+    "recall_min": 0.4,
+    "fpr_max": 0.25,
+    "lead_time_min": 4.0,
+    "min_positives": 10
+  },
+  "results": {
+    "6h": {
+      "optimal_threshold": null,
+      "pareto_count": 0,
+      "total_thresholds_tested": 46
+    },
+    "12h": {
+      "optimal_threshold": null,
+      "pareto_count": 0,
+      "total_thresholds_tested": 45
+    }
+  }
+}

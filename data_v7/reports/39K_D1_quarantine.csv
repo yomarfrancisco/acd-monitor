@@ -1,0 +1,2 @@
+date,venue,key,abs_path,size_bytes,sha256,reason
+20250708,COINBASE,T-TRADES/D-20250708/E-COINBASE/IDDI-5950967+SC-COINBASE_SPOT_BTC_USDT+S-BTC__002DUSDT.csv.gz,/Users/ygorfrancisco/Desktop/acd-monitor/data_v7/quarantine/COINBASE/20250708/QUARANTINE_IDDI_4e74f670__BTC-USD.csv.gz,734406,f4b60c4b1cb66af2ae04340dda98bd45545f72fec275120a9bd150e036132a6c,BTC-USDT pair (not BTC-USD)

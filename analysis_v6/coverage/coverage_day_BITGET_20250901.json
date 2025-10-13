@@ -1,0 +1,12 @@
+{
+  "venue": "BITGET",
+  "date": "20250901",
+  "total_rows": 325121,
+  "unique_timestamps": 200992,
+  "min_time": "2025-09-01T00:00:00.043000",
+  "max_time": "2025-09-01T23:59:59.126000",
+  "duplicate_pct": 0.0,
+  "empty_seconds_pct": 28.489583333333336,
+  "seconds_with_data": 61785,
+  "status": "SUCCESS"
+}

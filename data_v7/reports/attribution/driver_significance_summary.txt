@@ -1,0 +1,72 @@
+Phase 44K-DRIVER-ATTRIBUTION Summary
+=============================================
+Generated: 2025-10-12T09:42:54.428772Z
+
+TOP DRIVERS BY EXPLANATORY POWER (ΔCSS):
+--------------------------------------------------
+Rank Driver                    Correlation  P-value    Beta       R²      
+---------------------------------------------------------------------------
+1    price_volatility          0.5815       0.0000     0.8447     0.3390  
+2    leadership_pressure       0.4634       0.0000     0.1282     0.2161  
+3    volume_change             0.1873       0.0027     0.0001     0.0377  
+4    asia_session              -0.1282      0.0063     -0.0212    0.0170  
+5    us_session                0.0932       0.0327     0.0151     0.0089  
+6    css_std_across_venues     -0.0371      0.2062     -0.2065    0.0095  
+7    cross_venue_correlation   0.0369       0.2102     0.2248     0.0094  
+8    europe_session            0.0348       0.4892     0.0060     0.0019  
+9    market_stress             -0.0184      0.6728     -0.1430    0.0005  
+10   liquidity_proxy           0.0181       0.6771     0.0787     0.0005  
+
+TOP 5 INSTABILITY EPISODES:
+------------------------------
+1. 2025-08-02 00:00:00 (BITGET): CSS Drop=-0.3751, OFI=-0.899, Stress=0.511, Session=Asia
+2. 2025-08-09 00:00:00 (BITGET): CSS Drop=-0.2897, OFI=-0.899, Stress=0.499, Session=Asia
+3. 2025-07-19 00:00:00 (BITGET): CSS Drop=-0.2671, OFI=-0.899, Stress=0.501, Session=Asia
+4. 2025-08-30 00:00:00 (BYBITSPOT): CSS Drop=-0.2601, OFI=-0.900, Stress=0.507, Session=Asia
+5. 2025-09-15 16:00:00 (BITGET): CSS Drop=-0.2541, OFI=-0.899, Stress=0.497, Session=US
+
+DRIVER STATISTICS DURING INSTABILITY EVENTS:
+---------------------------------------------
+Driver                    Event Mean   Normal Mean  Difference  
+-----------------------------------------------------------------
+price_volatility          0.3013       0.4403       -0.1390     
+volume_change             1114.5115    1215.8792    -101.3677   
+ofi_imbalance             -0.8995      -0.8995      0.0001      
+coordination_intensity    0.5000       0.5000       0.0000      
+liquidity_proxy           0.9111       0.9485       -0.0374     
+market_stress             0.4986       0.4771       0.0214      
+leadership_pressure       0.2727       0.6266       -0.3539     
+cross_venue_correlation   0.9443       0.9594       -0.0152     
+
+TIMEZONE CONTEXT ANALYSIS:
+------------------------------
+Instability events by trading session:
+  Asia: 9 events (81.8%)
+  US: 2 events (18.2%)
+
+Instability events by day type:
+  Weekday: 5 events
+  Weekend: 6 events
+
+KEY INSIGHTS:
+---------------
+• Primary driver: price_volatility (correlation: 0.5815)
+• Secondary driver: leadership_pressure (correlation: 0.4634)
+• Weekend effect: 1.20x more events on weekends
+• Most volatile driver during events: volume_change
+
+INPUT VERIFICATION:
+--------------------
+Input files processed: 5
+  css_timeline: 570a6309326c425e...
+  hypothesis_metrics: 80fefded2705339a...
+  invariance_metrics: 6cde7f97f907eea1...
+  calibration_parquet: 642384a117522054...
+  venue_aligned: 6bcb4848a101c199...
+
+METADATA:
+----------
+Timestamp: 2025-10-12T09:42:54.431130
+Random seed: 42
+Total instability events: 11
+Total driver combinations: 48

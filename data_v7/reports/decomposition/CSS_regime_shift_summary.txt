@@ -1,0 +1,77 @@
+Phase 43K-TEMPORAL-DECOMPOSITION Summary
+==================================================
+Generated: 2025-10-12T09:26:30.903359Z
+
+TOP 5 STABILITY COLLAPSE EPISODES:
+----------------------------------------
+
+LEADERSHIP CHANGES (DON ROTATIONS):
+-----------------------------------
+Total Don changes: 434
+Average time between changes: 1.3 time bins
+Most frequent outgoing Don: BINANCE (125 times)
+Most frequent incoming Don: BINANCE (124 times)
+
+REGIME PERSISTENCE ANALYSIS:
+------------------------------
+BINANCE:
+  Regime changes: 1
+  Change frequency: 0.002
+  Avg regime duration: 583.0 time bins
+  Stable periods: 0 (0.0%)
+  Transitional periods: 583 (100.0%)
+
+BITGET:
+  Regime changes: 1
+  Change frequency: 0.002
+  Avg regime duration: 583.0 time bins
+  Stable periods: 0 (0.0%)
+  Transitional periods: 583 (100.0%)
+
+BYBITSPOT:
+  Regime changes: 1
+  Change frequency: 0.002
+  Avg regime duration: 583.0 time bins
+  Stable periods: 0 (0.0%)
+  Transitional periods: 583 (100.0%)
+
+COINBASE:
+  Regime changes: 1
+  Change frequency: 0.002
+  Avg regime duration: 583.0 time bins
+  Stable periods: 0 (0.0%)
+  Transitional periods: 583 (100.0%)
+
+CROSS-VENUE SYNCHRONIZATION:
+--------------------------------
+Total coordination bursts: 59
+Coordination threshold: 0.980
+Average coordination intensity: 0.959
+Synchronous drops: 0
+
+TIMEZONE PATTERNS:
+--------------------
+CSS by Trading Session:
+  Asia: Mean=0.386, Std=0.067, Count=780.0
+  Europe: Mean=0.393, Std=0.067, Count=776.0
+  US: Mean=0.411, Std=0.067, Count=776.0
+
+Weekend vs Weekday CSS:
+  Weekday: Mean=0.421, Std=0.055
+  Weekend: Mean=0.333, Std=0.056
+
+INPUT VERIFICATION:
+--------------------
+Input files processed: 4
+  calibration_parquet: 642384a117522054...
+  explain_parquet: ec8eb012ea02d65a...
+  hypothesis_metrics: 80fefded2705339a...
+  invariance_metrics: 6cde7f97f907eea1...
+
+METADATA:
+----------
+Timestamp: 2025-10-12T09:26:30.908309
+Random seed: 42
+Time period: July 7 - Oct 12, 2025
+Total time bins: 583
+Total records: 2332

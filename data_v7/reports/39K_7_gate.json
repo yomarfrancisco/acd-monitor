@@ -1,0 +1,11 @@
+{
+  "preflight": "OK",
+  "no_clobber": true,
+  "atomic": true,
+  "days_attempted": 6,
+  "days_succeeded": 6,
+  "calls_total": 18,
+  "budget_ok": true,
+  "files_saved": 12,
+  "success_criteria_met": true
+}

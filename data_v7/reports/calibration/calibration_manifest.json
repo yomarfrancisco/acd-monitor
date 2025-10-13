@@ -1,0 +1,38 @@
+{
+  "phase_id": "41K-CALIBRATE-COMPOSITE",
+  "timestamp": "2025-10-12T08:22:54.028934",
+  "random_seed": 42,
+  "input_hashes": {
+    "invariance_metrics": "6cde7f97f907eea1197b5e08aabc1587e440ed3fb553f202deae5152a34ee3d8",
+    "hypothesis_metrics": "80fefded2705339a331b8253b21bfc0d534f26edd36e50127369bf3be83aeb76",
+    "causality_bom": "b2b2e74d7b8130f5bb31a397af5614cf7c49c94bae3ffef31df30b0daccb252f"
+  },
+  "output_hashes": {
+    "composite_calibration.parquet": "642384a11752205451f381d0d04d55c803f01cdbfdcecea410f218e6477cc46d",
+    "CSS_heatmap.png": "edb7b92b815362cf35b662d4fcb24eb248e78f3091b897c5e2f05d2f328f8694",
+    "calibration_summary.txt": "2994190bcc31fca87b292130725647c6288ad85ad55f81a029380a4431ea2933"
+  },
+  "css_metadata": {
+    "timestamp": "2025-10-12T08:22:53.575076",
+    "seed": 42,
+    "total_venues": 4,
+    "components_count": 4
+  },
+  "css_weights": {
+    "causal_stability": 0.35,
+    "regime_stability": 0.25,
+    "coordination_stability": 0.25,
+    "invariance_stability": 0.15
+  },
+  "composite_scores": {
+    "BINANCE": 0.40757536135412703,
+    "BITGET": 0.40752531494991395,
+    "BYBITSPOT": 0.40757536135412703,
+    "COINBASE": 0.40757536135412703
+  },
+  "guardrails": {
+    "read_only_canon": true,
+    "network_frozen": true,
+    "writes_confined_to_calibration": true
+  }
+}

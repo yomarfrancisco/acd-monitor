@@ -1,0 +1,5 @@
+{
+  "1s_robustness": "SKIPPED - Memory constraints",
+  "2s_robustness": "SKIPPED - Memory constraints",
+  "note": "Full robustness analysis requires loading 1s bars and finding optimal hour"
+}

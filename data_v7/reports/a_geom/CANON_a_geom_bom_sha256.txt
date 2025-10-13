@@ -1,0 +1,24 @@
+# Phase 49K.1d-R BOM Hash
+
+SHA256: bf6b19545bbd853601935afc057301f66930d3fcc63507d830488a3b3838ec9e
+
+Content: Phase 49K.1d-R Results
+Timestamp: 2025-10-12T14:30:23.684304
+Seed: 42
+Folds: 1
+Features: 6
+Status: False
+
+
+# Phase 49K.1d-R2 BOM Hash
+
+SHA256: c607a7cd45c3085d25208ce2c23f86efdf7aa3a5d9cdc72a1408a8cffb205a98
+
+Content: Phase 49K.1d-R2 Results
+Timestamp: 2025-10-12T14:41:13.115813
+Seed: 42
+Folds: 2
+Features: 6
+Success: False
+Best Recall: 0.7582417582417582
+Best FPR: 0.3762993762993763

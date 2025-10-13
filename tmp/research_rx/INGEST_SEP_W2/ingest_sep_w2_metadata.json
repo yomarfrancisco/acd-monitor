@@ -1,0 +1,18 @@
+{
+  "download_timestamp": "2025-10-09T16:30:32.579210",
+  "week": "sep_w2",
+  "date_range": "2025-09-08 to 2025-09-14",
+  "venues": [
+    "BINANCE",
+    "COINBASE",
+    "BYBITSPOT",
+    "BITGET"
+  ],
+  "total_downloads_attempted": 28,
+  "successful_downloads": 28,
+  "failed_downloads": 0,
+  "total_observations": 22686568,
+  "overall_coverage_pct": 100.0,
+  "validation_status": "PASS",
+  "memory_usage_mb": 510.296875
+}

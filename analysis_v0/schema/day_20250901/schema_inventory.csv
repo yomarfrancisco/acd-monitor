@@ -1,0 +1,9 @@
+venue,date,kind,file_path,columns,dtypes,row_count,error
+BINANCE,20250901,ticks,data_v6/clean/BINANCE/20250901/ticks_v1.parquet,[],[],0,'pyarrow._parquet.ColumnSchema' object has no attribute 'type'
+BINANCE,20250901,bars,data_v6/bars_1s/BINANCE/20250901/bars_v1.parquet,[],[],0,'pyarrow._parquet.ColumnSchema' object has no attribute 'type'
+COINBASE,20250901,ticks,data_v6/clean/COINBASE/20250901/ticks_v1.parquet,[],[],0,'pyarrow._parquet.ColumnSchema' object has no attribute 'type'
+COINBASE,20250901,bars,data_v6/bars_1s/COINBASE/20250901/bars_v1.parquet,[],[],0,'pyarrow._parquet.ColumnSchema' object has no attribute 'type'
+BYBITSPOT,20250901,ticks,data_v6/clean/BYBITSPOT/20250901/ticks_v1.parquet,[],[],0,'pyarrow._parquet.ColumnSchema' object has no attribute 'type'
+BYBITSPOT,20250901,bars,data_v6/bars_1s/BYBITSPOT/20250901/bars_v1.parquet,[],[],0,'pyarrow._parquet.ColumnSchema' object has no attribute 'type'
+BITGET,20250901,ticks,data_v6/clean/BITGET/20250901/ticks_v1.parquet,[],[],0,'pyarrow._parquet.ColumnSchema' object has no attribute 'type'
+BITGET,20250901,bars,data_v6/bars_1s/BITGET/20250901/bars_v1.parquet,[],[],0,'pyarrow._parquet.ColumnSchema' object has no attribute 'type'

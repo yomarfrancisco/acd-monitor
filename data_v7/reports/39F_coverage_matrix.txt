@@ -1,0 +1,8 @@
+Phase 39F Coverage Matrix
+==============================
+
+Week-7 COINBASE: 7/7 days
+Week-6 BINANCE: 6/7 days
+Week-6 COINBASE: 6/7 days
+Week-6 BYBITSPOT: 6/7 days
+Week-6 BITGET: 5/7 days

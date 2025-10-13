@@ -1,0 +1,207 @@
+{
+  "timestamp": "2025-10-12T13:37:52.237275",
+  "total_features": 31,
+  "new_features": 27,
+  "baseline_features": 4,
+  "leakage_report": {
+    "price_last": {
+      "leakage_detected": false,
+      "feature_type": "instantaneous"
+    },
+    "volume_sum": {
+      "leakage_detected": false,
+      "feature_type": "instantaneous"
+    },
+    "ofi": {
+      "leakage_detected": false,
+      "feature_type": "instantaneous"
+    },
+    "vol_proxy": {
+      "leakage_detected": false,
+      "feature_type": "instantaneous"
+    },
+    "spread_proxy": {
+      "leakage_detected": false,
+      "feature_type": "instantaneous"
+    },
+    "ofi_variance_1h": {
+      "leakage_detected": false,
+      "feature_type": "rolling_window"
+    },
+    "ofi_variance_3h": {
+      "leakage_detected": false,
+      "feature_type": "rolling_window"
+    },
+    "ofi_variance_6h": {
+      "leakage_detected": false,
+      "feature_type": "rolling_window"
+    },
+    "adverse_selection_proxy": {
+      "leakage_detected": false,
+      "feature_type": "instantaneous"
+    },
+    "price_impact": {
+      "leakage_detected": false,
+      "feature_type": "instantaneous"
+    },
+    "price_corr_1h": {
+      "leakage_detected": false,
+      "feature_type": "rolling_window"
+    },
+    "price_corr_3h": {
+      "leakage_detected": false,
+      "feature_type": "rolling_window"
+    },
+    "price_corr_6h": {
+      "leakage_detected": false,
+      "feature_type": "rolling_window"
+    },
+    "price_corr_lag_1": {
+      "leakage_detected": false,
+      "feature_type": "lagged"
+    },
+    "price_corr_lag_2": {
+      "leakage_detected": false,
+      "feature_type": "lagged"
+    },
+    "price_coord_drift": {
+      "leakage_detected": false,
+      "feature_type": "instantaneous"
+    },
+    "leadership_entropy_6h": {
+      "leakage_detected": false,
+      "feature_type": "rolling_window"
+    },
+    "leadership_entropy_12h": {
+      "leakage_detected": false,
+      "feature_type": "rolling_window"
+    },
+    "css_diff": {
+      "leakage_detected": false,
+      "feature_type": "instantaneous"
+    },
+    "css_diff_std_6h": {
+      "leakage_detected": false,
+      "feature_type": "rolling_window"
+    },
+    "css_diff_std_12h": {
+      "leakage_detected": false,
+      "feature_type": "rolling_window"
+    },
+    "css_diff_std_24h": {
+      "leakage_detected": false,
+      "feature_type": "rolling_window"
+    },
+    "css_volatility": {
+      "leakage_detected": false,
+      "feature_type": "instantaneous"
+    },
+    "hour_sin": {
+      "leakage_detected": false,
+      "feature_type": "seasonal"
+    },
+    "hour_cos": {
+      "leakage_detected": false,
+      "feature_type": "seasonal"
+    },
+    "weekday_sin": {
+      "leakage_detected": false,
+      "feature_type": "seasonal"
+    },
+    "weekday_cos": {
+      "leakage_detected": false,
+      "feature_type": "seasonal"
+    },
+    "is_weekend": {
+      "leakage_detected": false,
+      "feature_type": "seasonal"
+    },
+    "is_asia": {
+      "leakage_detected": false,
+      "feature_type": "seasonal"
+    },
+    "is_europe": {
+      "leakage_detected": false,
+      "feature_type": "seasonal"
+    },
+    "is_us": {
+      "leakage_detected": false,
+      "feature_type": "seasonal"
+    }
+  },
+  "cv_results": {
+    "6h": {
+      "mean_auc": 0.9995331465919701,
+      "mean_pr_auc": 0.9992110948057183,
+      "mean_precision": 1.0,
+      "mean_recall": 0.9990662931839402,
+      "mean_f1": 0.9995324918186069,
+      "delta_auc": 0.16953314659197016,
+      "delta_pr_auc": 0.3492110948057183
+    }
+  },
+  "feature_definitions": {
+    "Liquidity": {
+      "spread_proxy": "Price variance across venues",
+      "ofi_variance_1h": "OFI variance over 1h window",
+      "ofi_variance_3h": "OFI variance over 3h window",
+      "ofi_variance_6h": "OFI variance over 6h window",
+      "adverse_selection_proxy": "OFI \u00d7 Volume interaction",
+      "price_impact": "Volume / Price ratio"
+    },
+    "Coordination": {
+      "price_corr_1h": "Cross-venue price correlation (1h)",
+      "price_corr_3h": "Cross-venue price correlation (3h)",
+      "price_corr_6h": "Cross-venue price correlation (6h)",
+      "price_corr_lag_1": "Price correlation lagged by 1h",
+      "price_corr_lag_2": "Price correlation lagged by 2h",
+      "price_coord_drift": "Change in price correlation"
+    },
+    "Leadership": {
+      "leadership_entropy_6h": "Shannon entropy of leadership (6h)",
+      "leadership_entropy_12h": "Shannon entropy of leadership (12h)"
+    },
+    "Regime": {
+      "css_diff_std_6h": "CSS difference std (6h)",
+      "css_diff_std_12h": "CSS difference std (12h)",
+      "css_diff_std_24h": "CSS difference std (24h)",
+      "css_volatility": "CSS coefficient of variation"
+    },
+    "Seasonality": {
+      "hour_sin": "Hour of day (sine encoding)",
+      "hour_cos": "Hour of day (cosine encoding)",
+      "weekday_sin": "Day of week (sine encoding)",
+      "weekday_cos": "Day of week (cosine encoding)",
+      "is_weekend": "Weekend indicator",
+      "is_asia": "Asia session indicator",
+      "is_europe": "Europe session indicator",
+      "is_us": "US session indicator"
+    }
+  },
+  "family_stats": {
+    "Unknown": {
+      "total": 5,
+      "leaked": 0
+    },
+    "Liquidity": {
+      "total": 6,
+      "leaked": 0
+    },
+    "Coordination": {
+      "total": 6,
+      "leaked": 0
+    },
+    "Leadership": {
+      "total": 2,
+      "leaked": 0
+    },
+    "Regime": {
+      "total": 4,
+      "leaked": 0
+    },
+    "Seasonality": {
+      "total": 8,
+      "leaked": 0
+    }
+  }
+}

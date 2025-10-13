@@ -1,0 +1,17 @@
+{
+  "timestamp": "2025-10-06T00:01:20.224564",
+  "date": "20250901",
+  "venues": [
+    "BINANCE",
+    "COINBASE",
+    "BYBITSPOT",
+    "BITGET"
+  ],
+  "total_venues_processed": 4,
+  "leadership_1s": "SUCCESS",
+  "leadership_5s": "SUCCESS",
+  "icp_analysis": "SKIPPED",
+  "vmm_analysis": "SUCCESS",
+  "memory_peak_mb": 160.015625,
+  "status": "SUCCESS"
+}

@@ -1,0 +1,12 @@
+{
+  "analysis_period": "2025-09-01 to 2025-09-07",
+  "total_tests": 36,
+  "bh_significant": 7,
+  "placebo_robust": 26,
+  "final_kept": 0,
+  "mean_abs_beta": 0.010590956006641027,
+  "median_abs_beta": 0.0053280234424237845,
+  "week_level": true,
+  "memory_peak_mb": 174.515625,
+  "status": "ACD_WEEK_5S_NULL"
+}

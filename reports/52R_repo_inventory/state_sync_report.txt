@@ -1,0 +1,16 @@
+ACD State Sync Report
+==================================================
+
+Alignment: RUNTIME_BEHIND
+Generated: 2025-10-13T09:20:58.450132
+
+Deltas:
+  phase_number:
+    Analytical: 42A-v6
+    Runtime: 03
+  dataset_sha:
+    Analytical: 5b8d2180af2b6aa2b03f8a3a8bbfee175a099b9898c6d048aa984b6fcfaff40b
+    Runtime: <unknown>
+  method_version:
+    Analytical: DOWNLOAD_METHOD_v2.0 (sha256:ca573c1a2821c737...)
+    Runtime: DOWNLOAD_METHOD_v2.0

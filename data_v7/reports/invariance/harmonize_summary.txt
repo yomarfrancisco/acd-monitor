@@ -1,0 +1,25 @@
+Phase 39K-HARMONIZE-INVARIANCE Summary
+==================================================
+Generated: 2025-10-11T23:45:32.039286Z
+
+Hourly Beacons: 9210 records
+Date Range: 2025-07-07 00:00:00 to 2025-10-10 23:00:00
+Venues: BINANCE, BITGET, BYBITSPOT, COINBASE
+
+Aggregates Generated:
+  1s: 2304 records
+  1m: 2112 records
+  1h: 9210 records
+
+Venue-Aligned Data: 2304 timestamps
+Features: 20 columns
+
+Invariance Metrics:
+  total_timestamps: 2304
+  price_features: 4
+  volume_features: 4
+  ofi_features: 4
+  date_range: 2025-07-07 00:00:00 to 2025-10-10 23:00:00
+  price_correlation_mean: 0.45613875107876783
+  volume_correlation_mean: 0.34371039834885636
+  ofi_correlation_mean: 0.08144843488760468

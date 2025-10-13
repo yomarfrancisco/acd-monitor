@@ -1,0 +1,4 @@
+proxy,real_beta,empirical_p_value,n_placebo_iterations
+A_t,0.4424844732695846,1.0,200
+A_t_unique,1.650176657547934,1.0,200
+A_t_rate,-0.6026951060530931,1.0,200

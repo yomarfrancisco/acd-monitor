@@ -1,0 +1,4 @@
+Invariance Analysis BOM SHA-256: a1ef0bfcab9f63fd8dfc85e4e20cb3bc0fd302638a2f3953d583e6724c37b5b5
+Generated: 2025-10-11T23:45:32.042160Z
+Files included: 8
+Total size: 5,935,237 bytes

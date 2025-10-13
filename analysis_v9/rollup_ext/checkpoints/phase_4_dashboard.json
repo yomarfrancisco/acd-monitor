@@ -1,0 +1,25 @@
+{
+  "phase": 4,
+  "status": "COMPLETE",
+  "key_files": {
+    "residual_windows": "analysis_v9/predictive_bursts/residual_windows.csv",
+    "overlap_metrics": "analysis_v9/predictive_bursts/overlap_metrics.csv",
+    "summary": "analysis_v9/predictive_bursts/summary.json"
+  },
+  "core_metrics": {
+    "total_residual_windows": 75585,
+    "total_overlap_metrics": 288,
+    "median_jaccard": 0.29718301971326166,
+    "median_precision": 0.29718301971326166,
+    "median_recall": 1.0,
+    "consistent_overlap_edges": 257
+  },
+  "flags": {
+    "any_residual_windows": true,
+    "any_overlap_metrics": true,
+    "consistent_overlap": true,
+    "memory_ok": true
+  },
+  "next": "Create 'analysis_v9/controls/CONTINUE_PHASE_4.txt' with PROCEED to continue",
+  "memory_peak_mb": 139.953125
+}

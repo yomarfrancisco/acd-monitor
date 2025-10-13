@@ -1,0 +1,31 @@
+Phase 40K-PRECHECK-CANON Log
+Started: 2025-10-12T07:55:20.289806Z
+==================================================
+
+[2025-10-12T07:55:20.290727] 🔍 Starting offline integrity pre-check...
+[2025-10-12T07:55:20.290789] 🔍 Checking BOM/hash consistency...
+[2025-10-12T07:55:20.305099]   Found 386 canonical files
+[2025-10-12T07:55:36.560034]   Found existing BOM file: /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/reports/canonical/CANON_bom_sha256.txt
+[2025-10-12T07:55:36.575887]   ✅ BOM consistency check complete
+[2025-10-12T07:55:36.576528] 📋 Checking manifest agreement...
+[2025-10-12T07:55:36.582344]   Loaded manifest: 386 entries
+[2025-10-12T07:55:51.978664]   ✅ Manifest agreement check complete
+[2025-10-12T07:55:51.979171] 📊 Checking coverage integrity...
+[2025-10-12T07:55:52.025350]   ✅ Coverage integrity check complete
+[2025-10-12T07:55:52.025430] 🏷️ Checking naming and normalization...
+[2025-10-12T07:55:52.056338]   Found 77 naming issues (0 blocking)
+[2025-10-12T07:55:52.056445] 🔍 Checking format and content sanity...
+[2025-10-12T07:55:52.087235]   Checked 10 files, found 0 format issues
+[2025-10-12T07:55:52.087308] 📊 Checking beacons and aligned inputs...
+[2025-10-12T07:55:52.605960]   ✅ hourly_beacons.parquet: 9210 rows, 1311565 bytes
+[2025-10-12T07:55:52.609337]   ✅ venue_aligned.parquet: 2304 rows, 438302 bytes
+[2025-10-12T07:55:52.611056]   ✅ aggregates_1s.parquet: 2304 rows, 122387 bytes
+[2025-10-12T07:55:52.612546]   ✅ aggregates_1m.parquet: 2112 rows, 163122 bytes
+[2025-10-12T07:55:52.616279]   ✅ aggregates_1h.parquet: 9210 rows, 1257908 bytes
+[2025-10-12T07:55:52.616527]   ✅ Beacons check complete, found 0 issues
+[2025-10-12T07:55:52.616582] 🔧 Generating environment info...
+[2025-10-12T07:55:52.642553]   ✅ Environment info saved
+[2025-10-12T07:55:52.642621] 📝 Generating final reports...
+[2025-10-12T07:55:52.642871]   ✅ Reports generated, overall status: PASS
+[2025-10-12T07:55:52.642914] ✅ Pre-check complete in 32.4 seconds
+[2025-10-12T07:55:52.642942] 🎯 Final status: PRECHECK_OK=true

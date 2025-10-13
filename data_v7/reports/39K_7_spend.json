@@ -1,0 +1,9 @@
+{
+  "total_calls": 18,
+  "list_calls": 6,
+  "get_calls": 12,
+  "budget_used": "18/70",
+  "days_attempted": 6,
+  "days_succeeded": 6,
+  "timestamp": "2025-10-11T15:00:12.766889Z"
+}

@@ -1,0 +1,31 @@
+{
+  "total_combinations": 84,
+  "tier_1_total": 56,
+  "tier_2_total": 0,
+  "tier_0_total": 2968,
+  "persistent_edges_count": 6,
+  "tier_1_by_frequency": {
+    "10S": 3,
+    "15S": 1,
+    "1S": 17,
+    "2S": 17,
+    "30S": 1,
+    "5S": 17
+  },
+  "tier_2_by_frequency": {
+    "10S": 0,
+    "15S": 0,
+    "1S": 0,
+    "2S": 0,
+    "30S": 0,
+    "5S": 0
+  },
+  "tier_1_by_alpha": {
+    "0.05": 56,
+    "0.1": 0
+  },
+  "tier_2_by_alpha": {
+    "0.05": 0,
+    "0.1": 0
+  }
+}

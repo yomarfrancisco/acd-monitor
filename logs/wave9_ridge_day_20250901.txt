@@ -1,0 +1,7 @@
+Wave 9 Ridge Execution Log - 2025-10-05T22:00:18.563974
+Memory peak: 148.6 MB
+Total tests: 12
+Skipped edges: 0
+Gamma significant (raw): 2
+Gamma significant (FDR): 0
+Status: SUCCESS

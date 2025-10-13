@@ -1,0 +1,14 @@
+version: 1.0
+download_method_sha: 645c6b06e35b4442ba1026efe75c0b06e0178dff53b9ef40f354c8c5adfadc34
+allowed_targets:
+  - week: -7
+    venues: [BINANCE, COINBASE, BYBITSPOT, BITGET]
+  - week: -6
+    venues: [BINANCE, COINBASE, BYBITSPOT, BITGET]
+budget_per_run: 160
+concurrency: 2
+write_policy: atomic_no_clobber
+btcusd_patterns: ["BTCUSD","BTCUSDT","BTC-USD","BTC__002DUSD"]
+source_of_truth_manifest: data_v7/reports/39G_beacon_ready.csv
+approvals_required: ["owner_signoff"]
+network_lock_path: locks/api_budget.lock

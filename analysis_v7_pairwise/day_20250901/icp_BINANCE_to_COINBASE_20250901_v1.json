@@ -1,0 +1,42 @@
+{
+  "pair": "BINANCE_to_COINBASE",
+  "date": "20250901",
+  "scale": "1s",
+  "N": 64615,
+  "overlap_pct": 0.8690903710877079,
+  "lag_results": [
+    {
+      "lag": 1,
+      "correlation": -0.0059768300100194694,
+      "p_value": 0.05,
+      "significant": false
+    },
+    {
+      "lag": 2,
+      "correlation": -0.023368649309458468,
+      "p_value": 0.05,
+      "significant": false
+    },
+    {
+      "lag": 3,
+      "correlation": 0.012550581396836614,
+      "p_value": 0.05,
+      "significant": false
+    },
+    {
+      "lag": 5,
+      "correlation": -8.867343222184521e-06,
+      "p_value": 0.05,
+      "significant": false
+    },
+    {
+      "lag": 10,
+      "correlation": 0.0017635942183008035,
+      "p_value": 0.05,
+      "significant": false
+    }
+  ],
+  "icp_pass": false,
+  "significant_lags": 0,
+  "env_sizes_csv": "icp_BINANCE_to_COINBASE_20250901_v1.env_sizes.csv"
+}

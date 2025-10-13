@@ -1,0 +1,25 @@
+{
+  "metrics": [
+    "tier_distribution",
+    "dynamic_tau_adjustments",
+    "cooldown_violations",
+    "window_guard_violations",
+    "weighted_ensemble_agreement_rate",
+    "relaxed_guard_efficiency"
+  ],
+  "alerts": [
+    "tierA_high_precision",
+    "tierB_balanced_performance",
+    "tierC_high_recall",
+    "combined_targets_met",
+    "weighted_ensemble_performance"
+  ],
+  "dashboards": [
+    "orchestrator_performance_v2",
+    "tier_breakdown_weighted",
+    "dynamic_tau_usage",
+    "cooldown_efficiency",
+    "relaxed_guard_monitoring"
+  ],
+  "status": "PRODUCTION_READY_V2"
+}

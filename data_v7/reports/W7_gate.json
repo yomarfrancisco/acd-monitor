@@ -1,0 +1,10 @@
+{
+  "week": "-7",
+  "venue": "COINBASE",
+  "days_expected": 7,
+  "days_passed": 7,
+  "all_gates_passed": true,
+  "total_files": 14,
+  "total_bytes": 225552345,
+  "timestamp": "2025-10-11T15:20:17.226904Z"
+}

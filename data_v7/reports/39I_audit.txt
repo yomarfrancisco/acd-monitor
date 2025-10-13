@@ -1,0 +1,38 @@
+Phase 39I Final Audit Report
+==================================================
+
+Timestamp: 2025-10-11T14:43:15.735320Z
+Apply Delete: False
+
+Counts:
+  Before cleanup: 44 files
+  After cleanup: 44 files
+  Deleted: 0 files
+  Bytes reclaimed: 0 bytes
+
+Top 20 Largest Survivors:
+------------------------------
+ 164,816,484 bytes  /Users/ygorfrancisco/Desktop/acd-monitor/data_v6/raw/coinapi_jul/BINANCE_20250725_BTCUSDT.csv.gz
+ 147,907,777 bytes  /Users/ygorfrancisco/Desktop/acd-monitor/data_v6/raw/coinapi_jul/BINANCE_20250724_BTCUSDT.csv.gz
+ 140,409,435 bytes  /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w7/20250711/BINANCE/IDDI-138123+SC-BINANCE_SPOT_BTC_USDT+S-BTCUSDT.csv.gz
+ 132,025,635 bytes  /Users/ygorfrancisco/Desktop/acd-monitor/data_v6/raw/coinapi_jul/BINANCE_20250722_BTCUSDT.csv.gz
+ 123,519,354 bytes  /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w7/20250710/BINANCE/IDDI-138123+SC-BINANCE_SPOT_BTC_USDT+S-BTCUSDT.csv.gz
+ 118,009,423 bytes  /Users/ygorfrancisco/Desktop/acd-monitor/data_v6/raw/coinapi_jul/BINANCE_20250723_BTCUSDT.csv.gz
+ 116,181,392 bytes  /Users/ygorfrancisco/Desktop/acd-monitor/data_v6/raw/coinapi_jul/BINANCE_20250727_BTCUSDT.csv.gz
+ 102,516,611 bytes  /Users/ygorfrancisco/Desktop/acd-monitor/data_v6/raw/coinapi_jul/BINANCE_20250726_BTCUSDT.csv.gz
+  89,418,242 bytes  /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w7/20250709/BINANCE/IDDI-138123+SC-BINANCE_SPOT_BTC_USDT+S-BTCUSDT.csv.gz
+  74,300,556 bytes  /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w7/20250707/BINANCE/IDDI-138123+SC-BINANCE_SPOT_BTC_USDT+S-BTCUSDT.csv.gz
+  66,224,363 bytes  /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w7/20250708/BINANCE/IDDI-138123+SC-BINANCE_SPOT_BTC_USDT+S-BTCUSDT.csv.gz
+  58,962,149 bytes  /Users/ygorfrancisco/Desktop/acd-monitor/data_v6/raw/coinapi_jul/COINBASE_20250725_BTCUSDT.csv.gz
+  44,460,934 bytes  /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w6/IDDI-138123+SC-BINANCE_SPOT_BTC_USDT+S-BTCUSDT.csv.gz
+  44,203,439 bytes  /Users/ygorfrancisco/Desktop/acd-monitor/data_v6/raw/coinapi_jul/BYBITSPOT_20250725_BTCUSDT.csv.gz
+  34,726,440 bytes  /Users/ygorfrancisco/Desktop/acd-monitor/data_v6/raw/coinapi_jul/BYBITSPOT_20250722_BTCUSDT.csv.gz
+  33,723,136 bytes  /Users/ygorfrancisco/Desktop/acd-monitor/data_v7/raw/coinapi_jul_w7/20250711/BYBITSPOT/IDDI-6072814+SC-BYBITSPOT_SPOT_BTC_USDT+S-BTCUSDT.csv.gz
+  33,423,988 bytes  /Users/ygorfrancisco/Desktop/acd-monitor/data_v6/raw/coinapi_jul/COINBASE_20250722_BTCUSDT.csv.gz
+  30,037,426 bytes  /Users/ygorfrancisco/Desktop/acd-monitor/data_v6/raw/coinapi_jul/COINBASE_20250724_BTCUSDT.csv.gz
+  28,872,167 bytes  /Users/ygorfrancisco/Desktop/acd-monitor/data_v6/raw/coinapi_jul/COINBASE_20250723_BTCUSDT.csv.gz
+  28,615,482 bytes  /Users/ygorfrancisco/Desktop/acd-monitor/data_v6/raw/coinapi_jul/BYBITSPOT_20250724_BTCUSDT.csv.gz
+
+Assertions:
+  NETWORK_UNUSED=0
+  APPLIED_DELETE=False

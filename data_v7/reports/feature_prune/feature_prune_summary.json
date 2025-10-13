@@ -1,0 +1,332 @@
+{
+  "timestamp": "2025-10-12T13:51:35.076946",
+  "seed": 42,
+  "n_features_original": 30,
+  "n_features_selected": 8,
+  "selected_features": [
+    "is_us",
+    "ofi",
+    "is_asia",
+    "css_volatility",
+    "is_weekend",
+    "price_corr_lag_1",
+    "weekday_cos",
+    "css_diff_std_12h"
+  ],
+  "dropped_features": [],
+  "stability_metrics": {
+    "price_last": {
+      "mean_rank": 21.0,
+      "std_rank": 0.0,
+      "rsi": 1.0,
+      "ranks": [
+        "21"
+      ]
+    },
+    "volume_sum": {
+      "mean_rank": 17.0,
+      "std_rank": 0.0,
+      "rsi": 1.0,
+      "ranks": [
+        "17"
+      ]
+    },
+    "ofi": {
+      "mean_rank": 2.0,
+      "std_rank": 0.0,
+      "rsi": 1.0,
+      "ranks": [
+        "2"
+      ]
+    },
+    "vol_proxy": {
+      "mean_rank": 27.0,
+      "std_rank": 0.0,
+      "rsi": 1.0,
+      "ranks": [
+        "27"
+      ]
+    },
+    "spread_proxy": {
+      "mean_rank": 29.0,
+      "std_rank": 0.0,
+      "rsi": 1.0,
+      "ranks": [
+        "29"
+      ]
+    },
+    "ofi_variance_1h": {
+      "mean_rank": 20.0,
+      "std_rank": 0.0,
+      "rsi": 1.0,
+      "ranks": [
+        "20"
+      ]
+    },
+    "ofi_variance_3h": {
+      "mean_rank": 23.0,
+      "std_rank": 0.0,
+      "rsi": 1.0,
+      "ranks": [
+        "23"
+      ]
+    },
+    "ofi_variance_6h": {
+      "mean_rank": 28.0,
+      "std_rank": 0.0,
+      "rsi": 1.0,
+      "ranks": [
+        "28"
+      ]
+    },
+    "adverse_selection_proxy": {
+      "mean_rank": 30.0,
+      "std_rank": 0.0,
+      "rsi": 1.0,
+      "ranks": [
+        "30"
+      ]
+    },
+    "price_impact": {
+      "mean_rank": 18.0,
+      "std_rank": 0.0,
+      "rsi": 1.0,
+      "ranks": [
+        "18"
+      ]
+    },
+    "price_corr_1h": {
+      "mean_rank": 13.0,
+      "std_rank": 0.0,
+      "rsi": 1.0,
+      "ranks": [
+        "13"
+      ]
+    },
+    "price_corr_3h": {
+      "mean_rank": 24.0,
+      "std_rank": 0.0,
+      "rsi": 1.0,
+      "ranks": [
+        "24"
+      ]
+    },
+    "price_corr_6h": {
+      "mean_rank": 12.0,
+      "std_rank": 0.0,
+      "rsi": 1.0,
+      "ranks": [
+        "12"
+      ]
+    },
+    "price_corr_lag_1": {
+      "mean_rank": 6.0,
+      "std_rank": 0.0,
+      "rsi": 1.0,
+      "ranks": [
+        "6"
+      ]
+    },
+    "price_corr_lag_2": {
+      "mean_rank": 10.0,
+      "std_rank": 0.0,
+      "rsi": 1.0,
+      "ranks": [
+        "10"
+      ]
+    },
+    "price_coord_drift": {
+      "mean_rank": 25.0,
+      "std_rank": 0.0,
+      "rsi": 1.0,
+      "ranks": [
+        "25"
+      ]
+    },
+    "leadership_entropy_6h": {
+      "mean_rank": 15.0,
+      "std_rank": 0.0,
+      "rsi": 1.0,
+      "ranks": [
+        "15"
+      ]
+    },
+    "leadership_entropy_12h": {
+      "mean_rank": 19.0,
+      "std_rank": 0.0,
+      "rsi": 1.0,
+      "ranks": [
+        "19"
+      ]
+    },
+    "css_diff_std_6h": {
+      "mean_rank": 22.0,
+      "std_rank": 0.0,
+      "rsi": 1.0,
+      "ranks": [
+        "22"
+      ]
+    },
+    "css_diff_std_12h": {
+      "mean_rank": 8.0,
+      "std_rank": 0.0,
+      "rsi": 1.0,
+      "ranks": [
+        "8"
+      ]
+    },
+    "css_diff_std_24h": {
+      "mean_rank": 9.0,
+      "std_rank": 0.0,
+      "rsi": 1.0,
+      "ranks": [
+        "9"
+      ]
+    },
+    "css_volatility": {
+      "mean_rank": 4.0,
+      "std_rank": 0.0,
+      "rsi": 1.0,
+      "ranks": [
+        "4"
+      ]
+    },
+    "hour_sin": {
+      "mean_rank": 14.0,
+      "std_rank": 0.0,
+      "rsi": 1.0,
+      "ranks": [
+        "14"
+      ]
+    },
+    "hour_cos": {
+      "mean_rank": 16.0,
+      "std_rank": 0.0,
+      "rsi": 1.0,
+      "ranks": [
+        "16"
+      ]
+    },
+    "weekday_sin": {
+      "mean_rank": 11.0,
+      "std_rank": 0.0,
+      "rsi": 1.0,
+      "ranks": [
+        "11"
+      ]
+    },
+    "weekday_cos": {
+      "mean_rank": 7.0,
+      "std_rank": 0.0,
+      "rsi": 1.0,
+      "ranks": [
+        "7"
+      ]
+    },
+    "is_weekend": {
+      "mean_rank": 5.0,
+      "std_rank": 0.0,
+      "rsi": 1.0,
+      "ranks": [
+        "5"
+      ]
+    },
+    "is_asia": {
+      "mean_rank": 3.0,
+      "std_rank": 0.0,
+      "rsi": 1.0,
+      "ranks": [
+        "3"
+      ]
+    },
+    "is_europe": {
+      "mean_rank": 26.0,
+      "std_rank": 0.0,
+      "rsi": 1.0,
+      "ranks": [
+        "26"
+      ]
+    },
+    "is_us": {
+      "mean_rank": 1.0,
+      "std_rank": 0.0,
+      "rsi": 1.0,
+      "ranks": [
+        "1"
+      ]
+    }
+  },
+  "high_corr_pairs": [
+    {
+      "feature1": "price_last",
+      "feature2": "spread_proxy",
+      "pearson_r": 0.9999999044321353,
+      "spearman_r": 0.9999990639990641,
+      "max_r": 0.9999999044321353
+    },
+    {
+      "feature1": "ofi_variance_1h",
+      "feature2": "ofi_variance_3h",
+      "pearson_r": 0.9513771831739327,
+      "spearman_r": 0.9444709764709767,
+      "max_r": 0.9513771831739327
+    },
+    {
+      "feature1": "ofi_variance_1h",
+      "feature2": "ofi_variance_6h",
+      "pearson_r": 0.9399099329162129,
+      "spearman_r": 0.9306631626631626,
+      "max_r": 0.9399099329162129
+    },
+    {
+      "feature1": "ofi_variance_3h",
+      "feature2": "ofi_variance_6h",
+      "pearson_r": 0.9867103297153085,
+      "spearman_r": 0.9850810330810331,
+      "max_r": 0.9867103297153085
+    }
+  ],
+  "vif_scores": {
+    "price_last": Infinity,
+    "volume_sum": 1.03963132162187,
+    "ofi": 3.9176588663907634,
+    "vol_proxy": 1.0346365645376001,
+    "spread_proxy": Infinity,
+    "ofi_variance_1h": 13.192391852437677,
+    "ofi_variance_3h": 48.20037907181349,
+    "ofi_variance_6h": 39.2737029477184,
+    "adverse_selection_proxy": 1.0445257625918718,
+    "price_impact": 1.0230832641752532,
+    "price_corr_1h": 1.0343351906822549,
+    "price_corr_3h": 1.0256019067423527,
+    "price_corr_6h": 1.022422600040865,
+    "price_corr_lag_1": 1.025150263504279,
+    "price_corr_lag_2": 1.0353747652080196,
+    "price_coord_drift": 1.0318321685913585,
+    "leadership_entropy_6h": 1.0255930134857605,
+    "leadership_entropy_12h": 1.0288998028372025,
+    "css_diff_std_6h": 1.0278361788471573,
+    "css_diff_std_12h": 1.0164532479819544,
+    "css_diff_std_24h": 1.021219458468368,
+    "css_volatility": 1.0194330407408703,
+    "hour_sin": 1.0211008593980122,
+    "hour_cos": 1.0305577061606288,
+    "weekday_sin": 1.0189393496858568,
+    "weekday_cos": 1.0336127458603512,
+    "is_weekend": 1.0334846728306604,
+    "is_asia": 1.0363517046880657,
+    "is_europe": 1.0189557609733733,
+    "is_us": 1.0161557800077297
+  },
+  "acceptance_gates": {
+    "gate1_8_12_features": true,
+    "gate2_mean_rsi_0_80": "True",
+    "gate3_max_corr_0_85": "True"
+  },
+  "final_status": {
+    "FEATURE_PRUNE_OK": "True"
+  },
+  "cross_model_overlap": 40.0,
+  "mean_rsi_retained": 1.0,
+  "max_corr_retained": 0.05424774091652524
+}

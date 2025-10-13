@@ -1,0 +1,93 @@
+{
+  "timestamp": "2025-10-12T14:30:23.682785",
+  "seed": 42,
+  "n_samples": 583,
+  "n_folds": 1,
+  "stable_features": [
+    "price_coord_drift",
+    "is_asia",
+    "css_diff_std_6h",
+    "is_weekend",
+    "css_diff_std_24h",
+    "price_corr_lag_1"
+  ],
+  "embargo_hours": 12,
+  "horizons": [
+    "6h",
+    "12h"
+  ],
+  "fold_results": {
+    "0": {
+      "6h": {
+        "auc": 0.7513804713804714,
+        "pr_auc": 0.5013174169519299,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "fpr": 0.0,
+        "base_rate": 0.175,
+        "train_base_rate": 0.15,
+        "p10_threshold": -0.10992801739126974,
+        "p15_threshold": -0.08110180409365876,
+        "n_test": 600
+      },
+      "12h": {
+        "auc": 0.7339752585332154,
+        "pr_auc": 0.397165248506534,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "fpr": 0.0,
+        "base_rate": 0.15166666666666667,
+        "train_base_rate": 0.15,
+        "p10_threshold": -0.11307900042612552,
+        "p15_threshold": -0.09189149808339853,
+        "n_test": 600
+      }
+    }
+  },
+  "integrity_passed": false,
+  "base_rate_results": {
+    "6h": {
+      "mean_base_rate": 0.175,
+      "std_base_rate": 0.0,
+      "min_base_rate": 0.175,
+      "max_base_rate": 0.175,
+      "base_rate_ok": true,
+      "base_rate_stable": "True",
+      "passed": "True"
+    },
+    "12h": {
+      "mean_base_rate": 0.15166666666666667,
+      "std_base_rate": 0.0,
+      "min_base_rate": 0.15166666666666667,
+      "max_base_rate": 0.15166666666666667,
+      "base_rate_ok": true,
+      "base_rate_stable": "True",
+      "passed": "True"
+    }
+  },
+  "model_results": {
+    "6h": {
+      "mean_auc": 0.7513804713804714,
+      "mean_recall": 0.0,
+      "valid_folds": 1,
+      "total_folds": 1,
+      "auc_ok": "True",
+      "recall_ok": "False",
+      "fold_ratio_ok": true,
+      "passed": "False"
+    },
+    "12h": {
+      "mean_auc": 0.7339752585332154,
+      "mean_recall": 0.0,
+      "valid_folds": 1,
+      "total_folds": 1,
+      "auc_ok": "True",
+      "recall_ok": "False",
+      "fold_ratio_ok": true,
+      "passed": "False"
+    }
+  },
+  "feature_prune_ok": false
+}

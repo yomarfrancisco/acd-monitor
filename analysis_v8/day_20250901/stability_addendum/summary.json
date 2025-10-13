@@ -1,0 +1,11 @@
+{
+  "day": "2025-09-01",
+  "n_edges": 12,
+  "full_pass": 0,
+  "hac_pass_stability_fail": 12,
+  "stability_pass_hac_fail": 0,
+  "full_fail": 0,
+  "rolling_stable": 0,
+  "block_stable": 0,
+  "hac_stable": 12
+}

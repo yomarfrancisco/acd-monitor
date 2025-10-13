@@ -1,0 +1,2 @@
+Placebo KS test: D=0.1038, p=0.7948
+Placebo p-values uniformly distributed: True
