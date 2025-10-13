@@ -27,6 +27,7 @@ jobs:
 
       - name: Test STS identity
         run: |
+          set -euo pipefail
           echo "🔍 Testing OIDC role assumption..."
           aws sts get-caller-identity
           
@@ -38,14 +39,16 @@ jobs:
 
       - name: Test S3 access (read-only)
         run: |
+          set -euo pipefail
           echo "🔍 Testing S3 read access..."
-          aws s3 ls s3://acd-monitor-snapshots/ --max-items 5
+          aws s3api list-objects-v2 --bucket acd-monitor-snapshots --prefix "" --max-items 5 --no-paginate
           
           echo "📊 S3 bucket info:"
           aws s3api get-bucket-location --bucket acd-monitor-snapshots
 
       - name: Test Athena access
         run: |
+          set -euo pipefail
           echo "🔍 Testing Athena access..."
           aws athena list-work-groups --query 'WorkGroups[?Name==`acd-analytics`]'
           
@@ -54,6 +57,7 @@ jobs:
 
       - name: Test Glue access
         run: |
+          set -euo pipefail
           echo "🔍 Testing Glue access..."
           aws glue get-databases --query 'DatabaseList[?Name==`acd_snapshots`]'
           
@@ -62,6 +66,7 @@ jobs:
 
       - name: OIDC Probe Summary
         run: |
+          set -euo pipefail
           echo "✅ OIDC probe completed successfully!"
           echo "🎯 Role assumption: Working"
           echo "🔐 S3 read access: Working" 
